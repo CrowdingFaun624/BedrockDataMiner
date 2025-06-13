@@ -1,68 +1,578 @@
-Difference of "ui" between "1.17.40.20" (beta of "1.17.40") and "1.17.40.21" (beta of "1.17.40").
+Difference of "ui" between "1.18.0.25" (beta of "1.18.0") and "1.18.0.27" (beta of "1.18.0").
 
-Changed namespace "patch_notes":
-	Changed element "button_content":
+Changed namespace "common_store":
+	Total element: 201 (+2, -1)
+	Removed element "banner_button@common_buttons.light_content_button":
+		field "size": ["100%c", 16]
+		field "layer": 4
+		field "bindings":
+			binding:
+				field "binding_name": "#promo_page_is_ready"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$button_state_panel": "common_buttons.new_ui_width_fitting_button_panel"
+			variable "$button_type_panel": "common_buttons.width_fitting_button_content_panel"
+			variable "$button_content": "common_store.promo_banner_button_content"
+			variable "$button_size_override":
+				item 0: "100%c + 8px"
+				item 1: "100%"
+			variable "$anchor": "bottom_left"
+			variable "$focus_id": "banner_button"
+			variable "$focus_override_up": "banner_full_button"
+			variable "$pressed_button_name": "button.promotion_page"
+	Added element "banner_button@common_buttons.new_ui_width_fitting_button_panel":
+		field "size": ["100%c", 16]
+		field "layer": 4
+		field "bindings":
+			binding:
+				field "binding_name": "#promo_page_is_ready"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$button_type_panel": "common_buttons.width_fitting_button_content_panel"
+			variable "$button_content": "common_store.promo_banner_button_content"
+			variable "$button_size_override":
+				item 0: "100%c + 8px"
+				item 1: "100%"
+			variable "$anchor": "bottom_left"
+			variable "$focus_id": "banner_button"
+			variable "$focus_override_up": "banner_full_button"
+			variable "$pressed_button_name": "button.promotion_page"
+	Changed element "image_glyphs_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "image":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "key_image":
+								Unchanged field "type": "image".
+								Changed field "controls":
+									Total control: 2 (+1, -0)
+									Added control:
+										element "persona_key_art_frame@common.square_image_border_white":
+											field "size": ["100%y", "80%"]
+											field "layer": 6
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "offset": [-10, 0]
+											field "bindings":
+												binding:
+													field "binding_name": "#promo_item_is_persona"
+													field "binding_name_override": "#visible"
+											field "controls":
+												control:
+													element "persona_image_panel":
+														field "type": "image"
+														field "size": ["100% - 2px", "100% - 2px"]
+														field "layer": 5
+														field "bilinear": true
+														field "anchor_from": "center"
+														field "anchor_to": "center"
+														field "bindings":
+															binding:
+																field "binding_name": "#promo_persona_thumbnail_texture"
+																field "binding_name_override": "#texture"
+															binding:
+																field "binding_name": "#promo_persona_thumbnail_file_system"
+																field "binding_name_override": "#texture_file_system"
+												control:
+													element "background@persona_common.item_rarity_color_background":
+														field "size": ["100% - 2px", "100% - 2px"]
+														field "layer": 1
+														field "$variables":
+															variable "$rarity_background_alpha": 1
+															variable "$rarity_color_background_texture": "textures/ui/button_borderless_light"
+															variable "$rarity_background_bindings":
+																item 0:
+																	item "binding_name": "#rarity_color"
+																	item "binding_name_override": "#color"
+												control:
+													element "rarity_bar_panel@persona_common.rarity_bar":
+														field "size": ["100% - 2px", 3]
+														field "layer": 6
+														field "offset": [0, -1]
+														field "bindings":
+															binding:
+																field "binding_name": "#rarity_bar_texture"
+																field "binding_name_override": "#texture"
+															binding:
+																field "binding_name": "#promotion_offer_visible"
+																field "binding_name_override": "#visible"
+	Changed element "promo_banner_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Total control: 1 (+1, -1)
-			Removed control element "button_label2@patch_notes.button_label_panel": field "$variables": variable "$button_text": "skins.picker.unlock.button".
-			Added control element "button_label2@patch_notes.button_label_panel": empty.
-	Changed element "button_label_panel":
-		Unchanged field "type": "panel".
+			Removed control:
+				element "promo_banner_panel_content":
+					field "type": "panel"
+					field "size": ["100% - 8px", "100%cm + 8px"]
+					field "controls":
+						control:
+							element "banner_full_button@common.button":
+								field "size": ["100%", "100%sm"]
+								field "layer": 3
+								field "bindings":
+									binding:
+										field "binding_name": "#promo_page_is_ready"
+										field "binding_name_override": "#enabled"
+								field "controls":
+									control element "default@common.empty_panel": empty
+									control element "hover@common.empty_panel": empty
+									control element "pressed@common.empty_panel": empty
+								field "$variables":
+									variable "$focus_id": "banner_full_button"
+									variable "$focus_override_down": "banner_button"
+									variable "$pressed_button_name": "button.promotion_page"
+						control element "banner_image@common_store.promo_banner_image": empty
+						control:
+							element "banner_text_panel":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "size": ["100% - 10px", "100%sm - 10px"]
+								field "offset": [5, 5]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "layer": 2
+								field "controls":
+									control:
+										element "banner_title@common_store.sdl_text_minecraftTen_aligned_panel":
+											field "$variables":
+												variable "$aligned_text_scale_factor": 1.2
+												variable "$aligned_text": "#banner_title_text"
+												variable "$aligned_text_color": "#title_text_color"
+												variable "$text_color_binding_type": "global"
+												variable "$alignment_binding_type": "global"
+												variable "$left_padding_visible_binding": "#banner_title_left_padding_visible"
+												variable "$right_padding_visible_binding": "#banner_title_right_padding_visible"
+									control:
+										element "description@common_store.sdl_text_aligned_panel":
+											field "$variables":
+												variable "$aligned_text_scale_factor": 0.8
+												variable "$aligned_text": "#banner_description_text"
+												variable "$aligned_text_color": "#description_text_color"
+												variable "$text_color_binding_type": "global"
+												variable "$alignment_binding_type": "global"
+												variable "$left_padding_visible_binding": "#banner_description_left_padding_visible"
+												variable "$right_padding_visible_binding": "#banner_description_right_padding_visible"
+						control:
+							element "button_stack_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100% - 10px", "100%cm"]
+								field "offset": [5, -7]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "controls":
+									control:
+										element "left_offset":
+											field "type": "panel"
+											field "size": [5, "100%sm"]
+											field "bindings":
+												binding:
+													field "binding_name": "$left_padding_visible_binding"
+													field "binding_name_override": "#visible"
+									control:
+										element "banner_button@common_store.sdl_content_aligned_panel":
+											field "$variables":
+												variable "$aligned_text_scale_factor": 0.8
+												variable "$aligned_control": "common_store.banner_button"
+												variable "$aligned_text": "#banner_description_text"
+												variable "$aligned_text_color": "#description_text_color"
+												variable "$text_color_binding_type": "global"
+												variable "$alignment_binding_type": "global"
+									control:
+										element "right_offset":
+											field "type": "panel"
+											field "size": [5, "100%sm"]
+											field "bindings":
+												binding:
+													field "binding_name": "$right_padding_visible_binding"
+													field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$left_padding_visible_binding": "#banner_button_left_padding_visible"
+									variable "$right_padding_visible_binding": "#banner_button_right_padding_visible"
+			Added control:
+				element "banner_full_button@common.button":
+					field "size": ["100%", "100%c"]
+					field "layer": 3
+					field "locked_control": ""
+					field "bindings":
+						binding:
+							field "binding_name": "#promo_page_is_ready"
+							field "binding_name_override": "#enabled"
+					field "controls":
+						control:
+							element "default@common_store.promo_banner_panel_content":
+								field "layer": 1
+								field "$variables":
+									variable "$new_ui_button_texture": "$default_button_texture"
+									variable "$text_color": "$default_text_color"
+									variable "$content_alpha": "$default_content_alpha"
+									variable "$secondary_text_color": "$light_button_secondary_default_text_color"
+									variable "$glyph_color": "$light_glyph_default_color"
+									variable "$border_color": "$light_border_default_color"
+									variable "$button_alpha": "$default_button_alpha"
+									variable "$border_visible": "$default_state_border_visible"
+									variable "$border_layer": 2
+									variable "$default_state": true
+									variable "$border_alpha": "$border_default_alpha"
+						control:
+							element "hover@common_store.promo_banner_panel_content":
+								field "layer": 2
+								field "$variables":
+									variable "$new_ui_button_texture": "$hover_button_texture"
+									variable "$text_color": "$light_button_hover_text_color"
+									variable "$secondary_text_color": "$light_button_secondary_hover_text_color"
+									variable "$glyph_color": "$light_glyph_hover_color"
+									variable "$content_alpha": "$hover_content_alpha"
+									variable "$border_color": "$light_border_hover_color"
+									variable "$border_visible": "$hover_state_border_visible"
+									variable "$border_layer": 3
+									variable "$hover_state": true
+									variable "$button_alpha": "$default_hover_alpha"
+						control:
+							element "pressed@common_store.promo_banner_panel_content":
+								field "layer": 3
+								field "$variables":
+									variable "$new_ui_button_texture": "$pressed_button_texture"
+									variable "$text_color": "$light_button_pressed_text_color"
+									variable "$secondary_text_color": "$light_button_secondary_pressed_text_color"
+									variable "$glyph_color": "$light_glyph_pressed_color"
+									variable "$content_alpha": "$pressed_alpha"
+									variable "$button_offset": "$button_pressed_offset"
+									variable "$border_color": "$light_border_pressed_color"
+									variable "$border_visible": "$pressed_state_border_visible"
+									variable "$border_layer": 3
+									variable "$button_alpha": "$default_pressed_alpha"
+									variable "$pressed_state": true
+					field "$variables":
+						variable "$focus_id": "banner_full_button"
+						variable "$focus_override_down": "banner_button"
+						variable "$pressed_button_name": "button.promotion_page"
+						variable "$button_offset|default":
+							item 0: 0
+							item 1: 0
+						variable "$button_pressed_offset|default":
+							item 0: 0
+							item 1: 1
+						variable "$pressed_alpha|default": 1
+						variable "$button_type_panel|default": "common_buttons.button_content_panel"
+						variable "$button_content|default": "common.empty_panel"
+						variable "$button_state_panel|default": "common_buttons.new_ui_button_panel"
+						variable "$default_button_alpha|default": 1
+						variable "$default_hover_alpha|default": 1
+						variable "$default_pressed_alpha|default": 1
+						variable "$border_default_alpha|default": 1
+						variable "$default_state|default": false
+						variable "$hover_state|default": false
+						variable "$pressed_state|default": false
+						variable "$locked_state|default": false
+						variable "$default_state_border_visible|default": true
+						variable "$hover_state_border_visible|default": true
+						variable "$pressed_state_border_visible|default": true
+						variable "$locked_state_border_visible|default": true
+						variable "$default_text_color|default": "$light_button_default_text_color"
+						variable "$default_button_texture|default": "textures/ui/button_borderless_light"
+						variable "$default_content_alpha|default": 1
+						variable "$hover_content_alpha|default": 1
+						variable "$hover_button_texture|default": "textures/ui/button_borderless_lighthover"
+						variable "$pressed_button_texture|default": "textures/ui/button_borderless_lightpressed"
+						variable "$locked_button_texture|default": "textures/ui/disabledButtonNoBorder"
+						variable "$default_font|default": "default"
+						variable "$font_type": "$default_font"
+						variable "$locked_alpha": 1
+	Added element "promo_banner_panel_content":
+		field "type": "panel"
+		field "size": ["100% - 8px", "100%cm + 8px"]
+		field "controls":
+			control element "banner_image@common_store.promo_banner_image": empty
+			control:
+				element "banner_text_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100% - 10px", "100%sm - 10px"]
+					field "offset": [5, 5]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "layer": 2
+					field "controls":
+						control:
+							element "banner_title@common_store.sdl_text_minecraftTen_aligned_panel":
+								field "$variables":
+									variable "$aligned_text_scale_factor": 1.2
+									variable "$aligned_text": "#banner_title_text"
+									variable "$aligned_text_color": "#title_text_color"
+									variable "$text_color_binding_type": "global"
+									variable "$alignment_binding_type": "global"
+									variable "$left_padding_visible_binding": "#banner_title_left_padding_visible"
+									variable "$right_padding_visible_binding": "#banner_title_right_padding_visible"
+						control:
+							element "description@common_store.sdl_text_aligned_panel":
+								field "$variables":
+									variable "$aligned_text_scale_factor": 0.8
+									variable "$aligned_text": "#banner_description_text"
+									variable "$aligned_text_color": "#description_text_color"
+									variable "$text_color_binding_type": "global"
+									variable "$alignment_binding_type": "global"
+									variable "$left_padding_visible_binding": "#banner_description_left_padding_visible"
+									variable "$right_padding_visible_binding": "#banner_description_right_padding_visible"
+			control:
+				element "button_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100% - 10px", "100%cm"]
+					field "offset": [5, -7]
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "controls":
+						control:
+							element "left_offset":
+								field "type": "panel"
+								field "size": [5, "100%sm"]
+								field "bindings":
+									binding:
+										field "binding_name": "$left_padding_visible_binding"
+										field "binding_name_override": "#visible"
+						control:
+							element "banner_button@common_store.sdl_content_aligned_panel":
+								field "$variables":
+									variable "$aligned_text_scale_factor": 0.8
+									variable "$aligned_control": "common_store.banner_button"
+									variable "$aligned_text": "#banner_description_text"
+									variable "$aligned_text_color": "#description_text_color"
+									variable "$text_color_binding_type": "global"
+									variable "$alignment_binding_type": "global"
+						control:
+							element "right_offset":
+								field "type": "panel"
+								field "size": [5, "100%sm"]
+								field "bindings":
+									binding:
+										field "binding_name": "$right_padding_visible_binding"
+										field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$left_padding_visible_binding": "#banner_button_left_padding_visible"
+						variable "$right_padding_visible_binding": "#banner_button_right_padding_visible"
+	Changed element "promo_grid_item_content":
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "text_label":
-					Unchanged field "type": "label".
-					Changed field "text" from "$button_text" to "#patch_link_button_text".
-					Added field "max_size": ["100%", "default"].
-					Added field "bindings": binding field "binding_name": "#patch_link_button_text".
-	Changed element "patch_notes_header":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "patch_notes_background@patch_notes.patch_notes_header_background":
-					Changed field "variables":
-						Changed variable:
-							Changed field "requires" from "$show_offer" to "$show_button".
-	Changed element "patch_notes_header_background":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "black_background":
+				Moved element from "key_art_image" to "thumbnail_image".
+				Changed element "thumbnail_image":
 					Unchanged field "type": "image".
-					Changed field "variables":
-						Changed variable:
-							Changed field "requires" from "(not $show_patch_image and not $show_offer)" to "(not $show_patch_image and not $show_button)".
 					Changed field "controls":
-						Changed control:
-							Changed element "content@$header_content":
-								Changed field "variables":
-									Changed variable:
-										Changed field "requires" from "(not $show_offer)" to "(not $show_button)".
-Changed namespace "profile":
-	Changed element "persona_preset_section_panel":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "green_check":
+								field "type": "image"
+								field "size": [15, 12]
+								field "texture": "textures/ui/realms_green_check"
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "offset": [4, -1]
+								field "layer": 15
+								field "bindings":
+									binding:
+										field "binding_name": "#item_has_been_claimed"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "gift_promotion_collection_items"
+						Added control:
+							element "persona_key_art_frame@common.square_image_border_white":
+								field "size": ["100%y", "80%"]
+								field "layer": 6
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "offset": [-10, 0]
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "gift_promotion_collection_items"
+										field "binding_name": "#promo_item_is_persona"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "persona_image_panel":
+											field "type": "image"
+											field "size": ["100% - 2px", "100% - 2px"]
+											field "layer": 5
+											field "bilinear": true
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "bindings":
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "gift_promotion_collection_items"
+													field "binding_name": "#promo_persona_thumbnail_texture"
+													field "binding_name_override": "#texture"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "gift_promotion_collection_items"
+													field "binding_name": "#promo_persona_thumbnail_file_system"
+													field "binding_name_override": "#texture_file_system"
+									control:
+										element "background@persona_common.item_rarity_color_background":
+											field "size": ["100% - 2px", "100% - 2px"]
+											field "layer": 1
+											field "$variables":
+												variable "$rarity_background_alpha": 1
+												variable "$rarity_color_background_texture": "textures/ui/button_borderless_light"
+												variable "$rarity_binding_type": "collection"
+												variable "$rarity_collection_name": "gift_promotion_collection_items"
+												variable "$rarity_background_bindings":
+													item 0:
+														item "binding_type": "$rarity_binding_type"
+														item "binding_collection_name": "$rarity_collection_name"
+														item "binding_name": "#rarity_color"
+														item "binding_name_override": "#color"
+									control:
+										element "rarity_bar_panel@persona_common.rarity_bar":
+											field "size": ["100% - 2px", 3]
+											field "layer": 6
+											field "offset": [0, -1]
+											field "bindings":
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "gift_promotion_collection_items"
+													field "binding_name": "#rarity_bar_texture"
+													field "binding_name_override": "#texture"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "gift_promotion_collection_items"
+													field "binding_name": "#promotion_offer_visible"
+													field "binding_name_override": "#visible"
+	Changed element "promo_left_inner_top":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control element "promo_timer@common_store.promo_timer_panel": empty.
+			Added control:
+				element "promo_timer@common_store.promo_timer_panel":
+					field "layer": 1
+					field "$variables": variable "$ignore_padding": false
+	Changed element "promo_multi_item_grid":
+		Unchanged field "type": "grid".
+		Added field "focus_identifier": "promo_multi_item_grid".
+	Changed element "promo_right_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "persona_preview@common_store.promotion_skin_viewer_panel":
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "(not #promo_item_is_world)" to "#promo_item_is_persona".
+	Changed element "promo_timer_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 3 (+1, -0)
+			Added control:
+				element "padding":
+					field "type": "panel"
+					field "size": [3, 0]
+					field "ignored": "$ignore_padding"
+					field "bindings":
+						binding:
+							field "binding_name": "(not #promo_item_timer_visible)"
+							field "binding_type": "global"
+							field "binding_collection_name": ""
+							field "binding_name_override": "#visible"
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$ignore_padding|default": true.
+	Changed element "promotion_period_grid_item":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "persona_preset_section":
-					Unchanged field "type": "stack_panel".
+				Changed element "frame":
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "preset_arrow_button_left_panel":
-								Unchanged field "type": "panel".
-								Added field "layer": "$preset_arrow_button_layer".
-						Changed control:
-							Changed element "preset_arrow_button_right_panel":
-								Unchanged field "type": "panel".
-								Added field "layer": "$preset_arrow_button_layer".
-					Added field "$variables": variable "$preset_arrow_button_layer": 228.
-Changed namespace "sidebar_navigation":
-	Changed element "content_view":
+							Changed element "item_selected_bg":
+								Unchanged field "type": "image".
+								Changed field "size":
+									Unchanged item 0: "100% + 4px".
+									Changed item 1 from "100% + 12px" to "100% + 23px".
+								Changed field "offset":
+									Unchanged item 0: 0.
+									Changed item 1 from -6 to -9.
+	Changed element "promotion_period_grid_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "content_view_stack":
-					Unchanged field "type": "stack_panel".
+				Changed element "promotion_offer_grid_image":
+					Unchanged field "type": "panel".
 					Changed field "controls":
-						Total control: 3 (+1, -0)
-						Added control element "divider@sidebar_navigation.edge_bar": field "color": "black".
+						Changed control:
+							Changed element "promotion_offer_grid_stack_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "day_label_panel":
+											Unchanged field "type": "panel".
+											Changed field "size":
+												Unchanged item 0: "100%".
+												Changed item 1 from "100%c - 8px" to "20%x + 5px".
+	Changed element "promotion_screen_top_section":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "left_corner_art_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "left_corner_art":
+								Unchanged field "type": "image".
+								Changed field "size":
+									Changed item 0 from "25%" to "35%".
+									Unchanged item 1: "75%x".
+								Changed field "offset":
+									Changed item 0 from 0 to -16.
+									Unchanged item 1: -4.
+			Changed control:
+				Changed element "right_corner_art_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "right_corner_art":
+								Unchanged field "type": "image".
+								Changed field "size":
+									Changed item 0 from "25%" to "35%".
+									Unchanged item 1: "75%x".
+								Changed field "offset":
+									Changed item 0 from 0 to 16.
+									Unchanged item 1: -4.
+Changed namespace "update_dimensions":
+	Total element: 10 (+2, -0)
+	Changed element "update_dimensions_dialog@common_dialogs.main_panel_three_buttons":
+		Changed field "controls":
+			Total control: 6 (+1, -1)
+			Removed control:
+				element "border":
+					field "type": "image"
+					field "size": ["55%", "55%"]
+					field "offset": [-9, 25]
+					field "texture": "textures/ui/update_world_chunks"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "layer": 0
+			Added control element "world_upgrade_image@update_dimensions.world_upgrade": empty.
+	Added element "world_upgrade":
+		field "type": "image"
+		field "layer": 5
+		field "texture": "textures/ui/world_upgrade"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "offset": [10, 25]
+		field "size": [130, 127]
+		field "uv_size": [130, 127]
+		field "uv": "@update_dimensions.world_upgrade_animation"
+		field "disable_anim_fast_forward": true
+	Added element "world_upgrade_animation":
+		field "anim_type": "flip_book"
+		field "initial_uv": [0, 0]
+		field "frame_count": 32
+		field "frame_step": 130
+		field "fps": 9
+		field "reversible": false
+		field "easing": "linear"

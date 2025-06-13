@@ -1,250 +1,868 @@
-Difference of "ui" between "1.16.100.56" (beta of "1.16.100") and "1.16.100.57" (beta of "1.16.100").
+Difference of "ui" between "1.16.200.52" (beta of "1.16.200") and "1.16.200.53" (beta of "1.16.200").
 
-Changed namespace "chat":
-	Changed element "keyboard_button@chat.small_button":
-		Changed field "bindings":
-			Total binding: 3 (+1, -0)
-			Added binding:
-				field "binding_name": "#keyboard_button_visible"
-				field "binding_name_override": "#visible"
-Changed namespace "coin_purchase":
-	Changed element "coin_purchase_screen_content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "dialog@common_dialogs.main_panel_no_buttons":
-					Changed field "$variables":
-						Total variable: 6 (+1, -0)
-						Added variable "$close_button_visible_binding_name": "#close_visible".
-Changed namespace "common":
-	Changed element "common_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "close_button_holder":
-					Unchanged field "type": "panel".
-					Changed field "ignored" from "(not $show_close_button)" to "(not $enable_close_button)".
-					Changed field "bindings":
-						Changed binding:
-							Changed field "binding_name" from "#close_button_visible" to "$close_button_visible_binding_name".
-		Changed field "$variables":
-			Total variable: 11 (+1, -0)
-			Moved variable from "$show_close_button|default" to "$enable_close_button|default".
-			Added variable "$close_button_visible_binding_name|default": "#close_button_visible".
-Changed namespace "common_dialogs":
-	Changed element "main_panel_no_buttons":
-		Unchanged field "type": "panel".
-		Changed field "$variables":
-			Total variable: 4 (+1, -0)
-			Added variable "$enable_close_button|default": true.
-Changed namespace "general_section":
-	Changed element "accessibility_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 7 (+1, -0)
-			Added control:
-				element "camera_shake_toggle@settings_common.option_toggle":
-					field "ignored": "($is_holographic and $is_reality_mode and not $is_pregame)"
-					field "$variables":
-						variable "$option_label": "options.screenShake"
-						variable "$option_binding_name": "#camera_shake"
-						variable "$option_enabled_binding_name": "#camera_shake_enabled"
-						variable "$toggle_name": "camera_shake"
-	Changed element "gamertag_controls":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "xboxlive_deep_link_buttons":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Total control: 7 (+2, -0)
-						Changed control:
-							Moved element from "action_button_0@settings_common.action_button" to "change_gamertag_button@settings_common.action_button".
-							Changed element "change_gamertag_button@settings_common.action_button":
-								Changed field "ignored" from "($is_windows_10_mobile)" to "($is_windows_10_mobile or $is_ios or $is_android)".
-						Changed control:
-							Moved element from "action_button_1@settings_common.action_button" to "manage_account_button@settings_common.action_button".
-							Changed element "manage_account_button@settings_common.action_button":
-								Added field "ignored": "($is_ios or $is_android)".
-						Added control:
-							element "change_gamertag_button_mobile@settings_common.link_button":
-								field "ignored": "(not ($is_windows_10_mobile or $is_ios or $is_android))"
-								field "size": ["50% - 1px", 30]
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "property_bag": field "#hyperlink": "https://social.xbox.com/changegamertag"
-								field "$variables": variable "$button_text": "options.changeGamertag"
-						Added control:
-							element "manage_account_button_mobile@settings_common.link_button":
-								field "ignored": "(not ($is_ios or $is_android))"
-								field "size": "$manage_button_size"
-								field "anchor_from": "top_right"
-								field "anchor_to": "top_right"
-								field "property_bag": field "#hyperlink": "https://account.xbox.com/Settings"
-								field "$variables": variable "$button_text": "options.manageAccount"
-	Changed element "video_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 46 (+1, -0)
-			Changed control:
-				Changed element "vr_mirror_texture@settings_common.option_toggle":
-					Changed field "ignored" from "($gear_vr or not $is_holographic)" to "($gear_vr or $psvr or not $is_holographic)".
-			Added control:
-				element "camera_shake_toggle@settings_common.option_toggle":
-					field "ignored": "($is_holographic and $is_reality_mode and not $is_pregame)"
-					field "$variables":
-						variable "$option_label": "options.screenShake"
-						variable "$option_binding_name": "#camera_shake"
-						variable "$option_enabled_binding_name": "#camera_shake_enabled"
-						variable "$toggle_name": "camera_shake"
-Changed namespace "how_to_play_common":
-	Changed element "toggle_button_control":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "tab_button_text":
-					Unchanged field "type": "label".
-					Changed field "size":
-						Changed item 0 from "100% - 38px" to "100% - 10px".
-						Unchanged item 1: "default".
-Changed namespace "hud":
-	Changed element "creative_above_interact_button_item_text@hud.item_name_text":
-		Changed field "offset":
-			Unchanged item 0: 0.
-			Changed item 1 from -22 to -30.
-	Changed element "creative_item_name_text@hud.item_name_text":
-		Changed field "offset":
-			Unchanged item 0: 0.
-			Changed item 1 from -12 to -20.
-	Changed element "item_name_text":
-		Unchanged field "type": "image".
-		Changed field "controls":
-			Changed control:
-				Changed element "item_text_label":
-					Unchanged field "type": "label".
-					Added field "max_size": [200, "default"].
-		Added field "anchor_from": "bottom_middle".
-		Added field "anchor_to": "bottom_middle".
-	Changed element "survival_above_interact_button_item_text@hud.item_name_text":
-		Changed field "offset":
-			Unchanged item 0: 0.
-			Changed item 1 from -42 to -50.
-	Changed element "survival_item_name_text@hud.item_name_text":
-		Changed field "variables":
-			Changed variable:
-				Changed field "$variables":
-					Changed variable "$offset":
-						Changed item 1 from -10 to -18.
-		Changed field "$variables":
-			Changed variable "$offset|default":
-				Changed item 1 from -32 to -40.
-Changed namespace "npc_interact":
-	Total element: 66 (+2, -0)
-	Added element "close_text@common.gamepad_helper_b": field "$variables": variable "$gamepad_description": "npc_interact.gamepad_helper_exit_text".
-	Added element "gamepad_helper_exit_text":
-		field "type": "label"
-		field "text": "controller.buttonTip.exit"
-		field "color": "$gamepad_description_text_color"
-	Changed element "npc_screen_contents":
+Changed namespace "common_buttons":
+	Total element: 57 (+1, -0)
+	Added element "deactivated_light_content_button@common_buttons.light_content_button":
+		field "$variables":
+			variable "$default_button_texture": "textures/ui/disabledButtonNoBorder"
+			variable "$hover_button_texture": "textures/ui/disabledButtonNoBorder"
+			variable "$pressed_button_texture": "textures/ui/disabledButtonNoBorder"
+			variable "$locked_button_texture": "textures/ui/disabledButtonNoBorder"
+Changed namespace "common_store":
+	Total element: 150 (+1, -0)
+	Changed element "hero_offer":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Total control: 3 (+1, -0)
 			Added control:
-				element "npc_screen_close@npc_interact.close_text":
-					field "anchor_to": "bottom_left"
+				element "rtx_label@common_store.rtx_label":
 					field "anchor_from": "bottom_left"
-					field "offset": [20, 0]
-Changed namespace "persona":
-	Total element: 202 (+0, -1)
-	Moved element from "achievement_text_button@common_buttons.light_text_form_fitting_button" to "achievement_text_button@common_buttons.light_text_button".
-	Changed element "achievement_text_button@common_buttons.light_text_button":
-		Changed field "variables":
-			Changed variable:
-				Changed field "$variables":
-					Changed variable "$button_offset":
-						Changed item 0 from 3 to 0.
-						Changed item 1 from 1 to -3.
-	Changed element "emotes_right_side_bottom_buttons@persona.right_side_bottom_buttons":
-		Changed field "controls":
-			Changed control:
-				Changed element "play_again@common_buttons.light_text_button":
-					Changed field "size":
-						Changed item 0 from "50% - 6px" to "30%".
-						Unchanged item 1: "100%".
-	Changed element "info_text_box":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Moved element from "discription_panel" to "description_panel".
-				Changed element "description_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "summary_author_button_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "summary_author_button@common_buttons.underline_button":
-											Added field "bindings":
-												binding:
-													field "binding_name": "(not #emotes_active)"
-													field "binding_name_override": "#enabled"
-	Changed element "persona_tabs":
+					field "anchor_to": "bottom_left"
+					field "size": [20, 15]
+					field "offset": [1, 0]
+					field "layer": 6
+					field "bindings":
+						binding:
+							field "binding_type": "$store_factory_collection_details"
+							field "binding_collection_name": "$store_factory_collection_name"
+							field "binding_collection_prefix": "$store_factory_collection_prefix"
+						binding:
+							field "binding_type": "$hero_offer_binding_type"
+							field "binding_collection_name": "$hero_offer_collection_name"
+							field "binding_name": "#rtx_label_visible"
+							field "binding_name_override": "#visible"
+	Added element "rtx_label":
+		field "type": "panel"
+		field "size": ["100%", "20%"]
+		field "anchor_from": "bottom_left"
+		field "anchor_to": "bottom_left"
+		field "controls":
+			control:
+				element "banner":
+					field "type": "image"
+					field "size": "$banner_size"
+					field "texture": "textures/ui/RTX_Label"
+					field "layer": 2
+					field "controls":
+						control:
+							element "icon":
+								field "type": "image"
+								field "layer": 3
+								field "size": ["default", "default"]
+								field "offset": [-3, 0]
+								field "max_size": ["70%", "70%"]
+								field "texture": "textures/ui/RTX_Sparkle"
+					field "$variables":
+						variable "$banner_size|default":
+							item 0: 20
+							item 1: 14
+	Changed element "store_offer_grid_item":
 		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 2 (+0, -1)
-			Removed control element "persona_tabs@persona.persona_tabs_no_cape": empty.
-	Removed element "persona_tabs_no_cape":
+			Changed control:
+				Changed element "frame@$offer_background_asset":
+					Changed field "controls":
+						Changed control:
+							Changed element "durable_offer_info_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "offer_status_panel":
+											Unchanged field "type": "stack_panel".
+											Changed field "controls":
+												Total control: 12 (+1, -0)
+												Added control:
+													element "rtx_label@common_store.rtx_label":
+														field "size": [20, 14]
+														field "bindings":
+															binding:
+																field "binding_type": "$store_factory_collection_details"
+																field "binding_collection_name": "$store_factory_collection_name"
+																field "binding_collection_prefix": "$store_factory_collection_prefix"
+															binding:
+																field "binding_type": "$offer_binding_type"
+																field "binding_collection_name": "$offer_collection_name"
+																field "binding_name": "#rtx_label_visible"
+																field "binding_name_override": "#visible"
+Changed namespace "confirm_msa_unlink":
+	Changed element "header_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "size":
+			Unchanged item 0: "100% - 8px".
+			Changed item 1 from 80 to "100%cm".
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Changed control:
+				Changed element "padding":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: 6.
+						Changed item 1 from "100%" to 1.
+			Removed control:
+				element "header_text":
+					field "type": "label"
+					field "text": "#unlink_warning_text"
+					field "font_type": "smooth"
+					field "font_scale_factor": 1.5
+					field "color": "$body_text_color"
+					field "size": ["fill", "100%"]
+					field "bindings": binding field "binding_name": "#unlink_warning_text"
+			Added control:
+				element "text_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["fill", "100%c"]
+					field "controls":
+						control:
+							element "header_text":
+								field "type": "label"
+								field "text": "#unlink_warning_text"
+								field "font_type": "smooth"
+								field "font_scale_factor": 1.2
+								field "color": "$body_text_color"
+								field "size": ["100%", "default"]
+								field "bindings": binding field "binding_name": "#unlink_warning_text"
+						control:
+							element "padding_2":
+								field "type": "panel"
+								field "size": ["100%", 4]
+						control:
+							element "header_text_2":
+								field "type": "label"
+								field "text": "options.unlink_msa.confirm.warning.2"
+								field "font_type": "smooth"
+								field "font_scale_factor": 1.2
+								field "color": "$body_text_color"
+								field "size": ["100%", "default"]
+Changed namespace "crafting":
+	Total element: 106 (+1, -0)
+	Added element "cell_image_darkgrey@crafting.cell_image":
+		field "texture": "textures/ui/cell_image_darkgrey"
+		field "size": "$cell_image_size"
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "$background_image_control_name"
+				field "resolve_sibling_scope": true
+				field "source_property_name": "(#container_item_background = 7)"
+				field "target_property_name": "#visible"
+		field "$variables":
+			variable "$cell_image_size|default":
+				item 0: "default"
+				item 1: "default"
+	Changed element "container_cell_images":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 7 (+1, -0)
+			Added control element "cell_darkgrey@crafting.cell_image_darkgrey": empty.
+Changed namespace "disconnect":
+	Changed element "disconnect_title_text@disconnect.disconnect_screen_text":
+		Changed field "size":
+			Unchanged item 0: "default".
+			Changed item 1 from 10 to 20.
+		Changed field "max_size":
+			Unchanged item 0: "100% - 20px".
+			Changed item 1 from 10 to 20.
+Changed namespace "expanded_skin_pack":
+	Changed element "purchase_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 5 (+2, -1)
+			Removed control:
+				element "purchase_buttons@pdp.purchase_buttons_panel":
+					field "size": ["100%", 26]
+					field "$variables":
+						variable "$button_action": "button.purchase"
+						variable "$button_focus_precedence": 6
+			Added control:
+				element "purchase_buttons_panel@pdp.purchase_buttons_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #button_panel_purchase_disallowed)"
+							field "binding_name_override": "#visible"
+						binding:
+							field "binding_name": "(not #button_panel_purchase_disallowed)"
+							field "binding_name_override": "#enabled"
+			Added control:
+				element "deactivated_purchase_buttons_panel@pdp.deactivated_purchase_buttons_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "#button_panel_purchase_disallowed"
+							field "binding_name_override": "#visible"
+						binding:
+							field "binding_name": "#button_panel_purchase_disallowed"
+							field "binding_name_override": "#enabled"
+Changed namespace "general_section":
+	Total element: 97 (+6, -0)
+	Added element "rtx_disabled_option_upsell":
+		field "type": "panel"
+		field "size": ["100%", 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "controls":
+			control:
+				element "rtx_disabled_option_upsell_image@general_section.rtx_disabled_option_upsell_image":
+					field "offset": [-14, 0]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "controls":
+						control:
+							element "hover_detection_input_panel":
+								field "type": "input_panel"
+								field "consume_hover_events": false
+								field "focus_enabled": true
+								field "button_mappings":
+									button mapping:
+										field "to_button_id": "$rtx_disabled_option_is_hovered_button_event"
+										field "mapping_type": "pressed"
+								field "$variables": variable "$rtx_disabled_option_is_hovered_button_event|default": "button.rtx_disabled_option_is_hovered"
+			control element "rtx_disabled_option_upsell_popup@general_section.rtx_disabled_option_upsell_popup": empty
+		field "bindings":
+			binding:
+				field "binding_name": "$rtx_disabled_option_upsell_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$rtx_disabled_option_upsell_visible|default": "#rtx_disabled_option_upsell_visible"
+			variable "$rtx_disabled_option_upsell_tooltip_visible|default": "#rtx_disabled_option_upsell_tooltip_visible"
+	Added element "rtx_disabled_option_upsell_image":
+		field "type": "image"
+		field "size": [7, 11]
+		field "texture": "textures/ui/infobulb"
+	Added element "rtx_disabled_option_upsell_popup@common.static_tooltip_popup_with_image_and_text":
+		field "size": ["100% - 4px", "100%cm + 8px"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "bottom_middle"
+		field "$variables":
+			variable "$tooltip_panel_offset":
+				item 0: 0
+				item 1: -10
+			variable "$tooltip_popup_image": "textures/ui/infobulb"
+			variable "$tooltip_button_binding_type": "global"
+			variable "$tooltip_button_collection_name": ""
+			variable "$tooltip_popup_visible_binding|default": "$rtx_disabled_option_upsell_tooltip_visible"
+			variable "$tooltip_text_binding_name": "#rtx_disabled_option_upsell_tooltip_text"
+			variable "$tooltip_chevron_anchor": "bottom_right"
+			variable "$tooltip_popup_chevron_offset":
+				item 0: "-30%x"
+				item 1: "100%y - 3px"
+	Added element "rtx_render_distance_popup@common.static_tooltip_popup_with_image_and_text":
+		field "size": ["100% - 4px", "100%cm + 8px"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "bottom_middle"
+		field "$variables":
+			variable "$tooltip_panel_offset":
+				item 0: 0
+				item 1: -10
+			variable "$tooltip_popup_image": "textures/ui/infobulb"
+			variable "$tooltip_button_binding_type": "global"
+			variable "$tooltip_button_collection_name": ""
+			variable "$tooltip_popup_visible_binding": "#rtx_render_distance_warning_tooltip_visible"
+			variable "$tooltip_text_binding_name": "#rtx_renderdist_performance_tooltip_text"
+			variable "$tooltip_chevron_anchor": "bottom_right"
+			variable "$tooltip_popup_chevron_offset":
+				item 0: "-30%x"
+				item 1: "100%y - 3px"
+	Added element "rtx_render_distance_warning":
+		field "type": "panel"
+		field "size": ["100%", 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "controls":
+			control:
+				element "rtx_render_distance_warning_image@general_section.rtx_render_distance_warning_image":
+					field "offset": [-14, 0]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "controls":
+						control:
+							element "hover_detection_input_panel":
+								field "type": "input_panel"
+								field "consume_hover_events": false
+								field "focus_enabled": true
+								field "button_mappings":
+									button mapping:
+										field "to_button_id": "button.rtx_warning_is_hovered"
+										field "mapping_type": "pressed"
+			control element "rtx_render_distance_popup@general_section.rtx_render_distance_popup": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#rtx_render_distance_warning_visible"
+				field "binding_name_override": "#visible"
+	Added element "rtx_render_distance_warning_image":
+		field "type": "image"
+		field "size": [7, 11]
+		field "texture": "textures/ui/WarningGlyph"
+	Changed element "sound_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 11 (+8, -0)
+			Changed control:
+				Changed element "option_slider_1@settings_common.option_slider":
+					Changed field "$variables":
+						Total variable: 6 (+0, -1)
+						Removed variable "$focus_override_up": "FOCUS_OVERRIDE_STOP".
+			Added control:
+				element "option_slider_0@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#main_volume_slider_label"
+						variable "$slider_name": "main_volume"
+						variable "$slider_value_binding_name": "#main_volume"
+						variable "$slider_tts_text_value": "#main_volume_text_value"
+						variable "$option_enabled_binding_name": "#main_volume_enabled"
+						variable "$focus_override_up": "FOCUS_OVERRIDE_STOP"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "option_slider_3@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#ambient_volume_slider_label"
+						variable "$slider_name": "ambient_volume"
+						variable "$slider_value_binding_name": "#ambient_volume"
+						variable "$slider_tts_text_value": "#ambient_volume_text_value"
+						variable "$option_enabled_binding_name": "#ambient_volume_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "option_slider_4@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#block_volume_slider_label"
+						variable "$slider_name": "block_volume"
+						variable "$slider_value_binding_name": "#block_volume"
+						variable "$slider_tts_text_value": "#block_volume_text_value"
+						variable "$option_enabled_binding_name": "#block_volume_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "option_slider_5@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#hostile_volume_slider_label"
+						variable "$slider_name": "hostile_volume"
+						variable "$slider_value_binding_name": "#hostile_volume"
+						variable "$slider_tts_text_value": "#hostile_volume_text_value"
+						variable "$option_enabled_binding_name": "#hostile_volume_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "option_slider_6@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#neutral_volume_slider_label"
+						variable "$slider_name": "neutral_volume"
+						variable "$slider_value_binding_name": "#neutral_volume"
+						variable "$slider_tts_text_value": "#neutral_volume_text_value"
+						variable "$option_enabled_binding_name": "#neutral_volume_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "option_slider_7@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#player_volume_slider_label"
+						variable "$slider_name": "player_volume"
+						variable "$slider_value_binding_name": "#player_volume"
+						variable "$slider_tts_text_value": "#player_volume_text_value"
+						variable "$option_enabled_binding_name": "#player_volume_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "option_slider_8@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#record_volume_slider_label"
+						variable "$slider_name": "record_volume"
+						variable "$slider_value_binding_name": "#record_volume"
+						variable "$slider_tts_text_value": "#record_volume_text_value"
+						variable "$option_enabled_binding_name": "#record_volume_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "option_slider_9@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#weather_volume_slider_label"
+						variable "$slider_name": "weather_volume"
+						variable "$slider_value_binding_name": "#weather_volume"
+						variable "$slider_tts_text_value": "#weather_volume_text_value"
+						variable "$option_enabled_binding_name": "#weather_volume_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+	Changed element "video_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 49 (+3, -0)
+			Changed control:
+				Changed element "render_distance_slider@settings_common.option_slider":
+					Added field "bindings":
+						binding:
+							field "binding_name": "#show_render_distance"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "upscaling_toggle@settings_common.option_toggle":
+					field "ignored": "($is_holographic and $win10_edition)"
+					field "controls":
+						control:
+							element "rtx_disabled_option_upsell@general_section.rtx_disabled_option_upsell":
+								field "$variables":
+									variable "$rtx_disabled_option_upsell_visible": "#rtx_upscale_disabled_option_upsell_visible"
+									variable "$rtx_disabled_option_is_hovered_button_event": "button.rtx_upscale_disabled_option_is_hovered"
+									variable "$rtx_disabled_option_upsell_tooltip_visible": "#rtx_upscale_disabled_option_upsell_tooltip_visible"
+						control element "option_generic_core@settings_common.option_generic_core": empty
+					field "$variables":
+						variable "$option_label": "options.upscaling"
+						variable "$option_binding_name": "#graphics_upscaling"
+						variable "$option_enabled_binding_name": "#graphics_upscaling_enabled"
+						variable "$toggle_name": "graphics_upscaling"
+			Added control:
+				element "raytracing_toggle@settings_common.option_toggle":
+					field "ignored": "($is_holographic)"
+					field "controls":
+						control element "rtx_disabled_option_upsell@general_section.rtx_disabled_option_upsell": empty
+						control element "option_generic_core@settings_common.option_generic_core": empty
+					field "$variables":
+						variable "$option_label": "options.raytracing"
+						variable "$option_binding_name": "#raytracing"
+						variable "$option_enabled_binding_name": "#raytracing_enabled"
+						variable "$toggle_name": "raytracing"
+			Added control:
+				element "raytracing_render_distance_slider@settings_common.option_slider":
+					field "ignored": "($is_holographic)"
+					field "controls":
+						control element "rtx_render_distance_warning@general_section.rtx_render_distance_warning": empty
+						control element "option_generic_core@settings_common.option_generic_core": empty
+					field "bindings":
+						binding:
+							field "binding_name": "#show_raytracing_render_distance"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "#raytracing_render_distance_slider_label"
+						variable "$slider_name": "raytracing_render_distance"
+						variable "$slider_value_binding_name": "#raytracing_render_distance"
+						variable "$slider_tts_text_value": "#raytracing_render_distance_text_value"
+						variable "$option_enabled_binding_name": "#raytracing_render_distance_enabled"
+						variable "$slider_steps_binding_name": "#raytracing_render_distance_steps"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+Changed namespace "invite":
+	Changed element "no_xbox_live_friends_frame_label@invite.frame_label":
+		Changed field "text" from "invite.noFriends" to "#no_xbox_live_friends_text".
+		Added field "bindings": binding field "binding_name": "#no_xbox_live_friends_text".
+Changed namespace "pdp":
+	Total element: 119 (+2, -0)
+	Added element "deactivated_smooth_purchase_buttons_panel":
+		field "type": "stack_panel"
+		field "layer": 3
+		field "size": ["100%", "100%c"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "orientation": "vertical"
+		field "controls":
+			control:
+				element "purchase_coins_button_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "deactivated_smooth_purchase_with_coins_button@common_buttons.deactivated_light_content_button":
+								field "size": ["100%", 20]
+								field "enabled": true
+								field "$variables":
+									variable "$focus_border_size_override":
+										item 0: "100%"
+										item 1: 20
+									variable "$button_image_size_override":
+										item 0: "100% - 2px"
+										item 1: 18
+									variable "$button_focus_precedence": 8
+									variable "$pressed_button_name": "$button_action"
+									variable "$interact_button_id|default": "button.purchase_with_coins"
+									variable "$focus_id": "$interact_button_id"
+									variable "$button_content": "pdp.disabled_smooth_coin_purchase_label_formfitting"
+									variable "$is_purchase_button": true
+			control:
+				element "pad_h1":
+					field "type": "panel"
+					field "size": ["100%", 3]
+					field "bindings":
+						binding:
+							field "binding_name": "#currency_purchase_visible"
+							field "binding_name_override": "#visible"
+			control:
+				element "purchase_currency_button_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "bindings":
+						binding:
+							field "binding_name": "#currency_purchase_visible"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "purchase_with_currency_button@common_buttons.deactivated_light_content_button":
+								field "size": ["100%", 20]
+								field "$variables":
+									variable "$focus_border_size_override":
+										item 0: "100%"
+										item 1: 20
+									variable "$button_image_size_override":
+										item 0: "100% - 2px"
+										item 1: 18
+									variable "$button_offset":
+										item 0: 0
+										item 1: 0
+									variable "$button_pressed_offset":
+										item 0: 0
+										item 1: 1
+									variable "$button_focus_precedence": 10
+									variable "$pressed_button_name": "$button_action"
+									variable "$focus_id": "$interact_button_id"
+									variable "$button_content": "pdp.currency_purchase_label"
+									variable "$text_size":
+										item 0: "100%"
+										item 1: "100%"
+		field "$variables":
+			variable "$has_real_money_button|default": false
+			variable "$button_action": "button.purchase_error_dialog"
+			variable "$interact_button_id|default": "interact_button"
+			variable "$is_purchase_button": true
+	Added element "disabled_smooth_coin_purchase_label_formfitting":
 		field "type": "stack_panel"
 		field "orientation": "horizontal"
 		field "size": ["100%", "100%"]
+		field "use_priority": true
 		field "controls":
-			control element "customization_tab@persona.customization_tab": empty
-			control element "skins_tab@persona.skins_tab": empty
-			control element "emotes_tab@persona.emotes_tab": field "$variables": variable "$is_right_most_tab": true
-		field "bindings":
+			control:
+				element "sales_banner_offset_panel":
+					field "priority": 0
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "sales_banner_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100% + 4px"]
+								field "offset": [-2, 0]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+								field "controls":
+									control:
+										element "markdown_banner@common_store.markdown_background":
+											field "size": ["100%c", "100%"]
+											field "layer": 9
+											field "$variables":
+												variable "$markdown_label": "pdp.discount_label"
+												variable "$banner_size":
+													item 0: "20px"
+													item 1: "100%"
+												variable "$triangle_offset":
+													item 0: 0
+													item 1: 0
+												variable "$triangle_texture": "textures/ui/saleflagtrianglebeveldefault"
+												variable "$banner_texture": "textures/ui/sale_button_borderless_lighthoverflag"
+								field "bindings":
+									binding:
+										field "binding_name": "#is_on_sale"
+										field "binding_name_override": "#visible"
+			control:
+				element "markdown_panel":
+					field "priority": 10
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "markdown_label@pdp.price_markdown_panel":
+								field "size": ["100%c + 5px", "100%"]
+								field "$variables":
+									variable "$strike_thru_offset":
+										item 0: 0
+										item 1: 0
+					field "bindings":
+						binding:
+							field "binding_name": "#is_on_sale"
+							field "binding_name_override": "#visible"
+			control:
+				element "fill_pad_left":
+					field "priority": 0
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #is_on_sale)"
+							field "binding_name_override": "#visible"
+			control:
+				element "info_icon":
+					field "type": "image"
+					field "texture": "textures/ui/infobulb"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": [9, 12]
+					field "priority": 1
+			control:
+				element "left_coin_image_offset_panel":
+					field "priority": 0
+					field "ignored": "$coin_image_on_right"
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls": control element "coin@pdp.coin_image": field "offset": [8, 1]
+			control:
+				element "info_icon_pad":
+					field "priority": 1
+					field "type": "panel"
+					field "size": [1, "100%"]
+			control:
+				element "coin_purchase_label_panel":
+					field "priority": 0
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls": control element "coin_purchase_label_text_left@pdp.coin_purchase_label_text": empty
+			control:
+				element "pad":
+					field "priority": 0
+					field "type": "panel"
+					field "size": [1, "100%"]
+			control:
+				element "right_coin_image_offset_panel":
+					field "priority": 0
+					field "ignored": "(not $coin_image_on_right)"
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls": control element "coin@pdp.coin_image": field "offset": [-3, 0]
+			control:
+				element "fill_pad_right":
+					field "priority": 0
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #is_on_sale)"
+							field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$coin_image_on_right|default": true
+			variable "$purchase_price_font_type|default": "smooth"
+	Changed element "purchase_buttons_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "purchase_currency_button_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "purchase_with_currency_button@common_buttons.light_content_button":
+								Removed field "type": "button".
+								Removed field "size": ["100%", "100%"].
+	Changed element "smooth_buttons_panel":
+		Unchanged field "type": "stack_panel".
+		Removed field "visible": false.
+		Removed field "bindings":
 			binding:
-				field "binding_name": "(not #has_capes)"
+				field "binding_name": "#buttons_panel_visible"
 				field "binding_name_override": "#visible"
-	Changed element "persona_tabs_with_cape":
+			binding:
+				field "binding_name": "#buttons_panel_visible"
+				field "binding_name_override": "#enabled"
+		Changed field "controls":
+			Total control: 3 (+2, -1)
+			Removed control element "purchase_buttons_panel@pdp.smooth_purchase_buttons_panel": empty.
+			Added control:
+				element "purchase_buttons_panel@pdp.smooth_purchase_buttons_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "#purchase_panel_visible_allowed"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "deactivated_purchase_buttons_panel@pdp.deactivated_smooth_purchase_buttons_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "#purchase_panel_visible_disallowed"
+							field "binding_name_override": "#visible"
+	Changed element "smooth_purchase_buttons_panel":
 		Unchanged field "type": "stack_panel".
 		Removed field "bindings":
 			binding:
-				field "binding_name": "#has_capes"
+				field "binding_name": "#purchase_panel_visible"
 				field "binding_name_override": "#visible"
-	Changed element "purchase_buttons":
+	Changed element "summary_content_left_side":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "coin_purchase_panel@persona.purchase_button_panel":
-					Changed field "size":
-						Changed item 0 from "50% - 1px" to "50% - 2px".
-						Unchanged item 1: "100%".
-			Changed control:
-				Changed element "view_achievement_button@persona.view_achievement":
-					Changed field "size":
-						Changed item 0 from "50% - 1px" to "68% - 1px".
-						Unchanged item 1: "100%".
-			Changed control:
-				Changed element "collect_achievement_button@persona.collect_achievement":
-					Changed field "size":
-						Changed item 0 from "50% - 1px" to "32% - 1px".
-						Unchanged item 1: "100%".
-Changed namespace "profile":
-	Changed element "edit_appearance_preset_button@common_buttons.light_text_button":
-		Added field "bindings":
-			binding:
-				field "binding_name": "#enable_edit_appearance"
-				field "binding_name_override": "#enabled"
-				field "binding_condition": "always"
-	Changed element "persona_main_preset_panel":
-		Unchanged field "type": "input_panel".
+				Changed element "full_content":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "top":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "image":
+											Unchanged field "type": "panel".
+											Changed field "controls":
+												Changed control:
+													Changed element "key_image":
+														Unchanged field "type": "image".
+														Changed field "controls":
+															Total control: 4 (+1, -0)
+															Added control:
+																element "rtx_label@common_store.rtx_label":
+																	field "size": [20, 12]
+																	field "bindings":
+																		binding:
+																			field "binding_name": "#rtx_label_visible"
+																			field "binding_name_override": "#visible"
+Changed namespace "permissions":
+	Changed element "permissions_options_scrolling_panel@common.scrolling_panel":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Added variable "$always_handle_scrolling": true.
+Changed namespace "persona":
+	Changed element "selection_wheel":
+		Unchanged field "type": "selection_wheel".
+		Changed field "$variables":
+			Changed variable "$button_tts_name|default" from "#emote_button_tts" to "".
+			Changed variable "$selection_wheel_bindings|default":
+				Removed item 0:
+					item "binding_name": "#emote_button_tts"
+					item "binding_condition": "always"
+		Added field "tts_skip_message": true.
+Changed namespace "popup_dialog":
+	Changed element "modal_input_panel@common.input_panel":
+		Added field "ttsSectionContainer": true.
+Changed namespace "progress":
+	Total element: 63 (+2, -0)
+	Changed element "popup_dialog_factory":
+		Unchanged field "type": "factory".
+		Changed field "control_ids":
+			Total control id: 9 (+2, -0)
+			Added control id "texture_pack_raytracing_optional": "add_on_only@progress.texture_pack_raytracing_optional".
+			Added control id "texture_pack_raytracing_required": "add_on_only@progress.texture_pack_raytracing_required".
+	Changed element "simple_popup_dialog_base@popup_dialog.popup_dialog":
 		Changed field "controls":
 			Changed control:
-				Changed element "persona_preset@profile.persona_appearance_preset_panel":
-					Changed field "bindings":
-						Total binding: 2 (+1, -0)
-						Added binding:
-							field "binding_name": "#enable_edit_appearance"
+				Changed element "dialog_background_hollow_3@common.dialog_background_hollow_3":
+					Changed field "controls":
+						Changed control:
+							Changed element "control":
+								Unchanged field "type": "image".
+								Changed field "controls":
+									Changed control:
+										Changed element "content_panel":
+											Unchanged field "type": "stack_panel".
+											Changed field "controls":
+												Total control: 11 (+1, -0)
+												Added control:
+													element "description2":
+														field "layer": 101
+														field "type": "label"
+														field "size": ["100%", "default"]
+														field "color": "$body_text_color"
+														field "text": "$description_text2"
+														field "ignored": "(not $has_second_line)"
+		Changed field "$variables":
+			Total variable: 5 (+1, -0)
+			Added variable "$has_second_line|default": false.
+	Added element "texture_pack_raytracing_optional@progress.simple_popup_dialog_base":
+		field "$variables":
+			variable "$title_text": "progressScreen.dialog.title.resourcePack"
+			variable "$description_text": "progressScreen.dialog.message.resourcePackOptional.rayTracing.line1"
+			variable "$description_text2": "progressScreen.dialog.message.resourcePackOptional.rayTracing.line2"
+			variable "$has_second_line": true
+			variable "$top_button_text": "#empty_binding"
+			variable "$middle_button_press": "button.join_and_download_all"
+			variable "$middle_button_text": "#join_and_download"
+			variable "$bottom_button_press": "button.join"
+			variable "$bottom_button_text": "progressScreen.dialog.button.join"
+	Added element "texture_pack_raytracing_required@progress.simple_popup_dialog_base":
+		field "$variables":
+			variable "$title_text": "progressScreen.dialog.title.resourcePack"
+			variable "$description_text": "progressScreen.dialog.message.resourcePackRequired.rayTracing.line1"
+			variable "$description_text2": "progressScreen.dialog.message.resourcePackRequired.rayTracing.line2"
+			variable "$has_second_line": true
+			variable "$top_button_text": "#empty_binding"
+			variable "$middle_button_press": "button.join_and_download_all"
+			variable "$middle_button_text": "#join_and_download"
+			variable "$bottom_button_press": "button.leave"
+			variable "$bottom_button_text": "progressScreen.dialog.button.leave"
+Changed namespace "realmsPlus_landing":
+	Changed element "info_section_text_2@realmsPlus_landing.info_section_text":
+		Changed field "controls":
+			Total control: 9 (+3, -1)
+			Removed control:
+				element "info_text_bullet_4@realmsPlus_landing.info_text_bullet":
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_plus_one_month_free_trial_visible"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info2.line4"
+			Added control:
+				element "info_text_bullet_4@realmsPlus_landing.info_text_bullet":
+					field "text": "#landing_info_line_4"
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_plus_one_month_free_trial_visible"
+							field "binding_name_override": "#visible"
+						binding field "binding_name": "#landing_info_line_4"
+			Added control element "vertical_small_spacer_3@realmsPlus_landing.vertical_small_spacer": empty.
+			Added control:
+				element "info_text_bullet_5@realmsPlus_landing.info_text_bullet":
+					field "text": "#landing_info_line_5"
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_plus_one_month_free_trial_not_visible"
+							field "binding_name_override": "#visible"
+						binding field "binding_name": "#landing_info_line_5"
+Changed namespace "realms_create":
+	Changed element "confirmation_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "create_realms_button@common_buttons.light_content_button":
+					Added field "bindings":
+						binding:
+							field "binding_name": "#has_checked_tos"
 							field "binding_name_override": "#enabled"
-							field "binding_condition": "always"
+	Changed element "terms_and_conditions_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "terms_string_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "buttons_stack_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "agree_panel":
+											Unchanged field "type": "panel".
+											Changed field "controls":
+												Changed control:
+													Changed element "checkbox_control@common.checkbox":
+														Added field "bindings":
+															binding:
+																field "binding_name": "#has_checked_tos"
+																field "binding_name_override": "#toggle_state"
+Changed namespace "start":
+	Changed element "platform_signin_button@common_buttons.light_text_button":
+		Removed field "tts_index": 4.
+		Added field "tts_index_order": 10.
+	Changed element "play_button@start.main_button":
+		Removed field "tts_index": 1.
+	Changed element "profile_button@common_buttons.light_text_form_fitting_button":
+		Removed field "tts_index": 5.
+		Added field "tts_index_order": 20.
+	Changed element "settings_button@start.main_button":
+		Removed field "tts_index": 2.
+	Changed element "store_button@common_buttons.light_content_button":
+		Removed field "tts_index": 3.
+	Changed element "xbl_signin_button@common_buttons.light_text_form_fitting_button":
+		Removed field "tts_index": 4.
+		Added field "tts_index_order": 10.
+Changed namespace "store_item_list":
+	Changed element "store_offer_grid_item":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@common_store.store_description_background":
+					Changed field "controls":
+						Changed control:
+							Changed element "offer_price_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Total control: 11 (+1, -0)
+									Added control:
+										element "rtx_label@common_store.rtx_label":
+											field "size": [20, 14]
+											field "bindings":
+												binding:
+													field "binding_type": "$store_factory_collection_details"
+													field "binding_collection_name": "$store_factory_collection_name"
+													field "binding_collection_prefix": "$store_factory_collection_prefix"
+												binding:
+													field "binding_type": "$offer_binding_type"
+													field "binding_collection_name": "$offer_collection_name"
+													field "binding_name": "#rtx_label_visible"
+													field "binding_name_override": "#visible"

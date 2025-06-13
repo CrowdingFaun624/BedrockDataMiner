@@ -1,4 +1,4 @@
-Difference of "render_controllers" between "1.13.0.5" (beta of "1.13.0") and "1.13.0.6" (beta of "1.13.0").
+Difference of "render_controllers" between "1.13.0.9" (beta of "1.13.0") and "1.13.0.13" (beta of "1.13.0").
 
 Changed file "armor_stand.render_controllers.json":
 	Changed resource pack "core":
@@ -12,55 +12,67 @@ Changed file "cape.render_controllers.json":
 				Changed field "part_visibility":
 					Changed part visibility dict:
 						Changed part visibility "cape" from "(query.armor_texture_slot(1) != 5) && variable.is_third_person" to "(query.armor_texture_slot(1) != 5) && (!variable.is_first_person || variable.is_paperdoll)".
-Changed file "horse.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.horse":
-				Changed field "arrays":
-					Changed field "textures":
-						Total array: 3 (+0, -1)
-						Changed array "Array.base":
-							Total array item: 12 (+7, -0)
-							Added array item "Texture.base_black".
-							Added array item "Texture.base_brown".
-							Added array item "Texture.base_chestnut".
-							Added array item "Texture.base_creamy".
-							Added array item "Texture.base_darkbrown".
-							Added array item "Texture.base_gray".
-							Added array item "Texture.base_white".
-						Removed array "Array.variant":
-							array item "Texture.base_black"
-							array item "Texture.base_brown"
-							array item "Texture.base_brown"
-							array item "Texture.base_chestnut"
-							array item "Texture.base_creamy"
-							array item "Texture.base_darkbrown"
-							array item "Texture.base_gray"
-							array item "Texture.base_white"
-				Removed field "part_visibility":
-					part visibility dict part visibility "*saddle*": "query.is_saddled"
-					part visibility dict part visibility "SaddleMouthLine": "query.is_saddled && query.has_rider"
-					part visibility dict part visibility "SaddleMouthLineR": "query.is_saddled && query.has_rider"
-					part visibility dict part visibility "Ear*": "!variable.horse.large_ears"
-					part visibility dict part visibility "MuleEar*": "variable.horse.large_ears"
-					part visibility dict part visibility "Bag*": "query.is_chested"
-				Changed field "materials":
-					Total material dict: 4 (+1, -1)
-					Removed material dict material "*": "(query.armor_texture_slot(1) == 1.0) ? Material.horse_leather_armor : Material.default".
-					Added material dict material "*": "Material.default".
-				Changed field "textures":
-					Total texture: 3 (+3, -3)
-					Removed texture "Array.armor[query.armor_texture_slot(1)]".
-					Added texture "Array.armor[variable.ArmorTextureIndex]".
-					Added texture "Array.base[variable.BaseTextureIndex]".
-					Removed texture "Array.markings[query.mark_variant]".
-					Added texture "Array.markings[variable.MarkingsTextureIndex]".
-					Removed texture "variable.horse.is_horse ? Array.variant[query.variant] : Array.base[query.sub_variant] ".
 Changed file "husk.render_controllers.json":
 	Changed resource pack "core":
 		Changed field "render_controllers":
 			Changed render controller "controller.render.husk":
 				Removed field "rebuild_animation_matrices": true.
+Changed file "persona.render_controllers.json":
+	Changed resource pack "core":
+		Changed field "render_controllers":
+			Changed render controller "controller.render.persona_animated_128x128.first_person":
+				Changed field "part_visibility":
+					Changed part visibility dict:
+						Changed part visibility "rightArm" from "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'".
+					Changed part visibility dict:
+						Changed part visibility "rightSleeve" from "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'".
+					Changed part visibility dict:
+						Changed part visibility "leftArm" from "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+					Changed part visibility dict:
+						Changed part visibility "leftSleeve" from "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+			Changed render controller "controller.render.persona_animated_32x32.first_person":
+				Changed field "part_visibility":
+					Changed part visibility dict:
+						Changed part visibility "rightArm" from "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'".
+					Changed part visibility dict:
+						Changed part visibility "rightSleeve" from "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'".
+					Changed part visibility dict:
+						Changed part visibility "leftArm" from "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+					Changed part visibility dict:
+						Changed part visibility "leftSleeve" from "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+			Changed render controller "controller.render.persona_animated_face.first_person":
+				Changed field "part_visibility":
+					Changed part visibility dict:
+						Changed part visibility "rightArm" from "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'".
+					Changed part visibility dict:
+						Changed part visibility "rightSleeve" from "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'".
+					Changed part visibility dict:
+						Changed part visibility "leftArm" from "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+					Changed part visibility dict:
+						Changed part visibility "leftSleeve" from "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+Changed file "player.render_controllers.json":
+	Changed resource pack "core":
+		Changed field "render_controllers":
+			Total render controller: 3 (+1, -0)
+			Changed render controller "controller.render.player.first_person":
+				Changed field "part_visibility":
+					Changed part visibility dict:
+						Changed part visibility "rightArm" from "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'".
+					Changed part visibility dict:
+						Changed part visibility "rightSleeve" from "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'".
+					Changed part visibility dict:
+						Changed part visibility "leftArm" from "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+					Changed part visibility dict:
+						Changed part visibility "leftSleeve" from "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+			Added render controller "controller.render.player.map":
+				field "geometry": "Geometry.default"
+				field "materials": material dict material "*": "Material.default"
+				field "textures": texture "Texture.default"
+				field "part_visibility":
+					part visibility dict part visibility "*": false
+					part visibility dict part visibility "head": true
+					part visibility dict part visibility "hat": true
+					part visibility dict part visibility "helmet": true
 Changed file "skeleton.render_controllers.json":
 	Changed resource pack "core":
 		Changed field "render_controllers":

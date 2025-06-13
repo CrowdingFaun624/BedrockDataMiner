@@ -1,345 +1,693 @@
-Difference of "ui" between "1.16.220.50" (beta of "1.16.220") and "1.16.220.51" (beta of "1.16.220").
+Difference of "ui" between "1.17.0.52" (beta of "1.17.0") and "1.17.0.54" (beta of "1.17.0").
 
+Total namespace: 193 (+1, -2)
 Changed namespace "general_section":
-	Total element: 104 (+4, -0)
-	Changed element "debug_section":
+	Total element: 106 (+3, -0)
+	Changed element "content_log_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 81 (+1, -0)
-			Added control element "mock_http_panel@general_section.mock_http_panel": empty.
-	Added element "mock_http_panel":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control:
-				element "display_mock_http_panel_toggle@settings_common.option_toggle":
-					field "$variables":
-						variable "$option_label": "Display Mock HTTP Panel"
-						variable "$option_binding_name": "#dev_display_mock_http_panel"
-						variable "$option_enabled_binding_name": "#dev_display_mock_http_panel_enabled"
-						variable "$toggle_name": "dev_display_mock_http_panel"
-						variable "$enabled": "(not $is_console)"
-			control element "mock_http_panel_content@general_section.mock_http_panel_content": empty
-	Added element "mock_http_panel_content":
-		field "type": "panel"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control:
-				element "mock_http_panel_background":
-					field "type": "stack_panel"
-					field "size": ["90%", "100%c"]
-					field "controls":
-						control:
-							element "add_mock_rules_button@settings_common.action_button":
-								field "$variables":
-									variable "$pressed_button_name": "dev_add_mock_http_rules"
-									variable "$button_text": "Add rules from file"
-						control:
-							element "remove_all_mock_rules_button@settings_common.action_button":
-								field "$variables":
-									variable "$pressed_button_name": "dev_remove_all_mock_http_rules"
-									variable "$button_text": "Remove all rules"
-						control:
-							element "active_rules_label":
-								field "type": "label"
-								field "size": ["100%", "20px"]
-								field "text": "Active Rules:"
-								field "color": "$body_text_color"
-						control element "rule_list@general_section.mock_http_rule_list": empty
-						control element "divider@common.section_divider": empty
-		field "bindings":
-			binding:
-				field "binding_name": "#dev_display_mock_http_panel"
-				field "binding_name_override": "#visible"
-	Added element "mock_http_rule":
-		field "type": "stack_panel"
-		field "controls":
-			control:
-				element "rule_details_label":
-					field "type": "label"
-					field "size": ["100%", "default"]
-					field "text": "#text"
-					field "color": "$body_text_color"
+			Total control: 9 (+2, -2)
+			Removed control:
+				element "open_content_log_history@settings_common.action_button":
 					field "bindings":
 						binding:
-							field "binding_name": "#rule_details_label"
-							field "binding_name_override": "#text"
-							field "binding_type": "collection"
-							field "binding_collection_name": "mock_http_rules"
-			control:
-				element "rule_spacer":
-					field "type": "panel"
-					field "size": ["100%", 5]
-	Added element "mock_http_rule_list":
-		field "type": "stack_panel"
-		field "size": ["100%", "100%c"]
-		field "factory":
-			field "name": "rule_list_factory"
-			field "control_name": "general_section.mock_http_rule"
-		field "collection_name": "mock_http_rules"
-		field "bindings":
-			binding:
-				field "binding_name": "#mock_http_rule_count"
-				field "binding_name_override": "#collection_length"
-	Changed element "realms_subscription_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
+							field "binding_name": "#content_log_gui_option_enabled"
+							field "binding_name_override": "#enabled"
+					field "$variables":
+						variable "$pressed_button_name": "button.open_content_log_history"
+						variable "$button_text": "contentlog.history.title"
+			Removed control:
+				element "clear_content_log_files@settings_common.action_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#allow_content_log_write_to_disk"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+						variable "$pressed_button_name": "button.clear_content_log_files"
+						variable "$button_text": "contentlog.clear_files"
 			Changed control:
-				Changed element "info":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "realm_name@common.minecraftTenLabel":
-								Removed field "visible": "(not $realms_plus_name)".
-		Removed field "$variables": variable "$realms_plus_name|default": false.
-	Changed element "view_subscriptions_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 14 (+2, -3)
-			Changed control:
-				Changed element "realms_plus_header_no_active_subscriptions":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Total control: 1 (+0, -1)
-						Changed control:
-							Changed element "text@common.minecraftTenLabel":
-								Added field "text_alignment": "center".
-						Removed control:
-							element "divider1@common.section_divider":
-								field "anchor_to": "bottom_middle"
-								field "anchor_from": "bottom_middle"
-			Changed control:
-				Changed element "realms_plus_header_label@common.minecraftTenLabel":
-					Changed field "text" from "options.viewSubscriptions.realmsPlus.header" to "#available_or_additional_subscriptions_text".
-					Added field "bindings": binding field "binding_name": "#available_or_additional_subscriptions_text".
-			Changed control:
-				Changed element "pad_0":
+				Moved element from "content_log_location_label_header_spacer" to "content_log_section_label_spacer_2".
+				Changed element "content_log_section_label_spacer_2":
 					Unchanged field "type": "panel".
 					Changed field "size":
 						Unchanged item 0: "100%".
-						Changed item 1 from 6 to 2.
-			Changed control:
-				Changed element "realms_plus_buy_offer@general_section.realms_subscription_main":
-					Changed field "$variables":
-						Total variable: 10 (+0, -1)
-						Removed variable "$realms_plus_name": true.
-						Changed variable "$name" from "" to "options.viewSubscriptions.tenPlayers".
-			Removed control element "divider2@common.section_divider": empty.
-			Removed control:
-				element "additional_subs_header_label@common.minecraftTenLabel":
-					field "text": "options.viewSubscriptions.realms.header"
-					field "text_alignment": "left"
-					field "color": "$body_text_color"
-					field "size": ["100%", 12]
-			Removed control:
-				element "pad_2":
-					field "type": "panel"
-					field "size": ["100%", 6]
+						Changed item 1 from 2 to 7.
 			Added control:
-				element "realms_plus_header_my_subscriptions":
+				element "section_panel_1":
 					field "type": "panel"
-					field "size": ["100%", "100%c + 2px"]
+					field "size": ["100%", "100%c + 14px"]
+					field "ignored": "$is_toolbox_ignored"
 					field "controls":
 						control:
-							element "text@common.minecraftTenLabel":
-								field "text": "options.viewSubscriptions.mySubscriptions"
-								field "color": "$body_text_color"
-								field "anchor_to": "top_middle"
-								field "anchor_from": "top_middle"
-								field "size": ["100%", 12]
-					field "bindings":
-						binding:
-							field "binding_name": "#my_subscriptions_visible"
-							field "binding_name_override": "#visible"
+							element "section_divider":
+								field "type": "image"
+								field "size": ["100% - 30px", 1]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "layer": 3
+								field "texture": "textures/ui/list_item_divider_line_light"
 			Added control:
-				element "active_available_divider@common.section_divider":
-					field "$variables":
-						variable "$top_padding_size":
-							item 0: "100%"
-							item 1: 0
-						variable "$bottom_padding_size":
-							item 0: "100%"
-							item 1: 1
-Changed namespace "online_safety":
-	Changed element "online_safety_dialog@common_dialogs.main_panel_three_buttons":
-		Removed field "bindings":
+				element "content_log_buttons":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 30]
+					field "controls":
+						control:
+							element "open_content_log_history@settings_common.action_button":
+								field "size": ["49.5%", "100%"]
+								field "bindings":
+									binding:
+										field "binding_name": "#content_log_gui_option_enabled"
+										field "binding_name_override": "#enabled"
+								field "$variables":
+									variable "$pressed_button_name": "button.open_content_log_history"
+									variable "$button_text": "contentlog.history.title"
+						control:
+							element "content_log_section_label_spacer":
+								field "type": "panel"
+								field "size": ["1%", "100%"]
+						control:
+							element "clear_content_log_files@settings_common.action_button":
+								field "size": ["49.5%", "100%"]
+								field "bindings":
+									binding:
+										field "binding_name": "#allow_content_log_write_to_disk"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+									variable "$pressed_button_name": "button.clear_content_log_files"
+									variable "$button_text": "contentlog.clear_files"
+	Added element "creator_button@settings_common.section_toggle_base":
+		field "$variables":
+			variable "$toggle_view_binding_name": "creator_button_toggle"
+			variable "$glyph_texture": "textures/ui/creator_glyph"
+			variable "$glyph_color_texture": "textures/ui/creator_glyph_color"
+			variable "$glyph_size":
+				item 0: 17
+				item 1: 17
+			variable "$button_text": "options.creator"
+			variable "$toggle_property_bag": item "#panel_title": "options.creatorTitle"
+	Added element "creator_section":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "variables":
+			variable:
+				field "requires": "(not $is_desktop or $is_publish)"
+				field "$variables": variable "$is_toolbox_ignored": true
+		field "bindings":
 			binding:
-				field "binding_name": "#tts_dialog_body"
-				field "binding_condition": "once"
-		Removed field "property_bag": field "#tts_dialog_body": "onlinePlay.message".
-Changed namespace "realmsPlus_content":
-	Total element: 13 (+1, -0)
-	Changed element "content_pack_types_section":
+				field "binding_type": "view"
+				field "source_control_name": "creator_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control element "toolbox_toggle@general_section.toolbox_toggle_panel": empty
+			control element "content_log_panel@general_section.content_log_panel": field "ignored": "$education_edition"
+		field "$variables": variable "$is_toolbox_ignored|default": false
+	Changed element "profile_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 4 (+2, -0)
-			Added control element "section_divider@realmsPlus.full_width_section_divider": empty.
-			Added control element "friends_get_access@realmsPlus_content.friends_get_access": empty.
-	Added element "friends_get_access":
+			Total control: 28 (+0, -3)
+			Removed control:
+				element "section_panel_1":
+					field "type": "panel"
+					field "size": ["100%", "100%c + 14px"]
+					field "controls":
+						control:
+							element "section_divider":
+								field "type": "image"
+								field "size": ["100% - 30px", 1]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "layer": 3
+								field "texture": "textures/ui/list_item_divider_line_light"
+			Removed control element "content_log_panel@general_section.content_log_panel": field "ignored": "$education_edition".
+			Removed control:
+				element "section_panel_2":
+					field "ignored": "$education_edition"
+					field "type": "panel"
+					field "size": ["100%", "100%c + 14px"]
+					field "controls":
+						control:
+							element "section_divider":
+								field "type": "image"
+								field "size": ["100% - 30px", 1]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "layer": 3
+								field "texture": "textures/ui/list_item_divider_line_light"
+	Added element "toolbox_toggle_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "30%x"]
+		field "orientation": "horizontal"
+		field "ignored": "$is_toolbox_ignored"
+		field "controls":
+			control:
+				element "toolbox_confirmation_panel":
+					field "type": "stack_panel"
+					field "size": ["68%", "100%c"]
+					field "controls":
+						control:
+							element "toolbox_mode_toggle@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.toolboxMode"
+									variable "$option_binding_name": "#toolbox_mode"
+									variable "$option_enabled_binding_name": "#toolbox_mode_enabled"
+									variable "$toggle_name": "toolbox_mode"
+						control:
+							element "toggle_spacer":
+								field "type": "panel"
+								field "size": ["100%", "2%x"]
+						control:
+							element "toolbox_confirmation_section_label":
+								field "type": "label"
+								field "text": "#toolbox_label"
+								field "color": "$light_button_locked_text_color"
+								field "size": ["100%", "default"]
+								field "bindings": binding field "binding_name": "#toolbox_label"
+			control:
+				element "toolbox_toggle_spacer":
+					field "type": "panel"
+					field "size": ["2%", 10]
+			control:
+				element "toolbox_image_panel":
+					field "type": "stack_panel"
+					field "size": ["30%", "100%x"]
+					field "controls":
+						control:
+							element "toolbox_icon":
+								field "type": "image"
+								field "layer": 2
+								field "size": ["100%", "100%"]
+								field "texture": "textures/ui/enable_toolbox"
+Changed namespace "settings":
+	Changed element "section_content_panels":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "general_and_controls_sections":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 18 (+1, -0)
+						Added control element "creator_section@general_section.creator_section": field "visible": false.
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "controls_and_settings_selector_pane":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 20 (+1, -0)
+						Added control:
+							element "creator_button@general_section.creator_button":
+								field "$variables":
+									variable "$toggle_group_forced_index": "$creator_forced_index"
+									variable "$tts_section_header": "$general_section_header"
+Changed namespace "start":
+	Total element: 58 (+1, -0)
+	Changed element "main_buttons_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_rows":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 11 (+1, -0)
+						Added control:
+							element "stacked_row_toolbox@start.stacked_row":
+								field "ignored": "$is_toolbox_ignored"
+								field "controls": control element "toolbox_mode_button@start.toolbox_mode_button": empty
+								field "bindings":
+									binding:
+										field "binding_name": "#toolbox_button_visible"
+										field "binding_name_override": "#visible"
+	Changed element "start_screen_content":
+		Unchanged field "type": "panel".
+		Changed field "variables":
+			Total variable: 6 (+1, -0)
+			Added variable:
+				field "requires": "(not $is_desktop or $is_publish)"
+				field "$variables": variable "$is_toolbox_ignored": true
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$is_toolbox_ignored|default": false.
+	Added element "toolbox_mode_button@start.main_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.toolbox_mode"
+			variable "$button_text": "menu.toolboxMode"
+			variable "$focus_override_right": "profile_button"
+Added namespace "toolbox":
+	element "toolbox_mode":
+		field "type": "panel"
+		field "controls":
+			control element "panel@common.fullscreen_header": empty
+			control:
+				element "title@settings_common.selector_group_label":
+					field "text": "toolboxMode.text"
+					field "text_alignment": "center"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+	element "toolbox_mode_screen@common.base_screen":
+		field "$variables":
+			variable "$screen_content": "toolbox.toolbox_mode"
+			variable "$screen_bg_content": "common.screen_background"
+Removed namespace "vr_align_screen":
+	element "advancement_prompt_label":
 		field "type": "label"
 		field "size": ["100%", "default"]
-		field "text": "store.realmsPlus.content.friendsGetAccess"
-		field "font_type": "smooth"
-		field "color": "$store_white_text_color"
-Changed namespace "realmsPlus_faq":
-	Changed element "faq_content_section@realmsPlus.section_base":
-		Changed field "controls":
-			Total control: 21 (+0, -10)
-			Removed control:
-				element "faq_question_2@realmsPlus_faq.image_right_faq_question_body":
-					field "$variables":
-						variable "$faq_question": "store.realmsPlus.faq.question2"
-						variable "$faq_answer": "store.realmsPlus.faq.answer2"
-						variable "$repo_image_texture": "nether_portal_small"
-			Removed control:
-				element "faq_question_3@realmsPlus_faq.image_left_faq_question_body":
-					field "$variables":
-						variable "$faq_question": "store.realmsPlus.faq.question3"
-						variable "$faq_answer": "store.realmsPlus.faq.answer3"
-						variable "$repo_image_texture": "creeper_forward"
-			Changed control:
-				Moved element from "faq_question_4@realmsPlus_faq.image_right_faq_question_body" to "faq_question_5@realmsPlus_faq.image_left_faq_question_body".
-				Changed element "faq_question_5@realmsPlus_faq.image_left_faq_question_body":
-					Changed field "$variables":
-						Changed variable "$faq_question" from "store.realmsPlus.faq.question4" to "store.realmsPlus.faq.question3".
-						Changed variable "$faq_answer" from "store.realmsPlus.faq.answer4" to "store.realmsPlus.faq.answer3".
-			Removed control element "faq_question_13_divider@realmsPlus_faq.faq_section_divider": empty.
-			Changed control:
-				Moved element from "faq_question_14@realmsPlus_faq.image_right_faq_question_body" to "faq_question_8@realmsPlus_faq.image_right_faq_question_body".
-				Changed element "faq_question_8@realmsPlus_faq.image_right_faq_question_body":
-					Changed field "$variables":
-						Changed variable "$faq_question" from "store.realmsPlus.faq.question14" to "store.realmsPlus.faq.question7".
-						Changed variable "$faq_answer" from "store.realmsPlus.faq.answer14" to "store.realmsPlus.faq.answer7".
-			Changed control:
-				Moved element from "faq_question_5@realmsPlus_faq.image_left_faq_price_bound" to "faq_question_3@realmsPlus_faq.image_left_faq_price_bound".
-				Changed element "faq_question_3@realmsPlus_faq.image_left_faq_price_bound":
-					Changed field "$variables":
-						Changed variable "$repo_image_texture" from "wolf_forward" to "steve_forward".
-			Removed control:
-				element "faq_question_6@realmsPlus_faq.image_right_faq_question_body":
-					field "$variables":
-						variable "$faq_question": "store.realmsPlus.faq.question6"
-						variable "$faq_answer": "store.realmsPlus.faq.answer6"
-						variable "$repo_image_texture": "steve_forward"
-			Changed control:
-				Changed element "faq_question_7@realmsPlus_faq.image_left_faq_question_body":
-					Changed field "$variables":
-						Changed variable "$faq_question" from "store.realmsPlus.faq.question7" to "store.realmsPlus.faq.question8".
-						Changed variable "$faq_answer" from "store.realmsPlus.faq.answer7" to "store.realmsPlus.faq.answer8".
-						Changed variable "$repo_image_texture" from "alex_forward" to "wolf_forward".
-			Removed control:
-				element "faq_question_8@realmsPlus_faq.image_right_faq_question_body":
-					field "$variables":
-						variable "$faq_question": "store.realmsPlus.faq.question8"
-						variable "$faq_answer": "store.realmsPlus.faq.answer8"
-						variable "$repo_image_texture": "guardians"
-			Changed control:
-				Moved element from "faq_question_9@realmsPlus_faq.image_left_faq_question_body" to "faq_question_2@realmsPlus_faq.image_right_faq_question_body".
-				Changed element "faq_question_2@realmsPlus_faq.image_right_faq_question_body":
-					Changed field "$variables":
-						Changed variable "$faq_question" from "store.realmsPlus.faq.question9" to "store.realmsPlus.faq.question2".
-						Changed variable "$faq_answer" from "store.realmsPlus.faq.answer9" to "store.realmsPlus.faq.answer2".
-			Removed control element "faq_question_9_divider@realmsPlus_faq.faq_section_divider": empty.
-			Changed control:
-				Moved element from "faq_question_10@realmsPlus_faq.image_right_faq_question_body" to "faq_question_4@realmsPlus_faq.image_right_faq_question_body".
-				Changed element "faq_question_4@realmsPlus_faq.image_right_faq_question_body":
-					Changed field "$variables":
-						Changed variable "$faq_question" from "store.realmsPlus.faq.question10" to "store.realmsPlus.faq.question4".
-						Changed variable "$faq_answer" from "store.realmsPlus.faq.answer10" to "store.realmsPlus.faq.answer4".
-			Removed control element "faq_question_10_divider@realmsPlus_faq.faq_section_divider": empty.
-			Removed control:
-				element "faq_question_11@realmsPlus_faq.image_left_faq_question_body":
-					field "$variables":
-						variable "$faq_question": "store.realmsPlus.faq.question11"
-						variable "$faq_answer": "store.realmsPlus.faq.answer11"
-						variable "$repo_image_texture": "cake_forward"
-			Removed control element "faq_question_11_divider@realmsPlus_faq.faq_section_divider": empty.
-			Changed control:
-				Moved element from "faq_question_12@realmsPlus_faq.image_right_faq_question_body" to "faq_question_6@realmsPlus_faq.image_right_faq_question_body".
-				Changed element "faq_question_6@realmsPlus_faq.image_right_faq_question_body":
-					Changed field "$variables":
-						Changed variable "$faq_question" from "store.realmsPlus.faq.question12" to "store.realmsPlus.faq.question9".
-						Changed variable "$faq_answer" from "store.realmsPlus.faq.answer12" to "store.realmsPlus.faq.answer9".
-			Removed control element "faq_question_12_divider@realmsPlus_faq.faq_section_divider": empty.
-			Changed control:
-				Moved element from "faq_question_13@realmsPlus_faq.image_left_faq_question_body" to "faq_question_9@realmsPlus_faq.image_left_faq_question_body".
-				Changed element "faq_question_9@realmsPlus_faq.image_left_faq_question_body":
-					Changed field "$variables":
-						Changed variable "$faq_question" from "store.realmsPlus.faq.question13" to "store.realmsPlus.faq.question6".
-						Changed variable "$faq_answer" from "store.realmsPlus.faq.answer13" to "store.realmsPlus.faq.answer6".
-Changed namespace "realmsPlus_landing":
-	Total element: 16 (+1, -0)
-	Added element "free_trial_text":
+		field "layer": 2
+		field "shadow": true
+		field "text": "#text"
+		field "text_tts": "#text_tts"
+		field "text_alignment": "center"
+		field "color": "$body_text_color"
+		field "bindings":
+			binding:
+				field "binding_name": "#advancement_prompt"
+				field "binding_name_override": "#text"
+			binding:
+				field "binding_name": "#advancement_prompt_tts"
+				field "binding_name_override": "#text_tts"
+	element "controller_prompt_label":
 		field "type": "label"
-		field "size": ["100% - 6 px", "default"]
-		field "text": "#free_trial_header_text"
-		field "color": "$store_white_text_color"
-		field "bindings": binding field "binding_name": "#free_trial_header_text"
-	Changed element "info_section_text_2@realmsPlus_landing.info_section_text":
-		Changed field "controls":
-			Total control: 7 (+1, -3)
-			Removed control element "info_text_bullet_3@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info2.line3".
-			Removed control element "vertical_small_spacer_2@realmsPlus_landing.vertical_small_spacer": empty.
-			Changed control:
-				Moved element from "info_text_bullet_4@realmsPlus_landing.info_text_bullet" to "info_text_bullet_5@realmsPlus_landing.info_text_bullet".
-				Changed element "info_text_bullet_5@realmsPlus_landing.info_text_bullet":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "binding_name" from "#realms_plus_one_month_free_trial_visible" to "#realms_plus_one_month_free_trial_not_visible".
-			Removed control:
-				element "info_text_bullet_5@realmsPlus_landing.info_text_bullet":
-					field "text": "#landing_info_line_5"
-					field "bindings":
-						binding:
-							field "binding_name": "#realms_plus_one_month_free_trial_not_visible"
-							field "binding_name_override": "#visible"
-						binding field "binding_name": "#landing_info_line_5"
-			Added control:
-				element "info_text_bullet_4@realmsPlus_landing.info_text_bullet":
-					field "text": "store.realmsPlus.landing.info2.line3"
-					field "bindings":
-						binding:
-							field "binding_name": "#realms_plus_one_month_free_trial_visible"
-							field "binding_name_override": "#visible"
-	Changed element "title_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 7 (+3, -1)
-			Removed control element "vertical_space@realmsPlus_landing.vertical_small_spacer": empty.
-			Changed control:
-				Moved element from "gradient_panel" to "gradient_panel2".
-				Changed element "gradient_panel2":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Moved element from "label_with_gradient@realmsPlus.gradient_content_panel" to "label_with_gradient2@realmsPlus.gradient_content_panel".
-					Added field "bindings":
-						binding:
-							field "binding_name": "#realms_plus_one_month_free_trial_not_visible"
-							field "binding_name_override": "#visible"
-			Added control:
-				element "gradient_panel":
+		field "layer": 2
+		field "size": ["100%", "default"]
+		field "shadow": true
+		field "text": "#text"
+		field "text_alignment": "center"
+		field "color": "$warning_text_color"
+		field "bindings":
+			binding:
+				field "binding_name": "#controller_prompt"
+				field "binding_name_override": "#text"
+			binding:
+				field "binding_name": "#show_controller_prompt"
+				field "binding_name_override": "#visible"
+	element "focus_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["90%", "100%c"]
+		field "controls":
+			control:
+				element "padding_0":
 					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "controls":
-						control:
-							element "label_with_gradient@realmsPlus.gradient_content_panel":
-								field "size": ["100% - 6px", 15]
-								field "$variables": variable "$gradient_content": "realmsPlus_landing.free_trial_text"
+					field "size": ["100%", 5]
+			control element "vrinfo_label@vr_align_screen.vrinfo_label": empty
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 15]
+			control element "recalibration_label@vr_align_screen.recalibration_label": empty
+			control:
+				element "padding_recalibration":
+					field "type": "panel"
+					field "size": ["100%", 15]
 					field "bindings":
 						binding:
-							field "binding_name": "#realms_plus_one_month_free_trial_visible"
+							field "binding_name": "#show_recalibration_text"
 							field "binding_name_override": "#visible"
-			Added control:
-				element "vertical_space@realmsPlus_landing.vertical_small_spacer":
+			control element "controller_prompt_label@vr_align_screen.controller_prompt_label": empty
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": ["100%", 10]
 					field "bindings":
 						binding:
-							field "binding_name": "#realms_plus_one_month_free_trial_visible"
+							field "binding_name": "#show_controller_prompt"
 							field "binding_name_override": "#visible"
-			Added control:
-				element "vertical_space2@realmsPlus_landing.vertical_small_spacer":
-					field "bindings":
-						binding:
-							field "binding_name": "#realms_plus_one_month_free_trial_not_visible"
-							field "binding_name_override": "#visible"
+			control element "advancement_prompt_label@vr_align_screen.advancement_prompt_label": empty
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 5]
+	element "main_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls": control element "focus_panel@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "vr_align_screen.focus_panel"
+	element "recalibration_label":
+		field "type": "label"
+		field "layer": 2
+		field "size": ["100%", "default"]
+		field "shadow": true
+		field "text": "#text"
+		field "text_tts": "#text_tts"
+		field "text_alignment": "center"
+		field "line_padding": 10.0
+		field "color": "$body_text_color"
+		field "bindings":
+			binding:
+				field "binding_name": "#recalibration_text"
+				field "binding_name_override": "#text"
+			binding:
+				field "binding_name": "#recalibration_text_tts"
+				field "binding_name_override": "#text_tts"
+			binding:
+				field "binding_name": "#show_recalibration_text"
+				field "binding_name_override": "#visible"
+	element "vr_align_dialog@common_dialogs.form_fitting_main_panel_no_buttons":
+		field "size": [340, "100%c"]
+		field "$variables":
+			variable "$show_close_button": "$can_quit"
+			variable "$child_control": "vr_align_screen.main_panel"
+			variable "$text_name": "vr.alignscreen.title"
+	element "vr_align_screen@common.base_screen":
+		field "send_telemetry": false
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "button.controller_select"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.mouse_clicked_vralign"
+				field "mapping_type": "global"
+			button mapping:
+				field "ignored": "(not $can_quit)"
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "ignored": "($can_quit)"
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_cancel"
+				field "mapping_type": "global"
+		field "$variables": variable "$screen_content": "vr_align_screen.vr_align_screen_content"
+	element "vr_align_screen_content":
+		field "type": "panel"
+		field "controls": control element "dialog@vr_align_screen.vr_align_dialog": empty
+	element "vrinfo_label":
+		field "type": "label"
+		field "layer": 2
+		field "size": ["100%", "default"]
+		field "shadow": true
+		field "text": "#vr_alignscreen_text"
+		field "text_alignment": "center"
+		field "color": "$body_text_color"
+		field "bindings":
+			binding:
+				field "binding_name": "#vr_alignscreen_text"
+				field "binding_condition": "once"
+Removed namespace "vrscheme":
+	element "back_button@vrscheme.rift_information_button":
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["50%-2px", "100%"]
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_vr_back"
+			variable "$button_text": "gui.back"
+	element "button_panel":
+		field "type": "panel"
+		field "anchor_from": "bottom_left"
+		field "anchor_to": "bottom_left"
+		field "size": ["100%-10px", 25]
+		field "offset": [5, -5]
+		field "controls":
+			control element "more_information_button@vrscheme.more_information_button": empty
+			control element "play_button@vrscheme.play_button": empty
+	element "gamepad_helpers":
+		field "type": "panel"
+		field "size": [100, 10]
+		field "offset": [0, "45%"]
+		field "controls":
+			control:
+				element "gamepad_helper_a@common.gamepad_helper_a":
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+	element "information_button_panel":
+		field "type": "panel"
+		field "anchor_from": "bottom_left"
+		field "anchor_to": "bottom_left"
+		field "size": ["100%-10px", 25]
+		field "offset": [5, -5]
+		field "controls":
+			control element "more_options_button@vrscheme.more_options_button": empty
+			control element "back_button@vrscheme.back_button": empty
+	element "more_information_button@vrscheme.rift_control_button":
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "size": ["50%-2px", "100%"]
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_vr_more_information"
+			variable "$button_text": "vr.moreInformation"
+	element "more_options_button@vrscheme.rift_information_button":
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "size": ["50%-2px", "100%"]
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_vr_more_options"
+			variable "$button_text": "vr.moreOptions"
+	element "plain_text":
+		field "type": "label"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "layer": 4
+		field "size": ["100%", "default"]
+		field "text": "vr.controls.title"
+		field "shadow": false
+		field "color": "$title_text_color"
+	element "play_button@vrscheme.rift_control_button":
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["50%-2px", "100%"]
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_exit"
+			variable "$button_text": "gui.ok"
+	element "rift_control_button@common_buttons.light_text_button":
+		field "size": ["50%-2px", "100%"]
+		field "property_bag":
+			field "experimental_radio_button_state": false
+			field "classic_radio_button_state": false
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "vr_classic_scheme_panel_button"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "classic_radio_button_state"
+	element "rift_control_title":
+		field "type": "label"
+		field "layer": 4
+		field "size": ["90%", "100%"]
+		field "offset": [0, 8]
+		field "text": "vr.controls.title"
+		field "color": "$title_text_color"
+	element "rift_information_button@common_buttons.light_text_button": field "size": ["50%-2px", "100%"]
+	element "rift_information_panel":
+		field "type": "panel"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "size": ["65%", "80%"]
+		field "controls":
+			control element "rift_options_bg@vrscheme.rift_options_bg": empty
+			control element "rift_control_title@vrscheme.rift_control_title": empty
+			control element "vr_information_panel@vrscheme.vr_information_panel": empty
+			control element "information_button_panel@vrscheme.information_button_panel": empty
+	element "rift_options_bg":
+		field "type": "panel"
+		field "controls": control element "bg_image@common.dialog_background_hollow_2": field "layer": 1
+	element "rift_options_panel":
+		field "type": "panel"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "size": ["80%", "80%"]
+		field "controls":
+			control element "rift_options_bg@vrscheme.rift_options_bg": empty
+			control element "rift_control_title@vrscheme.rift_control_title": empty
+			control element "vr_schemes_content_panel@vrscheme.vr_schemes_content_panel": empty
+			control element "button_panel@vrscheme.button_panel": empty
+	element "scheme_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_cancel"
+				field "mapping_type": "global"
+		field "$variables": variable "$screen_content": "vrscheme.scheme_screen_content"
+	element "scheme_screen_content":
+		field "type": "panel"
+		field "controls": control element "rift_options_panel@vrscheme.rift_options_panel": empty
+	element "vr_classic_scheme_panel@common.toggle":
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "35%"]
+		field "offset": [0, "45%"]
+		field "$variables":
+			variable "$unchecked_control": "vrscheme.vr_classic_scheme_panel_unchecked"
+			variable "$checked_control": "vrscheme.vr_classic_scheme_panel_checked"
+			variable "$unchecked_hover_control": "vrscheme.vr_classic_scheme_panel_unchecked_hover"
+			variable "$checked_hover_control": "vrscheme.vr_classic_scheme_panel_checked_hover"
+			variable "$unchecked_locked_control": "vrscheme.vr_classic_scheme_panel_unchecked"
+			variable "$unchecked_locked_hover_control": "vrscheme.vr_classic_scheme_panel_unchecked"
+			variable "$checked_locked_control": "vrscheme.vr_classic_scheme_panel_checked"
+			variable "$checked_locked_hover_control": "vrscheme.vr_classic_scheme_panel_checked"
+			variable "$radio_toggle_group": true
+			variable "$toggle_name": "radio_button_group"
+			variable "$toggle_group_default_selected": 0
+			variable "$toggle_group_forced_index": 1
+			variable "$toggle_state_binding_name": "#classic_radio_state"
+	element "vr_classic_scheme_panel_checked":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control element "vr_scheme_classic_title@vrscheme.vr_scheme_classic_title": empty
+			control element "vr_scheme_classic_description@vrscheme.vr_scheme_classic_description": empty
+			control:
+				element "radio_toggle_checked_state@common.radio_toggle_checked_state":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+	element "vr_classic_scheme_panel_checked_hover@vrscheme.vr_classic_scheme_panel_checked":
+		field "controls":
+			control element "vr_scheme_classic_title@vrscheme.vr_scheme_classic_title": empty
+			control element "vr_scheme_classic_description@vrscheme.vr_scheme_classic_description": empty
+			control:
+				element "radio_toggle_checked_hover_state@common.radio_toggle_checked_hover_state":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+	element "vr_classic_scheme_panel_unchecked":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control element "vr_scheme_classic_title@vrscheme.vr_scheme_classic_title": empty
+			control element "vr_scheme_classic_description@vrscheme.vr_scheme_classic_description": empty
+			control:
+				element "radio_toggle_unchecked_state@common.radio_toggle_unchecked_state":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+	element "vr_classic_scheme_panel_unchecked_hover@vrscheme.vr_classic_scheme_panel_unchecked":
+		field "controls":
+			control element "vr_scheme_classic_title@vrscheme.vr_scheme_classic_title": empty
+			control element "vr_scheme_classic_description@vrscheme.vr_scheme_classic_description": empty
+			control:
+				element "radio_toggle_unchecked_hover_state@common.radio_toggle_unchecked_hover_state":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+	element "vr_experimental_scheme_panel@common.toggle":
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "45%"]
+		field "$variables":
+			variable "$unchecked_control": "vrscheme.vr_experimental_scheme_panel_unchecked"
+			variable "$checked_control": "vrscheme.vr_experimental_scheme_panel_checked"
+			variable "$unchecked_hover_control": "vrscheme.vr_experimental_scheme_panel_unchecked_hover"
+			variable "$checked_hover_control": "vrscheme.vr_experimental_scheme_panel_checked_hover"
+			variable "$unchecked_locked_control": "vrscheme.vr_experimental_scheme_panel_unchecked"
+			variable "$unchecked_locked_hover_control": "vrscheme.vr_experimental_scheme_panel_unchecked"
+			variable "$checked_locked_control": "vrscheme.vr_experimental_scheme_panel_checked"
+			variable "$checked_locked_hover_control": "vrscheme.vr_experimental_scheme_panel_checked"
+			variable "$radio_toggle_group": true
+			variable "$toggle_name": "radio_button_group"
+			variable "$toggle_group_default_selected": 0
+			variable "$toggle_group_forced_index": 0
+			variable "$toggle_state_binding_name": "#enhanced_radio_state"
+	element "vr_experimental_scheme_panel_checked":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control element "vr_scheme_experimental_title@vrscheme.vr_scheme_experimental_title": empty
+			control element "vr_scheme_experimental_description@vrscheme.vr_scheme_experimental_description": empty
+			control:
+				element "radio_toggle_checked_state@common.radio_toggle_checked_state":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+	element "vr_experimental_scheme_panel_checked_hover@vrscheme.vr_experimental_scheme_panel_checked":
+		field "controls":
+			control element "vr_scheme_experimental_title@vrscheme.vr_scheme_experimental_title": empty
+			control element "vr_scheme_experimental_description@vrscheme.vr_scheme_experimental_description": empty
+			control:
+				element "radio_toggle_checked_hover_state@common.radio_toggle_checked_hover_state":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+	element "vr_experimental_scheme_panel_unchecked":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control element "vr_scheme_experimental_title@vrscheme.vr_scheme_experimental_title": empty
+			control element "vr_scheme_experimental_description@vrscheme.vr_scheme_experimental_description": empty
+			control:
+				element "radio_toggle_unchecked_state@common.radio_toggle_unchecked_state":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+	element "vr_experimental_scheme_panel_unchecked_hover@vrscheme.vr_experimental_scheme_panel_unchecked":
+		field "controls":
+			control element "vr_scheme_experimental_title@vrscheme.vr_scheme_experimental_title": empty
+			control element "vr_scheme_experimental_description@vrscheme.vr_scheme_experimental_description": empty
+			control:
+				element "radio_toggle_unchecked_hover_state@common.radio_toggle_unchecked_hover_state":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+	element "vr_information_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%-24px", "100%-60px"]
+		field "offset": [12, 26]
+		field "controls":
+			control element "vr_scheme_information_label@vrscheme.vr_scheme_information_label": empty
+			control:
+				element "spacing_gap":
+					field "type": "panel"
+					field "size": [0, 20]
+			control element "vr_scheme_go_to_vr_label@vrscheme.vr_scheme_go_to_vr_label": empty
+	element "vr_information_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_vr_back"
+				field "mapping_type": "global"
+		field "$variables": variable "$screen_content": "vrscheme.vr_information_screen_content"
+	element "vr_information_screen_content":
+		field "type": "panel"
+		field "controls": control element "rift_information_panel@vrscheme.rift_information_panel": empty
+	element "vr_scheme_classic_description@vrscheme.plain_text":
+		field "text": "vr.controls.classicDescription"
+		field "color": "$body_text_color"
+		field "offset": [15, 15]
+		field "size": ["100%-15px", "100%-15px"]
+	element "vr_scheme_classic_title@vrscheme.plain_text":
+		field "text": "vr.controls.title.classic"
+		field "color": "$body_text_color"
+		field "offset": [15, 4]
+		field "size": ["100%-15px", "100%-4px"]
+	element "vr_scheme_experimental_description@vrscheme.plain_text":
+		field "text": "vr.controls.experimentalDescription"
+		field "color": "$body_text_color"
+		field "offset": [15, 15]
+		field "size": ["100%-15px", "100%-15px"]
+	element "vr_scheme_experimental_title@vrscheme.plain_text":
+		field "text": "vr.controls.title.experimental"
+		field "color": "$body_text_color"
+		field "offset": [15, 4]
+		field "size": ["100%-15px", "100%-4px"]
+	element "vr_scheme_go_to_vr_label@vrscheme.plain_text":
+		field "text": "vr.detailedInformationLink"
+		field "color": "$body_text_color"
+	element "vr_scheme_information_label@vrscheme.plain_text":
+		field "text": "vr.detailedInformation"
+		field "color": "$body_text_color"
+	element "vr_scheme_shared_more_info@vrscheme.plain_text":
+		field "text": "vr.controls.sharedDescription"
+		field "color": "$body_text_color"
+	element "vr_schemes_content_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%-24px", "100%-60px"]
+		field "offset": [12, 26]
+		field "controls":
+			control element "vr_experimental_scheme_panel@vrscheme.vr_experimental_scheme_panel": empty
+			control element "vr_classic_scheme_panel_button@vrscheme.vr_classic_scheme_panel": empty
+			control element "vr_shared_info_panel@vrscheme.vr_shared_info_panel": empty
+	element "vr_shared_info_panel":
+		field "type": "panel"
+		field "anchor_from": "bottom_left"
+		field "anchor_to": "bottom_left"
+		field "size": ["100%", "20%"]
+		field "controls": control element "vr_scheme_shared_more_info@vrscheme.vr_scheme_shared_more_info": empty

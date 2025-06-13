@@ -1,7 +1,1201 @@
-Difference of "entities" between "1.19.80.20" (beta of "1.19.80") and "1.19.80.21" (beta of "1.19.80").
+Difference of "entities" between "1.20.0.20" (beta of "1.20.0") and "1.20.0.21" (beta of "1.20.0").
 
+Changed entity "bee.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "bee_adult":
+					Changed component "minecraft:breedable":
+						Changed field "breed_items":
+							Total item: 14 (+2, -0)
+							Added item "minecraft:cherry_leaves".
+							Added item "minecraft:pink_petals".
+				Changed component group "bee_baby":
+					Changed component "minecraft:ageable":
+						Changed field "feed_items":
+							Total item: 14 (+2, -0)
+							Added item "minecraft:cherry_leaves".
+							Added item "minecraft:pink_petals".
+				Changed component group "look_for_food":
+					Changed component "minecraft:behavior.move_to_block":
+						Changed field "target_blocks":
+							Total block: 14 (+2, -0)
+							Added block "minecraft:cherry_leaves".
+							Added block "minecraft:pink_petals".
+			Changed field "components":
+				Changed component "minecraft:behavior.tempt":
+					Changed field "items":
+						Total item: 14 (+2, -0)
+						Added item "minecraft:cherry_leaves".
+						Added item "minecraft:pink_petals".
+	Removed behavior pack "experimental":
+		field "format_version": "1.18.20"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:bee"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:has_nectar":
+						field "type": "bool"
+						field "client_sync": true
+						field "default": "query.had_component_group('has_nectar')"
+			field "component_groups":
+				component group "abort_shelter_detection":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "abort_sheltering"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "weather"
+											filter property "operator": "=="
+											filter property "value": "clear"
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": true
+				component group "angry_bee":
+					component "minecraft:angry":
+						field "duration": 25
+						field "broadcastAnger": true
+						field "broadcastRange": 20
+						field "broadcast_filters":
+							filter property "test": "is_family"
+							filter property "operator": "!="
+							filter property "value": "pacified"
+						field "calm_event":
+							field "event": "calmed_down"
+							field "target": "self"
+					component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "attack_once": true
+						field "speed_multiplier": 1.4
+						field "on_attack":
+							field "event": "countdown_to_perish_event"
+							field "target": "self"
+				component group "bee_adult":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "breeds_with":
+							field "mate_type": "minecraft:bee"
+							field "baby_type": "minecraft:bee"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+						field "breed_items":
+							item "minecraft:azalea_leaves_flowered"
+							item "minecraft:cherry_leaves"
+							item "minecraft:double_plant:0"
+							item "minecraft:double_plant:1"
+							item "minecraft:double_plant:4"
+							item "minecraft:double_plant:5"
+							item "minecraft:flowering_azalea"
+							item "minecraft:mangrove_propagule"
+							item "minecraft:pink_petals"
+							item "minecraft:red_flower"
+							item "minecraft:wither_rose"
+							item "minecraft:yellow_flower"
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
+				component group "bee_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item "minecraft:red_flower"
+							item "minecraft:yellow_flower"
+							item "minecraft:wither_rose"
+							item "minecraft:double_plant:0"
+							item "minecraft:double_plant:1"
+							item "minecraft:double_plant:4"
+							item "minecraft:double_plant:5"
+							item "minecraft:flowering_azalea"
+							item "minecraft:azalea_leaves_flowered"
+							item "minecraft:mangrove_propagule"
+							item "minecraft:cherry_leaves"
+							item "minecraft:pink_petals"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 11
+						field "speed_multiplier": 1.1
+				component group "countdown_to_perish":
+					component "minecraft:mark_variant": field "value": 1
+					component "minecraft:timer":
+						field "looping": false
+						field "time": [10, 60]
+						field "randomInterval": true
+						field "time_down_event":
+							field "event": "perish_event"
+							field "target": "self"
+					component "minecraft:type_family":
+						field "family":
+							family "arthropod"
+							family "bee"
+							family "mob"
+							family "pacified"
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+						field "force": true
+				component group "default_sound":
+					component "minecraft:ambient_sound_interval":
+						field "event_name": "ambient"
+						field "range": 0.0
+						field "value": 0.0
+				component group "easy_attack": component "minecraft:attack": field "damage": 2
+				component group "escape_fire":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": [20, 50]
+						field "randomInterval": true
+						field "time_down_event":
+							field "event": "stop_panicking_after_fire"
+							field "target": "self"
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+						field "force": true
+				component group "find_hive":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 180
+						field "time_down_event":
+							field "event": "find_hive_timeout"
+							field "target": "self"
+					component "minecraft:behavior.move_to_block":
+						field "priority": 10
+						field "search_range": 16
+						field "search_height": 10
+						field "tick_interval": 1
+						field "goal_radius": 0.633
+						field "target_blocks":
+							block "bee_nest"
+							block "beehive"
+						field "on_reach":
+							event:
+								field "event": "minecraft:bee_returned_to_hive"
+								field "target": "block"
+				component group "hard_attack":
+					component "minecraft:attack":
+						field "damage": 2
+						field "effect_name": "poison"
+						field "effect_duration": 18
+				component group "has_nectar":
+					component "minecraft:grows_crop":
+						field "charges": 10
+						field "chance": 0.03
+				component group "hive_full":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": [5, 20]
+						field "randomInterval": true
+						field "time_down_event":
+							field "event": "find_hive_event"
+							field "target": "self"
+				component group "look_for_food":
+					component "minecraft:ambient_sound_interval":
+						field "event_name": "ambient.pollinate"
+						field "range": 3.0
+						field "value": 2.0
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 180
+						field "time_down_event": field "event": "find_flower_timeout"
+					component "minecraft:behavior.move_to_block":
+						field "priority": 10
+						field "tick_interval": 1
+						field "start_chance": 0.5
+						field "search_range": 6
+						field "search_height": 4
+						field "goal_radius": 1.0
+						field "stay_duration": 20.0
+						field "target_selection_method": "random"
+						field "target_offset": [0, 0.25, 0]
+						field "target_block_filters":
+							filter property "test": "is_waterlogged"
+							filter property "subject": "block"
+							filter property "operator": "=="
+							filter property "value": false
+						field "target_blocks":
+							block "minecraft:azalea_leaves_flowered"
+							block "minecraft:cherry_leaves"
+							block "minecraft:double_plant:12"
+							block "minecraft:double_plant:13"
+							block "minecraft:double_plant:8"
+							block "minecraft:double_plant:9"
+							block "minecraft:flowering_azalea"
+							block "minecraft:mangrove_propagule"
+							block "minecraft:pink_petals"
+							block "minecraft:red_flower"
+							block "minecraft:wither_rose"
+							block "minecraft:yellow_flower"
+						field "on_stay_completed":
+							event:
+								field "event": "collected_nectar"
+								field "target": "self"
+				component group "normal_attack":
+					component "minecraft:attack":
+						field "damage": 2
+						field "effect_name": "poison"
+						field "effect_duration": 10
+				component group "perish":
+					component "minecraft:hurt_on_condition":
+						field "damage_conditions":
+							damage condition:
+								field "cause": "none"
+								field "damage_per_tick": 999
+				component group "return_to_home":
+					component "minecraft:behavior.go_home":
+						field "priority": 4
+						field "speed_multiplier": 1.0
+						field "interval": 1
+						field "goal_radius": 1.2
+						field "on_home":
+							event:
+								field "filters":
+									filter property "any_of":
+										filter:
+											filter property "test": "is_block"
+											filter property "subject": "block"
+											filter property "value": "minecraft:bee_nest"
+										filter:
+											filter property "test": "is_block"
+											filter property "subject": "block"
+											filter property "value": "minecraft:beehive"
+								field "event": "minecraft:bee_returned_to_hive"
+								field "target": "block"
+							event:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_block"
+											filter property "subject": "block"
+											filter property "operator": "!="
+											filter property "value": "minecraft:bee_nest"
+										filter:
+											filter property "test": "is_block"
+											filter property "subject": "block"
+											filter property "operator": "!="
+											filter property "value": "minecraft:beehive"
+								field "event": "find_hive_event"
+								field "target": "self"
+						field "on_failed":
+							event:
+								field "event": "find_hive_event"
+								field "target": "self"
+				component group "shelter_detection":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "seek_shelter"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "is_daytime"
+													filter property "value": false
+												filter:
+													filter property "test": "weather"
+													filter property "operator": "=="
+													filter property "value": "precipitation"
+										filter:
+											filter property "test": "bool_property"
+											filter property "domain": "minecraft:has_nectar"
+											filter property "operator": "!="
+										filter:
+											filter property "test": "has_biome_tag"
+											filter property "value": "overworld"
+				component group "take_nearest_target":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 5
+						field "time_down_event":
+							field "event": "calmed_down"
+							field "target": "self"
+					component "minecraft:behavior.nearest_attackable_target":
+						field "priority": 2
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "value": "player"
+								field "max_dist": 10
+				component group "track_attacker": component "minecraft:behavior.hurt_by_target": field "priority": 1
+			field "components":
+				component "minecraft:balloonable": field "mass": 0.5
+				component "minecraft:block_sensor":
+					field "sensor_radius": 16
+					field "sources":
+						filter:
+							filter property "test": "has_silk_touch"
+							filter property "subject": "other"
+							filter property "value": false
+					field "on_break":
+						event:
+							field "block_list":
+								block "minecraft:bee_nest"
+								block "minecraft:beehive"
+							field "on_block_broken": "hive_destroyed"
+				component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				component "minecraft:can_fly": empty
+				component "minecraft:collision_box":
+					field "width": 0.55
+					field "height": 0.5
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "deals_damage": false
+				component "minecraft:flying_speed": field "value": 0.15
+				component "minecraft:follow_range": field "value": 1024
+				component "minecraft:game_event_movement_tracking": field "emit_flap": true
+				component "minecraft:health":
+					field "value": 10
+					field "max": 10
+				component "minecraft:home":
+					field "restriction_radius": 22
+					field "home_block_list":
+						block "minecraft:bee_nest"
+						block "minecraft:beehive"
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.hover": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.hover":
+					field "can_path_over_water": true
+					field "can_sink": false
+					field "can_pass_doors": false
+					field "can_path_from_air": true
+					field "avoid_water": true
+					field "avoid_damage_blocks": true
+					field "avoid_sun": false
+				component "minecraft:on_target_acquired":
+					field "event": "attacked"
+					field "target": "self"
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "arthropod"
+						family "bee"
+						family "mob"
+				component "minecraft:behavior.float": field "priority": 19
+				component "minecraft:behavior.move_towards_home_restriction": field "priority": 9
+				component "minecraft:behavior.random_hover":
+					field "priority": 12
+					field "xz_dist": 8
+					field "y_dist": 8
+					field "y_offset": -1
+					field "interval": 1
+					field "hover_height": [1, 4]
+				component "minecraft:behavior.tempt":
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "within_radius": 8
+					field "can_tempt_vertically": true
+					field "items":
+						item "minecraft:azalea_leaves_flowered"
+						item "minecraft:cherry_leaves"
+						item "minecraft:double_plant:0"
+						item "minecraft:double_plant:1"
+						item "minecraft:double_plant:4"
+						item "minecraft:double_plant:5"
+						item "minecraft:flowering_azalea"
+						item "minecraft:mangrove_propagule"
+						item "minecraft:pink_petals"
+						item "minecraft:red_flower"
+						item "minecraft:wither_rose"
+						item "minecraft:yellow_flower"
+			field "events":
+				event "abort_sheltering":
+					field "add":
+						field "component_groups":
+							component group "look_for_food"
+							component group "shelter_detection"
+					field "remove":
+						field "component_groups":
+							component group "abort_shelter_detection"
+							component group "escape_fire"
+							component group "return_to_home"
+				event "attacked":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "angry_bee"
+							field "remove": field "component_groups": component group "take_nearest_target"
+						sequence item 1:
+							field "add": field "component_groups": component group "easy_attack"
+							field "filters":
+								filter property "test": "is_difficulty"
+								filter property "value": "easy"
+							field "remove":
+								field "component_groups":
+									component group "hard_attack"
+									component group "normal_attack"
+						sequence item 2:
+							field "add": field "component_groups": component group "normal_attack"
+							field "filters":
+								filter property "test": "is_difficulty"
+								filter property "value": "normal"
+							field "remove":
+								field "component_groups":
+									component group "easy_attack"
+									component group "hard_attack"
+						sequence item 3:
+							field "add": field "component_groups": component group "hard_attack"
+							field "filters":
+								filter property "test": "is_difficulty"
+								filter property "value": "hard"
+							field "remove":
+								field "component_groups":
+									component group "easy_attack"
+									component group "normal_attack"
+				event "calmed_down":
+					field "add":
+						field "component_groups":
+							component group "return_to_home"
+							component group "shelter_detection"
+					field "remove":
+						field "component_groups":
+							component group "angry_bee"
+							component group "take_nearest_target"
+				event "collected_nectar":
+					field "add":
+						field "component_groups":
+							component group "default_sound"
+							component group "has_nectar"
+							component group "return_to_home"
+					field "remove": field "component_groups": component group "look_for_food"
+					field "set_property": property "minecraft:has_nectar": true
+				event "countdown_to_perish_event":
+					field "add": field "component_groups": component group "countdown_to_perish"
+					field "remove":
+						field "component_groups":
+							component group "angry_bee"
+							component group "collect_nectar"
+							component group "escape_fire"
+							component group "find_hive"
+							component group "hive_full"
+							component group "look_for_food"
+							component group "take_nearest_target"
+							component group "track_attacker"
+				event "find_flower_timeout":
+					field "add": field "component_groups": component group "return_to_home"
+					field "remove": field "component_groups": component group "look_for_food"
+				event "find_hive_event":
+					field "add": field "component_groups": component group "find_hive"
+					field "remove":
+						field "component_groups":
+							component group "hive_full"
+							component group "return_to_home"
+				event "find_hive_timeout":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "look_for_food"
+							field "filters":
+								filter property "test": "bool_property"
+								filter property "operator": "!="
+								filter property "domain": "minecraft:has_nectar"
+							field "remove":
+								field "component_groups":
+									component group "escape_fire"
+									component group "find_hive"
+						sequence item 1:
+							field "add": field "component_groups": component group "return_to_home"
+							field "filters":
+								filter property "test": "bool_property"
+								filter property "domain": "minecraft:has_nectar"
+							field "remove": field "component_groups": component group "find_hive"
+				event "hive_destroyed":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "take_nearest_target"
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "self"
+								filter property "operator": "!="
+								filter property "value": "pacified"
+							field "remove": field "component_groups": component group "escape_fire"
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group "bee_adult"
+					field "remove": field "component_groups": component group "bee_baby"
+				event "minecraft:entity_born":
+					field "add":
+						field "component_groups":
+							component group "bee_baby"
+							component group "look_for_food"
+							component group "shelter_detection"
+							component group "track_attacker"
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "randomize":
+								randomize item:
+									field "weight": 95
+									field "add": field "component_groups": component group "bee_adult"
+								randomize item:
+									field "weight": 5
+									field "add": field "component_groups": component group "bee_baby"
+						sequence item 1:
+							field "add":
+								field "component_groups":
+									component group "look_for_food"
+									component group "shelter_detection"
+									component group "track_attacker"
+				event "minecraft:exited_disturbed_hive":
+					field "add": field "component_groups": component group "take_nearest_target"
+					field "remove":
+						field "component_groups":
+							component group "abort_shelter_detection"
+							component group "escape_fire"
+							component group "find_hive"
+							component group "has_nectar"
+							component group "return_to_home"
+							component group "shelter_detection"
+					field "set_property": property "minecraft:has_nectar": false
+				event "minecraft:exited_hive":
+					field "add":
+						field "component_groups":
+							component group "look_for_food"
+							component group "shelter_detection"
+					field "remove":
+						field "component_groups":
+							component group "abort_shelter_detection"
+							component group "find_hive"
+							component group "has_nectar"
+							component group "return_to_home"
+					field "set_property": property "minecraft:has_nectar": false
+				event "minecraft:exited_hive_on_fire": field "add": field "component_groups": component group "escape_fire"
+				event "minecraft:hive_full":
+					field "add": field "component_groups": component group "hive_full"
+					field "remove":
+						field "component_groups":
+							component group "find_hive"
+							component group "return_to_home"
+				event "perish_event": field "add": field "component_groups": component group "perish"
+				event "seek_shelter":
+					field "add":
+						field "component_groups":
+							component group "abort_shelter_detection"
+							component group "default_sound"
+							component group "return_to_home"
+					field "remove":
+						field "component_groups":
+							component group "collect_nectar"
+							component group "look_for_food"
+							component group "shelter_detection"
+				event "stop_panicking_after_fire": field "remove": field "component_groups": component group "escape_fire"
+Changed entity "boat.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 5 (+1, -0)
+				Added component group "minecraft:can_ride_bamboo":
+					component "minecraft:rideable":
+						field "seat_count": 2
+						field "passenger_max_width": 1.375
+						field "interact_text": "action.interact.ride.boat"
+						field "pull_in_entities": true
+						field "seats":
+							seat:
+								field "position": [0.0, 0.1, 0.0]
+								field "min_rider_count": 0
+								field "max_rider_count": 1
+								field "rotate_rider_by": -90
+								field "lock_rider_rotation": 90
+							seat:
+								field "position": [0.2, 0.1, 0.0]
+								field "min_rider_count": 2
+								field "max_rider_count": 2
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+							seat:
+								field "position": [-0.6, 0.1, 0.0]
+								field "min_rider_count": 2
+								field "max_rider_count": 2
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+				Moved component group from "minecraft:can_ride" to "minecraft:can_ride_default".
+			Changed field "components":
+				Total component: 12 (+0, -1)
+				Removed component "minecraft:rideable":
+					field "seat_count": 2
+					field "passenger_max_width": 1.375
+					field "interact_text": "action.interact.ride.boat"
+					field "pull_in_entities": true
+					field "seats":
+						seat:
+							field "position": [0.0, -0.2, 0.0]
+							field "min_rider_count": 0
+							field "max_rider_count": 1
+							field "rotate_rider_by": -90
+							field "lock_rider_rotation": 90
+						seat:
+							field "position": [0.2, -0.2, 0.0]
+							field "min_rider_count": 2
+							field "max_rider_count": 2
+							field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+							field "lock_rider_rotation": 90
+						seat:
+							field "position": [-0.6, -0.2, 0.0]
+							field "min_rider_count": 2
+							field "max_rider_count": 2
+							field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+							field "lock_rider_rotation": 90
+			Changed field "events":
+				Total event: 6 (+2, -0)
+				Added event "minecraft:add_can_ride":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "minecraft:can_ride_default"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "!="
+								filter property "value": 7
+						sequence item 1:
+							field "add": field "component_groups": component group "minecraft:can_ride_bamboo"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": 7
+				Added event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride".
+				Changed event "minecraft:exited_bubble_column":
+					Added field "trigger": "minecraft:add_can_ride".
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 1 (+0, -1)
+							Removed component group "minecraft:can_ride".
+				Changed event "minecraft:sink":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Changed component group from "minecraft:can_ride" to "minecraft:can_ride_bamboo".
+							Added component group "minecraft:can_ride_default".
+	Removed behavior pack "experimental":
+		field "format_version": "1.18.10"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:boat"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
+			field "component_groups":
+				component group "minecraft:above_bubble_column_down":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": false
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+						field "drag_down_on_buoyancy_removed": 0.7
+					component "minecraft:out_of_control": empty
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 3
+						field "time_down_event":
+							field "event": "minecraft:sink"
+							field "target": "self"
+				component group "minecraft:above_bubble_column_up":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": false
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+						field "drag_down_on_buoyancy_removed": 0.7
+					component "minecraft:out_of_control": empty
+				component group "minecraft:can_ride_bamboo":
+					component "minecraft:rideable":
+						field "seat_count": 2
+						field "passenger_max_width": 1.375
+						field "interact_text": "action.interact.ride.boat"
+						field "pull_in_entities": true
+						field "seats":
+							seat:
+								field "position": [0.0, 0.1, 0.0]
+								field "min_rider_count": 0
+								field "max_rider_count": 1
+								field "rotate_rider_by": -90
+								field "lock_rider_rotation": 90
+							seat:
+								field "position": [0.2, 0.1, 0.0]
+								field "min_rider_count": 2
+								field "max_rider_count": 2
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+							seat:
+								field "position": [-0.6, 0.1, 0.0]
+								field "min_rider_count": 2
+								field "max_rider_count": 2
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+				component group "minecraft:can_ride_default":
+					component "minecraft:rideable":
+						field "seat_count": 2
+						field "passenger_max_width": 1.375
+						field "interact_text": "action.interact.ride.boat"
+						field "pull_in_entities": true
+						field "seats":
+							seat:
+								field "position": [0.0, -0.2, 0.0]
+								field "min_rider_count": 0
+								field "max_rider_count": 1
+								field "rotate_rider_by": -90
+								field "lock_rider_rotation": 90
+							seat:
+								field "position": [0.2, -0.2, 0.0]
+								field "min_rider_count": 2
+								field "max_rider_count": 2
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+							seat:
+								field "position": [-0.6, -0.2, 0.0]
+								field "min_rider_count": 2
+								field "max_rider_count": 2
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+				component group "minecraft:floating":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": true
+						field "big_wave_probability": 0.03
+						field "big_wave_speed": 10.0
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+			field "components":
+				component "minecraft:balloonable": empty
+				component "minecraft:buoyant":
+					field "base_buoyancy": 1.0
+					field "apply_gravity": true
+					field "simulate_waves": true
+					field "big_wave_probability": 0.03
+					field "big_wave_speed": 10.0
+					field "liquid_blocks":
+						block "minecraft:flowing_water"
+						block "minecraft:water"
+				component "minecraft:collision_box":
+					field "width": 1.4
+					field "height": 0.455
+				component "minecraft:conditional_bandwidth_optimization":
+					field "default_values":
+						field "max_optimized_distance": 60.0
+						field "max_dropped_ticks": 20
+						field "use_motion_prediction_hints": true
+					field "conditional_values":
+						condition:
+							field "max_optimized_distance": 0.0
+							field "max_dropped_ticks": 0
+							field "use_motion_prediction_hints": true
+							field "conditional_values":
+								filter:
+									filter property "test": "is_moving"
+									filter property "subject": "self"
+									filter property "operator": "=="
+									filter property "value": true
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:inside_block_notifier":
+					field "block_list":
+						block:
+							field "block":
+								field "name": "minecraft:bubble_column"
+								field "states": state "drag_down": true
+							field "entered_block_event":
+								field "event": "minecraft:entered_bubble_column_down"
+								field "target": "self"
+							field "exited_block_event":
+								field "event": "minecraft:exited_bubble_column"
+								field "target": "self"
+						block:
+							field "block":
+								field "name": "minecraft:bubble_column"
+								field "states": state "drag_down": false
+							field "entered_block_event":
+								field "event": "minecraft:entered_bubble_column_up"
+								field "target": "self"
+							field "exited_block_event":
+								field "event": "minecraft:exited_bubble_column"
+								field "target": "self"
+				component "minecraft:is_stackable": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:loot": field "table": "loot_tables/entities/boat.json"
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "boat"
+						family "inanimate"
+			field "events":
+				event "minecraft:add_can_ride":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "minecraft:can_ride_default"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "!="
+								filter property "value": 7
+						sequence item 1:
+							field "add": field "component_groups": component group "minecraft:can_ride_bamboo"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": 7
+				event "minecraft:entered_bubble_column_down":
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_down"
+					field "remove": field "component_groups": component group "minecraft:floating"
+				event "minecraft:entered_bubble_column_up":
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_up"
+					field "remove": field "component_groups": component group "minecraft:floating"
+				event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride"
+				event "minecraft:exited_bubble_column":
+					field "trigger": "minecraft:add_can_ride"
+					field "add": field "component_groups": component group "minecraft:floating"
+					field "remove":
+						field "component_groups":
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
+				event "minecraft:sink":
+					field "remove":
+						field "component_groups":
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
+							component group "minecraft:can_ride_bamboo"
+							component group "minecraft:can_ride_default"
+							component group "minecraft:floating"
+Changed entity "camel.json":
+	Moved behavior pack from "experimental" to "core".
+Changed entity "chest_boat.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 5 (+1, -0)
+				Added component group "minecraft:can_ride_bamboo":
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "passenger_max_width": 1.375
+						field "interact_text": "action.interact.ride.boat"
+						field "pull_in_entities": true
+						field "seats":
+							seat:
+								field "position": [0.2, 0.1, 0.0]
+								field "min_rider_count": 0
+								field "max_rider_count": 1
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+				Moved component group from "minecraft:can_ride" to "minecraft:can_ride_default".
+			Changed field "components":
+				Total component: 12 (+0, -1)
+				Removed component "minecraft:rideable":
+					field "seat_count": 1
+					field "passenger_max_width": 1.375
+					field "interact_text": "action.interact.ride.boat"
+					field "pull_in_entities": true
+					field "seats":
+						seat:
+							field "position": [0.2, -0.2, 0.0]
+							field "min_rider_count": 0
+							field "max_rider_count": 1
+							field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+							field "lock_rider_rotation": 90
+			Changed field "events":
+				Total event: 6 (+2, -0)
+				Added event "minecraft:add_can_ride":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "minecraft:can_ride_default"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "!="
+								filter property "value": 7
+						sequence item 1:
+							field "add": field "component_groups": component group "minecraft:can_ride_bamboo"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": 7
+				Added event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride".
+				Changed event "minecraft:exited_bubble_column":
+					Added field "trigger": "minecraft:add_can_ride".
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 1 (+0, -1)
+							Removed component group "minecraft:can_ride".
+				Changed event "minecraft:sink":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Changed component group from "minecraft:can_ride" to "minecraft:can_ride_bamboo".
+							Added component group "minecraft:can_ride_default".
+	Removed behavior pack "experimental":
+		field "format_version": "1.18.10"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:chest_boat"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
+			field "component_groups":
+				component group "minecraft:above_bubble_column_down":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": false
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+						field "drag_down_on_buoyancy_removed": 0.7
+					component "minecraft:out_of_control": empty
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 3
+						field "time_down_event":
+							field "event": "minecraft:sink"
+							field "target": "self"
+				component group "minecraft:above_bubble_column_up":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": false
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+						field "drag_down_on_buoyancy_removed": 0.7
+					component "minecraft:out_of_control": empty
+				component group "minecraft:can_ride_bamboo":
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "passenger_max_width": 1.375
+						field "interact_text": "action.interact.ride.boat"
+						field "pull_in_entities": true
+						field "seats":
+							seat:
+								field "position": [0.2, 0.1, 0.0]
+								field "min_rider_count": 0
+								field "max_rider_count": 1
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+				component group "minecraft:can_ride_default":
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "passenger_max_width": 1.375
+						field "interact_text": "action.interact.ride.boat"
+						field "pull_in_entities": true
+						field "seats":
+							seat:
+								field "position": [0.2, -0.2, 0.0]
+								field "min_rider_count": 0
+								field "max_rider_count": 1
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+				component group "minecraft:floating":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": true
+						field "big_wave_probability": 0.03
+						field "big_wave_speed": 10.0
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+			field "components":
+				component "minecraft:balloonable": empty
+				component "minecraft:buoyant":
+					field "base_buoyancy": 1.0
+					field "apply_gravity": true
+					field "simulate_waves": true
+					field "big_wave_probability": 0.03
+					field "big_wave_speed": 10.0
+					field "liquid_blocks":
+						block "minecraft:flowing_water"
+						block "minecraft:water"
+				component "minecraft:collision_box":
+					field "width": 1.4
+					field "height": 0.455
+				component "minecraft:conditional_bandwidth_optimization":
+					field "default_values":
+						field "max_optimized_distance": 60.0
+						field "max_dropped_ticks": 20
+						field "use_motion_prediction_hints": true
+					field "conditional_values":
+						condition:
+							field "max_optimized_distance": 0.0
+							field "max_dropped_ticks": 0
+							field "use_motion_prediction_hints": true
+							field "conditional_values":
+								filter:
+									filter property "test": "is_moving"
+									filter property "subject": "self"
+									filter property "operator": "=="
+									filter property "value": true
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:inside_block_notifier":
+					field "block_list":
+						block:
+							field "block":
+								field "name": "minecraft:bubble_column"
+								field "states": state "drag_down": true
+							field "entered_block_event":
+								field "event": "minecraft:entered_bubble_column_down"
+								field "target": "self"
+							field "exited_block_event":
+								field "event": "minecraft:exited_bubble_column"
+								field "target": "self"
+						block:
+							field "block":
+								field "name": "minecraft:bubble_column"
+								field "states": state "drag_down": false
+							field "entered_block_event":
+								field "event": "minecraft:entered_bubble_column_up"
+								field "target": "self"
+							field "exited_block_event":
+								field "event": "minecraft:exited_bubble_column"
+								field "target": "self"
+				component "minecraft:inventory":
+					field "container_type": "chest_boat"
+					field "inventory_size": 27
+					field "can_be_siphoned_from": true
+				component "minecraft:is_stackable": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "boat"
+						family "inanimate"
+			field "events":
+				event "minecraft:add_can_ride":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "minecraft:can_ride_default"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "!="
+								filter property "value": 7
+						sequence item 1:
+							field "add": field "component_groups": component group "minecraft:can_ride_bamboo"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": 7
+				event "minecraft:entered_bubble_column_down":
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_down"
+					field "remove": field "component_groups": component group "minecraft:floating"
+				event "minecraft:entered_bubble_column_up":
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_up"
+					field "remove": field "component_groups": component group "minecraft:floating"
+				event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride"
+				event "minecraft:exited_bubble_column":
+					field "trigger": "minecraft:add_can_ride"
+					field "add": field "component_groups": component group "minecraft:floating"
+					field "remove":
+						field "component_groups":
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
+				event "minecraft:sink":
+					field "remove":
+						field "component_groups":
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
+							component group "minecraft:can_ride_bamboo"
+							component group "minecraft:can_ride_default"
+							component group "minecraft:floating"
 Changed entity "frog.json":
-	Added behavior pack "experimental":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "events":
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 2:
+							Changed field "filters":
+								Changed filter property "any_of":
+									Changed filter:
+										Changed filter property "all_of":
+											Total filter: 4 (+1, -0)
+											Added filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "cherry_grove"
+				Changed event "minecraft:entity_transformed":
+					Changed field "sequence":
+						Changed sequence item 2:
+							Changed field "filters":
+								Changed filter property "any_of":
+									Changed filter:
+										Changed filter property "all_of":
+											Total filter: 4 (+1, -0)
+											Added filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "cherry_grove"
+	Removed behavior pack "experimental":
 		field "format_version": "1.16.0"
 		field "minecraft:entity":
 			field "description":
@@ -344,3 +1538,19 @@ Changed entity "frog.json":
 				event "spawn_cold": field "add": field "component_groups": component group "cold_frog"
 				event "spawn_temperate": field "add": field "component_groups": component group "temperate_frog"
 				event "spawn_warm": field "add": field "component_groups": component group "warm_frog"
+Changed entity "pig.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.18.10" to "1.20.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:pig_saddled":
+					Changed component "minecraft:boostable":
+						Changed field "speed_multiplier" from 2.0 to 1.35.
+Changed entity "strider.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.18.10" to "1.20.0".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:strider_saddled":
+					Changed component "minecraft:boostable":
+						Changed field "speed_multiplier" from 2.0 to 1.35.

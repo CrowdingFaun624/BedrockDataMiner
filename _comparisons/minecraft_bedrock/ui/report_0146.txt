@@ -1,321 +1,161 @@
-Difference of "ui" between "1.14.0" and "1.14.0.50" (beta of "1.14.1").
-Unable to create data files for 1 file between: "1.14.0.12"
+Difference of "ui" between "1.14.1.3" (beta of "1.14.1") and "1.14.2.50" (beta of "1.14.20").
+Unable to create data files for 1 file between: "1.14.1"
 
-Total namespace: 199 (+0, -1)
-Changed namespace "common":
-	Changed element "base_screen":
-		Unchanged field "type": "screen".
-		Changed field "controls":
-			Changed control:
-				Changed element "variables_button_mappings_and_controls":
-					Unchanged field "type": "input_panel".
-					Changed field "variables":
-						Changed variable:
-							Changed field "$variables":
-								Total variable: 37 (+0, -1)
-								Removed variable "$gamepad_disconnect_screen_size":
-									item 0: 300
-									item 1: 100
-						Changed variable:
-							Changed field "$variables":
-								Total variable: 37 (+0, -1)
-								Removed variable "$gamepad_disconnect_screen_size":
-									item 0: 300
-									item 1: 100
-Changed namespace "common_store":
-	Changed element "hero_row_l2_panel":
+Changed namespace "convert_purchases_to_xbl":
+	Changed element "dialog_content":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "centering_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "l2_featured_stack":
-								Unchanged field "type": "stack_panel".
-								Changed field "$variables":
-									Changed variable "$offer_size":
-										Changed item 0 from "33.333% - 2px" to "fill".
-Removed namespace "gamepad_disconnected":
-	element "gamepad_disconnected_modal":
-		field "type": "panel"
-		field "size": "$gamepad_disconnect_screen_size"
-		field "controls":
-			control:
-				element "dialog_background_hollow_3@common.dialog_background_hollow_3":
-					field "size": ["100%", "100%"]
-					field "controls":
-						control:
-							element "control":
-								field "type": "image"
-								field "texture": "textures/ui/control"
-								field "size": ["100% - 16px", "100%"]
-								field "layer": -1
-								field "controls":
-									control:
-										element "content_panel":
-											field "type": "stack_panel"
-											field "size": ["100% - 4px", "100%"]
-											field "controls":
-												control:
-													element "padding_0":
-														field "type": "panel"
-														field "size": [0, 8]
-												control:
-													element "title":
-														field "layer": 10
-														field "type": "label"
-														field "offset": [0, 8]
-														field "size": ["95%", 10]
-														field "color": "$title_text_color"
-														field "shadow": false
-														field "text": "gamepad_disconnect"
-												control:
-													element "padding_1":
-														field "type": "panel"
-														field "size": [0, 8]
-												control:
-													element "description":
-														field "layer": 10
-														field "type": "label"
-														field "color": "$body_text_color"
-														field "size": ["100%", "default"]
-														field "text": "connect_gamepad.pressButtonToContinue"
-	element "gamepad_disconnected_screen@common.base_screen": field "$variables": variable "$screen_content": "gamepad_disconnected.gamepad_disconnected_modal"
-Changed namespace "pdp":
-	Changed element "purchase_buttons_panel":
-		Unchanged field "type": "stack_panel".
-		Added field "variables":
-			variable:
-				field "requires": "$is_on_sale"
-				field "$variables":
-					variable "$hover_button_texture": "textures/ui/sale_button_borderless_lighthover"
-					variable "$pressed_button_texture": "textures/ui/sale_button_borderless_lightpressed"
-	Changed element "smooth_coin_purchase_label_formfitting":
-		field "type": "stack_panel"
-		field "orientation": "horizontal"
-		field "size": ["100%", "100%"]
-		field "use_priority": true
-		field "controls":
-			control:
-				element "sales_banner_offset_panel":
-					field "priority": 0
-					field "type": "panel"
-					field "size": ["100%c", "100%"]
-					field "controls":
-						control:
-							element "sales_banner_panel":
-								field "type": "panel"
-								field "size": ["100%c", "100% + 4px"]
-								field "offset": [-2, 0]
-								field "anchor_from": "left_middle"
-								field "anchor_to": "left_middle"
-								field "controls":
-									control:
-										element "markdown_banner@common_store.markdown_background":
-											field "size": ["100%c", "100%"]
-											field "layer": 9
-											field "$variables":
-												variable "$markdown_label": "pdp.discount_label"
-												variable "$banner_size":
-													item 0: "20px"
-													item 1: "100%"
-												variable "$triangle_offset":
-													item 0: 0
-													item 1: 0
-												variable "$triangle_texture": "textures/ui/saleflagtrianglebeveldefault"
-												variable "$banner_texture": "textures/ui/sale_button_borderless_lighthoverflag"
-								field "bindings":
-									binding:
-										field "binding_name": "#is_on_sale"
-										field "binding_name_override": "#visible"
-			control:
-				element "markdown_panel":
-					field "priority": 10
-					field "type": "panel"
-					field "size": ["100%c", "100%"]
-					field "controls":
-						control:
-							element "markdown_label@pdp.price_markdown_panel":
-								field "size": ["100%c + 5px", "100%"]
-								field "$variables":
-									variable "$strike_thru_offset":
-										item 0: 0
-										item 1: 0
-					field "bindings":
-						binding:
-							field "binding_name": "#is_on_sale"
-							field "binding_name_override": "#visible"
-			control:
-				element "fill_pad_left":
-					field "priority": 0
-					field "type": "panel"
-					field "size": ["fill", "100%"]
-					field "bindings":
-						binding:
-							field "binding_name": "(not #is_on_sale)"
-							field "binding_name_override": "#visible"
-			control:
-				element "left_coin_image_offset_panel":
-					field "priority": 0
-					field "ignored": "$coin_image_on_right"
-					field "type": "panel"
-					field "size": ["100%c", "100%"]
-					field "controls": control element "coin@pdp.coin_image": field "offset": [8, 1]
-			control:
-				element "coin_purchase_label_panel":
-					field "priority": 0
-					field "type": "panel"
-					field "size": ["100%c", "100%"]
-					field "controls": control element "coin_purchase_label_text_left@pdp.coin_purchase_label_text": empty
-			control:
-				element "pad":
-					field "priority": 0
-					field "type": "panel"
-					field "size": [1, "100%"]
-			control:
-				element "right_coin_image_offset_panel":
-					field "priority": 0
-					field "ignored": "(not $coin_image_on_right)"
-					field "type": "panel"
-					field "size": ["100%c", "100%"]
-					field "controls": control element "coin@pdp.coin_image": field "offset": [-3, 0]
-			control:
-				element "fill_pad_right":
-					field "priority": 0
-					field "type": "panel"
-					field "size": ["fill", "100%"]
-					field "bindings":
-						binding:
-							field "binding_name": "(not #is_on_sale)"
-							field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$coin_image_on_right|default": true
-			variable "$purchase_price_font_type|default": "smooth"
-		field "type": "panel"
-		field "size": ["100%", "100%"]
-		field "controls":
-			control:
-				element "sales_banner_panel":
-					field "type": "panel"
-					field "size": ["100%c", "100% + 4px"]
-					field "offset": [-2, 0]
-					field "anchor_from": "left_middle"
-					field "anchor_to": "left_middle"
-					field "controls":
-						control:
-							element "markdown_banner@common_store.markdown_background":
-								field "size": ["100%c", "100%"]
-								field "ignored": "(not $default_state)"
-								field "layer": 9
-								field "$variables":
-									variable "$markdown_label": "pdp.discount_label"
-									variable "$banner_size":
-										item 0: "20px"
-										item 1: "100%"
-									variable "$triangle_offset":
-										item 0: 0
-										item 1: 0
-									variable "$triangle_texture": "textures/ui/saleflagtrianglebeveldefault"
-									variable "$banner_texture": "textures/ui/sale_button_borderless_lighthoverflag"
-						control:
-							element "discount_panel":
-								field "type": "panel"
-								field "size": ["100%c", "100%"]
-								field "ignored": "$default_state"
-								field "controls":
-									control:
-										element "discount_label@pdp.discount_label":
-											field "offset": [-2.5, 0]
-											field "layer": 11
-					field "bindings":
-						binding:
-							field "binding_name": "#is_on_sale"
-							field "binding_name_override": "#visible"
-			control:
-				element "text_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%c", "100%"]
-					field "offset": [7, 0]
-					field "controls":
-						control:
-							element "markdown_panel":
-								field "type": "panel"
-								field "size": ["100%c", "100%"]
-								field "controls":
-									control:
-										element "markdown_label@pdp.price_markdown_panel":
-											field "size": ["100%c + 5px", "100%"]
-											field "offset": [0, 0]
-											field "$variables":
-												variable "$strike_thru_offset":
-													item 0: 0
-													item 1: 0
-								field "bindings":
-									binding:
-										field "binding_name": "#is_on_sale"
-										field "binding_name_override": "#visible"
-						control:
-							element "left_coin_image_offset_panel":
-								field "ignored": "$coin_image_on_right"
-								field "type": "panel"
-								field "size": ["100%c", "100%"]
-								field "controls": control element "coin@pdp.coin_image": field "offset": [8, 1]
-						control:
-							element "coin_purchase_label_panel":
-								field "type": "panel"
-								field "size": ["100%c", "100%"]
-								field "controls": control element "coin_purchase_label_text_left@pdp.coin_purchase_label_text": empty
-						control:
-							element "pad":
-								field "type": "panel"
-								field "size": [1, "100%"]
-						control:
-							element "right_coin_image_offset_panel":
-								field "ignored": "(not $coin_image_on_right)"
-								field "type": "panel"
-								field "size": ["100%c", "100%"]
-								field "controls": control element "coin@pdp.coin_image": field "offset": [-3, 0]
-		field "$variables":
-			variable "$coin_image_on_right|default": true
-			variable "$purchase_price_font_type|default": "smooth"
-	Changed element "smooth_purchase_buttons_panel":
-		Unchanged field "type": "stack_panel".
-		Added field "variables":
-			variable:
-				field "requires": "$is_on_sale"
-				field "$variables":
-					variable "$hover_button_texture": "textures/ui/sale_button_borderless_lighthover"
-					variable "$pressed_button_texture": "textures/ui/sale_button_borderless_lightpressed"
-Changed namespace "play":
-	Changed element "friends_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
+				Changed element "button_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 14 (+1, -1)
 						Changed control:
-							Changed element "friends_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-								Removed field "ignored": "(not $is_realms_enabled)".
-						Removed control element "friends_crossplatform_disable_spacer@play.crossplatform_disable_spacer": field "ignored": "(not $is_realms_enabled)".
-						Added control element "friends_crossplatform_disable_spacer@play.crossplatform_disable_spacer": empty.
-	Changed element "worlds_stack_panel":
+							Changed element "save_to_xbox_button@common_buttons.light_text_button":
+								Changed field "$variables":
+									Total variable: 4 (+0, -1)
+									Changed variable "$button_text" from "#confirm_button_text" to "xbl.savePurchase.saveButton".
+									Removed variable "$button_text_binding_type": "global".
+						Changed control:
+							Changed element "leave_on_device_button@common_buttons.light_text_button":
+								Changed field "$variables":
+									Total variable: 3 (+0, -1)
+									Changed variable "$button_text" from "#skip_button_text" to "xbl.savePurchase.leaveOnDevice".
+									Removed variable "$button_text_binding_type": "global".
+Changed namespace "general_section":
+	Changed element "profile_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 17 (+1, -1)
 			Changed control:
-				Changed element "worlds_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-					Removed field "ignored": "(not $is_realms_enabled)".
-			Removed control element "worlds_crossplatform_disable_spacer@play.crossplatform_disable_spacer": field "ignored": "(not $is_realms_enabled)".
-			Added control element "worlds_crossplatform_disable_spacer@play.crossplatform_disable_spacer": empty.
-Changed namespace "profile_card":
-	Changed element "toggle_option":
-		Unchanged field "type": "stack_panel".
-		Changed field "$variables":
-			Total variable: 5 (+0, -1)
-			Removed variable "$toggle_tts_header": "$toggle_label".
+				Changed element "unlink_msa_account@settings_common.action_button":
+					Changed field "ignored" from "(not $is_berwick or not $is_pregame)" to "(not $is_pregame) or ($is_publish and (not $is_berwick))".
+Changed namespace "progress":
+	Changed element "simple_popup_dialog_base@popup_dialog.popup_dialog":
+		Added field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "modal.escape"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_up"
+				field "to_button_id": "button.menu_up"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_down"
+				field "to_button_id": "button.menu_down"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_left"
+				field "to_button_id": "button.menu_left"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_right"
+				field "to_button_id": "button.menu_right"
+				field "mapping_type": "global"
+				field "scope": "view"
 Changed namespace "start":
-	Changed element "platform_signin_button@common_buttons.light_text_button":
-		Removed field "size": [150, 32].
+	Changed element "online_buttons_panel":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Changed item 0 from "50% - 75px" to "50% - 100px".
+			Unchanged item 1: 32.
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_column":
+					Unchanged field "type": "stack_panel".
+					Changed field "offset":
+						Changed item 0 from "5%" to "10%".
+						Unchanged item 1: 0.
+					Changed field "controls":
+						Changed control:
+							Changed element "signingin":
+								Changed field "max_size":
+									Changed item 0 from 120 to 150.
+									Unchanged item 1: "100%".
+								Unchanged field "type": "label".
+Changed namespace "xbl_console_signin":
+	Changed element "gamepad_helpers":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "gamepad_helper_b@common.gamepad_helper_b":
+					Changed field "offset":
+						Unchanged item 0: 0.
+						Changed item 1 from "-10%" to "-5%".
+	Changed element "main_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 8 (+1, -1)
+			Removed control:
+				element "message_label_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "message_label":
+								field "type": "label"
+								field "size": ["100%", "default"]
+								field "text": "xbox.signin.message"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "layer": 2
+								field "text_alignment": "center"
+								field "color": "$xbl_signin_text_color"
+								field "font_type": "smooth"
+			Changed control:
+				Changed element "banner_1@xbl_console_signin.banner_fill":
+					Changed field "controls":
+						Changed control:
+							Changed element "url_label":
+								Unchanged field "type": "label".
+								Changed field "font_scale_factor" from 2 to "$xbl_signin_font_scale_factor".
+			Changed control:
+				Changed element "banner_2@xbl_console_signin.banner_fill":
+					Changed field "controls":
+						Changed control:
+							Changed element "code_label":
+								Unchanged field "type": "label".
+								Changed field "font_scale_factor" from 2 to "$xbl_signin_font_scale_factor".
+			Added control:
+				element "message_label_panel":
+					field "type": "stack_panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "message_label":
+								field "type": "label"
+								field "size": ["100%", "default"]
+								field "text": "xbox.signin.message"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "layer": 2
+								field "text_alignment": "left"
+								field "color": "$xbl_signin_text_color"
+								field "font_type": "smooth"
+						control:
+							element "padding":
+								field "type": "panel"
+								field "size": ["100%", 4]
+								field "visible": "#message_line2_visible"
+								field "bindings":
+									binding:
+										field "binding_name": "#message_line2_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "message_label_line2":
+								field "type": "label"
+								field "size": ["100%", "default"]
+								field "text": "xbox.signin.message.line2"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "layer": 2
+								field "text_alignment": "left"
+								field "color": "$xbl_signin_text_color"
+								field "font_type": "smooth"
+								field "visible": "#message_line2_visible"
+								field "bindings":
+									binding:
+										field "binding_name": "#message_line2_visible"
+										field "binding_name_override": "#visible"

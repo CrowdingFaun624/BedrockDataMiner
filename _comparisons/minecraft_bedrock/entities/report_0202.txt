@@ -1,78 +1,420 @@
-Difference of "entities" between "1.20.40.20" (beta of "1.20.40") and "1.20.40.21" (beta of "1.20.40").
+Difference of "entities" between "1.20.50.21" (beta of "1.20.50") and "1.20.50.22" (beta of "1.20.50").
 
-Changed entity "arrow.json":
+Changed entity "axolotl.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 28 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "on_kill":
+						field "event": "killed_enemy_event"
+						field "target": "self"
+				Added component "minecraft:behavior.melee_box_attack":
+					field "priority": 4
+					field "on_kill":
+						field "event": "killed_enemy_event"
+						field "target": "self"
+Changed entity "bee.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:hard_arrow":
-					Changed component "minecraft:projectile":
-						Changed field "on_hit":
-							Changed field "arrow_effect":
-								Added field "apply_effect_to_blocking_targets": false.
-				Changed component group "minecraft:pillager_arrow":
-					Changed component "minecraft:projectile":
-						Changed field "on_hit":
-							Changed field "arrow_effect":
-								Added field "apply_effect_to_blocking_targets": false.
-				Changed component group "minecraft:player_arrow":
-					Changed component "minecraft:projectile":
-						Changed field "on_hit":
-							Changed field "arrow_effect":
-								Added field "apply_effect_to_blocking_targets": false.
-			Changed field "components":
-				Changed component "minecraft:projectile":
-					Changed field "on_hit":
-						Changed field "arrow_effect":
-							Added field "apply_effect_to_blocking_targets": false.
-Changed entity "sniffer.json":
+				Changed component group "angry_bee":
+					Total component: 2 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "attack_once": true
+						field "speed_multiplier": 1.4
+						field "on_attack":
+							field "event": "countdown_to_perish_event"
+							field "target": "self"
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 2
+						field "attack_once": true
+						field "speed_multiplier": 1.4
+						field "on_attack":
+							field "event": "countdown_to_perish_event"
+							field "target": "self"
+			Changed field "events":
+				Total event: 20 (+1, -0)
+				Added event "minecraft:spawn_adult":
+					field "add":
+						field "component_groups":
+							component group "bee_adult"
+							component group "look_for_food"
+							component group "shelter_detection"
+							component group "track_attacker"
+Changed entity "blaze.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "feeling_happy":
-					Total component: 1 (+1, -1)
-					Removed component "minecraft:behavior.feeling_happy":
-						field "priority": 5
-						field "cooldown_range": 0.0
-						field "duration_range": [2.0, 5.0]
-						field "on_end":
-							field "event": "on_feeling_happy_end"
-							field "target": "self"
-					Added component "minecraft:behavior.timer_flag_3":
-						field "priority": 5
-						field "cooldown_range": 0.0
-						field "duration_range": [2.0, 5.0]
-						field "on_end":
-							field "event": "on_feeling_happy_end"
-							field "target": "self"
-				Changed component group "stand_up":
-					Total component: 1 (+1, -1)
-					Removed component "minecraft:behavior.rising":
+				Changed component group "melee_mode":
+					Total component: 2 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack": field "priority": 3.
+					Added component "minecraft:behavior.melee_box_attack": field "priority": 3.
+Changed entity "cave_spider.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:spider_angry":
+					Total component: 4 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 3
+						field "track_target": true
+						field "reach_multiplier": 1.4
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 3
+						field "track_target": true
+				Changed component group "minecraft:spider_hostile":
+					Total component: 4 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 3
+						field "track_target": true
+						field "random_stop_interval": 100
+						field "reach_multiplier": 0.8
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 3
+						field "track_target": true
+						field "random_stop_interval": 100
+Changed entity "dolphin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "dolphin_adult":
+					Total component: 4 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
 						field "priority": 2
-						field "cooldown_range": 0.0
-						field "duration_range": [2.0, 5.0]
-						field "on_end":
-							field "event": "on_rising_end"
-							field "target": "self"
-					Added component "minecraft:behavior.timer_flag_2":
+						field "track_target": true
+					Added component "minecraft:behavior.melee_box_attack":
 						field "priority": 2
-						field "cooldown_range": 0.0
-						field "duration_range": [2.0, 5.0]
-						field "on_end":
-							field "event": "on_rising_end"
-							field "target": "self"
+						field "track_target": true
+Changed entity "drowned.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:melee_mode":
+					Total component: 2 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "can_spread_on_fire": true
+						field "priority": 3
+						field "speed_multiplier": 1
+						field "track_target": false
+						field "require_complete_path": true
+					Added component "minecraft:behavior.melee_box_attack":
+						field "can_spread_on_fire": true
+						field "priority": 3
+						field "speed_multiplier": 1
+						field "track_target": false
+						field "require_complete_path": true
+Changed entity "enderman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:enderman_angry":
+					Total component: 3 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack": field "priority": 2.
+					Added component "minecraft:behavior.melee_box_attack": field "priority": 2.
+Changed entity "endermite.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 26 (+1, -1)
-				Removed component "minecraft:behavior.scenting":
+				Total component: 23 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 3
+					field "track_target": true
+				Added component "minecraft:behavior.melee_box_attack":
+					field "priority": 3
+					field "track_target": true
+Changed entity "fox.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:defending_fox":
+					Total component: 3 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 1
+						field "track_target": true
+						field "require_complete_path": true
+						field "reach_multiplier": 1.5
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 1
+						field "track_target": true
+						field "require_complete_path": true
+				Changed component group "minecraft:docile_fox":
+					Total component: 2 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 10
+						field "track_target": true
+						field "require_complete_path": true
+						field "reach_multiplier": 1.5
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 10
+						field "track_target": true
+						field "require_complete_path": true
+Changed entity "hoglin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:hoglin_adult":
+					Total component: 11 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+						field "reach_multiplier": 2.15
+						field "cooldown_time": 2
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+						field "cooldown_time": 2
+				Changed component group "minecraft:hoglin_baby":
+					Total component: 12 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+						field "reach_multiplier": 1.0
+						field "cooldown_time": 0.75
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+						field "cooldown_time": 0.75
+Changed entity "husk.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 31 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "can_spread_on_fire": true
+					field "priority": 3
+				Added component "minecraft:behavior.melee_box_attack":
+					field "can_spread_on_fire": true
+					field "priority": 3
+Changed entity "iron_golem.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 35 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 1
+					field "track_target": true
+				Added component "minecraft:behavior.melee_box_attack":
+					field "priority": 1
+					field "track_target": true
+Changed entity "panda.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:panda_adult":
+					Total component: 8 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "attack_once": true
+						field "track_target": true
+						field "reach_multiplier": 1.0
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 2
+						field "attack_once": true
+						field "track_target": true
+				Changed component group "minecraft:panda_aggressive":
+					Total component: 6 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "track_target": true
+						field "reach_multiplier": 1.0
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 2
+						field "track_target": true
+Changed entity "piglin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "melee_unit":
+					Total component: 4 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 8
+						field "speed_multiplier": 1.0
+						field "track_target": true
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 8
+						field "speed_multiplier": 1.0
+						field "track_target": true
+Changed entity "piglin_brute.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "melee_unit":
+					Total component: 4 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+Changed entity "pillager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:melee_attack":
+					Total component: 3 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "track_target": true
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "track_target": true
+Changed entity "silverfish.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:silverfish_angry":
+					Total component: 3 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "track_target": true
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "track_target": true
+Changed entity "skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:melee_attack":
+					Total component: 3 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "track_target": true
+						field "speed_multiplier": 1.25
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "track_target": true
+						field "speed_multiplier": 1.25
+Changed entity "spider.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:spider_angry":
+					Total component: 3 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 3
+						field "track_target": true
+						field "reach_multiplier": 0.8
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 3
+						field "track_target": true
+Changed entity "stray.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:melee_attack":
+					Total component: 3 (+1, -1)
+					Removed component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "track_target": true
+						field "speed_multiplier": 1.25
+					Added component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "track_target": true
+						field "speed_multiplier": 1.25
+Changed entity "vindicator.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 32 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack": field "priority": 3.
+				Added component "minecraft:behavior.melee_box_attack": field "priority": 3.
+Changed entity "warden.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 36 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "speed_multiplier": 1.2
+					field "melee_fov": 360
+				Added component "minecraft:behavior.melee_box_attack":
+					field "priority": 4
+					field "speed_multiplier": 1.2
+					field "melee_fov": 360
+Changed entity "wither_skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 31 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "track_target": true
+					field "speed_multiplier": 1.25
+				Added component "minecraft:behavior.melee_box_attack":
+					field "priority": 4
+					field "track_target": true
+					field "speed_multiplier": 1.25
+Changed entity "wolf.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 29 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack": field "priority": 5.
+				Added component "minecraft:behavior.melee_box_attack": field "priority": 5.
+Changed entity "zoglin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 24 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "reach_multiplier": 2.15
+					field "speed_multiplier": 1.4
+					field "track_target": true
+				Added component "minecraft:behavior.melee_box_attack":
+					field "priority": 4
+					field "speed_multiplier": 1.4
+					field "track_target": true
+Changed entity "zombie.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 30 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "can_spread_on_fire": true
+					field "priority": 3
+				Added component "minecraft:behavior.melee_box_attack":
+					field "can_spread_on_fire": true
+					field "priority": 3
+Changed entity "zombie_pigman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 30 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "speed_multiplier": 1.5
+				Added component "minecraft:behavior.melee_box_attack":
+					field "priority": 4
+					field "speed_multiplier": 1.5
+Changed entity "zombie_villager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 29 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "can_spread_on_fire": true
 					field "priority": 6
-					field "cooldown_range": [400.0, 500.0]
-					field "duration_range": 2.0
-					field "on_end":
-						field "event": "on_scenting_success"
-						field "target": "self"
-				Added component "minecraft:behavior.timer_flag_1":
+				Added component "minecraft:behavior.melee_box_attack":
+					field "can_spread_on_fire": true
 					field "priority": 6
-					field "cooldown_range": [400.0, 500.0]
-					field "duration_range": 2.0
-					field "on_end":
-						field "event": "on_scenting_success"
-						field "target": "self"
+Changed entity "zombie_villager_v2.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 29 (+1, -1)
+				Removed component "minecraft:behavior.melee_attack":
+					field "can_spread_on_fire": true
+					field "priority": 6
+				Added component "minecraft:behavior.melee_box_attack":
+					field "can_spread_on_fire": true
+					field "priority": 6

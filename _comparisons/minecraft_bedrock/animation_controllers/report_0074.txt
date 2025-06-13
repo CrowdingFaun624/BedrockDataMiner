@@ -1,23 +1,47 @@
-Difference of "animation_controllers" between "1.19.20.20" (beta of "1.19.20") and "1.19.20.22" (beta of "1.19.20").
+Difference of "animation_controllers" between "1.19.60.24" (beta of "1.19.60") and "1.19.60.25" (beta of "1.19.60").
 
-Changed file "allay.animation_controllers.json":
+Changed file "evoker.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Total animation controller: 4 (+1, -0)
-			Changed animation controller "controller.animation.allay.holding":
+			Changed animation controller "controller.animation.evoker.general":
 				Changed field "states":
-					Total state: 2 (+1, -0)
-					Added state "fly_holding":
-						field "animations": animation dict animation "hold_item_fly": "variable.is_holding_left || variable.is_holding_right"
-						field "transitions": transition list transition "holding": "query.modified_move_speed < 0.2"
-						field "blend_transition": 0.2
-					Changed state "holding":
-						Added field "transitions": transition list transition "fly_holding": "query.modified_move_speed > 0.2".
-						Added field "blend_transition": 0.2.
-			Added animation controller "controller.animation.allay.look_at_target":
+					Changed state "casting":
+						Changed field "animations":
+							Total animation dict: 3 (+1, -0)
+							Added animation dict "controller_riding".
+					Changed state "celebrating":
+						Changed field "animations":
+							Total animation dict: 2 (+1, -0)
+							Added animation dict "controller_riding".
+					Changed state "default":
+						Changed field "animations":
+							Total animation dict: 3 (+1, -0)
+							Added animation dict "controller_riding".
+			Changed animation controller "controller.animation.evoker.general.v1.0":
+				Changed field "states":
+					Changed state "casting":
+						Changed field "animations":
+							Total animation dict: 3 (+1, -0)
+							Added animation dict "controller_riding".
+					Changed state "default":
+						Changed field "animations":
+							Total animation dict: 3 (+1, -0)
+							Added animation dict "controller_riding".
+Changed file "humanoid.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 16 (+1, -1)
+			Removed animation controller "controller.animation.humanoid.holding_spyglass":
 				field "initial_state": "default"
 				field "states":
-					state "default": field "transitions": transition list transition "looking_at_target": "!query.is_dancing"
-					state "looking_at_target":
-						field "animations": animation dict "look_at_target_default"
-						field "transitions": transition list transition "default": "query.is_dancing"
+					state "default": field "transitions": transition list transition "holding_spyglass": "variable.is_holding_spyglass"
+					state "holding_spyglass":
+						field "animations": animation dict "holding_spyglass"
+						field "transitions": transition list transition "default": "!variable.is_holding_spyglass"
+			Added animation controller "controller.animation.humanoid.riding_legs_only":
+				field "initial_state": "default"
+				field "states":
+					state "default": field "transitions": transition list transition "riding": "query.is_riding"
+					state "riding":
+						field "animations": animation dict "riding.legs"
+						field "transitions": transition list transition "default": "!query.is_riding"

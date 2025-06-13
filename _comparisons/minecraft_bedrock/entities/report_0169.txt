@@ -1,250 +1,301 @@
-Difference of "entities" between "1.19.30.21" (beta of "1.19.30") and "1.19.30.22" (beta of "1.19.30").
+Difference of "entities" between "1.19.40.21" (beta of "1.19.40") and "1.19.40.22" (beta of "1.19.40").
 
-Changed entity "npc.json":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.13.0" to "1.19.30".
-		Changed field "minecraft:entity":
-			Added field "description":
-				description "identifier": "minecraft:npc"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
-			Changed field "components":
-				Total component: 11 (+10, -0)
-				Added component "minecraft:collision_box":
-					field "width": 0.6
-					field "height": 2.1
-				Added component "minecraft:damage_sensor":
-					field "triggers":
-						field "cause": "all"
-						field "deals_damage": false
-				Added component "minecraft:fire_immune": true.
-				Added component "minecraft:loot": field "table": "loot_tables/empty.json".
-				Added component "minecraft:movement": field "value": 0.5.
-				Added component "minecraft:npc":
-					field "npc_data":
-						field "portrait_offsets":
-							field "translate": [-7, 50, 0]
-							field "scale": [1.75, 1.75, 1.75]
-						field "picker_offsets":
-							field "translate": [0, 20, 0]
-							field "scale": [1.7, 1.7, 1.7]
-						field "skin_list":
-							skin field "variant": 0
-							skin field "variant": 1
-							skin field "variant": 2
-							skin field "variant": 3
-							skin field "variant": 4
-							skin field "variant": 5
-							skin field "variant": 6
-							skin field "variant": 7
-							skin field "variant": 8
-							skin field "variant": 9
-							skin field "variant": 10
-							skin field "variant": 11
-							skin field "variant": 12
-							skin field "variant": 13
-							skin field "variant": 14
-							skin field "variant": 15
-							skin field "variant": 16
-							skin field "variant": 17
-							skin field "variant": 18
-							skin field "variant": 19
-							skin field "variant": 25
-							skin field "variant": 26
-							skin field "variant": 27
-							skin field "variant": 28
-							skin field "variant": 29
-							skin field "variant": 30
-							skin field "variant": 31
-							skin field "variant": 32
-							skin field "variant": 33
-							skin field "variant": 34
-							skin field "variant": 20
-							skin field "variant": 21
-							skin field "variant": 22
-							skin field "variant": 23
-							skin field "variant": 24
-				Added component "minecraft:persistent": empty.
-				Added component "minecraft:physics": empty.
-				Added component "minecraft:type_family":
-					field "family":
-						family "mob"
-						family "npc"
-				Added component "minecraft:behavior.look_at_player":
-					field "priority": 0
-					field "look_distance": 6.0
-					field "probability": 0.02
-Changed entity "strider.json":
+Changed entity "drowned.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 9 (+1, -0)
-				Changed component group "minecraft:detect_suffocating":
-					Changed component "minecraft:environment_sensor":
-						Changed field "triggers" from:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "test": "in_lava"
-										filter property "subject": "self"
-										filter property "operator": "=="
-										filter property "value": false
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "is_riding"
-												filter property "subject": "self"
-												filter property "operator": "=="
-												filter property "value": false
-											filter:
-												filter property "test": "in_lava"
-												filter property "subject": "other"
-												filter property "operator": "=="
-												filter property "value": false
-							field "event": "start_suffocating"
-						to:
-							trigger:
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "test": "in_lava"
-											filter property "subject": "self"
-											filter property "operator": "=="
-											filter property "value": false
-										filter:
-											filter property "any_of":
-												filter:
-													filter property "test": "is_riding"
-													filter property "subject": "self"
-													filter property "operator": "=="
-													filter property "value": false
-												filter:
-													filter property "test": "in_lava"
-													filter property "subject": "other"
-													filter property "operator": "=="
-													filter property "value": false
-								field "event": "start_suffocating"
-							trigger:
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "test": "is_riding"
-											filter property "subject": "self"
-											filter property "operator": "equals"
-											filter property "value": false
-										filter:
-											filter property "test": "has_component"
-											filter property "subject": "self"
-											filter property "operator": "not"
-											filter property "value": "minecraft:behavior.move_to_liquid"
-								field "event": "on_not_riding_parent"
-				Changed component group "minecraft:start_suffocating":
-					Changed component "minecraft:environment_sensor":
-						Changed field "triggers" from:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "test": "in_lava"
-										filter property "subject": "self"
-										filter property "operator": "=="
-										filter property "value": true
-									filter:
-										filter property "test": "in_lava"
-										filter property "subject": "other"
-										filter property "operator": "=="
-										filter property "value": true
-							field "event": "stop_suffocating"
-						to:
-							trigger:
-								field "filters":
-									filter property "any_of":
-										filter:
-											filter property "test": "in_lava"
-											filter property "subject": "self"
-											filter property "operator": "=="
-											filter property "value": true
-										filter:
-											filter property "test": "in_lava"
-											filter property "subject": "other"
-											filter property "operator": "=="
-											filter property "value": true
-								field "event": "stop_suffocating"
-							trigger:
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "test": "is_riding"
-											filter property "subject": "self"
-											filter property "operator": "equals"
-											filter property "value": false
-										filter:
-											filter property "test": "has_component"
-											filter property "subject": "self"
-											filter property "operator": "not"
-											filter property "value": "minecraft:behavior.move_to_liquid"
-								field "event": "on_not_riding_parent"
-				Changed component group "minecraft:strider_parent_jockey":
-					Changed component "minecraft:addrider":
-						Changed field "spawn_event" from "spawn_baby" to "minecraft:spawn_baby_strider_jockey".
-				Added component group "minecraft:strider_pathing_behaviors":
-					component "minecraft:behavior.move_to_liquid":
-						field "priority": 7
-						field "search_range": 16
-						field "search_height": 10
-						field "goal_radius": 0.9
-						field "material_type": "Lava"
-						field "search_count": 30
-					component "minecraft:behavior.random_stroll":
-						field "priority": 8
-						field "speed_multiplier": 0.8
-					component "minecraft:behavior.rise_to_liquid_level":
-						field "priority": 0
-						field "liquid_y_offset": 0.25
-						field "rise_delta": 0.01
-						field "sink_delta": 0.01
-			Changed field "components":
-				Total component: 22 (+0, -3)
-				Removed component "minecraft:behavior.move_to_liquid":
-					field "priority": 7
-					field "search_range": 16
-					field "search_height": 10
-					field "goal_radius": 0.9
-					field "material_type": "Lava"
-					field "search_count": 30
-				Removed component "minecraft:behavior.random_stroll":
-					field "priority": 8
-					field "speed_multiplier": 0.8
-				Removed component "minecraft:behavior.rise_to_liquid_level":
-					field "priority": 0
-					field "liquid_y_offset": 0.25
-					field "rise_delta": 0.01
-					field "sink_delta": 0.01
+				Total component group: 10 (+2, -0)
+				Added component group "minecraft:melee_equipment":
+					component "minecraft:equipment":
+						field "table": "loot_tables/entities/drowned_equipment.json"
+						field "slot_drop_chance":
+							slot:
+								field "slot": "slot.weapon.offhand"
+								field "drop_chance": 1.0
+				Changed component group "minecraft:melee_mode":
+					Total component: 2 (+0, -1)
+					Removed component "minecraft:equipment":
+						field "table": "loot_tables/entities/drowned_equipment.json"
+						field "slot_drop_chance":
+							slot:
+								field "slot": "slot.weapon.offhand"
+								field "drop_chance": 1.0
+				Changed component group "minecraft:mode_switcher":
+					Total component: 1 (+0, -1)
+					Removed component "minecraft:equipment":
+						field "table": "loot_tables/entities/drowned_ranged_equipment.json"
+						field "slot_drop_chance":
+							slot:
+								field "slot": "slot.weapon.offhand"
+								field "drop_chance": 1.0
+				Added component group "minecraft:ranged_equipment":
+					component "minecraft:equipment":
+						field "table": "loot_tables/entities/drowned_ranged_equipment.json"
+						field "slot_drop_chance":
+							slot:
+								field "slot": "slot.weapon.offhand"
+								field "drop_chance": 1.0
 			Changed field "events":
-				Total event: 12 (+2, -0)
-				Added event "minecraft:spawn_baby_strider_jockey":
-					field "add":
-						field "component_groups":
-							component group "minecraft:detect_suffocating"
-							component group "minecraft:strider_baby"
-				Added event "on_not_riding_parent": field "add": field "component_groups": component group "minecraft:strider_pathing_behaviors".
-				Changed event "spawn_adult":
-					Changed field "add":
-						Changed field "component_groups":
-							Total component group: 4 (+1, -0)
-							Added component group "minecraft:strider_pathing_behaviors".
-				Changed event "spawn_adult_parent_jockey":
-					Changed field "add":
-						Changed field "component_groups":
-							Total component group: 5 (+1, -0)
-							Added component group "minecraft:strider_pathing_behaviors".
-				Changed event "spawn_adult_piglin_jockey":
-					Changed field "add":
-						Changed field "component_groups":
-							Total component group: 5 (+1, -0)
-							Added component group "minecraft:strider_pathing_behaviors".
-				Changed event "spawn_baby":
+				Changed event "minecraft:as_adult":
 					Changed field "add":
 						Changed field "component_groups":
 							Total component group: 3 (+1, -0)
-							Added component group "minecraft:strider_pathing_behaviors".
+							Added component group "minecraft:melee_equipment".
+				Changed event "minecraft:as_baby":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 3 (+1, -0)
+							Added component group "minecraft:melee_equipment".
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "randomize":
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 4 (+1, -0)
+											Added component group "minecraft:ranged_equipment".
+								Changed randomize item:
+									Changed field "randomize":
+										Changed randomize item:
+											Changed field "add":
+												Changed field "component_groups":
+													Total component group: 3 (+1, -0)
+													Added component group "minecraft:melee_equipment".
+										Changed randomize item:
+											Changed field "add":
+												Changed field "component_groups":
+													Total component group: 3 (+1, -0)
+													Added component group "minecraft:melee_equipment".
+Changed entity "villager_v2.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 54 (+1, -0)
+				Changed component group "adult":
+					Total component: 1 (+0, -2)
+					Removed component "minecraft:behavior.make_love": field "priority": 5.
+					Removed component "minecraft:behavior.receive_love": field "priority": 6.
+				Added component group "make_and_receive_love":
+					component "minecraft:behavior.make_love": field "priority": 5
+					component "minecraft:behavior.receive_love": field "priority": 6
+			Changed field "events":
+				Changed event "minecraft:ageable_grow_up":
+					Changed field "randomize":
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+				Changed event "minecraft:become_armorer":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_butcher":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_cartographer":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_cleric":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_farmer":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_fisherman":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_fletcher":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_leatherworker":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_librarian":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_mason":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_sheperd":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_toolsmith":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_unskilled":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:become_weaponsmith":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 1:
+							Changed field "randomize":
+								Changed randomize item:
+									Changed field "sequence":
+										Changed sequence item 0:
+											Changed field "add":
+												Changed field "component_groups":
+													Total component group: 2 (+1, -0)
+													Added component group "make_and_receive_love".
+				Changed event "minecraft:entity_transformed":
+					Changed field "sequence":
+						Changed sequence item 1:
+							Changed field "sequence":
+								Changed sequence item 0:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 2 (+1, -0)
+											Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_bed_villager":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 7 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_gather_villager":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_home_villager":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_wander_villager":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_work_farmer":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_work_fisher":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_work_librarian":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:schedule_work_pro_villager":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:spawn_armorer":
+					Changed field "randomize":
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+				Changed event "minecraft:spawn_butcher":
+					Changed field "randomize":
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+				Changed event "minecraft:spawn_cleric":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 5 (+1, -0)
+							Added component group "make_and_receive_love".
+				Changed event "minecraft:spawn_farmer":
+					Changed field "randomize":
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".
+				Changed event "minecraft:spawn_from_village":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "randomize":
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 2 (+1, -0)
+											Added component group "make_and_receive_love".
+				Changed event "minecraft:spawn_librarian":
+					Changed field "randomize":
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 5 (+1, -0)
+									Added component group "make_and_receive_love".

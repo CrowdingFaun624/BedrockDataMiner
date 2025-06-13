@@ -1,732 +1,1011 @@
-Difference of "ui" between "1.13.0.13" (beta of "1.13.0") and "1.13.0.15" (beta of "1.13.0").
+Difference of "ui" between "1.14.0.1" (beta of "1.14.0") and "1.14.0.2" (beta of "1.14.0").
 
-Changed namespace "chat":
-	Changed element "messages_scrolling_panel@common.scrolling_panel":
-		Unchanged field "type": "panel".
-		Changed field "$variables":
-			Total variable: 5 (+1, -0)
-			Added variable "$always_handle_scrolling": true.
-Changed namespace "common":
-	Changed element "single_line_label":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "label_panel":
-					Unchanged field "type": "label".
-					Changed field "text" from "$text" to "$single_line_label_text".
-					Changed field "$variables":
-						Total variable: 3 (+2, -0)
-						Added variable "$single_line_label_text|default": "".
-						Added variable "$label_text_bindings|default": empty.
-					Added field "bindings": "$label_text_bindings".
-		Changed field "$variables":
-			Total variable: 5 (+0, -2)
-			Removed variable "$single_line_label_binding_condition|default": "once".
-			Removed variable "$text|default": "$single_line_label_binding".
-Changed namespace "game_tip":
-	Total element: 17 (+1, -4)
-	Removed element "anim_game_tip_alpha":
-		field "anim_type": "alpha"
-		field "easing": "in_sine"
-		field "duration": 0.2
-		field "from": 1
-		field "to": 0
-	Changed element "cell_image_classic_hint@crafting.cell_image":
-		Changed field "factory":
-			Changed field "max_children_size" from 5 to 3.
-			Changed field "control_ids":
-				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
-	Moved element from "cell_image_hint_tips@common.cell_image" to "cell_image_hint_tip".
-	Changed element "cell_image_hint_tip":
-		Unchanged field "type": "image".
-		Changed field "variables":
-			Changed variable:
-				Changed field "$variables":
-					Total variable: 2 (+1, -0)
-					Changed variable "$hint_texture" from "textures/ui/hint_small_1" to "textures/ui/hint_burst_small".
-					Added variable "$hint_frame_count": 4.
-		Removed field "anims": animation "@game_tip.game_tip_size_animation_wait".
-		Changed field "$variables":
-			Total variable: 2 (+1, -1)
-			Changed variable "$hint_texture|default" from "textures/ui/hint_1" to "textures/ui/hint_burst".
-			Removed variable "$wait_time": 0.2.
-			Added variable "$hint_frame_count|default": 5.
-		Added field "uv_size": [37, 37].
-		Added field "uv": "@game_tip.hint_tip_animation".
-	Removed element "cell_image_hint_tips_2@common.cell_image":
-		field "layer": 14
-		field "type": "image"
-		field "variables":
-			variable:
-				field "requires": "($desktop_screen and $is_recipe_book_tip)"
-				field "$variables": variable "$hint_texture": "textures/ui/hint_small_2"
-		field "texture": "$hint_texture"
-		field "size": [37, 37]
-		field "anims": animation "@game_tip.game_tip_size_animation_wait"
-		field "$variables":
-			variable "$hint_texture|default": "textures/ui/hint_2"
-			variable "$wait_time": 0.4
-	Removed element "cell_image_hint_tips_3@common.cell_image":
-		field "layer": 14
-		field "type": "image"
-		field "variables":
-			variable:
-				field "requires": "($desktop_screen and $is_recipe_book_tip)"
-				field "$variables": variable "$hint_texture": "textures/ui/hint_small_3"
-		field "texture": "$hint_texture"
-		field "size": [37, 37]
-		field "anims": animation "@game_tip.game_tip_size_animation_wait"
-		field "$variables":
-			variable "$hint_texture|default": "textures/ui/hint_3"
-			variable "$wait_time": 0.6
-	Changed element "close_inventory_factory":
-		Unchanged field "type": "panel".
-		Changed field "factory":
-			Changed field "max_children_size" from 5 to 3.
-			Changed field "control_ids":
-				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
-	Removed element "game_tip_size_animation_wait":
-		field "anim_type": "wait"
-		field "duration": "$wait_time"
-		field "next": "@game_tip.anim_game_tip_alpha"
-	Added element "hint_tip_animation":
-		field "anim_type": "flip_book"
-		field "initial_uv": [0, 0]
-		field "frame_count": "$hint_frame_count"
-		field "frame_step": 37
-		field "fps": 6
-		field "easing": "linear"
-	Changed element "open_recipe_book_factory":
-		Unchanged field "type": "panel".
-		Changed field "factory":
-			Changed field "max_children_size" from 5 to 3.
-			Changed field "control_ids":
-				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
-	Changed element "open_search_tab_factory":
-		Unchanged field "type": "panel".
-		Changed field "factory":
-			Changed field "max_children_size" from 5 to 3.
-			Changed field "control_ids":
-				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
-	Changed element "recipe_item_tip":
-		Unchanged field "type": "panel".
-		Changed field "factory":
-			Changed field "max_children_size" from 5 to 3.
-			Changed field "control_ids":
-				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
-Changed namespace "general_section":
-	Total element: 83 (+7, -2)
-	Changed element "accessibility_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 5 (+1, -0)
-			Added control:
-				element "option_toggle0@settings_common.option_toggle":
-					field "ignored": "(not $text_to_speech_supported)"
-					field "$variables":
-						variable "$option_label": "options.enableAutoPlatformTextToSpeech"
-						variable "$option_binding_name": "#enable_auto_text_to_speech"
-						variable "$option_enabled_binding_name": "#enable_auto_text_to_speech_enabled"
-						variable "$toggle_name": "enable_auto_text_to_speech"
-	Changed element "additional_realm_subscription":
-		field "type": "panel"
-		field "size": ["100%", 73]
-		field "controls":
-			control:
-				element "black_background@general_section.black_image":
-					field "layer": 1
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "size": ["100%", 70]
-			control:
-				element "additional_realms_subscription_stack@general_section.additional_realms_subscription_stack":
-					field "layer": 2
-					field "$variables":
-						variable "$purchase_realm_button_text": "#placeholder_text_realms"
-						variable "$manage_realm_button_text": "ASD"
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "controls":
-			control:
-				element "horz_panel":
-					field "type": "panel"
-					field "size": ["100%", 73]
-					field "controls":
-						control:
-							element "black_background@general_section.black_image":
-								field "layer": 1
-								field "size": ["100%", 70]
-						control element "additional_realms_subscription_stack@general_section.additional_realms_subscription_stack": field "layer": 2
-			control:
-				element "renews_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "controls":
-						control:
-							element "black_background@general_section.black_image":
-								field "layer": 1
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "size": ["100%", 12]
-						control:
-							element "renews_text":
-								field "type": "label"
-								field "color": "$main_header_text_color"
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "layer": 2
-								field "offset": [2, 1]
-								field "text": "#realms_subscription_text"
-								field "bindings":
-									binding:
-										field "binding_name": "#additional_realms_subscriptions_visible"
-										field "binding_name_override": "#visible"
-									binding:
-										field "binding_type": "collection_details"
-										field "binding_collection_name": "additional_realms_subscriptions_collection"
-									binding:
-										field "binding_name": "#realms_subscription_text"
-										field "binding_type": "collection"
-										field "binding_collection_name": "additional_realms_subscriptions_collection"
-										field "binding_condition": "visible"
-						control:
-							element "possible_store_mismatch@general_section.possible_store_mismatch":
-								field "$variables":
-									variable "$tooltip_button_collection_name": "additional_realms_subscriptions_collection"
-									variable "$tooltip_text_binding_name": "#realms_purchased_store"
-	Added element "additional_realm_subscription_panel":
-		field "type": "stack_panel"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control element "additional_realm_subscription@general_section.additional_realm_subscription": empty
-			control:
-				element "padding1":
-					field "type": "panel"
-					field "size": ["100%", 3]
-	Changed element "additional_realms_offer_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 3 (+2, -0)
-			Changed control:
-				Changed element "additional_realms_desc_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 2 (+1, -0)
-						Changed control:
-							Changed element "realms_plus_desc_label":
-								Unchanged field "type": "label".
-								Changed field "text" from "BUY AN ADDITIONAL REALM" to "options.viewSubscriptions.buyAnAdditionalRealm".
-						Added control:
-							element "realms_plus_button_panel@general_section.realms_button_panel":
-								field "bindings":
-									binding:
-										field "binding_name": "#additional_realms_subscriptions_visible"
-										field "binding_name_override": "#visible"
-									binding:
-										field "binding_type": "collection_details"
-										field "binding_collection_name": "additional_realms_subscriptions_collection"
-									binding:
-										field "binding_name": "#realms_subscription_text"
-										field "binding_type": "collection"
-										field "binding_collection_name": "additional_realms_subscriptions_collection"
-										field "binding_condition": "visible"
-								field "$variables":
-									variable "$purchase_realm_button_text": "#buy_additional_realms_button_text"
-									variable "$purchase_button_name": "button.realms_additional_purchase_button"
-									variable "$manage_realm_button_text": "options.viewSubscriptions.button.info"
-									variable "$manage_button_name": "button.realms_additional_info_button"
-									variable "$purchase_button_visible": "#can_buy_more_subscriptions"
-			Added control:
-				element "realms_plus_image@common.service_repo_image_panel":
-					field "size": ["24%", "100% - 4px"]
-					field "$variables": variable "$repo_image_texture": "realms_key_art"
-			Added control:
-				element "spacer_0":
-					field "type": "panel"
-					field "size": [6, "100%"]
-	Removed element "additional_realms_subscription_offer":
-		field "type": "panel"
-		field "size": ["100%", 73]
-		field "controls":
-			control:
-				element "black_background@general_section.black_image":
-					field "layer": 1
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "size": ["100%", 70]
-			control:
-				element "additional_realms_subscription_stack@general_section.additional_realms_subscription_stack":
-					field "layer": 2
-					field "$variables":
-						variable "$purchase_realm_button_text": "#buy_additional_realms_button_text"
-						variable "$manage_realm_button_text": "INFO"
-						variable "$manage_button_name": "button.realms_additional_info_button"
-						variable "$purchase_button_name": "button.realms_additional_purchase_button"
-	Changed element "additional_realms_subscription_stack":
+Total namespace: 199 (+1, -0)
+Changed namespace "comment":
+	Total element: 47 (+13, -0)
+	Changed element "author_gamertag_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "size":
-			Unchanged item 0: "100%".
-			Changed item 1 from "100%" to 70.
+			Changed item 0 from "70%" to 140.
+			Unchanged item 1: "100%".
+		Changed field "controls":
+			Total control: 2 (+0, -1)
+			Changed control:
+				Changed element "author_gamertag_instance@feed_common.item_label":
+					Changed field "size":
+						Changed item 0 from 100 to "100%".
+						Unchanged item 1: 10.
+			Removed control element "spacing_gap@feed_common.spacing_gap": field "size": ["100%", 2].
+			Changed control:
+				Changed element "feed_item_timesince@feed_common.item_label":
+					Changed field "size":
+						Changed item 0 from 100 to "100%".
+						Unchanged item 1: 10.
+	Added element "author_linked_account_tags_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["70%", "100%"]
+		field "controls":
+			control:
+				element "feed_platformtag_instance@feed_common.item_label":
+					field "size": ["100%", 10]
+					field "font_size": "normal"
+					field "text": "#author_platform_tag"
+					field "bindings":
+						binding:
+							field "binding_name": "#author_platform_tag"
+							field "binding_type": "collection"
+							field "binding_collection_name": "comment_collection"
+			control:
+				element "spacing_gap_04":
+					field "type": "panel"
+					field "size": ["100%", 15]
+			control:
+				element "author_gamertag_instance@feed_common.item_label":
+					field "size": ["100%", 10]
+					field "font_size": "normal"
+					field "text": "#author_gamertag"
+					field "bindings":
+						binding:
+							field "binding_name": "#author_gamertag"
+							field "binding_type": "collection"
+							field "binding_collection_name": "comment_collection"
+			control element "spacing_gap@feed_common.spacing_gap": field "size": ["100%", 2]
+			control:
+				element "feed_item_timesince@feed_common.item_label":
+					field "size": ["100%", 10]
+					field "font_size": "normal"
+					field "alpha": 0.5
+					field "text": "#time_since_feed_post"
+					field "bindings":
+						binding:
+							field "binding_name": "#time_since_feed_post"
+							field "binding_type": "collection"
+							field "binding_collection_name": "comment_collection"
+	Added element "author_linked_accounts_pics":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": [20, 45]
+		field "controls":
+			control element "player_platform_pic_panel_instance@$platform_account": empty
+			control element "account_link_icon@feed_common.account_link_icon": empty
+			control element "player_gamerpic_panel_instance@$xboxlive_account": empty
+		field "$variables":
+			variable "$platform_account|default": "comment.player_platform_pic_panel"
+			variable "$xboxlive_account|default": "comment.player_pic_panel"
+	Changed element "author_player_panel":
+		Unchanged field "type": "stack_panel".
 		Removed field "anchor_from": "top_left".
 		Removed field "anchor_to": "top_left".
 		Changed field "controls":
-			Total control: 2 (+1, -2)
-			Removed control:
-				element "realms_additional_image":
-					field "type": "image"
-					field "size": ["22%", "100% - 4px"]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "texture": "textures/ui/realms_key_art"
-			Removed control:
-				element "padding":
-					field "type": "panel"
-					field "size": ["2%", "100%"]
 			Changed control:
-				Moved element from "realms_additional_sub_desc_panel" to "additional_realms_sub_desc_panel".
-				Changed element "additional_realms_sub_desc_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 3 (+1, -2)
-						Changed control:
-							Changed element "realms_additional_desc_label":
-								Unchanged field "type": "label".
-								Changed field "text" from "2 PERSON REALM" to "options.viewSubscriptions.twoPlayers".
-						Changed control:
-							Changed element "realms_additional_info_label":
-								Unchanged field "type": "label".
-								Changed field "text" from "Access to your own Realm server with up to 2 concurent players" to "options.viewSubscriptions.personalRealmServer".
-						Removed control:
-							element "padding2":
-								field "type": "panel"
-								field "size": ["100%", 10]
-						Removed control element "realms_additional_button_panel@general_section.realms_button_panel": field "$variables": variable "$renew_label_text": "".
-						Added control:
-							element "realms_additional_button_panel@general_section.realms_button_panel":
-								field "bindings":
-									binding:
-										field "binding_name": "#additional_realms_subscriptions_visible"
-										field "binding_name_override": "#visible"
-									binding:
-										field "binding_type": "collection_details"
-										field "binding_collection_name": "additional_realms_subscriptions_collection"
-									binding:
-										field "binding_name": "#realms_subscription_text"
-										field "binding_type": "collection"
-										field "binding_collection_name": "additional_realms_subscriptions_collection"
-								field "$variables":
-									variable "$realm_collection_name": "additional_realms_subscriptions_collection"
-									variable "$purchase_realm_button_text": "#buy_additional_realms_button_text"
-									variable "$manage_realm_button_text": "options.viewSubscriptions.button.info"
-									variable "$manage_button_name": "button.realms_additional_info_button"
-									variable "$purchase_button_name": "button.realms_additional_purchase_button"
-									variable "$purchase_button_visible": "#can_buy_more_subscriptions"
+				Moved element from "player_pic_panel_instance@comment.player_pic_panel" to "player_pic_panel_instance@comment.player_gamerpic_panel".
+			Changed control:
+				Moved element from "spacing_gap@feed_common.spacing_gap" to "spacing_gap_02@feed_common.spacing_gap".
+	Changed element "comment_gamertag_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "comment_gamertag_instance@feed_common.item_label":
+					Changed field "size":
+						Changed item 0 from 77 to "100%".
+						Unchanged item 1: 10.
+			Changed control:
+				Changed element "grid_comment_timesince@feed_common.item_label":
+					Changed field "size":
+						Changed item 0 from 77 to "100%".
+						Unchanged item 1: 10.
+	Changed element "comment_grid":
+		field "type": "grid"
+		field "size": ["100%", "default"]
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "grid_item_template": "comment.comment_grid_item"
+		field "grid_dimension_binding": "#comment_grid_dimension"
+		field "collection_name": "comment_collection"
+		field "bindings": binding field "binding_name": "#comment_grid_dimension"
+		field "$variables": variable "$collection_binding_name": "comment_collection"
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "orientation": "vertical"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "factory":
+			field "name": "factory"
+			field "control_ids":
+				control id "xbox_live": "@comment.comment_msa_item"
+				control id "linked": "@comment.comment_linked_account_item"
+			field "factory_variables":
+				variable "$feed_factory_collection_details"
+				variable "$feed_factory_binding_type"
+				variable "$feed_factory_collection_prefix"
+				variable "$collection_binding_name"
+		field "collection_name": "$collection_binding_name"
+		field "bindings":
+			binding:
+				field "binding_name": "#feed_comment_page_collection_length"
+				field "binding_name_override": "#collection_length"
+		field "$variables":
+			variable "$feed_factory_collection_details|default": "collection_details"
+			variable "$feed_factory_binding_type|default": "collection"
+			variable "$feed_factory_collection_prefix|default": "factory"
+			variable "$collection_binding_name": "comment_collection"
+	Added element "comment_linked_account_item":
+		field "type": "stack_panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c + 85px"]
+		field "controls":
+			control element "player_buttons_stack_panel@comment.linked_player_buttons_stack_panel": empty
+			control element "spacing_gap@feed_common.spacing_gap": field "size": ["100%", 5]
+			control:
+				element "text_post_spacer":
+					field "type": "panel"
+					field "size": ["100%", "100%cm"]
+					field "controls": control element "textpanel@comment.textpanel": field "offset": [17, 0]
+	Added element "comment_linked_account_tags_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["50%", "100%"]
+		field "controls":
+			control:
+				element "feed_platformtag_instance@feed_common.item_label":
+					field "size": ["100%", 10]
+					field "font_size": "normal"
+					field "text": "#comment_platform_tag"
+					field "bindings":
+						binding:
+							field "binding_name": "#comment_platform_tag"
+							field "binding_type": "collection"
+							field "binding_collection_name": "comment_collection"
+			control:
+				element "spacing_gap_04":
+					field "type": "panel"
+					field "size": ["100%", 15]
+			control:
+				element "comment_gamertag_instance@feed_common.item_label":
+					field "size": ["100%", 10]
+					field "font_size": "normal"
+					field "text": "#comment_gamertag"
+					field "bindings":
+						binding:
+							field "binding_name": "#comment_gamertag"
+							field "binding_type": "collection"
+							field "binding_collection_name": "comment_collection"
+			control element "spacing_gap@feed_common.spacing_gap": field "size": ["100%", 2]
+			control:
+				element "grid_comment_timesince@feed_common.item_label":
+					field "size": ["100%", 10]
+					field "font_size": "normal"
+					field "alpha": 0.5
+					field "text": "#likes_and_time_since_comment_post"
+					field "bindings":
+						binding:
+							field "binding_name": "#likes_and_time_since_comment_post"
+							field "binding_type": "collection"
+							field "binding_collection_name": "comment_collection"
+	Moved element from "comment_grid_item" to "comment_msa_item".
+	Changed element "comment_player_panel":
+		Unchanged field "type": "stack_panel".
+		Removed field "anchor_from": "top_left".
+		Removed field "anchor_to": "top_left".
+		Changed field "size":
+			Changed item 0 from 100 to 140.
+			Unchanged item 1: 50.
+		Changed field "controls":
+			Changed control:
+				Moved element from "player_pic_panel_instance@comment.player_comment_pic_panel" to "player_pic_panel_instance@comment.player_comment_gamerpic_panel".
+	Changed element "feed_item_content_details_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 8 (+4, -1)
+			Removed control element "author_player_panel@comment.author_player_panel": empty.
 			Added control:
-				element "additional_realms_image@common.service_repo_image_panel":
-					field "size": ["24%", "100% - 4px"]
-					field "$variables": variable "$repo_image_texture": "realms_key_art"
-		Removed field "$variables": variable "$placeholder_text|default": "asdasdasd".
-	Changed element "additional_realms_subscriptions_grid":
-		Unchanged field "type": "grid".
+				element "author_player_panel@comment.author_player_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #is_author_linked_account)"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "linked_author_player_panel@comment.linked_account_author_player_panel":
+					field "visible": false
+					field "bindings":
+						binding:
+							field "binding_name": "#is_author_linked_account"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "spacing_gap@feed_common.spacing_gap":
+					field "size": ["100%", 5]
+					field "visible": false
+					field "bindings":
+						binding:
+							field "binding_name": "#is_author_linked_account"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "spacing_gap_02@feed_common.spacing_gap":
+					field "size": ["100%", 5]
+					field "visible": false
+					field "bindings":
+						binding:
+							field "binding_name": "#is_author_linked_account"
+							field "binding_name_override": "#visible"
+		Added field "size": [140, 155].
+	Changed element "grid_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 6 (+1, -1)
+			Removed control element "comment_grid_instance@comment.comment_grid": empty.
+			Added control element "comment_grid_instance@comment.comment_grid": empty.
+	Changed element "like_options_comment_feed_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "size":
+			Changed item 0 from 100 to 140.
+			Unchanged item 1: 50.
+	Added element "linked_account_author_player_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", 45]
+		field "controls":
+			control element "player_pic_panel_instance@comment.author_linked_accounts_pics": empty
+			control element "spacing_gap_02@feed_common.spacing_gap": field "size": [5, "100%"]
+			control element "author_gamertag_panel@comment.author_linked_account_tags_panel": empty
+			control element "spacing_gap_01@feed_common.spacing_gap": field "size": [2, "100%"]
+			control element "platform_icon@feed_common.platform_icon_panel": empty
+	Added element "linked_accounts_comment_pics@comment.author_linked_accounts_pics":
+		field "$variables":
+			variable "$platform_account": "comment.player_comment_platform_pic_panel"
+			variable "$xboxlive_account": "comment.player_comment_pic_panel"
+	Added element "linked_comment_player_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": [125, 50]
+		field "controls":
+			control element "player_pic_panel_instance@comment.linked_accounts_comment_pics": empty
+			control element "spacing_gap@feed_common.spacing_gap": field "size": [5, "100%"]
+			control element "comment_gamertag_panel@comment.comment_linked_account_tags_panel": empty
+	Moved element from "feed_item_content_stack_panel" to "linked_player_buttons_stack_panel".
+	Changed element "linked_player_buttons_stack_panel":
+		Unchanged field "type": "stack_panel".
 		Changed field "size":
 			Unchanged item 0: "100%".
-			Changed item 1 from "default" to "100%c".
-		Changed field "grid_item_template" from "general_section.additional_realm_subscription" to "general_section.additional_realm_subscription_panel".
-		Changed field "collection_name" from "additional_realms_subscriptions_collection" to "$realm_collection_name".
+			Changed item 1 from "50%" to 50.
+		Changed field "controls":
+			Total control: 4 (+4, -2)
+			Removed control element "image_panel_instance@comment.image_panel": field "size": ["50%", "100%"].
+			Removed control element "feed_item_content_panel@comment.feed_item_content_panel": empty.
+			Added control element "comment_player_panel@comment.linked_comment_player_panel": empty.
+			Added control element "spacing_gap@feed_common.spacing_gap": field "size": [2, "100%"].
+			Added control:
+				element "platform_icon@feed_common.platform_icon_panel":
+					field "$variables":
+						variable "$icon_offset":
+							item 0: 0
+							item 1: 4
+			Added control element "like_options_comment_feed_stack_panel@comment.like_options_comment_feed_stack_panel": empty.
+	Changed element "player_comment_gamer_pic":
+		Unchanged field "type": "image".
+		Changed field "texture" from "#comment_gamerpic_texture" to "$texture_path".
+		Changed field "texture_file_system" from "#comment_gamerpic_texture_source" to "$texture_source".
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#comment_gamerpic_texture" to "$texture_path".
+			Changed binding:
+				Changed field "binding_name" from "#comment_texture_source" to "$texture_source".
+			Changed binding:
+				Changed field "binding_name" from "#comment_gamerpic_visible" to "$is_picture_visible".
+		Added field "$variables":
+			variable "$texture_path|default": "#comment_gamerpic_texture"
+			variable "$texture_source|default": "#comment_gamerpic_texture_source"
+			variable "$is_picture_visible|default": "#comment_gamerpic_visible"
+	Added element "player_comment_gamerpic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "controls": control element "player_gamer_pic_instance@comment.player_comment_gamer_pic": field "layer": 0
+	Changed element "player_comment_pic_panel":
+		Unchanged field "type": "panel".
+		Removed field "anchor_to": "top_left".
+		Removed field "anchor_from": "top_left".
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control element "player_gamer_pic@comment.player_comment_gamer_pic": empty.
+			Added control element "player_gamer_pic_instance@comment.player_comment_gamer_pic": field "layer": 0.
+			Added control element "bevel_bg@feed_common.player_pic_bevel": field "layer": 1.
+	Added element "player_comment_platform_pic@comment.player_comment_gamer_pic":
+		field "$variables":
+			variable "$texture_path": "#comment_platform_profile_pic_texture"
+			variable "$texture_source": "#comment_platform_profile_pic_texture_source"
+			variable "$is_picture_visible": "#comment_platform_pic_visible"
+	Added element "player_comment_platform_pic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "controls":
+			control element "player_platform_pic_instance@comment.player_comment_platform_pic": field "layer": 0
+			control element "bevel_bg@feed_common.player_pic_bevel": field "layer": 1
+	Changed element "player_gamer_pic":
+		Unchanged field "type": "image".
+		Changed field "texture" from "#gamerpic_texture" to "$texture_path".
+		Changed field "texture_file_system" from "#gamerpic_texture_source" to "$texture_source".
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#gamerpic_texture" to "$texture_path".
+			Changed binding:
+				Changed field "binding_name" from "#texture_source" to "$texture_source".
+			Changed binding:
+				Changed field "binding_name" from "#gamerpic_visible" to "$is_picture_visible".
+		Added field "$variables":
+			variable "$texture_path|default": "#gamerpic_texture"
+			variable "$texture_source|default": "#gamerpic_texture_source"
+			variable "$is_picture_visible|default": "#gamerpic_visible"
+	Added element "player_gamerpic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "controls": control element "player_gamer_pic_instance@comment.player_gamer_pic": field "layer": 0
+	Changed element "player_pic_panel":
+		Unchanged field "type": "panel".
+		Removed field "anchor_to": "top_left".
+		Removed field "anchor_from": "top_left".
+		Removed field "offset": [20, 23].
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control element "player_gamer_pic@comment.player_gamer_pic": empty.
+			Added control element "player_gamer_pic_instance@comment.player_gamer_pic": field "layer": 0.
+			Added control element "bevel_bg@feed_common.player_pic_bevel": field "layer": 1.
+	Added element "player_platform_pic@comment.player_gamer_pic":
+		field "$variables":
+			variable "$texture_path": "#platform_profile_pic_texture"
+			variable "$texture_source": "#platform_profile_pic_texture_source"
+			variable "$is_picture_visible": "#platform_pic_visible"
+	Added element "player_platform_pic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "controls":
+			control element "player_platform_pic_instance@comment.player_platform_pic": field "layer": 0
+			control element "bevel_bg@feed_common.player_pic_bevel": field "layer": 1
+Changed namespace "common":
+	Changed element "base_screen":
+		Unchanged field "type": "screen".
+		Changed field "controls":
+			Changed control:
+				Changed element "variables_button_mappings_and_controls":
+					Unchanged field "type": "input_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "safezone_screen_matrix@common.safezone_outer_matrix":
+								Changed field "layer" from 2 to "$safezone_screen_matrix_layer".
 		Changed field "$variables":
-			Total variable: 3 (+2, -0)
-			Added variable "$realm_collection_name": "additional_realms_subscriptions_collection".
-			Added variable "$binding_collection_type": "collection".
-	Added element "appearance_status_image_panel":
+			Total variable: 7 (+1, -0)
+			Added variable "$safezone_screen_matrix_layer|default": 2.
+Changed namespace "common_buttons":
+	Changed element "dark_content_button@common_buttons.dark_button_assets":
+		Changed field "controls":
+			Changed control:
+				Changed element "hover@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 10 (+2, -0)
+						Changed variable "$content_alpha" from 1 to "$hover_content_alpha".
+						Added variable "$button_image_fill": "$hover_button_image_fill".
+						Added variable "$button_image_color": "$hover_button_image_color".
+		Changed field "$variables":
+			Total variable: 13 (+3, -0)
+			Added variable "$hover_button_image_fill|default": false.
+			Added variable "$hover_content_alpha|default": 1.
+			Added variable "$hover_button_image_color|default":
+				item 0: 1.0
+				item 1: 1.0
+				item 2: 1.0
+	Changed element "light_content_button@common_buttons.light_button_assets":
+		Changed field "controls":
+			Changed control:
+				Changed element "default@$button_state_panel":
+					Changed field "$variables":
+						Changed variable "$text_color" from "$light_button_default_text_color" to "$default_text_color".
+		Changed field "$variables":
+			Total variable: 19 (+1, -0)
+			Added variable "$default_text_color|default": "$light_button_default_text_color".
+	Changed element "new_ui_button_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "$button_image@$button_image":
+					Added field "fill": "$button_image_fill".
+					Added field "color": "$button_image_color".
+		Changed field "$variables":
+			Total variable: 14 (+2, -0)
+			Added variable "$button_image_fill|default": false.
+			Added variable "$button_image_color|default":
+				item 0: 1.0
+				item 1: 1.0
+				item 2: 1.0
+Changed namespace "common_store":
+	Changed element "store_header_with_coins":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "top_bar@common_store.store_top_bar":
+					Changed field "controls":
+						Changed control:
+							Changed element "title_stack_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Total control: 10 (+1, -1)
+									Removed control element "status_and_coins@common_store.status_with_coins": empty.
+									Added control:
+										element "status_and_coins@common_store.status_with_coins":
+											field "bindings":
+												binding:
+													field "binding_type": "$top_status_and_coins_visible_binding_type"
+													field "binding_name": "$top_status_and_coins_visible_binding"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$top_status_and_coins_visible_binding_type|default": "none"
+												variable "$top_status_and_coins_visible_binding|default": ""
+Changed namespace "common_tabs":
+	Changed element "base_tab":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "$tab_view_binding_name@common.toggle":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$toggle_reset_on_focus_lost|default": true.
+					Added field "reset_on_focus_lost": "$toggle_reset_on_focus_lost".
+Added namespace "confirm_msa_unlink":
+	element "background@common.screen_background":
+		field "alpha": 0.65
+		field "layer": 1
+	element "confirm_checkbox":
+		field "type": "stack_panel"
+		field "size": ["100%", 25]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "check_box_wrapper":
+					field "type": "panel"
+					field "size": [21, "100%"]
+					field "controls": control element "check_box@common.checkbox": field "size": [15, 15]
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [4, "100%"]
+			control:
+				element "label_wrapper":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "label":
+								field "type": "label"
+								field "size": ["100%", "default"]
+								field "max_size": ["100%", "100%"]
+								field "font_type": "smooth"
+								field "font_scale_factor": 1.2
+								field "text": "$checkbox_text"
+								field "color": "$body_text_color"
+	element "confirm_msa_unlink_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.cancel"
+				field "mapping_type": "global"
+		field "force_render_below": true
+		field "$variables":
+			variable "$screen_content": "confirm_msa_unlink.confirm_msa_unlink_screen_content"
+			variable "$screen_bg_content": "confirm_msa_unlink.background"
+	element "confirm_msa_unlink_screen_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "root_panel":
+					field "type": "panel"
+					field "controls": control element "dialog@confirm_msa_unlink.screen_dialog": field "layer": 1
+	element "default_animation":
+		field "anim_type": "flip_book"
+		field "initial_uv": [0, 0]
+		field "frame_count": 2
+		field "fps": 1
+		field "reversible": false
+	element "description_label_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "layer": 1
+		field "controls":
+			control element "header_panel@confirm_msa_unlink.header_panel": empty
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control element "divider_0@confirm_msa_unlink.horizontal_divider": empty
+			control:
+				element "confirm_0@confirm_msa_unlink.confirm_checkbox":
+					field "$variables":
+						variable "$checkbox_text": "options.unlink_msa.confirm.checkbox1"
+						variable "$toggle_name": "confirm_0"
+						variable "$toggle_state_binding_name": "#confirm_0"
+						variable "$toggle_enabled_binding_name": "#confirm_0_enabled"
+			control element "divider_1@confirm_msa_unlink.horizontal_divider": empty
+			control:
+				element "confirm_1@confirm_msa_unlink.confirm_checkbox":
+					field "$variables":
+						variable "$checkbox_text": "options.unlink_msa.confirm.checkbox2"
+						variable "$toggle_name": "confirm_1"
+						variable "$toggle_state_binding_name": "#confirm_1"
+						variable "$toggle_enabled_binding_name": "#confirm_1_enabled"
+			control element "divider_2@confirm_msa_unlink.horizontal_divider": empty
+			control:
+				element "confirm_2@confirm_msa_unlink.confirm_checkbox":
+					field "$variables":
+						variable "$checkbox_text": "options.unlink_msa.confirm.checkbox3"
+						variable "$toggle_name": "confirm_2"
+						variable "$toggle_state_binding_name": "#confirm_2"
+						variable "$toggle_enabled_binding_name": "#confirm_2_enabled"
+			control element "divider_3@confirm_msa_unlink.horizontal_divider": empty
+			control:
+				element "confirm_3@confirm_msa_unlink.confirm_checkbox":
+					field "$variables":
+						variable "$checkbox_text": "options.unlink_msa.confirm.checkbox4"
+						variable "$toggle_name": "confirm_3"
+						variable "$toggle_state_binding_name": "#confirm_3"
+						variable "$toggle_enabled_binding_name": "#confirm_3_enabled"
+	element "dialog_content":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100% - 4px", "100% - 4px"]
+		field "controls":
+			control:
+				element "description_label_wrapper@common.tts_label_focus_wrapper":
+					field "size": ["100%", "fill"]
+					field "$variables":
+						variable "$tts_label_panel": "confirm_msa_unlink.scrolling_panel"
+						variable "$focus_border_size":
+							item 0: "100% + 2px"
+							item 1: "100%"
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "button_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 30]
+					field "controls":
+						control:
+							element "confirm_msa_unlink_button@common_buttons.light_text_button":
+								field "size": ["50% - 1px", 30]
+								field "$variables":
+									variable "$pressed_button_name": "button.cancel"
+									variable "$button_text": "gui.cancel"
+									variable "$button_text_max_size":
+										item 0: "100%"
+										item 1: 20
+						control:
+							element "padding":
+								field "type": "panel"
+								field "size": [2, "100%"]
+						control:
+							element "cancel_msa_unlink_button@common_buttons.light_text_button":
+								field "size": ["50% - 1px", 30]
+								field "bindings":
+									binding:
+										field "binding_name": "#unlink_consequences_acknowledged"
+										field "binding_name_override": "#enabled"
+								field "$variables":
+									variable "$pressed_button_name": "button.unlink"
+									variable "$button_text": "options.unlink_msa.confirm.button"
+									variable "$default_button_texture": "textures/ui/button_red"
+									variable "$hover_button_texture": "textures/ui/button_red"
+									variable "$pressed_button_texture": "textures/ui/button_red_pressed"
+									variable "$default_text_color": "$store_white_text_color"
+									variable "$hover_text_color": "$store_white_text_color"
+									variable "$pressed_text_color": "$store_white_text_color"
+									variable "$button_text_max_size":
+										item 0: "100%"
+										item 1: 20
+	element "header_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100% - 8px", 80]
+		field "controls":
+			control element "image_panel@confirm_msa_unlink.image_panel": empty
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [6, "100%"]
+			control:
+				element "header_text":
+					field "type": "label"
+					field "text": "#unlink_warning_text"
+					field "font_type": "smooth"
+					field "font_scale_factor": 1.5
+					field "color": "$body_text_color"
+					field "size": ["fill", "100%"]
+					field "bindings": binding field "binding_name": "#unlink_warning_text"
+	element "horizontal_divider@common.section_divider":
+		field "$variables":
+			variable "$divider_size":
+				item 0: "100%"
+				item 1: 1
+	element "image_panel":
+		field "type": "panel"
+		field "size": ["133.4375%y", 80]
+		field "controls":
+			control:
+				element "image":
+					field "type": "image"
+					field "texture": "textures/ui/tnt_animated"
+					field "size": ["100%", "100%"]
+					field "uv_size": [427, 320]
+					field "uv": "@confirm_msa_unlink.default_animation"
+					field "disable_anim_fast_forward": true
+					field "layer": 15
+	element "screen_dialog@common_dialogs.main_panel_no_buttons":
+		field "size": [350, "100% - 4px"]
+		field "$variables":
+			variable "$text_name": "options.unlink_msa.confirm.title"
+			variable "$child_control": "confirm_msa_unlink.dialog_content"
+			variable "$show_close_button": false
+	element "scrolling_panel@common.scrolling_panel":
+		field "size": ["100%", "100%"]
+		field "$variables":
+			variable "$show_background": false
+			variable "$scroll_box_visible_touch": true
+			variable "$scrolling_content": "confirm_msa_unlink.description_label_panel"
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100%"
+			variable "$scrolling_pane_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$scrolling_pane_offset":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_bar_right_padding_size":
+				item 0: 0
+				item 1: 0
+Changed namespace "day_one_experience_intro":
+	Changed element "top_tab@common_tabs.tab_top":
+		Changed field "$variables":
+			Total variable: 5 (+1, -0)
+			Added variable "$toggle_reset_on_focus_lost": false.
+Changed namespace "feed":
+	Total element: 50 (+5, -1)
+	Moved element from "grid_panel" to "factory_scrolling_content_stack".
+	Changed element "factory_scrolling_content_stack":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 6 (+1, -1)
+			Removed control element "feed_grid_instance@feed.feed_grid": empty.
+			Added control element "factory_feed_content@feed.feed_stack_panel_factory_content": empty.
+	Removed element "feed_grid":
+		field "type": "grid"
+		field "size": ["100%", "default"]
+		field "grid_item_template": "feed.feed_grid_item"
+		field "grid_dimension_binding": "#feed_grid_dimension"
+		field "collection_name": "feed_collection"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "bindings": binding field "binding_name": "#feed_grid_dimension"
+		field "$variables": variable "$collection_binding_name": "feed_collection"
+	Changed element "feed_item_scrolling_panel_content@common.scrolling_panel":
+		Changed field "$variables":
+			Changed variable "$scrolling_content" from "feed.grid_panel" to "feed.factory_scrolling_content_stack".
+	Added element "feed_linked_account":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", 190]
+		field "controls":
+			control element "image_panel_instance@feed.image_panel": field "size": ["60%", "80%"]
+			control:
+				element "spacing_gap_00":
+					field "type": "panel"
+					field "size": [10, "100%"]
+			control:
+				element "player_and_comment_and_buttons":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "size": ["100%", 190]
+					field "controls":
+						control:
+							element "spacing_gap_01":
+								field "type": "panel"
+								field "size": ["100%", "10%"]
+						control:
+							element "player_and_time":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": ["100%", "30%"]
+								field "controls":
+									control:
+										element "gamer_pic_panel":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": [20, "100%"]
+											field "controls":
+												control element "player_platform_pic@feed.player_platform_pic_panel": field "layer": 0
+												control element "account_link_icon@feed_common.account_link_icon": empty
+												control element "player_pic_panel_instance@feed.player_pic_panel": field "layer": 0
+									control:
+										element "spacing_gap_03":
+											field "type": "panel"
+											field "size": [5, "100%"]
+									control:
+										element "tag_and_date":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": [100, "100%"]
+											field "controls":
+												control:
+													element "feed_platformtag_instance@feed_common.item_label":
+														field "size": [100, 10]
+														field "font_size": "normal"
+														field "text": "#platform_tag"
+														field "bindings":
+															binding:
+																field "binding_name": "#platform_tag"
+																field "binding_type": "collection"
+																field "binding_collection_name": "feed_collection"
+												control:
+													element "spacing_gap_04":
+														field "type": "panel"
+														field "size": ["100%", 15]
+												control:
+													element "feed_gamertag_instance@feed_common.item_label":
+														field "size": [100, 10]
+														field "font_size": "normal"
+														field "text": "#gamertag"
+														field "bindings":
+															binding:
+																field "binding_name": "#gamertag"
+																field "binding_type": "collection"
+																field "binding_collection_name": "feed_collection"
+												control:
+													element "feed_timesince_instance@feed_common.item_label":
+														field "size": [100, 10]
+														field "font_size": "normal"
+														field "alpha": 0.5
+														field "text": "#time_since_feed_post"
+														field "bindings":
+															binding:
+																field "binding_name": "#time_since_feed_post"
+																field "binding_type": "collection"
+																field "binding_collection_name": "feed_collection"
+									control:
+										element "spacing_gap_02":
+											field "type": "panel"
+											field "size": [2, "100%"]
+									control element "platform_icon@feed_common.platform_icon_panel": empty
+						control:
+							element "feed_text_instance@feed_common.item_label":
+								field "size": [100, 30]
+								field "font_size": "normal"
+								field "text": "#content"
+								field "bindings":
+									binding:
+										field "binding_name": "#content"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+									binding:
+										field "binding_name": "#feed_text_visible"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+						control:
+							element "like_comment_label_instance@feed_common.item_label":
+								field "size": [150, 10]
+								field "font_size": "normal"
+								field "alpha": 0.5
+								field "text": "#likes_and_comments"
+								field "bindings":
+									binding:
+										field "binding_name": "#likes_and_comments"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+						control:
+							element "spacing_gap_05":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control element "feed_buttons_panel@feed.feed_buttons_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "$visible_binding_name"
+				field "binding_name_override": "#visible"
+		field "$variables": variable "$visible_binding_name|default": "(not #loading_bars_animation_visible)"
+	Changed element "feed_loading_grid_item":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "player_and_comment_and_buttons_load":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "player_and_time":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Moved element from "spacing_gap1" to "spacing_gap_01".
+	Added element "feed_stack_panel_factory_content":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "factory":
+			field "name": "factory"
+			field "control_ids":
+				control id "xbox_live": "@feed.feed_xbox_live_account"
+				control id "linked": "@feed.feed_linked_account"
+			field "factory_variables":
+				variable "$feed_factory_collection_details"
+				variable "$feed_factory_binding_type"
+				variable "$feed_factory_collection_prefix"
+				variable "$collection_binding_name"
+		field "collection_name": "feed_collection"
+		field "bindings":
+			binding:
+				field "binding_name": "#feed_page_collection_length"
+				field "binding_name_override": "#collection_length"
+		field "$variables":
+			variable "$feed_factory_collection_details|default": "collection_details"
+			variable "$feed_factory_binding_type|default": "collection"
+			variable "$feed_factory_collection_prefix|default": "factory"
+			variable "$collection_binding_name": "feed_collection"
+	Moved element from "feed_grid_item" to "feed_xbox_live_account".
+	Changed element "feed_xbox_live_account":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "spacing_gap0" to "spacing_gap_00".
+			Changed control:
+				Changed element "player_and_comment_and_buttons":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Moved element from "spacing_gap1" to "spacing_gap_01".
+						Changed control:
+							Changed element "player_and_time":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Total control: 3 (+1, -1)
+									Removed control element "player_pic_panel_instance@feed.player_pic_panel": field "layer": 0.
+									Changed control:
+										Moved element from "spacing_gap1" to "spacing_gap_03".
+									Added control:
+										element "gamer_pic_panel":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": [20, "100%"]
+											field "controls": control element "player_pic_panel_instance@feed.player_gamerpic_panel": field "layer": 0
+						Changed control:
+							Moved element from "spacing_gap2" to "spacing_gap_05".
+		Added field "bindings":
+			binding:
+				field "binding_name": "$visible_binding_name"
+				field "binding_name_override": "#visible"
+		Added field "$variables": variable "$visible_binding_name|default": "(not #loading_bars_animation_visible)".
+	Changed element "player_gamer_pic":
+		Unchanged field "type": "image".
+		Changed field "texture" from "#gamerpic_texture" to "$texture_path".
+		Removed field "layer": 0.
+		Changed field "texture_file_system" from "#gamerpic_texture_source" to "$texture_source".
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#gamerpic_texture" to "$texture_path".
+			Changed binding:
+				Changed field "binding_name" from "#gamerpic_texture_source" to "$texture_source".
+			Changed binding:
+				Changed field "binding_name" from "#gamerpic_visible" to "$is_picture_visible".
+		Added field "$variables":
+			variable "$texture_path|default": "#gamerpic_texture"
+			variable "$texture_source|default": "#gamerpic_texture_source"
+			variable "$is_picture_visible|default": "#gamerpic_visible"
+	Added element "player_gamerpic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls": control element "player_gamer_pic_instance@feed.player_gamer_pic": field "layer": 0
+	Changed element "player_pic_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control element "player_gamer_pic_instance@feed.player_gamer_pic": empty.
+			Added control element "player_gamer_pic_instance@feed.player_gamer_pic": field "layer": 0.
+			Added control element "bevel_bg@feed_common.player_pic_bevel": field "layer": 1.
+	Added element "player_platform_pic@feed.player_gamer_pic":
+		field "$variables":
+			variable "$texture_path": "#platform_profile_pic_texture"
+			variable "$texture_source": "#platform_profile_pic_texture_source"
+			variable "$is_picture_visible": "#platform_pic_visible"
+	Added element "player_platform_pic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls":
+			control element "player_gamer_pic_instance@feed.player_platform_pic": field "layer": 0
+			control element "bevel_bg@feed_common.player_pic_bevel": field "layer": 1
+Changed namespace "feed_common":
+	Total element: 52 (+5, -0)
+	Added element "account_link_icon":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", 5]
+		field "layer": 1
+		field "controls":
+			control:
+				element "space_01":
+					field "type": "panel"
+					field "size": [9, "100%"]
+			control element "account_link_image@feed_common.account_link_image": field "size": [2, "100%"]
+			control:
+				element "space_02":
+					field "type": "panel"
+					field "size": [9, "100%"]
+	Added element "account_link_image":
+		field "type": "image"
+		field "texture": "textures/ui/control_white"
+	Added element "platform_icon":
+		field "type": "image"
+		field "texture": "textures/ui/platform_icon"
+		field "size": [15, 15]
+	Added element "platform_icon_panel":
+		field "type": "panel"
+		field "size": [15, 15]
+		field "controls":
+			control:
+				element "platform_icon@feed_common.platform_icon":
+					field "layer": 1
+					field "offset": "$icon_offset"
+					field "size": ["100%-2px", "100%-2px"]
+		field "$variables":
+			variable "$icon_offset|default":
+				item 0: 0
+				item 1: 2
+	Added element "player_pic_bevel":
+		field "type": "image"
+		field "texture": "textures/ui/focus_border_white"
+		field "size": ["100%", "100%"]
+Changed namespace "general_section":
+	Total element: 75 (+0, -3)
+	Removed element "appearance_status_image_panel":
 		field "type": "image"
 		field "size": ["100%", "100%x"]
 		field "bilinear": true
 		field "texture": "textures/ui/infobulb"
 		field "layer": 1
-	Added element "possible_store_mismatch":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control:
-				element "spacer_0":
-					field "type": "panel"
-					field "size": ["100%", 4]
-			control:
-				element "tooltip_wrapper_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%cm"]
-					field "controls":
-						control element "summary_update_stack_panel@general_section.summary_update_stack_panel": empty
-						control:
-							element "padded_icon_1":
-								field "type": "stack_panel"
-								field "orientation": "horizontal"
-								field "size": ["100%", "100%cm"]
-								field "controls":
-									control element "padded_icon_0@common.empty_panel": field "size": [10, 0]
-									control:
-										element "limited_status_image":
-											field "type": "image"
-											field "size": [15, 19]
-											field "bilinear": true
-											field "texture": "textures/ui/infobulb"
-											field "layer": 1
-									control element "padded_icon_1@common.empty_panel": field "size": [10, 0]
-									control:
-										element "label_panel":
-											field "type": "panel"
-											field "size": ["100%", "100%c"]
-											field "controls":
-												control:
-													element "name_label2":
-														field "type": "label"
-														field "color": "$main_header_text_color"
-														field "size": ["100%", "default"]
-														field "text": "options.viewSubscriptions.boughtOnAnotherDevice"
-		field "bindings":
-			binding:
-				field "binding_type": "collection_details"
-				field "binding_collection_name": "$realm_collection_name"
-			binding:
-				field "binding_name": "#store_mismatch_visible"
-				field "binding_name_override": "#visible"
-				field "binding_type": "collection"
-				field "binding_collection_name": "$realm_collection_name"
-	Changed element "realms_button_panel":
+	Changed element "possible_store_mismatch":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control element "summary_update_stack_panel@general_section.summary_update_stack_panel": empty.
+	Changed element "profile_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 3 (+1, -1)
-			Removed control:
-				element "renew_label":
-					field "type": "label"
-					field "text": "$renew_label_text"
-					field "text_alignment": "left"
-					field "color": "$body_text_color"
-					field "font_type": "smooth"
-					field "font_scale_factor": 0.9
-					field "size": ["fill", "100%"]
-			Changed control:
-				Changed element "purchase_button@settings_common.action_button":
-					Added field "bindings":
-						binding:
-							field "binding_type": "collection_details"
-							field "binding_collection_name": "$realm_collection_name"
-						binding:
-							field "binding_name": "(not #store_mismatch_visible)"
-							field "binding_name_override": "#visible"
-							field "binding_type": "$binding_collection_type"
-							field "binding_collection_name": "$realm_collection_name"
-							field "binding_condition": "visible"
-			Added control element "padded_icon_0@common.empty_panel": field "size": ["fill", "100%"].
-		Added field "visible": "$purchase_button_visible".
-	Removed element "realms_plus_offer":
-		field "type": "panel"
-		field "size": ["100%", 73]
-		field "controls":
-			control:
-				element "black_background@general_section.black_image":
-					field "layer": 1
-					field "size": ["100%", 70]
-			control element "realms_plus_offer_stack@general_section.realms_plus_offer_stack": field "layer": 2
-			control:
-				element "margin":
-					field "type": "panel"
-					field "size": ["100%", 3]
-	Changed element "realms_plus_offer_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 3 (+1, -0)
-			Changed control:
-				Changed element "realms_plus_desc_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 2 (+1, -1)
-						Changed control:
-							Moved element from "realms_plus_desc_label" to "realms_plus_50_content".
-						Removed control:
-							element "realms_plus_button_panel@general_section.realms_button_panel":
-								field "$variables":
-									variable "$renew_label_text": ""
-									variable "$purchase_realm_button_text": "#buy_realms_plus_button_text"
-									variable "$manage_realm_button_text": "options.viewSubscriptions.button.manage"
-						Added control:
-							element "realms_plus_button_panel@general_section.realms_button_panel":
-								field "bindings":
-									binding:
-										field "binding_name": "#realms_plus_subscriptions_visible"
-										field "binding_name_override": "#visible"
-									binding:
-										field "binding_type": "collection_details"
-										field "binding_collection_name": "realms_plus_subscriptions_collection"
-									binding:
-										field "binding_name": "#can_buy_more_subscriptions"
-										field "binding_type": "collection"
-										field "binding_collection_name": "realms_plus_subscriptions_collection"
-									binding:
-										field "binding_name": "#realms_subscription_text"
-										field "binding_type": "collection"
-										field "binding_collection_name": "realms_plus_subscriptions_collection"
-								field "$variables":
-									variable "$realm_collection_name": "realms_plus_subscriptions_collection"
-									variable "$purchase_realm_button_text": "#buy_realms_plus_button_text"
-									variable "$manage_realm_button_text": "options.viewSubscriptions.button.info"
-									variable "$manage_button_name": "button.manage_realms_plus_button"
-									variable "$purchase_button_name": "button.purchase_realms_plus_button"
-									variable "$purchase_button_visible": "#can_buy_more_subscriptions"
+			Total control: 30 (+1, -0)
 			Added control:
-				element "spacer_0":
-					field "type": "panel"
-					field "size": [6, "100%"]
-	Changed element "realms_plus_subscription":
-		field "type": "panel"
-		field "size": ["100%", 73]
-		field "controls":
-			control:
-				element "black_background@general_section.black_image":
-					field "layer": 1
-					field "size": ["100%", 70]
-			control element "realms_plus_subscription_stack@general_section.realms_plus_subscription_stack": field "layer": 2
-			control:
-				element "margin":
-					field "type": "panel"
-					field "size": ["100%", 3]
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "controls":
-			control:
-				element "horz_panel":
-					field "type": "panel"
-					field "size": ["100%", 73]
-					field "controls":
-						control:
-							element "black_background@general_section.black_image":
-								field "layer": 1
-								field "size": ["100%", 70]
-						control element "realms_plus_subscription_stack@general_section.realms_plus_subscription_stack": field "layer": 2
-			control:
-				element "renews_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "controls":
-						control:
-							element "black_background@general_section.black_image":
-								field "layer": 1
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "size": ["100%", 12]
-						control:
-							element "renews_text":
-								field "type": "label"
-								field "color": "$main_header_text_color"
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "layer": 2
-								field "offset": [2, 1]
-								field "text": "#realms_subscription_text"
-								field "bindings":
-									binding:
-										field "binding_name": "#realms_plus_subscriptions_visible"
-										field "binding_name_override": "#visible"
-									binding:
-										field "binding_type": "collection_details"
-										field "binding_collection_name": "realms_plus_subscriptions_collection"
-									binding:
-										field "binding_name": "#realms_subscription_text"
-										field "binding_type": "collection"
-										field "binding_collection_name": "realms_plus_subscriptions_collection"
-										field "binding_condition": "visible"
-						control:
-							element "possible_store_mismatch@general_section.possible_store_mismatch":
-								field "$variables":
-									variable "$tooltip_button_collection_name": "realms_plus_subscriptions_collection"
-									variable "$tooltip_text_binding_name": "#realms_purchased_store"
-	Changed element "realms_plus_subscription_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "orientation" from "horizontal" to "vertical".
-		Changed field "controls":
-			Total control: 2 (+2, -2)
-			Removed control:
-				element "realms_plus_image@common.service_repo_image_panel":
-					field "size": ["177.8%y", "100%"]
-					field "$variables": variable "$repo_image_texture": "content_phalanx_logo2"
-			Removed control:
-				element "realms_plus_sub_desc_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["fill", "100%"]
-					field "controls":
-						control:
-							element "realms_plus_desc_label":
-								field "type": "label"
-								field "text": "#realms_plus_subscription_PLACEHOLDER_TEXT"
-								field "text_alignment": "left"
-								field "color": "$body_text_color"
-								field "font_type": "smooth"
-								field "font_scale_factor": 0.9
-								field "size": ["100%", "fill"]
+				element "unlink_msa_account@settings_common.action_button":
+					field "ignored": "(not $is_berwick or not $is_pregame)"
 					field "bindings":
 						binding:
-							field "binding_name": "#realms_plus_subscription_PLACEHOLDER_TEXT"
-							field "binding_type": "collection"
-							field "binding_collection_name": "$collection_binding_name"
-			Added control:
-				element "realms_plus_stack_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%", "fill"]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "controls":
-						control:
-							element "realms_plus_image@common.service_repo_image_panel":
-								field "size": ["177.8%y", "100%"]
-								field "$variables": variable "$repo_image_texture": "content_phalanx_logo2"
-						control:
-							element "padding":
-								field "type": "panel"
-								field "size": [4, "100%"]
-						control:
-							element "realms_plus_desc_label":
-								field "type": "label"
-								field "text": "#realms_subscription_text_ex"
-								field "text_alignment": "left"
-								field "color": "$body_text_color"
-								field "font_type": "smooth"
-								field "font_scale_factor": 0.9
-								field "size": ["fill", "100%"]
-								field "bindings":
-									binding:
-										field "binding_name": "#realms_plus_subscriptions_visible"
-										field "binding_name_override": "#visible"
-									binding:
-										field "binding_type": "collection_details"
-										field "binding_collection_name": "realms_plus_subscriptions_collection"
-									binding:
-										field "binding_name": "#realms_subscription_text_ex"
-										field "binding_type": "collection"
-										field "binding_collection_name": "realms_plus_subscriptions_collection"
-			Added control:
-				element "realms_plus_button_panel@general_section.realms_button_panel":
-					field "bindings":
-						binding:
-							field "binding_name": "#realms_plus_subscriptions_visible"
+							field "binding_name": "#logged_in"
 							field "binding_name_override": "#visible"
-						binding:
-							field "binding_type": "collection_details"
-							field "binding_collection_name": "realms_plus_subscriptions_collection"
-						binding:
-							field "binding_name": "#can_buy_more_subscriptions"
-							field "binding_type": "collection"
-							field "binding_collection_name": "realms_plus_subscriptions_collection"
-						binding:
-							field "binding_name": "#realms_subscription_text"
-							field "binding_type": "collection"
-							field "binding_collection_name": "realms_plus_subscriptions_collection"
 					field "$variables":
-						variable "$realm_collection_name": "realms_plus_subscriptions_collection"
-						variable "$purchase_realm_button_text": "#buy_realms_plus_button_text"
-						variable "$manage_realm_button_text": "options.viewSubscriptions.button.info"
-						variable "$manage_button_name": "button.manage_realms_plus_button"
-						variable "$purchase_button_name": "button.purchase_realms_plus_button"
-						variable "$purchase_button_visible": "#can_buy_more_subscriptions"
-	Changed element "realms_plus_subscriptions_grid":
-		Unchanged field "type": "grid".
-		Changed field "collection_name" from "realms_plus_subscriptions_collection" to "$realm_collection_name".
-		Changed field "$variables":
-			Total variable: 3 (+2, -0)
-			Added variable "$realm_collection_name": "realms_plus_subscriptions_collection".
-			Added variable "$binding_collection_type": "collection".
-	Added element "realms_subscription_offer_common":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "controls":
-			control:
-				element "horz_panel":
-					field "type": "panel"
-					field "size": ["100%", 73]
-					field "controls":
-						control:
-							element "black_background@general_section.black_image":
-								field "layer": 1
-								field "size": ["100%", 70]
-						control:
-							element "realms_plus_offer_stack@general_section.realms_plus_offer_stack":
-								field "visible": "$is_realms_plus"
-								field "layer": 2
-						control:
-							element "additional_realms_offer_stack@general_section.additional_realms_offer_stack":
-								field "visible": "(not $is_realms_plus)"
-								field "layer": 2
-			control:
-				element "subscription_offer_panel_common":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "controls":
-						control:
-							element "black_background@general_section.black_image":
-								field "layer": 1
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "size": ["100%", 12]
-						control:
-							element "renews_panel":
-								field "type": "label"
-								field "size": ["100%", "100%c"]
-								field "color": "$main_header_text_color"
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "layer": 2
-								field "offset": [2, 1]
-								field "text": "#realms_subscription_text"
-								field "bindings":
-									binding:
-										field "binding_type": "collection_details"
-										field "binding_collection_name": "$realm_collection_name"
-									binding:
-										field "binding_name": "#realms_subscription_text"
-										field "binding_type": "collection"
-										field "binding_collection_name": "$realm_collection_name"
-										field "binding_condition": "visible"
-	Added element "signin_subscription":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control:
-				element "sign_in":
-					field "ignored": "(not $is_pregame or not $is_xboxlive_enabled)"
-					field "type": "panel"
-					field "size": ["100%", 12]
-					field "controls":
-						control:
-							element "please_signin_label":
-								field "type": "label"
-								field "color": "$main_header_text_color"
-								field "text": "options.viewSubscriptions.signIn"
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-	Added element "static_tooltip_notification_panel@common.button":
+						variable "$pressed_button_name": "button.unlink_msa"
+						variable "$button_text": "options.unlink_msa.button"
+	Removed element "static_tooltip_notification_panel@common.button":
 		field "size": ["100%", 12]
 		field "sound_volume": 0.0
 		field "bindings":
@@ -750,133 +1029,600 @@ Changed namespace "general_section":
 			variable "$tooltip_button_hover_texture|default": "textures/ui/tooltip_notification_default_background"
 			variable "$tooltip_button_locked_texture|default": "textures/ui/tooltip_notification_default_background"
 			variable "$tooltip_button_default_texture|default": ""
-	Added element "summary_update_stack_panel":
+	Removed element "summary_update_stack_panel":
 		field "type": "stack_panel"
 		field "orientation": "horizontal"
-		field "size": ["100% -20px", "14px"]
+		field "size": ["100%", "100%sm"]
 		field "anchor_from": "top_left"
 		field "anchor_to": "top_left"
 		field "controls": control element "static_tooltip_notification_panel@general_section.static_tooltip_notification_panel": field "layer": 2
-	Changed element "view_subscriptions_section":
+	Changed element "view_subscriptions_button@settings_common.section_toggle_base":
+		Added field "enabled": "(not $trial)".
+Changed namespace "invite":
+	Total element: 82 (+10, -0)
+	Added element "add_friend_button@common_buttons.light_content_button":
+		field "ignored": "($is_inviting_to_realm or (not $supports_add_friend))"
+		field "size": "$button_size"
+		field "layer": 2
+		field "button_mappings": "$add_button_mappings"
+		field "bindings":
+			binding:
+				field "binding_name": "#cross_platform_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.add_friend"
+			variable "$button_content": "invite.invite_button_content"
+			variable "$button_text|default": "networkWorld.add_friend"
+			variable "$icon_description_bind_type": "none"
+			variable "$gamepad_helper": "common.gamepad_helper_y"
+	Added element "add_member_button@common_buttons.light_content_button":
+		field "ignored": "(not $is_realm_owner)"
+		field "size": "$button_size"
+		field "anchor_from": "bottom_left"
+		field "anchor_to": "bottom_left"
+		field "layer": 2
+		field "button_mappings": "$add_button_mappings"
+		field "$variables":
+			variable "$pressed_button_name": "button.add_member"
+			variable "$button_content": "invite.invite_button_content"
+			variable "$button_text": "invite.realm.add_member"
+			variable "$icon_description_bind_type": "none"
+			variable "$gamepad_helper": "common.gamepad_helper_y"
+	Added element "friends_category":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control element "friends_grid@$friends_category_grid_type": empty
+			control:
+				element "pagination_stack_panel":
+					field "ignored": "(not $use_pagination)"
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 4]
+						control element "pagination_controls@invite.friends_pagination_controls": empty
+						control:
+							element "padding_2":
+								field "type": "panel"
+								field "size": ["100%", 4]
+						control element "divider@common.horizontal_divider": field "size": ["100% - 7px", "100%c"]
+					field "bindings":
+						binding:
+							field "binding_name": "#friends_pagination_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_name"
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": ["100%", 4]
+		field "bindings":
+			binding:
+				field "binding_name": "$visibility_binding"
+				field "binding_name_override": "#visible"
+	Added element "friends_pagination_controls":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100% - 7px", 30]
+		field "controls":
+			control:
+				element "previous_button@common_buttons.light_glyph_button":
+					field "size": "$button_size"
+					field "focus_identifier": "$button_focus_identifier"
+					field "$variables":
+						variable "$pressed_button_name": "button.previous_friends_page"
+						variable "$button_content": "invite.left_arrow_image"
+						variable "$button_bindings":
+							item 0:
+								item "binding_type": "collection_details"
+								item "binding_collection_name": "$collection_name"
+							item 1:
+								item "binding_name": "#previous_button_enabled"
+								item "binding_type": "collection"
+								item "binding_name_override": "#enabled"
+								item "binding_collection_name": "$collection_name"
+			control:
+				element "center_panel":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "page_counter":
+								field "type": "label"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "color": "$body_text_color"
+								field "text": "#page_counter_label"
+								field "bindings":
+									binding:
+										field "binding_name": "#page_counter_label"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$collection_name"
+			control:
+				element "next_button@common_buttons.light_content_button":
+					field "size": "$button_size"
+					field "focus_identifier": "$button_focus_identifier"
+					field "$variables":
+						variable "$pressed_button_name": "button.next_friends_page"
+						variable "$button_content": "invite.right_arrow_image"
+						variable "$button_bindings":
+							item 0:
+								item "binding_type": "collection_details"
+								item "binding_collection_name": "$collection_name"
+							item 1:
+								item "binding_name": "#next_button_enabled"
+								item "binding_type": "collection"
+								item "binding_name_override": "#enabled"
+								item "binding_collection_name": "$collection_name"
+		field "$variables":
+			variable "$button_size|default":
+				item 0: "100%y"
+				item 1: "100%"
+	Moved element from "button_stack_panel" to "horizontal_button_stack_panel".
+	Changed element "horizontal_button_stack_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 12 (+4, -2)
-			Changed control:
-				Changed element "realms_plus_header_label":
-					Unchanged field "type": "label".
-					Added field "bindings":
-						binding:
-							field "binding_name": "#realms_plus_subscriptions_visible"
-							field "binding_name_override": "#visible"
+			Total control: 4 (+3, -3)
 			Removed control:
-				element "realms_plus_offer@general_section.realms_plus_offer":
+				element "add_friend_button@common_buttons.light_content_button":
+					field "ignored": "($is_inviting_to_realm or (not $supports_add_friend))"
+					field "size": "$button_size"
+					field "layer": 2
+					field "button_mappings": "$add_button_mappings"
 					field "bindings":
 						binding:
-							field "binding_name": "#realms_plus_offer_visible"
-							field "binding_name_override": "#visible"
-			Removed control element "additional_realms_offer@general_section.additional_realms_subscription_offer": empty.
-			Added control:
-				element "signin_controls@settings_common.option_custom_control":
-					field "ignored": "$education_edition"
-					field "bindings":
-						binding:
-							field "binding_name": "#not_logged_in"
-							field "binding_name_override": "#visible"
-					field "$variables": variable "$control_name": "general_section.signin_subscription"
-			Added control:
-				element "realms_plus_header_no_active_subscriptions":
-					field "type": "label"
-					field "text": "options.viewSubscriptions.noActiveSubscriptions"
-					field "text_alignment": "left"
-					field "color": "$body_text_color"
-					field "size": ["100%", 12]
-					field "bindings":
-						binding:
-							field "binding_name": "(not #realms_plus_subscriptions_visible)"
-							field "binding_name_override": "#visible"
-						binding:
-							field "binding_type": "collection_details"
-							field "binding_collection_name": "$realm_collection_name"
-					field "$variables": variable "$realm_collection_name": "realms_plus_subscriptions_collection"
-			Added control:
-				element "realms_plus_offer@general_section.realms_subscription_offer_common":
-					field "bindings":
-						binding:
-							field "binding_name": "#realms_plus_offer_visible"
-							field "binding_name_override": "#visible"
-						binding:
-							field "binding_type": "collection_details"
-							field "binding_collection_name": "$realm_collection_name"
+							field "binding_name": "#cross_platform_enabled"
+							field "binding_name_override": "#enabled"
 					field "$variables":
-						variable "$is_realms_plus": true
-						variable "$binding_collection_type": "global"
-						variable "$realm_collection_name": "realms_plus_subscriptions_collection"
-			Added control:
-				element "additional_realms_subscription_offer@general_section.realms_subscription_offer_common":
-					field "bindings":
-						binding:
-							field "binding_name": "(not #additional_realms_subscriptions_visible)"
-							field "binding_name_override": "#visible"
-						binding:
-							field "binding_type": "collection_details"
-							field "binding_collection_name": "$realm_collection_name"
+						variable "$pressed_button_name": "button.add_friend"
+						variable "$button_content": "invite.invite_button_content"
+						variable "$button_text|default": "networkWorld.add_friend"
+						variable "$icon_description_bind_type": "none"
+						variable "$gamepad_helper": "common.gamepad_helper_y"
+						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+			Removed control:
+				element "add_member_button@common_buttons.light_content_button":
+					field "ignored": "(not $is_realm_owner)"
+					field "size": "$button_size"
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "layer": 2
+					field "button_mappings": "$add_button_mappings"
 					field "$variables":
-						variable "$is_realms_plus": false
-						variable "$binding_collection_type": "global"
-						variable "$realm_collection_name": "additional_realms_subscriptions_collection"
-Changed namespace "pdp":
-	Changed element "bundle_upsell_offer_info":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "bundle_title@pdp.offer_title_label":
-					Removed field "$variables": variable "$single_line_label_binding_condition": "visibility_changed".
-			Changed control:
-				Changed element "other_bundle_packs_label@common.single_line_label":
-					Changed field "$variables":
-						Total variable: 4 (+1, -0)
-						Moved variable from "$single_line_label_binding" to "$single_line_label_text".
-						Added variable "$label_text_bindings": item 0: item "binding_name": "#bundle_upsell_other_packs_description".
-	Changed element "offer_title_label@common.single_line_label":
+						variable "$pressed_button_name": "button.add_member"
+						variable "$button_content": "invite.invite_button_content"
+						variable "$button_text": "invite.realm.add_member"
+						variable "$icon_description_bind_type": "none"
+						variable "$gamepad_helper": "common.gamepad_helper_y"
+						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+			Removed control:
+				element "send_button@common_buttons.light_content_button":
+					field "size": ["fill", 30]
+					field "layer": 2
+					field "button_mappings":
+						button mapping:
+							field "from_button_id": "button.controller_select"
+							field "to_button_id": "$pressed_button_name"
+							field "mapping_type": "global"
+						button mapping:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "$pressed_button_name"
+							field "mapping_type": "pressed"
+						button mapping:
+							field "from_button_id": "button.menu_ok"
+							field "to_button_id": "$pressed_button_name"
+							field "mapping_type": "focused"
+					field "$variables":
+						variable "$pressed_button_name": "button.send_invites"
+						variable "$button_content": "invite.invite_button_content"
+						variable "$button_text": "#send_button"
+						variable "$invite_label_binding_type": "global"
+						variable "$gamepad_helper": "common.gamepad_helper_x"
+						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+			Added control element "add_friend_button@invite.add_friend_button": field "$variables": variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
+			Added control element "add_member_button@invite.add_member_button": field "$variables": variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
+			Added control element "send_button@invite.send_button": field "$variables": variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
+	Moved element from "invite_panel@common_dialogs.main_panel_one_button" to "horizontal_invite_panel@common_dialogs.main_panel_one_button".
+	Changed element "horizontal_invite_panel@common_dialogs.main_panel_one_button":
 		Changed field "$variables":
-			Total variable: 2 (+1, -0)
-			Moved variable from "$single_line_label_binding" to "$single_line_label_text".
-			Added variable "$label_text_bindings":
-				item 0:
-					item "binding_name": "#title_label"
-					item "binding_type": "$mashup_collection_binding_type"
-					item "binding_collection_name": "$mashup_collection_name"
-					item "binding_condition": "once"
-	Changed element "summary_content_left_side":
+			Changed variable "$button_panel" from "invite.button_stack_panel" to "invite.horizontal_button_stack_panel".
+	Changed element "invite_screen_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "invite_panel@invite.invite_panel": field "layer": 1.
+			Added control element "invite_panel@$invite_panel": field "layer": 1.
+		Added field "variables":
+			variable:
+				field "requires": "($use_vertical_button_stack_panel and (not $is_inviting_to_realm or $is_realm_owner))"
+				field "$variables": variable "$invite_panel": "invite.vertical_invite_panel"
+		Added field "$variables": variable "$invite_panel|default": "invite.horizontal_invite_panel".
+	Added element "left_arrow_image":
+		field "type": "image"
+		field "texture": "textures/ui/arrow_l_default"
+		field "size": [7, 9]
+	Changed element "linked_friend_button@common.checkbox":
+		Added field "bindings":
+			binding:
+				field "binding_name": "#friend_button_focus_override_up"
+				field "binding_name_override": "#focus_change_up"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "#friend_button_focus_override_down"
+				field "binding_name_override": "#focus_change_down"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_type": "$toggle_binding_type"
+				field "binding_condition": "$toggle_binding_condition"
+				field "binding_collection_name": "$toggle_grid_collection_name"
+				field "binding_name": "$toggle_state_binding_name"
+				field "binding_name_override": "#toggle_state"
+	Changed element "msa_friend_button@common.checkbox":
+		Added field "bindings":
+			binding:
+				field "binding_name": "#friend_button_focus_override_up"
+				field "binding_name_override": "#focus_change_up"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "#friend_button_focus_override_down"
+				field "binding_name_override": "#focus_change_down"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_type": "$toggle_binding_type"
+				field "binding_condition": "$toggle_binding_condition"
+				field "binding_collection_name": "$toggle_grid_collection_name"
+				field "binding_name": "$toggle_state_binding_name"
+				field "binding_name_override": "#toggle_state"
+	Changed element "offline_linked_account_friend_grid_item@invite.friend_linked_account_grid_item_template":
+		Unchanged field "type": "panel".
+		Changed field "$variables":
+			Total variable: 1 (+0, -1)
+			Removed variable "$collection_name": "offline_linked_account_friends".
+	Changed element "offline_linked_account_friend_list_grid":
+		Unchanged field "type": "grid".
+		Changed field "collection_name" from "offline_linked_account_friends" to "$collection_name".
+	Changed element "offline_platform_friend_grid_item@invite.platform_friend_grid_item_template":
+		Unchanged field "type": "panel".
+		Changed field "$variables":
+			Total variable: 1 (+0, -1)
+			Removed variable "$collection_name": "offline_platform_friends".
+	Changed element "offline_platform_friend_list_grid":
+		Unchanged field "type": "grid".
+		Changed field "collection_name" from "offline_platform_friends" to "$collection_name".
+	Changed element "offline_xbox_live_friend_grid_item@invite.msa_friend_grid_item_template":
+		Unchanged field "type": "panel".
+		Removed field "$variables": variable "$collection_name": "offline_xbox_live_friends".
+	Changed element "offline_xbox_live_friend_list_grid":
+		Unchanged field "type": "grid".
+		Changed field "collection_name" from "offline_xbox_live_friends" to "$collection_name".
+	Changed element "online_linked_account_friend_grid_item@invite.friend_linked_account_grid_item_template":
+		Unchanged field "type": "panel".
+		Changed field "$variables":
+			Total variable: 1 (+0, -1)
+			Removed variable "$collection_name": "online_linked_account_friends".
+	Changed element "online_linked_account_friend_list_grid":
+		Unchanged field "type": "grid".
+		Changed field "collection_name" from "online_linked_account_friends" to "$collection_name".
+	Changed element "online_platform_friend_grid_item@invite.platform_friend_grid_item_template":
+		Unchanged field "type": "panel".
+		Changed field "$variables":
+			Total variable: 1 (+0, -1)
+			Removed variable "$collection_name": "online_platform_friends".
+	Changed element "online_platform_friend_list_grid":
+		Unchanged field "type": "grid".
+		Changed field "collection_name" from "online_platform_friends" to "$collection_name".
+	Changed element "online_xbox_live_friend_grid_item@invite.msa_friend_grid_item_template":
+		Unchanged field "type": "panel".
+		Removed field "$variables": variable "$collection_name": "online_xbox_live_friends".
+	Changed element "online_xbox_live_friend_list_grid":
+		Unchanged field "type": "grid".
+		Changed field "collection_name" from "online_xbox_live_friends" to "$collection_name".
+	Changed element "platform_friend_button@common.checkbox":
+		Added field "bindings":
+			binding:
+				field "binding_name": "#friend_button_focus_override_up"
+				field "binding_name_override": "#focus_change_up"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "#friend_button_focus_override_down"
+				field "binding_name_override": "#focus_change_down"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_type": "$toggle_binding_type"
+				field "binding_condition": "$toggle_binding_condition"
+				field "binding_collection_name": "$toggle_grid_collection_name"
+				field "binding_name": "$toggle_state_binding_name"
+				field "binding_name_override": "#toggle_state"
+	Changed element "progress_bar_and_scrolling_content_panel":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Unchanged item 0: "100%".
+			Changed item 1 from "100%" to "100%c".
+	Added element "right_arrow_image":
+		field "type": "image"
+		field "texture": "textures/ui/arrow_r_default"
+		field "size": [7, 9]
+	Changed element "scrolling_content_stack":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
+			Total control: 19 (+6, -6)
+			Removed control element "online_platform_friend_list_grid@invite.online_platform_friend_list_grid": field "$variables": variable "$tts_section_header": "thirdPartyConsole.invite.OnlineFriends".
+			Removed control element "online_linked_account_friend_list_grid@invite.online_linked_account_friend_list_grid": field "$variables": variable "$tts_section_header": "invite.OnlineFriends".
+			Removed control element "online_xbox_live_friend_list_grid@invite.online_xbox_live_friend_list_grid": field "$variables": variable "$tts_section_header": "invite.OnlineFriends".
+			Removed control element "offline_platform_friend_list_grid@invite.offline_platform_friend_list_grid": field "$variables": variable "$tts_section_header": "thirdPartyConsole.invite.OfflineFriends".
+			Removed control element "offline_linked_account_friend_list_grid@invite.offline_linked_account_friend_list_grid": field "$variables": variable "$tts_section_header": "invite.OfflineFriends".
+			Removed control element "offline_xbox_live_friend_list_grid@invite.offline_xbox_live_friend_list_grid": field "$variables": variable "$tts_section_header": "invite.OfflineFriends".
+			Added control:
+				element "online_platform_friend_list_category@invite.friends_category":
+					field "$variables":
+						variable "$collection_name": "online_platform_friends"
+						variable "$friends_category_grid_type": "invite.online_platform_friend_list_grid"
+						variable "$button_focus_identifier": "online_platform_friends_pagination_controls"
+						variable "$tts_section_header": "thirdPartyConsole.invite.OnlineFriends"
+						variable "$visibility_binding": "#online_platform_friends_visible"
+			Added control:
+				element "online_linked_account_friend_list_category@invite.friends_category":
+					field "$variables":
+						variable "$collection_name": "online_linked_account_friends"
+						variable "$friends_category_grid_type": "invite.online_linked_account_friend_list_grid"
+						variable "$button_focus_identifier": "online_linked_account_friends_pagination_controls"
+						variable "$tts_section_header": "invite.OnlineFriends"
+						variable "$visibility_binding": "#online_linked_account_friends_visible"
+			Added control:
+				element "online_xbox_live_friend_list_category@invite.friends_category":
+					field "$variables":
+						variable "$collection_name": "online_xbox_live_friends"
+						variable "$friends_category_grid_type": "invite.online_xbox_live_friend_list_grid"
+						variable "$button_focus_identifier": "online_xbox_live_friends_pagination_controls"
+						variable "$tts_section_header": "invite.OnlineFriends"
+						variable "$visibility_binding": "#online_xbox_live_friends_visible"
+			Added control:
+				element "offline_platform_friend_list_category@invite.friends_category":
+					field "$variables":
+						variable "$collection_name": "offline_platform_friends"
+						variable "$friends_category_grid_type": "invite.offline_platform_friend_list_grid"
+						variable "$button_focus_identifier": "offline_platform_friends_pagination_controls"
+						variable "$tts_section_header": "thirdPartyConsole.invite.OfflineFriends"
+						variable "$visibility_binding": "#offline_platform_friends_visible"
+			Added control:
+				element "offline_linked_account_friend_list_category@invite.friends_category":
+					field "$variables":
+						variable "$collection_name": "offline_linked_account_friends"
+						variable "$friends_category_grid_type": "invite.offline_linked_account_friend_list_grid"
+						variable "$button_focus_identifier": "offline_linked_account_friends_pagination_controls"
+						variable "$tts_section_header": "invite.OfflineFriends"
+						variable "$visibility_binding": "#offline_linked_account_friends_visible"
+			Added control:
+				element "offline_xbox_live_friend_list_category@invite.friends_category":
+					field "$variables":
+						variable "$collection_name": "offline_xbox_live_friends"
+						variable "$friends_category_grid_type": "invite.offline_xbox_live_friend_list_grid"
+						variable "$button_focus_identifier": "offline_xbox_live_friends_pagination_controls"
+						variable "$tts_section_header": "invite.OfflineFriends"
+						variable "$visibility_binding": "#offline_xbox_live_friends_visible"
+	Added element "send_button@common_buttons.light_content_button":
+		field "size": ["fill", 30]
+		field "layer": 2
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "$pressed_button_name"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "$pressed_button_name"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "$pressed_button_name"
+				field "mapping_type": "focused"
+		field "$variables":
+			variable "$pressed_button_name": "button.send_invites"
+			variable "$button_content": "invite.invite_button_content"
+			variable "$button_text": "#send_button"
+			variable "$invite_label_binding_type": "global"
+			variable "$gamepad_helper": "common.gamepad_helper_x"
+	Added element "vertical_buttons_bottom_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "send_button@invite.send_button":
+					field "size": ["100%", 30]
+					field "$variables":
+						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+						variable "$focus_override_left": "FOCUS_OVERRIDE_STOP"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+	Added element "vertical_buttons_top_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "add_friend_button@invite.add_friend_button":
+					field "$variables":
+						variable "$focus_override_left": "FOCUS_OVERRIDE_STOP"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+			control:
+				element "add_member_button@invite.add_member_button":
+					field "$variables":
+						variable "$focus_override_left": "FOCUS_OVERRIDE_STOP"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+		field "$variables":
+			variable "$button_size|default":
+				item 0: "100%"
+				item 1: 30
+	Added element "vertical_invite_panel@common_dialogs.main_panel_two_buttons":
+		field "size": "$large_screen_size"
+		field "$variables":
+			variable "$top_button_panel": "invite.vertical_buttons_top_panel"
+			variable "$bottom_button_panel": "invite.vertical_buttons_bottom_panel"
+			variable "$child_control": "invite.scrolling_area"
+			variable "$text_name": "invite.title"
+			variable "$add_button_mappings":
+				item 0:
+					item "from_button_id": "button.controller_secondary_select"
+					item "to_button_id": "$pressed_button_name"
+					item "mapping_type": "global"
+				item 1:
+					item "from_button_id": "button.menu_select"
+					item "to_button_id": "$pressed_button_name"
+					item "mapping_type": "pressed"
+				item 2:
+					item "from_button_id": "button.menu_ok"
+					item "to_button_id": "$pressed_button_name"
+					item "mapping_type": "focused"
+Changed namespace "pdp":
+	Total element: 114 (+0, -1)
+	Removed element "smooth_coin_purchase_label":
+		field "type": "stack_panel"
+		field "size": ["100% + 4px", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "sales_banner_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100% + 4px"]
+					field "controls":
+						control:
+							element "markdown_banner@common_store.markdown_background":
+								field "size": ["100%c", "100%"]
+								field "offset": [0, -2]
+								field "ignored": "(not $default_state)"
+								field "layer": 9
+								field "$variables":
+									variable "$markdown_label": "pdp.discount_label"
+									variable "$banner_size":
+										item 0: "26px"
+										item 1: "100%"
+									variable "$triangle_offset":
+										item 0: 0
+										item 1: 0
+									variable "$triangle_texture": "textures/ui/saleflagtrianglebeveldefault"
+									variable "$banner_texture": "textures/ui/sale_button_borderless_lighthoverflag"
+						control:
+							element "discount_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "offset": [0, -2]
+								field "ignored": "$default_state"
+								field "controls":
+									control:
+										element "discount_label@pdp.discount_label":
+											field "offset": [-2.2, 0]
+											field "layer": 9
+					field "bindings":
+						binding:
+							field "binding_name": "#is_on_sale"
+							field "binding_name_override": "#visible"
+			control:
+				element "sales_padding_0":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+			control:
+				element "coin_image_offset_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "controls": control element "coin@pdp.coin_image": field "offset": [-2, -0.25]
+			control element "coin_purchase_label_text@pdp.coin_purchase_label_text": empty
+			control:
+				element "sales_coin_purchase_label_text@pdp.coin_purchase_label_text":
+					field "color": "$light_button_default_text_color"
+					field "$variables": variable "$coin_label_visibility_binding|default": "#is_on_sale"
+			control:
+				element "markdown_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "markdown_label@pdp.price_markdown_panel":
+								field "size": ["100%c + 4px", "100%"]
+								field "offset": [0, 0]
+								field "$variables":
+									variable "$strike_thru_offset":
+										item 0: 0
+										item 1: 0
+					field "bindings":
+						binding:
+							field "binding_name": "#is_on_sale"
+							field "binding_name_override": "#visible"
+			control:
+				element "fill_padding_1":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "ignored": "$is_on_sale"
+	Changed element "smooth_coin_purchase_label_formfitting":
+		Unchanged field "type": "panel".
+		Changed field "controls":
 			Changed control:
-				Changed element "full_content":
+				Changed element "sales_banner_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "discount_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "discount_label@pdp.discount_label":
+											Changed field "layer" from 9 to 11.
+			Changed control:
+				Changed element "text_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "top":
-								Unchanged field "type": "stack_panel".
+							Changed element "coin_purchase_label_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Total control: 1 (+1, -2)
+									Removed control:
+										element "coin_purchase_label_text_left@pdp.coin_purchase_label_text":
+											field "text_alignment": "center"
+											field "ignored": "(not $coin_image_on_right)"
+											field "offset": [-4, 0]
+									Removed control:
+										element "coin_purchase_label_text_right@pdp.coin_purchase_label_text":
+											field "text_alignment": "center"
+											field "ignored": "$coin_image_on_right"
+											field "offset": [4, 0]
+									Added control element "coin_purchase_label_text_left@pdp.coin_purchase_label_text": empty.
+						Changed control:
+							Changed element "markdown_panel":
+								Unchanged field "type": "panel".
 								Changed field "controls":
 									Changed control:
-										Changed element "info":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "ratings_summary":
-														Unchanged field "type": "stack_panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "ratings_display":
-																	Unchanged field "type": "stack_panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "summary_rating_button@common_buttons.underline_button":
-																				Removed field "bindings": binding field "binding_name": "#rating_button_text".
-																				Changed field "$variables":
-																					Total variable: 3 (+1, -0)
-																					Moved variable from "$single_line_label_binding" to "$single_line_label_text".
-																					Added variable "$label_text_bindings": item 0: item "binding_name": "#rating_button_text".
+										Changed element "markdown_label@pdp.price_markdown_panel":
+											Changed field "size":
+												Changed item 0 from "100%c" to "100%c + 5px".
+												Unchanged item 1: "100%".
+						Changed control:
+							Changed element "right_coin_image_offset_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "coin@pdp.coin_image":
+											Changed field "offset":
+												Changed item 0 from -8 to -3.
+												Unchanged item 1: 0.
+	Changed element "smooth_purchase_buttons_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "purchase_coins_button_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "smooth_purchase_with_coins_button@common_buttons.light_content_button":
+								Changed field "$variables":
+									Total variable: 9 (+1, -0)
+									Added variable "$button_action": "button.purchase_with_coins".
 	Changed element "summary_description_inner_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
@@ -885,1046 +1631,722 @@ Changed namespace "pdp":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "read_more_button_panel@common_buttons.read_button":
-								Changed field "$variables":
-									Total variable: 4 (+0, -1)
-									Removed variable "$single_line_label_binding": "#read_more_label".
-									Moved variable from "$text" to "$single_line_label_text".
-						Changed control:
-							Changed element "read_less_button_panel@common_buttons.read_button":
-								Changed field "$variables":
-									Total variable: 4 (+0, -1)
-									Removed variable "$single_line_label_binding": "#read_less_label".
-									Moved variable from "$text" to "$single_line_label_text".
-	Changed element "title_and_author_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "author_button_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "summary_author_button@common_buttons.underline_button":
-								Changed field "$variables":
-									Total variable: 3 (+1, -0)
-									Moved variable from "$single_line_label_binding" to "$single_line_label_text".
-									Added variable "$label_text_bindings": item 0: item "binding_name": "#creator_label".
-Changed namespace "persona":
-	Total element: 169 (+1, -0)
-	Changed element "offer_state_info":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 1 (+1, -5)
-			Removed control:
-				element "sale_ribbon@persona.icon_image":
-					field "size": [11, 10]
-					field "offset": [-1, -1]
-					field "layer": 20
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "texture": "textures/ui/icon_saleribbon"
-					field "bindings":
-						binding:
-							field "binding_type": "collection"
-							field "binding_collection_name": "$offer_state_info_collection_name"
-							field "binding_name": "#is_offer_on_sale"
-							field "binding_name_override": "#visible"
-			Removed control:
-				element "limited_time@persona.icon_image":
-					field "size": [9, 9]
-					field "layer": 20
-					field "anchor_from": "top_right"
-					field "anchor_to": "top_right"
-					field "texture": "textures/ui/icon_timer"
-					field "bindings":
-						binding:
-							field "binding_type": "collection"
-							field "binding_collection_name": "$offer_state_info_collection_name"
-							field "binding_name": "#is_limited_time_offer"
-							field "binding_name_override": "#visible"
-			Removed control:
-				element "coin_icon@persona.icon_image":
-					field "size": [9, 9]
-					field "layer": 21
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "texture": "textures/ui/icon_minecoin_9x9"
-					field "bindings":
-						binding:
-							field "binding_type": "collection"
-							field "binding_collection_name": "$offer_state_info_collection_name"
-							field "binding_name": "#is_offer_purchasable_and_not_free"
-							field "binding_name_override": "#visible"
-			Removed control:
-				element "new_offer_symbol@persona.icon_image":
-					field "size": [9, 9]
-					field "offset": [-1, -1]
-					field "layer": 21
-					field "anchor_to": "top_left"
-					field "anchor_from": "top_left"
-					field "texture": "textures/ui/icon_new_item"
-					field "bindings":
-						binding:
-							field "binding_type": "collection"
-							field "binding_collection_name": "$offer_state_info_collection_name"
-							field "binding_name": "#is_offer_new"
-							field "binding_name_override": "#visible"
-			Removed control:
-				element "locked_icon@persona.icon_image":
-					field "size": [9, 11]
-					field "layer": 20
-					field "anchor_to": "bottom_right"
-					field "anchor_from": "bottom_right"
-					field "texture": "textures/ui/icon_lock"
-					field "bindings":
-						binding:
-							field "binding_type": "collection"
-							field "binding_collection_name": "$offer_state_info_collection_name"
-							field "binding_name": "#is_offer_locked"
-							field "binding_name_override": "#visible"
-			Added control:
-				element "offer_state_info_panel":
-					field "ignored": "$ignore_offer_state_info"
-					field "type": "panel"
-					field "controls":
-						control:
-							element "sale_ribbon@persona.icon_image":
-								field "size": [11, 10]
-								field "offset": [-1, -1]
-								field "layer": 20
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "texture": "textures/ui/icon_saleribbon"
-								field "bindings":
-									binding:
-										field "binding_type": "collection"
-										field "binding_collection_name": "$offer_state_info_collection_name"
-										field "binding_name": "#is_offer_on_sale"
-										field "binding_name_override": "#visible"
-						control:
-							element "limited_time@persona.icon_image":
-								field "size": [9, 9]
-								field "layer": 20
-								field "anchor_from": "top_right"
-								field "anchor_to": "top_right"
-								field "texture": "textures/ui/icon_timer"
-								field "bindings":
-									binding:
-										field "binding_type": "collection"
-										field "binding_collection_name": "$offer_state_info_collection_name"
-										field "binding_name": "#is_limited_time_offer"
-										field "binding_name_override": "#visible"
-						control:
-							element "coin_icon@persona.icon_image":
-								field "size": [11, 11]
-								field "layer": 21
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "texture": "textures/ui/MCoin"
-								field "bindings":
-									binding:
-										field "binding_type": "collection"
-										field "binding_collection_name": "$offer_state_info_collection_name"
-										field "binding_name": "#is_offer_purchasable_and_not_free"
-										field "binding_name_override": "#visible"
-						control:
-							element "new_offer_symbol@persona.icon_image":
-								field "size": [9, 9]
-								field "offset": [-1, -1]
-								field "layer": 21
-								field "anchor_to": "top_left"
-								field "anchor_from": "top_left"
-								field "texture": "textures/ui/icon_new_item"
-								field "bindings":
-									binding:
-										field "binding_type": "collection"
-										field "binding_collection_name": "$offer_state_info_collection_name"
-										field "binding_name": "#is_offer_new"
-										field "binding_name_override": "#visible"
-						control:
-							element "locked_icon@persona.icon_image":
-								field "size": [9, 11]
-								field "layer": 20
-								field "anchor_to": "bottom_right"
-								field "anchor_from": "bottom_right"
-								field "texture": "textures/ui/icon_lock"
-								field "bindings":
-									binding:
-										field "binding_type": "collection"
-										field "binding_collection_name": "$offer_state_info_collection_name"
-										field "binding_name": "#is_offer_locked"
-										field "binding_name_override": "#visible"
-		Changed field "$variables":
-			Total variable: 2 (+1, -0)
-			Added variable "$ignore_offer_state_info|default": false.
-	Changed element "persona_piece_offer_scroll_content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "piece_offer_list_stack":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "default_item_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "default_item_grid":
-											Unchanged field "type": "grid".
-											Changed field "$variables":
-												Total variable: 8 (+1, -0)
-												Added variable "$ignore_offer_state_info": true.
-	Changed element "persona_screen@common.base_screen":
-		Changed field "$variables":
-			Total variable: 7 (+1, -0)
-			Added variable "$screen_bg_content": "persona.persona_screen_background_content".
-	Added element "persona_screen_background_content":
-		field "type": "image"
-		field "fill": true
-		field "texture": "textures/ui/profile_bg"
-	Changed element "persona_screen_content":
-		field "type": "image"
-		field "fill": true
-		field "texture": "textures/ui/profile_bg"
-		field "size": ["100%", "100%"]
-		field "controls":
-			control:
-				element "main_panel@common_store.store_header_with_coins":
-					field "layer": 2
-					field "$variables":
-						variable "$child_control": "persona.persona_screen_main_panel"
-						variable "$back_button_pressed_button_name": "button.try_exiting"
-			control:
-				element "popup_dialog_factory":
-					field "type": "factory"
-					field "control_ids":
-						control id "no_store_connection": "@common_store.popup_dialog__no_store_connection"
-						control id "restore_popup": "@common_store.popup_dialog__restore_popup"
-						control id "restore_failed": "@common_store.popup_dialog__restore_failed"
-						control id "toast_message": "@persona.popup_toast"
-		field "$variables":
-			variable "$ignore_home_button": true
-			variable "$ignore_search": true
-		field "type": "panel"
-		field "size": ["100%", "100%"]
-		field "controls":
-			control:
-				element "main_panel@common_store.store_header_with_coins":
-					field "layer": 2
-					field "$variables":
-						variable "$child_control": "persona.persona_screen_main_panel"
-						variable "$back_button_pressed_button_name": "button.try_exiting"
-			control:
-				element "popup_dialog_factory":
-					field "type": "factory"
-					field "control_ids":
-						control id "no_store_connection": "@common_store.popup_dialog__no_store_connection"
-						control id "restore_popup": "@common_store.popup_dialog__restore_popup"
-						control id "restore_failed": "@common_store.popup_dialog__restore_failed"
-						control id "toast_message": "@persona.popup_toast"
-		field "$variables":
-			variable "$ignore_home_button": true
-			variable "$ignore_search": true
-	Changed element "piece_offer_button@common.button":
-		Changed field "controls":
-			Changed control:
-				Changed element "button_controls":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "previewed@persona.focus_border_skin_picker":
-								Added field "ignored": "$ignore_piece_selected".
-Changed namespace "play":
-	Changed element "server_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "no_third_party_connection@play.label_content_template":
-								Changed field "bindings":
-									Changed binding:
-										Changed field "binding_name" from "((not #multiplayer_blocked_panel_visible) or $ignore_3rd_party_servers)" to "(not #is_network_available)".
-						Changed control:
-							Changed element "more_servers_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "bindings":
-									Changed binding:
-										Changed field "binding_name" from "(not #multiplayer_blocked_panel_visible)" to "#is_network_available_and_not_multiplayer_visible".
-Changed namespace "profile":
-	Total element: 37 (+1, -0)
-	Changed element "profile_screen@common.base_screen":
-		Changed field "$variables":
-			Total variable: 14 (+1, -0)
-			Added variable "$screen_bg_content": "profile.profile_screen_background_content".
-	Added element "profile_screen_background_content":
-		field "type": "image"
-		field "fill": true
-		field "texture": "textures/ui/profile_bg"
-	Changed element "profile_screen_content":
-		field "type": "image"
-		field "fill": true
-		field "texture": "textures/ui/profile_bg"
-		field "size": ["100%", "100%"]
-		field "controls":
-			control:
-				element "main_panel@common_store.store_header_with_coins":
-					field "layer": 2
-					field "$variables": variable "$child_control": "profile.profile_screen_main_panel"
-			control:
-				element "popup_dialog_factory":
-					field "type": "factory"
-					field "control_ids":
-						control id "no_store_connection": "@common_store.popup_dialog__no_store_connection"
-						control id "restore_popup": "@common_store.popup_dialog__restore_popup"
-						control id "restore_failed": "@common_store.popup_dialog__restore_failed"
-						control id "toast_message": "@profile.popup_toast"
-						control id "delete_persona": "@profile.popup_dialog__delete_persona"
-		field "$variables":
-			variable "$ignore_home_button": true
-			variable "$ignore_search": true
-		field "type": "panel"
-		field "size": ["100%", "100%"]
-		field "controls":
-			control:
-				element "main_panel@common_store.store_header_with_coins":
-					field "layer": 2
-					field "$variables": variable "$child_control": "profile.profile_screen_main_panel"
-			control:
-				element "popup_dialog_factory":
-					field "type": "factory"
-					field "control_ids":
-						control id "no_store_connection": "@common_store.popup_dialog__no_store_connection"
-						control id "restore_popup": "@common_store.popup_dialog__restore_popup"
-						control id "restore_failed": "@common_store.popup_dialog__restore_failed"
-						control id "toast_message": "@profile.popup_toast"
-						control id "delete_persona": "@profile.popup_dialog__delete_persona"
-		field "$variables":
-			variable "$ignore_home_button": true
-			variable "$ignore_search": true
-Changed namespace "realmsPlus":
-	Changed element "scrollable_selector_area_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 6 (+2, -1)
-			Removed control element "buy_now_toggle@realmsPlus.buy_now_toggle": empty.
-			Added control element "buy_now_toggle@realmsPlus.buy_now_toggle": field "$variables": variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
-			Added control:
-				element "focus_reset_input_panel":
-					field "type": "input_panel"
-					field "focus_enabled": true
-					field "size": ["100%", 4]
-Changed namespace "realmsPlus_buy":
-	Changed element "buy_button_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "buy_button@common_buttons.light_content_button":
-					Changed field "bindings" to "$buy_now_bindings" from:
-						binding:
-							field "binding_name": "#buy_now_button_enabled"
-							field "binding_name_override": "#enabled"
-					Changed field "$variables":
-						Total variable: 1 (+0, -1)
-						Removed variable "$pressed_button_name": "button.create_realm".
-	Changed element "buy_now_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 10 (+1, -1)
-			Removed control element "buy_button@realmsPlus_buy.buy_button_panel": empty.
-			Added control:
-				element "buy_button@realmsPlus_buy.buy_button_panel":
-					field "$variables":
-						variable "$pressed_button_name": "button.create_realm"
-						variable "$buy_now_bindings":
-							item 0:
-								item "binding_name": "#buy_now_button_enabled"
-								item "binding_name_override": "#enabled"
-	Changed element "title_text":
-		Unchanged field "type": "label".
-		Changed field "text" from "store.realmsPlus.startTrial.title" to "#buy_now_banner_text".
-		Added field "bindings": binding field "binding_name": "#buy_now_banner_text".
-Changed namespace "realmsPlus_landing":
-	Changed element "title_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 5 (+1, -1)
-			Removed control element "buy_button@realmsPlus_buy.buy_button_panel": empty.
-			Added control:
-				element "buy_button@realmsPlus_buy.buy_button_panel":
-					field "$variables":
-						variable "$pressed_button_name": "button.go_to_buy_tab"
-						variable "$buy_now_bindings": empty
-Changed namespace "realms_settings":
-	Total element: 51 (+1, -1)
-	Removed element "realm_subscription_origin_label@settings_common.option_info_label":
-		field "bindings":
-			binding:
-				field "binding_name": "#realm_subscription_origin_visibility"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$container_size":
-				item 0: "100%"
-				item 1: "60px"
-			variable "$container_text_binding_name": "#realm_subscription_origin"
-			variable "$show_option_label": false
-	Added element "realm_subscription_origin_label@settings_common.option_info_label_with_bulb":
-		field "bindings":
-			binding:
-				field "binding_name": "#realm_subscription_origin_visibility"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$container_size":
-				item 0: "100%"
-				item 1: "60px"
-			variable "$container_text_binding_name": "#realm_subscription_origin"
-			variable "$show_option_label": false
-	Changed element "subscriptions_section":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "loaded_view":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 15 (+2, -1)
-						Removed control element "realm_subscription_origin_label@realms_settings.realm_subscription_origin_label": empty.
-						Added control:
-							element "possible_store_mismatch@general_section.possible_store_mismatch":
-								field "bindings":
-									binding:
-										field "binding_name": "#realm_consumable_to_subscription_visibility"
-										field "binding_name_override": "#visible"
-										field "binding_condition": "visible"
-								field "$variables":
-									variable "$realm_collection_name": ""
-									variable "$tooltip_button_collection_name": "additional_realms_subscriptions_collection"
-									variable "$tooltip_text_binding_name": "#realms_purchased_store"
-									variable "$tooltip_button_binding_type": "global"
-									variable "$tooltip_panel_offset":
-										item 0: 0
-										item 1: "-100%y - 2px"
-						Added control element "realm_subscription_origin_label@realms_settings.realm_subscription_origin_label": empty.
-Changed namespace "resource_packs":
-	Total element: 108 (+0, -3)
-	Changed element "available_pack_button_layout":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_panel_full@resource_packs.available_text_panel":
-					Changed field "$variables":
-						Changed variable "$size":
-							Changed item 0 from "100%-35px" to "100% - 60px".
-	Changed element "available_pack_button_layout_hover":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_panel_full_hover":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "text_panel_full@resource_packs.available_text_panel":
-								Changed field "$variables":
-									Changed variable "$size":
-										Changed item 0 from "100%-35px" to "100% - 60px".
-			Changed control:
-				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
-				Changed element "read_more_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_more_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "visible": true
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_type": "view"
-										field "source_property_name": "#using_ellipses"
-										field "target_property_name": "#visible"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_more_label"
-									variable "$text": "store.mashup.readMore"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_type": "view"
-								item "source_property_name": "#using_ellipses"
-								item "target_property_name": "#visible"
-			Changed control:
-				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
-				Changed element "read_less_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_less_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_name": "#is_read_less"
-										field "binding_name_override": "#visible"
-										field "binding_type": "collection"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_less_label"
-									variable "$text": "store.mashup.readLess"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$single_line_label_binding": "$read_less_label"
-						variable "$text": "store.mashup.readLess"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_name": "#is_read_less"
-								item "binding_name_override": "#visible"
-								item "binding_type": "collection"
-	Changed element "available_text_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "$variables":
-			Changed variable "$size|default":
-				Changed item 0 from "100%-35px" to "100% - 60px".
-	Changed element "invalid_text_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "$variables":
-			Changed variable "$size|default":
-				Changed item 0 from "100%-35px" to "100%".
-	Changed element "realms_pack_button_layout":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_panel_full@resource_packs.realms_text_panel":
-					Changed field "$variables":
-						Changed variable "$size":
-							Changed item 0 from "100%-35px" to "100% - 60px".
-			Changed control:
-				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
-				Changed element "read_more_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_more_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "visible": true
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_type": "view"
-										field "source_property_name": "#using_ellipses"
-										field "target_property_name": "#visible"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_more_label"
-									variable "$text": "store.mashup.readMore"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_type": "view"
-								item "source_property_name": "#using_ellipses"
-								item "target_property_name": "#visible"
-			Changed control:
-				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
-				Changed element "read_less_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_less_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_name": "#is_read_less"
-										field "binding_name_override": "#visible"
-										field "binding_type": "collection"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_less_label"
-									variable "$text": "store.mashup.readLess"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$single_line_label_binding": "$read_less_label"
-						variable "$text": "store.mashup.readLess"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_name": "#is_read_less"
-								item "binding_name_override": "#visible"
-								item "binding_type": "collection"
-	Changed element "realms_pack_button_layout_hover":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_panel_full_hover":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "text_panel_full@resource_packs.realms_text_panel":
-								Changed field "$variables":
-									Changed variable "$size":
-										Changed item 0 from "100%-35px" to "100% - 60px".
-			Changed control:
-				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
-				Changed element "read_more_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_more_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "visible": true
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_type": "view"
-										field "source_property_name": "#using_ellipses"
-										field "target_property_name": "#visible"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_more_label"
-									variable "$text": "store.mashup.readMore"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_type": "view"
-								item "source_property_name": "#using_ellipses"
-								item "target_property_name": "#visible"
-			Changed control:
-				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
-				Changed element "read_less_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_less_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_name": "#is_read_less"
-										field "binding_name_override": "#visible"
-										field "binding_type": "collection"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_less_label"
-									variable "$text": "store.mashup.readLess"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$single_line_label_binding": "$read_less_label"
-						variable "$text": "store.mashup.readLess"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_name": "#is_read_less"
-								item "binding_name_override": "#visible"
-								item "binding_type": "collection"
-	Changed element "realms_text_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "$variables":
-			Changed variable "$size|default":
-				Changed item 0 from "100%-35px" to "100% - 60px".
-	Changed element "selected_pack_button_layout":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_panel_full@resource_packs.selected_text_panel":
-					Changed field "$variables":
-						Changed variable "$size":
-							Changed item 0 from "100%-35px" to "100% - 60px".
-			Changed control:
-				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
-				Changed element "read_more_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_more_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "visible": true
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_type": "view"
-										field "source_property_name": "#using_ellipses"
-										field "target_property_name": "#visible"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_more_label"
-									variable "$text": "store.mashup.readMore"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_type": "view"
-								item "source_property_name": "#using_ellipses"
-								item "target_property_name": "#visible"
-			Changed control:
-				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
-				Changed element "read_less_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_less_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_name": "#is_read_less"
-										field "binding_name_override": "#visible"
-										field "binding_type": "collection"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_less_label"
-									variable "$text": "store.mashup.readLess"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$single_line_label_binding": "$read_less_label"
-						variable "$text": "store.mashup.readLess"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_name": "#is_read_less"
-								item "binding_name_override": "#visible"
-								item "binding_type": "collection"
-	Changed element "selected_pack_button_layout_hover":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_panel_full_hover":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "text_panel_full@resource_packs.selected_text_panel":
-								Changed field "$variables":
-									Changed variable "$size":
-										Changed item 0 from "100%-35px" to "100% - 60px".
-			Changed control:
-				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
-				Changed element "read_more_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_more_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "visible": true
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_type": "view"
-										field "source_property_name": "#using_ellipses"
-										field "target_property_name": "#visible"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_more_label"
-									variable "$text": "store.mashup.readMore"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_type": "view"
-								item "source_property_name": "#using_ellipses"
-								item "target_property_name": "#visible"
-			Changed control:
-				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
-				Changed element "read_less_button_panel@common_buttons.read_button":
-					Removed field "type": "panel".
-					Removed field "size": ["100%", "100%c"].
-					Removed field "controls":
-						control:
-							element "read_less_button@resource_packs.underline_button":
-								field "anchor_from": "bottom_right"
-								field "anchor_to": "bottom_right"
-								field "offset": [-6, -1]
-								field "bindings":
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_type": "collection_details"
-									binding:
-										field "binding_collection_name": "$name_collection_name"
-										field "binding_name": "#is_read_less"
-										field "binding_name_override": "#visible"
-										field "binding_type": "collection"
-								field "$variables":
-									variable "$single_line_label_binding": "$read_less_label"
-									variable "$text": "store.mashup.readLess"
-									variable "$pressed_button_name": "button.read_toggle"
-					Added field "$variables":
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$single_line_label_binding": "$read_less_label"
-						variable "$text": "store.mashup.readLess"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$bindings":
-							item 0:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_type": "collection_details"
-							item 1:
-								item "binding_collection_name": "$name_collection_name"
-								item "binding_name": "#is_read_less"
-								item "binding_name_override": "#visible"
-								item "binding_type": "collection"
-	Changed element "selected_pack_store_button@resource_packs.selected_pack_movement_button":
-		Changed field "$variables":
-			Changed variable "$visible_binding_name" from "#can_move" to "#can_go_to_store".
-	Changed element "selected_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "selected_pack_section":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "default_item":
+							Changed element "title_label":
 								Unchanged field "type": "panel".
 								Changed field "controls":
 									Changed control:
-										Changed element "description_panel":
-											Unchanged field "type": "panel".
-											Changed field "size":
-												Changed item 0 from "100%-45px" to "100%-50px".
-												Unchanged item 1: 30.
-	Changed element "selected_text_panel":
+										Changed element "title_label_text":
+											Unchanged field "type": "label".
+											Changed field "text" from "library.item.description" to "store.mashup.description".
+	Changed element "summary_text_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "apply_to_realm_panel":
+					Unchanged field "type": "panel".
+					Removed field "bindings":
+						binding:
+							field "binding_name": "#apply_to_realm_button_visible"
+							field "binding_name_override": "#visible"
+					Added field "visible": false.
+Changed namespace "persona":
+	Changed element "category_featured_offer_content":
 		Unchanged field "type": "stack_panel".
 		Changed field "$variables":
-			Changed variable "$size|default":
-				Changed item 0 from "100%-35px" to "100% - 60px".
-	Removed element "single_line_label":
-		field "type": "panel"
-		field "size": "$size"
-		field "controls":
+			Moved variable from "$cycle_button_panel_size" to "$cycle_button_panel_size|default".
+	Changed element "color_grid_icon":
+		Unchanged field "type": "image".
+		Added field "controls":
 			control:
-				element "label_panel":
-					field "type": "label"
-					field "size": "$single_label_size"
-					field "offset": "$single_line_label_offset"
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "layer": 2
-					field "font_type": "smooth"
-					field "enable_profanity_filter": false
-					field "font_scale_factor": "$single_line_font_scale_factor"
-					field "color": "$single_line_label_color"
-					field "text_alignment": "left"
-					field "text": "$text"
-					field "controls": "$underline_control"
-					field "$variables": variable "$single_line_label_color|default": "$body_text_color"
-		field "$variables":
-			variable "$size|default":
-				item 0: "100%c"
-				item 1: "100%c + 3px"
-			variable "$single_line_label_offset|default":
-				item 0: 2
-				item 1: 1
-			variable "$single_label_size|default":
-				item 0: "default"
-				item 1: 10
-			variable "$underline_control|default": "common.empty_panel"
-			variable "$single_line_font_scale_factor|default": 1
-			variable "$single_line_label_binding_condition|default": "once"
-			variable "$text|default": "$single_line_label_binding"
-	Removed element "underline":
-		field "type": "image"
-		field "size": ["100%", 1]
-		field "texture": "$texture"
-		field "alpha": 0.6
-		field "tiled": "x"
-		field "anchor_from": "bottom_left"
-		field "anchor_to": "bottom_left"
-		field "$variables": variable "$texture|default": "textures/ui/underline"
-	Removed element "underline_button@common.button":
-		field "size": ["100%c", "100%c"]
-		field "pressed_control": "hover"
-		field "controls":
-			control:
-				element "default":
+				element "equipped@equipped_border_skin_picker":
+					field "bindings":
+						binding:
+							field "binding_name": "#current_color_equipped"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "skin_colors"
+	Changed element "color_grid_item@common_buttons.light_content_button":
+		Changed field "size":
+			Changed item 0 from 20 to 27.
+			Unchanged item 1: "100%x".
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$button_pressed_offset":
+				item 0: 0
+				item 1: 0
+	Changed element "color_picker_content_panel":
+		Removed field "ignored": "$ignore_color_picker".
+		Unchanged field "type": "panel".
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#show_color_picker"
+				field "binding_name_override": "#visible"
+		Changed field "controls":
+			Total control: 1 (+0, -2)
+			Removed control:
+				element "close_color_picker@persona.leave_color_picker":
+					field "anchor_to": "top_right"
+					field "anchor_from": "top_right"
+					field "size": [12, 12]
+			Removed control:
+				element "gamepad_b@common.gamepad_helper_b":
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "offset": [-10, -4]
+					field "bindings":
+						binding:
+							field "binding_name": "#gamepad_helper_visible"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$gamepad_helper_size":
+							item 0: 20
+							item 1: 20
+						variable "$gamepad_helper_icon_size":
+							item 0: 20
+							item 1: 20
+						variable "$hide_description": true
+	Changed element "color_picker_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "size":
+			Unchanged item 0: "100%".
+			Changed item 1 from "100% - 6px" to "100%".
+		Changed field "focus_nagivation_mode_right" from "stop" to "none".
+		Changed field "focus_nagivation_mode_up" from "stop" to "none".
+		Changed field "controls":
+			Total control: 3 (+0, -1)
+			Changed control:
+				Changed element "top_pad@common.empty_panel":
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from "7%" to 10.
+			Changed control:
+				Changed element "top_bar":
+					Unchanged field "type": "stack_panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from "17%" to 25.
+					Changed field "controls":
+						Changed control:
+							Changed element "cycle_left":
+								Unchanged field "type": "panel".
+								Changed field "size":
+									Changed item 0 from "100%y" to 20.
+									Changed item 1 from 15 to "100%x".
+								Changed field "controls":
+									Changed control:
+										Changed element "button@color_picker_left_cycle":
+											Removed field "$variables": variable "$persona_focus_precedence": 2.
+									Changed control:
+										Changed element "left_bumper_panel@common.empty_panel":
+											Changed field "controls":
+												Total control: 1 (+1, -1)
+												Removed control:
+													element "left_bumper@common.gamepad_helper_left_bumper":
+														field "anchor_from": "left_middle"
+														field "anchor_to": "left_middle"
+														field "offset": [-18, -5]
+														field "bindings":
+															binding:
+																field "binding_name": "#gamepad_helper_visible"
+																field "binding_name_override": "#visible"
+														field "$variables":
+															variable "$gamepad_helper_size":
+																item 0: 18
+																item 1: 18
+															variable "$gamepad_helper_icon_size":
+																item 0: 18
+																item 1: 18
+															variable "$hide_description": true
+												Added control:
+													element "left_bumper@common.gamepad_helper_left_bumper":
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "offset": [0, -20]
+														field "bindings":
+															binding:
+																field "binding_name": "#gamepad_helper_visible"
+																field "binding_name_override": "#visible"
+														field "$variables": variable "$hide_description": true
+						Changed control:
+							Changed element "title":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "skin_title":
+											Unchanged field "type": "label".
+											Removed field "offset": [0, -2].
+											Added field "font_type": "MinecraftTen".
+						Changed control:
+							Changed element "cycle_right":
+								Unchanged field "type": "panel".
+								Changed field "size":
+									Changed item 0 from "100%y" to 20.
+									Changed item 1 from 15 to "100%x".
+								Changed field "controls":
+									Changed control:
+										Changed element "button@color_picker_right_cycle":
+											Removed field "$variables": variable "$persona_focus_precedence": 2.
+									Changed control:
+										Changed element "right_bumper_panel@common.empty_panel":
+											Changed field "controls":
+												Total control: 1 (+1, -1)
+												Removed control:
+													element "right_bumper@common.gamepad_helper_right_bumper":
+														field "anchor_from": "right_middle"
+														field "anchor_to": "right_middle"
+														field "offset": [18, -5]
+														field "bindings":
+															binding:
+																field "binding_name": "#gamepad_helper_visible"
+																field "binding_name_override": "#visible"
+														field "$variables":
+															variable "$gamepad_helper_size":
+																item 0: 18
+																item 1: 18
+															variable "$gamepad_helper_icon_size":
+																item 0: 18
+																item 1: 18
+															variable "$hide_description": true
+												Added control:
+													element "right_bumper@common.gamepad_helper_right_bumper":
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "offset": [0, -20]
+														field "bindings":
+															binding:
+																field "binding_name": "#gamepad_helper_visible"
+																field "binding_name_override": "#visible"
+														field "$variables": variable "$hide_description": true
+			Removed control:
+				element "pad_mid":
 					field "type": "panel"
-					field "size": ["100%c", 10]
+					field "size": ["100%", "5%"]
+	Changed element "offer_info_section_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Changed control:
+				Changed element "info_content_panels":
+					Unchanged field "type": "panel".
+					Removed field "variables":
+						variable:
+							field "requires": "$ignore_color_picker"
+							field "$variables": variable "$info_content_panel_bindings": empty
+					Removed field "bindings": "$info_content_panel_bindings".
+					Removed field "$variables":
+						variable "$info_content_panel_bindings|default":
+							item 0:
+								item "binding_type": "view"
+								item "source_control_name": "color_picker_content_panel"
+								item "source_property_name": "(not #visible)"
+								item "target_property_name": "#visible"
+								item "resolve_sibling_scope": true
+			Removed control element "color_picker_content_panel@persona.color_picker_content_panel": empty.
+	Changed element "offer_state_info":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "offer_state_info_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Total control: 6 (+1, -0)
+						Added control:
+							element "free_download@persona.icon_image":
+								field "size": [8, 10]
+								field "layer": 22
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "texture": "textures/ui/free_download"
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "$offer_state_info_collection_name"
+										field "binding_name": "#is_redeemable"
+										field "binding_name_override": "#visible"
+	Changed element "persona_category_unselect_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "persona_category_unselect_button@persona.category_button":
+					Changed field "$variables":
+						Total variable: 5 (+2, -0)
+						Added variable "$default_button_texture": "$unselect_default_button_texture".
+						Added variable "$default_text_color": "$unselect_default_text_color".
+		Changed field "$variables":
+			Total variable: 3 (+2, -0)
+			Added variable "$unselect_default_button_texture|default": "textures/ui/button_borderless_lightpressed".
+			Added variable "$unselect_default_text_color|default": "$light_button_hover_text_color".
+	Changed element "persona_piece_offer":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "piece_offer_center_on_y_axis":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "piece_offer_center_on_x_axis":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "piece_offer_button@persona.piece_offer_button":
+											Changed field "bindings":
+												Total binding: 2 (+1, -0)
+												Added binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "$persona_piece_collection_name"
+													field "binding_name": "#is_piece_visible"
+													field "binding_name_override": "#visible"
+	Changed element "persona_screen@common.base_screen":
+		Changed field "$variables":
+			Total variable: 8 (+1, -0)
+			Added variable "$safezone_screen_matrix_layer": 20.
+	Changed element "persona_screen_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "main_panel@common_store.store_header_with_coins":
+					Removed field "layer": 2.
+					Changed field "$variables":
+						Total variable: 4 (+2, -0)
+						Added variable "$top_status_and_coins_visible_binding_type": "global".
+						Added variable "$top_status_and_coins_visible_binding": "(not #preview_appearance_on)".
+	Changed element "persona_sections":
+		Unchanged field "type": "stack_panel".
+		Changed field "size":
+			Changed item 0 from "100%" to "100% - 4px".
+			Unchanged item 1: "100%c".
+		Changed field "controls":
+			Total control: 7 (+1, -0)
+			Changed control:
+				Changed element "body_selected@persona_category_unselect_panel":
+					Changed field "$variables":
+						Changed variable "$content_image_binding_name" from "textures/ui/dropdown_chevron" to "textures/ui/chevron_white_down".
+			Changed control:
+				Changed element "style_selected@persona_category_unselect_panel":
+					Changed field "$variables":
+						Changed variable "$content_image_binding_name" from "textures/ui/dropdown_chevron" to "textures/ui/chevron_white_down".
+			Added control element "top_pad@common.empty_panel": field "size": ["100%", 1].
+	Changed element "persona_subcategory_button@persona.subcategory_button":
+		Changed field "$variables":
+			Total variable: 17 (+3, -0)
+			Changed variable "$hover_button_texture" from "textures/ui/banners_no_border" to "textures/ui/white_background".
+			Added variable "$hover_button_image_fill": true.
+			Added variable "$hover_content_alpha": 0.5.
+			Added variable "$hover_button_image_color":
+				item 0: 0.02
+				item 1: 0.219
+				item 2: 0.259
+	Changed element "piece_offer_section_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 2 (+2, -4)
+			Removed control:
+				element "top_padding":
+					field "type": "panel"
+					field "size": ["100%", 2]
+					field "bindings":
+						binding:
+							field "binding_name": "#is_none_option_visible"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "side_selector@persona.limb_side_switcher":
+					field "bindings":
+						binding:
+							field "binding_name": "#is_leg_or_arms"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "none_piece_option_panel":
+					field "type": "panel"
+					field "size": ["100%", 19]
+					field "bindings":
+						binding:
+							field "binding_name": "#is_none_option_visible"
+							field "binding_name_override": "#visible"
 					field "controls":
 						control:
-							element "label_default@common.single_line_label":
+							element "none_piece_option_button@common_buttons.light_text_button":
+								field "size": ["100% - 4px", "100%"]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_none_option_enabled"
+										field "binding_name_override": "#enabled"
+								field "button_mappings":
+									button mapping:
+										field "from_button_id": "button.menu_select"
+										field "to_button_id": "$pressed_button_name"
+										field "mapping_type": "pressed"
+									button mapping:
+										field "from_button_id": "button.menu_ok"
+										field "to_button_id": "$pressed_button_name"
+										field "mapping_type": "focused"
 								field "$variables":
-									variable "$single_line_label_color": "$dark_button_default_text_color"
-									variable "$underline_control": item 0: item "underline_default@resource_packs.underline": empty
-			control:
-				element "hover":
-					field "type": "panel"
-					field "size": ["100%c", 10]
-					field "controls":
-						control:
-							element "label_hover@common.single_line_label":
-								field "$variables":
-									variable "$single_line_label_color":
-										item 0: 0.215
-										item 1: 0.839
-										item 2: 0.118
-									variable "$underline_control": item 0: item "underline_hover@resource_packs.underline": item "$texture": "textures/ui/underline_focus"
-		field "$variables":
-			variable "$single_label_size":
-				item 0: "default"
-				item 1: 8
-			variable "$single_line_font_scale_factor": 0.8
-			variable "$pressed_button_name|default": ""
-			variable "$mashup_collection_binding_type|default": "global"
-			variable "$mashup_collection_name|default": ""
-Changed namespace "settings_common":
-	Total element: 75 (+1, -0)
-	Added element "option_info_label_with_bulb":
-		field "type": "image"
-		field "texture": "textures/ui/text_label_box"
-		field "size": ["100%", "100%c + 6px"]
-		field "controls":
-			control:
-				element "stack_panel":
+									variable "$pressed_button_name": "button.none_piece_option"
+									variable "$button_text": "#none_option_text"
+									variable "$button_text_binding_type": "global"
+									variable "$button_text_size":
+										item 0: "default"
+										item 1: 10
+									variable "$button_font_scale_factor": 0.8
+									variable "$new_ui_label_offset":
+										item 0: 0
+										item 1: -1
+									variable "$font_type": "MinecraftTen"
+			Removed control element "piece_offer_scroll_panel@persona.piece_offer_scroll_panel": empty.
+			Added control:
+				element "pieces":
 					field "type": "stack_panel"
-					field "size": ["100%", "100%cm"]
-					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #show_color_picker)"
+							field "binding_name_override": "#visible"
 					field "controls":
-						control element "padding1@common.empty_panel": field "size": [2, 19]
 						control:
-							element "bulb_panel":
-								field "type": "stack_panel"
-								field "orientation": "vertical"
-								field "size": ["100%c", "100%sm"]
-								field "controls":
-									control element "padding1@common.empty_panel": field "size": [0, "fill"]
-									control:
-										element "bulb_image":
-											field "type": "image"
-											field "size": [15, 19]
-											field "bilinear": true
-											field "texture": "textures/ui/infobulb"
-											field "layer": 1
-									control element "padding2@common.empty_panel": field "size": [0, "fill"]
-						control element "padding2@common.empty_panel": field "size": [2, 0]
-						control:
-							element "label_panel":
+							element "top_padding":
 								field "type": "panel"
-								field "size": ["fill", "100%c"]
+								field "size": ["100%", 2]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_none_option_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "side_selector@persona.limb_side_switcher":
+								field "bindings":
+									binding:
+										field "binding_name": "#is_leg_or_arms"
+										field "binding_name_override": "#visible"
+						control:
+							element "none_piece_option_panel":
+								field "type": "panel"
+								field "size": ["100%", 19]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_none_option_visible"
+										field "binding_name_override": "#visible"
 								field "controls":
 									control:
-										element "info_label":
-											field "type": "label"
-											field "color": "$main_header_text_color"
-											field "size": ["100% - 2px", "default"]
-											field "layer": 1
-											field "text": "$container_text_binding_name"
-											field "font_size": "$used_fontsize"
-											field "font_type": "$used_fonttype"
-											field "bindings": binding field "binding_name": "$container_text_binding_name"
-		field "$variables":
-			variable "$used_fontsize|default": "normal"
-			variable "$used_fonttype|default": "default"
+										element "none_piece_option_button@common_buttons.light_text_button":
+											field "size": ["100% - 4px", "100%"]
+											field "bindings":
+												binding:
+													field "binding_name": "#is_none_option_enabled"
+													field "binding_name_override": "#enabled"
+											field "button_mappings":
+												button mapping:
+													field "from_button_id": "button.menu_select"
+													field "to_button_id": "$pressed_button_name"
+													field "mapping_type": "pressed"
+												button mapping:
+													field "from_button_id": "button.menu_ok"
+													field "to_button_id": "$pressed_button_name"
+													field "mapping_type": "focused"
+											field "$variables":
+												variable "$pressed_button_name": "button.none_piece_option"
+												variable "$button_text": "#none_option_text"
+												variable "$button_text_binding_type": "global"
+												variable "$button_text_size":
+													item 0: "default"
+													item 1: 10
+												variable "$button_font_scale_factor": 0.8
+												variable "$new_ui_label_offset":
+													item 0: 0
+													item 1: -1
+												variable "$font_type": "MinecraftTen"
+						control element "piece_offer_scroll_panel@persona.piece_offer_scroll_panel": empty
+			Added control:
+				element "color_picker_content_panel@persona.color_picker_content_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "#show_color_picker"
+							field "binding_name_override": "#visible"
+	Changed element "popup_anim_end":
+		Unchanged field "anim_type": "alpha".
+		Changed field "destroy_at_end" from "popup" to "toast_message".
+	Changed element "right_panel_classic_skin_featured":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "left_cycle_button@persona.featured_cycle_button":
+					Changed field "$variables":
+						Changed variable "$cycle_button_size" to "$cycle_button_panel_size" from:
+							item 0: 14
+							item 1: "100%"
+			Changed control:
+				Changed element "right_cycle_button@persona.featured_cycle_button":
+					Changed field "$variables":
+						Changed variable "$cycle_button_size" to "$cycle_button_panel_size" from:
+							item 0: 14
+							item 1: "100%"
+		Added field "$variables":
+			variable "$cycle_button_panel_size|default":
+				item 0: 14
+				item 1: "100%"
+	Changed element "right_side_bottom_buttons":
+		Unchanged field "type": "stack_panel".
+		Changed field "offset":
+			Unchanged item 0: 0.
+			Changed item 1 from "100%y - 4px" to "100%y - 6px".
+		Changed field "controls":
+			Total control: 2 (+0, -1)
+			Removed control:
+				element "skin_color_picker_button@persona.skin_color_picker":
+					field "size": [22, "100%"]
+					field "$variables":
+						variable "$focus_id": "skin_color_picker_button"
+						variable "$focus_override_right": "skin_preview_button"
+						variable "$focus_override_up": "skin_preview_button"
+						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+						variable "$persona_focus_precedence": 3
+	Changed element "right_side_stack":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 9 (+1, -1)
+			Removed control:
+				element "arrow_panel":
+					field "type": "input_panel"
+					field "size": ["100%", "4%"]
+					field "controls":
+						control element "rotate_arrows@skin_picker.skin_rotation_arrows": field "size": ["22%", "100%"]
+						control:
+							element "preview_skin_panel@common.empty_panel":
+								field "controls":
+									control:
+										element "preview_skin@persona.preview_skin_full":
+											field "size": ["100%", "100%"]
+											field "offset": [-5, -2]
+											field "bindings":
+												binding:
+													field "binding_name": "#is_using_gamepad"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$button_anchor_to": "bottom_right"
+												variable "$button_anchor_from": "bottom_right"
+												variable "$focus_id": "skin_preview_button"
+												variable "$focus_override_left": "skin_color_picker_button"
+												variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+									control:
+										element "preview_skin_mouse@persona.preview_skin_full":
+											field "size": [22, 22]
+											field "offset": [-5, -2]
+											field "anchor_to": "bottom_right"
+											field "anchor_from": "bottom_right"
+											field "bindings":
+												binding:
+													field "binding_name": "(not #is_using_gamepad)"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$focus_id": "skin_preview_button"
+												variable "$focus_override_left": "skin_color_picker_button"
+												variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+			Added control:
+				element "arrow_panel":
+					field "type": "panel"
+					field "size": ["100%", "4%"]
+					field "controls":
+						control element "rotate_arrows@skin_picker.skin_rotation_arrows": field "size": ["22%", "100%"]
+						control:
+							element "preview_skin_panel":
+								field "type": "stack_panel"
+								field "size": ["100%", "100%"]
+								field "orientation": "horizontal"
+								field "controls":
+									control:
+										element "color_button@common.empty_panel":
+											field "size": [22, "100%"]
+											field "controls":
+												control:
+													element "skin_color_picker_button@persona.skin_color_picker":
+														field "size": [22, "100%x"]
+														field "offset": [0, -5]
+														field "bindings":
+															binding:
+																field "binding_name": "#skin_color_option_on"
+																field "binding_name_override": "#visible"
+														field "$variables":
+															variable "$button_anchor_to": "bottom_left"
+															variable "$button_anchor_from": "bottom_left"
+															variable "$focus_id": "skin_color_picker_button"
+															variable "$focus_override_right": "skin_preview_button"
+															variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+									control:
+										element "preview_panel@common.empty_panel":
+											field "size": ["fill", "100%"]
+											field "controls":
+												control:
+													element "preview_skin@persona.preview_skin_full":
+														field "size": ["100%", "100%"]
+														field "bindings":
+															binding:
+																field "binding_name": "#is_using_gamepad"
+																field "binding_name_override": "#visible"
+														field "$variables":
+															variable "$button_anchor_to": "bottom_right"
+															variable "$button_anchor_from": "bottom_right"
+															variable "$focus_id": "skin_preview_button"
+															variable "$focus_override_left": "skin_color_picker_button"
+															variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+												control:
+													element "preview_skin_mouse@persona.preview_skin_full":
+														field "size": [22, 22]
+														field "anchor_to": "bottom_right"
+														field "anchor_from": "bottom_right"
+														field "bindings":
+															binding:
+																field "binding_name": "(not #is_using_gamepad)"
+																field "binding_name_override": "#visible"
+														field "$variables":
+															variable "$focus_id": "skin_preview_button"
+															variable "$focus_override_left": "skin_color_picker_button"
+															variable "$focus_override_right": "focus_override_stop"
+	Changed element "size_option_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "size_option_button@common.button":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_id": "body_option".
+	Changed element "skin_color_picker@common_buttons.light_content_button":
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#skin_color_option_on"
+				field "binding_name_override": "#visible"
+		Changed field "$variables":
+			Changed variable "$default_state_border_visible" from false to true.
+			Changed variable "$hover_state_border_visible" from false to true.
+			Changed variable "$pressed_state_border_visible" from false to true.
+			Changed variable "$locked_state_border_visible" from false to true.
+		Added field "layer": 92.
+	Changed element "skin_pack_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "owned_category_button@persona.persona_category_unselect_panel":
+					Changed field "$variables":
+						Total variable: 8 (+2, -0)
+						Added variable "$unselect_default_button_texture": "textures/ui/button_borderless_light".
+						Added variable "$unselect_default_text_color": "$light_button_default_text_color".
+			Changed control:
+				Moved element from "persona_category_button@persona.persona_category_unselect_panel" to "purchaseable_category_button@persona.persona_category_unselect_panel".
+				Changed element "purchaseable_category_button@persona.persona_category_unselect_panel":
+					Changed field "$variables":
+						Changed variable "$content_image_binding_name" from "textures/ui/dropdown_chevron" to "textures/ui/chevron_white_down".
+Changed namespace "play":
+	Changed element "legacy_world_content_status_area_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "world_storage_content_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "world_storage_information":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "legacy_world_label":
+											Unchanged field "type": "label".
+											Changed field "text" from "#worlds_diskspace" to "playscreen.worldsStorage".
+											Removed field "bindings": binding field "binding_name": "#worlds_diskspace".
+Changed namespace "profile":
+	Changed element "featured_pieces_info_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "info_panel":
+					Unchanged field "type": "panel".
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$cycle_button_panel_size":
+							item 0: 17
+							item 1: "100%"
+	Changed element "featured_skins_info_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "info_panel":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100% - 4px".
+						Changed item 1 from "100% - 4px" to "100% - 6px".
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$cycle_button_panel_size":
+							item 0: 17
+							item 1: "100%"
+	Changed element "information_and_selection_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "horizontal_stack":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "vertical_stack_left":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Total control: 2 (+1, -1)
+									Removed control element "title_bar_left@profile.title_bar": field "controls": control element "dressing_room_title@$info_title_control_left": empty.
+									Added control element "title_bar_left@profile.title_bar": field "controls": control element "dressing_room_title@$info_title_control_left": field "layer": 5.
+						Changed control:
+							Changed element "vertical_stack_right":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Total control: 2 (+1, -1)
+									Removed control element "title_bar_left@profile.title_bar": field "controls": control element "dressing_room_title@$info_title_control_right": empty.
+									Added control element "title_bar_left@profile.title_bar": field "controls": control element "dressing_room_title@$info_title_control_right": field "layer": 5.
+	Changed element "popup_dialog_delete_persona_content@common.empty_panel":
+		Changed field "controls":
+			Changed control:
+				Changed element "alex_warning":
+					Unchanged field "type": "image".
+					Changed field "size":
+						Changed item 0 from 44 to 47.
+						Changed item 1 from 95 to 67.
+	Changed element "profile_screen@common.base_screen":
+		Changed field "$variables":
+			Total variable: 15 (+1, -0)
+			Added variable "$safezone_screen_matrix_layer": 20.
+	Changed element "profile_screen_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "main_panel@common_store.store_header_with_coins":
+					Removed field "layer": 2.
+	Changed element "title_bar":
+		field "type": "panel"
+		field "layer": 2
+		field "size": ["100%", "100%cm"]
+		field "controls": control element "dressing_room_title@$info_title_control": empty
+		field "type": "image"
+		field "texture": "textures/ui/White"
+		field "alpha": "$dressing_room_profile_title_bar_alpha"
+		field "layer": 2
+		field "size": ["100%", "100%cm"]
+		field "controls": control element "dressing_room_title@$info_title_control": empty
+Changed namespace "simple_inprogress":
+	Changed element "main_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "title@simple_inprogress.title_text":
+					Changed field "text" from "xbl.savePurchase.saveButton" to "#in_progress_title".
+					Added field "bindings": binding field "binding_name": "#in_progress_title".
+	Changed element "simple_inprogress_screen@common.base_screen":
+		Added field "force_render_below": true.
+Changed namespace "start":
+	Changed element "main_buttons_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_rows":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "store@start.stacked_row":
+								Changed field "controls":
+									Changed control:
+										Changed element "marketplace_error_button@common_buttons.dynamic_tooltip_notification_panel":
+											Changed field "size":
+												Changed item 0 from "100%" to "100% - 2px".
+												Unchanged item 1: "100%".

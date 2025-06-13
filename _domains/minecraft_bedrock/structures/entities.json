@@ -3294,11 +3294,26 @@
     "component.projectile:on_hit.particle_on_hit": {
         "type": "Keymap",
         "keys": {
-            "particle_item_name": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "particle_item_name": {"types": ["str", "dict"], "structure": "component.projectile:on_hit.particle_on_hit.particle_item_name", "delegate_arguments": {"always_print": true}},
             "particle_type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "on_other_hit": {"types": "bool"},
             "on_entity_hit": {"types": "bool"},
             "num_particles": {"types": "decimal"}
+        }
+    },
+    "component.projectile:on_hit.particle_on_hit.particle_item_name": {
+        "type": "Union",
+        "substructures": {
+            "str": null,
+            "dict": {
+                "type": "Dict",
+                "delegate_arguments": {
+                    "field": "item",
+                    "measure_length": true
+                },
+                "value_types": "dict",
+                "value_structure": "filter"
+            }
         }
     },
     "component.projectile:on_hit.potion_effect.group": {

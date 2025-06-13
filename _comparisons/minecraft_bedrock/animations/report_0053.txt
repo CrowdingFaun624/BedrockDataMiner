@@ -1,5 +1,35 @@
-Difference of "animations" between "1.16.220.51" (beta of "1.16.220") and "1.16.220.52" (beta of "1.16.220").
+Difference of "animations" between "1.16.221" and "1.16.230.50" (beta of "1.17.0").
 
+Total file: 119 (+1, -0)
+Added file "goat.animation.json":
+	resource pack "experimental":
+		field "format_version": "1.8.0"
+		field "animations":
+			animation "animation.goat.attack":
+				field "loop": true
+				field "bones": bone "head": field "rotation": ["variable.attack_head_rot", 0, 0]
+			animation "animation.goat.baby_scaling":
+				field "loop": true
+				field "bones":
+					bone "head":
+						field "position": [0.0, 10.0, 4.0]
+						field "scale": 1.4
+			animation "animation.goat.look_at_target":
+				field "loop": true
+				field "bones":
+					bone "head":
+						field "relative_to": field "rotation": "entity"
+						field "rotation": ["math.clamp(query.target_x_rotation, -40, 40)", "math.clamp(query.target_y_rotation, -45, 25)", 0]
+			animation "animation.goat.ram_attack":
+				field "loop": true
+				field "bones": bone "head": field "rotation": ["variable.ram_head_rot", 0, 0]
+			animation "animation.goat.walk":
+				field "loop": true
+				field "bones":
+					bone "left_back_leg": field "rotation": ["variable.tcos_left_side * 0.5", 0.0, 0.0]
+					bone "left_front_leg": field "rotation": ["-variable.tcos_left_side * 0.5", 0.0, 0.0]
+					bone "right_back_leg": field "rotation": ["variable.tcos_right_side * 0.5", 0.0, 0.0]
+					bone "right_front_leg": field "rotation": ["-variable.tcos_right_side * 0.5", 0.0, 0.0]
 Changed file "player_firstperson.animation.json":
 	Changed resource pack "core":
 		Changed field "animations":
@@ -7,11 +37,58 @@ Changed file "player_firstperson.animation.json":
 				Changed field "bones":
 					Changed bone "leftarm":
 						Changed field "position":
-							Changed vector item 0 from "math.sin(-query.walk_distance * 180.0) * variable.hand_bob * 9.75" to "math.sin(-query.walk_distance * 180.0) * variable.hand_bob * 1.5".
+							Changed vector item 0 from "math.sin(-query.walk_distance * 180.0) * variable.hand_bob * 1.5" to "math.sin(-query.walk_distance * 180.0) * variable.hand_bob * 9.75".
 							Unchanged vector item 1: "-math.abs(math.cos(-query.walk_distance * 180.0)) * variable.hand_bob * 15.0 + variable.short_arm_offset_left".
 							Unchanged vector item 2: 0.0.
 					Changed bone "rightarm":
 						Changed field "position":
-							Changed vector item 0 from "math.sin(-query.walk_distance * 180.0) * variable.hand_bob * 9.75" to "math.sin(-query.walk_distance * 180.0) * variable.hand_bob * 1.5".
+							Changed vector item 0 from "math.sin(-query.walk_distance * 180.0) * variable.hand_bob * 1.5" to "math.sin(-query.walk_distance * 180.0) * variable.hand_bob * 9.75".
 							Unchanged vector item 1: "-math.abs(math.cos(-query.walk_distance * 180.0)) * variable.hand_bob * 15.0 + variable.short_arm_offset_right".
 							Unchanged vector item 2: 0.0.
+Changed file "shield.animation.json":
+	Changed resource pack "core":
+		Changed field "animations":
+			Total animation: 5 (+1, -0)
+			Changed animation "animation.shield.wield_main_hand_first_person":
+				Changed field "bones":
+					Changed bone "shield":
+						Changed field "position":
+							Changed vector item 0 from -12.0 to 5.3.
+							Changed vector item 1 from 10.5 to 26.0.
+							Changed vector item 2 from -12.0 to 0.4.
+						Changed field "rotation":
+							Changed vector item 0 from 76.0 to 91.0.
+							Changed vector item 1 from -119.0 to 65.0.
+							Changed vector item 2 from -34.0 to -43.0.
+			Added animation "animation.shield.wield_main_hand_first_person_blocking":
+				field "loop": true
+				field "bones":
+					bone "shield":
+						field "position": [-2, -3.0, -2]
+						field "rotation": [0.0, -12.0, 0.0]
+			Changed animation "animation.shield.wield_off_hand_first_person":
+				Changed field "bones":
+					Changed bone "shield":
+						Changed field "position":
+							Changed vector item 0 from -14.0 to -13.5.
+							Changed vector item 1 from 20.0 to -5.8.
+							Changed vector item 2 from "(query.get_equipped_item_name == 'bow') && (query.main_hand_item_use_duration > 0.0f) ? -25.0 : 2.0" to "(query.get_equipped_item_name == 'bow') && (query.main_hand_item_use_duration > 0.0f) ? -25.0 : 5.1".
+						Changed field "rotation":
+							Changed vector item 0 from 0.0 to 1.0.
+							Changed vector item 1 from 185.0 to 176.0.
+							Changed vector item 2 from 178.0 to -2.5.
+			Moved animation from "animation.shield.wield_first_person_blocking" to "animation.shield.wield_off_hand_first_person_blocking".
+			Changed animation "animation.shield.wield_off_hand_first_person_blocking":
+				Changed field "bones":
+					Changed bone "shield":
+						Changed field "position":
+							Changed vector item 0 from 3.0 to 0.5.
+							Changed vector item 1 from "c.item_slot != 'main_hand' ? 1.0 + q.shield_blocking_bob : 2.0" to 4.2.
+							Changed vector item 2 from 2.0 to 1.5.
+			Changed animation "animation.shield.wield_third_person":
+				Changed field "bones":
+					Changed bone "shield":
+						Changed field "position":
+							Changed vector item 0 from -1.0 to "c.item_slot == 'main_hand' ? -0.4 : -1.6".
+							Unchanged vector item 1: 9.0.
+							Changed vector item 2 from "c.item_slot == 'main_hand' ? 8.5 : -16.5" to "c.item_slot == 'main_hand' ? 9.3 : -15.3".

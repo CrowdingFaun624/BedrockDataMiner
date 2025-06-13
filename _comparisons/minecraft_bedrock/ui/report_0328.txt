@@ -1,290 +1,520 @@
-Difference of "ui" between "1.20.20.22" (beta of "1.20.30") and "1.20.20.23" (beta of "1.20.30").
+Difference of "ui" between "1.20.40.21" (beta of "1.20.40") and "1.20.40.22" (beta of "1.20.40").
 
-Changed namespace "play":
-	Total element: 277 (+5, -1)
-	Changed element "add_friend_and_invite_panel":
+Changed namespace "controls_section":
+	Total element: 22 (+3, -0)
+	Added element "customize_tooltip_option":
+		field "type": "panel"
+		field "size": ["100%", 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "controls":
+			control:
+				element "customize_tooltip_option_image@controls_section.customize_tooltip_option_image":
+					field "offset": [-14, -20]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "layer": 3
+					field "controls":
+						control:
+							element "hover_detection_input_panel":
+								field "type": "input_panel"
+								field "consume_hover_events": false
+								field "focus_enabled": true
+								field "tts_skip_message": true
+								field "button_mappings":
+									button mapping:
+										field "to_button_id": "button.customize_tooltip_option_is_hovered"
+										field "mapping_type": "pressed"
+			control element "customize_tooltip_option_popup@controls_section.customize_tooltip_option_popup": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#resizable_tooltip_enable"
+				field "binding_name_override": "#visible"
+				field "binding_type": "global"
+	Added element "customize_tooltip_option_image":
+		field "type": "image"
+		field "size": [7, 11]
+		field "texture": "textures/ui/infobulb"
+	Added element "customize_tooltip_option_popup@common.static_tooltip_popup_with_image_and_text":
+		field "size": ["100% - 4px", "100%cm + 8px"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "bottom_middle"
+		field "$variables":
+			variable "$tooltip_panel_offset":
+				item 0: 0
+				item 1: -30
+			variable "$tooltip_popup_image": "textures/ui/infobulb"
+			variable "$tooltip_button_binding_type": "global"
+			variable "$tooltip_button_collection_name": ""
+			variable "$tooltip_popup_visible_binding|default": "#customize_tooltip_option_visible"
+			variable "$tooltip_text_binding_name": "#customize_tooltip_option_text"
+			variable "$tooltip_chevron_anchor": "bottom_right"
+			variable "$tooltip_popup_chevron_offset":
+				item 0: "-30%x"
+				item 1: "100%y - 3px"
+	Changed element "touch_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "join_by_code_button@play.join_by_code_button":
-					Added field "ignored": "$is_editor_mode_enabled".
-	Changed element "editor_play_screen_panel@play.play_screen_panel":
-		Changed field "$variables":
-			Changed variable "$navigation_tab" from "play.editor_tab_navigation_panel_layout" to "play.default_tab_navigation_panel_layout".
-	Changed element "editor_server_content_panel":
+				Changed element "common_touch_settings":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 22 (+1, -0)
+						Changed control:
+							Changed element "modify_control_layout_section":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Total control: 3 (+1, -0)
+									Added control element "customize_tooltip_option@controls_section.customize_tooltip_option": empty.
+						Added control:
+							element "option_resizable_ui@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.resizableUI"
+									variable "$option_binding_name": "#resizable_ui"
+									variable "$option_enabled_binding_name": "#resizable_ui_enabled"
+									variable "$toggle_name": "resizable_ui"
+Changed namespace "general_section":
+	Total element: 164 (+1, -0)
+	Changed element "debug_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 1 (+0, -2)
-			Removed control element "lan_servers_panel@play.lan_servers_scroll_content": empty.
+			Total control: 83 (+1, -0)
+			Added control:
+				element "option_dropdown_nethernet_logging_verbosity@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.dev_nethernet_logging_verbosity"
+						variable "$dropdown_content": "general_section.dev_nethernet_logging_verbosity_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "dev_nethernet_logging_verbosity_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_nethernet_logging_verbosity_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#dev_nethernet_logging_verbosity_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "200%"
+	Added element "dev_nethernet_logging_verbosity_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#dev_nethernet_logging_verbosity_disabled"
+						item "$radio_label_text": "options.dev_nethernet_logging_verbosity.disabled"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#dev_nethernet_logging_verbosity_criticalonly"
+						item "$radio_label_text": "options.dev_nethernet_logging_verbosity.criticalonly"
+				item 2:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#dev_nethernet_logging_verbosity_error"
+						item "$radio_label_text": "options.dev_nethernet_logging_verbosity.error"
+				item 3:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#dev_nethernet_logging_verbosity_warning"
+						item "$radio_label_text": "options.dev_nethernet_logging_verbosity.warning"
+				item 4:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#dev_nethernet_logging_verbosity_information"
+						item "$radio_label_text": "options.dev_nethernet_logging_verbosity.information"
+				item 5:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#dev_nethernet_logging_verbosity_verbose"
+						item "$radio_label_text": "options.dev_nethernet_logging_verbosity.verbose"
+	Changed element "ui_debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 57 (+0, -1)
 			Removed control:
-				element "servers_divider@common.horizontal_divider":
+				element "option_resizable_ui@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.resizableUI"
+						variable "$option_binding_name": "#resizable_ui"
+						variable "$option_enabled_binding_name": "#resizable_ui_enabled"
+						variable "$toggle_name": "resizable_ui"
+Changed namespace "globalpause":
+	Changed element "quit_button@common_buttons.light_text_form_fitting_button":
+		Added field "variables":
+			variable:
+				field "requires": "$is_editor_playtest_roundtrip"
+				field "$variables": variable "$button_text": "pauseScreen.editor.quit"
+Changed namespace "hud":
+	Changed element "root_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "layout_customization_reset":
+					Unchanged field "type": "image".
+					Changed field "controls":
+						Changed control:
+							Changed element "layout_customization_reset_modal@common_dialogs.main_panel_two_buttons":
+								Changed field "$variables":
+									Total variable: 5 (+0, -1)
+									Removed variable "$text_name": "hudScreen.controlCustomization.resetModalTitle".
+			Changed control:
+				Changed element "layout_customization_close_without_saving":
+					Unchanged field "type": "image".
+					Changed field "controls":
+						Changed control:
+							Changed element "layout_customization_close_without_saving_modal@common_dialogs.main_panel_two_buttons":
+								Changed field "$variables":
+									Total variable: 5 (+0, -1)
+									Removed variable "$text_name": "hudScreen.controlCustomization.closeWithoutSavingModalTitle".
+Changed namespace "pause":
+	Changed element "quit_button@pause.pause_button_template":
+		Changed field "variables":
+			Total variable: 2 (+1, -0)
+			Changed variable:
+				Changed field "requires" from "$is_secondary_client" to "($is_secondary_client and not $is_editor_playtest_roundtrip)".
+			Added variable:
+				field "requires": "$is_editor_playtest_roundtrip"
+				field "$variables": variable "$button_text": "pauseScreen.editor.quit"
+	Changed element "return_to_game_button@pause.pause_button_template":
+		Added field "variables":
+			variable:
+				field "requires": "$is_editor_playtest_roundtrip"
+				field "$variables": variable "$button_text": "pauseScreen.editor.returnToTesting"
+			variable:
+				field "requires": "$is_editor_mode_enabled"
+				field "$variables": variable "$button_text": "pauseScreen.editor.returnToEditing"
+Changed namespace "toast_screen":
+	Total element: 29 (+2, -0)
+	Added element "game_tip_label":
+		field "type": "label"
+		field "layer": 3
+		field "text_alignment": "left"
+		field "color": "$body_text_color"
+		field "size": ["default", "default"]
+		field "min_size": ["default", "default"]
+		field "max_size": [165, 20]
+		field "text": "$label_text"
+		field "bindings":
+			binding:
+				field "binding_name": "#toast_title"
+				field "binding_name_override": "#toast_title"
+		field "$variables": variable "$label_text|default": "#toast_title"
+	Added element "recipe_unlocked_icon":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": [18, 18]
+		field "controls":
+			control:
+				element "padding_vertical":
+					field "type": "panel"
+					field "size": "$icon_padding"
+			control:
+				element "item_renderer@toast_screen.item_renderer":
+					field "size": [18, 18]
+					field "property_bag": field "#item_id_aux": 3801088
 					field "bindings":
 						binding:
-							field "binding_name": "#lan_grid_visible"
-							field "binding_name_override": "#visible"
-	Changed element "editor_tab_content_panel_layout@play.common_tab_content_panel_type":
-		Changed field "controls":
-			Total control: 3 (+1, -0)
-			Added control element "friends_tab_content@play.friends_tab_content_panel": empty.
-	Removed element "editor_tab_navigation_panel_layout@play.common_tab_navigation_panel_layout":
-		field "controls":
-			control element "world_navigation_tab@play.world_navigation_tab": field "size": ["33%", "100%"]
-			control element "server_navigation_tab@play.server_navigation_tab": field "size": ["33%", "100%"]
-	Changed element "friends_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "joinable_realms_panel":
-								Unchanged field "type": "stack_panel".
-								Added field "ignored": "$is_editor_mode_enabled".
-	Added element "header_button_panel_opt_in":
-		field "type": "panel"
-		field "layer": 1
-		field "anchor_from": "top_left"
-		field "anchor_to": "top_left"
+							field "binding_name": "#recipe_unlocked"
+							field "binding_name_override": "#item_id_aux"
+		field "$variables":
+			variable "$icon_padding|default":
+				item 0: 0
+				item 1: 5
+	Changed element "recipe_unlocked_pocket_popup":
+		field "type": "input_panel"
+		field "offset": "$toast_offset"
+		field "anchor_from": "$toast_anchor_from"
+		field "anchor_to": "$toast_anchor_to"
+		field "layer": 20
+		field "size": [150, 28]
+		field "gesture_tracking_button": "button.toast_interaction"
+		field "anims": "$offset_anims"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.toast_interaction"
+				field "mapping_type": "pressed"
+				field "button_up_right_of_first_refusal": true
 		field "controls":
 			control:
-				element "buttons":
+				element "background":
+					field "type": "image"
+					field "texture": "textures/ui/greyBorder"
+			control:
+				element "popup_content":
 					field "type": "stack_panel"
 					field "orientation": "horizontal"
-					field "size": ["100% - 1px", "100%"]
+					field "size": ["100%", "100%"]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
 					field "controls":
 						control:
-							element "primary_panel":
+							element "horizontal_padding":
 								field "type": "panel"
-								field "size": ["fill", "100%"]
-								field "controls":
-									control:
-										element "primary@$primary_header_button":
-											field "size": ["100% - 1px", "100%"]
-											field "anchor_from": "top_left"
-											field "anchor_to": "top_left"
-											field "layer": 1
+								field "size": [8.3, "fill"]
 						control:
-							element "secondary@$secondary_header_button":
-								field "visible": "$secondary_visible"
-								field "anchor_from": "top_right"
-								field "anchor_to": "top_right"
-								field "layer": 1
-						control:
-							element "ternary@$ternary_header_button":
-								field "visible": "$ternary_visible"
-								field "anchor_from": "top_right"
-								field "anchor_to": "top_right"
-								field "layer": 1
-					field "$variables":
-						variable "$secondary_visible|default": true
-						variable "$ternary_visible|default": true
-	Added element "new_ui_switch_button_options_panel":
-		field "type": "stack_panel"
-		field "ignored": "$education_edition"
-		field "orientation": "vertical"
-		field "size": ["50% - 10px", "100%c + 4px"]
-		field "bindings":
-			binding:
-				field "binding_name": "#show_new_play_screen_opt_in"
-				field "binding_name_override": "#visible"
-		field "controls":
-			control:
-				element "unlock_template_options_button@settings_common.action_button":
-					field "size": ["100% - 1px", 30]
-					field "$variables":
-						variable "$button_text": "options.newUiPlayScreen.initiate"
-						variable "$pressed_button_name": "button.switch_to_new_ui"
-	Changed element "realms_feed_button@common_buttons.dark_glyph_button":
-		Changed field "bindings":
-			Total binding: 5 (+1, -0)
-			Added binding:
-				field "binding_name": "#realms_feed_button_tts_header"
-				field "binding_collection_name": "$realms_worlds_collection_name"
-				field "binding_type": "collection"
-		Changed field "$variables":
-			Changed variable "$button_tts_header" from "accessibility.play.realmFeed" to "#realms_feed_button_tts_header".
-	Changed element "realms_world_item":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 4 (+1, -1)
-			Removed control:
-				element "feed_panel":
-					field "type": "panel"
-					field "size": ["100%c - 1px", "100% + 1px"]
-					field "controls": control element "realms_feed_button@play.realms_feed_button": field "layer": 1
-			Added control:
-				element "feed_panel_with_unread_count":
-					field "type": "panel"
-					field "size": ["100%y", "100%"]
-					field "controls":
-						control:
-							element "feed_panel":
-								field "type": "panel"
-								field "size": ["100%c - 1px", "100% + 1px"]
-								field "controls": control element "realms_feed_button@play.realms_feed_button": field "layer": 1
-						control element "unread_story_count@play.unread_story_count_panel": field "offset": [0, 1.5]
-	Changed element "server_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 6 (+1, -1)
-						Removed control:
-							element "servers_panel":
+							element "recipe_unlocked_icon":
 								field "type": "stack_panel"
-								field "orientation": "vertical"
-								field "size": ["100%", "100%c"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": [25, 25]
 								field "controls":
 									control:
-										element "more_servers_panel":
-											field "type": "stack_panel"
-											field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
-											field "size": ["100%", "100%c"]
-											field "bindings":
-												binding:
-													field "binding_name": "#is_network_available_and_multiplayer_visible"
-													field "binding_name_override": "#visible"
-											field "controls":
-												control element "more_servers_divider@common.horizontal_divider": empty
-												control:
-													element "padding_0":
-														field "type": "panel"
-														field "size": ["100%", 2]
-												control:
-													element "more_servers_label@common.minecraftTenLabel":
-														field "size": ["default", "default"]
-														field "text": "thirdPartyWorld.Additional"
-														field "color": "$dark_button_default_text_color"
-														field "bindings":
-															binding:
-																field "binding_name": "#is_additional_server_label_visible"
-																field "binding_name_override": "#visible"
-												control element "add_server_button@play.add_server_toggle_button": empty
-												control:
-													element "padding_1":
-														field "type": "panel"
-														field "size": ["100%", 2]
-												control element "more_servers_grid@play.more_servers_grid": empty
-												control:
-													element "padding_3":
-														field "type": "panel"
-														field "size": ["100%", 4]
-														field "bindings":
-															binding:
-																field "binding_name": "#servers_grid_visible"
-																field "binding_name_override": "#visible"
-											field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
+										element "vertical_padding":
+											field "type": "panel"
+											field "size": ["fill", "4px"]
 									control:
-										element "featured_servers_panel":
+										element "icon_stack_panel":
 											field "type": "stack_panel"
-											field "size": ["100%", "100%c"]
-											field "ignored": "$ignore_3rd_party_servers"
+											field "size": ["100%", 20]
 											field "controls":
 												control:
-													element "loading_featured_panel@play.label_background":
-														field "size": ["100%", 40]
-														field "controls":
-															control element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
-															control element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+													element "icon_padding":
+														field "type": "panel"
+														field "size": ["fill", "1px"]
+												control:
+													element "item_renderer@toast_screen.item_renderer":
+														field "size": [18, 18]
+														field "anchor_from": "top_right"
+														field "anchor_to": "top_right"
+														field "property_bag": field "#item_id_aux": 3801088
 														field "bindings":
 															binding:
-																field "binding_name": "#loading_servers_progress_visible"
-																field "binding_name_override": "#visible"
-												control:
-													element "padding_1":
-														field "type": "panel"
-														field "size": ["100%", 2]
-												control:
-													element "featured_servers_label@common.minecraftTenLabel":
-														field "size": ["default", "default"]
-														field "text": "thirdPartyWorld.Featured"
-														field "color": "$dark_button_default_text_color"
-												control:
-													element "padding_2":
-														field "type": "panel"
-														field "size": ["100%", 2]
-												control element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
-												control:
-													element "padding_3":
-														field "type": "panel"
-														field "size": ["100%", 2]
+																field "binding_name": "#recipe_unlocked"
+																field "binding_name_override": "#item_id_aux"
+						control:
+							element "horizontal_padding2":
+								field "type": "panel"
+								field "size": [-2, "fill"]
+						control:
+							element "text_stack_panel":
+								field "type": "stack_panel"
+								field "size": ["100%", 20]
+								field "controls":
+									control:
+										element "title_text_padding":
+											field "type": "panel"
+											field "size": ["fill", 9.5]
+									control:
+										element "title@toast_screen.toast_label":
+											field "text": "#toast_title"
+											field "size": ["100%-10px", 10]
 											field "bindings":
 												binding:
-													field "binding_name": "#featured_servers_visible_and_available"
-													field "binding_name_override": "#visible"
-											field "$variables":
-												variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
-												variable "$focus_id": "featured_servers_panel"
-								field "$variables": variable "$focus_id": "left_panel"
-						Added control element "server_content@$server_scroll_panel_content": empty.
-	Changed element "servers_content_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 4 (+1, -0)
-			Added control element "add_server_button@play.add_server_toggle_button": empty.
-	Changed element "tab_text_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "count_section":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "count_background_image":
-								Unchanged field "type": "image".
-								Changed field "controls":
-									Changed control:
-										Changed element "count@common_button_text":
-											Changed field "offset":
-												Changed item 0 from 1 to 0.
-												Changed item 1 from 1 to 0.5.
-	Added element "unread_story_count_panel":
-		field "type": "panel"
-		field "anchor_from": "top_right"
-		field "anchor_to": "right_middle"
+													field "binding_name": "#toast_title"
+													field "binding_name_override": "#toast_title"
+		field "$variables":
+			variable "$toast_anchor_from|default": "bottom_middle"
+			variable "$toast_anchor_to|default": "center"
+			variable "$toast_offset|default":
+				item 0: 0
+				item 1: 0
+			variable "$alpha_anims|default": empty
+			variable "$offset_anims|default": item 0: "@toast_screen.popup_anim"
+		field "type": "image"
+		field "texture": "textures/ui/greyBorder"
+		field "layer": 20
 		field "size": ["100%c", "100%c"]
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "center"
+		field "anims": "$offset_anims"
 		field "controls":
 			control:
-				element "text@play.unread_story_count_text":
-					field "layer": 9
+				element "input_panel":
+					field "type": "input_panel"
+					field "size": ["100%c", "100%c"]
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "gesture_tracking_button": "button.toast_interaction"
+					field "button_mappings":
+						button mapping:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "button.toast_interaction"
+							field "mapping_type": "pressed"
+							field "button_up_right_of_first_refusal": true
 					field "controls":
 						control:
-							element "background@play.unread_story_count_text_background":
-								field "layer": -1
-								field "size": ["100%+4px", "100%"]
-								field "offset": [-0.5, 0]
-		field "bindings":
-			binding:
-				field "binding_type": "collection"
-				field "binding_name": "#realms_unread_story_count_visible"
-				field "binding_name_override": "#visible"
-				field "binding_collection_name": "$realms_worlds_collection_name"
-	Added element "unread_story_count_text":
-		field "type": "label"
-		field "color": "$tab_secondary_unchecked_text_color"
-		field "shadow": false
-		field "text": "#realms_unread_story_count"
-		field "bindings":
-			binding:
-				field "binding_type": "collection"
-				field "binding_name": "#realms_unread_story_count"
-				field "binding_collection_name": "$realms_worlds_collection_name"
-	Added element "unread_story_count_text_background":
+							element "label_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%c", "100%cm"]
+								field "controls":
+									control:
+										element "horizontal_padding_1":
+											field "type": "panel"
+											field "size": [9, 0]
+									control element "recipe_unlocked_icon@toast_screen.recipe_unlocked_icon": empty
+									control:
+										element "horizontal_padding_2":
+											field "type": "panel"
+											field "size": [6, 0]
+									control:
+										element "label_panel":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "size": ["100%c", "100%c"]
+											field "controls":
+												control:
+													element "padding_vertical":
+														field "type": "panel"
+														field "size": [0, 10]
+												control element "label@toast_screen.game_tip_label": empty
+												control:
+													element "padding_vertical_1":
+														field "type": "panel"
+														field "size": [0, 7]
+									control:
+										element "horizontal_padding_3":
+											field "type": "panel"
+											field "size": [9, 0]
+		field "$variables":
+			variable "$alpha_anims|default": empty
+			variable "$offset_anims|default": item 0: "@toast_screen.popup_anim"
+	Changed element "recipe_unlocked_popup":
+		field "type": "input_panel"
+		field "offset": "$toast_offset"
+		field "anchor_from": "$toast_anchor_from"
+		field "anchor_to": "$toast_anchor_to"
+		field "size": "$toast_size"
+		field "gesture_tracking_button": "button.toast_interaction"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.toast_interaction"
+				field "mapping_type": "pressed"
+				field "button_up_right_of_first_refusal": true
+		field "controls":
+			control:
+				element "background":
+					field "type": "image"
+					field "texture": "textures/ui/greyBorder"
+					field "anims": "$alpha_anims"
+			control:
+				element "popup_content":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "layer": 1
+					field "controls":
+						control:
+							element "horizontal_padding":
+								field "type": "panel"
+								field "size": [8.3, "fill"]
+						control:
+							element "recipe_unlocked_icon":
+								field "layer": 1
+								field "type": "stack_panel"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": [20, 30]
+								field "controls":
+									control:
+										element "vertical_padding":
+											field "type": "panel"
+											field "size": ["fill", 5]
+									control:
+										element "item_renderer@toast_screen.item_renderer":
+											field "size": [20, 20]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "property_bag": field "#item_id_aux": 3801088
+											field "bindings":
+												binding:
+													field "binding_name": "#recipe_unlocked"
+													field "binding_name_override": "#item_id_aux"
+						control:
+							element "horizontal_padding2":
+								field "type": "panel"
+								field "size": [5.5, "fill"]
+						control:
+							element "text_stack_panel":
+								field "type": "stack_panel"
+								field "size": ["100%", 30]
+								field "controls":
+									control:
+										element "top_padding":
+											field "type": "panel"
+											field "size": ["fill", 5.5]
+									control:
+										element "title@toast_screen.toast_label":
+											field "text": "#toast_title"
+											field "size": ["100%-10px", 10]
+											field "bindings": binding field "binding_name": "#toast_title"
+									control:
+										element "description@toast_screen.toast_label":
+											field "size": ["100%-10px", 10]
+											field "text": "#toast_subtitle"
+											field "alpha": 0.8
+											field "bindings": binding field "binding_name": "#toast_subtitle"
+		field "anims": "$offset_anims"
+		field "$variables":
+			variable "$toast_anchor_from|default": "top_right"
+			variable "$toast_anchor_to|default": "bottom_right"
+			variable "$toast_offset|default":
+				item 0: 0
+				item 1: 0
+			variable "$toast_size|default":
+				item 0: 165
+				item 1: 30
+			variable "$alpha_anims|default": empty
+			variable "$offset_anims|default": item 0: "@toast_screen.popup_anim"
 		field "type": "image"
-		field "texture": "textures/ui/invite_number_background"
-	Changed element "worlds_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "header_button":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Moved element from "buttons@play.header_button_panel" to "buttons@play.header_button_panel_opt_in".
-							Changed element "buttons@play.header_button_panel_opt_in":
-								Changed field "$variables":
-									Total variable: 4 (+1, -0)
-									Changed variable "$secondary_header_button" from "import_world_button" to "new_ui_switch_button_options_panel".
-									Moved variable from "$secondary_visible" to "$ternary_visible".
-									Added variable "$ternary_header_button": "import_world_button".
+		field "texture": "textures/ui/greyBorder"
+		field "layer": 20
+		field "size": ["100%c", "100%c"]
+		field "anchor_from": "top_right"
+		field "anchor_to": "bottom_right"
+		field "anims": "$offset_anims"
+		field "controls":
+			control:
+				element "input_panel":
+					field "type": "input_panel"
+					field "size": ["100%c", "100%c"]
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "gesture_tracking_button": "button.toast_interaction"
+					field "button_mappings":
+						button mapping:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "button.toast_interaction"
+							field "mapping_type": "pressed"
+							field "button_up_right_of_first_refusal": true
+					field "controls":
+						control:
+							element "label_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%c", "100%cm"]
+								field "controls":
+									control:
+										element "horizontal_padding_1":
+											field "type": "panel"
+											field "size": [9, 0]
+									control:
+										element "recipe_unlocked_icon@toast_screen.recipe_unlocked_icon":
+											field "$variables":
+												variable "$icon_padding":
+													item 0: 0
+													item 1: 7
+									control:
+										element "horizontal_padding_2":
+											field "type": "panel"
+											field "size": [6, 0]
+									control:
+										element "label_panel":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "size": ["100%c", "100%c"]
+											field "controls":
+												control:
+													element "padding_vertical_1":
+														field "type": "panel"
+														field "size": [0, 7]
+												control element "label@toast_screen.game_tip_label": field "line_padding": 1
+												control:
+													element "padding_vertical_2":
+														field "type": "panel"
+														field "size": [0, 7]
+									control:
+										element "horizontal_padding_3":
+											field "type": "panel"
+											field "size": [9, 0]
+		field "$variables":
+			variable "$toast_offset|default":
+				item 0: 0
+				item 1: 0
+			variable "$alpha_anims|default": empty
+			variable "$offset_anims|default": item 0: "@toast_screen.popup_anim"

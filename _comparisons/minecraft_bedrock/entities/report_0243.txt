@@ -1,11 +1,47 @@
-Difference of "entities" between "1.21.60.21" (beta of "1.21.60") and "1.21.60.23" (beta of "1.21.60").
+Difference of "entities" between "1.21.70.20" (beta of "1.21.70") and "1.21.70.22" (beta of "1.21.70").
 
-Changed entity "cave_spider.json":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.21.0" to "1.21.60".
+Changed entity "bee.json":
+	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "bee_adult":
+					Changed component "minecraft:breedable":
+						Changed field "breed_items":
+							Total item: 26 (+1, -0)
+							Added item "minecraft:cactus_flower".
+				Changed component group "bee_baby":
+					Changed component "minecraft:ageable":
+						Changed field "feed_items":
+							Total item: 26 (+1, -0)
+							Added item "minecraft:cactus_flower".
+				Changed component group "look_for_food":
+					Changed component "minecraft:behavior.move_to_block":
+						Changed field "target_blocks":
+							Total block: 27 (+1, -0)
+							Added block "minecraft:cactus_flower".
 			Changed field "components":
-				Total component: 27 (+1, -0)
+				Changed component "minecraft:behavior.tempt":
+					Changed field "items":
+						Total item: 27 (+1, -0)
+						Added item "minecraft:cactus_flower".
+Changed entity "boat.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.19.80" to "1.21.70".
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:boat".
+				Removed description "is_experimental": false.
+			Changed field "components":
+				Total component: 14 (+1, -0)
+				Changed component "minecraft:conditional_bandwidth_optimization":
+					Changed field "conditional_values":
+						Changed condition:
+							Changed field "conditional_values":
+								Changed filter:
+									Unchanged filter property "test": "is_moving".
+									Unchanged filter property "subject": "self".
+									Removed filter property "operator": "==".
+									Removed filter property "value": true.
 				Changed component "minecraft:hurt_on_condition":
 					Changed field "damage_conditions":
 						Changed damage condition:
@@ -14,75 +50,618 @@ Changed entity "cave_spider.json":
 								Unchanged filter property "subject": "self".
 								Removed filter property "operator": "==".
 								Removed filter property "value": true.
-				Added component "minecraft:renders_when_invisible": empty.
+				Added component "minecraft:is_collidable": empty.
 			Changed field "events":
-				Changed event "minecraft:entity_spawned":
-					Changed field "randomize":
-						Changed randomize item:
-							Changed field "randomize":
-								Changed randomize item:
-									Removed field "remove": empty.
-								Changed randomize item:
-									Removed field "remove": empty.
-								Changed randomize item:
-									Removed field "remove": empty.
-						Changed randomize item:
-							Removed field "remove": empty.
-Changed entity "creaking.json":
+				Changed event "minecraft:add_can_ride":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "filters":
+								Unchanged filter property "test": "is_variant".
+								Removed filter property "subject": "self".
+								Unchanged filter property "operator": "!=".
+								Unchanged filter property "value": 7.
+						Changed sequence item 1:
+							Changed field "filters":
+								Unchanged filter property "test": "is_variant".
+								Removed filter property "subject": "self".
+								Unchanged filter property "operator": "==".
+								Unchanged filter property "value": 7.
+Changed entity "chest_boat.json":
 	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 13 (+1, -0)
-				Added component "minecraft:renders_when_invisible": empty.
-Changed entity "enderman.json":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.21.40" to "1.21.60".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 31 (+1, -0)
-				Added component "minecraft:renders_when_invisible": empty.
-Changed entity "phantom.json":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.16.0" to "1.21.60".
+		Changed field "format_version" from "1.18.10" to "1.21.70".
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:phantom".
+				Unchanged description "identifier": "minecraft:chest_boat".
 				Removed description "is_experimental": false.
-			Removed field "component_groups": empty.
 			Changed field "components":
-				Total component: 24 (+1, -0)
-				Added component "minecraft:renders_when_invisible": empty.
+				Total component: 14 (+1, -0)
+				Changed component "minecraft:conditional_bandwidth_optimization":
+					Changed field "conditional_values":
+						Changed condition:
+							Changed field "conditional_values":
+								Changed filter:
+									Unchanged filter property "test": "is_moving".
+									Unchanged filter property "subject": "self".
+									Removed filter property "operator": "==".
+									Removed filter property "value": true.
+				Changed component "minecraft:hurt_on_condition":
+					Changed field "damage_conditions":
+						Changed damage condition:
+							Changed field "filters":
+								Unchanged filter property "test": "in_lava".
+								Unchanged filter property "subject": "self".
+								Removed filter property "operator": "==".
+								Removed filter property "value": true.
+				Added component "minecraft:is_collidable": empty.
+Changed entity "chicken.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.21.60"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:chicken"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:climate_variant":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "temperate"
+						field "values":
+							possible property "cold"
+							possible property "temperate"
+							possible property "warm"
+				description "spawn_category": "creature"
+			field "component_groups":
+				component group "minecraft:chicken_adult":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "breeds_with":
+							field "mate_type": "minecraft:chicken"
+							field "baby_type": "minecraft:chicken"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+						field "breed_items":
+							item "beetroot_seeds"
+							item "melon_seeds"
+							item "pitcher_pod"
+							item "pumpkin_seeds"
+							item "torchflower_seeds"
+							item "wheat_seeds"
+						field "property_inheritance": property "minecraft:climate_variant": empty
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/chicken.json"
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family "zombie"
+						field "seats": field "position": [0.0, 0.4, 0.0]
+					component "minecraft:spawn_entity":
+						field "entities":
+							entity type:
+								field "min_wait_time": 300
+								field "max_wait_time": 600
+								field "spawn_sound": "plop"
+								field "spawn_item": "egg"
+								field "filters":
+									filter:
+										filter property "test": "rider_count"
+										filter property "subject": "self"
+										filter property "operator": "=="
+										filter property "value": 0
+									filter:
+										filter property "test": "enum_property"
+										filter property "subject": "self"
+										filter property "domain": "minecraft:climate_variant"
+										filter property "value": "temperate"
+							entity type:
+								field "min_wait_time": 300
+								field "max_wait_time": 600
+								field "spawn_sound": "plop"
+								field "spawn_item": "brown_egg"
+								field "filters":
+									filter:
+										filter property "test": "rider_count"
+										filter property "subject": "self"
+										filter property "operator": "=="
+										filter property "value": 0
+									filter:
+										filter property "test": "enum_property"
+										filter property "subject": "self"
+										filter property "domain": "minecraft:climate_variant"
+										filter property "value": "warm"
+							entity type:
+								field "min_wait_time": 300
+								field "max_wait_time": 600
+								field "spawn_sound": "plop"
+								field "spawn_item": "blue_egg"
+								field "filters":
+									filter:
+										filter property "test": "rider_count"
+										filter property "subject": "self"
+										filter property "operator": "=="
+										filter property "value": 0
+									filter:
+										filter property "test": "enum_property"
+										filter property "subject": "self"
+										filter property "domain": "minecraft:climate_variant"
+										filter property "value": "cold"
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
+				component group "minecraft:chicken_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item "wheat_seeds"
+							item "beetroot_seeds"
+							item "melon_seeds"
+							item "pumpkin_seeds"
+							item "pitcher_pod"
+							item "torchflower_seeds"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 5
+						field "speed_multiplier": 1.1
+			field "components":
+				component "minecraft:balloonable": field "mass": 0.5
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.6
+					field "height": 0.8
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "deals_damage": "no"
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:game_event_movement_tracking": field "emit_flap": true
+				component "minecraft:health":
+					field "value": 4
+					field "max": 4
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "chicken"
+						family "mob"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "look_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 2
+					field "speed_multiplier": 1.5
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.5
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.tempt":
+					field "priority": 4
+					field "speed_multiplier": 1.0
+					field "items":
+						item "beetroot_seeds"
+						item "melon_seeds"
+						item "pitcher_pod"
+						item "pumpkin_seeds"
+						item "torchflower_seeds"
+						item "wheat_seeds"
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group "minecraft:chicken_adult"
+					field "remove": field "component_groups": component group "minecraft:chicken_baby"
+				event "minecraft:entity_born":
+					field "add": field "component_groups": component group "minecraft:chicken_baby"
+					field "remove": empty
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "randomize":
+								randomize item:
+									field "trigger": "minecraft:spawn_adult"
+									field "weight": 95
+								randomize item:
+									field "weight": 5
+									field "add": field "component_groups": component group "minecraft:chicken_baby"
+						sequence item 1:
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "spawns_warm_variant_farm_animals"
+							field "set_property": property "minecraft:climate_variant": "warm"
+						sequence item 2:
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "spawns_cold_variant_farm_animals"
+							field "set_property": property "minecraft:climate_variant": "cold"
+				event "minecraft:hatch_cold": field "set_property": property "minecraft:climate_variant": "cold"
+				event "minecraft:hatch_warm": field "set_property": property "minecraft:climate_variant": "warm"
+				event "minecraft:spawn_adult": field "add": field "component_groups": component group "minecraft:chicken_adult"
+Changed entity "egg.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.21.60"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:egg"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:climate_variant":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "temperate"
+						field "values":
+							possible property "cold"
+							possible property "temperate"
+							possible property "warm"
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.25
+					field "height": 0.25
+				component "minecraft:conditional_bandwidth_optimization":
+					field "default_values":
+						field "max_optimized_distance": 80.0
+						field "max_dropped_ticks": 7
+						field "use_motion_prediction_hints": true
+				component "minecraft:physics": empty
+				component "minecraft:projectile":
+					field "on_hit":
+						field "impact_damage":
+							field "damage": 0
+							field "knockback": true
+							field "destroy_on_hit": true
+						field "spawn_chance":
+							field "first_spawn_chance": 8
+							field "second_spawn_chance": 32
+							field "first_spawn_count": 1
+							field "second_spawn_count": 4
+							field "spawn_definition": "minecraft:chicken"
+							field "spawn_baby": true
+							field "on_spawn":
+								event:
+									field "filters":
+										filter property "test": "enum_property"
+										filter property "subject": "other"
+										filter property "domain": "minecraft:climate_variant"
+										filter property "value": "warm"
+									field "event": "minecraft:hatch_warm"
+								event:
+									field "filters":
+										filter property "test": "enum_property"
+										filter property "subject": "other"
+										filter property "domain": "minecraft:climate_variant"
+										filter property "value": "cold"
+									field "event": "minecraft:hatch_cold"
+						field "remove_on_hit": empty
+						field "particle_on_hit":
+							field "particle_type": "iconcrack"
+							field "num_particles": 6
+							field "on_entity_hit": true
+							field "on_other_hit": true
+							field "particle_item_name":
+								item "brown_egg":
+									filter property "test": "enum_property"
+									filter property "domain": "minecraft:climate_variant"
+									filter property "value": "warm"
+								item "blue_egg":
+									filter property "test": "enum_property"
+									filter property "domain": "minecraft:climate_variant"
+									filter property "value": "cold"
+					field "power": 1.5
+					field "gravity": 0.03
+					field "angle_offset": 0.0
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+			field "events":
+				event "minecraft:spawn_cold": field "set_property": property "minecraft:climate_variant": "cold"
+				event "minecraft:spawn_temperate": field "set_property": property "minecraft:climate_variant": "temperate"
+				event "minecraft:spawn_warm": field "set_property": property "minecraft:climate_variant": "warm"
+Changed entity "sheep.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.21.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:sheep"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "spawn_category": "creature"
+			field "component_groups":
+				component group "minecraft:loot_sheared": component "minecraft:loot": field "table": "loot_tables/entities/sheep_sheared.json"
+				component group "minecraft:loot_wooly": component "minecraft:loot": field "table": "loot_tables/entities/sheep.json"
+				component group "minecraft:rideable_sheared":
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family "zombie"
+						field "seats": field "position": [0.0, 0.9, 0.0]
+				component group "minecraft:rideable_wooly":
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family "zombie"
+						field "seats": field "position": [0.0, 0.975, 0.0]
+				component group "minecraft:sheep_adult":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "combine_parent_colors": true
+						field "breeds_with":
+							field "mate_type": "minecraft:sheep"
+							field "baby_type": "minecraft:sheep"
+						field "breed_items": "wheat"
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:behavior.breed":
+						field "priority": 3
+						field "speed_multiplier": 1.0
+				component group "minecraft:sheep_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items": "wheat"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.1
+				component group "minecraft:sheep_black": component "minecraft:color": field "value": 15
+				component group "minecraft:sheep_brown": component "minecraft:color": field "value": 12
+				component group "minecraft:sheep_dyeable": component "minecraft:is_dyeable": field "interact_text": "action.interact.dye"
+				component group "minecraft:sheep_gray": component "minecraft:color": field "value": 8
+				component group "minecraft:sheep_light_gray": component "minecraft:color": field "value": 7
+				component group "minecraft:sheep_pink": component "minecraft:color": field "value": 6
+				component group "minecraft:sheep_red": component "minecraft:color": field "value": 14
+				component group "minecraft:sheep_sheared": component "minecraft:is_sheared": empty
+				component group "minecraft:sheep_white": component "minecraft:color": field "value": 0
+			field "components":
+				component "minecraft:balloonable": field "mass": 0.75
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.9
+					field "height": 1.3
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health":
+					field "value": 8
+					field "max": 8
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:interact":
+					field "interactions":
+						interaction:
+							field "cooldown": 2.5
+							field "use_item": false
+							field "hurt_item": 1
+							field "spawn_items": field "table": "loot_tables/entities/sheep_shear.json"
+							field "play_sounds": "shear"
+							field "interact_text": "action.interact.shear"
+							field "vibration": "shear"
+							field "on_interact":
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "has_equipment"
+											filter property "subject": "other"
+											filter property "domain": "hand"
+											filter property "value": "shears"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "player"
+										filter:
+											filter property "test": "has_component"
+											filter property "operator": "!="
+											filter property "value": "minecraft:is_baby"
+										filter:
+											filter property "test": "has_component"
+											filter property "value": "minecraft:is_dyeable"
+								field "event": "minecraft:on_sheared"
+								field "target": "self"
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "mob"
+						family "sheep"
+				component "minecraft:behavior.eat_block":
+					field "priority": 6
+					field "success_chance": "query.is_baby ? 0.02 : 0.001"
+					field "time_until_eat": 1.8
+					field "eat_and_replace_block_pairs":
+						block pair:
+							field "eat_block": "grass"
+							field "replace_block": "dirt"
+						block pair:
+							field "eat_block": "tallgrass"
+							field "replace_block": "air"
+						block pair:
+							field "eat_block": "short_dry_grass"
+							field "replace_block": "air"
+						block pair:
+							field "eat_block": "tall_dry_grass"
+							field "replace_block": "air"
+					field "on_eat":
+						field "event": "minecraft:on_eat_block"
+						field "target": "self"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.follow_parent":
+					field "priority": 5
+					field "speed_multiplier": 1.1
+				component "minecraft:behavior.look_at_player":
+					field "priority": 8
+					field "look_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 2
+					field "speed_multiplier": 1.5
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+				component "minecraft:behavior.random_look_around": field "priority": 9
+				component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 0.8
+				component "minecraft:behavior.tempt":
+					field "priority": 4
+					field "speed_multiplier": 1.25
+					field "items": item "wheat"
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "add":
+						field "component_groups":
+							component group "minecraft:loot_wooly"
+							component group "minecraft:rideable_wooly"
+							component group "minecraft:sheep_adult"
+					field "remove": field "component_groups": component group "minecraft:sheep_baby"
+				event "minecraft:entity_born":
+					field "add":
+						field "component_groups":
+							component group "minecraft:rideable_sheared"
+							component group "minecraft:sheep_baby"
+							component group "minecraft:sheep_dyeable"
+					field "remove": empty
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "randomize":
+								randomize item:
+									field "trigger": "spawn_adult"
+									field "weight": 95
+									field "remove": empty
+								randomize item:
+									field "trigger": "spawn_baby"
+									field "weight": 5
+									field "remove": empty
+						sequence item 1:
+							field "randomize":
+								randomize item:
+									field "weight": 81836
+									field "add": field "component_groups": component group "minecraft:sheep_white"
+								randomize item:
+									field "weight": 5000
+									field "add": field "component_groups": component group "minecraft:sheep_black"
+								randomize item:
+									field "weight": 5000
+									field "add": field "component_groups": component group "minecraft:sheep_light_gray"
+								randomize item:
+									field "weight": 5000
+									field "add": field "component_groups": component group "minecraft:sheep_gray"
+								randomize item:
+									field "weight": 3000
+									field "add": field "component_groups": component group "minecraft:sheep_brown"
+								randomize item:
+									field "weight": 164
+									field "add": field "component_groups": component group "minecraft:sheep_pink"
+				event "minecraft:on_eat_block":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "minecraft:sheep_dyeable"
+							field "remove": field "component_groups": component group "minecraft:sheep_sheared"
+						sequence item 1:
+							field "add":
+								field "component_groups":
+									component group "minecraft:loot_wooly"
+									component group "minecraft:rideable_wooly"
+							field "filters":
+								filter property "subject": "self"
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:is_baby"
+							field "remove": field "component_groups": component group "minecraft:loot_sheared"
+				event "minecraft:on_sheared":
+					field "add":
+						field "component_groups":
+							component group "minecraft:loot_sheared"
+							component group "minecraft:rideable_sheared"
+							component group "minecraft:sheep_sheared"
+					field "remove":
+						field "component_groups":
+							component group "minecraft:loot_wooly"
+							component group "minecraft:sheep_dyeable"
+				event "spawn_adult":
+					field "add":
+						field "component_groups":
+							component group "minecraft:loot_wooly"
+							component group "minecraft:rideable_wooly"
+							component group "minecraft:sheep_adult"
+							component group "minecraft:sheep_dyeable"
+				event "spawn_baby":
+					field "add":
+						field "component_groups":
+							component group "minecraft:rideable_sheared"
+							component group "minecraft:sheep_baby"
+							component group "minecraft:sheep_dyeable"
+				event "wololo": field "add": field "component_groups": component group "minecraft:sheep_red"
 Changed entity "shulker.json":
 	Changed behavior pack "core":
-		Changed field "format_version" from "1.16.0" to "1.21.60".
-		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:shulker".
-				Removed description "is_experimental": false.
-			Changed field "components":
-				Total component: 22 (+1, -0)
-				Changed component "minecraft:experience_reward":
-					Changed field "on_death" from "query.last_hit_by_player ? 5 : 0" to "query.last_hit_by_player ? 5: 0".
-				Added component "minecraft:renders_when_invisible": empty.
-Changed entity "spider.json":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.21.0" to "1.21.60".
+		Changed field "format_version" from "1.21.60" to "1.21.70".
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 28 (+1, -0)
-				Changed component "minecraft:hurt_on_condition":
-					Changed field "damage_conditions":
-						Changed damage condition:
-							Changed field "filters":
-								Unchanged filter property "test": "in_lava".
-								Unchanged filter property "subject": "self".
-								Removed filter property "operator": "==".
-								Removed filter property "value": true.
-				Added component "minecraft:renders_when_invisible": empty.
-Changed entity "strider.json":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.21.60" to "1.21.0".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 22 (+0, -1)
-				Removed component "minecraft:movement_sound_distance_offset": field "value": 0.6.
+				Total component: 23 (+1, -0)
+				Added component "minecraft:is_collidable": empty.

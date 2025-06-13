@@ -1,228 +1,106 @@
-Difference of "entities" between "1.16.10" and "1.16.20.50" (beta of "1.16.20").
+Difference of "entities" between "1.16.100.53" (beta of "1.16.100") and "1.16.100.54" (beta of "1.16.100").
 
-Total entity: 105 (+1, -0)
-Changed entity "husk.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:shareables":
-					Changed field "items":
-						Changed item:
-							Unchanged field "item": "minecraft:chainmail_helmet".
-							Changed field "priority" from 2 to 3.
-						Changed item:
-							Unchanged field "item": "minecraft:iron_helmet".
-							Changed field "priority" from 3 to 2.
-						Changed item:
-							Unchanged field "item": "minecraft:chainmail_chestplate".
-							Changed field "priority" from 2 to 3.
-						Changed item:
-							Unchanged field "item": "minecraft:iron_chestplate".
-							Changed field "priority" from 3 to 2.
-						Changed item:
-							Unchanged field "item": "minecraft:chainmail_leggings".
-							Changed field "priority" from 2 to 3.
-						Changed item:
-							Unchanged field "item": "minecraft:iron_leggings".
-							Changed field "priority" from 3 to 2.
-						Changed item:
-							Unchanged field "item": "minecraft:chainmail_boots".
-							Changed field "priority" from 2 to 3.
-						Changed item:
-							Unchanged field "item": "minecraft:iron_boots".
-							Changed field "priority" from 3 to 2.
-Changed entity "pig.json":
+Changed entity "hoglin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:pig_adult":
-					Total component: 4 (+0, -1)
-					Removed component "minecraft:despawn": field "despawn_from_distance": empty.
+				Changed component group "minecraft:hoglin_adult":
+					Total component: 11 (+0, -1)
+					Removed component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				Changed component group "minecraft:hoglin_baby":
+					Changed component "minecraft:attack":
+						Changed field "damage" from 0.5 to 1.0.
 			Changed field "components":
-				Total component: 24 (+1, -0)
-				Added component "minecraft:despawn": field "despawn_from_distance": empty.
+				Total component: 20 (+1, -0)
+				Added component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? 5 : 0"
+				Changed component "minecraft:behavior.avoid_block":
+					Changed field "target_blocks":
+						Total block: 3 (+1, -0)
+						Added block "minecraft:respawn_anchor".
+Changed entity "iron_golem.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 3 (+2, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "hoglin"
+									filter:
+										filter property "test": "is_difficulty"
+										filter property "operator": "!="
+										filter property "value": "peaceful"
+							field "max_dist": 16
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "zoglin"
+									filter:
+										filter property "test": "is_difficulty"
+										filter property "operator": "!="
+										filter property "value": "peaceful"
+							field "max_dist": 16
 Changed entity "piglin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "angry":
-					Changed component "minecraft:angry":
-						Added field "broadcast_targets": entity "piglin".
-				Changed component group "interactable_piglin":
-					Changed component "minecraft:interact":
-						Changed field "interactions":
-							Changed interaction:
-								Changed field "on_interact":
-									Changed field "filters":
-										Changed filter property "all_of":
-											Total filter: 3 (+1, -0)
-											Added filter:
-												filter property "test": "has_component"
-												filter property "subject": "self"
-												filter property "operator": "!="
-												filter property "value": "minecraft:is_baby"
+				Changed component group "become_zombie":
+					Changed component "minecraft:transformation":
+						Added field "drop_inventory": true.
+						Added field "preserve_equipment": true.
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 54 (+0, -1)
-						Changed item:
-							Unchanged field "item": "minecraft:golden_sword".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_axe".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_hoe".
-							Added field "pickup_limit": 1.
-						Removed item:
-							field "item": "minecraft:golden_pickaxe"
-							field "priority": 2
-							field "admire": true
-							field "stored_in_inventory": true
-						Changed item:
-							Unchanged field "item": "minecraft:golden_shovel".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_rail".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_helmet".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_chestplate".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_leggings".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_boots".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_apple".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:appleEnchanted".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_carrot".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:gold_block".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:gold_ore".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:nether_gold_ore".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:gilded_blackstone".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:horsearmorgold".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:bell".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:clock".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:speckled_melon".
-							Added field "pickup_limit": 1.
-						Changed item:
-							Unchanged field "item": "minecraft:light_weighted_pressure_plate".
-							Added field "pickup_limit": 1.
-Added entity "piglin_brute.json":
-	behavior pack "core":
-		field "format_version": "1.16.0"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:piglin_brute"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
-			field "component_groups":
-				component group "alert_for_attack_targets":
-					component "minecraft:behavior.nearest_prioritized_attackable_target":
-						field "priority": 3
-						field "within_radius": 12.0
-						field "persist_time": 2.0
-						field "must_see": true
-						field "entity_types":
-							entity type:
-								field "filters":
-									filter property "test": "is_family"
-									filter property "subject": "other"
-									filter property "value": "player"
-								field "max_dist": 12
-								field "priority": 0
-							entity type:
-								field "filters":
-									filter property "test": "is_family"
-									filter property "subject": "other"
-									filter property "value": "wither"
-								field "max_dist": 12
-								field "priority": 1
-				component group "angry":
-					component "minecraft:angry":
-						field "duration": 30
-						field "broadcast_anger": false
-						field "broadcast_anger_on_attack": false
-						field "broadcast_anger_on_being_attacked": true
-						field "broadcast_range": 16
-						field "broadcast_targets": entity "piglin"
-						field "calm_event":
-							field "event": "become_calm_event"
-							field "target": "self"
-						field "filters":
-							filter property "all_of":
-								filter:
-									filter property "test": "is_family"
-									filter property "subject": "other"
-									filter property "operator": "!="
-									filter property "value": "piglin"
-						field "angry_sound": "angry"
-						field "sound_interval":
-							field "range_max": 5.0
-							field "range_min": 2.0
-				component group "become_zombie":
-					component "minecraft:transformation":
-						field "into": "minecraft:zombie_pigman"
-						field "transformation_sound": "converted_to_zombified"
-						field "keep_level": true
-				component group "go_back_to_spawn":
-					component "minecraft:behavior.go_home":
-						field "priority": 6
-						field "interval": 200
-						field "speed_multiplier": 0.6
-						field "goal_radius": 4.0
-						field "on_failed":
-							field "event": "go_back_to_spawn_failed"
-							field "target": "self"
-				component group "melee_unit":
-					component "minecraft:attack": field "damage": 7
-					component "minecraft:equipment": field "table": "loot_tables/entities/piglin_brute_gear.json"
-					component "minecraft:variant": field "value": 1
-					component "minecraft:behavior.melee_attack":
-						field "priority": 4
-						field "speed_multiplier": 1
-						field "track_target": true
-				component group "start_zombification":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "filters":
-								filter property "test": "in_nether"
-								filter property "subject": "self"
-								filter property "operator": "=="
-								filter property "value": true
-							field "event": "stop_zombification_event"
-					component "minecraft:is_shaking": empty
-					component "minecraft:timer":
-						field "looping": false
-						field "time": 15
-						field "time_down_event": field "event": "become_zombie_event"
-				component group "take_target_as_response_to_block_break":
+						Total item: 62 (+7, -0)
+						Added item:
+							field "item": "minecraft:skull:2"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 8
+						Added item:
+							field "item": "minecraft:skull:3"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 8
+						Added item:
+							field "item": "minecraft:skull:4"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 8
+						Added item:
+							field "item": "minecraft:skull:5"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 8
+						Added item:
+							field "item": "minecraft:turtle_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 8
+						Added item:
+							field "item": "minecraft:elytra"
+							field "priority": 7
+						Added item:
+							field "item": "minecraft:shield"
+							field "priority": 7
+Changed entity "piglin_brute.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 7 (+0, -1)
+				Removed component group "take_target_as_response_to_block_break":
 					component "minecraft:behavior.nearest_attackable_target":
 						field "priority": 3
 						field "entity_types":
@@ -232,18 +110,9 @@ Added entity "piglin_brute.json":
 									filter property "subject": "other"
 									filter property "value": "player"
 								field "max_dist": 16
-				component group "zombification_sensor":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "filters":
-								filter property "test": "in_nether"
-								filter property "subject": "self"
-								filter property "operator": "=="
-								filter property "value": false
-							field "event": "start_zombification_event"
-			field "components":
-				component "minecraft:annotation.open_door": empty
-				component "minecraft:block_sensor":
+			Changed field "components":
+				Total component: 23 (+0, -1)
+				Removed component "minecraft:block_sensor":
 					field "sensor_radius": 16
 					field "on_break":
 						event:
@@ -255,108 +124,142 @@ Added entity "piglin_brute.json":
 								block "minecraft:shulker_box"
 								block "minecraft:undyed_shulker_box"
 							field "on_block_broken": "important_block_destroyed_event"
-				component "minecraft:breathable":
-					field "total_supply": 15
-					field "suffocate_time": 0
-				component "minecraft:collision_box":
-					field "width": 0.6
-					field "height": 1.9
-				component "minecraft:despawn":
-					field "filters":
-						filter property "any_of":
-							filter:
-								filter property "all_of":
-									filter:
-										filter property "test": "is_persistent"
-										filter property "value": false
-									filter:
-										filter property "test": "distance_to_nearest_player"
-										filter property "operator": ">"
-										filter property "value": 54
-							filter:
-								filter property "all_of":
-									filter:
-										filter property "test": "is_persistent"
-										filter property "value": false
-									filter:
-										filter property "test": "inactivity_timer"
-										filter property "subject": "self"
-										filter property "value": 30
-									filter:
-										filter property "test": "random_chance"
-										filter property "value": 800
-									filter:
-										filter property "test": "distance_to_nearest_player"
-										filter property "operator": ">"
-										filter property "value": 32
-				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 10 : 0"
-				component "minecraft:follow_range": field "value": 64
-				component "minecraft:health":
-					field "value": 50
-					field "max": 50
-				component "minecraft:home": empty
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "filters":
-								filter property "test": "in_lava"
-								filter property "subject": "self"
-								filter property "operator": "=="
-								filter property "value": true
-							field "cause": "lava"
-							field "damage_per_tick": 4
-				component "minecraft:jump.static": empty
-				component "minecraft:loot": field "table": "loot_tables/entities/piglin.json"
-				component "minecraft:movement": field "value": 0.35
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk":
-					field "can_path_over_water": true
-					field "can_open_doors": true
-				component "minecraft:on_target_acquired":
-					field "event": "become_angry_event"
-					field "target": "self"
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:type_family":
-					field "family":
-						family "adult_piglin"
-						family "monster"
-						family "piglin"
-						family "piglin_brute"
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "priority": 8
-					field "look_distance": 8
-				component "minecraft:behavior.random_look_around": field "priority": 9
-				component "minecraft:behavior.random_stroll":
-					field "priority": 7
-					field "speed_multiplier": 0.6
-			field "events":
-				event "become_angry_event": field "add": field "component_groups": component group "angry"
-				event "become_calm_event":
-					field "add": field "component_groups": component group "alert_for_attack_targets"
-					field "remove":
-						field "component_groups":
-							component group "angry"
-							component group "take_target_as_response_to_block_break"
-				event "become_zombie_event": field "add": field "component_groups": component group "become_zombie"
-				event "go_back_to_spawn_failed": field "remove": field "component_groups": component group "go_back_to_spawn"
-				event "important_block_destroyed_event":
+				Changed component "minecraft:experience_reward":
+					Changed field "on_death" from "query.last_hit_by_player ? 10 : 0" to "query.last_hit_by_player ? 20 : 0".
+			Changed field "events":
+				Total event: 7 (+0, -1)
+				Changed event "become_calm_event":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 1 (+0, -1)
+							Removed component group "take_target_as_response_to_block_break".
+				Removed event "important_block_destroyed_event":
 					field "add": field "component_groups": component group "take_target_as_response_to_block_break"
 					field "remove": field "component_groups": component group "alert_for_attack_targets"
-				event "minecraft:entity_spawned":
-					field "add":
-						field "component_groups":
-							component group "alert_for_attack_targets"
-							component group "go_back_to_spawn"
-							component group "melee_unit"
-							component group "zombification_sensor"
-				event "start_zombification_event":
-					field "add": field "component_groups": component group "start_zombification"
-					field "remove": field "component_groups": component group "zombification_sensor"
-				event "stop_zombification_event":
-					field "add": field "component_groups": component group "zombification_sensor"
-					field "remove": field "component_groups": component group "start_zombification"
+Changed entity "strider.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 8 (+0, -1)
+				Changed component group "minecraft:strider_piglin_jockey":
+					Changed component "minecraft:addrider":
+						Changed field "spawn_event" from "spawn_zombified_piglin_rider" to "minecraft:spawn_as_strider_jockey".
+					Changed component "minecraft:rideable":
+						Changed field "seats":
+							Changed field "position":
+								Unchanged vector item 0: 0.0.
+								Changed vector item 1 from 1.8 to 1.65.
+								Unchanged vector item 2: -0.2.
+				Removed component group "minecraft:zombified_piglin_rider": component "minecraft:equipment": field "table": "loot_tables/entities/zombified_piglin_rider_gear.json".
+			Changed field "components":
+				Total component: 22 (+1, -1)
+				Changed component "minecraft:health":
+					Changed field "value" from 15 to 20.
+					Changed field "max" from 15 to 20.
+				Removed component "minecraft:behavior.move_to_lava":
+					field "priority": 7
+					field "search_range": 16
+					field "search_height": 10
+					field "goal_radius": 1.0
+				Added component "minecraft:behavior.move_to_liquid":
+					field "priority": 7
+					field "search_range": 16
+					field "search_height": 10
+					field "goal_radius": 0.9
+					field "material_type": "Lava"
+					field "search_count": 30
+				Changed component "minecraft:behavior.tempt":
+					Added field "can_tempt_while_ridden": true.
+			Changed field "events":
+				Total event: 10 (+0, -1)
+				Removed event "spawn_zombified_piglin_rider": field "add": field "component_groups": component group "minecraft:zombified_piglin_rider".
+Changed entity "villager_v2.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "wander_schedule_villager":
+					Changed component "minecraft:behavior.explore_outskirts":
+						Removed field "wait_time": 200.
+						Added field "next_xz": 5.
+						Added field "next_y": 3.
+						Added field "min_wait_time": 3.0.
+						Added field "max_wait_time": 10.0.
+						Added field "max_travel_time": 60.0.
+						Added field "min_perimeter": 1.0.
+						Added field "min_dist_from_target": 2.5.
+						Added field "timer_ratio": 2.0.
+						Added field "dist_from_boundary": [5.0, 0.0, 5.0].
+Changed entity "wither_skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 4 (+1, -0)
+						Changed entity type:
+							Changed field "filters":
+								Removed filter property "test": "is_family".
+								Removed filter property "subject": "other".
+								Removed filter property "value": "irongolem".
+								Added filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "piglin"
+									filter:
+										filter property "test": "is_difficulty"
+										filter property "operator": "!="
+										filter property "value": "peaceful"
+						Changed entity type:
+							Changed field "filters":
+								Removed filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+								Added filter property "test": "is_family".
+								Added filter property "subject": "other".
+								Added filter property "value": "irongolem".
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 16
+Changed entity "zoglin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "zoglin_adult":
+					Total component: 5 (+0, -2)
+					Removed component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					Removed component "minecraft:loot": field "table": "loot_tables/entities/zoglin.json".
+			Changed field "components":
+				Total component: 21 (+2, -0)
+				Added component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? 5 : 0"
+				Added component "minecraft:loot": field "table": "loot_tables/entities/zoglin.json".
+Changed entity "zombie_pigman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 5 (+1, -0)
+				Added component group "minecraft:strider_jockey": component "minecraft:equipment": field "table": "loot_tables/entities/zombified_piglin_rider_gear.json".
+			Changed field "events":
+				Total event: 5 (+1, -0)
+				Added event "minecraft:spawn_as_strider_jockey": field "add": field "component_groups": component group "minecraft:strider_jockey".

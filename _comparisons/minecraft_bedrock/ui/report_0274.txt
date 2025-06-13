@@ -1,279 +1,18 @@
-Difference of "ui" between "1.19.10.24" (beta of "1.19.10") and "1.19.10".
+Difference of "ui" between "1.19.21" and "1.19.22".
 
-Total namespace: 207 (+1, -0)
-Added namespace "confirm_delete_account":
-	element "background@common.screen_background":
-		field "alpha": 0.65
-		field "layer": 1
-	element "confirm_checkbox":
-		field "type": "stack_panel"
-		field "size": ["100%", 25]
-		field "orientation": "horizontal"
-		field "controls":
-			control:
-				element "check_box_wrapper":
-					field "type": "panel"
-					field "size": [21, "100%"]
-					field "controls":
-						control:
-							element "check_box@common.checkbox":
-								field "size": [15, 15]
-								field "$variables": variable "$toggle_tts_header": "$checkbox_text"
-			control:
-				element "padding":
-					field "type": "panel"
-					field "size": [4, "100%"]
-			control:
-				element "label_wrapper":
-					field "type": "panel"
-					field "size": ["fill", "100%"]
-					field "controls":
-						control:
-							element "label":
-								field "type": "label"
-								field "size": ["100%", "default"]
-								field "max_size": ["100%", "100%"]
-								field "font_type": "smooth"
-								field "font_scale_factor": 1.2
-								field "text": "$checkbox_text"
-								field "color": "$body_text_color"
-	element "confirm_delete_account_screen@common.base_screen":
-		field "button_mappings":
-			button mapping:
-				field "from_button_id": "button.menu_cancel"
-				field "to_button_id": "button.cancel"
-				field "mapping_type": "global"
-		field "force_render_below": true
-		field "$variables":
-			variable "$screen_content": "confirm_delete_account.confirm_delete_account_screen_content"
-			variable "$screen_bg_content": "confirm_delete_account.background"
-	element "confirm_delete_account_screen_content":
-		field "type": "panel"
-		field "controls":
-			control:
-				element "root_panel":
-					field "type": "panel"
-					field "controls": control element "dialog@confirm_delete_account.screen_dialog": field "layer": 1
-	element "default_animation":
-		field "anim_type": "flip_book"
-		field "initial_uv": [0, 0]
-		field "frame_count": 2
-		field "fps": 1
-		field "reversible": false
-	element "description_label_panel":
-		field "type": "stack_panel"
-		field "size": ["100%", "100%c"]
-		field "layer": 1
-		field "controls":
-			control:
-				element "header_label_wrapper@common.tts_label_focus_wrapper":
-					field "$variables":
-						variable "$tts_label_panel": "confirm_delete_account.header_panel"
-						variable "$focus_border_size":
-							item 0: "100%"
-							item 1: "100%sm + 2px"
-			control:
-				element "padding":
-					field "type": "panel"
-					field "size": ["100%", 2]
-			control element "divider_0@confirm_delete_account.horizontal_divider": empty
-			control:
-				element "confirm_0@confirm_delete_account.confirm_checkbox":
-					field "$variables":
-						variable "$checkbox_text": "options.delete_account.confirm.checkbox1"
-						variable "$toggle_name": "confirm_0"
-						variable "$toggle_state_binding_name": "#confirm_0"
-						variable "$toggle_enabled_binding_name": "#confirm_0_enabled"
-			control element "divider_1@confirm_delete_account.horizontal_divider": empty
-			control:
-				element "confirm_1@confirm_delete_account.confirm_checkbox":
-					field "$variables":
-						variable "$checkbox_text": "options.delete_account.confirm.checkbox2"
-						variable "$toggle_name": "confirm_1"
-						variable "$toggle_state_binding_name": "#confirm_1"
-						variable "$toggle_enabled_binding_name": "#confirm_1_enabled"
-			control element "divider_2@confirm_delete_account.horizontal_divider": field "ignored": "(not $is_realms_enabled)"
-			control:
-				element "confirm_2@confirm_delete_account.confirm_checkbox":
-					field "ignored": "(not $is_realms_enabled)"
-					field "$variables":
-						variable "$checkbox_text": "options.delete_account.confirm.checkbox3"
-						variable "$toggle_name": "confirm_2"
-						variable "$toggle_state_binding_name": "#confirm_2"
-						variable "$toggle_enabled_binding_name": "#confirm_2_enabled"
-			control element "divider_3@confirm_delete_account.horizontal_divider": empty
-			control:
-				element "confirm_3@confirm_delete_account.confirm_checkbox":
-					field "$variables":
-						variable "$checkbox_text": "options.delete_account.confirm.checkbox4"
-						variable "$toggle_name": "confirm_3"
-						variable "$toggle_state_binding_name": "#confirm_3"
-						variable "$toggle_enabled_binding_name": "#confirm_3_enabled"
-	element "dialog_content":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100% - 4px", "100% - 4px"]
-		field "controls":
-			control element "body_content@confirm_delete_account.scrolling_panel": field "size": ["100%", "fill"]
-			control:
-				element "padding":
-					field "type": "panel"
-					field "size": ["100%", 2]
-			control:
-				element "button_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%", 30]
-					field "controls":
-						control:
-							element "confirm_delete_account_button@common_buttons.light_text_button":
-								field "size": ["50% - 1px", 30]
-								field "$variables":
-									variable "$pressed_button_name": "button.cancel"
-									variable "$button_text": "gui.cancel"
-									variable "$button_text_max_size":
-										item 0: "100%"
-										item 1: 20
-						control:
-							element "padding":
-								field "type": "panel"
-								field "size": [2, "100%"]
-						control:
-							element "cancel_delete_account_button@common_buttons.light_text_button":
-								field "size": ["50% - 1px", 30]
-								field "bindings":
-									binding:
-										field "binding_name": "#unlink_consequences_acknowledged"
-										field "binding_name_override": "#enabled"
-								field "$variables":
-									variable "$pressed_button_name": "button.unlink"
-									variable "$button_text": "options.delete_account.confirm.button"
-									variable "$default_button_texture": "textures/ui/button_red"
-									variable "$hover_button_texture": "textures/ui/button_red"
-									variable "$pressed_button_texture": "textures/ui/button_red_pressed"
-									variable "$default_text_color": "$store_white_text_color"
-									variable "$hover_text_color": "$store_white_text_color"
-									variable "$pressed_text_color": "$store_white_text_color"
-									variable "$button_text_max_size":
-										item 0: "100%"
-										item 1: 20
-	element "header_panel":
-		field "type": "stack_panel"
-		field "orientation": "horizontal"
-		field "size": ["100% - 8px", "100%cm"]
-		field "controls":
-			control element "image_panel@confirm_delete_account.image_panel": empty
-			control:
-				element "padding":
-					field "type": "panel"
-					field "size": [6, 1]
-			control:
-				element "text_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["fill", "100%c"]
-					field "controls":
-						control:
-							element "header_text":
-								field "type": "label"
-								field "text": "#unlink_warning_text"
-								field "font_type": "smooth"
-								field "font_scale_factor": 1.2
-								field "color": "$body_text_color"
-								field "size": ["100%", "default"]
-								field "bindings": binding field "binding_name": "#unlink_warning_text"
-						control:
-							element "padding_2":
-								field "type": "panel"
-								field "size": ["100%", 4]
-						control:
-							element "header_text_2":
-								field "type": "label"
-								field "text": "options.delete_account.confirm.warning.2"
-								field "font_type": "smooth"
-								field "font_scale_factor": 1.2
-								field "color": "$body_text_color"
-								field "size": ["100%", "default"]
-	element "horizontal_divider@common.section_divider":
-		field "$variables":
-			variable "$divider_size":
-				item 0: "100%"
-				item 1: 1
-	element "image_panel":
-		field "type": "panel"
-		field "size": ["133.4375%y", 80]
-		field "controls":
-			control:
-				element "image":
-					field "type": "image"
-					field "texture": "textures/ui/tnt_animated"
-					field "size": ["100%", "100%"]
-					field "uv_size": [427, 320]
-					field "uv": "@confirm_delete_account.default_animation"
-					field "disable_anim_fast_forward": true
-					field "layer": 15
-	element "screen_dialog@common_dialogs.main_panel_no_buttons":
-		field "size": [350, "100% - 4px"]
-		field "$variables":
-			variable "$text_name": "options.delete_account.confirm.title"
-			variable "$child_control": "confirm_delete_account.dialog_content"
-			variable "$show_close_button": false
-	element "scrolling_panel@common.scrolling_panel":
-		field "size": ["100%", "100%"]
-		field "$variables":
-			variable "$show_background": false
-			variable "$scroll_box_visible_touch": true
-			variable "$scrolling_content": "confirm_delete_account.description_label_panel"
-			variable "$scroll_size":
-				item 0: 5
-				item 1: "100%"
-			variable "$scrolling_pane_size":
-				item 0: "100%"
-				item 1: "100%"
-			variable "$scrolling_pane_offset":
-				item 0: 0
-				item 1: 0
-			variable "$scroll_bar_right_padding_size":
-				item 0: 0
-				item 1: 0
-Changed namespace "general_section":
-	Changed element "profile_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 56 (+2, -0)
-			Added control:
-				element "paddingDeleteAccount":
-					field "ignored": "((not $is_pregame) or (not $is_ios))"
-					field "type": "panel"
-					field "size": "$spatialPatternsPadding"
-			Added control:
-				element "delete_account@settings_common.action_button":
-					field "ignored": "((not $is_pregame) or (not $is_ios))"
-					field "bindings":
-						binding:
-							field "binding_name": "#logged_in"
-							field "binding_name_override": "#visible"
-					field "$variables":
-						variable "$pressed_button_name": "button.delete_account"
-						variable "$button_text": "options.delete_account.button"
 Changed namespace "play":
-	Total element: 264 (+0, -9)
-	Changed element "add_server_toggle_button@common_toggles.light_text_toggle":
-		Changed field "visible" from "(not $ignore_add_servers)" to "false".
-		Changed field "size":
-			Changed item 0 from "100%" to "0px".
-			Changed item 1 from 20 to 0.
+	Total element: 273 (+9, -0)
 	Changed element "create_new_world_button@common_buttons.light_text_button":
 		Changed field "variables":
-			Total variable: 2 (+0, -1)
-			Removed variable:
+			Total variable: 3 (+1, -0)
+			Added variable:
 				field "requires": "$is_editor_mode_enabled"
 				field "$variables": variable "$button_text": "playscreen.editor.create"
-	Removed element "editor_play_screen_panel@play.play_screen_panel":
+	Added element "editor_play_screen_panel@play.play_screen_panel":
 		field "$variables":
 			variable "$navigation_tab": "play.editor_tab_navigation_panel_layout"
 			variable "$tab_content_panel": "play.editor_tab_content_panel_layout"
-	Removed element "editor_server_content_panel":
+	Added element "editor_server_content_panel":
 		field "type": "stack_panel"
 		field "orientation": "vertical"
 		field "size": ["100%", "100%c"]
@@ -287,13 +26,13 @@ Changed namespace "play":
 							field "binding_name_override": "#visible"
 			control element "more_servers_panel@play.manually_added_servers_scrolling_content": empty
 		field "$variables": variable "$focus_id": "left_panel"
-	Removed element "editor_settings_image_content":
+	Added element "editor_settings_image_content":
 		field "type": "image"
 		field "size": [14, 14]
 		field "layer": 2
 		field "texture": "textures/ui/icon_setting"
 		field "color": "white"
-	Removed element "editor_settings_menu_button@common_buttons.light_content_button":
+	Added element "editor_settings_menu_button@common_buttons.light_content_button":
 		field "layer": 1
 		field "offset": [0, -3]
 		field "size": [24, 24]
@@ -306,12 +45,12 @@ Changed namespace "play":
 		field "$variables":
 			variable "$pressed_button_name": "button.editor_settings"
 			variable "$button_content": "play.editor_settings_image_content"
-	Removed element "editor_tab_content_panel_layout@play.common_tab_content_panel_type":
+	Added element "editor_tab_content_panel_layout@play.common_tab_content_panel_type":
 		field "controls":
 			control element "worlds_tab_content@play.worlds_tab_content_panel": empty
 			control element "server_tab_content_panel@play.server_tab_content_panel": empty
 		field "$variables": variable "$server_scroll_panel_content": "play.editor_server_content_panel"
-	Removed element "editor_tab_navigation_panel_layout@play.common_tab_navigation_panel_layout":
+	Added element "editor_tab_navigation_panel_layout@play.common_tab_navigation_panel_layout":
 		field "controls":
 			control element "world_navigation_tab@play.world_navigation_tab": field "size": ["33%", "100%"]
 			control element "server_navigation_tab@play.server_navigation_tab": field "size": ["33%", "100%"]
@@ -322,8 +61,7 @@ Changed namespace "play":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 15 (+1, -1)
-						Removed control element "lan_grid@play.lan_servers_scroll_content": empty.
-						Added control:
+						Removed control:
 							element "lan_grid@play.label_content_template":
 								field "bindings":
 									binding:
@@ -337,7 +75,8 @@ Changed namespace "play":
 									variable "$network_world_item_grid_dimension_binding": "#lan_network_world_item_grid_dimension"
 									variable "$collection_name": "lan_network_worlds"
 									variable "$tts_section_header": "$label_content_label"
-	Removed element "lan_servers_scroll_content@play.label_content_template":
+						Added control element "lan_grid@play.lan_servers_scroll_content": empty.
+	Added element "lan_servers_scroll_content@play.label_content_template":
 		field "bindings":
 			binding:
 				field "binding_name": "#lan_grid_visible"
@@ -350,7 +89,7 @@ Changed namespace "play":
 			variable "$network_world_item_grid_dimension_binding": "#lan_network_world_item_grid_dimension"
 			variable "$collection_name": "lan_network_worlds"
 			variable "$tts_section_header": "$label_content_label"
-	Removed element "manually_added_servers_scrolling_content":
+	Added element "manually_added_servers_scrolling_content":
 		field "type": "stack_panel"
 		field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
 		field "size": ["100%", "100%c"]
@@ -389,34 +128,37 @@ Changed namespace "play":
 	Changed element "play_screen_content":
 		Unchanged field "type": "panel".
 		Changed field "variables":
-			Total variable: 2 (+0, -1)
+			Total variable: 3 (+1, -0)
 			Changed variable:
-				Changed field "requires" from "(not $education_edition and not $is_editor_mode_enabled)" to "(not $education_edition)".
+				Changed field "requires" from "(not $education_edition)" to "(not $education_edition and not $is_editor_mode_enabled)".
 			Changed variable:
-				Changed field "requires" from "($education_edition and not $is_editor_mode_enabled)" to "$education_edition".
-			Removed variable:
+				Changed field "requires" from "$education_edition" to "($education_edition and not $is_editor_mode_enabled)".
+			Added variable:
 				field "requires": "(not $education_edition and $is_editor_mode_enabled)"
 				field "$variables": variable "$main_panel": "play.editor_play_screen_panel"
-	Changed element "server_scroll_panel@play.common_scroll_pane":
+	Changed element "server_scroll_content@play.common_content":
 		Changed field "controls":
 			Changed control:
-				Changed element "stack_panel":
+				Changed element "feature_server_message_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 7 (+1, -0)
 						Changed control:
-							Changed element "servers_panel":
-								Unchanged field "type": "stack_panel".
+							Changed element "feature_server_message_panel@play.dark_label_background":
 								Changed field "controls":
 									Changed control:
-										Changed element "more_servers_panel":
-											Unchanged field "type": "stack_panel".
+										Changed element "label_panel_layout":
+											Unchanged field "type": "panel".
+											Changed field "size":
+												Changed item 0 from "100%" to "97%".
+												Unchanged item 1: "100%c + 8px".
 											Changed field "controls":
-												Total control: 6 (+0, -1)
-												Removed control element "add_server_button@play.add_server_toggle_button": empty.
-						Added control element "add_server_button@play.add_server_toggle_button": empty.
-		Removed field "$variables": variable "$server_scroll_panel_content|default": "play.servers_content_panel".
-	Removed element "servers_content_panel":
+												Changed control:
+													Changed element "label":
+														Unchanged field "type": "label".
+														Removed field "text_alignment": "center".
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Added field "$variables": variable "$server_scroll_panel_content|default": "play.servers_content_panel".
+	Added element "servers_content_panel":
 		field "type": "stack_panel"
 		field "orientation": "vertical"
 		field "size": ["100%", "100%c"]
@@ -465,11 +207,17 @@ Changed namespace "play":
 			control element "more_servers_divider@common.horizontal_divider": empty
 			control element "more_servers_panel@play.manually_added_servers_scrolling_content": empty
 		field "$variables": variable "$focus_id": "left_panel"
+	Changed element "sync_legacy_worlds_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Changed variable "$button_text" from "playscreen.syncLegacyWorlds" to "#sync_legacy_button_text".
+			Added variable "$button_text_binding_type": "global".
 	Changed element "tab_navigation_panel_layout":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 2 (+1, -1)
-			Removed control:
+			Removed control element "close_navigation_tab@play.close_navigation_tab": field "size": ["100%y", "100%"].
+			Added control:
 				element "close_navigation_tab":
 					field "size": ["100%y", "100%"]
 					field "type": "panel"
@@ -479,9 +227,22 @@ Changed namespace "play":
 							field "$variables": variable "$end_tab_control": "play.editor_settings_menu_button"
 					field "controls": control element "close_button@$end_tab_control": empty
 					field "$variables": variable "$end_tab_control|default": "play.close_navigation_tab"
-			Added control element "close_navigation_tab@play.close_navigation_tab": field "size": ["100%y", "100%"].
+	Changed element "world_list_label_with_color_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "list_label":
+					Unchanged field "type": "label".
+					Added field "bindings":
+						binding:
+							field "binding_type": "$label_binding_type"
+							field "binding_name": "$label_text"
+							field "binding_name_override": "$label_text"
+					Added field "$variables":
+						variable "$label_text|default": "b"
+						variable "$label_binding_type|default": "none"
 	Changed element "world_navigation_tab@play.top_tab":
-		Removed field "variables":
+		Added field "variables":
 			variable:
 				field "requires": "$is_editor_mode_enabled"
 				field "$variables": variable "$tab_text_name": "playscreen.editor.worlds"
@@ -491,9 +252,25 @@ Changed namespace "play":
 			Changed control:
 				Changed element "worlds_label@play.world_list_label_with_color_panel":
 					Changed field "variables":
-						Total variable: 1 (+0, -1)
+						Total variable: 2 (+1, -0)
 						Changed variable:
-							Changed field "requires" from "($pre_release and not $is_editor_mode_enabled)" to "$pre_release".
-						Removed variable:
+							Changed field "requires" from "$pre_release" to "($pre_release and not $is_editor_mode_enabled)".
+						Added variable:
 							field "requires": "$is_editor_mode_enabled"
 							field "$variables": variable "$label_text": "playscreen.editor.worlds"
+			Changed control:
+				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
+					Changed field "$variables":
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "legacy_world_item_grid@play.legacy_world_item_grid":
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
+					Changed field "$variables":
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid":
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".

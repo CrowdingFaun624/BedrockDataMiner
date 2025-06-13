@@ -1,138 +1,56 @@
-Difference of "animation_controllers" between "1.9.0.3" (beta of "1.9.0") and "1.9.0.5" (beta of "1.9.0").
+Difference of "animation_controllers" between "1.10.0" and "1.11.0.1" (beta of "1.11.0").
+Unable to create data files for 1 file between: "1.10.1"
 
-Total file: 40 (+2, -0)
-Changed file "cow.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.cow.baby":
-				Changed field "states":
-					Total state: 1 (+1, -1)
-					Removed state "baby":
-						field "parameters": parameter "query.is_baby"
-						field "animations":
-							animation dict:
-								animation "baby_transform":
-									item:
-										timestamp "0.0": 0.0
-										timestamp "1.0": 1.0
-					Added state "default": field "animations": animation dict animation "baby_transform": empty.
-Changed file "humanoid.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.humanoid.bow_and_arrow":
-				Changed field "states":
-					Changed state "bow_and_arrow":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "default": "!variable.is_bow_and_arrow".
-							Added transition list transition "default": "!query.has_target".
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "bow_and_arrow": "variable.is_bow_and_arrow".
-							Added transition list transition "bow_and_arrow": "query.has_target".
-Changed file "mooshroom.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.mooshroom.baby":
-				Changed field "states":
-					Total state: 1 (+1, -1)
-					Removed state "baby":
-						field "parameters": parameter "query.is_baby"
-						field "animations":
-							animation dict:
-								animation "baby_transform":
-									item:
-										timestamp "0.0": 0.0
-										timestamp "1.0": 1.0
-					Added state "default": field "animations": animation dict animation "baby_transform": empty.
-Changed file "panda.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.panda.move":
-				Changed field "states":
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 3 (+3, -3)
-							Removed transition list transition "rolling": "variable.roll_counter > 0".
-							Removed transition list transition "sitting": "variable.sit_amount > 0".
-							Removed transition list transition "lying": "variable.lie_amount > 0".
-							Added transition list transition "rolling": "query.roll_counter > 0".
-							Added transition list transition "sitting": "query.sit_amount > 0".
-							Added transition list transition "lying": "query.lie_amount > 0".
-					Changed state "lying":
-						Changed field "transitions":
-							Total transition list: 3 (+3, -3)
-							Removed transition list transition "default": "variable.lie_amount <= 0".
-							Removed transition list transition "rolling": "variable.roll_counter > 0".
-							Removed transition list transition "sitting": "variable.sit_amount > 0".
-							Added transition list transition "default": "query.lie_amount <= 0".
-							Added transition list transition "rolling": "query.roll_counter > 0".
-							Added transition list transition "sitting": "query.sit_amount > 0".
-					Changed state "rolling":
-						Changed field "transitions":
-							Total transition list: 3 (+3, -3)
-							Removed transition list transition "default": "variable.roll_counter <= 0".
-							Removed transition list transition "sitting": "variable.sit_amount > 0".
-							Removed transition list transition "lying": "variable.lie_amount > 0".
-							Added transition list transition "default": "query.roll_counter <= 0".
-							Added transition list transition "sitting": "query.sit_amount > 0".
-							Added transition list transition "lying": "query.lie_amount > 0".
-					Changed state "sitting":
-						Changed field "transitions":
-							Total transition list: 3 (+3, -3)
-							Removed transition list transition "default": "variable.sit_amount <= 0".
-							Removed transition list transition "rolling": "variable.roll_counter > 0".
-							Removed transition list transition "lying": "variable.lie_amount > 0".
-							Added transition list transition "default": "query.sit_amount <= 0".
-							Added transition list transition "rolling": "query.roll_counter > 0".
-							Added transition list transition "lying": "query.lie_amount > 0".
-			Changed animation controller "controller.animation.panda.sneezing":
-				Changed field "states":
-					Changed state "baby":
-						Changed field "parameters":
-							Changed parameter from "variable.sneeze_counter" to "query.sneeze_counter".
-			Changed animation controller "controller.animation.panda.unhappy":
-				Changed field "states":
-					Changed state "baby":
-						Changed field "parameters":
-							Changed parameter from "variable.unhappy_counter" to "query.unhappy_counter".
-Changed file "sheep.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.sheep.move":
-				Changed field "states":
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "grazing": "variable.is_grazing".
-							Added transition list transition "grazing": "query.is_grazing".
-					Changed state "grazing":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "default": "!variable.is_grazing".
-							Added transition list transition "default": "!query.is_grazing".
-Changed file "snow_golem.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Moved animation controller from "controller.animation.snowgolem.move" to "controller.animation.snowgolem.move.v1.8".
-Added file "snow_golem.v1.0.json":
+Total file: 44 (+1, -1)
+Removed file "illager_beast.animation_controllers.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "animation_controllers":
-			animation controller "controller.animation.snowgolem.move":
+			animation controller "controller.animation.illager_beast.head_movement": field "states": state "default": field "animations": animation dict animation "idle_mouth": empty
+			animation controller "controller.animation.illager_beast.move":
 				field "states":
 					state "default":
-						field "parameters": parameter "query.walk_speed"
+						field "parameters": parameter "query.modified_move_speed"
 						field "animations":
 							animation dict:
-								animation "move":
+								animation "walk":
 									item:
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
 							animation dict animation "look_at_target": empty
-							animation dict animation "arms": empty
-Added file "zombie_pigman.v1.0.json":
+Added file "ravager.animation_controllers.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
-		field "animation_controllers": animation controller "controller.animation.zombie_pigman.look_at.v1.0": field "states": state "default": field "animations": animation dict animation "zombie_pigman_look_at": empty
+		field "animation_controllers":
+			animation controller "controller.animation.ravager.head_movement":
+				field "states":
+					state "biting":
+						field "animations": animation dict animation "biting": empty
+						field "transitions": transition list transition "default": "query.is_delayed_attacking == 0"
+					state "default":
+						field "animations": animation dict animation "idle_mouth": empty
+						field "transitions":
+							transition list transition "roaring": "query.is_roaring == 1"
+							transition list transition "biting": "query.is_delayed_attacking == 1"
+					state "roaring":
+						field "animations": animation dict animation "roaring": empty
+						field "transitions": transition list transition "default": "query.is_roaring == 0"
+			animation controller "controller.animation.ravager.move":
+				field "states":
+					state "default":
+						field "parameters": parameter "query.modified_move_speed"
+						field "animations":
+							animation dict:
+								animation "walk":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+							animation dict animation "look_at_target": empty
+						field "transitions": transition list transition "stunned": "query.is_stunned == 1"
+					state "stunned":
+						field "animations": animation dict animation "stunned": empty
+						field "particle_effects":
+							particle effect:
+								field "effect": "stun_particles"
+								field "locator": "stun"
+						field "transitions": transition list transition "default": "query.is_stunned == 0"

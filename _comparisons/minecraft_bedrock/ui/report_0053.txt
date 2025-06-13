@@ -1,31 +1,98 @@
-Difference of "ui" between "1.1.0" and "1.1.1.0" (beta of "1.1.1").
+Difference of "ui" between "1.1.5" and "1.1.7".
 
-Changed namespace "coin_purchase":
-	Changed element "offer_panel":
+Changed namespace "play":
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "friends_realms@play.realms_world_item_grid":
+								Changed field "$variables":
+									Moved variable from "$grid_name" to "$grid_dimension".
+								Added field "bindings":
+									binding field "binding_name": "#friend_realms_grid_dimension"
+									binding:
+										field "binding_name": "#friends_realms_grids_visible"
+										field "binding_name_override": "#visible"
+	Changed element "realms_world_item_grid":
+		Unchanged field "type": "grid".
+		Changed field "grid_dimension_binding" from "$grid_name" to "$grid_dimension".
+		Removed field "bindings":
+			binding field "binding_name": "$grid_name"
+			binding:
+				field "binding_name": "#realms_grids_visible"
+				field "binding_name_override": "#visible"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "personal_realms@play.realms_world_item_grid":
+					Changed field "$variables":
+						Moved variable from "$grid_name" to "$grid_dimension".
+					Added field "bindings":
+						binding field "binding_name": "#personal_realms_grid_dimension"
+						binding:
+							field "binding_name": "#personal_realms_grids_visible"
+							field "binding_name_override": "#visible"
+Changed namespace "realms_create":
+	Total element: 28 (+0, -4)
+	Changed element "content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "agree_to_tos": "@realms_create.popup_dialog__agree_to_tos"
+						control id "purchase_failed": "@realms_create.popup_dialog__purchase_failed"
+						control id "purchase_in_progress": "@realms_create.popup_dialog__purchase_in_progress"
+	Removed element "popup_dialog__agree_to_tos@realms_create.popup_dialog_base":
+		field "controls":
+			control element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control:
+				element "popup_dialog_message@popup_dialog.popup_dialog_message":
+					field "offset": [0, 30]
+					field "bindings": binding field "binding_name": "$message_text"
+			control element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$message_text": "#tos_error_msg"
+			variable "$middle_button_text": "realmsCreateScreen.goBack"
+	Removed element "popup_dialog__purchase_failed@realms_create.popup_dialog_base":
+		field "controls":
+			control element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control element "popup_dialog_message@popup_dialog.popup_dialog_message": field "offset": [0, 30]
+			control element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$message_text": "realmsCreateScreen.purchaseFailed"
+			variable "$middle_button_text": "gui.ok"
+	Removed element "popup_dialog__purchase_in_progress@popup_dialog.popup_dialog":
+		field "controls":
+			control element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control element "popup_dialog_message@popup_dialog.popup_dialog_message": field "size": ["90%", "100%"]
+		field "$variables": variable "$message_text": "realmsCreateScreen.waitingPurchase"
+	Removed element "popup_dialog_base@popup_dialog.popup_dialog": field "$variables": variable "$middle_button_press": "button.close_dialog".
+Changed namespace "start":
+	Changed element "main_buttons_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "image_body":
-					Unchanged field "type": "panel".
+				Changed element "stacked_rows":
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 2 (+0, -1)
-						Removed control:
-							element "best_value@coin_purchase.white_label":
-								field "anchor_from": "top_middle"
-								field "anchor_to": "top_middle"
-								field "offset": [0, 3]
-								field "layer": 4
-								field "text": "#value_label"
-								field "size": ["100% - 6px", "default"]
-								field "text_alignment": "center"
-								field "bindings":
-									binding:
-										field "binding_name": "#value_label"
-										field "binding_type": "collection"
-										field "binding_collection_name": "coin_purchase_grid"
-Changed namespace "resource_pack_purchase":
-	Changed element "resource_pack_purchase_screen_content@common_store.store_dialog_with_coin_header":
-		Changed field "$variables":
-			Total variable: 3 (+1, -0)
-			Changed variable "$text_name" from "$pack_name" to "#resource_pack_title".
-			Added variable "$title_text_binding_type": "global".
+						Changed control:
+							Changed element "stacked_row_2@start.stacked_row":
+								Changed field "controls":
+									Changed control:
+										Changed element "stacked_columns":
+											Unchanged field "type": "stack_panel".
+											Changed field "controls":
+												Changed control:
+													Changed element "stacked_col_1":
+														Unchanged field "type": "panel".
+														Added field "bindings":
+															binding:
+																field "binding_name": "#store_visible"
+																field "binding_name_override": "#visible"

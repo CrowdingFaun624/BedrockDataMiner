@@ -65,7 +65,7 @@
             "terrain_adaptation": {"types": "str"},
             "start_pool": {"types": "str"},
             "max_depth": {"types": "int"},
-            "max_distance_from_center": {"types": "int"},
+            "max_distance_from_center": {"types": ["int", "dict"], "structure": "max_distance_from_center"},
             "start_height": {"types": ["int", "dict"], "structure": "start_height"},
             "heightmap_projection": {"types": "str"}
         }
@@ -96,6 +96,19 @@
         "type": "Keymap",
         "keys": {
             "absolute": {"types": "int"}
+        }
+    },
+    "max_distance_from_center": {
+        "type": "Union",
+        "substructures": {
+            "int": null,
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "horizontal": {"types": "int"},
+                    "vertical": {"types": "int"}
+                }
+            }
         }
     }
 }

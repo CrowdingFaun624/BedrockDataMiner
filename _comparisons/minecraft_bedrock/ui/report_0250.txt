@@ -1,38 +1,5 @@
-Difference of "ui" between "1.18.20.21" (beta of "1.18.30") and "1.18.20.23" (beta of "1.18.30").
+Difference of "ui" between "1.18.30.26" (beta of "1.18.30") and "1.18.30.28" (beta of "1.18.30").
 
-Changed namespace "chat":
-	Changed element "messages_text":
-		field "type": "panel"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control:
-				element "text":
-					field "type": "label"
-					field "color": "$chat_text_color"
-					field "localize": false
-					field "size": ["100%", "default"]
-					field "text": "#text"
-					field "text_tts": "#text_tts"
-					field "font_type": "$chat_font_type"
-					field "font_scale_factor": "$chat_font_scale_factor"
-					field "line_padding": "$chat_line_spacing"
-		field "bindings":
-			binding:
-				field "binding_name": "#chat_visible"
-				field "binding_name_override": "#visible"
-		field "type": "label"
-		field "color": "$chat_text_color"
-		field "localize": false
-		field "size": ["100%", "default"]
-		field "text": "#text"
-		field "text_tts": "#text_tts"
-		field "font_type": "$chat_font_type"
-		field "font_scale_factor": "$chat_font_scale_factor"
-		field "line_padding": "$chat_line_spacing"
-		field "bindings":
-			binding:
-				field "binding_name": "#chat_visible"
-				field "binding_name_override": "#visible"
 Changed namespace "controls_section":
 	Changed element "touch_section":
 		Unchanged field "type": "stack_panel".
@@ -42,108 +9,62 @@ Changed namespace "controls_section":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "option_toggle_toggle_crouch@settings_common.option_toggle":
-								Added field "bindings":
-									binding:
-										field "binding_name": "#touch_controls_v2"
-										field "binding_name_override": "#visible"
-Changed namespace "crafting_pocket":
-	Changed element "crafting_grid_2x2_with_label":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "crafting_label@crafting.crafting_label":
-					Changed field "size":
-						Changed item 0 from "100%" to "200%".
-						Unchanged item 1: 10.
-					Added field "offset": ["-50%", 0].
+							Changed element "option_always_highlight_hovering_box_in_crosshair@settings_common.option_toggle":
+								Changed field "bindings":
+									Changed binding:
+										Changed field "binding_name" from "#touch_controls_v2" to "#touch_controls_v2_crosshair_mode".
 Changed namespace "hud":
-	Changed element "chat_grid_item":
-		Unchanged field "type": "panel".
+	Changed element "tooltip_helper_icon_description":
+		Unchanged field "type": "label".
 		Changed field "controls":
 			Changed control:
-				Changed element "chat_background":
+				Changed element "label_background":
 					Unchanged field "type": "image".
+					Changed field "alpha" from 0.7 to 0.5.
 					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from "100%c" to "100%c + 4px".
-					Changed field "controls":
-						Changed control:
-							Changed element "chat_text@chat_label":
-								Changed field "offset":
-									Unchanged item 0: 2.
-									Changed item 1 from 0 to 2.
-Changed namespace "persona":
-	Total element: 344 (+4, -2)
-	Changed element "a_button_helper@common.gamepad_helper_a":
-		Changed field "offset":
-			Changed item 0 from "-34%" to "-25% - 2px".
-			Changed item 1 from 0 to "-25% + 1px".
-		Removed field "bindings":
-			binding:
-				field "binding_name": "#show_equip_button_helper"
-				field "binding_name_override": "#visible"
+						Changed item 0 from "100% + 8px" to "100% + 2px".
+						Changed item 1 from "100% + 1px" to "100% + 2px".
+					Changed field "$variables":
+						Changed variable "$tip_description_background_offset|default":
+							Changed item 0 from -1 to 0.
+							Changed item 1 from 0.5 to 0.
+						Changed variable "$tip_description_background_visible|default" from false to true.
+Changed namespace "play":
+	Changed element "sync_legacy_worlds_button@common_buttons.light_text_button":
 		Changed field "$variables":
-			Total variable: 3 (+2, -0)
-			Moved variable from "$hide_description|default" to "$hide_description".
-			Added variable "$gamepad_helper_icon_size":
-				item 0: 20
-				item 1: 20
-			Added variable "$gamepad_helper_size":
-				item 0: "100%"
-				item 1: "100%"
-		Added field "size": ["100%", "100%"].
-	Added element "a_button_helper_center@common.empty_panel":
-		field "size": ["90%y", "100%"]
-		field "controls": control element "a_button_helper@persona.a_button_helper": empty
-		field "bindings":
-			binding:
-				field "binding_name": "#show_equip_button_helper"
-				field "binding_name_override": "#visible"
-	Changed element "emote_wheel_screen@common.base_screen":
-		Changed field "$variables":
-			Changed variable "$is_full_screen_layout" from true to false.
-	Removed element "equip_button@persona.equip_piece":
-		field "size": ["100%", "100%"]
-		field "$variables": variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
-	Added element "equip_button_content@common.horizontal_stack_panel":
-		field "size": ["100%", "100%"]
-		field "offset": [0, 3]
-		field "anchor_from": "left_middle"
-		field "anchor_to": "left_middle"
-		field "controls":
-			control element "helper_wrapper@persona.a_button_helper_center": empty
-			control element "equip_text@persona.equip_piece_text_wrapper": empty
-	Changed element "equip_button_panel":
-		Unchanged field "type": "panel".
-		Removed field "offset": ["50%", 0].
-		Removed field "anchor_from": "bottom_middle".
-		Removed field "anchor_to": "bottom_middle".
+			Total variable: 3 (+1, -0)
+			Changed variable "$button_text" from "playscreen.syncLegacyWorlds" to "#sync_legacy_button_text".
+			Added variable "$button_text_binding_type": "global".
+	Changed element "world_list_label_with_color_panel":
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 1 (+0, -1)
-			Removed control element "a_button_helper@persona.a_button_helper": empty.
 			Changed control:
-				Moved element from "equip@persona.equip_button" to "equip@persona.equip_piece_button".
-	Removed element "equip_piece@persona.equip_piece_button":
-		field "$variables":
-			variable "$pressed_button_name": "$equip_button_name"
-			variable "$button_text": "dr.equip_piece"
-	Moved element from "equip_piece_button@common_buttons.light_text_button" to "equip_piece_button@common_buttons.light_content_button".
-	Changed element "equip_piece_button@common_buttons.light_content_button":
-		Changed field "$variables":
-			Total variable: 5 (+3, -1)
-			Removed variable "$new_ui_label_offset":
-				item 0: 0
-				item 1: 0
-			Added variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
-			Added variable "$pressed_button_name": "$equip_button_name".
-			Added variable "$button_content": "persona.equip_button_content".
-	Added element "equip_piece_text":
-		field "type": "label"
-		field "size": ["100%", "default"]
-		field "color": "$text_color"
-		field "text": "dr.equip_piece"
-		field "text_alignment": "center"
-	Added element "equip_piece_text_wrapper@common.empty_panel":
-		field "size": ["fill", "100%"]
-		field "controls": control element "text@persona.equip_piece_text": empty
+				Changed element "list_label":
+					Unchanged field "type": "label".
+					Added field "bindings":
+						binding:
+							field "binding_type": "$label_binding_type"
+							field "binding_name": "$label_text"
+							field "binding_name_override": "$label_text"
+					Added field "$variables":
+						variable "$label_text|default": "b"
+						variable "$label_binding_type|default": "none"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
+					Changed field "$variables":
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "legacy_world_item_grid@play.legacy_world_item_grid":
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
+					Changed field "$variables":
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid":
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".

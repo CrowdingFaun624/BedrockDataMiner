@@ -1,148 +1,402 @@
-Difference of "entities" between "1.18.0.23" (beta of "1.18.0") and "1.18.0.24" (beta of "1.18.0").
+Difference of "entities" between "1.18.10.24" (beta of "1.18.10") and "1.18.10.26" (beta of "1.18.10").
 
-Changed entity "fish.json":
+Changed entity "axolotl.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "bee.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "boat.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.100" to "1.18.10".
+Changed entity "cat.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.100" to "1.18.10".
+Changed entity "dolphin.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "enderman.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:behavior.avoid_mob_type":
+				Changed component "minecraft:teleport":
+					Changed field "random_teleport_cube":
+						Changed vector item 0 from 32 to 64.
+						Unchanged vector item 1: 32.
+						Changed vector item 2 from 32 to 64.
+Changed entity "frog.json":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Moved component group from "frog_snowy" to "cold_frog".
+				Changed component group "cold_frog":
+					Total component: 2 (+1, -0)
+					Added component "minecraft:behavior.eat_mob":
+						field "priority": 7
+						field "run_speed": 2.0
+						field "eat_animation_time": 0.3
+						field "pull_in_force": 0.75
+						field "reach_mob_distance": 1.75
+						field "eat_mob_sound": "tongue"
+						field "mob_loot":
+							mob:
+								field "mob": "slime"
+								field "loot": "slime_ball"
+							mob:
+								field "mob": "magma_cube"
+								field "loot": "verdant_froglight"
+				Moved component group from "frog_swamp" to "temperate_frog".
+				Changed component group "temperate_frog":
+					Total component: 2 (+1, -0)
+					Added component "minecraft:behavior.eat_mob":
+						field "priority": 7
+						field "run_speed": 2.0
+						field "eat_animation_time": 0.3
+						field "pull_in_force": 0.75
+						field "reach_mob_distance": 1.75
+						field "eat_mob_sound": "tongue"
+						field "mob_loot":
+							mob:
+								field "mob": "slime"
+								field "loot": "slime_ball"
+							mob:
+								field "mob": "magma_cube"
+								field "loot": "ochre_froglight"
+				Moved component group from "frog_tropical" to "warm_frog".
+				Changed component group "warm_frog":
+					Total component: 2 (+1, -0)
+					Added component "minecraft:behavior.eat_mob":
+						field "priority": 7
+						field "run_speed": 2.0
+						field "eat_animation_time": 0.3
+						field "pull_in_force": 0.75
+						field "reach_mob_distance": 1.75
+						field "eat_mob_sound": "tongue"
+						field "mob_loot":
+							mob:
+								field "mob": "slime"
+								field "loot": "slime_ball"
+							mob:
+								field "mob": "magma_cube"
+								field "loot": "pearlescent_froglight"
+			Changed field "components":
+				Total component: 27 (+0, -1)
+				Changed component "minecraft:damage_sensor":
+					Changed field "triggers" from:
+						trigger:
+							field "cause": "fall"
+							field "deals_damage": true
+							field "damage_modifier": -10
+					to:
+						field "cause": "fall"
+						field "deals_damage": true
+						field "damage_modifier": -5
+				Changed component "minecraft:jump.static":
+					Removed field "jump_power": 0.6.
+				Removed component "minecraft:behavior.eat_mob":
+					field "priority": 7
+					field "run_speed": 2.0
+					field "eat_animation_time": 0.3
+					field "pull_in_force": 0.75
+					field "reach_mob_distance": 1.75
+					field "item_drop": "slime_ball"
+				Changed component "minecraft:behavior.jump_to_block":
+					Changed field "search_height" from 3 to 4.
+				Changed component "minecraft:behavior.nearest_attackable_target":
 					Changed field "entity_types":
-						Changed entity type:
+						Total entity type: 3 (+2, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "magmacube"
+									filter:
+										filter property "test": "is_variant"
+										filter property "subject": "other"
+										filter property "operator": "=="
+										filter property "value": 1
+							field "max_dist": 16
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "goat"
+							field "max_dist": 16
+				Changed component "minecraft:behavior.panic":
+					Changed field "speed_multiplier" from 1.25 to 2.0.
+			Changed field "events":
+				Total event: 7 (+3, -0)
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Removed component group "frog_swamp".
+									Added component group "temperate_frog".
+						Changed sequence item 1:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Removed component group "frog_tropical".
+									Added component group "warm_frog".
 							Changed field "filters":
-								Removed filter property "test": "is_family".
-								Removed filter property "subject": "other".
-								Removed filter property "value": "player".
-								Added filter property "any_of":
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "player"
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "axolotl"
-Changed entity "lingering_potion.json":
+								Changed filter property "any_of":
+									Total filter: 7 (+2, -0)
+									Added filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "warm"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "ocean"
+									Added filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "lukewarm"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "ocean"
+						Changed sequence item 2:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Added component group "cold_frog".
+									Removed component group "frog_snowy".
+							Changed field "filters":
+								Changed filter property "any_of":
+									Total filter: 6 (+1, -0)
+									Added filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "the_end"
+				Changed event "minecraft:entity_transformed":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Removed component group "frog_swamp".
+									Added component group "temperate_frog".
+						Changed sequence item 1:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Removed component group "frog_tropical".
+									Added component group "warm_frog".
+							Changed field "filters":
+								Changed filter property "any_of":
+									Total filter: 7 (+2, -0)
+									Added filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "warm"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "ocean"
+									Added filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "lukewarm"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "ocean"
+						Changed sequence item 2:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Added component group "cold_frog".
+									Removed component group "frog_snowy".
+							Changed field "filters":
+								Changed filter property "any_of":
+									Total filter: 6 (+1, -0)
+									Added filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "the_end"
+				Added event "spawn_cold": field "add": field "component_groups": component group "cold_frog".
+				Added event "spawn_temperate": field "add": field "component_groups": component group "temperate_frog".
+				Added event "spawn_warm": field "add": field "component_groups": component group "warm_frog".
+Changed entity "glow_squid.json":
 	Changed behavior pack "core":
+		Changed field "format_version" from "1.13.0" to "1.18.10".
+Changed entity "goat.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "hoglin.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "iron_golem.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.13.0" to "1.18.10".
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:conditional_bandwidth_optimization":
-					Changed field "default_values":
-						Changed field "max_dropped_ticks" from 7 to 5.
+				Total component: 35 (+1, -0)
+				Changed component "minecraft:balloonable":
+					Added field "mass": 2.0.
+				Added component "minecraft:interact":
+					field "interactions":
+						interaction:
+							field "on_interact":
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "player"
+										filter:
+											filter property "test": "has_equipment"
+											filter property "domain": "hand"
+											filter property "subject": "other"
+											filter property "value": "iron_ingot"
+										filter:
+											filter property "test": "is_missing_health"
+											filter property "value": true
+							field "use_item": true
+							field "health_amount": 25
+							field "play_sounds": "irongolem.repair"
+							field "interact_text": "action.interact.repair"
 Changed entity "magma_cube.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.nearest_attackable_target":
-					Changed field "entity_types":
-						Changed entity type:
-							Changed field "filters":
-								Removed filter property "test": "is_family".
-								Removed filter property "subject": "other".
-								Removed filter property "value": "player".
-								Added filter property "any_of":
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "player"
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "irongolem"
-Changed entity "pufferfish.json":
+			Changed field "component_groups":
+				Changed component group "minecraft:slime_large":
+					Total component: 6 (+1, -0)
+					Added component "minecraft:variant": field "value": 4.
+				Changed component group "minecraft:slime_medium":
+					Total component: 6 (+1, -0)
+					Added component "minecraft:variant": field "value": 2.
+				Changed component group "minecraft:slime_small":
+					Total component: 5 (+1, -0)
+					Added component "minecraft:variant": field "value": 1.
+			Changed field "events":
+				Total event: 6 (+3, -0)
+				Changed event "minecraft:entity_spawned":
+					Removed field "add": field "component_groups": component group "minecraft:slime_calm".
+					Added field "randomize":
+						randomize item:
+							field "trigger": "spawn_small"
+							field "weight": 1
+						randomize item:
+							field "trigger": "spawn_medium"
+							field "weight": 1
+						randomize item:
+							field "trigger": "spawn_large"
+							field "weight": 1
+				Added event "spawn_large":
+					field "add":
+						field "component_groups":
+							component group "minecraft:slime_calm"
+							component group "minecraft:slime_large"
+				Added event "spawn_medium":
+					field "add":
+						field "component_groups":
+							component group "minecraft:slime_calm"
+							component group "minecraft:slime_medium"
+				Added event "spawn_small":
+					field "add":
+						field "component_groups":
+							component group "minecraft:slime_calm"
+							component group "minecraft:slime_small"
+Changed entity "panda.json":
 	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 22 (+1, -0)
-				Added component "minecraft:behavior.avoid_mob_type":
-					field "priority": 1
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "player"
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "axolotl"
-							field "max_dist": 6
-							field "walk_speed_multiplier": 1.5
-							field "sprint_speed_multiplier": 2.0
-Changed entity "salmon.json":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "parrot.json":
 	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.avoid_mob_type":
-					Changed field "entity_types":
-						Changed entity type:
-							Changed field "filters":
-								Removed filter property "test": "is_family".
-								Removed filter property "subject": "other".
-								Removed filter property "value": "player".
-								Added filter property "any_of":
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "player"
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "axolotl"
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "pig.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "player.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.17.10" to "1.18.10".
+Changed entity "polar_bear.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
 Changed entity "slime.json":
 	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.nearest_attackable_target":
-					Changed field "entity_types":
-						Changed entity type:
-							Changed field "filters":
-								Changed filter property "any_of":
-									Total filter: 2 (+0, -1)
-									Removed filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "snowgolem"
-Changed entity "splash_potion.json":
+			Changed field "component_groups":
+				Changed component group "minecraft:slime_large":
+					Total component: 5 (+1, -0)
+					Added component "minecraft:variant": field "value": 4.
+				Changed component group "minecraft:slime_medium":
+					Total component: 5 (+1, -0)
+					Added component "minecraft:variant": field "value": 2.
+				Changed component group "minecraft:slime_small":
+					Total component: 6 (+1, -0)
+					Added component "minecraft:variant": field "value": 1.
+			Changed field "events":
+				Total event: 6 (+3, -0)
+				Changed event "minecraft:entity_spawned":
+					Removed field "add": field "component_groups": component group "minecraft:slime_calm".
+					Added field "randomize":
+						randomize item:
+							field "trigger": "spawn_small"
+							field "weight": 1
+						randomize item:
+							field "trigger": "spawn_medium"
+							field "weight": 1
+						randomize item:
+							field "trigger": "spawn_large"
+							field "weight": 1
+				Added event "spawn_large":
+					field "add":
+						field "component_groups":
+							component group "minecraft:slime_calm"
+							component group "minecraft:slime_large"
+				Added event "spawn_medium":
+					field "add":
+						field "component_groups":
+							component group "minecraft:slime_calm"
+							component group "minecraft:slime_medium"
+				Added event "spawn_small":
+					field "add":
+						field "component_groups":
+							component group "minecraft:slime_calm"
+							component group "minecraft:slime_small"
+Changed entity "squid.json":
 	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:conditional_bandwidth_optimization":
-					Changed field "default_values":
-						Changed field "max_dropped_ticks" from 7 to 5.
-Changed entity "tnt.json":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "strider.json":
 	Changed behavior pack "core":
+		Changed field "format_version" from "1.14.0" to "1.18.10".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:strider_piglin_jockey":
+					Changed component "minecraft:rideable":
+						Removed field "priority": 0.
+				Changed component group "minecraft:strider_saddled":
+					Changed component "minecraft:rideable":
+						Removed field "priority": 0.
+Changed entity "tadpole.json":
+	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:conditional_bandwidth_optimization":
-					Added field "default_values":
-						field "max_optimized_distance": 80.0
-						field "max_dropped_ticks": 5
-						field "use_motion_prediction_hints": true
-Changed entity "tropicalfish.json":
+				Total component: 19 (+1, -0)
+				Changed component "minecraft:behavior.look_at_player":
+					Changed field "priority" from 2 to 3.
+				Added component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 2.0
+				Changed component "minecraft:behavior.random_swim":
+					Changed field "priority" from 1 to 2.
+Changed entity "villager.json":
 	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.avoid_mob_type":
-					Changed field "entity_types":
-						Changed entity type:
-							Changed field "filters":
-								Removed filter property "test": "is_family".
-								Removed filter property "subject": "other".
-								Removed filter property "value": "player".
-								Added filter property "any_of":
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "player"
-									filter:
-										filter property "test": "is_family"
-										filter property "subject": "other"
-										filter property "value": "axolotl"
-Changed entity "xp_bottle.json":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "villager_v2.json":
 	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:conditional_bandwidth_optimization":
-					Changed field "default_values":
-						Changed field "max_dropped_ticks" from 7 to 5.
+		Changed field "format_version" from "1.16.100" to "1.18.10".
+Changed entity "wolf.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+Changed entity "zoglin.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".

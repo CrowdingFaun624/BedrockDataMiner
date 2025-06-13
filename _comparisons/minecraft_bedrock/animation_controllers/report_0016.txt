@@ -1,137 +1,17 @@
-Difference of "animation_controllers" between "1.13.0.2" (beta of "1.13.0") and "1.13.0.4" (beta of "1.13.0").
-Unable to create data files for 1 file between: "1.13.0.3"
+Difference of "animation_controllers" between "1.13.0.5" (beta of "1.13.0") and "1.13.0.6" (beta of "1.13.0").
 
-Changed file "armor_stand.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.armor_stand.pose":
-				Changed field "states":
-					Changed state "athena":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "brandish":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "cancan_a":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "cancan_b":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "default":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "entertain":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "hero":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "honor":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "none":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "riposte":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "salute":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "solemn":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
-					Changed state "zombie":
-						Added field "blend_transition": 0.1.
-						Added field "blend_via_shortest_path": true.
 Changed file "player.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Total animation controller: 4 (+1, -1)
-			Removed animation controller "controller.animation.player.base":
-				field "initial_state": "default"
-				field "states":
-					state "default":
-						field "animations":
-							animation dict animation "look_at_target": "!query.is_sleeping"
-							animation dict "cape"
-							animation dict "move.arms"
-							animation dict "move.legs"
-							animation dict animation "riding.arms": "query.is_riding"
-							animation dict animation "riding.legs": "query.is_riding"
-							animation dict "holding"
-							animation dict animation "brandish_spear": "variable.is_brandishing_spear"
-							animation dict animation "charging": "query.is_charging"
-							animation dict animation "sneaking": "query.is_sneaking && !query.is_sleeping"
-							animation dict "bob"
-							animation dict animation "damage_nearby_mobs": "variable.damage_nearby_mobs"
-							animation dict animation "bow_and_arrow": "query.has_target"
-							animation dict animation "swimming": "variable.swim_amount > 0.0"
-							animation dict animation "swimming.legs": "variable.swim_amount > 0.0"
-							animation dict animation "use_item_progress": "( variable.use_item_interval_progress > 0.0 ) || ( variable.use_item_startup_progress > 0.0 ) && !variable.is_brandishing_spear"
-							animation dict animation "sleeping": "query.is_sleeping && query.is_alive"
-							animation dict animation "attack.positions": "variable.attack_time >= 0.0"
-							animation dict animation "attack.rotations": "variable.attack_time >= 0.0"
-							animation dict animation "shield_block_main_hand": "query.blocking && query.get_equipped_item_name('off_hand') != 'shield' && query.get_equipped_item_name == 'shield'"
-							animation dict animation "shield_block_off_hand": "query.blocking && query.get_equipped_item_name('off_hand') == 'shield'"
-							animation dict animation "crossbow_controller": "variable.is_third_person && query.get_equipped_item_name == 'crossbow'"
-							animation dict animation "third_person_bow_equipped": "variable.is_third_person && query.get_equipped_item_name == 'bow' && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)"
-						field "transitions": transition list transition "paperdoll": "variable.is_paperdoll"
-					state "paperdoll":
-						field "animations":
-							animation dict "look_at_target_ui"
-							animation dict "cape"
-						field "transitions": transition list transition "default": "!variable.is_paperdoll && !variable.is_first_person"
-			Added animation controller "controller.animation.player.root":
-				field "initial_state": "first_person"
-				field "states":
-					state "first_person":
-						field "animations":
-							animation dict animation "first_person_attack_controller": "variable.attack_time > 0.0f && query.get_equipped_item_name != 'map'"
-							animation dict animation "first_person_base_pose": "query.get_equipped_item_name != 'map'"
-							animation dict animation "first_person_walk": "variable.bob_animation"
-							animation dict animation "first_person_map_controller": "(query.get_equipped_item_name == 'map' || query.get_equipped_item_name('off_hand') == 'map')"
-							animation dict animation "first_person_crossbow_equipped": "query.get_equipped_item_name == 'crossbow' && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)"
-						field "transitions":
-							transition list transition "paperdoll": "variable.is_paperdoll"
-							transition list transition "third_person": "variable.is_third_person"
-					state "paperdoll":
-						field "animations":
-							animation dict "humanoid_base_pose"
-							animation dict "look_at_target_ui"
-							animation dict "move.arms"
-							animation dict "move.legs"
-							animation dict "cape"
-						field "transitions":
-							transition list transition "first_person": "!variable.is_paperdoll && variable.is_first_person"
-							transition list transition "third_person": "!variable.is_paperdoll && variable.is_third_person"
-					state "third_person":
-						field "animations":
-							animation dict "humanoid_base_pose"
-							animation dict animation "look_at_target": "!query.is_sleeping"
-							animation dict "move.arms"
-							animation dict "move.legs"
-							animation dict "cape"
-							animation dict animation "riding.arms": "query.is_riding"
-							animation dict animation "riding.legs": "query.is_riding"
-							animation dict "holding"
-							animation dict animation "brandish_spear": "variable.is_brandishing_spear"
-							animation dict animation "charging": "query.is_charging"
-							animation dict animation "sneaking": "query.is_sneaking && !query.is_sleeping"
-							animation dict "bob"
-							animation dict animation "damage_nearby_mobs": "variable.damage_nearby_mobs"
-							animation dict animation "bow_and_arrow": "query.has_target"
-							animation dict animation "swimming": "variable.swim_amount > 0.0"
-							animation dict animation "swimming.legs": "variable.swim_amount > 0.0"
-							animation dict animation "use_item_progress": "( variable.use_item_interval_progress > 0.0 ) || ( variable.use_item_startup_progress > 0.0 ) && !variable.is_brandishing_spear"
-							animation dict animation "sleeping": "query.is_sleeping && query.is_alive"
-							animation dict animation "attack.positions": "variable.attack_time >= 0.0"
-							animation dict animation "attack.rotations": "variable.attack_time >= 0.0"
-							animation dict animation "shield_block_main_hand": "query.blocking && query.get_equipped_item_name('off_hand') != 'shield' && query.get_equipped_item_name == 'shield'"
-							animation dict animation "shield_block_off_hand": "query.blocking && query.get_equipped_item_name('off_hand') == 'shield'"
-							animation dict animation "crossbow_controller": "query.get_equipped_item_name == 'crossbow'"
-							animation dict animation "third_person_bow_equipped": "query.get_equipped_item_name == 'bow' && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)"
-						field "transitions":
-							transition list transition "paperdoll": "variable.is_paperdoll"
-							transition list transition "first_person": "variable.is_first_person"
+			Changed animation controller "controller.animation.player.root":
+				Changed field "states":
+					Changed state "first_person":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "third_person": "variable.is_third_person".
+							Added transition list transition "third_person": "!variable.is_first_person".
+					Changed state "paperdoll":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "third_person": "!variable.is_paperdoll && variable.is_third_person".
+							Added transition list transition "third_person": "!variable.is_paperdoll && !variable.is_first_person".

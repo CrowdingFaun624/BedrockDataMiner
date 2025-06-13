@@ -8,6 +8,7 @@ from Utilities.File import FakeFile, File
 
 domain = get_domain_from_module(__name__)
 json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
+lines_serializer = domain.script_referenceable.get_future("minecraft_bedrock!serializers/lines_serializer", Serializer)
 
 __all__ = (
     "animation_controllers_fix_old",
@@ -43,6 +44,7 @@ __all__ = (
     "sound_events_similarity_weight",
     "sounds_json_make_strings_to_dict",
     "spawn_rules_normalize_herd",
+    "subdirs_normalize",
     "terrain_textures_normalize",
     "texture_list_normalize",
     "textures_split_lines",
@@ -482,6 +484,15 @@ def sounds_json_make_strings_to_dict(data:Any) -> Any:
 def spawn_rules_normalize_herd(data:dict[str,Any]|list[dict[str,Any]]) -> list[dict[str,Any]]|None:
     if isinstance(data, dict):
         return [data]
+
+def subdirs_normalize(data:dict[str,File[list[str]]]) -> list[str]:
+    output:list[str] = []
+    for file_name, file in data.items():
+        file_contents = file.read(lines_serializer.get())
+        file_name_stripped = file_name.rsplit("/", 1)[0] + "/"
+        for line in file_contents:
+            output.append(file_name_stripped + line)
+    return output
 
 def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     other_keys = {"texture_name": {}, "padding": {}, "num_mip_levels": {}}

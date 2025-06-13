@@ -1,106 +1,333 @@
-Difference of "ui" between "1.15.0.55" (beta of "1.16.0") and "1.15.0.56" (beta of "1.16.0").
+Difference of "ui" between "1.16.0.60" (beta of "1.16.0") and "1.16.0.61" (beta of "1.16.0").
 
-Changed namespace "command_block":
-	Changed element "command_block_screen_content":
-		Unchanged field "type": "panel".
-		Added field "max_size": "$extra_large_max_screen_size".
-Changed namespace "common":
-	Changed element "base_screen":
-		Unchanged field "type": "screen".
+Changed namespace "anvil":
+	Changed element "cost_label@anvil.generic_label":
 		Changed field "controls":
 			Changed control:
-				Changed element "variables_button_mappings_and_controls":
-					Unchanged field "type": "input_panel".
-					Changed field "variables":
-						Changed variable:
-							Changed field "$variables":
-								Total variable: 39 (+1, -0)
-								Changed variable "$extra_large_screen_size":
-									Changed item 0 from 370 to "100% - 4px".
-									Changed item 1 from "100% - 50px" to "100% - 4px".
-								Added variable "$extra_large_max_screen_size":
-									item 0: 370
-									item 1: "100% - 50px"
-Changed namespace "manifest_validation":
-	Changed element "manifest_validation_screen_content":
-		Unchanged field "type": "panel".
-		Added field "max_size": "$extra_large_max_screen_size".
-Changed namespace "pack_settings":
-	Changed element "main_screen_content@common_dialogs.main_panel_no_buttons":
-		Added field "max_size": "$extra_large_max_screen_size".
-Changed namespace "pdp":
-	Changed element "download_progress":
-		Unchanged field "type": "image".
+				Changed element "gray@resource_packs.gray_image":
+					Changed field "size":
+						Changed item 0 from "110%" to "105%".
+						Changed item 1 from "110%" to "105%".
+Changed namespace "disconnect":
+	Total element: 21 (+2, -0)
+	Changed element "button_panel":
+		field "type": "panel"
+		field "size": ["100%c", 0]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "controls": control element "ok_button@ok_button": empty
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "bottom_middle"
+		field "offset": [0, "-20%"]
+		field "controls":
+			control:
+				element "open_uri_button_panel":
+					field "type": "panel"
+					field "size": ["100%", 30]
+					field "ignored": "$is_holographic"
+					field "visible": false
+					field "bindings":
+						binding:
+							field "binding_name": "#open_uri_button_visible"
+							field "binding_name_override": "#visible"
+					field "controls": control element "open_uri_button@disconnect.open_uri_button": empty
+			control:
+				element "open_button_panel":
+					field "type": "panel"
+					field "size": ["100%", 26]
+					field "controls": control element "ok_button@disconnect.ok_button": empty
+	Changed element "cancel_button@disconnect.menu_button_template":
+		Changed field "size":
+			Changed item 0 from "100%" to 256.
+			Unchanged item 1: "100%".
+	Changed element "disconnect_screen@common.base_screen":
+		Changed field "button_mappings":
+			Total button mapping: 2 (+1, -0)
+			Added button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.menu_select"
+				field "mapping_type": "pressed"
+	Added element "open_account_setting_button@common_buttons.hyperlink_button":
+		field "property_bag": field "#hyperlink": "https://aka.ms/MCMultiplayerHelp"
+		field "$variables": variable "$button_text": "permissions.open.account.help.button"
+	Added element "open_uri_button@disconnect.open_account_setting_button": field "size": [200, 26].
+	Changed element "realms_disconnect_button_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "size":
+			Changed item 0 from "100%c" to "100%".
+			Changed item 1 from 0 to "100%c".
+		Changed field "orientation" from "horizontal" to "vertical".
+		Changed field "controls":
+			Total control: 2 (+2, -3)
+			Removed control element "check_store_button@disconnect.check_store_button": empty.
+			Removed control element "spacing_gap@disconnect.spacing_gap": field "ignored": "$is_holographic".
+			Removed control element "exit_button@disconnect.exit_button": empty.
+			Added control:
+				element "open_uri_button_panel":
+					field "type": "panel"
+					field "size": ["100%", 30]
+					field "ignored": "$is_holographic"
+					field "visible": false
+					field "bindings":
+						binding:
+							field "binding_name": "#open_uri_button_visible"
+							field "binding_name_override": "#visible"
+					field "controls": control element "open_uri_button@disconnect.open_uri_button": empty
+			Added control:
+				element "realm_buttons_panel":
+					field "type": "panel"
+					field "size": ["100%", 30]
+					field "controls":
+						control:
+							element "realm_buttons":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "controls":
+									control element "check_store_button@disconnect.check_store_button": empty
+									control element "spacing_gap@disconnect.spacing_gap": field "ignored": "$is_holographic"
+									control element "exit_button@disconnect.exit_button": empty
+		Added field "offset": [0, 30].
+	Changed element "realms_warning_button_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "realms_warning_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": [260, "100%c"]
+					field "controls":
+						control:
+							element "realms_warning_text_gap@disconnect.spacing_gap":
+								field "type": "panel"
+								field "size": ["100%", 70]
+						control:
+							element "continue_button_panel":
+								field "type": "panel"
+								field "size": [260, 26]
+								field "controls":
+									control:
+										element "continue_button_stack_panel":
+											field "type": "stack_panel"
+											field "size": ["100%c", "100%"]
+											field "orientation": "horizontal"
+											field "controls":
+												control element "check_store_button@disconnect.check_store_button": empty
+												control element "spacing_gap@disconnect.spacing_gap": field "ignored": "$is_holographic"
+												control element "continue_button@disconnect.continue_button": empty
+						control:
+							element "realms_warning_button_gap@disconnect.spacing_gap":
+								field "type": "panel"
+								field "size": ["100%", 5]
+						control:
+							element "cancel_button_panel":
+								field "type": "panel"
+								field "size": [260, 26]
+								field "controls": control element "cancel_button@disconnect.cancel_button": empty
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "offset": [0, 30]
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "continue_button_panel":
+					field "type": "panel"
+					field "size": ["100%", 26]
+					field "controls":
+						control:
+							element "continue_button_stack_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "controls":
+									control element "check_store_button@disconnect.check_store_button": empty
+									control element "spacing_gap@disconnect.spacing_gap": field "ignored": "$is_holographic"
+									control element "continue_button@disconnect.continue_button": empty
+			control:
+				element "realms_warning_button_gap@disconnect.spacing_gap":
+					field "type": "panel"
+					field "size": ["100%", 5]
+			control:
+				element "cancel_button_panel":
+					field "type": "panel"
+					field "size": ["100%", 26]
+					field "controls": control element "cancel_button@disconnect.cancel_button": empty
+Changed namespace "permissions":
+	Changed element "permission_level_dropdown@settings_common.option_dropdown":
+		Changed field "$variables":
+			Total variable: 11 (+1, -0)
+			Added variable "$option_dropdown_type": "common.dropdown_no_scrollpanel".
+	Changed element "permission_level_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Changed variable "$radio_buttons":
+				Changed item 6:
+					Changed item "permission_level_radio_custom@permissions.permission_level_radio":
+						Changed item "ignored" from "$is_world_settings" to "($is_world_settings or $is_in_realm)".
+			Added variable "$is_in_realm|default": false.
+Changed namespace "persona":
+	Changed element "info_text_box":
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "stacker":
+				Changed element "discription_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "sizer_bar":
+							Moved element from "lock_image" to "lock_state_icon_panel".
+							Changed element "lock_state_icon_panel":
 								Unchanged field "type": "panel".
 								Changed field "controls":
+									Total control: 1 (+0, -1)
 									Changed control:
-										Changed element "download_progress_bar@common_store.store_progress_bar_icon":
-											Changed field "$variables":
-												Changed variable "$progress_bindings":
-													Changed item 0:
-														Changed item "binding_name" from "#download_progress_bar_percentage" to "#download_progress".
-	Changed element "purchase_buttons_panel":
+										Moved element from "locked_icon@persona.icon_image" to "locked_state_icon@persona.icon_image".
+										Changed element "locked_state_icon@persona.icon_image":
+											Removed field "texture": "textures/ui/icon_lock".
+											Changed field "bindings":
+												Total binding: 1 (+1, -1)
+												Removed binding:
+													field "binding_name": "(not #is_offer_achievement_unlocked)"
+													field "binding_name_override": "#visible"
+												Added binding:
+													field "binding_name": "#achievement_offer_lock_state_texture"
+													field "binding_name_override": "#texture"
+									Removed control:
+										element "unlocked_icon@persona.icon_image":
+											field "size": [12, 11]
+											field "anchor_to": "top_middle"
+											field "anchor_from": "top_middle"
+											field "texture": "textures/ui/icon_unlocked"
+											field "bindings":
+												binding:
+													field "binding_name": "#is_offer_achievement_unlocked"
+													field "binding_name_override": "#visible"
+	Changed element "purchase_buttons":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "purchase_with_coins_button@common_buttons.light_content_button":
-					Unchanged field "type": "button".
-					Added field "enabled": false.
-					Added field "bindings":
+				Changed element "view_achievement_button@persona.view_achievement":
+					Added field "ignored": "(not $supports_xbl_achievements)".
+Changed namespace "play":
+	Total element: 243 (+1, -0)
+	Added element "open_account_setting_button@common_buttons.hyperlink_button":
+		field "property_bag": field "#hyperlink": "https://aka.ms/MCMultiplayerHelp"
+		field "size": ["100%", 30]
+		field "ignored": "$is_holographic"
+		field "visible": false
+		field "bindings":
+			binding:
+				field "binding_name": "#open_uri_button_visible"
+				field "binding_name_override": "#visible"
+		field "$variables": variable "$button_text": "permissions.open.account.help.button"
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 8 (+1, -1)
+						Removed control:
+							element "server_multiplayer_privileges_blocked@play.information_panel":
+								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+								field "bindings":
+									binding:
+										field "binding_name": "#multiplayer_blocked_panel_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$information_label_font": "smooth"
+									variable "$information_panel_label_text": "#multiplayer_blocked_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+						Added control:
+							element "more_servers_blocked_panel":
+								field "type": "stack_panel"
+								field "size": ["100%", "100%c"]
+								field "orientation": "vertical"
+								field "visible": false
+								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+								field "bindings":
+									binding:
+										field "binding_name": "#multiplayer_blocked_panel_visible"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "server_multiplayer_privileges_blocked@play.information_panel":
+											field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+											field "$variables":
+												variable "$information_label_font": "smooth"
+												variable "$information_panel_label_text": "#multiplayer_blocked_text"
+												variable "$information_panel_label_text_binding_type": "global"
+												variable "$information_panel_label_text_binding_condition": "always_when_visible"
+									control element "open_uri_button@play.open_account_setting_button": empty
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "realms_multiplayer_blocked_panel@play.label_content_template" to "realms_multiplayer_blocked_panel".
+				Changed element "realms_multiplayer_blocked_panel":
+					Removed field "$variables":
+						variable "$label_content_label": "playscreen.header.realms"
+						variable "$label_content_content": "play.information_panel"
+						variable "$information_panel_label_text": "#multiplayer_sessions"
+						variable "$information_panel_label_text_binding_type": "global"
+						variable "$information_panel_label_text_binding_condition": "always_when_visible"
+					Added field "type": "stack_panel".
+					Added field "size": ["100%", "100%c"].
+					Added field "controls":
+						control:
+							element "text_panel@play.label_content_template":
+								field "$variables":
+									variable "$label_content_label": "playscreen.header.realms"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#multiplayer_sessions"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+						control element "open_uri_button@play.open_account_setting_button": empty
+Changed namespace "world_section":
+	Total element: 31 (+1, -0)
+	Changed element "multiplayer_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 8 (+1, -0)
+			Added control:
+				element "open_uri_button@play.open_account_setting_button":
+					field "size": ["100%", 30]
+					field "ignored": "$is_holographic"
+					field "visible": false
+					field "bindings":
 						binding:
-							field "binding_name": "#purchase_panel_enabled"
-							field "binding_name_override": "#enabled"
-			Changed control:
-				Changed element "purchase_currency_button_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "purchase_with_currency_button@common_buttons.light_content_button":
-								Unchanged field "type": "button".
-								Added field "enabled": false.
-								Added field "bindings":
-									binding:
-										field "binding_name": "#purchase_panel_enabled"
-										field "binding_name_override": "#enabled"
-		Changed field "bindings":
-			Total binding: 1 (+0, -1)
-			Removed binding:
-				field "binding_name": "#purchase_panel_enabled"
-				field "binding_name_override": "#enabled"
-	Changed element "smooth_purchase_buttons_panel":
+							field "binding_name": "#open_uri_button_visible"
+							field "binding_name_override": "#visible"
+	Added element "open_account_setting_button@common_buttons.hyperlink_button":
+		field "property_bag": field "#hyperlink": "https://aka.ms/MCMultiplayerHelp"
+		field "$variables": variable "$button_text": "permissions.open.account.help.button"
+Changed namespace "world_templates":
+	Total element: 49 (+1, -0)
+	Added element "open_account_setting_button@common_buttons.hyperlink_button":
+		field "property_bag": field "#hyperlink": "https://aka.ms/MCMultiplayerHelp"
+		field "$variables": variable "$button_text": "permissions.open.account.help.button"
+	Changed element "world_template_screen_content_stack_panel":
 		Unchanged field "type": "stack_panel".
-		Changed field "bindings":
-			Total binding: 1 (+0, -1)
-			Removed binding:
-				field "binding_name": "#purchase_panel_enabled"
-				field "binding_name_override": "#enabled"
 		Changed field "controls":
 			Changed control:
-				Changed element "purchase_coins_button_panel":
-					Unchanged field "type": "panel".
+				Changed element "realms_info_panel":
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Changed control:
-							Changed element "smooth_purchase_with_coins_button@common_buttons.light_content_button":
-								Added field "enabled": false.
-								Added field "bindings":
+						Total control: 3 (+1, -0)
+						Added control:
+							element "open_uri_button@disconnect.open_account_setting_button":
+								field "size": ["100%", 26]
+								field "ignored": "$is_holographic"
+								field "visible": false
+								field "bindings":
 									binding:
-										field "binding_name": "#purchase_panel_enabled"
-										field "binding_name_override": "#enabled"
-			Changed control:
-				Changed element "purchase_currency_button_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "purchase_with_currency_button@common_buttons.light_content_button":
-								Added field "enabled": false.
-								Added field "bindings":
-									binding:
-										field "binding_name": "#purchase_panel_enabled"
-										field "binding_name_override": "#enabled"
+										field "binding_name": "#open_uri_button_visible"
+										field "binding_name_override": "#visible"
+	Changed element "world_templates_screen@common.base_screen":
+		Changed field "button_mappings":
+			Total button mapping: 2 (+1, -0)
+			Added button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.menu_select"
+				field "mapping_type": "pressed"

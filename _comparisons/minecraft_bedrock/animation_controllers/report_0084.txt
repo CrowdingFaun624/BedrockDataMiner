@@ -1,48 +1,52 @@
-Difference of "animation_controllers" between "1.20.40.20" (beta of "1.20.40") and "1.20.40.21" (beta of "1.20.40").
+Difference of "animation_controllers" between "1.20.51" and "1.20.60.20" (beta of "1.20.60").
 
-Changed file "sniffer.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.sniffer.feeling_happy":
-				Changed field "states":
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "feeling_happy": "query.is_feeling_happy".
-							Added transition list transition "feeling_happy": "query.timer_flag_3".
-					Changed state "feeling_happy":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "default": "!query.is_feeling_happy".
-							Added transition list transition "default": "!query.timer_flag_3".
-			Changed animation controller "controller.animation.sniffer.long_sniff":
-				Changed field "states":
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "long_sniff": "query.is_scenting".
-							Added transition list transition "long_sniff": "query.timer_flag_1".
-					Changed state "long_sniff":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "default": "!query.is_scenting".
-							Added transition list transition "default": "!query.timer_flag_1".
-			Changed animation controller "controller.animation.sniffer.sniffsniff":
-				Changed field "states":
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "sniffsniff": "query.modified_move_speed > 0.005 && !query.is_searching && !query.is_digging && !query.is_scenting && !query.is_rising".
-							Added transition list transition "sniffsniff": "query.modified_move_speed > 0.005 && !query.is_searching && !query.is_digging && !query.timer_flag_1 && !query.timer_flag_2".
-			Changed animation controller "controller.animation.sniffer.stand_up":
-				Changed field "states":
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "stand_up": "query.is_rising".
-							Added transition list transition "stand_up": "query.timer_flag_2".
-					Changed state "stand_up":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "default": "!query.is_rising".
-							Added transition list transition "default": "!query.timer_flag_2".
+Total file: 63 (+1, -0)
+Added file "breeze.animation_controllers.json":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "animation_controllers":
+			animation controller "controller.animation.breeze.ground_particles":
+				field "initial_state": "default"
+				field "states":
+					state "default":
+						field "transitions":
+							transition list transition "idling": "!query.is_moving && query.is_on_ground && query.vertical_speed > -2"
+							transition list transition "moving": "query.is_moving && query.is_on_ground && query.vertical_speed > -2"
+					state "idling":
+						field "animations": animation dict "idle_ground_particles"
+						field "transitions":
+							transition list transition "default": "!query.is_on_ground"
+							transition list transition "moving": "query.is_moving && query.is_on_ground"
+					state "moving":
+						field "animations": animation dict "slide_ground_particles"
+						field "transitions":
+							transition list transition "default": "!query.is_on_ground"
+							transition list transition "idling": "!query.is_moving && query.is_on_ground"
+			animation controller "controller.animation.breeze.idle":
+				field "initial_state": "default"
+				field "states": state "default": field "animations": animation dict "idle"
+			animation controller "controller.animation.breeze.jump":
+				field "initial_state": "default"
+				field "states":
+					state "default": field "transitions": transition list transition "jump": "query.is_jump_goal_jumping"
+					state "jump":
+						field "animations": animation dict "jump"
+						field "transitions": transition list transition "default": "!query.is_jump_goal_jumping"
+			animation controller "controller.animation.breeze.look_at":
+				field "initial_state": "default"
+				field "states": state "default": field "animations": animation dict "look_at"
+			animation controller "controller.animation.breeze.move":
+				field "initial_state": "default"
+				field "states":
+					state "default": field "transitions": transition list transition "moving": "query.modified_move_speed > 0.1 && query.vertical_speed == 0"
+					state "moving":
+						field "animations": animation dict "slide"
+						field "transitions": transition list transition "default": "query.modified_move_speed < 0.1 || !query.is_on_ground"
+						field "blend_transition": 0.2
+			animation controller "controller.animation.breeze.shoot":
+				field "initial_state": "default"
+				field "states":
+					state "default": field "transitions": transition list transition "shoot": "query.facing_target_to_range_attack"
+					state "shoot":
+						field "animations": animation dict "shoot"
+						field "transitions": transition list transition "default": "!query.facing_target_to_range_attack || query.all_animations_finished"

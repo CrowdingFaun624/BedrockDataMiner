@@ -1,106 +1,381 @@
-Difference of "ui" between "1.18.30.20" (beta of "1.18.30") and "1.18.30.22" (beta of "1.18.30").
+Difference of "ui" between "1.19.0.20" (beta of "1.19.0") and "1.19.0.24" (beta of "1.19.0").
 
-Changed namespace "common_buttons":
-	Changed element "underline_button@common.button":
+Total namespace: 204 (+1, -0)
+Changed namespace "enchanting_pocket":
+	Changed element "enchant_button_panel":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Unchanged item 0: "100%".
+			Changed item 1 from "33% - 1px" to "33% - 5px".
+	Changed element "enchant_selection_panel":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Unchanged item 0: "100%-34px".
+			Changed item 1 from 60 to 72.
 		Changed field "controls":
-			Total control: 3 (+1, -0)
-			Added control:
-				element "pressed":
+			Changed control:
+				Changed element "grid":
+					Unchanged field "type": "grid".
+					Changed field "grid_dimensions":
+						Unchanged item 0: 1.
+						Changed item 1 from 5 to 3.
+					Changed field "controls":
+						Total control: 3 (+0, -2)
+						Removed control:
+							element "padd1":
+								field "type": "panel"
+								field "size": [0, 4]
+								field "grid_position": [0, 1]
+						Changed control:
+							Moved element from "button2@enchanting_pocket.enchant_button_panel" to "button3@enchanting_pocket.enchant_button_panel".
+							Changed element "button3@enchanting_pocket.enchant_button_panel":
+								Changed field "$variables":
+									Changed variable "$texture_selectable" from "textures/ui/dust_selectable_2" to "textures/ui/dust_selectable_3".
+									Changed variable "$texture_unselectable" from "textures/ui/dust_unselectable_2" to "textures/ui/dust_unselectable_3".
+						Removed control:
+							element "padd2":
+								field "type": "panel"
+								field "size": [0, 4]
+								field "grid_position": [0, 3]
+						Changed control:
+							Moved element from "button3@enchanting_pocket.enchant_button_panel" to "button2@enchanting_pocket.enchant_button_panel".
+							Changed element "button2@enchanting_pocket.enchant_button_panel":
+								Changed field "grid_position":
+									Unchanged item 0: 0.
+									Changed item 1 from 4 to 1.
+								Changed field "$variables":
+									Changed variable "$texture_selectable" from "textures/ui/dust_selectable_3" to "textures/ui/dust_selectable_2".
+									Changed variable "$texture_unselectable" from "textures/ui/dust_unselectable_3" to "textures/ui/dust_unselectable_2".
+Added namespace "gathering_info":
+	element "gathering_info_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_exit"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "$variables":
+			variable "$screen_content": "gathering_info.info_content"
+			variable "$is_full_screen_layout": true
+	element "info_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "header@common.fullscreen_header":
+					field "$variables":
+						variable "$back_button_has_title": true
+						variable "$button_text": "#header_text"
+						variable "$button_text_binding_type": "global"
+			control:
+				element "left_panel":
 					field "type": "panel"
-					field "size": "$underline_button_size"
+					field "size": ["40%", "100% - 22px"]
+					field "offset": [0, 22]
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
 					field "controls":
 						control:
-							element "label_hover@common.single_line_label":
+							element "stack":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "size": ["100% - 18px", "100%"]
+								field "controls":
+									control element "pad_1@common.empty_panel": field "size": ["100%", 4]
+									control:
+										element "event_image":
+											field "type": "image"
+											field "size": ["100%", "77%x"]
+											field "bindings":
+												binding:
+													field "binding_name": "#event_image"
+													field "binding_name_override": "#texture"
+									control element "pad_2@common.empty_panel": field "size": ["100%", 8]
+									control:
+										element "button_and_caption":
+											field "type": "panel"
+											field "size": ["100%", 28]
+											field "controls":
+												control:
+													element "caption@start.gathering_caption":
+														field "anchor_to": "top_left"
+														field "anchor_from": "top_left"
+														field "offset": [8, -19]
+														field "layer": 20
+												control:
+													element "action_button@common_buttons.light_text_button":
+														field "size": ["100%", 28]
+														field "bindings":
+															binding:
+																field "binding_name": "#action_button_enabled"
+																field "binding_name_override": "#enabled"
+														field "$variables":
+															variable "$pressed_button_name": "button.action"
+															variable "$button_text": "#action_button_text"
+															variable "$button_text_binding_type": "global"
+									control element "pad_3@common.empty_panel": field "size": ["100%", 4]
+									control:
+										element "info_button@common_buttons.light_text_button":
+											field "size": ["100%", 28]
+											field "$variables":
+												variable "$pressed_button_name": "button.info"
+												variable "$button_text": "#info_button_text"
+												variable "$button_text_binding_type": "global"
+			control element "section_divider@gathering_info.section_divider": empty
+			control:
+				element "right_panel":
+					field "type": "panel"
+					field "size": ["60% - 4px", "100% - 23px"]
+					field "offset": [0, 23]
+					field "anchor_to": "top_right"
+					field "anchor_from": "top_right"
+					field "controls":
+						control:
+							element "scroll@common.scrolling_panel":
 								field "$variables":
-									variable "$single_line_label_color|default":
-										item 0: 0.215
-										item 1: 0.839
-										item 2: 0.118
-									variable "$underline_control": item 0: item "underline_hover@common.underline": item "$texture": "textures/ui/underline_focus"
-Changed namespace "common_store":
-	Changed element "cycle_pack_left_button@common_store.cycle_pack_button":
-		Changed field "$variables":
-			Total variable: 5 (+1, -0)
-			Added variable "$focus_id|default": "left_cycle_button".
-	Changed element "cycle_pack_right_button@common_store.cycle_pack_button":
-		Changed field "$variables":
-			Total variable: 4 (+1, -0)
-			Added variable "$focus_id|default": "right_cycle_button".
-Changed namespace "controls_section":
-	Changed element "touch_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 2 (+0, -1)
-			Removed control:
-				element "new_touch_control_schemes_settings":
-					field "type": "stack_panel"
-					field "size": ["100%", "100%c"]
+									variable "$scrolling_content": "gathering_info.right_panel_content"
+									variable "$scrolling_content_anchor_from": "top_middle"
+									variable "$scrolling_content_anchor_to": "top_middle"
+									variable "$show_background": false
+	element "right_panel_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 24px", "100%c"]
+		field "orientation": "vertical"
+		field "use_child_anchors": true
+		field "controls":
+			control:
+				element "title":
+					field "type": "label"
+					field "text": "#title_text"
+					field "font_type": "MinecraftTen"
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "color": "$body_text_color"
+					field "bindings": binding field "binding_name": "#title_text"
+			control element "pad_1@common.empty_panel": field "size": ["100%", 4]
+			control:
+				element "body":
+					field "type": "label"
+					field "text": "#body_text"
+					field "size": ["100%", "default"]
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "color": "$body_text_color"
+					field "bindings": binding field "binding_name": "#body_text"
+			control element "pad_2@common.empty_panel": field "size": ["100%", 20]
+			control:
+				element "body_image":
+					field "type": "image"
+					field "texture": "#body_image"
+					field "size": ["100% - 40px", "77%x"]
+					field "anchor_to": "top_middle"
+					field "anchor_from": "top_middle"
 					field "bindings":
 						binding:
-							field "binding_name": "#new_touch_control_schemes_settings"
-							field "binding_name_override": "#visible"
-					field "controls":
-						control:
-							element "interaction_model_dropdown@settings_common.option_dropdown":
-								field "$variables":
-									variable "$option_label": "options.interactionmodel"
-									variable "$dropdown_content": "controls_section.interaction_model_dropdown_content"
-									variable "$dropdown_area": "content_area"
-									variable "$dropdown_name": "interaction_model_dropdown"
-									variable "$option_enabled_binding_name": "#intereaction_model_dropdown_enabled"
-									variable "$options_dropdown_toggle_label_binding": "#interaction_model_dropdown_toggle_label"
-									variable "$dropdown_scroll_content_size":
-										item 0: "100%"
-										item 1: "200%"
-			Changed control:
-				Changed element "common_touch_settings":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 20 (+2, -0)
-						Changed control:
-							Changed element "option_slider_1@settings_common.option_slider":
-								Removed field "bindings":
-									binding:
-										field "binding_name": "(not #touch_controls_v2)"
-										field "binding_name_override": "#visible"
-						Added control:
-							element "option_enable_new_touch_control_schemes_button@settings_common.option_toggle":
-								field "bindings":
-									binding:
-										field "binding_name": "#new_touch_control_schemes_preview_enabled"
-										field "binding_name_override": "#visible"
-								field "$variables":
-									variable "$option_label": "options.enableNewTouchControlSchemes"
-									variable "$option_binding_name": "#enable_new_touch_control_schemes"
-									variable "$option_enabled_binding_name": "#enable_new_touch_control_schemes_enabled"
-									variable "$toggle_name": "enable_new_touch_control_schemes"
-						Added control:
-							element "interaction_model_dropdown@settings_common.option_dropdown":
-								field "bindings":
-									binding:
-										field "binding_name": "#new_touch_control_schemes_settings"
-										field "binding_name_override": "#visible"
-								field "$variables":
-									variable "$option_label": "options.interactionmodel"
-									variable "$dropdown_content": "controls_section.interaction_model_dropdown_content"
-									variable "$dropdown_area": "content_area"
-									variable "$dropdown_name": "interaction_model_dropdown"
-									variable "$option_enabled_binding_name": "#intereaction_model_dropdown_enabled"
-									variable "$options_dropdown_toggle_label_binding": "#interaction_model_dropdown_toggle_label"
-									variable "$dropdown_scroll_content_size":
-										item 0: "100%"
-										item 1: "200%"
-Changed namespace "persona_deprecated":
-	Changed element "category_featured_offer_content":
+							field "binding_name": "#body_image"
+							field "binding_name_override": "#texture"
+	element "section_divider":
+		field "type": "image"
+		field "offset": ["40%", "20px"]
+		field "size": ["4px", "100% - 18px"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "layer": 3
+		field "texture": "textures/ui/HowToPlayDivider"
+Changed namespace "general_section":
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 93 (+1, -0)
+			Added control:
+				element "gathering_override@settings_common.option_text_edit":
+					field "$variables":
+						variable "$option_label": "options.dev.gathering_config_id_override"
+						variable "$option_binding_name": "#gathering_config_id_override_text_box"
+						variable "$option_enabled_binding_name": "#gathering_config_id_override_text_box_enabled"
+						variable "$max_text_edit_length": 40
+						variable "$text_box_name": "gathering_config_id_override_text_box"
+	Changed element "ui_debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 23 (+1, -0)
+			Added control:
+				element "option_show_touch_control_selection_screen@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.showTouchControlSelectionScreen"
+						variable "$option_binding_name": "#show_touch_control_selection_screen"
+						variable "$option_enabled_binding_name": "#show_touch_control_selection_screen_enabled"
+						variable "$toggle_name": "show_touch_control_selection_screen"
+Changed namespace "play":
+	Changed element "sync_legacy_worlds_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 2 (+0, -1)
+			Changed variable "$button_text" from "#sync_legacy_button_text" to "playscreen.syncLegacyWorlds".
+			Removed variable "$button_text_binding_type": "global".
+	Changed element "world_list_label_with_color_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "left_cycle_button@persona_deprecated.left_cycle_button":
-					Changed field "$variables":
-						Total variable: 3 (+1, -0)
-						Added variable "$focus_id": "left_featured_cycle_button".
+				Changed element "list_label":
+					Unchanged field "type": "label".
+					Removed field "bindings":
+						binding:
+							field "binding_type": "$label_binding_type"
+							field "binding_name": "$label_text"
+							field "binding_name_override": "$label_text"
+					Removed field "$variables":
+						variable "$label_text|default": "b"
+						variable "$label_binding_type|default": "none"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
 			Changed control:
-				Changed element "right_cycle_button@persona_deprecated.right_cycle_button":
+				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
 					Changed field "$variables":
-						Total variable: 3 (+1, -0)
-						Added variable "$focus_id": "right_featured_cycle_button".
+						Changed variable "$label_text" from "#upgrade_legacy_text" to "playscreen.upgradeLegacyWorlds".
+			Changed control:
+				Changed element "legacy_world_item_grid@play.legacy_world_item_grid":
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "#upgrade_legacy_text" to "playscreen.upgradeLegacyWorlds".
+			Changed control:
+				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
+					Changed field "$variables":
+						Changed variable "$label_text" from "#upgrade_legacy_text" to "playscreen.upgradeLegacyWorlds".
+			Changed control:
+				Changed element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid":
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "#upgrade_legacy_text" to "playscreen.upgradeLegacyWorlds".
+Changed namespace "start":
+	Total element: 74 (+5, -0)
+	Added element "badge_and_caption":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "anchor_to": "bottom_middle"
+		field "anchor_from": "bottom_middle"
+		field "offset": [-4, -20]
+		field "controls":
+			control:
+				element "caption_and_padding":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%c"]
+					field "layer": 14
+					field "controls":
+						control element "pad@common.empty_panel": field "size": [4, -2]
+						control element "caption@start.gathering_caption": empty
+			control:
+				element "badge_and_padding":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 20]
+					field "controls":
+						control element "badge@start.gathering_badge": empty
+						control element "fill@common.empty_panel": field "size": ["fill", "100%"]
+	Added element "gathering_badge":
+		field "type": "image"
+		field "size": [30, 20]
+		field "anchor_to": "bottom_left"
+		field "anchor_from": "bottom_left"
+		field "layer": 20
+		field "bindings":
+			binding:
+				field "binding_name": "#gathering_badge"
+				field "binding_name_override": "#texture"
+			binding:
+				field "binding_name": "#gathering_badge_visible"
+				field "binding_name_override": "#visible"
+	Added element "gathering_button@common_buttons.light_text_button":
+		field "anchor_to": "bottom_left"
+		field "anchor_from": "bottom_left"
+		field "size": [80, 25]
+		field "bindings":
+			binding:
+				field "binding_name": "#gathering_button_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.gathering"
+			variable "$button_text": "#gathering_button_text"
+			variable "$button_text_binding_type": "global"
+			variable "$button_text_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$focus_override_right": "play_button"
+	Added element "gathering_caption":
+		field "type": "image"
+		field "size": ["100%c", "100%c + 14px"]
+		field "anchor_to": "bottom_middle"
+		field "anchor_from": "bottom_middle"
+		field "layer": 9
+		field "color": "$gathering_caption_background_color"
+		field "texture": "textures/ui/newOffersIcon"
+		field "keep_ratio": false
+		field "controls":
+			control:
+				element "countdown_text":
+					field "type": "label"
+					field "text": "#text"
+					field "font_scale_factor": 0.9
+					field "offset": [0, -2]
+					field "size": [100, "default"]
+					field "text_alignment": "center"
+					field "color": "$gathering_caption_foreground_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#gathering_countdown_text"
+							field "binding_name_override": "#text"
+							field "binding_condition": "always_when_visible"
+						binding:
+							field "binding_name": "#gathering_caption_foreground_color"
+							field "binding_name_override": "#color"
+		field "bindings":
+			binding:
+				field "binding_name": "#gathering_caption_background_color"
+				field "binding_name_override": "#color"
+		field "$variables":
+			variable "$gathering_caption_foreground_color|default": "$0_color_format"
+			variable "$gathering_caption_background_color|default": "$f_color_format"
+	Added element "gathering_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", 60]
+		field "controls":
+			control element "pad@common.empty_panel": field "size": ["5% + 2px", "100%"]
+			control:
+				element "inner_panel":
+					field "type": "panel"
+					field "anchor_to": "bottom_left"
+					field "anchor_from": "bottom_left"
+					field "size": ["100%", 60]
+					field "controls":
+						control element "badge_and_caption@start.badge_and_caption": empty
+						control element "gathering_button@start.gathering_button": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#gathering_enabled"
+				field "binding_name_override": "#visible"
+	Changed element "lower_online_buttons_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control element "gathering_panel@start.gathering_panel": empty.
+Changed namespace "store_inventory":
+	Changed element "right_pane_factory":
+		Unchanged field "type": "stack_panel".
+		Added field "collection_name": "right_pane_factory_collection".
+Changed namespace "world_section":
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "experimental_toggles_label@settings_common.option_group_label":
+					Changed field "ignored" from "$education_edition" to "($is_publish and $education_edition)".
+			Changed control:
+				Changed element "experimental_toggles_label_info@settings_common.option_group_label":
+					Changed field "ignored" from "$education_edition" to "($is_publish and $education_edition)".
+			Changed control:
+				Changed element "experimental_toggles":
+					Unchanged field "type": "stack_panel".
+					Changed field "ignored" from "$education_edition" to "($is_publish and $education_edition)".

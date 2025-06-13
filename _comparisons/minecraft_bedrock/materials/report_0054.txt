@@ -1,75 +1,71 @@
-Difference of "materials" between "1.2.20.1" (beta of "1.4.0") and "1.2.20.2" (beta of "1.4.0").
+Difference of "materials" between "1.4.3" and "1.5.0.0" (beta of "1.5.0").
+Unable to create data files for 1 file between: "1.4.4"
 
-Changed material "entity.material":
+Changed material "terrain.material":
 	Changed resource pack "core":
 		Changed field "materials":
-			Changed material "entity_alphatest_change_color_glint:entity_change_color":
-				Removed field "textures":
-					texture:
-						field "textureIndex": 1
-						field "textureLocation": "InUserPackage"
-						field "textureName": "textures/misc/enchanted_item_glint"
-			Changed material "entity_alphatest_glint:entity_alphatest":
-				Removed field "textures":
-					texture:
-						field "textureIndex": 1
-						field "textureLocation": "InUserPackage"
-						field "textureName": "textures/misc/enchanted_item_glint"
-			Changed material "entity_alphatest_glint_item:entity_alphatest":
-				Removed field "textures":
-					texture:
-						field "textureIndex": 0
-						field "textureLocation": "InUserPackage"
-						field "textureName": "atlas.items"
-					texture:
-						field "textureIndex": 1
-						field "textureLocation": "InUserPackage"
-						field "textureName": "textures/misc/enchanted_item_glint"
-			Changed material "entity_glint:entity":
-				Removed field "textures":
-					texture:
-						field "textureIndex": 1
-						field "textureLocation": "InUserPackage"
-						field "textureName": "textures/misc/enchanted_item_glint"
-			Changed material "item_in_hand_glint:item_in_hand":
-				Removed field "textures":
-					texture:
-						field "textureIndex": 0
-						field "textureLocation": "InUserPackage"
-						field "textureName": "atlas.items"
-					texture:
-						field "textureIndex": 1
-						field "textureLocation": "InUserPackage"
-						field "textureName": "textures/misc/enchanted_item_glint"
-Changed material "ui.material":
-	Changed resource pack "core":
-		Changed field "materials":
-			Changed material "ui_inventory_item_glint:ui_item_glint":
-				Removed field "textures":
-					texture:
-						field "textureIndex": 0
-						field "textureLocation": "InUserPackage"
-						field "textureName": "atlas.items"
-					texture:
-						field "textureIndex": 1
-						field "textureLocation": "InUserPackage"
-						field "textureName": "textures/misc/enchanted_item_glint"
-Changed material "ui3D.material":
-	Changed resource pack "core":
-		Changed field "materials":
-			Changed material "precipitation":
-				Removed field "textures":
-					texture:
-						field "textureIndex": 0
-						field "textureLocation": "InUserPackage"
-						field "textureName": "textures/environment/weather"
-			Changed material "snow:precipitation":
-				Removed field "textures":
-					texture:
-						field "textureIndex": 0
-						field "textureLocation": "InUserPackage"
-						field "textureName": "textures/environment/weather"
-					texture:
-						field "textureIndex": 1
-						field "textureLocation": "InAppPackage"
-						field "textureName": "DYNAMIC_WEATHER"
+			Total material: 14 (+0, -2)
+			Changed material "terrain_blend:terrain_base":
+				Changed field "+variants":
+					Total variant: 2 (+1, -1)
+					Removed variant:
+						material "underwater":
+							field "+states":
+								statement "EnableStencilTest"
+								statement "InvertCulling"
+					Added variant material "underwater": empty.
+			Removed material "terrain_water:terrain_blend":
+				field "+defines": definition "NEAR_WATER"
+				field "+states": statement "Blending"
+				field "depthBias": 0.0
+				field "slopeScaledDepthBias": 0.1
+				field "depthBiasOGL": 0.0
+				field "slopeScaledDepthBiasOGL": 0.5
+				field "+variants":
+					variant:
+						material "underwater":
+							field "+states":
+								statement "EnableStencilTest"
+								statement "InvertCulling"
+					variant:
+						material "fog.underwater":
+							field "+states":
+								statement "EnableStencilTest"
+								statement "InvertCulling"
+			Removed material "terrain_water_below_stencil":
+				field "vertexShader": "shaders/renderchunk.vertex"
+				field "vrGeometryShader": "shaders/renderchunk.geometry"
+				field "fragmentShader": "shaders/renderchunk.fragment"
+				field "+states":
+					statement "DisableColorWrite"
+					statement "DisableDepthWrite"
+					statement "EnableStencilTest"
+					statement "InvertCulling"
+					statement "StencilWrite"
+				field "+defines": definition "BYPASS_PIXEL_SHADER"
+				field "+samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureFilter": "TexelAA"
+					sampler state:
+						field "samplerIndex": 1
+						field "textureFilter": "Bilinear"
+				field "msaaSupport": "Both"
+				field "vertexFields":
+					vertex field field "field": "Position"
+					vertex field field "field": "UV1"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
+				field "frontFace":
+					field "stencilFunc": "Always"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Replace"
+				field "backFace":
+					field "stencilFunc": "Always"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Replace"
+				field "stencilRef": 2
+				field "stencilReadMask": 255
+				field "stencilWriteMask": 2

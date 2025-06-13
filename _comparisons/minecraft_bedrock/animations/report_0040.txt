@@ -1,67 +1,49 @@
-Difference of "animations" between "1.16.0.60" (beta of "1.16.0") and "1.16.0.61" (beta of "1.16.0").
+Difference of "animations" between "1.16.10" and "1.16.20.50" (beta of "1.16.20").
 
-Total file: 112 (+1, -0)
-Added file "elytra.animation.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "animations":
-			animation "animation.elytra.default":
-				field "loop": true
-				field "bones":
-					bone "body": field "scale": 1.067
-					bone "left_wing":
-						field "position": [4.5, 4, -2]
-						field "rotation": [15, 0, -13]
-						field "scale": [1, 1, 2]
-					bone "right_wing":
-						field "position": [-4.5, 4, -2]
-						field "rotation": [15, 0, 13]
-						field "scale": [1, 1, 2]
-			animation "animation.elytra.gliding":
-				field "loop": true
-				field "bones":
-					bone "body": field "scale": 1.067
-					bone "left_wing":
-						field "position": [2, 2, -2]
-						field "rotation": ["variable.ratio = (query.position_delta(1) < 0) ? 1 - math.pow(-query.movement_direction(1), 1.5) : 1; return math.lerp(15, 20, variable.ratio);", 0, "math.lerp(-15, -90, variable.ratio)"]
-						field "scale": [1, 1, 2]
-					bone "right_wing":
-						field "position": [-2, 2, -2]
-						field "rotation": ["variable.ratio = (query.position_delta(1) < 0) ? 1 - math.pow(-query.movement_direction(1), 1.5) : 1; return math.lerp(15, 20, variable.ratio);", 0, "math.lerp(15, 90, variable.ratio)"]
-						field "scale": [1, 1, 2]
-			animation "animation.elytra.sleeping":
-				field "loop": true
-				field "bones":
-					bone "body": field "scale": 1.067
-					bone "left_wing":
-						field "position": [5, 4, -2]
-						field "rotation": [0, 0, -15]
-						field "scale": [1, 1, 2]
-					bone "right_wing":
-						field "position": [-5, 4, -2]
-						field "rotation": [0, 0, 15]
-						field "scale": [1, 1, 2]
-			animation "animation.elytra.sneaking":
-				field "loop": true
-				field "bones":
-					bone "body": field "scale": 1.067
-					bone "left_wing":
-						field "position": [2, 3, -2]
-						field "rotation": [20, -15, -45]
-						field "scale": [1, 1, 2]
-					bone "right_wing":
-						field "position": [-2, 3, -2]
-						field "rotation": [20, 15, 45]
-						field "scale": [1, 1, 2]
-			animation "animation.elytra.swimming":
-				field "loop": true
-				field "bones":
-					bone "body": field "scale": 1.067
-					bone "left_wing":
-						field "position": [5, 2, -2]
-						field "rotation": ["query.swim_amount * 15", 0, -15]
-						field "scale": [1, 1, 2]
-					bone "right_wing":
-						field "position": [-5, 2, -2]
-						field "rotation": ["query.swim_amount * 15", 0, 15]
-						field "scale": [1, 1, 2]
+Changed file "piglin.animation.json":
+	Changed resource pack "core":
+		Changed field "animations":
+			Changed animation "animation.piglin.move":
+				Changed field "bones":
+					Changed bone "leftarm":
+						Changed field "rotation":
+							Changed vector item 0 from "-variable.tcos_left_side" to "variable.tcos0".
+							Unchanged vector item 1: 0.0.
+							Unchanged vector item 2: 0.0.
+					Changed bone "leftear":
+						Changed field "rotation":
+							Unchanged vector item 0: 0.0.
+							Unchanged vector item 1: 0.0.
+							Changed vector item 2 from "variable.tcos_left_side * 0.5" to "variable.tcos0 * 0.5".
+					Changed bone "leftleg":
+						Changed field "rotation":
+							Changed vector item 0 from "variable.tcos_left_side * 1.4" to "-variable.tcos0 * 1.4".
+							Unchanged vector item 1: 0.0.
+							Unchanged vector item 2: 0.0.
+					Changed bone "rightarm":
+						Changed field "rotation":
+							Changed vector item 0 from "-variable.tcos_right_side" to "-variable.tcos0".
+							Unchanged vector item 1: 0.0.
+							Unchanged vector item 2: 0.0.
+					Changed bone "rightear":
+						Changed field "rotation":
+							Unchanged vector item 0: 0.0.
+							Unchanged vector item 1: 0.0.
+							Changed vector item 2 from "variable.tcos_right_side * 0.5" to "-variable.tcos0 * 0.5".
+					Changed bone "rightleg":
+						Changed field "rotation":
+							Changed vector item 0 from "variable.tcos_right_side * 1.4" to "variable.tcos0 * 1.4".
+							Unchanged vector item 1: 0.0.
+							Unchanged vector item 2: 0.0.
+			Changed animation "animation.piglin.sword.attack":
+				Changed field "bones":
+					Changed bone "leftarm":
+						Changed field "rotation":
+							Changed vector item 0 from "-90 + (variable.attack2 * 1.2 - variable.attack * 0.4) - variable.x_bob - this" to "(math.cos(query.life_time * 20.0 * 10.89) * 28.65) + (math.sin(variable.attack_time * 180.0) * 68.76 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0)) * 22.92)".
+							Changed vector item 1 from "5.73 - (variable.attack2 * 0.6) - this" to 0.0.
+							Changed vector item 2 from "-variable.z_bob - this" to 0.0.
+					Changed bone "rightarm":
+						Changed field "rotation":
+							Changed vector item 0 from "-90 + (variable.attack2 * 1.2 - variable.attack * 0.4) + variable.x_bob - this" to "-100 + (variable.attack2 * 2.2 - variable.attack * 0.4) + variable.x_bob - this".
+							Unchanged vector item 1: "variable.attack2 * 0.6 - 5.73 - this".
+							Unchanged vector item 2: "variable.z_bob - this".

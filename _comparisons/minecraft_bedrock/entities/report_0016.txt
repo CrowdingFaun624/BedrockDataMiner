@@ -1,185 +1,123 @@
-Difference of "entities" between "1.1.0.1" (beta of "1.1.0") and "1.1.0.3" (beta of "1.1.0").
+Difference of "entities" between "1.1.0.3" (beta of "1.1.0") and "1.1.0.5" (beta of "1.1.0").
+Unable to create data files for 1 file between: "1.1.0.4"
 
 Changed entity "bat.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 12 (+1, -1)
-				Removed component "minecraft:float_wander":
-					field "xz_dist": 10
-					field "y_dist": 7
-					field "y_offset": -2.0
 				Unchanged component "minecraft:identifier": field "id": "minecraft:bat".
-				Added component "minecraft:behavior.float_wander":
-					field "xz_dist": 10
-					field "y_dist": 7
-					field "y_offset": -2.0
-Changed entity "command_block_minecart.json":
+				Changed component "minecraft:movement":
+					Removed field "max": 0.3.
+Changed entity "blaze.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 5 (+0, -1)
-				Unchanged component "minecraft:identifier": field "id": "minecraft:command_block_minecart".
-				Changed component "minecraft:inventory":
-					Removed field "container_type": "minecart_command_block".
-					Removed field "inventory_size": 1.
-				Removed component "minecraft:item_command_block":
-					field "ticks_per_command": 4
-					field "current_tick_count": 0
-					field "ticking": false
-Changed entity "elder_guardian.json":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:blaze".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.23.
+Changed entity "chicken.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 19 (+0, -1)
-				Removed component "minecraft:can_swim": empty.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:elder_guardian".
+				Unchanged component "minecraft:identifier": field "id": "minecraft:chicken".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+Changed entity "cow.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:cow".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+Changed entity "creeper.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:creeper".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.2.
+Changed entity "ender_crystal.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Added field "component_groups":
+				component group "crystal_exploding":
+					component "minecraft:explode":
+						field "fuseLength": 0
+						field "fuseLit": true
+						field "power": 6
+						field "causesFire": false
+						field "destroyAffectedByGriefing": true
+			Changed field "components":
+				Total component: 5 (+3, -0)
+				Added component "minecraft:fire_immune": true.
+				Added component "minecraft:health":
+					field "value": 1
+					field "max": 1
+				Unchanged component "minecraft:identifier": field "id": "minecraft:ender_crystal".
+				Added component "minecraft:on_hurt":
+					field "event": "minecraft:crystal_explode"
+					field "target": "self"
+			Added field "events":
+				event "minecraft:crystal_explode":
+					field "add": field "component_groups": component group "crystal_exploding"
+					field "remove": empty
 Changed entity "evocation_illager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 21 (+2, -5)
-				Removed component "minecraft:caster": empty.
 				Unchanged component "minecraft:identifier": field "id": "minecraft:evocation_illager".
-				Removed component "minecraft:behavior.attack_spell_goal":
-					field "priority": 4
-					field "attacks":
-						choice:
-							field "attack_type": "circle"
-							field "min_activation_range": 0
-							field "max_activation_range": 5
-							field "summon_type": "minecraft:evocation_fang"
-							field "priority": 1
-							field "circles":
-								spell sequence step:
-									field "radius": 1.5
-									field "delay": 1
-									field "num_entities_spawned": 5
-								spell sequence step:
-									field "radius": 2.5
-									field "delay": 3
-									field "num_entities_spawned": 8
-						choice:
-							field "attack_type": "line"
-							field "min_activation_range": 5
-							field "summon_type": "minecraft:evocation_fang"
-							field "priority": 2
-							field "range": 16
-							field "base_delay": 1
-							field "delay_between_spawns": 1
-				Changed component "minecraft:behavior.avoid_mob_type":
-					Changed field "priority" from 2 to 5.
-				Removed component "minecraft:behavior.casting_spell_goal": field "priority": 1.
-				Added component "minecraft:behavior.send_event":
-					field "priority": 3
-					field "event_choices":
-						choice:
-							field "min_activation_range": 0.0
-							field "max_activation_range": 16.0
-							field "cooldown_time": 5.0
-							field "cast_duration": 3.0
-							field "particle_color": "#FFB38033"
-							field "weight": 3
-							field "filters":
-								filter property "other_with_families": "sheep"
-								filter property "other_with_color": 11
-							field "sequence":
-								event:
-									field "base_delay": 2.0
-									field "event": "wololo"
-				Added component "minecraft:behavior.summon_entity":
-					field "priority": 2
-					field "summon_choices":
-						choice:
-							field "min_activation_range": 0.0
-							field "max_activation_range": 4.0
-							field "cooldown_time": 5.0
-							field "weight": 3
-							field "cast_duration": 2.0
-							field "particle_color": "#FF664D59"
-							field "sequence":
-								spell sequence step:
-									field "shape": "circle"
-									field "target": "self"
-									field "base_delay": 1.0
-									field "delay_per_summon": 0.0
-									field "num_entities_spawned": 5
-									field "entity_type": "minecraft:evocation_fang"
-									field "size": 1.5
-									field "entity_lifespan": 1.1
-								spell sequence step:
-									field "shape": "circle"
-									field "target": "self"
-									field "base_delay": 2.0
-									field "delay_per_summon": 0.0
-									field "num_entities_spawned": 8
-									field "entity_type": "minecraft:evocation_fang"
-									field "size": 2.5
-									field "entity_lifespan": 1.1
-						choice:
-							field "min_activation_range": 5.0
-							field "weight": 3
-							field "cooldown_time": 5.0
-							field "cast_duration": 2.0
-							field "particle_color": "#FF664D59"
-							field "sequence":
-								spell sequence step:
-									field "shape": "line"
-									field "target": "self"
-									field "base_delay": 1.0
-									field "delay_per_summon": 0.5
-									field "num_entities_spawned": 8
-									field "entity_type": "minecraft:evocation_fang"
-									field "size": 16
-									field "entity_lifespan": 1.1
-						choice:
-							field "weight": 1
-							field "cooldown_time": 17.0
-							field "cast_duration": 5.0
-							field "particle_color": "#FFB3B3CC"
-							field "sequence":
-								spell sequence step:
-									field "shape": "circle"
-									field "target": "self"
-									field "base_delay": 5.0
-									field "num_entities_spawned": 3
-									field "entity_type": "minecraft:vex"
-									field "summon_cap": 8
-									field "summon_cap_radius": 16.0
-									field "size": 1.0
-				Removed component "minecraft:behavior.summon_spell_goal":
-					field "priority": 5
-					field "entity_type": "minecraft:vex"
-					field "summon_cap": 8
-					field "mobs_per_summon": 3
-				Removed component "minecraft:behavior.wololo_spell_goal":
-					field "priority": 5
-					field "target_types": entity "minecraft:sheep"
-					field "target_color": "blue"
-					field "change_color": "red"
-					field "range": 16
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+				Changed component "minecraft:behavior.summon_entity":
+					Changed field "summon_choices":
+						Changed choice:
+							Changed field "max_activation_range" from 4.0 to 3.0.
+							Changed field "sequence":
+								Changed spell sequence step:
+									Unchanged field "shape": "circle".
+									Changed field "base_delay" from 2.0 to 0.15.
+						Changed choice:
+							Changed field "min_activation_range" from 5.0 to 3.0.
+							Changed field "sequence":
+								Changed spell sequence step:
+									Unchanged field "shape": "line".
+									Changed field "delay_per_summon" from 0.5 to 0.05.
+									Changed field "num_entities_spawned" from 8 to 16.
+									Changed field "size" from 16 to 20.
 Changed entity "ghast.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 18 (+1, -1)
-				Removed component "minecraft:float_wander": field "priority": 2.
 				Unchanged component "minecraft:identifier": field "id": "minecraft:ghast".
-				Added component "minecraft:behavior.float_wander": field "priority": 2.
-Changed entity "guardian.json":
+				Changed component "minecraft:movement":
+					Removed field "max": 0.1.
+Changed entity "horse.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 20 (+0, -1)
-				Removed component "minecraft:can_swim": empty.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:guardian".
+			Changed field "component_groups":
+				Changed component group "minecraft:horse_saddled":
+					Total component: 4 (+1, -0)
+					Added component "minecraft:behavior.player_ride_tamed": empty.
+				Changed component group "minecraft:horse_tamed":
+					Total component: 5 (+0, -1)
+					Removed component "minecraft:behavior.player_ride_tamed": empty.
 Changed entity "husk.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:zombie_husk_adult":
+					Changed component "minecraft:movement":
+						Removed field "max": 0.23.
+				Changed component group "minecraft:zombie_husk_baby":
+					Changed component "minecraft:movement":
+						Removed field "max": 0.35.
+Changed entity "llama.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:husk".
-				Changed component "minecraft:navigation.walk":
-					Changed field "can_open_doors" from false to true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:llama".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
 Changed entity "magma_cube.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -187,256 +125,167 @@ Changed entity "magma_cube.json":
 				Changed component group "minecraft:slime_aggressive":
 					Changed component "minecraft:movement.jump":
 						Changed field "jump_delay":
-							Changed range item 0 from 0.16 to 0.32.
-							Changed range item 1 from 0.5 to 1.0.
+							Changed range item 0 from 0.32 to 0.667.
+							Changed range item 1 from 1.0 to 2.0.
 				Changed component group "minecraft:slime_calm":
 					Changed component "minecraft:movement.jump":
 						Changed field "jump_delay":
-							Changed range item 0 from 0.5 to 1.0.
-							Changed range item 1 from 1.5 to 3.0.
+							Changed range item 0 from 1.0 to 2.0.
+							Changed range item 1 from 3.0 to 6.0.
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:magma_cube".
+				Changed component "minecraft:movement.jump":
+					Changed field "jump_delay":
+						Changed range item 0 from 0.5 to 2.0.
+						Changed range item 1 from 1.5 to 6.0.
 Changed entity "mooshroom.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:cow_adult":
-					Changed component "minecraft:loot":
-						Changed field "table" from "loot_tables/entities/cow.json" to "loot_tables/entities/mooshroom.json".
-Changed entity "sheep.json":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:mooshroom".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+Changed entity "mule.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 14 (+1, -0)
-				Added component group "minecraft:sheep_red": component "minecraft:color": field "value": 14.
-			Changed field "events":
-				Total event: 8 (+1, -0)
-				Added event "wololo": field "add": field "component_groups": component group "minecraft:sheep_red".
+				Changed component group "minecraft:mule_saddled":
+					Total component: 4 (+1, -0)
+					Added component "minecraft:behavior.player_ride_tamed": empty.
+				Changed component group "minecraft:mule_tamed":
+					Total component: 5 (+0, -1)
+					Removed component "minecraft:behavior.player_ride_tamed": empty.
+Changed entity "ocelot.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:ocelot".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.3.
+Changed entity "pig.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:pig".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+Changed entity "player.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:player".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+Changed entity "rabbit.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:rabbit".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.3.
+Changed entity "sheep.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:sheep".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+Changed entity "skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeleton".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.25.
 Changed entity "slime.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
 				Changed component group "minecraft:slime_small":
 					Changed component "minecraft:movement":
-						Changed field "value" from 0.3 to 0.6.
+						Changed field "value" from 0.6 to 0.3.
+Changed entity "small_fireball.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:small_fireball".
+				Changed component "minecraft:projectile":
+					Changed field "onHit":
+						Changed field "impact_damage":
+							Changed field "semirandomdiffdamage" from true to false.
+Changed entity "squid.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:squid".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+Changed entity "stray.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:stray".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.25.
 Changed entity "vex.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Unchanged component "minecraft:identifier": field "id": "minecraft:vex".
-				Changed component "minecraft:type_family":
-					Changed field "family":
-						Total family: 2 (+1, -0)
-						Added family "monster".
+				Changed component "minecraft:movement":
+					Removed field "max": 1.0.
 Changed entity "villager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Total component group: 18 (+1, -0)
-				Changed component group "behavior_peasant":
-					Changed component "minecraft:shareables":
-						Changed field "items":
-							Total item: 7 (+2, -0)
-							Added item:
-								field "item": "minecraft:wheat_seeds"
-								field "want_amount": 64
-								field "surplus_amount": 64
-							Added item:
-								field "item": "minecraft:beetroot_seeds"
-								field "want_amount": 64
-								field "surplus_amount": 64
-				Added component group "cartographer":
-					component "minecraft:trade_table":
-						field "display_name": "entity.villager.cartographer"
-						field "table": "trading/cartographer_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family "cartographer"
-							family "villager"
-					component "minecraft:variant": field "value": 1
-			Changed field "events":
-				Total event: 13 (+1, -0)
-				Changed event "minecraft:entity_born":
-					Changed field "sequence":
-						Changed sequence item 1:
-							Changed field "randomize":
-								Total randomize item: 12 (+1, -0)
-								Added randomize item:
-									field "weight": 20
-									field "add":
-										field "component_groups":
-											component group "behavior_non_peasant"
-											component group "cartographer"
-				Changed event "minecraft:entity_spawned":
-					Changed field "sequence":
-						Changed sequence item 1:
-							Changed field "randomize":
-								Total randomize item: 12 (+1, -0)
-								Added randomize item:
-									field "weight": 20
-									field "add":
-										field "component_groups":
-											component group "behavior_non_peasant"
-											component group "cartographer"
-				Changed event "minecraft:entity_transformed":
-					Changed field "sequence":
-						Total sequence item: 14 (+1, -0)
-						Changed sequence item 7:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 2 (+1, -1)
-									Added component group "cartographer".
-									Removed component group "cleric".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "cleric" to "cartographer".
-						Changed sequence item 8:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 2 (+1, -1)
-									Removed component group "armorer".
-									Added component group "cleric".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "armorer" to "cleric".
-						Changed sequence item 9:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 2 (+1, -1)
-									Added component group "armorer".
-									Removed component group "weaponsmith".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "weaponsmith" to "armorer".
-						Changed sequence item 10:
-							Changed field "add":
-								Changed field "component_groups":
-									Changed component group from "toolsmith" to "weaponsmith".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "toolsmith" to "weaponsmith".
-						Changed sequence item 11:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 2 (+1, -1)
-									Removed component group "butcher".
-									Added component group "toolsmith".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "butcher" to "toolsmith".
-						Changed sequence item 12:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 2 (+1, -1)
-									Added component group "butcher".
-									Removed component group "leatherworker".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "leatherworker" to "butcher".
-						Added sequence item 13:
-							field "add":
-								field "component_groups":
-									component group "behavior_non_peasant"
-									component group "leatherworker"
-							field "filters": filter property "other_with_families": "leatherworker"
-				Added event "minecraft:spawn_cartographer":
-					field "add":
-						field "component_groups":
-							component group "adult"
-							component group "behavior_non_peasant"
-							component group "cartographer"
-					field "remove": field "component_groups": component group "baby"
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:villager".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
+Changed entity "vindication_illager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:vindicator".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.35.
 Changed entity "wither.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 23 (+1, -0)
-				Added component "minecraft:can_fly": empty.
 				Unchanged component "minecraft:identifier": field "id": "minecraft:wither".
-Changed entity "zombie.json":
+				Changed component "minecraft:movement":
+					Removed field "max": 0.25.
+Changed entity "wither_skeleton.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie".
-				Changed component "minecraft:navigation.walk":
-					Added field "can_open_doors": true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:wither_skeleton".
+				Changed component "minecraft:movement":
+					Removed field "max": 0.25.
+Changed entity "zombie.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:zombie_adult":
+					Changed component "minecraft:movement":
+						Removed field "max": 0.23.
+				Changed component group "minecraft:zombie_baby":
+					Changed component "minecraft:movement":
+						Removed field "max": 0.35.
 Changed entity "zombie_pigman.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_pigman".
-				Changed component "minecraft:navigation.walk":
-					Added field "can_pass_doors": true.
-					Added field "can_open_doors": true.
+				Changed component "minecraft:movement":
+					Removed field "max": 0.5.
 Changed entity "zombie_villager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 17 (+1, -0)
-				Added component group "cartographer":
-					component "minecraft:type_family":
-						field "family":
-							family "cartographer"
-							family "monster"
-							family "undead"
-							family "zombie"
-							family "zombie_villager"
-					component "minecraft:variant": field "value": 1
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_villager".
-				Changed component "minecraft:navigation.walk":
-					Added field "can_pass_doors": true.
-					Added field "can_open_doors": true.
-			Changed field "events":
-				Changed event "minecraft:entity_spawned":
-					Changed field "sequence":
-						Changed sequence item 1:
-							Changed field "randomize":
-								Total randomize item: 12 (+1, -0)
-								Added randomize item:
-									field "weight": 20
-									field "add": field "component_groups": component group "cartographer"
-				Changed event "minecraft:entity_transformed":
-					Changed field "sequence":
-						Total sequence item: 14 (+1, -0)
-						Changed sequence item 7:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Added component group "cartographer".
-									Removed component group "cleric".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "cleric" to "cartographer".
-						Changed sequence item 8:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Removed component group "armorer".
-									Added component group "cleric".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "armorer" to "cleric".
-						Changed sequence item 9:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Added component group "armorer".
-									Removed component group "weaponsmith".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "weaponsmith" to "armorer".
-						Changed sequence item 10:
-							Changed field "add":
-								Changed field "component_groups":
-									Changed component group from "toolsmith" to "weaponsmith".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "toolsmith" to "weaponsmith".
-						Changed sequence item 11:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Removed component group "butcher".
-									Added component group "toolsmith".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "butcher" to "toolsmith".
-						Changed sequence item 12:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Added component group "butcher".
-									Removed component group "leatherworker".
-							Changed field "filters":
-								Changed filter property "other_with_families" from "leatherworker" to "butcher".
-						Added sequence item 13:
-							field "add": field "component_groups": component group "leatherworker"
-							field "filters": filter property "other_with_families": "leatherworker"
+				Changed component group "adult":
+					Changed component "minecraft:movement":
+						Removed field "max": 0.23.
+				Changed component group "baby":
+					Changed component "minecraft:movement":
+						Removed field "max": 0.35.

@@ -1,12 +1,101 @@
-Difference of "entities_client" between "1.15.0.55" (beta of "1.16.0") and "1.15.0.56" (beta of "1.16.0").
+Difference of "entities_client" between "1.15.0.56" (beta of "1.16.0") and "1.16.0.51" (beta of "1.16.0").
 
-Changed entity "bee.entity.json":
+Total entity: 138 (+2, -0)
+Added entity "hoglin.entity.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group animation controller "look_at_target": "controller.animation.hoglin.look_at_target"
+					animation controller group animation controller "walk": "controller.animation.hoglin.walk"
+					animation controller group animation controller "attack": "controller.animation.hoglin.attack"
+				field "animations":
+					animation "attack": "animation.hoglin.attack"
+					animation "look_at_target": "animation.hoglin.look_at_target"
+					animation "walk": "animation.hoglin.walk"
+				field "geometry": geometry "default": "geometry.hoglin"
+				field "identifier": "minecraft:hoglin"
+				field "materials": materials "default": "hoglin"
+				field "render_controllers": render controller "controller.render.hoglin"
+				field "scripts":
+					field "pre_animation":
+						script "variable.tcos_right_side = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
+						script "variable.tcos_left_side = -variable.tcos_right_side;"
+						script "variable.attack_head_rot =  Math.sin(variable.attack_time * 180.0) * -37.3;"
+				field "spawn_egg":
+					field "base_color": "#ffb300"
+					field "overlay_color": "#959b9b"
+				field "textures": texture "default": "textures/entity/hoglin/hoglin"
+Added entity "piglin.entity.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group animation controller "humanoid_baby_big_head": "controller.animation.humanoid.baby_big_head"
+					animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
+					animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
+					animation controller group animation controller "move": "controller.animation.piglin.move"
+					animation controller group animation controller "riding": "controller.animation.humanoid.riding"
+					animation controller group animation controller "attack": "controller.animation.humanoid.attack"
+					animation controller group animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs"
+					animation controller group animation controller "bob": "controller.animation.humanoid.bob"
+					animation controller group animation controller "piglin_attack": "controller.animation.piglin.attack"
+					animation controller group animation controller "piglin_celebrate_hunt": "controller.animation.piglin.celebrate"
+				field "animations":
+					animation "attack.rotations": "animation.humanoid.attack.rotations"
+					animation "bob": "animation.humanoid.bob"
+					animation "celebrate_hunt": "animation.piglin.celebrate_hunt"
+					animation "celebrate_hunt_special": "animation.piglin.celebrate_hunt_special"
+					animation "crossbow_charge": "animation.piglin.crossbow.charge"
+					animation "crossbow_hold": "animation.piglin.crossbow.hold"
+					animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs"
+					animation "holding": "animation.humanoid.holding"
+					animation "humanoid_base_pose": "animation.humanoid.base_pose"
+					animation "humanoid_big_head": "animation.humanoid.big_head"
+					animation "look_at_target_default": "animation.humanoid.look_at_target.default"
+					animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding"
+					animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming"
+					animation "melee_attack": "animation.piglin.sword.attack"
+					animation "move": "animation.piglin.move"
+					animation "riding.arms": "animation.humanoid.riding.arms"
+					animation "riding.legs": "animation.humanoid.riding.legs"
+				field "enable_attachables": true
+				field "geometry": geometry "default": "geometry.piglin"
+				field "identifier": "minecraft:piglin"
+				field "materials": materials "default": "piglin"
+				field "render_controllers": render controller "controller.render.piglin"
+				field "scripts":
+					field "pre_animation":
+						script "variable.tcos_right_side = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
+						script "variable.tcos_left_side = -variable.tcos_right_side;"
+						script "variable.attack_body_rot_y = Math.sin(Math.sqrt(variable.attack_time) * 360.0) * 11.46;"
+						script "variable.cos_attack_body_rot_y = Math.cos(variable.attack_body_rot_y);"
+						script "variable.sin_attack_body_rot_y = Math.sin(variable.attack_body_rot_y);"
+						script "variable.internal_swim_pos = Math.mod(query.modified_distance_moved, 26.0);"
+						script "variable.attack = Math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3;"
+						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
+						script "variable.z_bob = Math.cos(query.life_time * 103.13244) * 2.865 + 2.865;"
+						script "variable.x_bob = Math.sin(query.life_time * 76.776372) * 2.865;"
+				field "spawn_egg":
+					field "base_color": "#532f36"
+					field "overlay_color": "#ad6d2b"
+				field "textures": texture "default": "textures/entity/piglin/piglin"
+Changed entity "zombie_pigman.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Unchanged field "identifier": "minecraft:bee".
-				Changed field "spawn_egg":
-					Removed field "overlay_color": "#43241B".
-					Removed field "base_color": "#EDC343".
-					Added field "texture": "egg_bee".
-					Added field "texture_index": 0.
+				Changed field "animation_controllers":
+					Total animation controller group: 16 (+1, -1)
+					Removed animation controller group animation controller "swimming": "controller.animation.zombie.swimming".
+					Added animation controller group animation controller "swimming": "controller.animation.humanoid.swimming".
+				Changed field "animations":
+					Changed animation "swimming" from "animation.zombie.swimming" to "animation.humanoid.swimming".
+				Changed field "geometry":
+					Total geometry: 1 (+0, -1)
+					Removed geometry "baby": "geometry.pigzombie.baby.v1.8".
+					Changed geometry "default" from "geometry.pigzombie.v1.8" to "geometry.piglin".
+				Unchanged field "identifier": "minecraft:zombie_pigman".
+				Changed field "textures":
+					Changed texture "default" from "textures/entity/pig/pigzombie" to "textures/entity/piglin/zombie_piglin".

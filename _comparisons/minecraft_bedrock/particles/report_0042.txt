@@ -1,67 +1,39 @@
-Difference of "particles" between "1.18.30.20" (beta of "1.18.30") and "1.18.30.22" (beta of "1.18.30").
+Difference of "particles" between "1.18.30.30" (beta of "1.18.30") and "1.18.30.32" (beta of "1.18.30").
 
-Total particle: 137 (+2, -0)
-Added particle "sculk_charge.json":
+Total particle: 138 (+1, -0)
+Added particle "warden_dig.particle.json":
 	resource pack "experimental":
 		field "format_version": "1.10.0"
 		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:sculk_charge_particle"
+				field "identifier": "minecraft:warden_dig"
 				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/sculk_charge"
+					field "material": "particles_opaque"
+					field "texture": "atlas.terrain"
 			field "components":
-				field "minecraft:emitter_initialization": field "creation_expression": "variable.size = Math.random(0.15, 0.3);"
-				field "minecraft:emitter_lifetime_once": empty
-				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x", "variable.direction.y", "variable.direction.z"]
+				field "minecraft:emitter_lifetime_once": field "active_time": 4.5
+				field "minecraft:emitter_rate_steady":
+					field "spawn_rate": "Math.random(550, 650)"
+					field "max_particles": 2000
+				field "minecraft:emitter_shape_point":
+					field "offset": ["Math.random(-0.7, 0.7)", 0, "Math.random(-0.7, 0.7)"]
+					field "direction": ["Math.random(-0.5,0.5)", 1, "Math.random(-0.5,0.5)"]
 				field "minecraft:particle_appearance_billboard":
-					field "size": ["variable.size", "variable.size"]
+					field "size": ["variable.particle_random_1 * 0.0375 + 0.0375", "variable.particle_random_1 * 0.0375 + 0.0375"]
 					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_width": 16
-						field "texture_height": 112
-						field "flipbook":
-							field "base_UV": [0, 0]
-							field "size_UV": [16, 16]
-							field "step_UV": [0, 16]
-							field "max_frame": 7
-							field "stretch_to_lifetime": true
-							field "loop": false
+						field "texture_width": 1
+						field "texture_height": 1
+						field "uv": ["variable.dig_particle_texture_coordinate.u + (variable.dig_particle_texture_size.u/4) * (variable.particle_random_1*3)", "variable.dig_particle_texture_coordinate.v + (variable.dig_particle_texture_size.v/4) * (variable.particle_random_2*3)"]
+						field "uv_size": ["variable.dig_particle_texture_size.u/4", "variable.dig_particle_texture_size.v/4"]
 				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_appearance_tinting": field "color": color [1.0, 1.0, 1.0, 1.0]
-				field "minecraft:particle_initial_speed": 0
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.4, 1.0)"
-				field "minecraft:particle_motion_parametric": field "rotation": "variable.rotation"
-Added particle "sculk_charge_pop.json":
-	resource pack "experimental":
-		field "format_version": "1.10.0"
-		field "particle_effect":
-			field "description":
-				field "identifier": "minecraft:sculk_charge_pop_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/sculk_charge_pop"
-			field "components":
-				field "minecraft:emitter_initialization": field "creation_expression": "variable.size = Math.random(0.1, 0.2);"
-				field "minecraft:emitter_lifetime_once": empty
-				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x", "variable.direction.y", "variable.direction.z"]
-				field "minecraft:particle_appearance_billboard":
-					field "size": ["variable.size", "variable.size"]
-					field "facing_camera_mode": "lookat_xyz"
-					field "uv":
-						field "texture_width": 16
-						field "texture_height": 64
-						field "flipbook":
-							field "base_UV": [0, 0]
-							field "size_UV": [16, 16]
-							field "step_UV": [0, 16]
-							field "max_frame": 4
-							field "stretch_to_lifetime": true
-							field "loop": false
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_appearance_tinting": field "color": color [1.0, 1.0, 1.0, 1.0]
-				field "minecraft:particle_initial_speed": 0.7
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.3, 0.5)"
-				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, 0, 0]
+				field "minecraft:particle_appearance_tinting": field "color": color ["Math.clamp(variable.dig_particle_color.r, 0, 1)", "Math.clamp(variable.dig_particle_color.g, 0, 1)", "Math.clamp(variable.dig_particle_color.b, 0, 1)", "Math.clamp(variable.dig_particle_color.a, 0, 1)"]
+				field "minecraft:particle_initial_speed": "Math.random(3.0, 4.5)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.1, 1.0)"
+				field "minecraft:particle_motion_collision":
+					field "collision_drag": 8
+					field "coefficient_of_restitution": 0.2
+					field "collision_radius": 0.01
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, -9.8, 0]
+					field "linear_drag_coefficient": 0.5

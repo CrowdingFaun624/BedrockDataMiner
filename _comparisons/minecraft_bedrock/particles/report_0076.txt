@@ -1,14 +1,84 @@
-Difference of "particles" between "1.21.50.24" (beta of "1.21.50") and "1.21.50.25" (beta of "1.21.50").
+Difference of "particles" between "1.21.50.25" (beta of "1.21.50") and "1.21.50.26" (beta of "1.21.50").
 
-Moved particle from "creaking_teardown_body.json" to "creaking_crumble_body.json".
-Changed particle "creaking_crumble_body.json":
-	Changed resource pack "core":
-		Changed field "particle_effect":
-			Changed field "description":
-				Changed field "identifier" from "minecraft:creaking_teardown_body" to "minecraft:creaking_crumble_body".
-Moved particle from "creaking_teardown_head.json" to "creaking_crumble_head.json".
-Changed particle "creaking_crumble_head.json":
-	Changed resource pack "core":
-		Changed field "particle_effect":
-			Changed field "description":
-				Changed field "identifier" from "minecraft:creaking_teardown_head" to "minecraft:creaking_crumble_head".
+Total particle: 176 (+3, -0)
+Added particle "eyeblossom_close.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:eyeblossom_close"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/pixel"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_point": empty
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.0375, 0.0375]
+					field "facing_camera_mode": "lookat_xyz"
+				field "minecraft:particle_appearance_tinting": field "color": color ["95.0/255.0 * math.min(math.random(0.875, 1.125), 1.0)", "95.0/255.0 * math.min(math.random(0.875, 1.125), 1.0)", "95.0/255.0 * math.min(math.random(0.875, 1.125), 1.0)", 1.0]
+				field "minecraft:particle_initial_speed": ["math.random(-0.5, 0.5)", "math.random(1.0, 2.0)", "math.random(-0.5, 0.5)"]
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(0.0, 1.0) + 0.5"
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, 0, 0]
+Added particle "eyeblossom_open.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:eyeblossom_open"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/pixel"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_point": empty
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.0375, 0.0375]
+					field "facing_camera_mode": "lookat_xyz"
+				field "minecraft:particle_appearance_tinting": field "color": color ["252.0/255.0 * math.min(math.random(0.875, 1.125), 1.0)", "120.0/255.0 * math.min(math.random(0.875, 1.125), 1.0)", "18.0/255.0 * math.min(math.random(0.875, 1.125), 1.0)", 1.0]
+				field "minecraft:particle_initial_speed": ["math.random(-0.5, 0.5)", "math.random(1.0, 2.0)", "math.random(-0.5, 0.5)"]
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(0.0, 1.0) + 0.5"
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, 0, 0]
+Added particle "pale_oak_leaves_particle.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:pale_oak_leaves_particle"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/pale_oak_leaves_atlas"
+			field "components":
+				field "minecraft:emitter_initialization": field "creation_expression": "v.fall_acc = -0.3; v.wind_acc = 10; v.curve_len = 15;"
+				field "minecraft:emitter_lifetime_expression":
+					field "activation_expression": 1
+					field "expiration_expression": 0
+				field "minecraft:emitter_rate_manual": field "max_particles": 2000
+				field "minecraft:emitter_shape_box":
+					field "offset": [0.5, -0.075, 0.5]
+					field "half_dimensions": [0.5, 0.0, 0.5]
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["v.particle_random_1 > 0.5 ? 0.1 : 0.15", "v.particle_random_1 > 0.5 ? 0.1 : 0.15"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 28
+						field "texture_height": 21
+						field "uv": ["math.floor(v.particle_random_1 * 4) * 7", "math.floor(v.particle_random_2 * 3) * 7"]
+						field "uv_size": [7, 7]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color [1, 1, 1, 1]
+				field "minecraft:particle_initial_speed": [0.0, -0.021, 0.0]
+				field "minecraft:particle_initial_spin":
+					field "rotation": "math.random(0, 360)"
+					field "rotation_rate": "math.random(-30, 30)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 15
+				field "minecraft:particle_motion_collision":
+					field "collision_drag": 10
+					field "collision_radius": 0.075
+					field "expire_on_contact": true
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": ["math.cos((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)", "v.fall_acc", "math.sin((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)"]
+					field "rotation_acceleration": "v.particle_random_4 > 0.5 ? -5 : 5"

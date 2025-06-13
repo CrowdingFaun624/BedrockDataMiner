@@ -1,8 +1,11 @@
-Difference of "attachables" between "1.18.2" and "1.18.10.20" (beta of "1.18.10").
+Difference of "attachables" between "1.18.10.20" (beta of "1.18.10") and "1.18.10.21" (beta of "1.18.10").
 
-Changed attachable "bow.json":
+Changed attachable "shield.entity.json":
 	Changed field "minecraft:attachable":
 		Changed field "description":
-			Unchanged field "identifier": "minecraft:bow".
+			Unchanged field "identifier": "minecraft:shield".
 			Changed field "scripts":
-				Added situation "pre_animation": script "variable.charge_amount = math.clamp((query.main_hand_item_max_duration - (query.main_hand_item_use_duration - query.frame_alpha + 1.0)) / 10.0, 0.0, 1.0f);".
+				Changed situation "pre_animation":
+					Total script: 3 (+2, -0)
+					Added script "variable.is_blocking_main_hand = query.blocking && (query.get_equipped_item_name('off_hand') != 'shield') && (query.get_equipped_item_name == 'shield');".
+					Added script "variable.is_blocking_off_hand = query.blocking && (query.get_equipped_item_name('off_hand') == 'shield');".

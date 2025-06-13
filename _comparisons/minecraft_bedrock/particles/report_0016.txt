@@ -1,65 +1,16 @@
-Difference of "particles" between "1.14.60" and "1.15.0.51" (beta of "1.16.0").
+Difference of "particles" between "1.15.0.51" (beta of "1.16.0") and "1.15.0.53" (beta of "1.16.0").
 
-Changed particle "evaporation_elephant_toothpaste.json":
-	Total resource pack: 2 (+1, -0)
-	Added resource pack "education":
-		field "format_version": "1.10.0"
-		field "particle_effect":
-			field "description":
-				field "identifier": "minecraft:elephant_tooth_paste_vapor_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/elephant_toothpaste"
-			field "components":
-				field "minecraft:emitter_lifetime_once": field "active_time": 5
-				field "minecraft:emitter_rate_steady":
-					field "spawn_rate": 5
-					field "max_particles": 25
-				field "minecraft:emitter_shape_custom":
-					field "offset": [0, 0, 0]
-					field "direction": [0.0, 1.0, 0.0]
-				field "minecraft:particle_appearance_billboard":
-					field "size": ["variable.size", "variable.size"]
-					field "facing_camera_mode": "lookat_xyz"
-					field "uv":
-						field "texture_width": 1
-						field "texture_height": 12
-						field "uv": [0, 0]
-						field "uv_size": [1, 1]
-						field "flipbook":
-							field "base_UV": [0, 11]
-							field "max_frame": 12
-							field "stretch_to_lifetime": true
-							field "step_UV": [0, -1]
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_appearance_tinting":
-					field "color":
-						field "gradient":
-							color "#ffb900"
-							color "#ffeebf"
-						field "interpolant": "variable.particle_age / variable.particle_lifetime"
-				field "minecraft:particle_initial_speed": "Math.random(2.0, 6.0)"
-				field "minecraft:particle_initialization": field "per_render_expression": "variable.size = 0.75 * math.pow(1.0-(variable.particle_age / variable.particle_lifetime), 0.08);"
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "5"
-				field "minecraft:particle_motion_collision": field "collision_radius": 0.25
-				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["Math.random(-0.5, 0.5)", -9.8, "Math.random(-0.5, 0.5)"]
-Changed particle "explosion_eyeofender_death.json":
+Changed particle "mobspell.json":
 	Changed resource pack "core":
 		Changed field "particle_effect":
 			Changed field "components":
-				Changed field "minecraft:particle_appearance_tinting":
-					Changed field "color":
-						Total color: 1 (+1, -1)
-						Removed color ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0.0].
-						Added color ["variable.particle_random_1 * 0.6 + 0.4", "(variable.particle_random_1 * 0.6 + 0.4) * 0.3", "(variable.particle_random_1 * 0.6 + 0.4) * 0.9", 1.0].
-				Changed field "minecraft:particle_initial_speed":
-					Changed vector item 0 from "variable.velocity.x * 20 + Math.random(-1, 1)" to 0.
-					Changed vector item 1 from "variable.velocity.y * 20 + Math.random(-1, 1)" to 0.
-					Changed vector item 2 from "variable.velocity.z * 20 + Math.random(-1, 1)" to 0.
-				Changed field "minecraft:particle_lifetime_expression":
-					Changed field "max_lifetime" from "4 / Math.Random(1, 5) + 0.1" to "3 / Math.Random(1, 5) + 0.1".
-				Changed field "minecraft:particle_motion_dynamic":
-					Changed field "linear_acceleration":
-						Changed vector item 0 from 0 to "variable.acceleration.x * 15".
-						Changed vector item 1 from 2 to "variable.acceleration.y".
-						Changed vector item 2 from 0 to "variable.acceleration.z * 15".
+				Changed field "minecraft:particle_motion_collision":
+					Changed field "collision_radius" from 0.5 to 0.01.
+					Added field "expire_on_contact": true.
+Changed particle "splashpotionspell.json":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:particle_motion_collision":
+					Changed field "collision_radius" from 0.5 to 0.01.
+					Added field "expire_on_contact": true.

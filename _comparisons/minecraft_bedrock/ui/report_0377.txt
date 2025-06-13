@@ -1,825 +1,195 @@
-Difference of "ui" between "1.21.50.28" (beta of "1.21.50") and "1.21.50.29" (beta of "1.21.50").
+Difference of "ui" between "1.21.62" and "1.21.70.20" (beta of "1.21.70").
 
-Changed namespace "play":
-	Total element: 295 (+1, -3)
-	Changed element "cloud_upload_and_edit_world_stack_panel":
+Total namespace: 227 (+2, -0)
+Changed namespace "coin_purchase":
+	Changed element "bonus_coins_stack":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "cloud@play.cloud_upload_button":
-					Changed field "bindings":
-						Total binding: 2 (+0, -1)
-						Removed binding:
-							field "binding_type": "collection"
-							field "binding_collection_name": "local_worlds"
-							field "binding_name": "(not #is_ownership_verification_in_progress)"
-							field "binding_name_override": "#enabled"
-	Added element "crossplatform_disabled_panel@play.dark_label_background":
-		field "size": ["100%", "100%c + 8px"]
-		field "bindings":
-			binding:
-				field "binding_name": "(not #cross_platform_enabled)"
-				field "binding_name_override": "#visible"
-		field "controls":
-			control:
-				element "disable_text":
-					field "type": "label"
-					field "color": "$dark_button_default_text_color"
-					field "size": ["100% - 8px", "default"]
-					field "layer": 1
-					field "shadow": false
-					field "font_type": "smooth"
-					field "text": "$cross_platform_information_text"
-	Removed element "crossplatform_disabled_panel@play.information_panel":
-		field "bindings":
-			binding:
-				field "binding_name": "(not #cross_platform_enabled)"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$information_label_font": "smooth"
-			variable "$information_panel_label_text": "$cross_platform_information_text"
-	Changed element "friends_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 16 (+1, -1)
-						Removed control:
-							element "friends_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-								field "ignored": "(not $is_realms_enabled)"
-								field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.friends"
-						Added control:
-							element "friends_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-								field "ignored": "(not $is_realms_enabled)"
-								field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.friends"
-	Changed element "local_world_edit_button@common_buttons.dark_glyph_button":
-		Changed field "bindings":
-			Total binding: 1 (+0, -1)
-			Removed binding:
-				field "binding_type": "collection"
-				field "binding_collection_name": "local_worlds"
-				field "binding_name": "(not #is_ownership_verification_in_progress)"
-				field "binding_name_override": "#enabled"
-	Changed element "local_world_item":
-		field "type": "panel"
-		field "anchor_from": "top_left"
-		field "anchor_to": "top_left"
-		field "layer": 1
-		field "size": ["100%", 29]
-		field "controls":
-			control:
-				element "header_button_panel@play.header_button_panel":
-					field "layer": 1
-					field "size": ["100%", "100% + 1px"]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "$variables":
-						variable "$primary_header_button": "play.local_world_item_button"
-						variable "$secondary_header_button": "play.cloud_upload_and_edit_world_stack_panel"
-						variable "$secondary_visible": "$local_world_edit_button_visible"
-			control element "signin_in_progress_panel@play.ownership_verification_in_progress_panel": empty
-		field "$variables": variable "$local_world_edit_button_visible|default": true
-		field "type": "stack_panel"
-		field "anchor_from": "top_left"
-		field "anchor_to": "top_left"
-		field "layer": 1
-		field "size": ["100%", 29]
-		field "orientation": "horizontal"
-		field "controls":
-			control:
-				element "header_button_panel@play.header_button_panel":
-					field "layer": 1
-					field "size": ["100%", "100% + 1px"]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "$variables":
-						variable "$primary_header_button": "play.local_world_item_button"
-						variable "$secondary_header_button": "play.cloud_upload_and_edit_world_stack_panel"
-						variable "$secondary_visible": "$local_world_edit_button_visible"
-		field "$variables": variable "$local_world_edit_button_visible|default": true
-	Changed element "network_world_item":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 1 (+0, -1)
-			Removed control:
-				element "tts_border@common.tts_activate_sibling":
-					field "size": ["100%sm", "100%sm - 1px"]
-					field "bindings":
-						binding:
-							field "binding_name": "(not #cross_platform_enabled)"
-							field "binding_name_override": "#visible"
-					field "offset": [0, -2]
-	Removed element "ownership_verification_in_progress_content":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100%", "100%"]
-		field "controls":
-			control element "top_padding@common.empty_panel": field "size": ["100%", 4]
-			control:
-				element "loading_bar_panel":
-					field "type": "panel"
-					field "size": ["100%", "fill"]
-					field "controls":
-						control:
-							element "loading_bar_animation@progress.progress_loading_bars":
-								field "size": ["75%", "75%"]
-								field "offset": [0, 1]
-								field "anchor_to": "top_middle"
-								field "anchor_from": "top_middle"
-								field "bindings": empty
-			control element "mid_padding@common.empty_panel": field "size": ["100%", 2]
-			control:
-				element "loading_label":
-					field "type": "label"
-					field "size": ["100%", "fill"]
-					field "text": "#ownership_verification_state_text"
-					field "text_alignment": "center"
-					field "color": "$f_color_format"
-					field "bindings": binding field "binding_name": "#ownership_verification_state_text"
-			control element "bottom_padding@common.empty_panel": field "size": ["100%", 2]
-	Removed element "ownership_verification_in_progress_panel":
-		field "type": "image"
-		field "layer": 50
-		field "texture": "textures/ui/DarkBannerNoBorder"
-		field "color": "$0_color_format"
-		field "alpha": 0.7
-		field "controls": control element "ownership_verification_in_progress_content@play.ownership_verification_in_progress_content": empty
-		field "bindings":
-			binding:
-				field "binding_type": "collection"
-				field "binding_collection_name": "local_worlds"
-				field "binding_name": "#is_ownership_verification_in_progress"
-				field "binding_name_override": "#visible"
-	Changed element "realms_world_item":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 4 (+1, -1)
-			Removed control:
-				element "realms_button_panel":
-					field "type": "panel"
-					field "size": ["fill", "100% + 1px"]
-					field "controls":
-						control:
-							element "realms_world_item_button@play.realms_world_item_button":
-								field "size": ["100%", "100%"]
-								field "layer": 1
-						control:
-							element "tts_border@common.tts_activate_sibling":
-								field "size": ["100%sm", "100%sm - 1px"]
-								field "bindings":
-									binding:
-										field "binding_name": "(not #cross_platform_enabled)"
-										field "binding_name_override": "#visible"
-								field "offset": [0, -2]
-			Added control:
-				element "realms_world_item_button@play.realms_world_item_button":
-					field "size": ["fill", "100% + 1px"]
-					field "layer": 1
-	Changed element "server_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 6 (+1, -1)
-						Removed control element "servers_crossplatform_disabled_panel@play.crossplatform_disabled_panel": field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.servers".
-						Added control element "servers_crossplatform_disabled_panel@play.crossplatform_disabled_panel": field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.servers".
-	Changed element "servers_content_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 5 (+0, -2)
-			Removed control element "more_servers_divider@common.horizontal_divider": empty.
-			Removed control element "more_servers_panel@play.manually_added_servers_scrolling_content": empty.
-	Changed element "worlds_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 24 (+1, -1)
-			Removed control:
-				element "worlds_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-					field "ignored": "(not $is_realms_enabled)"
-					field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.realms"
-			Added control:
-				element "worlds_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-					field "ignored": "(not $is_realms_enabled)"
-					field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.realms"
-Changed namespace "start":
-	Total element: 75 (+3, -26)
-	Removed element "ai_lesson_crafter_button@common_buttons.light_content_button":
-		field "size": ["100% - 2px", "100% - 2px"]
-		field "ignored": "(not $education_edition)"
-		field "$variables":
-			variable "$pressed_button_name": "button.ai_lesson_crafter"
-			variable "$button_content": "start.edu_ai_lesson_crafter_button_content"
-	Removed element "alex_icon":
-		field "type": "image"
-		field "texture": "textures/ui/icon_alex"
-		field "layer": 1
-		field "size": [16, 16]
-	Removed element "anim_main_buttons_panel_alpha":
-		field "anim_type": "alpha"
-		field "easing": "linear"
-		field "duration": 0.2
-		field "from": 0
-		field "to": 1
-		field "play_event": "anim_main_buttons_panel_alpha_play_event"
-	Removed element "anim_new_player_buttons_panel_alpha":
-		field "anim_type": "alpha"
-		field "easing": "linear"
-		field "duration": 0.2
-		field "from": 1
-		field "to": 0
-		field "play_event": "anim_new_player_buttons_panel_alpha_play_event"
-		field "end_event": "anim_new_player_buttons_panel_finish_event"
-	Changed element "badge_and_caption":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "caption_and_padding":
-					Unchanged field "type": "stack_panel".
+				Changed element "currency_panel":
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "pad@common.empty_panel":
+							Changed element "currency_price_panel":
+								Unchanged field "type": "image".
+								Changed field "offset":
+									Unchanged item 0: 0.
+									Changed item 1 from 4 to 4.5.
 								Changed field "size":
-									Unchanged item 0: 12.
-									Changed item 1 from 1 to -4.
+									Unchanged item 0: "100% + 8px".
+									Changed item 1 from 14 to 15.
+	Changed element "call_out_bonus_coins_stack":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
 			Changed control:
-				Changed element "badge_and_padding":
-					Unchanged field "type": "stack_panel".
-					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from 30 to 20.
-		Added field "anchor_to": "bottom_middle".
-		Added field "anchor_from": "bottom_middle".
-		Added field "offset": [-4, -27].
-	Changed element "change_skin_button@common_buttons.light_glyph_button":
-		Removed field "ignored": "(not $education_edition)".
-		Changed field "anchor_from" from "bottom_left" to "bottom_middle".
-		Changed field "anchor_to" from "bottom_left" to "bottom_middle".
-	Removed element "change_skin_button_demo@common_buttons.light_glyph_button":
-		field "ignored": "(not $education_edition)"
-		field "size": [25, 25]
-		field "anchor_from": "bottom_middle"
-		field "anchor_to": "bottom_middle"
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_skins"
-			variable "$button_content_offset":
-				item 0: 1
-				item 1: 2
-			variable "$button_content": "start.change_skin_icon"
-			variable "$pressed_alpha": 0.65
-			variable "$focus_id": "menu_skins_button"
-			variable "$button_tts_header": "accessibility.start.skinPicker"
-	Changed element "copyright":
-		field "type": "panel"
-		field "controls":
-			control:
-				element "label":
-					field "type": "label"
-					field "color": "$main_header_text_color"
-					field "layer": 2
-					field "text": "menu.copyright"
-					field "size": ["default", 10]
-					field "max_size": ["100%", "100%"]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-			control:
-				element "label_background":
-					field "type": "image"
-					field "texture": "textures/ui/Black"
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "offset": [-1, -1]
-					field "alpha": 0.6
-					field "size": ["100%sm + 4px", "100%sm + 2px"]
-					field "layer": 1
-		field "type": "label"
-		field "color": "$main_header_text_color"
-		field "layer": 2
-		field "text": "menu.copyright"
-		field "size": ["default", 10]
-		field "max_size": ["100%", "100%"]
-		field "anchor_from": "top_left"
-		field "anchor_to": "top_left"
-	Moved element from "servers_button@start.main_button" to "course_button@start.main_button".
-	Changed element "course_button@start.main_button":
-		Changed field "$variables":
-			Changed variable "$pressed_button_name" from "button.menu_servers" to "button.menu_courses".
-			Changed variable "$button_text" from "menu.servers" to "course.edu.courses".
-	Changed element "development_version":
-		field "type": "panel"
-		field "controls":
-			control:
-				element "label":
-					field "type": "label"
-					field "color": "$main_header_text_color"
-					field "layer": 2
-					field "text": "#development_version"
-					field "size": ["default", 10]
-					field "max_size": ["100%", "100%"]
-					field "anchor_from": "center"
-					field "anchor_to": "center"
-					field "bindings": binding field "binding_name": "#development_version"
-			control:
-				element "label_background":
-					field "type": "image"
-					field "texture": "textures/ui/Black"
-					field "anchor_from": "center"
-					field "anchor_to": "center"
-					field "alpha": 0.6
-					field "size": ["100%sm + 2px", "100%sm + 2px"]
-					field "layer": 1
-		field "type": "label"
-		field "color": "$main_header_text_color"
-		field "layer": 2
-		field "text": "#development_version"
-		field "size": ["default", 10]
-		field "max_size": ["100%", "100%"]
-		field "anchor_from": "center"
-		field "anchor_to": "center"
-		field "bindings": binding field "binding_name": "#development_version"
-	Removed element "edu_ai_lesson_crafter_button_content":
-		field "type": "stack_panel"
-		field "orientation": "horizontal"
-		field "size": ["100%c", "100%"]
-		field "controls":
-			control:
-				element "padded_label@common.empty_panel":
-					field "size": ["100%c", "100%"]
-					field "controls":
-						control:
-							element "label":
-								field "type": "label"
-								field "size": ["default", "default"]
-								field "color": "$text_color"
-								field "text": "menu.ai_lesson_crafter"
-			control:
-				element "padded_icon@common.empty_panel":
-					field "size": ["100%c", "100%c"]
-					field "controls":
-						control:
-							element "icon":
+				Changed element "currency_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "currency_price_panel":
+								Unchanged field "type": "image".
+								Changed field "offset":
+									Unchanged item 0: 0.
+									Changed item 1 from 3 to 3.5.
+								Changed field "layer" from 2 to -4.
+								Changed field "size":
+									Unchanged item 0: "100% + 9px".
+									Changed item 1 from 14 to 15.
+	Changed element "call_out_button_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "call_out_background":
+					Unchanged field "type": "image".
+					Changed field "layer" from 1 to -8.
+					Changed field "controls":
+						Total control: 1 (+0, -1)
+						Removed control:
+							element "bevel":
 								field "type": "image"
-								field "texture": "textures/ui/icon_external_link"
-								field "color": "$glyph_color"
-								field "size": [9, 9]
-								field "offset": [3, 7]
-	Removed element "gamerpic":
-		field "type": "custom"
-		field "renderer": "profile_image_renderer"
-		field "size": [16, 16]
-		field "layer": 2
-		field "bindings":
-			binding field "binding_name": "#profile_image_options"
-			binding:
-				field "binding_name": "$gamerpic_visible"
-				field "binding_name_override": "#visible"
-		field "$variables": variable "$gamerpic_visible|default": "#none"
-	Changed element "gathering_badge":
-		Unchanged field "type": "image".
-		Changed field "size":
-			Changed item 0 from "237%y" to 25.
-			Changed item 1 from "100%" to 25.
-		Removed field "allow_debug_missing_texture": false.
-		Added field "anchor_to": "bottom_left".
-		Added field "anchor_from": "bottom_left".
-	Moved element from "gathering_button@common_buttons.light_text_form_fitting_button" to "gathering_button@common_buttons.light_text_button".
-	Changed element "gathering_button@common_buttons.light_text_button":
-		Changed field "size":
-			Changed item 0 from "100%c" to 80.
-			Unchanged item 1: 25.
-		Changed field "$variables":
-			Total variable: 5 (+1, -2)
-			Removed variable "$button_state_panel": "common_buttons.new_ui_width_fitting_button_panel".
-			Removed variable "$button_text_max_size":
-				item 0: 105
-				item 1: 25
-			Added variable "$button_text_size":
-				item 0: "100%"
-				item 1: "100%"
-		Added field "anchor_to": "bottom_left".
-		Added field "anchor_from": "bottom_left".
-	Changed element "gathering_caption":
-		Unchanged field "type": "image".
-		Changed field "controls":
-			Changed control:
-				Changed element "countdown_text":
-					Unchanged field "type": "label".
-					Changed field "size":
-						Changed item 0 from 88 to 100.
-						Unchanged item 1: "default".
-	Changed element "gathering_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "orientation" from "vertical" to "horizontal".
-		Changed field "size":
-			Unchanged item 0: "100%".
-			Changed item 1 from "100%c" to 60.
-		Changed field "controls":
-			Total control: 2 (+2, -2)
-			Removed control:
-				element "horizontal_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%", "100%c"]
-					field "controls":
-						control element "pad@common.empty_panel": field "size": [5, 0]
-						control:
-							element "inner_panel":
-								field "type": "stack_panel"
-								field "orientation": "vertical"
-								field "anchor_to": "bottom_left"
-								field "anchor_from": "bottom_left"
-								field "size": ["100% - 5px", "100%c"]
-								field "controls":
-									control element "badge_and_caption@start.badge_and_caption": empty
-									control element "gathering_button@start.gathering_button": empty
-			Removed control:
-				element "bottom_pad":
-					field "type": "panel"
-					field "size": ["100%", 5]
-					field "bindings":
-						binding:
-							field "binding_name": "#upper_online_buttons_visible"
-							field "binding_name_override": "#visible"
-			Added control element "pad@common.empty_panel": field "size": [5, "100%"].
-			Added control:
-				element "inner_panel":
-					field "type": "panel"
-					field "anchor_to": "bottom_left"
-					field "anchor_from": "bottom_left"
-					field "size": ["100% - 5px", 60]
-					field "controls":
-						control element "badge_and_caption@start.badge_and_caption": empty
-						control element "gathering_button@start.gathering_button": empty
-	Removed element "get_started_button@start.main_button":
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_get_started"
-			variable "$button_text": "#get_started_button_text"
-			variable "$button_text_binding_type": "global"
-			variable "$button_binding_condition": "once"
-	Removed element "inbox_bell_animated_icon":
-		field "type": "image"
-		field "layer": 2
-		field "texture": "textures/ui/bell_ringing"
-		field "uv_size": [16, 16]
-		field "size": [16, 16]
-		field "uv": "@start.inbox_bell_animation"
-	Removed element "inbox_bell_animation":
-		field "anim_type": "flip_book"
-		field "initial_uv": [0, 0]
-		field "frame_count": 28
-		field "frame_step": 8
-		field "fps": 10
-		field "play_event": "inbox_bell_animation_start"
-		field "reset_event": "inbox_bell_animation_reset"
-		field "looping": false
-	Removed element "inbox_button@common_buttons.light_content_button":
-		field "size": [24, 24]
-		field "button_mappings":
-			button mapping:
-				field "from_button_id": "button.menu_select"
-				field "to_button_id": "$pressed_button_name"
-				field "mapping_type": "pressed"
-			button mapping:
-				field "from_button_id": "button.menu_ok"
-				field "to_button_id": "$pressed_button_name"
-				field "mapping_type": "pressed"
-			button mapping:
-				field "to_button_id": "inbox_button.is_hovered"
-				field "mapping_type": "pressed"
-		field "$variables":
-			variable "$button_content": "start.inbox_bell_animated_icon"
-			variable "$pressed_button_name": "button.menu_inbox"
-			variable "$button_tts_header": "menu.inbox"
-	Removed element "inbox_button_unread_panel":
-		field "type": "panel"
-		field "anchor_from": "top_right"
-		field "anchor_to": "top_right"
-		field "size": [7, 8]
-		field "offset": [0, 1]
-		field "controls": control element "background@start.unread_notification_icon": field "layer": 8
-	Removed element "inbox_icon":
-		field "type": "image"
-		field "texture": "textures/ui/icon_bell"
-		field "layer": 3
-		field "size": [16, 16]
-	Removed element "inbox_icon_button":
-		field "type": "panel"
-		field "offset": [0, 0]
-		field "ignored": "$education_edition"
-		field "controls":
-			control element "inbox_button@start.inbox_button": empty
-			control element "inbox_button_unread_panel@start.inbox_button_unread_panel": empty
-		field "$variables": variable "$button_tts_header": "menu.inbox"
-	Changed element "lower_online_buttons_panel":
-		Unchanged field "type": "stack_panel".
-		Removed field "variables":
-			variable:
-				field "requires": "($showing_new_player_flow_buttons)"
-				field "$variables": variable "$anim_type": "@start.anim_main_buttons_panel_alpha"
-			variable:
-				field "requires": "(not $showing_new_player_flow_buttons)"
-				field "$variables": variable "$anim_type": 1.0
-		Removed field "alpha": "$anim_type".
-		Changed field "controls":
-			Changed control:
-				Changed element "stacked_column":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 9 (+1, -1)
+								field "size": ["100% + 2px", "100% + 6px"]
+								field "offset": [0, -3]
+								field "layer": 2
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "texture": "textures/ui/coin_bevel"
 						Changed control:
-							Moved element from "inbox_padding" to "invite_padding".
-							Changed element "invite_padding":
-								Unchanged field "type": "panel".
-								Changed field "bindings":
-									Changed binding:
-										Changed field "binding_name" from "#inbox_enabled" to "#realms_notification_visible".
-						Changed control:
-							Moved element from "inbox_btn@start.column_frame" to "invite_btn_other@start.column_frame".
-							Changed element "invite_btn_other@start.column_frame":
-								Changed field "controls":
-									Changed control:
-										Moved element from "inbox_icon_button@start.inbox_icon_button" to "invite_button@start.realms_pending_invite_panel".
-								Changed field "bindings":
-									Changed binding:
-										Changed field "binding_name" from "#inbox_enabled" to "#realms_notification_visible".
-						Changed control:
-							Moved element from "profile_btn_padding" to "notificationcenter_padding".
-							Changed element "notificationcenter_padding":
-								Unchanged field "type": "panel".
+							Changed element "call_out_border":
+								Unchanged field "type": "image".
 								Changed field "size":
-									Changed item 0 from 5 to 3.
-									Changed item 1 from "100%" to 0.
-								Changed field "bindings":
-									Changed binding:
-										Changed field "binding_name" from "#profile_button_a_visible" to "#notificationcenter_enabled".
-						Removed control:
-							element "profile_btn@start.column_frame":
-								field "size": ["100%c", 32]
-								field "controls": control element "profile_button@start.profile_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#profile_button_a_visible"
-										field "binding_name_override": "#visible"
-						Added control:
-							element "notificationcenter_btn@start.column_frame":
-								field "size": [28, 32]
-								field "controls": control element "notificationcenter_icon_button@start.notificationcenter_icon_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#notificationcenter_enabled"
-										field "binding_name_override": "#visible"
-	Removed element "main_button_dark@common_buttons.dark_text_button": field "size": ["100% - 2px", "100% - 2px"].
-	Changed element "main_buttons_panel":
+									Unchanged item 0: "100% + 2px".
+									Changed item 1 from "100% + 5px" to "100% + 6px".
+								Changed field "layer" from 3 to 10.
+Changed namespace "common_store":
+	Total element: 248 (+0, -1)
+	Changed element "failure_text_alpha_animation":
+		Unchanged field "anim_type": "alpha".
+		Added field "play_event": "anim_store_base_error_visible_start".
+	Removed element "failure_text_wait_animation":
+		field "anim_type": "wait"
+		field "duration": "$failure_timeout"
+		field "next": "@common_store.failure_text_alpha_animation"
+		field "$variables": variable "$failure_timeout|default": 5.0
+	Changed element "progress_loading":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "stacked_rows":
+				Changed element "progress_loading_outline@common_store.banner_fill":
+					Changed field "visible" from "(not $hide_failure_text) or (not $hide_progress_loading_outline)" to "#store_error_visible or (not $hide_progress_loading_outline)".
+					Changed field "anims":
+						Changed animation from "@common_store.failure_text_wait_animation" to "@common_store.failure_text_alpha_animation".
+					Added field "bindings":
+						binding:
+							field "binding_name": "#store_error_visible"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+			Changed control:
+				Changed element "stack_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 8 (+1, -5)
 						Changed control:
-							Changed element "stacked_row_2@start.stacked_row":
+							Changed element "top_panel":
+								Unchanged field "type": "stack_panel".
 								Changed field "controls":
 									Changed control:
-										Changed element "stacked_columns":
-											Unchanged field "type": "stack_panel".
+										Changed element "error_glyph_panel":
+											Unchanged field "type": "panel".
 											Changed field "controls":
 												Changed control:
-													Changed element "stacked_col_1":
-														Unchanged field "type": "panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "store_button@start.store_button":
-																	Added field "bindings":
-																		binding:
-																			field "binding_name": "(not #marketplace_disabled)"
-																			field "binding_name_override": "#visible"
-						Removed control:
-							element "ai_lesson_crafter_row@start.stacked_row":
-								field "bindings":
-									binding:
-										field "binding_name": "#edu_ai_lesson_crafter_on"
-										field "binding_name_override": "#visible"
-								field "controls":
-									control element "ai_lesson_crafter_button@start.ai_lesson_crafter_button": empty
-									control element "lesson_crafter_preview_overlay@start.preview_tag": empty
-						Removed control:
-							element "edu_featured_button@start.stacked_row":
-								field "ignored": "(not $education_edition)"
-								field "bindings":
-									binding:
-										field "binding_name": "#edu_signed_in_only_ui_visible"
-										field "binding_name_override": "#visible"
-								field "controls": control element "new_and_featured_button@edu_featured.featured_button": empty
-						Removed control:
-							element "settings_and_editions_panel@start.stacked_row":
-								field "ignored": "($trial or not $supports_launching_legacy_version)"
-								field "bindings":
-									binding:
-										field "binding_name": "#realms_promo_visible"
-										field "binding_name_override": "#visible"
-								field "controls":
-									control:
-										element "settings_and_editions":
-											field "type": "stack_panel"
-											field "size": ["100%", "100%"]
-											field "orientation": "horizontal"
-											field "ignored": "($trial or not $supports_launching_legacy_version)"
-											field "bindings":
-												binding:
-													field "binding_name": "#editions_visible"
-													field "binding_name_override": "#visible"
-											field "controls":
-												control:
-													element "settings_panel":
-														field "type": "panel"
-														field "size": ["fill", "100%"]
-														field "controls": control element "settings_button@start.settings_button": empty
-												control:
-													element "editions_panel":
-														field "type": "panel"
-														field "size": ["fill", "100%"]
-														field "controls": control element "launch_editions_button@start.launch_editions_button": empty
-									control:
-										element "settings_panel@start.stacked_row":
-											field "bindings":
-												binding:
-													field "binding_name": "(not #editions_visible)"
-													field "binding_name_override": "#visible"
-											field "controls": control element "settings_button@start.settings_button": field "$variables": variable "$focus_override_right": "profile_button"
+													Changed element "error_image":
+														Unchanged field "type": "image".
+														Changed field "anims":
+															Changed animation from "@common_store.failure_text_wait_animation" to "@common_store.failure_text_alpha_animation".
+									Changed control:
+										Changed element "store_failure_text":
+											Unchanged field "type": "label".
+											Changed field "anims":
+												Changed animation from "@common_store.failure_text_wait_animation" to "@common_store.failure_text_alpha_animation".
 						Changed control:
-							Changed element "settings@start.stacked_row":
-								Removed field "bindings":
-									binding:
-										field "binding_name": "#not_realms_promo_visible_and_supports_launching_legacy_version"
-										field "binding_name_override": "#visible"
-						Removed control:
-							element "realms@start.stacked_row":
-								field "ignored": "($trial or $is_preview_app)"
-								field "bindings":
-									binding:
-										field "binding_name": "#realms_promo_visible"
-										field "binding_name_override": "#visible"
-								field "controls": control element "realms_button@start.realms_button": field "$variables": variable "$button_text": "menu.realms"
-						Removed control:
-							element "unlock_full_game_row@start.stacked_row":
-								field "ignored": "(not $education_edition)"
-								field "bindings":
-									binding:
-										field "binding_name": "#edu_demo_only_ui_visible"
-										field "binding_name_override": "#visible"
-								field "controls": control element "unlock_full_game@start.unlock_full_game_button": empty
-						Changed control:
-							Changed element "launch_editions@start.stacked_row":
-								Changed field "bindings":
-									Changed binding:
-										Changed field "binding_name" from "#editions_visible_and_not_realms_promo_visible" to "#editions_visible".
-						Added control:
-							element "course@start.stacked_row":
-								field "ignored": "$courses_ignored"
-								field "controls": control element "course_button@start.course_button": empty
-	Removed element "main_buttons_panel_new_player_flow":
-		field "type": "panel"
-		field "size": [150, "100%c"]
-		field "controls":
-			control:
-				element "stacked_rows":
-					field "type": "stack_panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_middle"
-					field "anchor_to": "bottom_middle"
-					field "controls":
-						control:
-							element "test_label_row@start.stacked_row":
-								field "ignored": "(not $trial or not $is_new_trial_mode_enabled)"
-								field "controls": control element "trial_info@start.trial_info": empty
-						control:
-							element "spacer":
-								field "type": "panel"
-								field "ignored": "(not $trial or not $is_new_trial_mode_enabled)"
-								field "size": [20, 20]
-						control element "get_started_row@start.stacked_row": field "controls": control element "get_started_button@start.get_started_button": empty
-						control element "main_menu_row@start.stacked_row": field "controls": control element "main_menu_button@start.main_menu_button": empty
-	Changed element "main_buttons_stack_panel":
+							Changed element "image":
+								Unchanged field "type": "image".
+								Changed field "anims":
+									Changed animation from "@common_store.failure_text_wait_animation" to "@common_store.failure_text_alpha_animation".
+					Added field "visible": "#store_error_visible".
+					Added field "bindings":
+						binding:
+							field "binding_name": "#store_error_visible"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+			Changed control:
+				Changed element "store_failure_code":
+					Unchanged field "type": "label".
+					Changed field "anims":
+						Changed animation from "@common_store.failure_text_wait_animation" to "@common_store.failure_text_alpha_animation".
+					Changed field "bindings":
+						Total binding: 2 (+1, -0)
+						Added binding:
+							field "binding_name": "#store_error_visible"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+					Added field "visible": "#store_error_visible".
+	Changed element "static_offer_row_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "store_row_dropdown_panel":
+					Unchanged field "type": "panel".
+					Changed field "bindings":
+						Changed binding:
+							Removed field "ignored": "(not $is_persona_sdl_enabled)".
+Changed namespace "common_toggles":
+	Changed element "light_template_toggle@common.toggle":
+		Changed field "$variables":
+			Total variable: 88 (+1, -0)
+			Added variable "$toggle_consume_hover_events|default": true.
+		Added field "consume_hover_events": "$toggle_consume_hover_events".
+Changed namespace "csb_content":
+	Changed element "popular_packs":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 6 (+0, -1)
 			Changed control:
-				Changed element "main_buttons_panel":
-					Unchanged field "type": "panel".
-					Removed field "variables":
-						variable:
-							field "requires": "($showing_new_player_flow_buttons)"
-							field "$variables": variable "$anim_type": "@start.anim_main_buttons_panel_alpha"
-						variable:
-							field "requires": "(not $showing_new_player_flow_buttons)"
-							field "$variables": variable "$anim_type": 1.0
-					Removed field "bindings":
-						binding:
-							field "binding_name": "(not #showing_new_player_flow_buttons)"
-							field "binding_name_override": "#visible"
-					Removed field "alpha": "$anim_type".
-					Removed field "propagate_alpha": true.
-			Removed control:
-				element "main_buttons_panel_new_player_flow":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "bindings":
-						binding:
-							field "binding_name": "#showing_new_player_flow_buttons"
-							field "binding_name_override": "#visible"
-					field "alpha": "@start.anim_new_player_buttons_panel_alpha"
-					field "propagate_alpha": true
-					field "controls": control element "main_buttons_panel_new_player_flow@start.main_buttons_panel_new_player_flow": empty
-	Removed element "main_menu_button@edu_common.underline_button":
-		field "$variables":
-			variable "$pressed_button_name": "button.open_main_menu"
-			variable "$single_label_size":
-				item 0: "default"
-				item 1: "default"
-			variable "$single_line_font_scale_factor": 1
-			variable "$single_line_label_text": "menu.openMainMenu"
-			variable "$font_type": "smooth"
-	Removed element "manage_accounts_icon":
-		field "type": "image"
-		field "anchor_from": "center"
-		field "anchor_to": "center"
-		field "texture": "textures/ui/profile_glyph_combined"
-		field "layer": 3
-		field "size": [11, 12]
-	Added element "notificationcenter_icon":
-		field "type": "image"
-		field "texture": "textures/ui/notification_center"
-		field "layer": 3
-		field "size": [20, 20]
-	Removed element "preview_tag":
-		field "type": "image"
-		field "size": ["100%c + 4px", 15]
-		field "offset": [19, -1]
-		field "layer": 11
-		field "anchor_from": "top_right"
-		field "anchor_to": "top_right"
-		field "texture": "textures/ui/previewIcon"
-		field "bindings":
-			binding:
-				field "binding_name": "#edu_ai_lesson_crafter_on"
-				field "binding_name_override": "#visible"
-		field "controls":
-			control:
-				element "preview_label":
-					field "type": "label"
-					field "size": ["default", 10]
-					field "offset": [0, 1]
-					field "text": "menu.preview"
-					field "color": "$store_white_text_color"
-					field "anchor_from": "top_middle"
-					field "anchor_to": "top_middle"
-					field "layer": 1
-	Removed element "profile_button@common_buttons.light_content_form_fitting_button":
+				Changed element "view_all_packs_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "view_character_creator_items@common_buttons.light_content_button":
+								Removed field "visible": "$view_character_creator_items_visible".
+Added namespace "friendsbutton":
+	element "button@common_buttons.light_content_form_fitting_button":
 		field "size": ["100%c", "100%c"]
 		field "$variables":
 			variable "$button_content_size_override":
 				item 0: "100%c"
 				item 1: "100%c - 4px"
-			variable "$button_content": "start.profile_button_content"
-			variable "$pressed_button_name": "button.menu_profile"
-	Moved element from "dressing_room_button@common_buttons.light_text_form_fitting_button" to "profile_button@common_buttons.light_text_form_fitting_button".
-	Changed element "profile_button@common_buttons.light_text_form_fitting_button":
-		Removed field "ignored": "($education_edition)".
-		Changed field "$variables":
-			Total variable: 7 (+1, -0)
-			Added variable "$button_tts_header": "accessibility.start.profile".
-	Removed element "profile_button_content":
+			variable "$button_content": "friendsbutton.friendsdrawer_button_content"
+	element "friendsdrawer_animated_icon":
+		field "type": "image"
+		field "layer": 2
+		field "texture": "textures/ui/friendsbutton/navbar-friends-icon"
+	element "friendsdrawer_button_content":
 		field "type": "stack_panel"
 		field "size": ["100%c", 24]
 		field "orientation": "horizontal"
 		field "controls":
 			control:
-				element "gamerpic_offset_wrapper":
+				element "icon_wrapper":
 					field "type": "panel"
 					field "size": ["100%c", "100%c"]
 					field "controls":
 						control:
-							element "gamerpic_with_border":
+							element "icon_with_border":
 								field "type": "panel"
 								field "size": [18, 18]
 								field "offset": [-2, 0]
 								field "controls":
-									control element "gamerpic@start.gamerpic": field "$variables": variable "$gamerpic_visible": "#show_gamerpic"
-									control:
-										element "alex_icon@start.alex_icon":
-											field "bindings":
-												binding:
-													field "binding_name": "(not #show_gamerpic)"
-													field "binding_name_override": "#visible"
+									control element "friendsdrawer_animated_icon@friendsbutton.friendsdrawer_animated_icon": empty
 									control:
 										element "border_black@common.focus_border_black":
 											field "layer": 3
 											field "size": [18, 18]
 			control element "padding_middle@common.empty_panel": field "size": [2, "100%"]
 			control:
-				element "vertically_central_text":
+				element "vertically_centered_text":
 					field "type": "stack_panel"
 					field "orientation": "vertical"
 					field "size": ["100%c", "100%c"]
@@ -832,312 +202,636 @@ Changed namespace "start":
 							element "profile_button_label@common_buttons.new_ui_binding_button_label":
 								field "layer": 1
 								field "$variables":
-									variable "$button_text": "menu.profile"
+									variable "$button_text_binding_type": "global"
 									variable "$button_text_size":
 										item 0: "default"
 										item 1: "default"
 									variable "$button_text_max_size":
 										item 0: "default"
 										item 1: 20
-									variable "$button_text_binding_type": "none"
 									variable "$button_binding_condition": "none"
 									variable "$button_text_grid_collection_name": ""
 			control element "padding_right@common.empty_panel": field "size": [6, "100%"]
-	Removed element "realms_button@start.main_button_dark":
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_realms"
-			variable "$button_text": "menu.realmsServer"
-			variable "$default_button_texture": "textures/ui/realms_button_borderless_default"
-			variable "$hover_button_texture": "textures/ui/realms_button_borderless_hover"
-			variable "$pressed_button_texture": "textures/ui/realms_button_borderless_hover_pressed"
-	Added element "realms_pending_invite_panel":
+Changed namespace "general_section":
+	Total element: 210 (+7, -1)
+	Changed element "debug_override_progressions_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "override_progressions_panel_background":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 4 (+0, -1)
+						Removed control element "current_sandbox_label@general_section.sandbox_label": empty.
+	Added element "debug_override_realms_features_panel":
 		field "type": "panel"
-		field "layer": 1
-		field "size": [24, 24]
+		field "size": ["100%", "100%c"]
 		field "controls":
 			control:
-				element "button@start.invite_notification_button":
-					field "$variables":
-						variable "$pressed_button_name": "button.menu_invite_notification"
-						variable "$button_tts_header": "realmsInvitationScreen.shareTitle"
-			control element "count@start.notification_button_text_panel": field "offset": [-2.5, 2]
+				element "override_realms_features_panel_background":
+					field "type": "stack_panel"
+					field "size": ["90%", "100%c"]
+					field "controls":
+						control:
+							element "option_toggle_realms_feature_override@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.dev_overrideRealmsFeatures"
+									variable "$option_binding_name": "#dev_show_override_realms_features"
+									variable "$option_enabled_binding_name": "#dev_show_override_realms_features_enabled"
+									variable "$toggle_name": "dev_show_override_realms_features"
+						control:
+							element "spacer_0":
+								field "type": "panel"
+								field "size": ["100%", 4]
+						control:
+							element "override_realms_features_options_panel":
+								field "type": "stack_panel"
+								field "size": ["100%", "100%c"]
+								field "bindings":
+									binding:
+										field "binding_name": "#dev_show_override_realms_features"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "add_realms_features_panel":
+											field "type": "stack_panel"
+											field "size": ["100%", 40]
+											field "orientation": "horizontal"
+											field "controls":
+												control:
+													element "text_edit_realms_features@settings_common.option_text_edit":
+														field "$variables":
+															variable "$option_generic_panel_size":
+																item 0: "fill"
+																item 1: "100%c"
+															variable "$option_label": "options.dev_addRealmsFeatureId"
+															variable "$text_box_name": "dev_realms_feature_id"
+															variable "$option_binding_name": "#dev_realms_feature_id"
+															variable "$option_enabled_binding_name": "#dev_realms_feature_id_enabled"
+															variable "$max_text_edit_length": 50
+												control:
+													element "add_button_panel":
+														field "type": "panel"
+														field "size": [40, "100%"]
+														field "controls":
+															control:
+																element "add_button@common_buttons.light_text_button":
+																	field "size": [40, 30]
+																	field "offset": [0, 1]
+																	field "anchor_from": "bottom_right"
+																	field "anchor_to": "bottom_right"
+																	field "$variables":
+																		variable "$pressed_button_name": "button.add_realms_feature_by_name"
+																		variable "$button_text": "options.dev_addLabel"
+									control:
+										element "realms_feature_cache_management_panel":
+											field "type": "stack_panel"
+											field "orientation": "horizontal"
+											field "size": ["100%", 30]
+											field "controls":
+												control:
+													element "reset_to_default@common_buttons.light_text_button":
+														field "size": ["50%", "100%"]
+														field "$variables":
+															variable "$pressed_button_name": "button.reset_to_default_realms_features"
+															variable "$button_text": "options.dev_resetToDefault"
+												control:
+													element "clear_realms_features@common_buttons.light_text_button":
+														field "size": ["50%", "100%"]
+														field "$variables":
+															variable "$pressed_button_name": "button.clear_realms_feature_list"
+															variable "$button_text": "options.dev_clearFlights"
+						control:
+							element "current_realms_features_label_panel@common_store.banner_fill":
+								field "size": ["100%", 18]
+								field "controls":
+									control:
+										element "realms_features_label":
+											field "type": "label"
+											field "offset": [3, 0]
+											field "text": "options.dev_currentRealmsFeaturesTitle"
+											field "text_alignment": "left"
+											field "color": "$body_text_color"
+											field "layer": 1
+						control:
+							element "realms_features_grid":
+								field "type": "grid"
+								field "size": ["100%", "100%c"]
+								field "grid_item_template": "general_section.realms_feature_grid_item"
+								field "grid_dimension_binding": "#realms_features_grid_dimension"
+								field "collection_name": "realms_features_collection"
+								field "bindings":
+									binding:
+										field "binding_name": "#realms_features_grid_dimension"
+										field "binding_condition": "visible"
+						control:
+							element "unused_realms_features_label_panel@common_store.banner_fill":
+								field "size": ["100%", 18]
+								field "controls":
+									control:
+										element "realms_features_label":
+											field "type": "label"
+											field "offset": [3, 0]
+											field "text": "options.dev_unusedRealmsFeaturesTitle"
+											field "text_alignment": "left"
+											field "color": "$body_text_color"
+											field "layer": 1
+						control:
+							element "unused_realms_features_grid":
+								field "type": "grid"
+								field "size": ["100%", "100%c"]
+								field "grid_item_template": "general_section.unused_realms_feature_grid_item"
+								field "grid_dimension_binding": "#unused_realms_features_grid_dimension"
+								field "collection_name": "unused_realms_features_collection"
+								field "bindings":
+									binding:
+										field "binding_name": "#unused_realms_features_grid_dimension"
+										field "binding_condition": "visible"
 		field "bindings":
 			binding:
-				field "binding_name": "#realms_notification_visible"
+				field "binding_name": "#dev_display_realms_features_panel"
 				field "binding_name_override": "#visible"
-	Changed element "skin_or_profile_panel":
-		Unchanged field "type": "panel".
-		Changed field "size":
-			Changed item 0 from 55 to "100%".
-			Unchanged item 1: 25.
-		Removed field "variables":
-			variable:
-				field "requires": "($showing_new_player_flow_buttons)"
-				field "$variables": variable "$anim_type": "@start.anim_main_buttons_panel_alpha"
-			variable:
-				field "requires": "(not $showing_new_player_flow_buttons)"
-				field "$variables": variable "$anim_type": 1.0
-		Removed field "alpha": "$anim_type".
-		Changed field "controls":
-			Total control: 2 (+0, -3)
-			Changed control:
-				Changed element "change_skin@start.change_skin_button":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "binding_name" from "#edu_signed_in_only_ui_visible" to "(not #persona_enabled)".
-			Changed control:
-				Moved element from "change_skin_button_demo@start.change_skin_button_demo" to "change_profile@start.profile_button".
-				Changed element "change_profile@start.profile_button":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "binding_name" from "#edu_demo_only_ui_visible" to "#persona_enabled".
-			Removed control:
-				element "dressing_room_button@start.dressing_room_button":
-					field "bindings":
-						binding:
-							field "binding_name": "#dressing_room_button_visible"
-							field "binding_name_override": "#visible"
-			Removed control:
-				element "switch_accounts@start.switch_accounts_button":
-					field "bindings":
-						binding:
-							field "binding_name": "#edu_signed_in_only_ui_visible"
-							field "binding_name_override": "#visible"
-			Removed control:
-				element "profile_button@start.profile_button":
-					field "bindings":
-						binding:
-							field "binding_name": "#profile_button_b_visible"
-							field "binding_name_override": "#visible"
-					field "$variables": variable "$focus_id": "profile_button"
-		Removed field "bindings":
-			binding:
-				field "binding_name": "#persona_and_skins_enabled"
-				field "binding_name_override": "#visible"
-	Changed element "start_screen_content":
+	Changed element "debug_override_treatments_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "online_button_stack":
+				Changed element "override_treatments_panel_background":
 					Unchanged field "type": "stack_panel".
-					Removed field "variables":
-						variable:
-							field "requires": "($showing_new_player_flow_buttons)"
-							field "$variables": variable "$anim_type": "@start.anim_main_buttons_panel_alpha"
-						variable:
-							field "requires": "(not $showing_new_player_flow_buttons)"
-							field "$variables": variable "$anim_type": 1.0
-					Removed field "alpha": "$anim_type".
-	Changed element "store_button@common_buttons.light_content_button":
-		Removed field "bindings":
-			binding:
-				field "binding_name": "(not #marketplace_disabled)"
-				field "binding_name_override": "#visible"
-	Changed element "store_button_stack@start.stacked_row":
-		Changed field "controls":
-			Total control: 5 (+2, -0)
-			Changed control:
-				Changed element "store_button@start.store_button":
-					Added field "bindings":
-						binding:
-							field "binding_name": "(not #marketplace_disabled)"
-							field "binding_name_override": "#visible"
-			Added control:
-				element "marketplace_error_button@common_buttons.dynamic_tooltip_notification_panel":
-					field "size": ["100%", "100%"]
-					field "button_mappings":
-						button mapping:
-							field "from_button_id": "button.menu_select"
-							field "to_button_id": "button.menu_store_error"
-							field "mapping_type": "pressed"
-						button mapping:
-							field "to_button_id": "button.is_hovered"
-							field "mapping_type": "pressed"
-					field "consume_hover_events": false
-					field "focus_enabled": true
-					field "bindings":
-						binding:
-							field "binding_name": "#marketplace_disabled"
-							field "binding_name_override": "#visible"
-					field "$variables":
-						variable "$dynamic_tooltip_button_visibility_binding_name": "#has_marketplace_errors"
-						variable "$tooltip_popup_visible_binding": "#marketplace_errors_tooltip_visible"
-						variable "$override_tooltip_popup_image": true
-						variable "$tooltip_popup_override_image_panel": "start.store_error_image"
-						variable "$tooltip_text_binding_name": "#marketplace_error_text"
-						variable "$tool_tip_text_max_size":
-							item 0: "300px"
-							item 1: "default"
-						variable "$tooltip_panel_content": "start.store_error_content"
-			Added control:
-				element "marketplace_error_icon@start.marketplace_error_icon":
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "offset": [-2, 0]
-					field "bindings":
-						binding:
-							field "binding_name": "#marketplace_disabled"
-							field "binding_name_override": "#visible"
-	Removed element "switch_accounts_button@common_buttons.light_content_button":
-		field "ignored": "(not $education_edition)"
-		field "size": [25, 25]
-		field "anchor_from": "bottom_right"
-		field "anchor_to": "bottom_right"
-		field "$variables":
-			variable "$pressed_button_name": "button.manage_account"
-			variable "$button_content_offset":
-				item 0: 0
-				item 1: 0
-			variable "$button_content": "start.manage_accounts_icon"
-			variable "$pressed_alpha": 0.65
-			variable "$focus_id": "menu_account_button"
-			variable "$button_tts_header": "accounts.manage"
-	Moved element from "unlock_full_game_button@start.main_button" to "switch_accounts_button@start.main_button".
-	Changed element "switch_accounts_button@start.main_button":
-		Changed field "$variables":
-			Changed variable "$button_text" from "#unlock_full_game_button_text" to "#manage_account_button_text".
-	Changed element "text_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 3 (+3, -3)
-			Removed control element "copyright@start.copyright": empty.
-			Removed control element "development_version@start.development_version": field "ignored": "$is_publish".
-			Removed control element "version@start.version": empty.
-			Added control element "copyright@start.copyright": empty.
-			Added control element "development_version@start.development_version": field "ignored": "$is_publish".
-			Added control element "version@start.version": empty.
-	Removed element "trial_info":
-		field "type": "panel"
-		field "controls":
-			control:
-				element "trial_label":
-					field "type": "label"
-					field "size": ["150%", 20]
-					field "offset": [4, 0]
-					field "text": "menu.trialLabel"
-					field "color": "$body_text_color"
-					field "text_alignment": "center"
-					field "layer": 2
-			control:
-				element "label_background":
-					field "type": "image"
-					field "texture": "textures/ui/Black"
-					field "anchor_from": "center"
-					field "anchor_to": "center"
-					field "alpha": 0.6
-					field "size": ["100%sm + 10px", "100%sm + 10px"]
-					field "layer": 1
-	Added element "tutorial_button@start.main_button":
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_tutorial"
-			variable "$button_text": "tutorial.edu.menuTitle"
-	Removed element "unread_notification_animation_show":
-		field "anim_type": "flip_book"
-		field "frame_count": 4
-		field "frame_step": 8
-		field "fps": 10
-		field "looping": false
-		field "resettable": false
-	Removed element "unread_notification_animation_wait":
-		field "anim_type": "wait"
-		field "duration": 2.0
-		field "play_event": "inbox_bell_animation_start"
-		field "next": "@start.unread_notification_animation_show"
-	Moved element from "unread_notification_icon" to "unread_notifications_background_icon".
-	Changed element "unread_notifications_background_icon":
-		Unchanged field "type": "image".
-		Changed field "texture" from "textures/ui/red_dot" to "textures/ui/unread_notifications_background".
-		Changed field "size":
-			Changed item 0 from 7 to 22.
-			Changed item 1 from 8 to 13.
-		Changed field "bindings":
-			Total binding: 2 (+1, -1)
-			Removed binding field "binding_name": "#unread_notification_icon".
-			Changed binding:
-				Changed field "binding_name" from "#unread_notification_icon_visibility" to "#unread_notifications_background_icon_visibility".
-			Added binding field "binding_name": "#unread_notifications_background_icon".
-	Changed element "upper_online_buttons_panel":
+					Changed field "controls":
+						Total control: 10 (+0, -1)
+						Removed control element "current_sandbox_label@general_section.sandbox_label": empty.
+	Changed element "debug_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 1 (+0, -2)
-			Removed control:
-				element "top_pad":
+			Total control: 87 (+2, -0)
+			Added control:
+				element "padding_deferred_debug":
 					field "type": "panel"
-					field "size": ["100%", 5]
+					field "size": ["100%", 3]
+			Added control:
+				element "deferred_platform_override@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "Deferred Platform Override"
+						variable "$dropdown_content": "general_section.deferred_platform_override_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "deferred_platform_override_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#deferred_platform_override_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#deferred_platform_override_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "400%"
+	Added element "deferred_platform_override_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#none"
+						item "$radio_label_text": "None"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#android"
+						item "$radio_label_text": "Android"
+				item 2:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#ios"
+						item "$radio_label_text": "iOS"
+				item 3:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#switch"
+						item "$radio_label_text": "Switch"
+				item 4:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#console_gen8"
+						item "$radio_label_text": "Console Gen 8"
+				item 5:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#console_gen8_5"
+						item "$radio_label_text": "Console Gen 8.5"
+				item 6:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#console_gen9"
+						item "$radio_label_text": "Console Gen 9"
+				item 7:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#pc"
+						item "$radio_label_text": "PC"
+	Added element "disable_realms_feature_icon":
+		field "type": "image"
+		field "texture": "textures/ui/realms_red_x"
+	Added element "enable_realms_feature_icon":
+		field "type": "image"
+		field "texture": "textures/ui/realms_green_check"
+	Changed element "marketplace_debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "version_options_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "option_version_override@settings_common.option_toggle":
+								Changed field "$variables":
+									Changed variable "$option_label" from "Xforge Client Version Override" to "Client Version Override".
+	Added element "new_send_invites_screen_grid_item@settings_common.radio_with_label":
+		field "bindings":
+			binding:
+				field "binding_name": "#default_focus_precedence"
+				field "binding_type": "collection"
+				field "binding_condition": "visible"
+				field "binding_collection_name": "dev_new_send_invites_screen_radio"
+		field "$variables":
+			variable "$toggle_state_binding_name": "#initial_selected"
+			variable "$radio_label_text": "#description"
+			variable "$radio_label_bindings":
+				item 0:
+					item "binding_name": "#description"
+					item "binding_type": "collection"
+					item "binding_condition": "once"
+					item "binding_collection_name": "dev_new_send_invites_screen_radio"
+			variable "$radio_toggle_group": true
+			variable "$toggle_binding_type": "collection"
+			variable "$toggle_name": "dev_new_send_invites_screen_radio"
+			variable "$toggle_grid_collection_name": "dev_new_send_invites_screen_radio"
+			variable "$option_enabled_binding_name": ""
+	Changed element "realms_debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 16 (+2, -0)
+			Added control:
+				element "realms_features_override_panel":
+					field "type": "stack_panel"
+					field "size": ["100%", "100%c"]
+					field "orientation": "vertical"
+					field "controls":
+						control:
+							element "option_toggle_realms_features_override@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.dev_displayRealmsFeaturesPanel"
+									variable "$option_binding_name": "#dev_display_realms_features_panel"
+									variable "$option_enabled_binding_name": "#dev_display_realms_features_panel_enabled"
+									variable "$toggle_name": "dev_display_realms_features_panel"
+						control element "override_realms_features_panel@general_section.debug_override_realms_features_panel": empty
+			Added control:
+				element "realms_debug_options_spacer_2":
+					field "type": "panel"
+					field "size": ["100%", 3]
+	Added element "realms_feature_grid_item":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", 18]
+		field "controls":
+			control:
+				element "realms_feature_id_panel@common_store.banner_fill":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "realms_feature_id":
+								field "type": "label"
+								field "size": ["100% - 3px", 10]
+								field "offset": [3, 0]
+								field "text": "#realms_feature_id"
+								field "text_alignment": "left"
+								field "color": "$body_text_color"
+								field "layer": 1
+								field "bindings":
+									binding:
+										field "binding_name": "#realms_feature_id"
+										field "binding_type": "collection"
+										field "binding_collection_name": "realms_features_collection"
+										field "binding_condition": "visible"
+			control:
+				element "disable_button@common_buttons.light_content_button":
+					field "size": [20, "100%"]
+					field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "realms_features_collection"
+							field "binding_condition": "visible"
+						binding:
+							field "binding_name": "#dev_show_override_realms_features"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$pressed_button_name": "button.disable_realms_feature"
+						variable "$button_content": "general_section.disable_realms_feature_icon"
+	Removed element "sandbox_label":
+		field "type": "label"
+		field "offset": [3, 0]
+		field "text": "options.dev_sandboxRetail"
+		field "text_alignment": "left"
+		field "color": "$body_text_color"
+		field "layer": 1
+	Changed element "ui_debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 76 (+4, -0)
+			Added control:
+				element "new_send_invites_radio_label":
+					field "type": "label"
+					field "text": "New Send Invites Screen"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+			Added control:
+				element "new_send_invites_screen_radio_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Added control:
+				element "new_send_invites_screen_radio_button":
+					field "type": "grid"
+					field "size": ["100%", "100%c"]
+					field "grid_item_template": "general_section.new_send_invites_screen_grid_item"
+					field "grid_dimension_binding": "#dev_new_send_invites_screen_radio_dimension"
+					field "collection_name": "dev_new_send_invites_screen_radio"
+					field "bindings":
+						binding:
+							field "binding_name": "#dev_new_send_invites_screen_radio_dimension"
+							field "binding_condition": "visible"
+			Added control:
+				element "new_send_invites_screen_radio_button_spacer":
+					field "type": "panel"
+					field "size": ["100%", 10]
+	Added element "unused_realms_feature_grid_item":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", 18]
+		field "controls":
+			control:
+				element "unused_realms_feature_id_panel@common_store.banner_fill":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "unused_realms_feature_id":
+								field "type": "label"
+								field "size": ["100% - 3px", 10]
+								field "offset": [3, 0]
+								field "text": "#unused_realms_feature_id"
+								field "text_alignment": "left"
+								field "color": "$body_text_color"
+								field "layer": 1
+								field "bindings":
+									binding:
+										field "binding_name": "#unused_realms_feature_id"
+										field "binding_type": "collection"
+										field "binding_collection_name": "unused_realms_features_collection"
+										field "binding_condition": "visible"
+			control:
+				element "enable_button@common_buttons.light_content_button":
+					field "size": [18, "100%"]
+					field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "unused_realms_features_collection"
+							field "binding_condition": "visible"
+						binding:
+							field "binding_name": "#dev_show_override_realms_features"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$pressed_button_name": "button.enable_realms_feature"
+						variable "$button_content": "general_section.enable_realms_feature_icon"
+Changed namespace "horse":
+	Changed element "horse_screen@common.inventory_screen_common":
+		Changed field "variables":
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 3 (+1, -0)
+					Added variable "$screen_background_alpha": 0.4.
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 4 (+1, -0)
+					Added variable "$screen_background_alpha": 0.4.
+Added namespace "iconbutton":
+	element "button@common_buttons.light_content_form_fitting_button":
+		field "size": ["100%c", "100%c"]
+		field "$variables":
+			variable "$button_content_size_override":
+				item 0: "100%c"
+				item 1: "100%c - 4px"
+			variable "$button_content": "iconbutton.iconbutton_button_content"
+	element "iconbutton_animated_icon":
+		field "type": "image"
+		field "layer": 2
+		field "texture": "$icon_texture"
+	element "iconbutton_button_content":
+		field "type": "stack_panel"
+		field "size": ["100%c", 24]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "icon_wrapper":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "controls":
+						control:
+							element "icon_with_border":
+								field "type": "panel"
+								field "size": [18, 18]
+								field "offset": [-2, 0]
+								field "controls":
+									control element "iconbutton_animated_icon@iconbutton.iconbutton_animated_icon": empty
+									control:
+										element "border_black@common.focus_border_black":
+											field "layer": 3
+											field "size": [18, 18]
+			control element "padding_middle@common.empty_panel": field "size": [2, "100%"]
+			control:
+				element "vertically_centered_text":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%c", "100%c"]
+					field "controls":
+						control:
+							element "top_padding":
+								field "type": "panel"
+								field "size": ["0px", 4]
+						control:
+							element "profile_button_label@common_buttons.new_ui_binding_button_label":
+								field "layer": 1
+								field "$variables":
+									variable "$button_text_binding_type": "$textbutton_binding_type"
+									variable "$button_text_size":
+										item 0: "default"
+										item 1: "default"
+									variable "$button_text_max_size":
+										item 0: "default"
+										item 1: 20
+									variable "$button_binding_condition": "none"
+									variable "$button_text_grid_collection_name": ""
+			control element "padding_right@common.empty_panel": field "size": [6, "100%"]
+Changed namespace "pause":
+	Total element: 88 (+1, -0)
+	Changed element "invite_players_button@pause.grid_button_template":
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#invite_button_visible" to "#legacy_invite_button_visible".
+			Changed binding:
+				Changed field "binding_name" from "#invite_button_enabled" to "#legacy_invite_button_enabled".
+	Changed element "player_list":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 10 (+1, -0)
+			Changed control:
+				Moved element from "vertical_padding_2@pause.vertical_padding" to "vertical_padding_4@pause.vertical_padding".
+			Changed control:
+				Moved element from "vertical_padding_3@pause.vertical_padding" to "vertical_padding_5@pause.vertical_padding".
+			Changed control:
+				Moved element from "vertical_padding_4@pause.vertical_padding" to "vertical_padding_6@pause.vertical_padding".
+			Changed control:
+				Moved element from "vertical_padding_5@pause.vertical_padding" to "vertical_padding_7@pause.vertical_padding".
+			Added control element "social_buttons_panel@pause.social_buttons_panel": empty.
+	Added element "social_buttons_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "friendsbutton_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "friendsdrawer_button@iconbutton.button":
+								field "$variables":
+									variable "$pressed_button_name": "button.friends_drawer"
+									variable "$button_text": "#friends_with_count"
+									variable "$icon_texture": "textures/ui/friendsbutton/navbar-friends-icon"
+									variable "$textbutton_binding_type": "global"
+						control element "vertical_padding_1@pause.vertical_padding": field "size": [0, 3]
+					field "bindings":
+						binding:
+							field "binding_name": "#friends_drawer_button_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "global"
+			control:
+				element "invitebutton_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "invite_button@iconbutton.button":
+								field "$variables":
+									variable "$pressed_button_name": "button.menu_invite_players"
+									variable "$button_text": "pauseScreen.invite"
+									variable "$icon_texture": "textures/ui/Envelope"
+									variable "$textbutton_binding_type": "none"
+						control element "vertical_padding_2@pause.vertical_padding": field "size": [0, 3]
+					field "bindings":
+						binding:
+							field "binding_name": "#invite_button_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "global"
+						binding:
+							field "binding_name": "#invite_button_enabled"
+							field "binding_name_override": "#enabled"
+	Changed element "the_icon_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "size":
+			Unchanged item 0: "50% - 75px".
+			Changed item 1 from "130%c" to "100%c".
+		Changed field "controls":
+			Total control: 2 (+1, -0)
 			Changed control:
 				Changed element "stacked_column":
 					Unchanged field "type": "stack_panel".
-					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from "100%c" to 32.
+					Removed field "offset": ["5%", 0].
+					Removed field "anchor_from": "top_left".
+					Removed field "anchor_to": "top_left".
 					Changed field "controls":
 						Changed control:
-							Changed element "xbl_btn@start.column_frame":
+							Changed element "side_padding":
+								Unchanged field "type": "panel".
 								Changed field "size":
-									Unchanged item 0: 94.
-									Changed item 1 from 25 to 32.
-								Changed field "max_size":
-									Unchanged item 0: "95%".
-									Changed item 1 from 25 to 32.
-						Changed control:
-							Changed element "gamertag_pic_and_label":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "gamerpic_with_border":
-											Unchanged field "type": "panel".
-											Changed field "controls":
-												Total control: 2 (+1, -1)
-												Removed control element "gamerpic@start.gamerpic": empty.
-												Added control:
-													element "gamerpic":
-														field "type": "image"
-														field "size": [16, 16]
-														field "layer": 1
-														field "bindings":
-															binding:
-																field "binding_name": "#gamerpic_texture_path"
-																field "binding_name_override": "#texture"
-															binding:
-																field "binding_name": "#gamerpic_texture_location_type"
-																field "binding_name_override": "#texture_file_system"
-			Removed control:
-				element "bottom_pad":
-					field "type": "panel"
-					field "size": ["100%", 5]
-	Changed element "version":
+									Changed item 0 from "12%" to 5.
+									Unchanged item 1: 0.
+			Added control element "padding_bottom@common.empty_panel": field "size": ["100%", 5].
+		Added field "orientation": "vertical".
+Changed namespace "persona":
+	Changed element "purchase_buttons@common.horizontal_stack_panel":
+		Changed field "controls":
+			Total control: 14 (+0, -1)
+			Removed control element "size_equip@persona.size_equip_button_panel": field "ignored": "$is_persona_sdl_enabled".
+	Changed element "size_right_side_info_section@persona.right_side_dialog_panel":
+		Removed field "ignored": "(not $is_persona_sdl_enabled)".
+		Unchanged field "type": "input_panel".
+Changed namespace "profile":
+	Changed element "create_persona_choice_button":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "choice_toggle@common_toggles.dark_vertical_form_fitting_content_toggle":
+					Added field "$variables": variable "$toggle_consume_hover_events": false.
+	Changed element "create_persona_choice_classic_skin@profile.create_persona_choice_button":
+		Changed field "$variables":
+			Total variable: 5 (+2, -0)
+			Added variable "$toggle_view_binding_name": "skin_toggle".
+			Added variable "$focus_override_up": "select_default_character_button".
+	Changed element "select_default_character_button@common_buttons.light_text_button":
+		Added field "focus_identifier": "select_default_character_button".
+Changed namespace "realmsPlus_content":
+	Changed element "popular_packs":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "view_character_creator_items_button@common_buttons.light_content_button":
+					Removed field "bindings":
+						binding:
+							field "binding_name": "#realms_content_creator_button_visible"
+							field "binding_name_override": "#visible"
+Changed namespace "realms_invite_link_settings":
+	Changed element "general_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "share_link_button@settings_common.action_button":
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "#copy_share_enabled" to "#share_link_enabled".
+	Changed element "link_panel@realms_invite_link_settings.link_banner":
+		Changed field "controls":
+			Changed control:
+				Changed element "link_copy_container":
+					Unchanged field "type": "panel".
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "#copy_share_enabled" to "#copy_link_enabled".
+Changed namespace "sdl_image_row":
+	Changed element "single_image":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control:
+				element "image_selector@common.tts_activate_sibling":
+					field "anchor_to": "top_middle"
+					field "anchor_from": "top_middle"
+					field "tts_name": "accessibility.image.tts.title"
+Changed namespace "start":
+	Total element: 99 (+1, -0)
+	Added element "friendsdrawer_button_panel":
 		field "type": "panel"
 		field "anchor_from": "top_right"
 		field "anchor_to": "top_right"
-		field "size": ["50%", "100%"]
+		field "offset": [-5, 5]
+		field "size": ["100%c", "100%c"]
 		field "controls":
 			control:
-				element "label":
-					field "type": "label"
-					field "color": "$main_header_text_color"
-					field "layer": 2
-					field "text": "#version"
-					field "size": ["default", 10]
-					field "max_size": ["100%", "100%"]
-					field "anchor_from": "top_right"
-					field "anchor_to": "top_right"
-					field "bindings": binding field "binding_name": "#version"
-			control:
-				element "label_background":
-					field "type": "image"
-					field "texture": "textures/ui/Black"
-					field "anchor_from": "top_right"
-					field "anchor_to": "top_right"
-					field "offset": [1, -1]
-					field "alpha": 0.6
-					field "size": ["100%sm + 2px", "100%sm + 2px"]
-					field "layer": 1
-		field "type": "label"
-		field "color": "$main_header_text_color"
-		field "layer": 2
-		field "text": "#version"
-		field "size": ["default", 10]
-		field "max_size": ["100%", "100%"]
-		field "anchor_from": "top_right"
-		field "anchor_to": "top_right"
-		field "bindings": binding field "binding_name": "#version"
+				element "friendsdrawer_button@friendsbutton.button":
+					field "$variables":
+						variable "$pressed_button_name": "button.friends_drawer"
+						variable "$button_text": "#friends_with_count"
+	Changed element "start_screen_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 6 (+1, -0)
+			Added control:
+				element "friendsdrawer_button_panel@start.friendsdrawer_button_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "#friends_drawer_button_enabled"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$focus_id": "friendsdrawer_button"
+Changed namespace "toast_screen":
+	Changed element "toast_label":
+		Unchanged field "type": "label".
+		Added field "localize": false.

@@ -1,35 +1,522 @@
-Difference of "ui" between "1.13.0.5" (beta of "1.13.0") and "1.13.0.6" (beta of "1.13.0").
+Difference of "ui" between "1.13.0.18" (beta of "1.13.0") and "1.13.0".
 
-Changed namespace "world_section":
-	Changed element "selector_pane_content":
+Changed namespace "choose_realm":
+	Changed element "realms_scroll_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "realms_stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Moved element from "realms_plus_button@choose_realm.realms_plus_button" to "ten_player_button@choose_realm.ten_player_button".
+						Changed control:
+							Moved element from "create_realm_button@choose_realm.create_new_realm_button" to "two_player_button@choose_realm.two_player_button".
+	Moved element from "realms_plus_button@settings_common.action_button" to "ten_player_button@settings_common.action_button".
+	Changed element "ten_player_button@settings_common.action_button":
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#realms_plus_visible" to "#ten_player_button_visible".
+		Changed field "$variables":
+			Changed variable "$pressed_button_name" from "button.realms_plus" to "button.ten_player".
+	Moved element from "create_new_realm_button@common_buttons.light_text_button" to "two_player_button@common_buttons.light_text_button".
+	Changed element "two_player_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Changed variable "$pressed_button_name" from "button.menu_create_realm" to "button.two_player".
+		Added field "bindings":
+			binding:
+				field "binding_name": "#two_player_button_visible"
+				field "binding_name_override": "#visible"
+Changed namespace "common_buttons":
+	Changed element "new_ui_button_panel":
+		Unchanged field "type": "panel".
+		Changed field "$variables":
+			Total variable: 12 (+2, -0)
+			Added variable "$button_anchor_to|default": "center".
+			Added variable "$button_anchor_from|default": "center".
+		Added field "anchor_to": "$button_anchor_to".
+		Added field "anchor_from": "$button_anchor_from".
+Changed namespace "common_store":
+	Changed element "store_header_with_coins":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "play_or_create_panel":
+				Changed element "top_bar@common_store.store_top_bar":
+					Added field "focus_container": true.
+					Added field "focus_nagivation_mode_up": "stop".
+					Added field "focus_nagivation_mode_right": "stop".
+					Added field "focus_nagivation_mode_left": "none".
+Changed namespace "general_section":
+	Changed element "realms_button_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "left_button@common_buttons.light_content_button":
+					Changed field "$variables":
+						Changed variable "$left_button_bindings|default":
+							Changed item 0:
+								Added item "binding_condition": "once".
+	Changed element "view_subscriptions_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "realms_plus_buy_offer@general_section.realms_subscription_main":
+					Changed field "bindings":
+						Changed binding:
+							Added field "binding_type": "collection".
+							Added field "binding_collection_name": "$realm_collection_name".
+			Changed control:
+				Changed element "additional_realms_buy_offer@general_section.realms_subscription_main":
+					Changed field "bindings":
+						Changed binding:
+							Added field "binding_type": "collection".
+							Added field "binding_collection_name": "$realm_collection_name".
+Changed namespace "pdp":
+	Total element: 114 (+0, -1)
+	Removed element "smooth_coin_purchase_label":
+		field "type": "stack_panel"
+		field "size": ["100% + 4px", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "sales_banner_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100% + 4px"]
+					field "controls":
+						control:
+							element "markdown_banner@common_store.markdown_background":
+								field "size": ["100%c", "100%"]
+								field "offset": [0, -2]
+								field "ignored": "(not $default_state)"
+								field "layer": 9
+								field "$variables":
+									variable "$markdown_label": "pdp.discount_label"
+									variable "$banner_size":
+										item 0: "26px"
+										item 1: "100%"
+									variable "$triangle_offset":
+										item 0: 0
+										item 1: 0
+									variable "$triangle_texture": "textures/ui/saleflagtrianglebeveldefault"
+									variable "$banner_texture": "textures/ui/sale_button_borderless_lighthoverflag"
+						control:
+							element "discount_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "offset": [0, -2]
+								field "ignored": "$default_state"
+								field "controls":
+									control:
+										element "discount_label@pdp.discount_label":
+											field "offset": [-2.2, 0]
+											field "layer": 9
+					field "bindings":
+						binding:
+							field "binding_name": "#is_on_sale"
+							field "binding_name_override": "#visible"
+			control:
+				element "sales_padding_0":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+			control:
+				element "coin_image_offset_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "controls": control element "coin@pdp.coin_image": field "offset": [-2, -0.25]
+			control element "coin_purchase_label_text@pdp.coin_purchase_label_text": empty
+			control:
+				element "sales_coin_purchase_label_text@pdp.coin_purchase_label_text":
+					field "color": "$light_button_default_text_color"
+					field "$variables": variable "$coin_label_visibility_binding|default": "#is_on_sale"
+			control:
+				element "markdown_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "markdown_label@pdp.price_markdown_panel":
+								field "size": ["100%c + 4px", "100%"]
+								field "offset": [0, 0]
+								field "$variables":
+									variable "$strike_thru_offset":
+										item 0: 0
+										item 1: 0
+					field "bindings":
+						binding:
+							field "binding_name": "#is_on_sale"
+							field "binding_name_override": "#visible"
+			control:
+				element "fill_padding_1":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "ignored": "$is_on_sale"
+	Changed element "smooth_coin_purchase_label_formfitting":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "sales_banner_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "discount_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "discount_label@pdp.discount_label":
+											Changed field "layer" from 9 to 11.
+			Changed control:
+				Changed element "text_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 2 (+1, -0)
-						Added control:
-							element "play_on_realm_button@settings_common.action_button":
-								field "ignored": "(not $is_pregame or $education_edition)"
-								field "size": ["50%", 30]
-								field "default_focus_precedence": 2
-								field "variables":
-									field "requires": "(not $is_world_edit)"
-									field "$variables":
-										variable "$button_text": "createWorldScreen.createOnRealms"
-										variable "$pressed_button_name": "create_world_on_realm_button"
-								field "bindings":
-									binding:
-										field "binding_name": "#create_on_realm_visible"
-										field "binding_name_override": "#visible"
-								field "$variables":
-									variable "$button_text": "menu.playOnRealms"
-									variable "$button_text_max_size":
-										item 0: "100%"
-										item 1: 20
-									variable "$default_button_texture": "textures/ui/realmsContent"
-									variable "$hover_button_texture": "textures/ui/realmsContentHover"
-									variable "$pressed_button_texture": "textures/ui/realmsContentPressed"
-									variable "$pressed_button_name": "play_world_on_realm_button"
-									variable "$focus_override_up": "FOCUS_OVERRIDE_STOP"
+						Changed control:
+							Changed element "coin_purchase_label_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Total control: 1 (+1, -2)
+									Removed control:
+										element "coin_purchase_label_text_left@pdp.coin_purchase_label_text":
+											field "text_alignment": "center"
+											field "ignored": "(not $coin_image_on_right)"
+											field "offset": [-4, 0]
+									Removed control:
+										element "coin_purchase_label_text_right@pdp.coin_purchase_label_text":
+											field "text_alignment": "center"
+											field "ignored": "$coin_image_on_right"
+											field "offset": [4, 0]
+									Added control element "coin_purchase_label_text_left@pdp.coin_purchase_label_text": empty.
+						Changed control:
+							Changed element "markdown_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "markdown_label@pdp.price_markdown_panel":
+											Changed field "size":
+												Changed item 0 from "100%c" to "100%c + 5px".
+												Unchanged item 1: "100%".
+						Changed control:
+							Changed element "right_coin_image_offset_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "coin@pdp.coin_image":
+											Changed field "offset":
+												Changed item 0 from -8 to -3.
+												Unchanged item 1: 0.
+	Changed element "smooth_purchase_buttons_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "purchase_coins_button_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "smooth_purchase_with_coins_button@common_buttons.light_content_button":
+								Changed field "$variables":
+									Total variable: 9 (+1, -0)
+									Added variable "$button_action": "button.purchase_with_coins".
+	Changed element "summary_text_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "apply_to_realm_panel":
+					Unchanged field "type": "panel".
+					Removed field "bindings":
+						binding:
+							field "binding_name": "#apply_to_realm_button_visible"
+							field "binding_name_override": "#visible"
+					Added field "visible": false.
+Changed namespace "persona":
+	Total element: 174 (+2, -0)
+	Changed element "category_featured_offer_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "left_cycle_button_panel":
+					Unchanged field "type": "panel".
+					Added field "ignored": "$ignore_cycle_buttons".
+			Changed control:
+				Changed element "rigtt_cycle_button_panel":
+					Unchanged field "type": "panel".
+					Added field "ignored": "$ignore_cycle_buttons".
+		Changed field "$variables":
+			Total variable: 9 (+1, -0)
+			Added variable "$ignore_cycle_buttons|default": false.
+	Changed element "cycle_featured_content_section":
+		Unchanged field "type": "panel".
+		Changed field "focus_nagivation_mode_up" from "stop" to "none".
+	Changed element "featured_info_panel@persona.right_side_dialog_panel":
+		Changed field "$variables":
+			Total variable: 9 (+1, -0)
+			Added variable "$ignore_cycle_buttons": true.
+		Added field "focus_container": true.
+		Added field "focus_nagivation_mode_left": "none".
+		Added field "focus_nagivation_mode_right": "stop".
+		Added field "focus_nagivation_mode_up": "none".
+		Added field "focus_nagivation_mode_down": "stop".
+	Changed element "persona_category_section@persona.dialog_background_object":
+		Changed field "focus_nagivation_mode_up" from "stop" to "none".
+	Changed element "persona_classic_skin_category_section@persona.dialog_background_object":
+		Changed field "focus_nagivation_mode_up" from "stop" to "none".
+	Changed element "persona_piece_offer":
+		Unchanged field "type": "panel".
+		Removed field "max_size": "$persona_piece_max_size".
+		Changed field "$variables":
+			Total variable: 1 (+0, -1)
+			Removed variable "$persona_piece_max_size|default":
+				item 0: "100%"
+				item 1: "100%x"
+	Changed element "persona_piece_offer_scroll_content":
+		Unchanged field "type": "panel".
+		Added field "$variables":
+			variable "$piece_grid_visible_binding_type": "global"
+			variable "$piece_grid_visible_binding_name": "#is_piece_offer_list_visible"
+	Added element "persona_restricted_skin_pack_panel":
+		field "type": "panel"
+		field "size": ["100%", 58]
+		field "controls":
+			control:
+				element "background_image":
+					field "type": "image"
+					field "texture": "textures/ui/dressing_room_banner"
+					field "color": "$dressing_room_skin_picker_dark_bg_color"
+					field "alpha": "$dressing_room_panel_alpha"
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "size": ["100%", 45]
+			control:
+				element "pack_label":
+					field "type": "label"
+					field "offset": [2, 5]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": ["100%", 16]
+					field "text": "#pack_title"
+					field "color": "$dressing_room_right_side_default_text_color"
+					field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_type": "$persona_skin_pack_binding_type"
+							field "binding_collection_name": "$persona_skin_pack_collection_name"
+							field "binding_name": "#pack_title"
+	Changed element "persona_skin_pack_grid":
+		Unchanged field "type": "grid".
+		Changed field "grid_item_template" from "persona.persona_skin_pack_panel" to "persona.persona_skin_pack_panel_controller".
+	Added element "persona_skin_pack_panel_controller":
+		field "type": "panel"
+		field "size": ["100%", 58]
+		field "controls":
+			control:
+				element "standard_panel@persona.persona_skin_pack_panel":
+					field "bindings":
+						binding:
+							field "binding_type": "$persona_skin_pack_binding_type"
+							field "binding_collection_name": "$persona_skin_pack_collection_name"
+							field "binding_name": "(not #is_skin_pack_multiplayer_restricted)"
+							field "binding_name_override": "#visible"
+			control:
+				element "restricted_panel@persona.persona_restricted_skin_pack_panel":
+					field "bindings":
+						binding:
+							field "binding_type": "$persona_skin_pack_binding_type"
+							field "binding_collection_name": "$persona_skin_pack_collection_name"
+							field "binding_name": "(#is_skin_pack_multiplayer_restricted)"
+							field "binding_name_override": "#visible"
+	Changed element "persona_skin_section@persona.dialog_background_object":
+		Changed field "focus_nagivation_mode_up" from "stop" to "none".
+	Changed element "piece_offer_button@common.button":
+		Changed field "controls":
+			Changed control:
+				Changed element "button_controls":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Total control: 8 (+2, -2)
+						Removed control element "hover@persona.focus_border_skin_picker": field "layer": 5.
+						Removed control element "pressed@persona.selected_border_skin_picker": field "layer": 4.
+						Added control element "hover@persona.focus_border_skin_picker": field "layer": 9.
+						Added control element "pressed@persona.selected_border_skin_picker": field "layer": 9.
+	Changed element "piece_offer_section_panel":
+		Unchanged field "type": "stack_panel".
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#current_up_mode_piece_offer"
+				field "binding_name_override": "#focus_nagivation_mode_up"
+		Added field "focus_nagivation_mode_up": "none".
+	Changed element "preview_skin_full@common_buttons.light_content_button":
+		Changed field "$variables":
+			Total variable: 7 (+1, -0)
+			Added variable "$button_size_override":
+				item 0: 22
+				item 1: 22
+	Changed element "purchase_buttons":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "coin_purchase_panel@persona.purchase_button_panel":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
+			Changed control:
+				Changed element "real_money_purchase_panel@persona.purchase_button_panel":
+					Changed field "$variables":
+						Total variable: 4 (+2, -0)
+						Added variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
+						Added variable "$focus_override_right": "FOCUS_OVERRIDE_STOP".
+	Changed element "right_side_stack":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "arrow_panel":
+					Unchanged field "type": "input_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "preview_skin_panel@common.empty_panel":
+								Changed field "controls":
+									Total control: 2 (+1, -0)
+									Changed control:
+										Moved element from "preview_skin@persona.preview_skin_full" to "preview_skin_mouse@persona.preview_skin_full".
+										Changed element "preview_skin_mouse@persona.preview_skin_full":
+											Added field "bindings":
+												binding:
+													field "binding_name": "(not #is_using_gamepad)"
+													field "binding_name_override": "#visible"
+									Added control:
+										element "preview_skin@persona.preview_skin_full":
+											field "size": ["100%", "100%"]
+											field "offset": [-5, -2]
+											field "bindings":
+												binding:
+													field "binding_name": "#is_using_gamepad"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$button_anchor_to": "bottom_right"
+												variable "$button_anchor_from": "bottom_right"
+												variable "$focus_id": "skin_preview_button"
+												variable "$focus_override_left": "skin_color_picker_button"
+												variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+	Changed element "skin_pack_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "focus_nagivation_mode_up" from "stop" to "none".
+Changed namespace "profile":
+	Changed element "edit_appearance_button@common_buttons.light_text_button":
+		Added field "focus_change_left": "FOCUS_OVERRIDE_STOP".
+	Changed element "edit_appearance_preset_button@common_buttons.light_text_button":
+		Added field "focus_change_left": "FOCUS_OVERRIDE_STOP".
+	Changed element "featured_info_panel@profile.bottom_dialog_panel":
+		Changed field "$variables":
+			Total variable: 12 (+1, -0)
+			Moved variable from "$left_control_left_cycle_focus_override_left|default" to "$left_control_left_cycle_focus_override_left".
+			Moved variable from "$right_control_right_cycle_focus_override_right|default" to "$right_control_right_cycle_focus_override_right".
+			Added variable "$right_cycle_focus_override_down": "FOCUS_OVERRIDE_STOP".
+		Added field "focus_container": true.
+		Added field "use_last_focus": true.
+		Added field "focus_wrap_enabled": false.
+		Added field "focus_nagivation_mode_down": "stop".
+		Added field "focus_nagivation_mode_right": "stop".
+		Added field "focus_nagivation_mode_left": "stop".
+	Changed element "persona_preset_section_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "persona_preset_section":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "preset_arrow_button_left_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Total control: 2 (+1, -1)
+									Removed control:
+										element "preset_arrow_button_left@profile.preset_arrow_button_panel":
+											field "$variables":
+												variable "$focus_id": "arrow_left"
+												variable "$focus_override_left": "FOCUS_OVERRIDE_STOP"
+												variable "$focus_override_right": "arrow_right"
+									Added control element "preset_arrow_button_left@profile.preset_arrow_button_panel": empty.
+						Changed control:
+							Changed element "preset_arrow_button_right_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "preset_arrow_button_right@profile.preset_arrow_button_panel":
+											Changed field "$variables":
+												Total variable: 1 (+0, -3)
+												Removed variable "$focus_id": "arrow_right".
+												Removed variable "$focus_override_right": "FOCUS_OVERRIDE_STOP".
+												Removed variable "$focus_override_left": "arrow_left".
+	Changed element "preset_arrow_button_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "preset_arrow_button@common_buttons.light_content_button":
+					Added field "focus_enabled": false.
+	Changed element "profile_screen@common.base_screen":
+		Changed field "button_mappings":
+			Changed button mapping:
+				Changed field "to_button_id" from "button.menu_exit" to "button.try_exiting".
+	Changed element "profile_screen_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "main_panel@common_store.store_header_with_coins":
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$back_button_pressed_button_name": "button.try_exiting".
+	Changed element "profile_screen_main_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "profile_screen_main_content":
+					Unchanged field "type": "stack_panel".
+					Added field "focus_container": true.
+					Added field "use_last_focus": true.
+					Added field "focus_wrap_enabled": false.
+					Added field "focus_nagivation_mode_right": "stop".
+					Added field "focus_nagivation_mode_left": "stop".
+	Changed element "settings_button@common_buttons.light_content_button":
+		Added field "focus_change_right": "FOCUS_OVERRIDE_STOP".
+Changed namespace "realmsPlus":
+	Changed element "buy_now_toggle@realmsPlus.toggle_base":
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#is_not_owned" to "#buy_visible".
+Changed namespace "realmsPlus_buy":
+	Changed element "buy_now_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "buy_button@realmsPlus_buy.buy_button_panel":
+					Changed field "$variables":
+						Changed variable "$buy_now_bindings":
+							Changed item 0:
+								Changed item "binding_name" from "#buy_now_button_enabled" to "#has_checked_tos".
+	Changed element "terms_and_conditions_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "terms_string_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "buttons_stack_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "agree_panel":
+											Unchanged field "type": "panel".
+											Changed field "controls":
+												Changed control:
+													Changed element "checkbox_control@common.checkbox":
+														Added field "bindings":
+															binding:
+																field "binding_name": "#has_checked_tos"
+																field "binding_name_override": "#toggle_state"
+Changed namespace "realmsPlus_landing":
+	Changed element "title_stack":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "action_button@realmsPlus_buy.buy_button_panel":
+					Added field "bindings":
+						binding:
+							field "binding_name": "#buy_visible"
+							field "binding_name_override": "#visible"

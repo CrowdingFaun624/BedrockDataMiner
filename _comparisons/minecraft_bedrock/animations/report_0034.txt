@@ -1,89 +1,67 @@
-Difference of "animations" between "1.15.0.51" (beta of "1.16.0") and "1.15.0.53" (beta of "1.16.0").
+Difference of "animations" between "1.15.0.56" (beta of "1.16.0") and "1.16.0.51" (beta of "1.16.0").
 
-Total file: 107 (+3, -0)
-Added file "actor.animation.json":
+Total file: 109 (+2, -0)
+Added file "hoglin.animation.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "animations":
-			animation "animation.actor.billboard":
+			animation "animation.hoglin.attack":
 				field "loop": true
-				field "bones": bone "body": field "rotation": ["query.camera_rotation(0)", "query.camera_rotation(1)", 0.0]
-Added file "drowned.animation.json":
+				field "bones": bone "head": field "rotation": ["variable.attack_head_rot", 0, 0]
+			animation "animation.hoglin.look_at_target":
+				field "loop": true
+				field "bones":
+					bone "head":
+						field "relative_to": field "rotation": "entity"
+						field "rotation": [0, "query.target_y_rotation - this", 0]
+			animation "animation.hoglin.walk":
+				field "loop": true
+				field "bones":
+					bone "left_ear": field "rotation": [0.0, 0.0, "variable.tcos_left_side * 0.5"]
+					bone "leg_back_left": field "rotation": ["variable.tcos_left_side", 0.0, 0.0]
+					bone "leg_back_right": field "rotation": ["variable.tcos_right_side", 0.0, 0.0]
+					bone "leg_front_left": field "rotation": ["-variable.tcos_left_side", 0.0, 0.0]
+					bone "leg_front_right": field "rotation": ["-variable.tcos_right_side", 0.0, 0.0]
+					bone "right_ear": field "rotation": [0.0, 0.0, "variable.tcos_right_side * 0.5"]
+Added file "piglin.animation.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "animations":
-			animation "animation.drowned.attack.rotations":
+			animation "animation.piglin.celebrate_hunt":
 				field "loop": true
 				field "bones":
-					bone "body": field "rotation": [0.0, "math.sin(math.sqrt(variable.attack_time) * 360.0) * 11.46", 0.0]
-					bone "leftarm": field "rotation": ["-(math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) + math.sin(variable.attack_time * 180.0)) * 5.73", 0.0, 0.0]
-					bone "rightarm": field "rotation": ["-(math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 34.38 + math.sin(variable.attack_time * 180.0) * 28.65) * (variable.is_brandishing_spear ? -2.5 : 1.0 )", "variable.is_brandishing_spear ? 0.0 : math.sin(math.sqrt(variable.attack_time) * 360.0) * 22.92", 0.0]
-Added file "drowned.animation.v1.0.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "animations":
-			animation "animation.drowned.attack.rotations.v1.0":
+					bone "leftear": field "rotation": [0.0, 0.0, "Math.sin(query.time_stamp * 30) * 10"]
+					bone "rightear": field "rotation": [0.0, 0.0, "Math.cos(query.time_stamp * 30) * 10"]
+			animation "animation.piglin.celebrate_hunt_special":
 				field "loop": true
 				field "bones":
-					bone "body": field "rotation": [0.0, "math.sin(math.sqrt(variable.attack_time) * 360.0) * 11.46", 0.0]
-					bone "leftarm": field "rotation": ["-(math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) + math.sin(variable.attack_time * 180.0)) * 5.73", "math.sin(math.sqrt(variable.attack_time) * 360.0) * 11.46", 0.0]
-					bone "rightarm": field "rotation": ["-(math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 34.38 + math.sin(variable.attack_time * 180.0) * 28.65) * (variable.is_brandishing_spear ? -2.5 : 1.0 )", "variable.is_brandishing_spear ? 0.0 : math.sin(math.sqrt(variable.attack_time) * 360.0) * 22.92", 0.0]
-			animation "animation.drowned.swimming.v1.0":
+					bone "body": field "position": [0.0, "Math.sin(query.time_stamp * 40) * 0.35", 0.0]
+					bone "head": field "position": ["Math.sin(query.time_stamp * 10)", "Math.sin(query.time_stamp * 40)", 0.0]
+					bone "leftarm": field "rotation": [0.0, 0.0, "-70 - Math.cos(query.time_stamp * 40) * 10"]
+					bone "leftear": field "rotation": [0.0, 0.0, "Math.sin(query.time_stamp * 30) * 10"]
+					bone "rightarm": field "rotation": [0.0, 0.0, "70 + Math.cos(query.time_stamp * 40) * 10"]
+					bone "rightear": field "rotation": [0.0, 0.0, "Math.cos(query.time_stamp * 30) * 10"]
+			animation "animation.piglin.crossbow.charge":
 				field "loop": true
 				field "bones":
-					bone "leftarm": field "rotation": ["math.lerp(this, -180.0, variable.swim_amount) - (variable.swim_amount * ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4)) - (variable.swim_amount * (math.sin(query.life_time * 76.776372) * 2.865)) - this", "math.lerp(this, -14.325, variable.swim_amount) - this", "math.lerp(this, 14.325, variable.swim_amount) - (variable.swim_amount * (math.cos(query.life_time * 103.13244) * 2.865 + 2.865)) - this"]
-					bone "leftleg": field "rotation": ["math.lerp(this, math.cos(query.life_time * 390.0 + 180.0) * 0.3, variable.swim_amount) - this", 0.0, 0.0]
-					bone "rightarm": field "rotation": ["math.lerp(this, -180.0, variable.swim_amount) - (variable.swim_amount * ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4)) + (variable.swim_amount * (math.sin(query.life_time * 76.776372) * 2.865)) - this", "math.lerp(this, 14.325, variable.swim_amount) - this", "math.lerp(this, -14.325, variable.swim_amount) + (variable.swim_amount * (math.cos(query.life_time * 103.13244) * 2.865 + 2.865)) - this"]
-					bone "rightleg": field "rotation": ["math.lerp(this, math.cos(query.life_time * 390.0) * 0.3, variable.swim_amount)", 0.0, 0.0]
-					bone "root":
-						field "position": [0.0, "variable.swim_amount * -10.0 - this", "variable.swim_amount * 9.0 - this"]
-						field "rotation": ["variable.swim_amount * (90.0 + query.target_x_rotation)", 0.0, 0.0]
-Changed file "skeleton.animations.v1.0.json":
-	Changed resource pack "core":
-		Changed field "animations":
-			Total animation: 19 (+1, -0)
-			Added animation "animation.humanoid.big_head.v1.0":
+					bone "leftarm": field "rotation": ["math.lerp(-90.0 + 34.38, -90.0, variable.crossbow_charge)  -this", "math.lerp(22.92, 48.70, variable.crossbow_charge) -this", 0.0]
+					bone "rightarm": field "rotation": ["-90.0 + 34.38 -this", "-45.84 -this", 0.0]
+			animation "animation.piglin.crossbow.hold":
 				field "loop": true
 				field "bones":
-					bone "hat": field "scale": 1.4
-					bone "head": field "scale": 1.4
-			Changed animation "animation.humanoid.look_at_target.swimming.v1.0":
-				Changed field "bones":
-					Changed bone "hat":
-						Changed field "rotation":
-							Changed vector item 0 from "math.lerp(query.target_x_rotation, -45.0, variable.swimamount)" to "math.lerp(query.target_x_rotation, -45.0, variable.swim_amount)".
-							Unchanged vector item 1: "query.target_y_rotation".
-							Unchanged vector item 2: 0.0.
-Changed file "zombie.animation.json":
-	Changed resource pack "core":
-		Changed field "animations":
-			Changed animation "animation.zombie.attack_bare_hand":
-				Changed field "bones":
-					Changed bone "leftarm":
-						Changed field "rotation":
-							Changed vector item 0 from "-90 - ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4) - (math.sin(query.life_time * 76.776372) * 2.865) - this" to "-90.0 - ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4) - (math.sin(query.life_time * 76.776372) * 2.865) - this".
-							Unchanged vector item 1: "5.73 - ((math.sin(variable.attack_time * 180.0) * 57.3) * 0.6) - this".
-							Unchanged vector item 2: "math.cos(query.life_time * 103.13244) * -2.865 - 2.865 - this".
-					Changed bone "rightarm":
-						Changed field "rotation":
-							Changed vector item 0 from "90 * (variable.is_brandishing_spear - 1.0) - ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4) + (math.sin(query.life_time * 76.776372) * 2.865) - this" to "90.0 * (variable.is_brandishing_spear - 1.0) - ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4) + (math.sin(query.life_time * 76.776372) * 2.865) - this".
-							Unchanged vector item 1: "(math.sin(variable.attack_time * 180.0) * 57.3) * 0.6 - 5.73 - this".
-							Unchanged vector item 2: "math.cos(query.life_time * 103.13244) * 2.865 + 2.865 - this".
-			Changed animation "animation.zombie.swimming":
-				Changed field "bones":
-					Total bone: 5 (+3, -0)
-					Added bone "body":
-						field "position": [0.0, "variable.swim_amount * -10.0 - this", "variable.swim_amount * 9.0 - this"]
-						field "rotation": ["variable.swim_amount * (90.0 + query.target_x_rotation)", 0.0, 0.0]
-					Changed bone "leftarm":
-						Changed field "rotation":
-							Changed vector item 0 from "math.lerprotate(this, -180.0, variable.swim_amount) - (variable.swim_amount * ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4)) - (variable.swim_amount * (math.sin(query.life_time * 76.776372) * 2.865)) - this" to "math.lerp(this, -180.0, variable.swim_amount) - (variable.swim_amount * ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4)) - (variable.swim_amount * (math.sin(query.life_time * 76.776372) * 2.865)) - this".
-							Changed vector item 1 from "math.lerprotate(this, 14.325, variable.swim_amount) - this" to "math.lerp(this, 14.325, variable.swim_amount) - this".
-							Changed vector item 2 from "math.lerprotate(this, 14.325, variable.swim_amount) - (variable.swim_amount * (math.cos(query.life_time * 103.13244) * 2.865 + 2.865)) - this" to "math.lerp(this, 14.325, variable.swim_amount) - (variable.swim_amount * (math.cos(query.life_time * 103.13244) * 2.865 + 2.865)) - this".
-					Added bone "leftleg": field "rotation": ["math.lerp(this, math.cos(query.life_time * 390.0 + 180.0) * 0.3, variable.swim_amount)", 0.0, 0.0].
-					Changed bone "rightarm":
-						Changed field "rotation":
-							Changed vector item 0 from "math.lerprotate(this, -180.0, variable.swim_amount) - (variable.swim_amount * ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4)) + (variable.swim_amount * (math.sin(query.life_time * 76.776372) * 2.865)) - this" to "math.lerp(this, -180.0, variable.swim_amount) - (variable.swim_amount * ((math.sin(variable.attack_time * 180.0) * 57.3) * 1.2 - (math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3) * 0.4)) + (variable.swim_amount * (math.sin(query.life_time * 76.776372) * 2.865)) - this".
-							Changed vector item 1 from "math.lerprotate(this, 14.325, variable.swim_amount) - this" to "math.lerp(this, 14.325, variable.swim_amount) - this".
-							Changed vector item 2 from "math.lerprotate(this, -14.325, variable.swim_amount) + (variable.swim_amount * (math.cos(query.life_time * 103.13244) * 2.865 + 2.865)) - this" to "math.lerp(this, -14.325, variable.swim_amount) + (variable.swim_amount * (math.cos(query.life_time * 103.13244) * 2.865 + 2.865)) - this".
-					Added bone "rightleg": field "rotation": ["math.lerp(this, math.cos(query.life_time * 390.0) * 0.3, variable.swim_amount)", 0.0, 0.0].
+					bone "leftarm": field "rotation": ["-85.94 + query.target_x_rotation -this", "34.38 + math.clamp(query.target_y_rotation, -45, 25) -this", 0.0]
+					bone "rightarm": field "rotation": ["-90.0 + 5.73 + query.target_x_rotation -this", "-17.19 + math.clamp(query.target_y_rotation, -25, 45) -this", 0.0]
+			animation "animation.piglin.move":
+				field "loop": true
+				field "bones":
+					bone "leftarm": field "rotation": ["variable.tcos_left_side", 0.0, 0.0]
+					bone "leftear": field "rotation": [0.0, 0.0, "variable.tcos_left_side * 0.5"]
+					bone "leftleg": field "rotation": ["variable.tcos_left_side * 1.4", 0.0, 0.0]
+					bone "rightarm": field "rotation": ["variable.tcos_right_side", 0.0, 0.0]
+					bone "rightear": field "rotation": [0.0, 0.0, "variable.tcos_right_side * 0.5"]
+					bone "rightleg": field "rotation": ["variable.tcos_right_side * 1.4", 0.0, 0.0]
+			animation "animation.piglin.sword.attack":
+				field "loop": true
+				field "bones":
+					bone "leftarm": field "rotation": ["-90 + (variable.attack2 * 1.2 - variable.attack * 0.4) - variable.x_bob - this", "5.73 - (variable.attack2 * 0.6) - this", "-variable.z_bob - this"]
+					bone "rightarm": field "rotation": ["-90 + (variable.attack2 * 1.2 - variable.attack * 0.4) + variable.x_bob - this", "variable.attack2 * 0.6 - 5.73 - this", "variable.z_bob - this"]

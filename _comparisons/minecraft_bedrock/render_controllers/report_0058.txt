@@ -1,15 +1,13 @@
-Difference of "render_controllers" between "1.19.11" and "1.19.20.20" (beta of "1.19.20").
+Difference of "render_controllers" between "1.19.30.22" (beta of "1.19.30") and "1.19.30.23" (beta of "1.19.30").
 
-Changed file "player.render_controllers.json":
-	Changed resource pack "experimental":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.player.first_person":
-				Changed field "part_visibility":
-					Changed part visibility dict:
-						Changed part visibility "rightArm" from "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'filled_map'".
-					Changed part visibility dict:
-						Changed part visibility "rightSleeve" from "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'filled_map'".
-					Changed part visibility dict:
-						Changed part visibility "leftArm" from "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'filled_map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'filled_map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
-					Changed part visibility dict:
-						Changed part visibility "leftSleeve" from "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'filled_map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'filled_map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+Changed file "cape.render_controllers.json":
+	Total resource pack: 2 (+1, -0)
+	Added resource pack "experimental":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.player.cape":
+				field "rebuild_animation_matrices": true
+				field "geometry": "Geometry.cape"
+				field "materials": material dict material "*": "Material.cape"
+				field "textures": texture "Texture.cape"
+				field "part_visibility": part visibility dict part visibility "cape": "query.armor_texture_slot(1) != 5 && (!variable.is_first_person || variable.is_paperdoll) && !variable.map_face_icon && !query.is_spectator"

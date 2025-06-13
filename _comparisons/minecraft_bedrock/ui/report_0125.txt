@@ -1,75 +1,165 @@
-Difference of "ui" between "1.12.0.3" (beta of "1.12.0") and "1.12.0.4" (beta of "1.12.0").
+Difference of "ui" between "1.13.0.1" (beta of "1.13.0") and "1.13.0.2" (beta of "1.13.0").
 
-Changed namespace "enchanting_pocket":
-	Changed element "enchanting_book_panel":
+Changed namespace "file_upload":
+	Changed element "progress_bar_icon":
 		Unchanged field "type": "panel".
 		Changed field "controls":
-			Changed control:
-				Changed element "enchanting_book":
-					Unchanged field "type": "custom".
-					Added field "layer": -1.
+			Total control: 2 (+0, -1)
+			Removed control:
+				element "infinite_loading_bar_icon@feed_common.progress_loading_bars":
+					field "layer": 3
+					field "visible": "#infinite_progress_visible"
+					field "size": ["50%", 150]
+					field "bindings":
+						binding:
+							field "binding_name": "#infinite_progress_visible"
+							field "binding_name_override": "#visible"
 Changed namespace "game_tip":
-	Changed element "game_tip_item_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "info_bulb":
-					Unchanged field "type": "image".
-					Changed field "size":
-						Changed item 0 from 12 to 15.
-						Changed item 1 from 14 to 19.
-			Changed control:
-				Changed element "label_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "padding_vertical":
-								Unchanged field "type": "panel".
-								Changed field "size":
-									Unchanged item 0: 0.
-									Changed item 1 from 2 to 3.
 	Changed element "inventory_game_tip_panel":
 		Unchanged field "type": "panel".
 		Changed field "variables":
-			Total variable: 7 (+0, -1)
-			Changed variable:
-				Changed field "requires" from "((not $up_enabled and $is_recipe) and $pocket_screen)" to "((not $up_enabled and $is_recipe or $is_close)) and $pocket_screen)".
+			Total variable: 8 (+0, -1)
 			Removed variable:
-				field "requires": "(($is_close) and $pocket_screen)"
+				field "requires": "$is_equipment_tab_tip"
 				field "$variables":
+					variable "$offset_value":
+						item 0: 0
+						item 1: 32
 					variable "$chevron_offset":
 						item 0: 0
-						item 1: -20
+						item 1: -17
+		Changed field "$variables":
+			Total variable: 11 (+0, -1)
+			Removed variable "$is_equipment_tab_tip|default": false.
 	Changed element "inventory_tip_horizontal_panel":
-		Unchanged field "type": "stack_panel".
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "inventory_tip@game_tip.game_tip_item_background":
 					Changed field "variables":
-						Total variable: 4 (+1, -0)
-						Added variable:
-							field "requires": "($is_close and $pocket_screen)"
-							field "$variables":
-								variable "$tip_max_size":
-									item 0: 120
-									item 1: "default"
-								variable "$tip_min_size":
-									item 0: 120
-									item 1: "default"
+						Changed variable:
+							Changed field "requires" from "(($is_recipe or $is_equipment_tab_tip) and $pocket_screen)" to "($is_recipe and $pocket_screen)".
+						Changed variable:
+							Changed field "requires" from "(($is_close or $is_recipe or $is_equipment_tab_tip) and $pocket_screen)" to "(($is_close or $is_recipe) and $pocket_screen)".
 Changed namespace "general_section":
-	Changed element "vr_section":
+	Changed element "accessibility_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 4 (+1, -0)
+			Added control:
+				element "option_toggle3@settings_common.option_toggle":
+					field "ignored": "(not $text_to_speech_supported)"
+					field "$variables":
+						variable "$option_label": "options.enableOpenChatMessage"
+						variable "$option_binding_name": "#enable_open_chat_message"
+						variable "$option_enabled_binding_name": "#enable_open_chat_message_enabled"
+						variable "$toggle_name": "enable_open_chat_message"
+Changed namespace "pdp":
+	Changed element "apply_to_realm_button@common_buttons.light_content_button":
+		Changed field "$variables":
+			Total variable: 5 (+3, -0)
+			Added variable "$default_button_texture": "textures/ui/realmsContent".
+			Added variable "$hover_button_texture": "textures/ui/realmsContentHover".
+			Added variable "$pressed_button_texture": "textures/ui/realmsContentPressed".
+		Added field "offset": [2, 0].
+	Changed element "summary_text_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 10 (+1, -1)
+			Removed control element "apply_to_realm_button@pdp.apply_to_realm_button": empty.
+			Added control:
+				element "apply_to_realm_panel":
+					field "type": "panel"
+					field "size": ["100%", 20]
+					field "controls": control element "apply_to_realm_button@pdp.apply_to_realm_button": empty
+Changed namespace "settings":
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 6 (+2, -0)
+			Changed control:
+				Changed element "controls_and_settings_selector_pane":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 19 (+0, -2)
+						Removed control:
+							element "spacer_0":
+								field "ignored": "(not $include_world_section)"
+								field "type": "panel"
+								field "size": [2, 2]
+						Removed control element "accessibility_button@general_section.accessibility_button": field "$variables": variable "$toggle_group_forced_index": "$accessibility_forced_index".
+			Added control:
+				element "spacer_0":
+					field "ignored": "(not $include_world_section)"
+					field "type": "panel"
+					field "size": [2, 2]
+			Added control element "accessibility_button@general_section.accessibility_button": field "$variables": variable "$toggle_group_forced_index": "$accessibility_forced_index".
+Changed namespace "structure_editor":
+	Changed element "load_mode_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 17 (+4, -0)
+			Changed control:
+				Moved element from "offset_0" to "integrity_offset".
+				Changed element "integrity_offset":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from "100%c + 4px" to 4.
+			Added control:
+				element "include_entities_offset":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			Added control element "include_entities@structure_editor.include_entities_panel": empty.
+			Added control:
+				element "remove_blocks_offset":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			Added control element "remove_blocks@structure_editor.remove_blocks_panel": empty.
+Changed namespace "win10_trial_conversion":
+	Changed element "pack_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "things_to_hide_while_playing_in_living_room_mode":
+				Changed element "packdesc@win10_trial_conversion.label_panel":
+					Changed field "color" from "$7_color_format" to "$wtc_pack_desc_text_color".
+Changed namespace "world_section":
+	Changed element "selector_pane_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "play_or_create_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 16 (+0, -1)
-						Removed control:
-							element "dev_show_latency_graph_toggle@settings_common.option_toggle":
-								field "ignored": "($is_mobile_vr and $is_publish)"
-								field "$variables":
-									variable "$option_label": "options.vrRollTurning"
-									variable "$option_binding_name": "#vr_roll_turn"
-									variable "$option_enabled_binding_name": "#vr_roll_turn_enabled"
-									variable "$toggle_name": "vr_roll_turn"
+						Changed control:
+							Changed element "create_or_play_button@settings_common.action_button":
+								Removed field "ignored": "(not $is_pregame)".
+						Changed control:
+							Changed element "play_on_realm_button@settings_common.action_button":
+								Changed field "ignored" from "(not $is_pregame)" to "(not $is_pregame or $education_edition)".
+								Changed field "$variables":
+									Total variable: 7 (+4, -0)
+									Added variable "$button_text_max_size":
+										item 0: "100%"
+										item 1: 20
+									Added variable "$default_button_texture": "textures/ui/realmsContent".
+									Added variable "$hover_button_texture": "textures/ui/realmsContentHover".
+									Added variable "$pressed_button_texture": "textures/ui/realmsContentPressed".
+					Added field "ignored": "(not $is_pregame)".
+Changed namespace "world_templates":
+	Changed element "generate_random@common_buttons.light_text_button":
+		Removed field "default_focus_precedence": 1.
+	Changed element "new_world_toggle@common_toggles.dark_image_toggle":
+		Changed field "$variables":
+			Total variable: 10 (+1, -0)
+			Added variable "$default_focus_precedence": 1.
+Changed namespace "xbl_first_launch":
+	Changed element "xbl_signin_label":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 2 (+0, -1)
+			Removed control:
+				element "nx_button_label@xbl_first_launch.button_label":
+					field "ignored": "(not $hide_xbox_live_icon)"
+					field "size": ["100%", "default"]
+					field "offset": [6, 0]

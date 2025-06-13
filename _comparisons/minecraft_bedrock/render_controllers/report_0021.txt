@@ -1,210 +1,24 @@
-Difference of "render_controllers" between "1.13.0.6" (beta of "1.13.0") and "1.13.0.9" (beta of "1.13.0").
+Difference of "render_controllers" between "1.13.0.15" (beta of "1.13.0") and "1.13.0.18" (beta of "1.13.0").
+Unable to create data files for 2 files between: "1.13.0.16", "1.13.0.17"
 
-Total file: 76 (+1, -0)
-Changed file "armor_stand.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.armor_stand":
-				Added field "rebuild_animation_matrices": true.
-Changed file "cape.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.player.cape":
-				Changed field "part_visibility":
-					Changed part visibility dict:
-						Changed part visibility "cape" from "(query.armor_texture_slot(1) != 5) && (!variable.is_first_person || variable.is_paperdoll)" to "(query.armor_texture_slot(1) != 5) && variable.is_third_person".
-Changed file "enderman.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.enderman":
-				Changed field "materials":
-					Total material dict: 1 (+1, -1)
-					Removed material dict material "*": "Material.default".
-					Added material dict material "*": "Array.materials[query.is_invisible]".
-				Added field "arrays":
-					field "materials":
-						array "Array.materials":
-							array item "Material.default"
-							array item "Material.invisible"
-Changed file "evoker.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.evoker":
-				Changed field "part_visibility":
-					Changed part visibility dict:
-						Changed part visibility "arms" from "!query.is_casting" to "!(query.is_casting || query.is_celebrating)".
-					Changed part visibility dict:
-						Changed part visibility "leftarm" from "query.is_casting" to "query.is_casting || query.is_celebrating".
-					Changed part visibility dict:
-						Changed part visibility "rightarm" from "query.is_casting" to "query.is_casting || query.is_celebrating".
-Changed file "husk.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.husk":
-				Added field "rebuild_animation_matrices": true.
-Changed file "mooshroom.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.mooshroom":
-				Changed field "textures":
-					Total texture: 1 (+1, -1)
-					Added texture "Array.skins[query.variant]".
-					Removed texture "Texture.default".
-				Added field "arrays":
-					field "textures":
-						array "Array.skins":
-							array item "Texture.brown"
-							array item "Texture.default"
-Added file "persona.render_controllers.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "render_controllers":
-			render controller "controller.render.persona_animated_128x128.first_person":
-				field "rebuild_animation_matrices": true
-				field "geometry": "Geometry.animated_128x128"
-				field "materials": material dict material "*": "Material.animated"
-				field "textures": texture "Texture.animated_128x128"
-				field "part_visibility":
-					part visibility dict part visibility "*": false
-					part visibility dict part visibility "rightArm": "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'"
-					part visibility dict part visibility "rightSleeve": "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'"
-					part visibility dict part visibility "leftArm": "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
-					part visibility dict part visibility "leftSleeve": "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
-				field "uv_anim":
-					field "offset":
-						expression 0.0
-						expression "Math.mod(Math.floor(query.life_time * 7),variable.animation_frames_128x128)/variable.animation_frames_128x128"
-					field "scale": [1.0, 1.0]
-			render controller "controller.render.persona_animated_128x128.third_person":
-				field "rebuild_animation_matrices": true
-				field "geometry": "Geometry.animated_128x128"
-				field "materials": material dict material "*": "Material.animated"
-				field "textures": texture "Texture.animated_128x128"
-				field "part_visibility":
-					part visibility dict part visibility "*": true
-					part visibility dict part visibility "helmet": "variable.helmet_layer_visible"
-					part visibility dict part visibility "leftLegging": "variable.leg_layer_visible"
-					part visibility dict part visibility "rightLegging": "variable.leg_layer_visible"
-					part visibility dict part visibility "leftBoot": "variable.boot_layer_visible"
-					part visibility dict part visibility "rightBoot": "variable.boot_layer_visible"
-					part visibility dict part visibility "leftSock": "variable.boot_layer_visible && variable.leg_layer_visible"
-					part visibility dict part visibility "rightSock": "variable.boot_layer_visible && variable.leg_layer_visible"
-					part visibility dict part visibility "bodyArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "leftArmArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "rightArmArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "belt": "variable.chest_layer_visible && variable.leg_layer_visible"
-				field "uv_anim":
-					field "offset":
-						expression 0.0
-						expression "Math.mod(Math.floor(query.life_time * 7),variable.animation_frames_128x128)/variable.animation_frames_128x128"
-					field "scale": [1.0, 1.0]
-			render controller "controller.render.persona_animated_32x32.first_person":
-				field "rebuild_animation_matrices": true
-				field "geometry": "Geometry.animated_32x32"
-				field "materials": material dict material "*": "Material.animated"
-				field "textures": texture "Texture.animated_32x32"
-				field "part_visibility":
-					part visibility dict part visibility "*": false
-					part visibility dict part visibility "rightArm": "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'"
-					part visibility dict part visibility "rightSleeve": "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'"
-					part visibility dict part visibility "leftArm": "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
-					part visibility dict part visibility "leftSleeve": "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
-				field "uv_anim":
-					field "offset":
-						expression 0.0
-						expression "Math.mod(Math.floor(query.life_time * 7),variable.animation_frames_32x32)/variable.animation_frames_32x32"
-					field "scale": [1.0, 1.0]
-			render controller "controller.render.persona_animated_32x32.third_person":
-				field "rebuild_animation_matrices": true
-				field "geometry": "Geometry.animated_32x32"
-				field "materials": material dict material "*": "Material.animated"
-				field "textures": texture "Texture.animated_32x32"
-				field "part_visibility":
-					part visibility dict part visibility "*": true
-					part visibility dict part visibility "helmet": "variable.helmet_layer_visible"
-					part visibility dict part visibility "leftLegging": "variable.leg_layer_visible"
-					part visibility dict part visibility "rightLegging": "variable.leg_layer_visible"
-					part visibility dict part visibility "leftBoot": "variable.boot_layer_visible"
-					part visibility dict part visibility "rightBoot": "variable.boot_layer_visible"
-					part visibility dict part visibility "leftSock": "variable.boot_layer_visible && variable.leg_layer_visible"
-					part visibility dict part visibility "rightSock": "variable.boot_layer_visible && variable.leg_layer_visible"
-					part visibility dict part visibility "bodyArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "leftArmArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "rightArmArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "belt": "variable.chest_layer_visible && variable.leg_layer_visible"
-				field "uv_anim":
-					field "offset":
-						expression 0.0
-						expression "Math.mod(Math.floor(query.life_time * 7),variable.animation_frames_32x32)/variable.animation_frames_32x32"
-					field "scale": [1.0, 1.0]
-			render controller "controller.render.persona_animated_face.first_person":
-				field "rebuild_animation_matrices": true
-				field "geometry": "Geometry.animated_face"
-				field "materials": material dict material "*": "Material.animated"
-				field "textures": texture "Texture.animated_face"
-				field "part_visibility":
-					part visibility dict part visibility "*": false
-					part visibility dict part visibility "rightArm": "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'"
-					part visibility dict part visibility "rightSleeve": "query.get_rendered_item_name == '' || query.get_rendered_item_name == 'map'"
-					part visibility dict part visibility "leftArm": "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
-					part visibility dict part visibility "leftSleeve": "(query.get_rendered_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
-				field "uv_anim":
-					field "offset":
-						expression 0.0
-						expression "variable.is_blinking * 0.5"
-					field "scale": [1.0, 1.0]
-			render controller "controller.render.persona_animated_face.third_person":
-				field "rebuild_animation_matrices": true
-				field "geometry": "Geometry.animated_face"
-				field "materials": material dict material "*": "Material.animated"
-				field "textures": texture "Texture.animated_face"
-				field "part_visibility":
-					part visibility dict part visibility "*": true
-					part visibility dict part visibility "helmet": "variable.helmet_layer_visible"
-					part visibility dict part visibility "leftLegging": "variable.leg_layer_visible"
-					part visibility dict part visibility "rightLegging": "variable.leg_layer_visible"
-					part visibility dict part visibility "leftBoot": "variable.boot_layer_visible"
-					part visibility dict part visibility "rightBoot": "variable.boot_layer_visible"
-					part visibility dict part visibility "leftSock": "variable.boot_layer_visible && variable.leg_layer_visible"
-					part visibility dict part visibility "rightSock": "variable.boot_layer_visible && variable.leg_layer_visible"
-					part visibility dict part visibility "bodyArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "leftArmArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "rightArmArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "belt": "variable.chest_layer_visible && variable.leg_layer_visible"
-				field "uv_anim":
-					field "offset":
-						expression 0.0
-						expression "variable.is_blinking * 0.5"
-					field "scale": [1.0, 1.0]
 Changed file "pufferfish.render_controllers.json":
 	Changed resource pack "core":
 		Changed field "render_controllers":
-			Changed render controller "controller.render.pufferfish":
-				Changed field "geometry" from "Array.geos[variable.PuffedState]" to "Array.geos[query.variant]".
-Changed file "skeleton.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.skeleton":
-				Added field "rebuild_animation_matrices": true.
-Changed file "vindicator.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.vindicator":
-				Changed field "part_visibility":
-					Changed part visibility dict:
-						Changed part visibility "rightArm" from "query.is_angry" to "query.is_angry || query.is_celebrating".
-					Changed part visibility dict:
-						Changed part visibility "leftArm" from "query.is_angry" to "query.is_angry || query.is_celebrating".
-					Changed part visibility dict:
-						Changed part visibility "arms" from "!query.is_angry" to "!(query.is_angry || query.is_celebrating)".
-				Added field "rebuild_animation_matrices": true.
-Changed file "zombie.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.zombie":
-				Added field "rebuild_animation_matrices": true.
-Changed file "zombie_pigman.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.zombie_pigman":
-				Added field "rebuild_animation_matrices": true.
+			Total render controller: 3 (+2, -0)
+			Added render controller "controller.render.pufferfish.large":
+				field "geometry": "geometry.large"
+				field "materials": material dict material "*": "Material.default"
+				field "textures": texture "Texture.default"
+			Added render controller "controller.render.pufferfish.medium":
+				field "geometry": "geometry.mid"
+				field "materials": material dict material "*": "Material.default"
+				field "textures": texture "Texture.default"
+			Moved render controller from "controller.render.pufferfish" to "controller.render.pufferfish.small".
+			Changed render controller "controller.render.pufferfish.small":
+				Removed field "arrays":
+					field "geometries":
+						array "Array.geos":
+							array item "Geometry.default"
+							array item "Geometry.large"
+							array item "Geometry.mid"
+				Changed field "geometry" from "Array.geos[query.variant]" to "geometry.default".

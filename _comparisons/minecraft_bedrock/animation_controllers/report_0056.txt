@@ -1,17 +1,34 @@
-Difference of "animation_controllers" between "1.17.40.21" (beta of "1.17.40") and "1.17.40.23" (beta of "1.17.40").
+Difference of "animation_controllers" between "1.18.0.20" (beta of "1.18.0") and "1.18.0.21" (beta of "1.18.0").
 
-Changed file "persona.animation_controllers.json":
+Changed file "shield.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.persona.blink":
+			Changed animation controller "controller.animation.shield.wield":
+				Changed field "initial_state" from "first_person" to "default".
 				Changed field "states":
-					Changed state "blink":
+					Total state: 3 (+2, -1)
+					Added state "blocking":
+						field "animations":
+							animation dict animation "wield_main_hand_first_person_block": "query.get_equipped_item_name('off_hand') != 'shield' && query.get_equipped_item_name == 'shield' && c.item_slot == 'main_hand'"
+							animation dict animation "wield_off_hand_first_person_block": "query.get_equipped_item_name('off_hand') == 'shield' && c.item_slot != 'main_hand'"
+						field "transitions":
+							transition list transition "default": "!query.blocking"
+							transition list transition "third_person": "!c.is_first_person"
+					Added state "default":
+						field "animations":
+							animation dict animation "wield_main_hand_first_person": "c.item_slot == 'main_hand'"
+							animation dict animation "wield_off_hand_first_person": "c.item_slot != 'main_hand'"
+						field "transitions":
+							transition list transition "blocking": "query.blocking"
+							transition list transition "third_person": "!c.is_first_person"
+					Removed state "first_person":
+						field "animations":
+							animation dict animation "wield_main_hand_first_person": "c.item_slot == 'main_hand'"
+							animation dict animation "wield_off_hand_first_person": "c.item_slot != 'main_hand'"
+							animation dict animation "wield_main_hand_first_person_block": "query.blocking && query.get_equipped_item_name('off_hand') != 'shield' && query.get_equipped_item_name == 'shield' && c.item_slot == 'main_hand'"
+							animation dict animation "wield_off_hand_first_person_block": "query.blocking && query.get_equipped_item_name('off_hand') == 'shield' && c.item_slot != 'main_hand'"
+						field "transitions": transition list transition "third_person": "!c.is_first_person"
+					Changed state "third_person":
 						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "open": "variable.is_blinking = 1; variable.last_blink_time = query.life_time; return query.all_animations_finished && (query.life_time > variable.return_from_blink);".
-							Added transition list transition "open": "variable.is_blinking = 1; variable.last_blink_time = query.life_time; return query.all_animations_finished && (query.life_time > (variable.return_from_blink ?? 0.2));".
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "open": "variable.is_blinking = 0; variable.last_blink_time = query.life_time; return variable.last_blink_time != 0;".
-							Added transition list transition "open": "variable.is_blinking = 0; variable.return_from_blink = query.life_time + math.random(0, 0.2); variable.last_blink_time = query.life_time; return variable.last_blink_time != 0;".
+							Changed transition list:
+								Moved transition from "first_person" to "default".

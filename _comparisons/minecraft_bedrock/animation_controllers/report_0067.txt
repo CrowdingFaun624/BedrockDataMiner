@@ -1,35 +1,13 @@
-Difference of "animation_controllers" between "1.18.30.30" (beta of "1.18.30") and "1.18.30.32" (beta of "1.18.30").
+Difference of "animation_controllers" between "1.19.0.20" (beta of "1.19.0") and "1.19.0.24" (beta of "1.19.0").
 
-Total file: 60 (+1, -0)
-Added file "warden.animation_controllers.json":
-	resource pack "experimental":
-		field "format_version": "1.10.0"
-		field "animation_controllers":
-			animation controller "controller.animation.warden.melee_attacking":
+Changed file "warden.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 5 (+1, -0)
+			Added animation controller "controller.animation.warden.hurt":
 				field "initial_state": "default"
 				field "states":
-					state "attack":
-						field "animations": animation dict "melee_attack"
-						field "transitions": transition list transition "default": "variable.attack_time <= 0.0"
-					state "default": field "transitions": transition list transition "attack": "variable.attack_time > 0.0"
-			animation controller "controller.animation.warden.roar":
-				field "initial_state": "default"
-				field "states":
-					state "default": field "transitions": transition list transition "roar": "query.is_roaring"
-					state "roar":
-						field "animations": animation dict "roar"
-						field "transitions": transition list transition "default": "!query.is_roaring"
-			animation controller "controller.animation.warden.shiver":
-				field "initial_state": "default"
-				field "states":
-					state "default": field "transitions": transition list transition "shiver": "variable.tendril_animation > 0"
-					state "shiver":
-						field "animations": animation dict "shiver"
-						field "transitions": transition list transition "default": "variable.tendril_animation <= 0"
-			animation controller "controller.animation.warden.sniff":
-				field "initial_state": "default"
-				field "states":
-					state "default": field "transitions": transition list transition "sniff": "query.is_sniffing"
-					state "sniff":
-						field "animations": animation dict "sniff"
-						field "transitions": transition list transition "default": "!query.is_sniffing"
+					state "default": field "transitions": transition list transition "hurting": "query.hurt_time > 0"
+					state "hurting":
+						field "animations": animation dict "hurt"
+						field "transitions": transition list transition "default": "query.hurt_time <= 0"

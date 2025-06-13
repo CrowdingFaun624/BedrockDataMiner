@@ -1,106 +1,851 @@
-Difference of "ui" between "1.10.0.3" (beta of "1.10.0") and "1.10.0.4" (beta of "1.10.0").
+Difference of "ui" between "1.11.0.4" (beta of "1.11.0") and "1.11.0.5" (beta of "1.11.0").
 
-Changed namespace "chat":
-	Total element: 31 (+4, -0)
-	Changed element "chat_header":
+Total namespace: 169 (+1, -0)
+Changed namespace "cartography":
+	Changed element "map_image":
+		Unchanged field "type": "image".
+		Removed field "size": [66, 66].
+	Changed element "output_description_label":
+		Unchanged field "type": "label".
+		Changed field "anchor_to" from "bottom_middle" to "top_middle".
+		Changed field "offset":
+			Unchanged item 0: 0.
+			Changed item 1 from 2 to -8.
+		Added field "size": ["100%", 20].
+		Added field "text_alignment": "center".
+Changed namespace "cartography_pocket":
+	Changed element "cartography_content_stack_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "top_bar@common_store.store_top_bar":
+				Changed element "map_centerer":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from "100%c" to "fill".
 					Changed field "controls":
-						Changed control:
-							Changed element "title_stack_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Total control: 7 (+2, -1)
-									Removed control element "chat_settings_button@chat_settings.chat_settings_button_panel": empty.
-									Added control element "mute_section@chat.mute_panel": field "ignored": "(not $is_publish)".
-									Added control element "chat_settings_button@chat_settings.chat_settings_button_panel": field "ignored": "$is_publish".
-	Added element "hide_toggle@settings_common.option_toggle":
-		field "$variables":
-			variable "$option_binding_name": "#hide_chat"
-			variable "$option_enabled_binding_name": "#hide_chat_enabled"
-			variable "$toggle_name": "hide_chat"
-	Added element "mute_interaction":
+						Total control: 1 (+1, -1)
+						Removed control element "map_image_panel@cartography.map_image_panel": empty.
+						Added control:
+							element "map_image_panel@cartography.map_image_panel":
+								field "size": ["100%y", "100%"]
+								field "max_size": [66, 66]
+					Added field "max_size": ["100%", 66].
+			Changed control:
+				Changed element "description_centerer":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control element "output_description_label@cartography.output_description_label": empty.
+						Added control:
+							element "output_description_label@cartography.output_description_label":
+								field "anchor_from": "bottom_middle"
+								field "anchor_to": "bottom_middle"
+								field "offset": [0, 2]
+			Changed control:
+				Changed element "filling_panel":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from "fill" to 4.
+	Changed element "inventory_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "size":
+			Unchanged item 0: "100% - 12px".
+			Changed item 1 from "100% - 12px" to "100% - 9px".
+		Changed field "controls":
+			Changed control:
+				Changed element "inventory_title_label_centerer":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "default".
+						Changed item 1 from 14 to 11.
+	Changed element "vertical_arrow_icon":
+		Unchanged field "type": "image".
+		Changed field "texture" from "textures/ui/arrow_down" to "textures/ui/arrow_down_small".
+		Changed field "size":
+			Changed item 0 from 14 to 11.
+			Changed item 1 from 17 to 9.
+Changed namespace "chat":
+	Total element: 32 (+1, -0)
+	Changed element "back_content_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "back_button@common.back_button":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$button_tts_header": "accessibility.button.exit".
+	Changed element "chat_background":
+		Unchanged field "type": "image".
+		Changed field "alpha" from 0.5 to 0.7.
+	Changed element "hide_toggle@settings_common.option_toggle":
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$toggle_tts_header": "accessibility.chat.tts.hideChat".
+	Changed element "keyboard_button@chat.small_button":
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$button_tts_header": "accessibility.chat.tts.keyboard".
+	Added element "message_tts_wrapper@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "chat.messages_text".
+	Changed element "messages_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "factory":
+			Changed field "control_ids":
+				Changed control id "chat_screen_messages" from "chat_screen_messages@chat.messages_text" to "chat_screen_messages@chat.message_tts_wrapper".
+	Changed element "send_button@common_buttons.light_text_form_fitting_button":
+		Changed field "focus_enabled" from false to "$tts_enabled".
+		Changed field "$variables":
+			Total variable: 5 (+2, -0)
+			Added variable "$tts_enabled|default": true.
+			Added variable "$button_tts_header": "accessibility.chat.tts.sendChatMessage".
+	Changed element "text_edit_box@common.text_edit_box":
+		Changed field "$variables":
+			Total variable: 7 (+2, -0)
+			Added variable "$text_box_tts_header": "accessibility.chat.tts.textboxTitle".
+			Added variable "$text_box_tts_name": "".
+Changed namespace "chat_settings":
+	Changed element "font_size_slider@settings_common.option_slider":
+		Changed field "$variables":
+			Total variable: 8 (+1, -0)
+			Changed variable "$label_bindings":
+				Changed item 0:
+					Changed item "binding_name" from "#chat_font_size_custom_label" to "$option_label".
+				Added item 1: item "binding_name": "$slider_tts_text_value".
+			Added variable "$slider_tts_text_value": "#chat_font_size_text_value".
+	Changed element "line_spacing_slider@settings_common.option_slider":
+		Changed field "$variables":
+			Total variable: 8 (+1, -0)
+			Changed variable "$label_bindings":
+				Changed item 0:
+					Changed item "binding_name" from "#chat_line_spacing_custom_text" to "$option_label".
+				Added item 1: item "binding_name": "$slider_tts_text_value".
+			Added variable "$slider_tts_text_value": "#chat_line_spacing_text_value".
+	Changed element "mute_all_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "mute_all_toggle@settings_common.option_toggle" to "mute_all_toggle@settings_common.option_generic".
+				Changed element "mute_all_toggle@settings_common.option_generic":
+					Changed field "$variables":
+						Total variable: 6 (+2, -0)
+						Added variable "$control_name": "settings_common.option_toggle_control".
+						Added variable "$toggle_tts_header": "accessibility.chat.tts.muteChatToggle".
+					Added field "variables":
+						variable:
+							field "requires": "$desktop_screen"
+							field "$variables": variable "$one_line_layout": true
+Changed namespace "common":
+	Total element: 247 (+1, -0)
+	Changed element "back_button@common_buttons.no_background_content_button":
+		Removed field "focus_enabled": false.
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_name": "#tts_enabled"
+				field "binding_name_override": "#focus_enabled"
+		Changed field "$variables":
+			Total variable: 7 (+1, -0)
+			Added variable "$button_tts_header|default": "accessibility.button.back".
+	Changed element "button":
+		Unchanged field "type": "button".
+		Changed field "$variables":
+			Total variable: 11 (+1, -0)
+			Added variable "$button_tts_control_type_order_priority|default": -100.
+		Added field "tts_control_type_order_priority": "$button_tts_control_type_order_priority".
+	Changed element "close_button":
+		Unchanged field "type": "button".
+		Removed field "focus_enabled": true.
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_name": "#tts_enabled"
+				field "binding_name_override": "#focus_enabled"
+	Changed element "gamepad_helper":
+		Unchanged field "type": "stack_panel".
+		Changed field "bindings":
+			Changed binding:
+				Added field "binding_condition": "$gamepad_helper_binding_condition".
+		Changed field "$variables":
+			Total variable: 12 (+1, -0)
+			Added variable "$gamepad_helper_binding_condition|default": "none".
+	Changed element "slider":
+		Unchanged field "type": "slider".
+		Changed field "button_mappings":
+			Changed button mapping:
+				Changed field "input_mode_condition" from "gamepad_and_not_gaze" to "not_gaze".
+			Changed button mapping:
+				Changed field "input_mode_condition" from "gamepad_and_not_gaze" to "not_gaze".
+			Changed button mapping:
+				Changed field "input_mode_condition" from "gamepad_and_not_gaze" to "not_gaze".
+			Changed button mapping:
+				Changed field "input_mode_condition" from "gamepad_and_not_gaze" to "not_gaze".
+	Changed element "toggle@common.toggle_visuals":
+		Unchanged field "type": "toggle".
+		Changed field "bindings":
+			Total binding: 6 (+1, -0)
+			Added binding:
+				field "binding_type": "$toggle_tts_enabled_binding_type"
+				field "binding_name": "#tts_enabled"
+				field "binding_name_override": "#focus_enabled"
+		Changed field "$variables":
+			Total variable: 38 (+1, -0)
+			Added variable "$toggle_tts_enabled_binding_type|default": "none".
+	Added element "tts_label_focus_wrapper":
 		field "type": "panel"
-		field "size": ["100%c", "100%"]
-		field "anchor_from": "left_middle"
-		field "anchor_to": "left_middle"
+		field "size": ["100%", "100%cm"]
 		field "controls":
+			control element "label@$tts_label_panel": empty
 			control:
-				element "yes_or_no_panel":
-					field "type": "panel"
-					field "size": [24, "100%"]
-					field "controls":
-						control:
-							element "yes_or_no_label":
-								field "type": "label"
-								field "size": [20, 8]
-								field "offset": [-20, -2]
-								field "text": "#text"
-								field "color": "$title_text_color"
-								field "layer": 2
-								field "bindings":
-									binding:
-										field "binding_name": "#text_chat_hidden"
-										field "binding_name_override": "#text"
-			control:
-				element "toggle_panel":
-					field "type": "panel"
-					field "size": ["100%c", "100%c"]
-					field "anchor_from": "bottom_left"
-					field "anchor_to": "bottom_left"
-					field "controls":
-						control:
-							element "hide_toggle@chat.hide_toggle":
-								field "size": [32, "100%c"]
-								field "offset": [20, 1]
-								field "bindings":
-									binding:
-										field "binding_name": "(not #gamepad_helper_visible)"
-										field "binding_name_override": "#visible"
-			control:
-				element "gamepad_y_button":
-					field "type": "panel"
-					field "size": [24, 17]
-					field "offset": [6, -1]
-					field "controls": control element "icon@common.gamepad_helper_y": field "$variables": variable "$icon_description_bind_type": "none"
+				element "focus_border@common.non_interact_focus_border_button":
+					field "size": "$focus_border_size"
+					field "tts_inherit_siblings": true
+					field "inherit_max_sibling_height": "$inherit_sibling_height"
+					field "anchor_from": "$focus_border_anchor"
+					field "anchor_to": "$focus_border_anchor"
+					field "offset": "$focus_border_offset"
+					field "default_focus_precedence": "$focus_border_precedence"
 					field "bindings":
 						binding:
-							field "binding_name": "#gamepad_helper_visible"
+							field "binding_name": "#tts_enabled"
 							field "binding_name_override": "#visible"
-	Added element "mute_panel":
-		field "type": "stack_panel"
-		field "orientation": "horizontal"
-		field "size": ["100%c", "100%"]
-		field "controls":
-			control element "mute@chat.mute_text": empty
-			control:
-				element "padding3":
-					field "type": "panel"
-					field "size": [16, "100%"]
-			control element "mute_interact@chat.mute_interaction": empty
-	Added element "mute_text":
+		field "$variables":
+			variable "$tts_label_panel|default": "common.empty_panel"
+			variable "$focus_border_size|default":
+				item 0: "100%"
+				item 1: 16
+			variable "$focus_border_anchor|default": "center"
+			variable "$focus_border_offset|default":
+				item 0: 0
+				item 1: 0
+			variable "$focus_border_precedence|default": 0
+			variable "$inherit_sibling_height|default": false
+Changed namespace "common_dialogs":
+	Changed element "standard_title_label":
+		Unchanged field "type": "label".
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_type": "global"
+				field "binding_condition": "once"
+				field "binding_name": "#tts_dialog_title"
+		Added field "property_bag": field "#tts_dialog_title": "$text_name".
+Changed namespace "common_tabs":
+	Changed element "base_tab":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "$tab_view_binding_name@common.toggle":
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$toggle_tts_enabled_binding_type": "global".
+Changed namespace "common_toggles":
+	Changed element "light_ui_toggle_collection":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "$toggle_view_binding_name@common.toggle" to "$toggle_view_binding_name@$template_toggle".
+		Changed field "$variables":
+			Total variable: 41 (+1, -0)
+			Added variable "$template_toggle|default": "common.toggle".
+Changed namespace "controls_section":
+	Changed element "gamepad_mapping_item":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "keymapping_button_0@controls_section.image_binding_button":
+					Added field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "$keymapping_collection"
+						binding:
+							field "binding_name": "#audible_keymapping_name"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$keymapping_collection"
+					Added field "$variables": variable "$button_tts_header": "#audible_keymapping_name".
+			Changed control:
+				Changed element "keymapping_button_1@controls_section.reset_binding_button":
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$button_tts_header": "accessibility.settings.reset".
+Changed namespace "convert_purchases_to_xbl":
+	Total element: 8 (+1, -0)
+	Changed element "description_label_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "line1":
+					Unchanged field "type": "label".
+					Added field "bindings":
+						binding:
+							field "binding_type": "global"
+							field "binding_condition": "once"
+							field "binding_name": "#tts_dialog_body"
+					Added field "property_bag": field "#tts_dialog_body": "xbl.savePurchase.description.line1".
+			Changed control:
+				Changed element "line2":
+					Unchanged field "type": "label".
+					Added field "bindings":
+						binding:
+							field "binding_type": "global"
+							field "binding_condition": "once"
+							field "binding_name": "#tts_dialog_body"
+					Added field "property_bag": field "#tts_dialog_body": "xbl.savePurchase.description.line2".
+	Changed element "dialog_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "scrolling_panel@common.scrolling_panel" to "description_label_wrapper@common.tts_label_focus_wrapper".
+				Changed element "description_label_wrapper@common.tts_label_focus_wrapper":
+					Changed field "$variables":
+						Total variable: 2 (+0, -5)
+						Removed variable "$show_background": false.
+						Removed variable "$scroll_box_visible_touch": true.
+						Moved variable from "$scrolling_content" to "$tts_label_panel".
+						Changed variable "$tts_label_panel" from "convert_purchases_to_xbl.description_label_panel" to "convert_purchases_to_xbl.scrolling_panel".
+						Removed variable "$scroll_size":
+							item 0: 5
+							item 1: "100%"
+						Moved variable from "$scrolling_pane_size" to "$focus_border_size".
+						Changed variable "$focus_border_size":
+							Changed item 0 from "100%" to "100% + 2px".
+						Removed variable "$scrolling_pane_offset":
+							item 0: 0
+							item 1: 0
+						Removed variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+			Changed control:
+				Changed element "button_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "save_to_xbox_button@common_buttons.light_text_button":
+								Changed field "$variables":
+									Total variable: 4 (+1, -0)
+									Added variable "$button_focus_precedence": 10.
+	Added element "scrolling_panel@common.scrolling_panel":
+		field "size": ["100%", "100%"]
+		field "$variables":
+			variable "$show_background": false
+			variable "$scroll_box_visible_touch": true
+			variable "$scrolling_content": "convert_purchases_to_xbl.description_label_panel"
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100%"
+			variable "$scrolling_pane_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$scrolling_pane_offset":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_bar_right_padding_size":
+				item 0: 0
+				item 1: 0
+Changed namespace "disconnect":
+	Changed element "disconnect_text@disconnect.disconnect_screen_text":
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_name": "#tts_dialog_body"
+				field "binding_condition": "once"
+		Added field "property_bag": field "#tts_dialog_body": "#disconnect_text".
+	Changed element "disconnect_title_text@disconnect.disconnect_screen_text":
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_name": "#tts_dialog_title"
+				field "binding_condition": "once"
+		Added field "property_bag": field "#tts_dialog_title": "#disconnect_text".
+Changed namespace "general_section":
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 52 (+1, -0)
+			Added control:
+				element "option_perf_turtle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.perf_turtle"
+						variable "$option_binding_name": "#perf_turtle"
+						variable "$option_enabled_binding_name": "#perf_turtle_enabled"
+						variable "$toggle_name": "perf_turtle"
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "build_info_label_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "MinecraftAccount_id_label":
+								Removed field "ignored": "(not $new_mcid)".
+								Unchanged field "type": "label".
+Changed namespace "hud":
+	Changed element "anim_chat_bg_alpha":
+		Unchanged field "anim_type": "alpha".
+		Changed field "from" from 0.5 to 0.7.
+	Changed element "chat_grid_item":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "chat_background":
+					Unchanged field "type": "image".
+					Changed field "alpha" from 0.5 to 0.7.
+Changed namespace "invite":
+	Total element: 41 (+1, -0)
+	Changed element "button_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "add_friend_button@common_buttons.light_content_button":
+					Removed field "focus_enabled": false.
+					Added field "bindings":
+						binding:
+							field "binding_name": "#tts_enabled"
+							field "binding_name_override": "#focus_enabled"
+			Changed control:
+				Changed element "add_member_button@common_buttons.light_content_button":
+					Removed field "focus_enabled": false.
+					Added field "bindings":
+						binding:
+							field "binding_name": "#tts_enabled"
+							field "binding_name_override": "#focus_enabled"
+			Changed control:
+				Changed element "send_button@common_buttons.light_content_button":
+					Removed field "focus_enabled": false.
+					Added field "bindings":
+						binding:
+							field "binding_name": "#tts_enabled"
+							field "binding_name_override": "#focus_enabled"
+	Changed element "friend_button@common.checkbox":
+		Added field "tts_control_type_order_priority": 100.
+		Added field "tts_value_order_priority": 101.
+	Added element "no_friends_frame_label@invite.frame_label":
+		field "size": ["default", 30]
+		field "max_size": ["100% - 14px", 30]
+		field "text": "invite.noFriends"
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "bottom_middle"
+	Changed element "scrolling_content_stack":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 8 (+2, -2)
+			Removed control element "online_friend_list_grid@online_friend_list_grid": empty.
+			Removed control element "offline_friend_list_grid@offline_friend_list_grid": empty.
+			Changed control:
+				Changed element "no_friends@friend_panel":
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "frame_label@frame_label":
+								field "size": ["default", 30]
+								field "max_size": ["100% - 14px", 30]
+								field "text": "invite.noFriends"
+								field "anchor_from": "bottom_middle"
+								field "anchor_to": "bottom_middle"
+						Added control element "no_friends_tts_wrapper@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "invite.no_friends_frame_label".
+			Added control element "online_friend_list_grid@online_friend_list_grid": field "$variables": variable "$tts_section_header": "invite.OnlineFriends".
+			Added control element "offline_friend_list_grid@offline_friend_list_grid": field "$variables": variable "$tts_section_header": "invite.OfflineFriends".
+Changed namespace "patch_notes":
+	Total element: 18 (+1, -0)
+	Changed element "patch_notes_header_content_with_offer":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "store_item_section":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "store_button@common_buttons.light_content_button":
+								Changed field "$variables":
+									Total variable: 4 (+2, -0)
+									Added variable "$button_tts_name": "#tts_offer_name".
+									Added variable "$button_tts_control_type_order_priority": 10.
+								Added field "bindings": binding field "binding_name": "#tts_offer_name".
+	Added element "patch_notes_panel":
 		field "type": "panel"
-		field "size": ["100%c", "100%"]
+		field "size": ["100%", "100%c"]
 		field "controls":
 			control:
-				element "title_panel":
+				element "patch_notes_text":
 					field "type": "label"
-					field "size": ["default", 10]
-					field "text": "chat.mute"
-					field "offset": [2, -1]
-					field "color": "$title_text_color"
+					field "color": "$body_text_color"
+					field "size": ["100%-4px", "default"]
+					field "text": "#patch_description"
+					field "font_type": "smooth"
+					field "bindings":
+						binding:
+							field "binding_name": "#patch_description"
+							field "binding_type": "global"
+						binding:
+							field "binding_type": "global"
+							field "binding_condition": "once"
+							field "binding_name": "#tts_dialog_body"
+					field "property_bag": field "#tts_dialog_body": "#patch_description"
+	Changed element "scroll_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 4 (+1, -1)
+			Removed control:
+				element "patch_notes_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "patch_notes_text":
+								field "type": "label"
+								field "color": "$body_text_color"
+								field "size": ["100%-4px", "default"]
+								field "text": "#patch_description"
+								field "font_type": "smooth"
+								field "bindings":
+									binding:
+										field "binding_name": "#patch_description"
+										field "binding_type": "global"
+			Added control element "tts_label_wrapper@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "patch_notes.patch_notes_panel".
+Added namespace "perf_turtle":
+	element "perf_turtle_panel":
+		field "ignored": "$test_infrastructure_disabled"
+		field "type": "panel"
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "size": ["100%", "100%c"]
+		field "max_size": ["100%", "50%"]
+		field "bindings":
+			binding:
+				field "binding_name": "#turtle_visible"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "perf_turtle_background":
+					field "type": "image"
+					field "texture": "textures/ui/Black"
+					field "alpha": 0.5
+					field "size": ["100%", 35]
+			control:
+				element "stack_panel":
+					field "type": "stack_panel"
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "size": ["100%", 70]
+					field "orientation": "horizontal"
+					field "controls":
+						control:
+							element "turtle":
+								field "size": [35, 35]
+								field "type": "image"
+								field "texture": "textures/ui/purtle"
+						control:
+							element "turtle_text":
+								field "type": "label"
+								field "size": ["fill", "default"]
+								field "text": "#text"
+								field "font_type": "smooth"
+								field "color": "$main_header_text_color"
+								field "bindings":
+									binding:
+										field "binding_name": "#turtle_text"
+										field "binding_name_override": "#text"
+Changed namespace "play":
+	Changed element "close_navigation_tab":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "x_image@common.close_button" to "x_image@common.light_close_button".
+	Changed element "top_tab@common_tabs.tab_top":
+		Changed field "$variables":
+			Total variable: 7 (+1, -1)
+			Removed variable "$toggle_focus_enabled": true.
+			Added variable "$toggle_tts_enabled_binding_type": "global".
+Changed namespace "popup_dialog":
+	Total element: 35 (+1, -0)
+	Added element "dialog_text_wrapper@common.tts_label_focus_wrapper":
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "offset": [0, 23]
+		field "$variables":
+			variable "$tts_label_panel": "popup_dialog.modal_label_panel"
+			variable "$focus_border_size":
+				item 0: "100%"
+				item 1: "100% - 3px"
+			variable "$focus_border_anchor": "top_middle"
+	Changed element "modal_dialog_with_buttons":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "text_with_buttons@popup_dialog.modal_label_panel" to "text_with_buttons@popup_dialog.dialog_text_wrapper".
+	Changed element "modal_label_panel@common.scrolling_panel":
+		Removed field "offset": [0, 23].
+	Changed element "modal_label_text":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "text":
+					Unchanged field "type": "label".
+					Changed field "bindings":
+						Total binding: 2 (+1, -0)
+						Added binding:
+							field "binding_type": "global"
+							field "binding_condition": "once"
+							field "binding_name": "#tts_dialog_body"
+					Added field "property_bag": field "#tts_dialog_body": "#modal_label_text".
+	Changed element "modal_title_text":
+		Unchanged field "type": "label".
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_type": "global"
+				field "binding_condition": "once"
+				field "binding_name": "#tts_dialog_title"
+		Added field "property_bag": field "#tts_dialog_title": "#modal_title_text".
+Changed namespace "settings_common":
+	Total element: 62 (+1, -1)
+	Changed element "option_info_label@settings_common.option_generic":
+		Changed field "$variables":
+			Changed variable "$control_name" from "settings_common.option_info_label_control" to "settings_common.option_info_label_image".
+	Removed element "option_info_label_control":
+		field "type": "input_panel"
+		field "focus_enabled": true
+		field "size": ["100%", "100%c"]
+		field "controls": control element "option_info_label_image@settings_common.option_info_label_image": empty
+	Added element "option_info_label_image@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "settings_common.option_info_label_with_image".
+	Moved element from "option_info_label_image" to "option_info_label_with_image".
+	Changed element "option_info_label_with_image":
+		Unchanged field "type": "image".
+		Changed field "controls":
+			Changed control:
+				Changed element "control":
+					Unchanged field "type": "label".
+					Removed field "controls":
+						control:
+							element "focus_border@common.non_interact_focus_border_button":
+								field "size": ["100% + 8px", "100% + 6px"]
+								field "layer": 1
+Changed namespace "sync_iaps_to_xbl":
+	Total element: 8 (+1, -0)
+	Changed element "description_label_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "layer": 1
+		field "controls":
+			control:
+				element "line1":
+					field "type": "label"
+					field "size": ["100%", "default"]
+					field "text": "xbl.syncIAP.description"
+					field "font_type": "smooth"
+					field "color": "$body_text_color"
+					field "font_scale_factor": "$font_scale"
+		field "$variables": variable "$font_scale": 0.8
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "layer": 1
+		field "controls":
+			control:
+				element "line1":
+					field "type": "label"
+					field "size": ["100%", "default"]
+					field "text": "xbl.syncIAP.description"
+					field "font_type": "smooth"
+					field "color": "$body_text_color"
+					field "font_scale_factor": "$font_scale"
+					field "bindings":
+						binding:
+							field "binding_type": "global"
+							field "binding_condition": "once"
+							field "binding_name": "#tts_dialog_body"
+					field "property_bag": field "#tts_dialog_body": "xbl.syncIAP.description"
+		field "$variables": variable "$font_scale": 0.8
+	Changed element "dialog_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "scrolling_panel@common.scrolling_panel" to "description_label_wrapper@common.tts_label_focus_wrapper".
+				Changed element "description_label_wrapper@common.tts_label_focus_wrapper":
+					Changed field "$variables":
+						Total variable: 2 (+0, -5)
+						Removed variable "$show_background": false.
+						Removed variable "$scroll_box_visible_touch": true.
+						Moved variable from "$scrolling_content" to "$tts_label_panel".
+						Changed variable "$tts_label_panel" from "sync_iaps_to_xbl.description_label_panel" to "sync_iaps_to_xbl.scrolling_panel".
+						Removed variable "$scroll_size":
+							item 0: 5
+							item 1: "100%"
+						Moved variable from "$scrolling_pane_size" to "$focus_border_size".
+						Changed variable "$focus_border_size":
+							Changed item 0 from "100%" to "100% + 2px".
+						Removed variable "$scrolling_pane_offset":
+							item 0: 0
+							item 1: 0
+						Removed variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+	Added element "scrolling_panel@common.scrolling_panel":
+		field "size": ["100%", "100%"]
+		field "$variables":
+			variable "$show_background": false
+			variable "$scroll_box_visible_touch": true
+			variable "$scrolling_content": "sync_iaps_to_xbl.description_label_panel"
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100%"
+			variable "$scrolling_pane_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$scrolling_pane_offset":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_bar_right_padding_size":
+				item 0: 0
+				item 1: 0
+Changed namespace "toast_screen":
+	Changed element "toast_screen_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control element "perf_turtle_panel@perf_turtle.perf_turtle_panel": empty.
+Changed namespace "trade2":
+	Total element: 68 (+3, -0)
+	Changed element "container_cell_image":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "cell_image@common.cell_image":
+					Changed field "bindings":
+						Changed binding:
+							Added field "binding_condition": "$cell_image_binding_condition".
+			Changed control:
+				Changed element "red_cell_image@trade2.red_cell_image":
+					Changed field "bindings":
+						Changed binding:
+							Added field "binding_condition": "$cell_image_binding_condition".
+		Added field "$variables": variable "$cell_image_binding_condition|default": "none".
+	Added element "gamepad_helper_x@common.gamepad_helper_x":
+		field "$variables":
+			variable "$gamepad_helper_visible_binding_name": "#gamepad_helper_x_visible"
+			variable "$gamepad_helper_binding_condition": "always"
+	Added element "gamepad_helper_y@common.gamepad_helper_y":
+		field "$variables":
+			variable "$gamepad_helper_visible_binding_name": "#gamepad_helper_y_visible"
+			variable "$gamepad_helper_binding_condition": "always"
+	Changed element "hover_button":
+		Unchanged field "type": "button".
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding field "binding_type": "collection_details".
+	Changed element "item_slot@common.container_item":
+		Changed field "$variables":
+			Total variable: 7 (+3, -0)
+			Added variable "$item_renderer_binding_condition": "always_when_visible".
+			Added variable "$stack_count_binding_condition": "always_when_visible".
+			Added variable "$cell_image_binding_condition": "always".
+	Changed element "result_item_slot@trade2.item_slot":
+		Changed field "$variables":
+			Total variable: 2 (+0, -1)
+			Removed variable "$item_renderer_binding_condition": "always_when_visible".
+	Changed element "screen_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 6 (+1, -1)
+			Removed control element "container_gamepad_helpers@common.container_gamepad_helpers": empty.
+			Added control:
+				element "container_gamepad_helpers@common.container_gamepad_helpers":
+					field "$variables":
+						variable "$helper_x_control": "trade2.gamepad_helper_x"
+						variable "$helper_y_control": "trade2.gamepad_helper_y"
+	Changed element "tier_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Added field "bindings":
+			binding:
+				field "binding_name": "#tier_visible"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "always"
+	Added element "trade_actual_toggle@common.toggle":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.menu_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.menu_ok"
+				field "mapping_type": "focused"
+			button mapping:
+				field "ignored": "(not $enable_directional_toggling)"
+				field "from_button_id": "button.menu_left"
+				field "to_button_id": "$toggle_off_button"
+				field "mapping_type": "pressed"
+				field "input_mode_condition": "gamepad_and_not_gaze"
+			button mapping:
+				field "ignored": "(not $enable_directional_toggling)"
+				field "from_button_id": "button.menu_right"
+				field "to_button_id": "$toggle_on_button"
+				field "mapping_type": "pressed"
+				field "input_mode_condition": "gamepad_and_not_gaze"
+			button mapping:
+				field "to_button_id": "button.trade_toggle_hovered"
+				field "mapping_type": "pressed"
+	Changed element "trade_toggle@common_toggles.light_image_toggle_collection":
+		Changed field "$variables":
+			Total variable: 15 (+1, -0)
+			Added variable "$template_toggle": "trade2.trade_actual_toggle".
+Changed namespace "trade2_pocket":
+	Changed element "screen_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "container_gamepad_helpers@common.container_gamepad_helpers":
+					Changed field "$variables":
+						Total variable: 7 (+2, -0)
+						Added variable "$helper_x_control": "trade2.gamepad_helper_x".
+						Added variable "$helper_y_control": "trade2.gamepad_helper_y".
+Changed namespace "xbl_first_launch":
+	Total element: 11 (+1, -0)
+	Added element "message_label":
+		field "type": "label"
+		field "size": ["100%", "100%"]
+		field "text": "#message"
+		field "font_type": "smooth"
+		field "layer": 2
+		field "color": "$body_text_color"
+		field "bindings":
+			binding field "binding_name": "#message"
+			binding:
+				field "binding_type": "global"
+				field "binding_condition": "once"
+				field "binding_name": "#tts_dialog_body"
+		field "property_bag": field "#tts_dialog_body": "#message"
+	Changed element "title_image_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 4 (+1, -1)
+			Removed control:
+				element "message_label":
+					field "type": "label"
+					field "size": ["100%-96.73px", "100%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "text": "#message"
+					field "font_type": "smooth"
 					field "layer": 2
-	Changed element "text_edit_box@common.text_edit_box":
-		Changed field "button_mappings":
-			Total button mapping: 19 (+1, -0)
-			Changed button mapping:
-				Added field "ignored": "$is_publish".
-			Added button mapping:
-				field "from_button_id": "button.controller_secondary_select"
-				field "to_button_id": "button.mute_chat"
-				field "handle_select": false
-				field "handle_deselect": false
-				field "mapping_type": "global"
-				field "ignored": "(not $is_publish)"
+					field "color": "$body_text_color"
+					field "bindings": binding field "binding_name": "#message"
+			Added control:
+				element "label_wrapper@common.tts_label_focus_wrapper":
+					field "size": ["100%-96.73px", "100%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "$variables":
+						variable "$focus_border_size":
+							item 0: "100% + 8px"
+							item 1: "100% + 4px"
+						variable "$tts_label_panel": "xbl_first_launch.message_label"
+						variable "$focus_border_offset":
+							item 0: 2
+							item 1: 0
+	Changed element "xbl_signin_button@common_buttons.light_content_button":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Added variable "$button_focus_precedence": 10.

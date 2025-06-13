@@ -1,2230 +1,762 @@
-Difference of "ui" between "1.17.20.23" (beta of "1.17.30") and "1.17.30.20" (beta of "1.17.30").
+Difference of "ui" between "1.17.34" and "1.17.40.20" (beta of "1.17.40").
 
-Changed namespace "account_banned":
-	Changed element "description_label_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "line1":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
+Total namespace: 196 (+1, -1)
 Changed namespace "authentication":
-	Total element: 51 (+4, -1)
-	Changed element "agree_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "i_agree_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "auth_screen@common.base_screen":
-		Changed field "button_mappings":
-			Changed button mapping:
-				Changed field "to_button_id" from "button.menu_exit" to "button.auth_cancel".
+	Total element: 60 (+9, -0)
+	Added element "authentication_popup@popup_dialog.form_fit_modal_dialog_popup":
+		field "$variables":
+			variable "$popup_dialog_escape_button_name": "button.close_dialog"
+			variable "$modal_title": "#popup_title"
+			variable "$modal_title_binding_type": "global"
+			variable "$modal_title_binding_condition": "visible"
+			variable "$modal_contents": "authentication.authentication_popup_content_panel"
+			variable "$modal_contents_padding":
+				item 0: 6
+				item 1: 0
+			variable "$popup_type": "popup_dialog.form_fit_screen_with_title_and_close_and_bottom_buttons"
+			variable "$lower_button_control": "authentication.authentication_popup_lower_button_panel"
+	Added element "authentication_popup_button@common_buttons.light_text_button":
+		field "size": ["fill", "100%"]
+		field "$variables":
+			variable "$button_text": "('#popup_' + $button_pos + '_lower_button_text')"
+			variable "$button_text_binding_type": "global"
+			variable "$button_binding_condition": "visible"
+			variable "$pressed_button_name": "('button.' + $button_pos + '_lower_popup_button')"
+	Added element "authentication_popup_content_panel@authentication.resizeable_scrolling_panel":
+		field "size": [254, "100%c"]
+		field "$variables":
+			variable "$scroll_view_port_max_size":
+				item 0: "100%"
+				item 1: 185
+			variable "$scroll_view_port_max_size_touch":
+				item 0: "100%"
+				item 1: 185
+			variable "$scrolling_content": "authentication.authentication_popup_contents"
+			variable "$show_background": false
+			variable "$scroll_bar_left_padding_size":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_bar_right_padding_size":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_bar_and_track_size":
+				item 0: "100%c"
+				item 1: "100%sm - 6px"
+			variable "$scroll_track_offset":
+				item 0: 0
+				item 1: 3
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100%"
+			variable "$scroll_size_touch": "$scroll_size"
+	Added element "authentication_popup_contents":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control element "initial_padding@common.empty_panel": field "size": ["100%", 3]
+			control:
+				element "body@authentication.smooth_bound_label":
+					field "font_scale_factor": 1
+					field "max_size": ["100%", "default"]
+					field "$variables": variable "$text_binding_name": "#popup_text"
+			control element "learn_more_link@authentication.authentication_popup_link_button": field "$variables": variable "$link_type": "learn_more"
+			control element "link2@authentication.authentication_popup_link_button": field "$variables": variable "$link_type": "open_demo"
+			control element "end_padding@common.empty_panel": field "size": ["100%", 3]
+	Added element "authentication_popup_link_button":
+		field "type": "stack_panel"
+		field "controls":
+			control element "top_padding@common.empty_panel": field "size": ["100%", 10]
+			control element "link_button@edu_common.underline_button": empty
+		field "bindings":
+			binding:
+				field "binding_name": "('#popup_' + $link_type + '_visible')"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$single_label_size":
+				item 0: "default"
+				item 1: 10
+			variable "$single_line_font_scale_factor": 1
+			variable "$pressed_button_name": "('button.' + $link_type + '_popup_link')"
+			variable "$single_line_label_text": "('#popup_' + $link_type + '_text')"
+			variable "$label_text_bindings": item 0: item "binding_name": "('#popup_' + $link_type + '_text')"
+	Added element "authentication_popup_lower_button_panel":
+		field "type": "panel"
+		field "controls":
+			control element "one_button@authentication.authentication_popup_one_button": empty
+			control element "two_buttons@authentication.authentication_popup_two_buttons": empty
+	Added element "authentication_popup_one_button":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "button@authentication.authentication_popup_button":
+					field "size": ["100%", "100%"]
+					field "$variables": variable "$button_pos": "first"
+		field "bindings":
+			binding:
+				field "binding_name": "(not #popup_has_two_buttons)"
+				field "binding_name_override": "#visible"
+	Added element "authentication_popup_two_buttons":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control element "first_button@authentication.authentication_popup_button": field "$variables": variable "$button_pos": "first"
+			control element "button_padding@common.empty_panel": field "size": [2, "100%"]
+			control element "second_button@authentication.authentication_popup_button": field "$variables": variable "$button_pos": "second"
+		field "bindings":
+			binding:
+				field "binding_name": "#popup_has_two_buttons"
+				field "binding_name_override": "#visible"
 	Changed element "authentication_screen_content":
 		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 10 (+1, -0)
 			Changed control:
-				Changed element "demo@edu_signin.screen_content":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "binding_name" from "#demo_choice_visible" to "#demo_visible".
+				Changed element "popup_dialog_factory":
+					Unchanged field "type": "factory".
+					Changed field "control_ids":
+						Total control id: 4 (+1, -0)
+						Added control id "muts_driven": "@authentication.authentication_popup".
+	Changed element "debug_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 6 (+1, -0)
 			Added control:
-				element "welcome@edu_signin.screen_content":
+				element "open_popup@common_buttons.light_text_button":
+					field "size": [150, 16]
 					field "bindings":
 						binding:
-							field "binding_name": "#welcome_visible"
+							field "binding_name": "#debug_json_popup_enabled"
 							field "binding_name_override": "#visible"
-	Added element "download_button@common_buttons.light_text_button":
-		field "size": [200, 30]
-		field "$variables":
-			variable "$pressed_button_name": "button.goToDownload"
-			variable "$button_text": "authentication.error.outOfDate.downloadPage"
-	Changed element "eula_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "prompt_wrapper@common.empty_panel":
-					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from "100%c" to "100%cm".
-					Changed field "controls":
-						Total control: 2 (+1, -0)
-						Added control element "border@authentication.tts_control": field "offset": [0, 4].
-	Changed element "generic_welcome_additional_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 1 (+0, -1)
-			Removed control element "hyperlink_intro@authentication.student_message_panel": empty.
-	Added element "hyperlink_panel":
-		field "type": "panel"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control:
-				element "link_stack":
-					field "type": "stack_panel"
-					field "size": ["100% - 4px", "100%c"]
-					field "controls":
-						control:
-							element "link1@edu_common.underline_button":
-								field "$variables":
-									variable "$single_label_size":
-										item 0: "default"
-										item 1: 10
-									variable "$single_line_font_scale_factor": 1
-									variable "$pressed_button_name": "button.showEligibility"
-									variable "$single_line_label_text": "authentication.error.generic.link1"
-						control:
-							element "link2@edu_common.underline_button":
-								field "$variables":
-									variable "$single_label_size":
-										item 0: "default"
-										item 1: 10
-									variable "$single_line_font_scale_factor": 1
-									variable "$pressed_button_name": "button.open_demo_screen"
-									variable "$single_line_label_text": "authentication.error.generic.link2"
-						control element "padding@common.empty_panel": field "size": ["100%", 8]
-		field "bindings":
-			binding:
-				field "binding_name": "#sign_in_error_visible"
-				field "binding_name_override": "#visible"
-	Changed element "popup_content_base":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 3 (+1, -1)
-			Removed control:
-				element "message@authentication.fixed_width_wrapper":
-					field "size": ["100%", "100%c + 4px"]
 					field "$variables":
-						variable "$wrapped_content": "authentication.popup_message"
-						variable "$internal_size":
-							item 0: "100% - 8px"
-							item 1: "default"
-						variable "$internal_offset":
-							item 0: 0
-							item 1: 4
-			Added control:
-				element "message":
-					field "type": "panel"
-					field "size": ["100%", "100%cm"]
-					field "controls":
-						control element "border@authentication.tts_control": empty
-						control:
-							element "text@authentication.fixed_width_wrapper":
-								field "size": ["100%", "100%c"]
-								field "$variables":
-									variable "$wrapped_content": "authentication.popup_message"
-									variable "$internal_size":
-										item 0: "100% - 8px"
-										item 1: "default"
-									variable "$internal_offset":
-										item 0: 0
-										item 1: 4
-	Added element "popup_message":
+						variable "$pressed_button_name": "button.debug_open_json_popup"
+						variable "$button_text": "Load popup from clipboard"
+	Changed element "eula_hyperlink@common_buttons.hyperlink_button":
+		Changed field "property_bag":
+			Changed field "#hyperlink" from "https://education.minecraft.net/eula" to "https://aka.ms/meeeula".
+	Changed element "privacy_policy_button@common_buttons.hyperlink_button":
+		Changed field "property_bag":
+			Changed field "#hyperlink" from "https://aka.ms/privacy" to "https://aka.ms/mee_privacy".
+	Added element "resizeable_scrolling_panel@common.scrolling_panel":
+		field "$variables":
+			variable "$scrolling_pane_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$scroll_view_control_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$scroll_view_stack_panel_size":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$scroll_view_port_panel_size":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$view_port_size":
+				item 0: "fill"
+				item 1: "100%cm"
+			variable "$view_port_size_touch":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$scroll_view_port_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$scroll_view_port_size_touch":
+				item 0: "100%"
+				item 1: "100%c"
+Added namespace "cloud_upload":
+	element "button@common_buttons.light_text_button":
+		field "layer": 101
+		field "size": ["40%", "20%"]
+	element "cancel_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.cancel"
+			variable "$button_text": "gui.cancel"
+	element "close_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.close"
+			variable "$button_text": "gui.close"
+	element "cloud_upload_screen@progress.progress_screen":
+		field "force_render_below": false
+		field "should_be_skipped_during_automation": true
+		field "$variables": variable "$screen_content": "cloud_upload.screen_content"
+	element "description_stack":
 		field "type": "stack_panel"
-		field "size": ["100%", "100%c"]
+		field "size": ["100% - 12px", "100%c"]
+		field "orientation": "vertical"
 		field "controls":
 			control:
-				element "main_message@authentication.smooth_bound_label":
+				element "description_1@cloud_upload.label":
+					field "text": "cloud_upload.uploading.description_1"
 					field "size": ["100%", "default"]
-					field "layer": 1
-					field "$variables": variable "$text_binding_name": "#popup_text"
-			control element "extra_message@authentication.student_message_panel": empty
-			control element "padding@common.empty_panel": field "size": ["100%", 4]
-	Removed element "popup_message@authentication.smooth_bound_label":
-		field "layer": 1
-		field "anchor_from": "top_middle"
-		field "anchor_to": "top_middle"
-		field "offset": [0, 4]
-		field "size": ["100% - 8px", "default"]
-		field "$variables": variable "$text_binding_name": "#popup_text"
-	Changed element "purchase_confirm_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "size":
-			Changed item 0 from 310 to 318.
-			Unchanged item 1: 180.
-		Changed field "controls":
-			Changed control:
-				Changed element "terms_and_conditions_panel@authentication.terms_and_conditions_panel":
-					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from 18 to 25.
-			Changed control:
-				Changed element "button_padding@common.empty_panel":
-					Changed field "size":
-						Changed item 0 from 0 to "100%".
-						Unchanged item 1: 2.
-			Changed control:
-				Changed element "padding@common.empty_panel":
-					Changed field "size":
-						Changed item 0 from 0 to "100%".
-						Unchanged item 1: 4.
-	Changed element "purchase_prompt_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "prompt_wrap":
-					Unchanged field "type": "panel".
-					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from "100%c + 8px" to "100%cm + 8px".
-					Changed field "controls":
-						Total control: 2 (+1, -0)
-						Changed control:
-							Changed element "prompt@authentication.smooth_label":
-								Removed field "anchor_from": "top_middle".
-								Removed field "anchor_to": "top_middle".
-								Removed field "offset": [0, 4].
-						Added control element "border@authentication.tts_control": empty.
-	Changed element "scroll_stack_panel":
-		field "type": "stack_panel"
-		field "anchor_from": "top_left"
-		field "anchor_to": "top_left"
-		field "size": ["100%", "100%c"]
-		field "controls":
 			control:
-				element "terms@authentication.smooth_bound_label":
-					field "font_scale_factor": 1
-					field "size": ["100% - 4px", "default"]
-					field "$variables": variable "$text_binding_name": "#edu_store_purchase_info"
-		field "type": "panel"
-		field "anchor_from": "top_left"
-		field "anchor_to": "top_left"
-		field "size": ["100%", "100%cm"]
-		field "controls":
-			control element "border@authentication.tts_control": empty
-			control:
-				element "terms@authentication.smooth_bound_label":
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "font_scale_factor": 1
-					field "size": ["100% - 4px", "default"]
-					field "$variables": variable "$text_binding_name": "#edu_store_purchase_info"
-	Changed element "sign_in_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 4 (+2, -0)
-			Changed control:
-				Changed element "sign_in_wrapper@common.empty_panel":
-					Changed field "controls":
-						Changed control:
-							Changed element "button@authentication.sign_in_button":
-								Changed field "size":
-									Changed item 0 from 76 to "100% - 8px".
-									Unchanged item 1: 18.
-			Added control element "body_hyperlink@authentication.hyperlink_panel": empty.
-			Added control:
-				element "download_wrapper":
+				element "padding_1":
 					field "type": "panel"
-					field "size": ["100%", "100%c + 4px"]
-					field "controls":
-						control:
-							element "button@authentication.download_button":
-								field "anchor_from": "top_middle"
-								field "anchor_to": "top_middle"
-								field "size": ["100% - 8px", 18]
-					field "bindings":
-						binding:
-							field "binding_name": "#sign_in_error_client_visible"
-							field "binding_name_override": "#visible"
-	Changed element "sign_in_ios_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 5 (+3, -0)
-			Added control element "body_hyperlink@authentication.hyperlink_panel": empty.
-			Added control:
-				element "error_sign_in_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c + 4px"]
-					field "controls":
-						control:
-							element "button@authentication.sign_in_button":
-								field "size": ["100% - 8px", 18]
-								field "anchor_from": "top_middle"
-								field "anchor_to": "top_middle"
-					field "bindings":
-						binding:
-							field "binding_name": "#sign_in_button_visible"
-							field "binding_name_override": "#visible"
-			Added control:
-				element "error_download_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c + 4px"]
-					field "controls":
-						control:
-							element "button@authentication.download_button":
-								field "anchor_from": "top_middle"
-								field "anchor_to": "top_middle"
-								field "size": ["100% - 8px", 18]
-					field "bindings":
-						binding:
-							field "binding_name": "#sign_in_error_client_visible"
-							field "binding_name_override": "#visible"
-	Changed element "smooth_label":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "student_message_panel@authentication.fixed_width_wrapper":
-		Changed field "$variables":
-			Changed variable "$internal_size":
-				Changed item 0 from "100% - 8px" to "100%".
-	Changed element "trial_info_additional_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 1 (+0, -1)
-			Removed control element "student_message@authentication.student_message_panel": empty.
-	Added element "tts_control@common.non_interact_focus_border_button":
-		field "tts_inherit_siblings": true
-		field "size": ["100%", "100%sm"]
-		field "layer": 1
-		field "bindings":
-			binding:
-				field "binding_name": "#tts_enabled"
-				field "binding_name_override": "#enabled"
-Changed namespace "braze":
-	Changed element "description_label_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "line1":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "bundle_purchase_warning":
-	Changed element "grid_item_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "bundle_title_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "bundle_title":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "side_contents":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "title_alignment_hack":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "side_section_title":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "chat_settings":
-	Changed element "typeface_dropdown_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "noto_sans@settings_common.radio_item_with_label_and_content":
-					Changed field "$variables":
-						Changed variable "$radio_label_font_type" from "#smooth_font" to "smooth".
-Changed namespace "coin_purchase":
-	Changed element "price":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "comment":
-	Changed element "textpost_content":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "common":
-	Changed element "container_item":
-		Unchanged field "type": "input_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "item_button_ref@$button_ref":
-					Added field "tts_ignore_count": true.
-					Added field "tts_skip_message": true.
-					Added field "tts_inherit_siblings": true.
-	Changed element "minecraftTenLabel":
-		Unchanged field "type": "label".
-		Changed field "backup_font_type" from "UIFont" to "DefaultFont".
-	Changed element "toggle@common.toggle_visuals":
-		Unchanged field "type": "toggle".
-		Changed field "bindings":
-			Total binding: 7 (+1, -0)
-			Changed binding:
-				Added field "ignored": "$ignore_tts_enabled_bind".
-			Added binding:
-				field "ignored": "(($toggle_focus_bind = '') and (not $ignore_tts_enabled_bind))"
-				field "binding_type": "global"
-				field "binding_name": "$toggle_focus_bind"
-				field "binding_name_override": "#focus_enabled"
-		Changed field "$variables":
-			Total variable: 41 (+2, -0)
-			Added variable "$ignore_tts_enabled_bind|default": false.
-			Added variable "$toggle_focus_bind|default": "".
-Changed namespace "common_buttons":
-	Changed element "transparent_content_button@common_buttons.light_content_button":
-		Changed field "$variables":
-			Changed variable "$default_font" from "#smooth_font" to "smooth".
-Changed namespace "common_store":
-	Changed element "coin_balance_panel@common_store.ribbon_bar_text_background":
-		Changed field "controls":
-			Changed control:
-				Changed element "coin_balance_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "content_owned_no_xbl_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "no_xbl_content_owned_label_alignment_pannel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "no_xbl_content_owned_label_panel@common_store.ribbon_bar_red_hover_text_background":
-								Changed field "controls":
-									Changed control:
-										Changed element "gamertag_label":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "disclaimer_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "legal_text_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "hero_offer_details_title":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "hero_offer_sale_markdown":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "inventory_panel":
-		Unchanged field "type": "input_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "inventory_button@common_buttons.light_content_button":
-					Changed field "button_mappings":
-						Total button mapping: 3 (+1, -0)
-						Changed button mapping:
-							Removed field "ignored": "($pressed_button_name = '')".
-						Changed button mapping:
-							Removed field "ignored": "($pressed_button_name = '')".
-						Added button mapping:
-							field "from_button_id": "button.menu_select"
-							field "to_button_id": "$pressed_button_name"
-							field "mapping_type": "pressed"
-					Changed field "$variables":
-						Total variable: 3 (+0, -1)
-						Removed variable "$is_inventory_screen|default": false.
-		Removed field "$variables": variable "$add_coin_not_visible|default": false.
-	Changed element "no_xbl_player_status_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "no_xbl_player_status_label_alignment_pannel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "label_panel@common_store.ribbon_bar_text_background":
-								Changed field "controls":
-									Changed control:
-										Changed element "gamertag_label":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "offer_download_progress":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "offer_price_markdown_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "offer_price":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "price_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "price_label_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "price@common_store.label":
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "promo_banner_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "promo_banner_panel_content":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "banner_text_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "banner_description":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "rating_text_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "rating_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "realms_plus_expiration":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "contents":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "text_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "text":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "row_offer_sale_markdown":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "store_offer_grid_item":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "frame@$offer_background_asset":
-					Changed field "controls":
-						Changed control:
-							Changed element "durable_offer_info_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "title_label_padding_stack":
-											Unchanged field "type": "panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "title_label_vert_stack_panel":
-														Unchanged field "type": "stack_panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "offer_price_info_panel":
-																	Unchanged field "type": "stack_panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "sales_banner":
-																				Unchanged field "type": "stack_panel".
-																				Changed field "controls":
-																					Changed control:
-																						Changed element "offer_prompt_panel":
-																							Unchanged field "type": "panel".
-																							Changed field "controls":
-																								Changed control:
-																									Changed element "offer_status_text":
-																										Unchanged field "type": "label".
-																										Changed field "font_type" from "#smooth_font" to "smooth".
-									Changed control:
-										Changed element "offer_status_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "offer_prompt_panel":
-														Unchanged field "type": "stack_panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "offer_status_text_panel":
-																	Unchanged field "type": "panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "offer_status_text":
-																				Unchanged field "type": "label".
-																				Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "store_offer_grid_show_more":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "frame@common_store.banner_fill":
-					Changed field "controls":
-						Changed control:
-							Changed element "title":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "store_offer_item_creator_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "creator_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "store_offer_title":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "suggested_content_offers_grid_item":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "frame@common_store.banner_fill":
-					Changed field "controls":
-						Changed control:
-							Changed element "title_label_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "title":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-									Changed control:
-										Changed element "offer_type":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "timer_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "timer":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "xbl_player_status_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "label_alignment_pannel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "label_panel@common_store.ribbon_bar_text_background":
-								Changed field "controls":
-									Changed control:
-										Changed element "gamertag_label":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "confirm_msa_unlink":
-	Changed element "confirm_checkbox":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "label_wrapper":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "header_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "header_text":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-						Changed control:
-							Changed element "header_text_2":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "content_log":
-	Changed element "content_log_label":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "content_log_history":
-	Changed element "content_log_message":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "controls_section":
-	Changed element "controller_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 18 (+1, -0)
-			Added control:
-				element "option_toggle_11@settings_common.option_toggle":
-					field "$variables":
-						variable "$option_label": "options.clearhotbar"
-						variable "$option_binding_name": "#controller_clear_hotbar"
-						variable "$option_enabled_binding_name": "#controller_clear_hotbar_enabled"
-						variable "$toggle_name": "controller_clear_hotbar"
-						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
-Changed namespace "convert_purchases_to_xbl":
-	Changed element "description_label_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "line1":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "line2":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "crafting":
-	Changed element "inventory_container_item@common.container_item":
-		Changed field "controls":
-			Changed control:
-				Changed element "item_button_ref@$button_ref":
-					Added field "tts_ignore_count": true.
-					Added field "tts_skip_message": true.
-					Added field "tts_inherit_siblings": true.
-Changed namespace "create_world_upsell":
-	Changed element "create_world_upsell@common.base_screen":
-		Added field "should_be_skipped_during_automation": true.
-Changed namespace "edu_common":
-	Changed element "add_resources_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "resource_button@common_buttons.light_text_button":
-					Changed field "$variables":
-						Total variable: 4 (+2, -0)
-						Added variable "$focus_override_up": "copy_button".
-						Added variable "$focus_override_right": "teams_button".
-	Changed element "body_content_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 6 (+2, -2)
-			Changed control:
-				Changed element "icons@edu_common.icon_section":
-					Added field "variables":
-						variable:
-							field "requires": "($resource_uri_state = 'add_resource')"
-							field "$variables": variable "$wrap_focus_left": "button.resource_button"
-						variable:
-							field "requires": "($resource_uri_state = 'edit_resource')"
-							field "$variables": variable "$wrap_focus_left": "edit_resource_uri_button"
-					Added field "$variables": variable "$focus_down": "copy_button".
-			Removed control element "add_resources@edu_common.add_resources_section": field "ignored": "$add_resources_ignored".
-			Removed control element "edit_resources@edu_common.edit_resources_section": field "ignored": "$edit_resources_ignored".
-			Added control element "add_resources@edu_common.add_resources_section": field "ignored": "(not ($resource_uri_state = 'add_resource'))".
-			Added control element "edit_resources@edu_common.edit_resources_section": field "ignored": "(not ($resource_uri_state = 'edit_resource'))".
-		Changed field "$variables":
-			Total variable: 4 (+1, -2)
-			Removed variable "$add_resources_ignored|default": true.
-			Removed variable "$edit_resources_ignored|default": true.
-			Added variable "$resource_uri_state|default": "".
-	Changed element "copy_link_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "copy_button@common_buttons.light_content_button":
-					Changed field "$variables":
-						Total variable: 5 (+3, -0)
-						Added variable "$focus_id": "copy_button".
-						Added variable "$focus_override_left": "$focus_left".
-						Added variable "$focus_override_right": "$focus_right".
-		Changed field "$variables":
-			Total variable: 3 (+2, -0)
-			Added variable "$focus_left|default": "classrooms_button".
-			Added variable "$focus_right|default": "resource_button".
-	Changed element "edit_resources_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "edit_resource_body_button_stack":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "resource_button@edu_pause.shared_resource_uri_button":
-								Added field "$variables":
-									variable "$focus_id": "resource_button"
-									variable "$focus_override_up": "copy_button"
-									variable "$focus_override_left": "copy_button"
-						Changed control:
-							Changed element "edit_resource_uri_button@common_buttons.light_glyph_button":
-								Changed field "$variables":
-									Total variable: 7 (+3, -0)
-									Added variable "$focus_id": "edit_resource_uri_button".
-									Added variable "$focus_override_up": "copy_button".
-									Added variable "$focus_override_right": "teams_button".
-								Added field "variables":
-									variable:
-										field "requires": "($apple_os and $supports_clipboard)"
-										field "$variables": variable "$focus_override_right": "mail_button"
-	Changed element "icon_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "teams_button@edu_common.default_share_button":
-					Changed field "$variables":
-						Total variable: 6 (+3, -0)
-						Added variable "$focus_id": "teams_button".
-						Added variable "$focus_override_down": "$focus_down".
-						Added variable "$focus_override_left": "$wrap_focus_left".
-			Changed control:
-				Changed element "mail_button@edu_common.default_share_button":
-					Changed field "$variables":
-						Total variable: 5 (+2, -0)
-						Added variable "$focus_id": "mail_button".
-						Added variable "$focus_override_down": "$focus_down".
-			Changed control:
-				Changed element "classrooms_button@edu_common.default_share_button":
-					Changed field "$variables":
-						Total variable: 5 (+2, -0)
-						Added variable "$focus_id": "classrooms_button".
-						Added variable "$focus_override_down": "$focus_down".
-		Added field "$variables":
-			variable "$focus_down|default": "copy_button"
-			variable "$wrap_focus_left|default": "copy_button"
-	Changed element "readable_label":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "teams_body_content_stack@edu_common.body_content_stack":
-		Changed field "$variables":
-			Total variable: 4 (+1, -1)
-			Removed variable "$add_resources_ignored": false.
-			Added variable "$resource_uri_state": "add_resource".
-	Changed element "teams_body_resource_content_stack@edu_common.body_content_stack":
-		Changed field "$variables":
-			Total variable: 5 (+1, -1)
-			Removed variable "$edit_resources_ignored": false.
-			Added variable "$resource_uri_state": "edit_resource".
-Changed namespace "expanded_skin_pack":
-	Total element: 31 (+0, -7)
-	Changed element "content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 4 (+0, -1)
-			Removed control:
-				element "buy_pack@expanded_skin_pack.purchase_pack_panel":
-					field "offset": [-2, 23]
-					field "size": ["40% - 4px", "100% - 23px"]
-					field "anchor_from": "top_right"
-					field "anchor_to": "top_right"
-					field "layer": 2
-	Removed element "purchase_pack_panel":
-		field "type": "panel"
-		field "controls":
-			control element "purchase_stack@expanded_skin_pack.purchase_stack_panel": empty
+					field "size": [0, 14]
 			control:
-				element "see_pack_in_store@common_buttons.dark_text_button":
-					field "size": ["100% - 4px", 26]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "offset": [0, -2]
-					field "$variables":
-						variable "$pressed_button_name": "button.see_pack_in_store"
-						variable "$button_text": "skins.store.upsell.seePack"
-		field "bindings":
-			binding:
-				field "binding_name": "(not #is_owned)"
-				field "binding_name_override": "#visible"
-	Removed element "purchase_pack_panel_background@common.focus_border_white":
-		field "size": ["100%", "100%c + 2px"]
-		field "anchor_from": "center"
-		field "anchor_to": "center"
-		field "color": "$light_border_default_color"
-		field "controls":
-			control:
-				element "background@common_store.store_description_background":
-					field "size": ["100% - 2px", "100%c + 8px"]
-					field "anchor_from": "center"
-					field "anchor_to": "center"
-					field "controls": control element "content@expanded_skin_pack.purchase_pack_panel_content": empty
-	Removed element "purchase_pack_panel_content":
-		field "type": "stack_panel"
-		field "layer": 2
-		field "size": ["100% - 1px", "100%c"]
-		field "anchor_from": "top_left"
-		field "anchor_to": "top_left"
-		field "orientation": "vertical"
-		field "controls":
-			control element "top_row@expanded_skin_pack.purchase_panel_top_row": empty
-			control:
-				element "description_stack":
-					field "type": "stack_panel"
-					field "size": ["100% - 2px", "100%c"]
-					field "anchor_from": "center"
-					field "anchor_to": "center"
-					field "orientation": "horizontal"
-					field "controls":
-						control element "padding@pdp.horizontal_padding_2px": field "size": [4, 0]
-						control element "description@expanded_skin_pack.purchase_panel_description": empty
-	Removed element "purchase_panel_description":
+				element "description_2@cloud_upload.label":
+					field "text": "cloud_upload.uploading.description_2"
+					field "size": ["100%", "default"]
+	element "failed_description@cloud_upload.label": field "text": "cloud_upload.failed.description"
+	element "label":
 		field "type": "label"
-		field "size": ["100%", "default"]
-		field "anchor_from": "top_middle"
-		field "anchor_to": "top_middle"
-		field "font_type": "#smooth_font"
-		field "text": "skins.store.upsell.unlockPack"
+		field "size": ["100% - 4px", "default"]
+		field "font_type": "smooth"
+		field "line_padding": 1.5
 		field "color": "$body_text_color"
-	Removed element "purchase_panel_top_row":
-		field "type": "stack_panel"
-		field "size": ["100%", "100%c"]
-		field "orientation": "horizontal"
-		field "anchor_from": "top_left"
-		field "anchor_to": "bottom_right"
-		field "controls":
-			control:
-				element "summary_text_panel":
-					field "type": "stack_panel"
-					field "size": ["fill", "100%cm"]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "controls":
-						control:
-							element "title_panel":
-								field "type": "panel"
-								field "size": ["100%", "100%c + 2px"]
-								field "controls":
-									control:
-										element "pack_title":
-											field "type": "label"
-											field "size": ["100% - 2px", "default"]
-											field "max_size": ["100% - 2px", 20]
-											field "offset": [2, 1]
-											field "layer": 1
-											field "font_type": "#smooth_font"
-											field "color": "$body_text_color"
-											field "text_alignment": "left"
-											field "text": "#pack_name"
-											field "bindings":
-												binding:
-													field "binding_name": "#pack_name"
-													field "binding_condition": "once"
-						control:
-							element "author_panel":
-								field "type": "panel"
-								field "size": ["100%", "100%c"]
-								field "controls":
-									control:
-										element "author_label":
-											field "type": "label"
-											field "size": ["100% - 2px", "default"]
-											field "max_size": ["100% - 2px", 20]
-											field "offset": [2, 0]
-											field "layer": 1
-											field "color": "$store_author_text_color"
-											field "font_type": "#smooth_font"
-											field "text": "#creator_name"
-											field "bindings":
-												binding:
-													field "binding_name": "#creator_name"
-													field "binding_condition": "once"
-						control:
-							element "padding_0":
-								field "type": "panel"
-								field "size": ["100%", 2]
-						control:
-							element "glyph_section@pdp.vertical_glyph_section_panel":
-								field "$variables":
-									variable "$store_factory_collection_details": "none"
-									variable "$store_factory_binding_type": "global"
-									variable "$store_factory_collection_prefix": ""
-									variable "$store_factory_collection_name": ""
-			control element "padding1@pdp.horizontal_padding_2px": field "size": [1, 0]
-			control:
-				element "key_image_panel":
-					field "type": "panel"
-					field "size": ["177.77%y", 40]
-					field "anchor_from": "bottom_left"
-					field "anchor_to": "bottom_left"
-					field "controls":
-						control:
-							element "key_image":
-								field "type": "image"
-								field "layer": 2
-								field "size": ["default", "default"]
-								field "offset": [0, 3]
-								field "anchor_from": "bottom_left"
-								field "anchor_to": "bottom_left"
-								field "bilinear": true
-								field "controls":
-									control:
-										element "border@common.focus_border_white":
-											field "size": ["100% + 2px", "100% + 2px"]
-											field "color": "$light_border_default_color"
-											field "layer": 1
-								field "bindings":
-									binding:
-										field "binding_name": "#key_art_texture"
-										field "binding_name_override": "#texture"
-									binding:
-										field "binding_name": "#key_art_file_system"
-										field "binding_name_override": "#texture_file_system"
-			control element "padding2@pdp.horizontal_padding_2px": field "size": [2, 0]
-	Removed element "purchase_stack_panel":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100% - 4px", "100% - 28px"]
-		field "anchor_from": "top_right"
-		field "anchor_to": "top_right"
-		field "controls":
-			control element "user_info@expanded_skin_pack.user_info_panel": empty
-			control element "pdp_background@expanded_skin_pack.purchase_pack_panel_background": empty
-			control:
-				element "purchase_buttons_panel@pdp.purchase_buttons_panel":
-					field "bindings":
-						binding:
-							field "binding_name": "(not #button_panel_purchase_disallowed)"
-							field "binding_name_override": "#visible"
-						binding:
-							field "binding_name": "(not #button_panel_purchase_disallowed)"
-							field "binding_name_override": "#enabled"
-			control:
-				element "deactivated_purchase_buttons_panel@pdp.deactivated_purchase_buttons_panel":
-					field "bindings":
-						binding:
-							field "binding_name": "#button_panel_purchase_disallowed"
-							field "binding_name_override": "#visible"
-						binding:
-							field "binding_name": "#button_panel_purchase_disallowed"
-							field "binding_name_override": "#enabled"
-			control:
-				element "disclaimer_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "controls":
-						control:
-							element "legal_text_label":
-								field "type": "label"
-								field "size": ["100%", "default"]
-								field "color": "$body_text_color"
-								field "font_type": "#smooth_font"
-								field "font_scale_factor": 0.68
-								field "text": "#purchase_with_currency_disclaimer"
-								field "bindings":
-									binding field "binding_name": "#purchase_with_currency_disclaimer"
-									binding:
-										field "binding_name": "#currency_purchase_visible"
-										field "binding_name_override": "#visible"
-	Removed element "user_info_panel":
-		field "type": "stack_panel"
-		field "size": ["100%", "100%c"]
-		field "orientation": "vertical"
-		field "controls":
-			control:
-				element "padding_0":
-					field "type": "panel"
-					field "size": ["100%", 2]
-			control element "inventory_button@common_store.inventory_panel": field "size": ["100%c", 17]
-			control:
-				element "coin_balance_panel":
-					field "type": "panel"
-					field "size": ["100%c", "100%c"]
-					field "controls":
-						control:
-							element "coin_balance_panel@common_store.purchase_coins_panel":
-								field "size": ["100%c", 21]
-								field "layer": 1
-								field "$variables":
-									variable "$purchase_button_offset":
-										item 0: -4
-										item 1: 0
-									variable "$wallet_plus_image_bindings": empty
-									variable "$wallet_gamepad_helper_bindings":
-										item 0:
-											item "binding_name": "#wallet_gamepad_helper_visible"
-											item "binding_name_override": "#visible"
-Changed namespace "feed":
-	Changed element "textpost_content":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "feed_common":
-	Changed element "feed_label@feed_common.label":
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "item_label@feed_common.label":
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "no_feed_item_content":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "smooth_label@feed_common.label":
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "general_section":
-	Changed element "consumable_not_extendable":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "panel_content":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "label_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "name_label2":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "dev_transport_layer_dropdown_content@settings_common.option_radio_dropdown_group":
-		Changed field "$variables":
-			Changed variable "$radio_buttons":
-				Changed item 3:
-					Changed item "@settings_common.radio_with_label":
-						Changed item "$toggle_state_binding_name" from "#transport_layer_websockets" to "#transport_layer_nethernet_websockets".
-						Changed item "$radio_label_text" from "options.dev_transport_layer.websockets" to "options.dev_transport_layer.nethernet_websockets".
-	Changed element "possible_store_mismatch":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "panel_content":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "label_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "name_label2":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "realms_subscription_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "middle_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "renews_text":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "realms_subscription_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "info":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "realms_desc_label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "gift_promo":
-	Changed element "free_discount_label":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "promo_item_action_button":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "markdown":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "price_markdown_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "offer_price":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "promotion_item_description":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "promotion_item_text_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "timer_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "timer_text":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "world":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "text":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "timer_tooltip_panel@common.button":
-		Changed field "$variables":
-			Changed variable "$tooltip_text_font_type" from "#smooth_font" to "smooth".
-Changed namespace "im_reader":
-	Changed element "error":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "error_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "item_description":
-	Changed element "base_label":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "library_modal":
-	Changed element "paragraph":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "manage_feed":
-	Changed element "textpost_content":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "manifest_validation":
-	Changed element "error_pack_content_layout":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "black@manifest_validation.background":
-					Changed field "controls":
-						Changed control:
-							Changed element "error_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "error_header_panel":
-											Unchanged field "type": "panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "error_type_panel":
-														Unchanged field "type": "label".
-														Changed field "font_type" from "#smooth_font" to "smooth".
-									Changed control:
-										Changed element "error_text_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "offset":
-														Unchanged field "type": "panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "error_label":
-																	Unchanged field "type": "label".
-																	Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "error_pack_secondary_layout":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "black@manifest_validation.background":
-					Changed field "controls":
-						Changed control:
-							Changed element "stack_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "stack_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "pack_info":
-														Unchanged field "type": "panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "bottom":
-																	Unchanged field "type": "stack_panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "description@manifest_validation.text_label":
-																				Changed field "font_type" from "#smooth_font" to "smooth".
-									Changed control:
-										Changed element "secondary_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "title_panel":
-														Unchanged field "type": "stack_panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "offset":
-																	Unchanged field "type": "panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "title@manifest_validation.text_label":
-																				Changed field "font_type" from "#smooth_font" to "smooth".
-												Changed control:
-													Changed element "version_panel":
-														Unchanged field "type": "stack_panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "offset":
-																	Unchanged field "type": "panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "version@manifest_validation.text_label":
-																				Changed field "font_type" from "#smooth_font" to "smooth".
-												Changed control:
-													Changed element "path_panel":
-														Unchanged field "type": "stack_panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "offset":
-																	Unchanged field "type": "panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "description@manifest_validation.text_label":
-																				Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "non_xbl_user_management":
-	Changed element "modal_label_text":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "online_safety":
-	Changed element "online_safety_screen@common.base_screen":
-		Added field "should_be_skipped_during_automation": true.
-Changed namespace "patch_notes":
-	Changed element "patch_notes_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "patch_notes_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "pause":
-	Total element: 77 (+9, -3)
-	Added element "achievements_button@common_buttons.light_content_button":
-		field "size": [24, 24]
+	element "retry_button@cloud_upload.button":
+		field "size": "$button_size"
 		field "$variables":
-			variable "$button_content": "pause.achievements_icon"
-			variable "$pressed_button_name": "button.menu_achievements"
-	Removed element "achievements_button@pause.pause_button_template":
-		field "anchor_to": "top_middle"
-		field "anchor_from": "top_middle"
-		field "ignored": true
-		field "bindings":
-			binding:
-				field "binding_name": "#achievements_visible"
-				field "binding_name_override": "#visible"
-				field "binding_type": "global"
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_achievements"
-			variable "$button_text": "menu.achievements"
-	Added element "achievements_icon":
-		field "type": "image"
-		field "texture": "textures/ui/achievements"
-		field "layer": 3
-		field "size": [16, 16]
-	Added element "achievements_icon_button":
-		field "ignored": "$achievements_ignored"
+			variable "$pressed_button_name": "button.retry"
+			variable "$button_text": "gui.retry"
+	element "screen_content":
 		field "type": "panel"
-		field "controls": control element "achievements_button@pause.achievements_button": field "ignored": "$education_edition"
-		field "$variables": variable "$button_tts_header": "menu.achievements"
-	Added element "column_frame": field "type": "panel".
-	Removed element "feed_button@pause.pause_button_template":
-		field "anchor_to": "top_left"
-		field "anchor_from": "top_left"
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_feed"
-			variable "$focus_id": "button.menu_feed"
-			variable "$button_text": "pauseScreen.feed"
-	Added element "feedback_button@common_buttons.hyperlink_content_button":
-		field "size": [24, 24]
-		field "property_bag": field "#hyperlink": "https://aka.ms/minecraftfb"
-		field "$variables": variable "$button_content": "pause.feedback_icon"
-	Removed element "feedback_button@pause.pause_button_template":
-		field "anchor_to": "top_middle"
-		field "anchor_from": "top_middle"
-		field "ignored": "$education_edition"
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_feedback"
-			variable "$button_text": "feedbackScreen.button"
-	Added element "feedback_icon":
-		field "type": "image"
-		field "texture": "textures/ui/Feedback"
-		field "layer": 3
-		field "size": [16, 16]
-	Added element "feedback_icon_button":
-		field "type": "panel"
-		field "controls": control element "feedback_button@pause.feedback_button": field "ignored": "$education_edition"
-		field "$variables":
-			variable "$button_tts_header": "accessibility.start.feedback"
-			variable "$pressed_button_name": "button.feedback"
-	Changed element "menu_background@pause.transparent_background":
-		Changed field "controls":
-			Changed control:
-				Changed element "button_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 9 (+0, -7)
-						Removed control:
-							element "feed_and_screenshot_buttons":
-								field "type": "stack_panel"
+		field "controls":
+			control:
+				element "main_content":
+					field "type": "panel"
+					field "size": "$cloud_upload_progress_screen_size"
+					field "controls":
+						control:
+							element "common_panel@common.common_panel":
+								field "$variables":
+									variable "$dialog_background": "dialog_background_hollow_2"
+									variable "$fill_alpha": 1
+									variable "$show_close_button": false
+						control:
+							element "progress_title_text@progress.progress_title_text":
+								field "color": "$title_text_color"
 								field "anchor_from": "top_middle"
 								field "anchor_to": "top_middle"
-								field "orientation": "horizontal"
-								field "size": ["100%", 28]
+								field "offset": [0, 8]
+						control:
+							element "inner_content":
+								field "type": "panel"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": ["100%-12px", "100%-12px"]
+								field "offset": [6, 6]
 								field "controls":
-									control element "feed_button@pause.feed_button": field "size": ["fill", "100%"]
-									control element "padding_1@pause.horizontal_padding": field "ignored": "($is_holographic)"
 									control:
-										element "take_screenshot_button@common_buttons.light_glyph_button":
-											field "ignored": "($is_holographic)"
-											field "size": [28, "100%"]
-											field "sound_name": "random.screenshot"
-											field "sound_volume": 1.0
-											field "sound_pitch": 1.0
-											field "$variables":
-												variable "$pressed_button_name": "button.screenshot"
-												variable "$button_tts_header": "key.screenshot"
-												variable "$button_content": "pause.take_screenshot_icon"
-												variable "$pressed_alpha": 0.65
-								field "bindings":
-									binding:
-										field "binding_name": "#show_clubs"
-										field "binding_name_override": "#visible"
-										field "binding_type": "global"
-						Removed control:
-							element "feed@pause.vertical_padding":
-								field "bindings":
-									binding:
-										field "binding_name": "#show_clubs"
-										field "binding_name_override": "#visible"
-										field "binding_type": "global"
-						Removed control element "achievements_button@pause.achievements_button": empty.
-						Removed control:
-							element "achievements@pause.vertical_padding":
-								field "ignored": "$achievements_ignored"
-								field "bindings":
-									binding:
-										field "binding_name": "#achievements_visible"
-										field "binding_name_override": "#visible"
-										field "binding_type": "global"
-						Removed control element "feedback_button@pause.feedback_button": empty.
-						Removed control element "feedback@pause.vertical_padding": empty.
-						Removed control element "how_to_play@pause.vertical_padding": field "ignored": "(not $education_edition or $education_edition_china)".
-	Changed element "pause_screen_content":
-		Unchanged field "type": "panel".
-		Added field "variables":
-			variable:
-				field "requires": "$education_edition"
-				field "$variables": variable "$achievements_ignored": true
-			variable:
-				field "requires": "$trial"
-				field "$variables": variable "$achievements_ignored": true
-	Changed element "pause_screen_menu":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 4 (+1, -1)
-			Removed control:
-				element "pause_logo_panel@common_art.pause_logo_panel":
-					field "anchor_from": "top_middle"
-					field "anchor_to": "top_middle"
-					field "tts_ignore_count": true
-			Added control element "the_icon_panel@pause.the_icon_panel": empty.
-	Changed element "quit_button@pause.pause_button_template":
-		Changed field "focus_change_down" from "button.menu_continue" to "button.feedback".
-	Added element "take_screenshot_button@common_buttons.light_glyph_button":
-		field "ignored": "($is_holographic)"
-		field "size": [24, 24]
-		field "sound_name": "random.screenshot"
-		field "sound_volume": 1.0
-		field "sound_pitch": 1.0
-		field "$variables":
-			variable "$pressed_button_name": "button.screenshot"
-			variable "$button_tts_header": "key.screenshot"
-			variable "$button_content": "pause.take_screenshot_icon"
-			variable "$pressed_alpha": 0.65
-	Added element "the_icon_panel":
-		field "type": "stack_panel"
-		field "anchor_to": "bottom_left"
-		field "anchor_from": "bottom_left"
-		field "size": ["50% - 75px", "100%c"]
-		field "offset": [0, "-10%"]
+										element "description_stack@common.tts_label_focus_wrapper":
+											field "anchor_from": "top_middle"
+											field "anchor_to": "top_middle"
+											field "offset": [0, 20]
+											field "$variables": variable "$tts_label_panel": "cloud_upload.description_stack"
+									control:
+										element "progress_loading_bars@progress.progress_loading_bars":
+											field "anchor_from": "bottom_middle"
+											field "anchor_to": "bottom_middle"
+											field "offset": [0, -50]
+									control:
+										element "cancel@cloud_upload.cancel_button":
+											field "size": ["100%", 30]
+											field "anchor_from": "bottom_middle"
+											field "anchor_to": "bottom_middle"
+					field "bindings":
+						binding:
+							field "binding_name": "#upload_in_progress"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+			control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "terms_and_conditions": "terms_and_conditions@cloud_upload.terms_and_conditions"
+						control id "upload_failed": "upload_failed@cloud_upload.upload_failed"
+						control id "upload_succeeded": "upload_succeeded@cloud_upload.upload_succeeded"
+	element "scrolling_child":
+		field "type": "panel"
 		field "controls":
 			control:
-				element "stacked_column":
+				element "scrolling_panel@common.scrolling_panel":
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100% - 1px"
+							item 1: "100% - 2px"
+						variable "$scroll_view_port_size":
+							item 0: "100% - 4px"
+							item 1: "100% - 4px"
+						variable "$scroll_view_port_offset":
+							item 0: 3
+							item 1: 2
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100% - 2px"
+						variable "$show_background": false
+	element "service_agreement_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.service_agreement"
+			variable "$button_text": "cloud_upload.button.service_agreement"
+	element "succeeded_description@cloud_upload.label": field "text": "cloud_upload.succeeded.description"
+	element "terms_and_conditions@common_dialogs.main_panel_three_buttons":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$text_name": "cloud_upload.terms.title"
+			variable "$description_text": "cloud_upload.terms.description"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$child_control": "cloud_upload.scrolling_child"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+			variable "$top_button_panel": "cloud_upload.terms_checkbox"
+			variable "$middle_button_panel": "cloud_upload.upload_world_button"
+			variable "$bottom_button_panel": "cloud_upload.service_agreement_button"
+			variable "$tts_label_panel": "cloud_upload.terms_and_conditions_description"
+	element "terms_and_conditions_description@cloud_upload.label": field "text": "cloud_upload.terms.description"
+	element "terms_checkbox@common.checkbox":
+		field "size": ["100%", 30]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "tts_control_type_order_priority": 100
+		field "tts_value_order_priority": 101
+		field "controls":
+			control:
+				element "header_description_stack_panel":
 					field "type": "stack_panel"
-					field "size": ["100%", 32]
-					field "offset": ["5%", 0]
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
 					field "anchor_from": "top_left"
 					field "anchor_to": "top_left"
-					field "orientation": "horizontal"
 					field "controls":
 						control:
-							element "side_padding":
+							element "checkbox_visuals@common.toggle_visuals":
+								field "size": [30, "100%"]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+						control:
+							element "buffer_panel":
 								field "type": "panel"
-								field "size": ["12%", 0]
+								field "layer": 3
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$light_button_default_text_color"
+											field "text": "$toggle_label_text"
+											field "size": ["default", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
 						control:
-							element "feedback_btn@pause.column_frame":
-								field "ignored": "$education_edition"
-								field "size": [28, 32]
-								field "controls": control element "feedback_icon_button@pause.feedback_icon_button": empty
-						control:
-							element "feedback_padding":
+							element "another_panel":
 								field "type": "panel"
-								field "size": ["2%", 0]
-						control:
-							element "achievements_btn@pause.column_frame":
-								field "ignored": "$achievements_ignored"
-								field "size": [28, 32]
-								field "controls": control element "achievements_icon_button@pause.achievements_icon_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#achievements_visible"
-										field "binding_name_override": "#visible"
-						control:
-							element "achievements_padding":
-								field "type": "panel"
-								field "size": ["2%", 0]
-								field "bindings":
-									binding:
-										field "binding_name": "#achievements_visible"
-										field "binding_name_override": "#visible"
-						control:
-							element "take_screenshot_btn@pause.column_frame":
-								field "ignored": "($is_holographic)"
-								field "size": [28, 32]
-								field "controls": control element "take_screenshot_button@pause.take_screenshot_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#show_clubs"
-										field "binding_name_override": "#visible"
-										field "binding_type": "global"
-Changed namespace "pdp":
-	Changed element "appearance_status_content":
-		Unchanged field "type": "stack_panel".
+								field "size": [30, "100%"]
+		field "$variables":
+			variable "$toggle_name": "cloud_upload_terms_accepted"
+			variable "$toggle_state_binding_name": "#cloud_upload_terms_accepted"
+			variable "$toggle_label_text|default": "cloud_upload.toggle.accept_terms"
+			variable "$toggle_enabled_binding_type": "global"
+	element "upload_failed@common_dialogs.main_panel_two_buttons":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$show_close_button": false
+			variable "$text_name": "cloud_upload.title"
+			variable "$description_text": "cloud_upload.failed.description"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$child_control": "cloud_upload.scrolling_child"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+			variable "$top_button_panel": "cloud_upload.retry_button"
+			variable "$bottom_button_panel": "cloud_upload.close_button"
+			variable "$tts_label_panel": "cloud_upload.failed_description"
+	element "upload_succeeded@common_dialogs.main_panel_one_button":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$show_close_button": false
+			variable "$text_name": "cloud_upload.title"
+			variable "$description_text": "cloud_upload.succeeded.description"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$child_control": "cloud_upload.scrolling_child"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+			variable "$button_panel": "cloud_upload.close_button"
+			variable "$tts_label_panel": "cloud_upload.succeeded_description"
+	element "upload_world_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "bindings":
+			binding:
+				field "binding_name": "#cloud_upload_terms_accepted"
+				field "binding_name_override": "#enabled"
+				field "binding_condition": "always_when_visible"
+		field "$variables":
+			variable "$pressed_button_name": "button.upload_world"
+			variable "$button_text": "#upload_button_text"
+			variable "$button_text_binding_type": "global"
+Changed namespace "common":
+	Changed element "base_screen":
+		Unchanged field "type": "screen".
 		Changed field "controls":
 			Changed control:
-				Changed element "last_update_panel":
+				Changed element "variables_button_mappings_and_controls":
+					Unchanged field "type": "input_panel".
+					Changed field "variables":
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 42 (+1, -0)
+								Added variable "$cloud_upload_progress_screen_size":
+									item 0: 290
+									item 1: 200
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 42 (+1, -0)
+								Added variable "$cloud_upload_progress_screen_size":
+									item 0: 290
+									item 1: 200
+	Changed element "scroll_background_and_viewport":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "scrolling_view_port":
 					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "last_update_label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "chart_section":
+					Added field "max_size": "$scroll_view_port_max_size".
+	Changed element "scroll_bar_and_track":
+		Unchanged field "type": "panel".
+		Changed field "size" from ["100%c", "100%"] to "$scroll_bar_and_track_size".
+		Added field "$variables":
+			variable "$scroll_bar_and_track_size|default":
+				item 0: "100%c"
+				item 1: "100%"
+	Changed element "scrolling_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "stack":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "star_number_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "star_number":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-						Changed control:
-							Changed element "percent":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "description_section_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "contents_description":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "disabled_smooth_coin_purchase_label_formfitting":
-		Unchanged field "type": "stack_panel".
-		Changed field "$variables":
-			Changed variable "$purchase_price_font_type|default" from "#smooth_font" to "smooth".
-	Changed element "discount_label":
-		Unchanged field "type": "label".
-		Changed field "$variables":
-			Changed variable "$discount_label_font|default" from "#smooth_font" to "smooth".
-	Changed element "download_progress_small@purchase_common.banner_fill":
-		Changed field "controls":
-			Changed control:
-				Changed element "stacker":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "sizer_text":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "download_progress_text":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "glyph_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "item_glyph_count_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "item_glyph_count_panel_label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "price_markdown_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "offer_price":
-					Unchanged field "type": "label".
+				Changed element "scroll_touch@common.scrolling_panel_base":
 					Changed field "$variables":
-						Changed variable "$purchase_price_font_type|default" from "#smooth_font" to "smooth".
-	Changed element "price_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "offer_prompt_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "offer_status_text":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "ratings_chart_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "ratings_chart_content":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "rating_text_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "rating_text":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-						Changed control:
-							Changed element "count_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "count":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "smooth_coin_purchase_label_formfitting":
-		Unchanged field "type": "stack_panel".
+						Total variable: 13 (+1, -0)
+						Added variable "$scroll_view_port_max_size": "$scroll_view_port_max_size_touch".
 		Changed field "$variables":
-			Changed variable "$purchase_price_font_type|default" from "#smooth_font" to "smooth".
-	Changed element "smooth_currency_purchase_label":
+			Total variable: 27 (+2, -0)
+			Added variable "$scroll_view_port_max_size|default":
+				item 0: "100%"
+				item 1: "100%"
+			Added variable "$scroll_view_port_max_size_touch|default":
+				item 0: "100%"
+				item 1: "100%"
+Changed namespace "edu_common":
+	Total element: 74 (+3, -0)
+	Added element "manage_sharelink_body_content_stack":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "layer": 5
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "body_text_centering_panel1@edu_common.vertical_stack_item":
+					field "controls":
+						control:
+							element "body_text1":
+								field "type": "label"
+								field "font_type": "smooth"
+								field "color": "$body_text_color"
+								field "text": "manage.sharepopup.link.body.top"
+								field "size": ["100%", "default"]
+								field "layer": 1
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+			control element "padding1@common.empty_panel": field "size": ["100%sm", 8]
+			control:
+				element "body_text_centering_panel2@edu_common.vertical_stack_item":
+					field "controls":
+						control:
+							element "body_text2":
+								field "type": "label"
+								field "font_type": "smooth"
+								field "color": "$body_text_color"
+								field "text": "manage.sharepopup.link.body.bottom"
+								field "size": ["100%", "default"]
+								field "layer": 1
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+			control element "padding2@common.empty_panel": field "size": ["100%sm", 8]
+			control element "icons@edu_common.icon_section": empty
+			control element "copy_link_centering_panel@edu_common.vertical_stack_item": field "controls": control element "copy_link_panel@edu_common.copy_link_stack_panel": empty
+			control element "padding3@common.empty_panel": field "size": ["100%sm", 8]
+			control:
+				element "manage_access_button@edu_common.underline_button":
+					field "$variables":
+						variable "$single_label_size":
+							item 0: "default"
+							item 1: "default"
+						variable "$single_line_font_scale_factor": 1
+						variable "$pressed_button_name": "button.manage_access"
+						variable "$single_line_label_text": "manage.sharepopup.link.manage"
+						variable "$font_type": "smooth"
+			control element "padding4@common.empty_panel": field "size": ["100%sm", 8]
+			control:
+				element "learn_more_button@edu_common.underline_button":
+					field "$variables":
+						variable "$single_label_size":
+							item 0: "default"
+							item 1: "default"
+						variable "$single_line_font_scale_factor": 1
+						variable "$pressed_button_name": "button.learn_more"
+						variable "$single_line_label_text": "manage.sharepopup.copy.hyperlink"
+						variable "$font_type": "smooth"
+			control element "padding5@common.empty_panel": field "size": ["100%sm", 4]
+			control:
+				element "done_button@edu_worlds.world_entry_button_def":
+					field "size": ["100%", 24]
+					field "$variables":
+						variable "$font_type": "default"
+						variable "$button_text": "manage.sharepopup.link.done"
+						variable "$pressed_button_name": "button.close_share_popup"
+	Added element "manage_sharelink_body_panel@edu_common.body_panel": field "$variables": variable "$body_stack": "edu_common.manage_sharelink_body_content_stack".
+	Added element "manage_sharelink_edu_popup@popup_dialog.form_fit_modal_dialog_popup":
+		field "$variables":
+			variable "$modal_title": "($share_source + '.item.sharepopup.title.simple')"
+			variable "$modal_contents": "edu_common.manage_sharelink_body_panel"
+			variable "$modal_contents_padding":
+				item 0: 6
+				item 1: 6
+			variable "$popup_dialog_escape_button_name": "button.close_share_popup"
+Changed namespace "general_section":
+	Changed element "debug_override_treatments_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "currency_purchase_label_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "summary_text_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "sale_timer_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "timer_label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "perf_turtle":
-	Changed element "perf_turtle_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
+				Changed element "override_treatments_panel_background":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "turtle_text":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "permissions":
-	Changed element "radio_content_with_title_bar":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "helper_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "persona":
-	Changed element "appearance_status_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "appearance_status":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "label_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "label":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "featured_skin_pack_button_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "featured_skin_pack_button@common.button":
-					Changed field "button_mappings":
-						Changed button mapping:
-							Added field "ignored": "($controller_left_bumper_mapping = '')".
-						Changed button mapping:
-							Added field "ignored": "($controller_right_bumper_mapping = '')".
-	Changed element "info_text_box":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "description_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "description_label_vert_stack":
+							Changed element "override_treatment_options_panel":
 								Unchanged field "type": "stack_panel".
 								Changed field "controls":
-									Changed control:
-										Changed element "description_label_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "description_label":
-														Unchanged field "type": "label".
-														Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "persona_left_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "persona_offer_panel_content":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "persona_left_panels@persona.persona_section_panels":
-								Added field "variables":
-									variable:
-										field "requires": "(not $is_sidebar_navigation_enabled)"
-										field "$variables":
-											variable "$focus_navigation_mode_up": "custom"
-											variable "$focus_container_custom_up": item 0: item "other_focus_container_name": "persona_tabs_cape"
-								Added field "focus_nagivation_mode_up": "$focus_navigation_mode_up".
-								Added field "focus_container_custom_up": "$focus_container_custom_up".
-								Added field "$variables":
-									variable "$is_sidebar_navigation_enabled|default": false
-									variable "$focus_navigation_mode_up|default": "none"
-									variable "$focus_container_custom_up|default": empty
-	Changed element "persona_tabs_with_cape":
-		Unchanged field "type": "stack_panel".
-		Added field "focus_container": true.
-		Added field "focus_wrap_enabled": true.
-		Added field "focus_nagivation_mode_left": "$main_content_focus_container_left".
-		Added field "focus_container_custom_left": "$main_content_focus_container_left_custom".
-	Changed element "piece_offer_button@common.button":
-		Changed field "button_mappings":
-			Changed button mapping:
-				Added field "ignored": "($controller_left_bumper_mapping = '')".
-			Changed button mapping:
-				Added field "ignored": "($controller_right_bumper_mapping = '')".
-	Changed element "popup_toast@persona.popup":
-		Changed field "$variables":
-			Changed variable "$toast_font_type" from "#smooth_font" to "smooth".
-	Changed element "right_side_stack_debug_control":
+									Total control: 3 (+1, -0)
+									Added control:
+										element "apply_treatments_button@common_buttons.light_text_button":
+											field "size": ["100%", 30]
+											field "$variables":
+												variable "$pressed_button_name": "button.apply_treatments"
+												variable "$button_text": "options.dev_applyTreatments"
+	Changed element "debug_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Changed control:
-				Changed element "debug_skin_names":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "debug_current_name":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-						Changed control:
-							Changed element "debug_active_name":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "debug_preview_skin_name":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "roamable_status_notification_panel":
-		Unchanged field "type": "input_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "appearance_status_notification@common_buttons.static_tooltip_notification_panel":
-					Changed field "$variables":
-						Changed variable "$tooltip_text_font_type" from "#smooth_font" to "smooth".
-	Changed element "skin_info_label_and_image":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "content_stack":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "label_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "label":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "special_offer_banner":
-		Unchanged field "type": "image".
-		Changed field "controls":
-			Changed control:
-				Changed element "banner_info":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "special_banner_text":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "top_tab@common_tabs.tab_top":
+			Total control: 90 (+2, -0)
+			Added control:
+				element "option_toggle_disable_render_main_menu_paperdoll_animation@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_disableRenderMainMenuPaperdollAnimation"
+						variable "$option_binding_name": "#dev_disable_render_main_menu_paperdoll_animation"
+						variable "$option_enabled_binding_name": "#dev_disable_render_main_menu_paperdoll_animation_enabled"
+						variable "$toggle_name": "dev_disable_render_main_menu_paperdoll_animation"
+			Added control:
+				element "reset_cloud_upload_option@settings_common.action_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.dev_reset_cloud_upload_option"
+						variable "$button_text": "Reset Cloud Upload Dialog Option"
+	Changed element "ui_debug_button@settings_common.section_toggle_base":
 		Changed field "$variables":
-			Total variable: 11 (+2, -0)
-			Added variable "$ignore_tts_enabled_bind": true.
-			Added variable "$toggle_focus_bind": "#is_top_bar_focus_enabled".
-	Changed element "usage_limited_right_panel_text":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
+			Changed variable "$glyph_texture" from "textures/ui/focus_border_white" to "textures/ui/ui_debug_glyph".
+			Changed variable "$glyph_color_texture" from "textures/ui/right_split_panel_default" to "textures/ui/ui_debug_glyph_color".
+			Changed variable "$glyph_size":
+				Changed item 0 from 15 to 16.
+				Changed item 1 from 15 to 16.
 Changed namespace "play":
-	Changed element "add_server_info_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "server_info_stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "add_server_description":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "additional_server_info_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "server_info_stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "server_name@play.world_list_text":
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "crossplatform_disabled_panel@play.dark_label_background":
-		Changed field "controls":
-			Changed control:
-				Changed element "disable_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "description_text_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "contents_description":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "games_factory_object":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "games_factory_panel":
-					Unchanged field "type": "image".
-					Changed field "controls":
-						Changed control:
-							Changed element "top_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "game_title_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "game_title":
-														Unchanged field "type": "label".
-														Changed field "font_type" from "#smooth_font" to "smooth".
-												Changed control:
-													Changed element "game_subtitle":
-														Unchanged field "type": "label".
-														Changed field "font_type" from "#smooth_font" to "smooth".
-						Changed control:
-							Changed element "bottom_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "bottom_panel":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "high_ping_popup_content_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_line_1":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "text_line_2":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "news_section_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "read_more_panel":
-					Unchanged field "type": "image".
-					Changed field "controls":
-						Changed control:
-							Changed element "text_stack_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "news_title_text":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "news_text_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "contents_news":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "realms_plus_banner":
-		Unchanged field "type": "panel".
-		Changed field "$variables":
-			Changed variable "$banner_content":
-				Changed item 2:
-					Changed item "expiration_timer":
-						Changed item "font_type" from "#smooth_font" to "smooth".
-	Changed element "server_button_content_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "top_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "title_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "third_party_server_name@play.world_list_text":
-											Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "bottom_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "third_party_server_message@play.world_list_text":
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "server_scroll_content@play.common_content":
-		Changed field "controls":
-			Changed control:
-				Changed element "feature_server_message_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "feature_server_message_panel@play.dark_label_background":
-								Changed field "controls":
-									Changed control:
-										Changed element "label_panel_layout":
-											Unchanged field "type": "panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "label":
-														Unchanged field "type": "label".
-														Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "server_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 6 (+0, -1)
-						Changed control:
-							Changed element "no_featured_server_connection@play.information_panel":
-								Changed field "$variables":
-									Changed variable "$information_label_font" from "#smooth_font" to "smooth".
-						Changed control:
-							Changed element "more_servers_blocked_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "server_multiplayer_privileges_blocked@play.information_panel":
-											Changed field "$variables":
-												Changed variable "$information_label_font" from "#smooth_font" to "smooth".
-						Changed control:
-							Changed element "servers_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "more_servers_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Total control: 7 (+1, -0)
-												Added control element "add_server_button@play.add_server_toggle_button": empty.
-						Removed control element "add_server_button@play.add_server_toggle_button": empty.
-	Changed element "text_icon_number_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "number":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "third_party_server_info_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "server_info_stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "server_name@play.world_list_text":
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "popup_dialog":
-	Changed element "modal_label_text":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#font_type" to "smooth".
-Changed namespace "portfolio":
-	Changed element "pick_panel":
-		Unchanged field "type": "image".
-		Changed field "controls":
-			Total control: 3 (+1, -1)
-			Removed control element "close_button@portfolio.close_button": field "offset": [-3, 5].
-			Added control element "close_button@portfolio.close_button": field "offset": [-10, 10].
-Changed namespace "profile":
-	Changed element "buttons_sides_padding_panel":
-		Unchanged field "type": "panel".
-		Removed field "variables":
-			variable:
-				field "requires": "$supports_xbl_achievements"
-				field "$variables":
-					variable "$sides_padding_size":
-						item 0: "5%"
-						item 1: 0
-			variable:
-				field "requires": "(not $supports_xbl_achievements)"
-				field "$variables":
-					variable "$sides_padding_size":
-						item 0: "27%"
-						item 1: 0
-		Changed field "size" from "$sides_padding_size" to ["27%", 0].
-	Changed element "debug_skin_view":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "skin_name":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "lower_button_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 6 (+0, -2)
-			Removed control element "achievements_button@profile.achievements_button": empty.
-			Removed control element "more_padding@profile.horizontal_padding_4px": field "ignored": "(not $supports_xbl_achievements)".
-	Changed element "popup_dialog_delete_persona_content@common.empty_panel":
-		Changed field "controls":
-			Changed control:
-				Changed element "popup_dialog_message@popup_dialog.popup_dialog_message":
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "popup_toast@persona.popup":
-		Changed field "$variables":
-			Changed variable "$toast_font_type" from "#smooth_font" to "smooth".
-Changed namespace "profile_card":
-	Changed element "add_friend_dropdown_content@settings_common.option_radio_dropdown_group":
-		Changed field "$variables":
-			Changed variable "$radio_buttons":
-				Changed item 1:
-					Changed item "friend_helper_text":
-						Changed item "font_type" from "#smooth_font" to "smooth".
-				Changed item 4:
-					Changed item "favorite_helper_text":
-						Changed item "font_type" from "#smooth_font" to "smooth".
-Changed namespace "purchase_common":
-	Changed element "pack_description":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "realmsPlus_buy":
-	Changed element "content_description":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "content_description_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "trial_image_and_description":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "description_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "realmsPlus_content":
-	Changed element "content_description":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "content_description_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "friends_get_access":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "pack_type_description":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "description_nesting_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "description_label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "realmsPlus_faq":
-	Changed element "faq_price_bound_text_section@realmsPlus_faq.faq_text_section_body":
-		Changed field "controls":
-			Changed control:
-				Changed element "faq_text_answer":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "faq_text_section@realmsPlus_faq.faq_text_section_body":
-		Changed field "controls":
-			Changed control:
-				Changed element "faq_text_answer":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "realmsPlus_landing":
-	Changed element "info_text_bullet":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "info_text_bullet_bullet":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "info_text_bullet_body":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "realms_create":
-	Changed element "privacy_policy_button@common_buttons.light_text_button":
-		Changed field "$variables":
-			Changed variable "$font_type" from "#smooth_font" to "smooth".
-	Changed element "scroll_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "realms_terms_info@settings_common.option_info_label":
-					Changed field "$variables":
-						Changed variable "$used_fonttype" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "realms_external_subscription_terms_info@settings_common.option_info_label":
-					Changed field "$variables":
-						Changed variable "$used_fonttype" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "realms_switch_nso_info@settings_common.option_info_label":
-					Changed field "$variables":
-						Changed variable "$used_fonttype" from "#smooth_font" to "smooth".
-	Changed element "terms_and_conditions_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "terms_string_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "buttons_stack_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "agree_panel":
-											Unchanged field "type": "panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "i_agree_label":
-														Unchanged field "type": "label".
-														Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "view_terms_button@common_buttons.light_text_button":
-		Changed field "$variables":
-			Changed variable "$font_type" from "#smooth_font" to "smooth".
-Changed namespace "realms_plus_ended":
-	Changed element "main_content_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "main_content_stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "text_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "text":
-											Unchanged field "type": "label".
-											Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "realmsplus_upgrade_notice_screen":
-	Changed element "content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "wall_of_text":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "the_text":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "resource_packs":
-	Changed element "description_label@resource_packs.white_label":
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "pack_label@resource_packs.white_label":
-		Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "selected_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "world_template_option_lock_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "option_info_label@settings_common.option_info_label":
-								Changed field "$variables":
-									Changed variable "$used_fonttype" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "selected_pack_section":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "default_item":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "description_panel":
-											Unchanged field "type": "panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "white_label@resource_packs.white_label":
-														Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "size_label@resource_packs.white_label":
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "safe_zone":
-	Changed element "safe_zone_screen@common.base_screen":
-		Added field "should_be_skipped_during_automation": true.
-Changed namespace "screenshotpicker":
-	Changed element "screenshotpicker_item_label":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "settings_common":
-	Changed element "radio_description_panel":
-		Unchanged field "type": "panel".
-		Changed field "$variables":
-			Changed variable "$description_font_type" from "#smooth_font" to "smooth".
-Changed namespace "start":
-	Total element: 62 (+4, -1)
-	Added element "achievements_button@common_buttons.light_content_button":
-		field "size": [24, 24]
+	Total element: 263 (+3, -0)
+	Added element "cloud_upload_and_edit_world_stack_panel":
+		field "size": ["100%c - 2px", "100%"]
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "cloud@play.cloud_upload_button":
+					field "visible": false
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "local_worlds"
+						binding:
+							field "binding_name": "#cloud_upload_enabled"
+							field "binding_name_override": "#visible"
+			control element "edit@play.local_world_edit_button": empty
+	Added element "cloud_upload_button@common_buttons.dark_glyph_button":
+		field "size": ["100%y - 1px", "100%"]
+		field "layer": 2
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "local_worlds"
 		field "$variables":
-			variable "$button_content": "start.achievements_icon"
-			variable "$pressed_button_name": "button.menu_achievements"
-	Removed element "achievements_button@start.main_button":
-		field "bindings": binding field "binding_name": "#focus_change_left"
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_achievements"
-			variable "$button_text": "menu.achievements"
-			variable "$focus_override_right": "menu_skins_button"
-	Added element "achievements_icon":
+			variable "$pressed_button_name": "button.cloud_upload"
+			variable "$button_content": "play.upload_icon"
+			variable "$button_tts_header": "accessibility.play.uploadWorld"
+	Changed element "legacy_world_item_button@common_buttons.dark_content_button":
+		Changed field "button_mappings":
+			Total button mapping: 2 (+0, -2)
+			Removed button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.upload_legacy_world"
+				field "mapping_type": "focused"
+			Removed button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.upload_legacy_world"
+				field "mapping_type": "focused"
+	Changed element "local_world_item":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "header_button_panel@play.header_button_panel":
+					Changed field "$variables":
+						Changed variable "$secondary_header_button" from "play.local_world_edit_button" to "play.cloud_upload_and_edit_world_stack_panel".
+	Changed element "more_servers_world_item":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "additional_server_toggle_base@play.server_toggle_base":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_override_right": "edit_server".
+			Changed control:
+				Changed element "network_server_world_edit_button@play.network_server_world_edit_button":
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$focus_id": "edit_server".
+	Added element "upload_icon":
 		field "type": "image"
-		field "texture": "textures/ui/achievements"
-		field "layer": 3
+		field "texture": "textures/ui/upload_glyph"
 		field "size": [16, 16]
-	Added element "achievements_icon_button":
-		field "ignored": "$achievements_ignored"
-		field "type": "panel"
-		field "controls": control element "achievements_button@start.achievements_button": field "ignored": "$education_edition"
-		field "$variables": variable "$button_tts_header": "menu.achievements"
-	Moved element from "online_buttons_panel" to "lower_online_buttons_panel".
+Changed namespace "profile":
+	Total element: 51 (+0, -1)
+	Removed element "achievements_button@common_buttons.light_text_button":
+		field "ignored": "(not $supports_xbl_achievements)"
+		field "size": ["fill", "100%"]
+		field "tts_play_on_unchanged_focus_control": true
+		field "bindings":
+			binding:
+				field "binding_name": "#enable_achievement_button"
+				field "binding_name_override": "#enabled"
+				field "binding_condition": "always"
+		field "$variables":
+			variable "$pressed_button_name": "button.achievements"
+			variable "$button_text": "gui.achievements"
+			variable "$font_type": "MinecraftTen"
+			variable "$button_font_scale_factor": 1.0
+			variable "$new_ui_label_offset":
+				item 0: 0
+				item 1: 2
+			variable "$button_text_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$button_text_max_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$persona_focus_precedence": 3
+Changed namespace "scoreboard":
+	Changed element "scoreboard_sidebar":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "main":
+					Unchanged field "type": "image".
+					Changed field "controls":
+						Changed control:
+							Changed element "lists":
+								Unchanged field "type": "panel".
+								Removed field "inherit_max_sibling_width": true.
+								Changed field "controls":
+									Changed control:
+										Changed element "scores":
+											Unchanged field "type": "stack_panel".
+											Added field "use_child_anchors": true.
+	Changed element "scoreboard_sidebar_player":
+		Unchanged field "type": "label".
+		Removed field "text_alignment": "left".
+		Removed field "anchor_from": "top_right".
+		Removed field "anchor_to": "top_right".
+		Removed field "inherit_max_sibling_width": true.
+	Changed element "scoreboard_sidebar_score":
+		Unchanged field "type": "label".
+		Removed field "text_alignment": "right".
+		Removed field "inherit_max_sibling_width": true.
+Changed namespace "start":
+	Total element: 68 (+6, -0)
+	Added element "cloud_upload_description":
+		field "type": "label"
+		field "size": ["100% - 4px", "default"]
+		field "font_type": "smooth"
+		field "line_padding": 1.5
+		field "color": "$body_text_color"
+		field "text": "cloud_upload.prompt.description"
+	Added element "cloud_upload_do_not_show_checkbox@common.checkbox":
+		field "size": ["100%", 30]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "tts_control_type_order_priority": 100
+		field "tts_value_order_priority": 101
+		field "controls":
+			control:
+				element "header_description_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls":
+						control:
+							element "checkbox_visuals@common.toggle_visuals":
+								field "size": [30, "100%"]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+						control:
+							element "buffer_panel":
+								field "type": "panel"
+								field "layer": 3
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$light_button_default_text_color"
+											field "text": "$toggle_label_text"
+											field "size": ["default", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+						control:
+							element "another_panel":
+								field "type": "panel"
+								field "size": [30, "100%"]
+		field "$variables":
+			variable "$toggle_name": "cloud_upload_do_not_show_again"
+			variable "$toggle_state_binding_name": "#cloud_upload_do_not_show_again"
+			variable "$toggle_label_text|default": "cloud_upload.prompt.do_not_show_toggle"
+			variable "$toggle_enabled_binding_type": "global"
+	Added element "cloud_upload_learn_more_button@popup_dialog.popup_dialog_button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.learn_more"
+			variable "$button_text": "cloud_upload.prompt.button.learn_more"
+	Added element "cloud_upload_prompt@common_dialogs.main_panel_three_buttons":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$text_name": "cloud_upload.title"
+			variable "$description_text": "cloud_upload.prompt.description"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$close_button_to_button_id": "button.close_cloud_upload_prompt"
+			variable "$child_control": "start.scrolling_child"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+			variable "$top_button_panel": "start.cloud_upload_do_not_show_checkbox"
+			variable "$middle_button_panel": "start.cloud_upload_worlds_button"
+			variable "$bottom_button_panel": "start.cloud_upload_learn_more_button"
+			variable "$tts_label_panel": "start.cloud_upload_description"
+	Added element "cloud_upload_worlds_button@popup_dialog.popup_dialog_button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.worlds"
+			variable "$button_text": "cloud_upload.prompt.button.worlds"
 	Changed element "lower_online_buttons_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
@@ -2232,408 +764,221 @@ Changed namespace "start":
 				Changed element "stacked_column":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 7 (+3, -3)
-						Removed control:
-							element "gamertag_pic_and_label":
-								field "ignored": "(not $nx_os and not $is_ps4)"
-								field "type": "stack_panel"
-								field "orientation": "horizontal"
-								field "size": ["100%c", 16]
-								field "controls":
-									control:
-										element "gamerpic_with_border":
-											field "type": "panel"
-											field "size": ["100%c", "100%"]
-											field "controls":
-												control:
-													element "gamerpic":
-														field "type": "image"
-														field "size": [16, 16]
-														field "layer": 1
-														field "bindings":
-															binding:
-																field "binding_name": "#gamerpic_texture_path"
-																field "binding_name_override": "#texture"
-															binding:
-																field "binding_name": "#gamerpic_texture_location_type"
-																field "binding_name_override": "#texture_file_system"
-												control:
-													element "border_white@common.focus_border_white":
-														field "layer": 3
-														field "size": [16, 16]
-									control:
-										element "spacer":
-											field "type": "panel"
-											field "size": [1, 0]
-									control:
-										element "label_panel":
-											field "type": "panel"
-											field "size": ["100%c", "100%"]
-											field "controls":
-												control:
-													element "gamertag_label":
-														field "type": "label"
-														field "color": "$main_header_text_color"
-														field "layer": 1
-														field "text": "#gamertag_label"
-														field "locked_alpha": 0.5
-														field "size": ["default", "100%"]
-														field "offset": [0, "25%"]
-														field "bindings": binding field "binding_name": "#gamertag_label"
-								field "bindings":
-									binding:
-										field "binding_name": "#gamertag_pic_and_label_visible"
-										field "binding_name_override": "#visible"
 						Changed control:
-							Changed element "feedback_padding":
-								Unchanged field "type": "panel".
-								Added field "ignored": "$feedback_ignored".
-						Removed control:
-							element "xbl_btn@start.column_frame":
-								field "ignored": "($nx_os or $is_ps4)"
-								field "size": [94, 32]
-								field "max_size": ["95%", 32]
-								field "controls": control element "xbl_signin_button@start.xbl_signin_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#sign_in_visible"
-										field "binding_name_override": "#visible"
-						Removed control:
-							element "platform_signin_btn@start.column_frame":
-								field "ignored": "(not $nx_os and not $is_ps4)"
-								field "size": ["90% - 6px", 32]
-								field "controls": control element "platform_signin_button@start.platform_signin_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#sign_in_visible"
-										field "binding_name_override": "#visible"
-						Added control:
-							element "achievements_padding":
-								field "ignored": "$achievements_ignored"
-								field "type": "panel"
-								field "size": [3, 0]
-								field "bindings":
-									binding:
-										field "binding_name": "#achievements_icon_visible"
-										field "binding_name_override": "#visible"
-						Added control:
-							element "achievements_btn@start.column_frame":
-								field "ignored": "$achievements_ignored"
-								field "size": [28, 32]
-								field "controls": control element "achievements_icon_button@start.achievements_icon_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#achievements_icon_visible"
-										field "binding_name_override": "#visible"
-						Added control:
-							element "invite_padding":
-								field "ignored": "($nx_os or $is_ps4)"
-								field "type": "panel"
-								field "size": [3, 0]
-								field "bindings":
-									binding:
-										field "binding_name": "#realms_notification_visible"
-										field "binding_name_override": "#visible"
-	Changed element "main_buttons_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "stacked_rows":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 10 (+0, -1)
-						Removed control:
-							element "stacked_row_1@start.stacked_row":
-								field "ignored": "$achievements_ignored"
-								field "controls": control element "achievements_button@start.achievements_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#achievements_visible"
-										field "binding_name_override": "#visible"
-	Changed element "platform_signin_button@common_buttons.light_text_button":
-		Added field "anchor_from": "left_middle".
-		Added field "anchor_to": "left_middle".
-	Changed element "start_screen_content":
-		Unchanged field "type": "panel".
-		Changed field "variables":
-			Total variable: 7 (+1, -0)
-			Added variable:
-				field "requires": "$trial"
-				field "$variables": variable "$achievements_ignored": true
-		Changed field "controls":
-			Total control: 5 (+1, -0)
-			Changed control:
-				Moved element from "online_buttons_panel@start.online_buttons_panel" to "upper_online_buttons_panel@start.upper_online_buttons_panel".
-			Added control element "lower_online_buttons_panel@start.lower_online_buttons_panel": empty.
-	Added element "upper_online_buttons_panel":
-		field "type": "stack_panel"
-		field "anchor_to": "bottom_left"
-		field "anchor_from": "bottom_left"
-		field "size": ["50% - 75px", "100%c"]
-		field "offset": [0, "-23%"]
+							Changed element "signingin":
+								Changed field "max_size":
+									Changed item 0 from 150 to 120.
+									Unchanged item 1: "100%".
+								Unchanged field "type": "label".
+	Added element "scrolling_child":
+		field "type": "panel"
 		field "controls":
 			control:
-				element "stacked_column":
-					field "type": "stack_panel"
-					field "size": ["100%", 32]
-					field "offset": ["5%", 0]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "orientation": "horizontal"
+				element "scrolling_panel@common.scrolling_panel":
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100% - 1px"
+							item 1: "100% - 2px"
+						variable "$scroll_view_port_size":
+							item 0: "100% - 4px"
+							item 1: "100% - 4px"
+						variable "$scroll_view_port_offset":
+							item 0: 3
+							item 1: 2
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100% - 2px"
+						variable "$show_background": false
+	Changed element "start_screen_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 6 (+1, -0)
+			Added control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids": control id "cloud_upload_prompt": "@start.cloud_upload_prompt"
+Changed namespace "update_version":
+	Changed element "update_version_popup@common_dialogs.main_panel_one_button":
+		Added field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_exit"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+Removed namespace "world_conversion_error_report":
+	element "dialog@common_dialogs.main_panel_no_buttons":
+		field "size": [280, 206]
+		field "$variables":
+			variable "$text_name": "worldConversionErrorReport.title"
+			variable "$child_control": "world_conversion_error_report.dialog_content"
+			variable "$show_close_button": false
+	element "dialog_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 4px", "100% - 4px"]
+		field "controls":
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 1]
+			control:
+				element "dropdown_visibility_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c - 2px"]
+					field "ignored": "$hide_report_reason_dropdown"
 					field "controls":
 						control:
-							element "xbl_btn_padding":
-								field "ignored": "($nx_os or $is_ps4)"
-								field "type": "panel"
-								field "size": [5, 0]
-								field "bindings":
-									binding:
-										field "binding_name": "#sign_in_visible"
-										field "binding_name_override": "#visible"
-						control:
-							element "xbl_btn@start.column_frame":
-								field "ignored": "($nx_os or $is_ps4)"
-								field "size": [94, 32]
-								field "max_size": ["95%", 32]
-								field "controls": control element "xbl_signin_button@start.xbl_signin_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#sign_in_visible"
-										field "binding_name_override": "#visible"
-						control:
-							element "platform_signin_btn@start.column_frame":
-								field "ignored": "(not $nx_os and not $is_ps4)"
-								field "size": ["90% - 6px", 32]
-								field "controls": control element "platform_signin_button@start.platform_signin_button": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#sign_in_visible"
-										field "binding_name_override": "#visible"
-						control:
-							element "gamertag_pic_and_label":
-								field "ignored": "(not $nx_os and not $is_ps4)"
-								field "type": "stack_panel"
-								field "orientation": "horizontal"
-								field "size": ["100%c", 16]
-								field "controls":
-									control:
-										element "gamerpic_with_border":
-											field "type": "panel"
-											field "size": ["100%c", "100%"]
-											field "controls":
-												control:
-													element "gamerpic":
-														field "type": "image"
-														field "size": [16, 16]
-														field "layer": 1
-														field "bindings":
-															binding:
-																field "binding_name": "#gamerpic_texture_path"
-																field "binding_name_override": "#texture"
-															binding:
-																field "binding_name": "#gamerpic_texture_location_type"
-																field "binding_name_override": "#texture_file_system"
-												control:
-													element "border_white@common.focus_border_white":
-														field "layer": 3
-														field "size": [16, 16]
-									control:
-										element "spacer":
-											field "type": "panel"
-											field "size": [1, 0]
-									control:
-										element "label_panel":
-											field "type": "panel"
-											field "size": ["100%c", "100%"]
-											field "controls":
-												control:
-													element "gamertag_label":
-														field "type": "label"
-														field "color": "$main_header_text_color"
-														field "layer": 1
-														field "text": "#gamertag_label"
-														field "locked_alpha": 0.5
-														field "size": ["default", "100%"]
-														field "offset": [0, "25%"]
-														field "bindings": binding field "binding_name": "#gamertag_label"
-								field "bindings":
-									binding:
-										field "binding_name": "#gamertag_pic_and_label_visible"
-										field "binding_name_override": "#visible"
-		field "bindings":
-			binding:
-				field "binding_name": "#online_buttons_visible"
-				field "binding_name_override": "#visible"
-	Changed element "xbl_signin_button@common_buttons.light_text_form_fitting_button":
-		Added field "anchor_from": "left_middle".
-		Added field "anchor_to": "left_middle".
-Changed namespace "store_inventory":
-	Changed element "no_xbl_and_local_content_warning_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "padding_content_padding_stack":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "background_and_content_panel@common_store.banner_fill":
-								Changed field "controls":
-									Changed control:
-										Changed element "content_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "horizontal_stack":
-														Unchanged field "type": "stack_panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "warning_and_sign_in_stack":
-																	Unchanged field "type": "stack_panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "warning_label":
-																				Unchanged field "type": "label".
-																				Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "no_xbl_and_no_local_conent_warning_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "image_and_description_bg_panel@common_store.banner_fill":
-					Changed field "controls":
-						Changed control:
-							Changed element "image_and_description_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "image_and_description_stack":
-											Unchanged field "type": "stack_panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "warning_image_and_label_1":
-														Unchanged field "type": "stack_panel".
-														Changed field "controls":
-															Changed control:
-																Changed element "warning_label_centering_panel":
-																	Unchanged field "type": "panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "warning_label_stack":
-																				Unchanged field "type": "stack_panel".
-																				Changed field "controls":
-																					Changed control:
-																						Changed element "warning_label_line_1":
-																							Unchanged field "type": "label".
-																							Changed field "font_type" from "#smooth_font" to "smooth".
-																					Changed control:
-																						Changed element "warning_label_line_2":
-																							Unchanged field "type": "label".
-																							Changed field "font_type" from "#smooth_font" to "smooth".
-																					Changed control:
-																						Changed element "warning_label_line_3":
-																							Unchanged field "type": "label".
-																							Changed field "font_type" from "#smooth_font" to "smooth".
-																					Changed control:
-																						Changed element "warning_label_line_4":
-																							Unchanged field "type": "label".
-																							Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "store_item_list":
-	Changed element "store_offer_grid_item":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "frame@common_store.store_description_background":
-					Changed field "controls":
-						Changed control:
-							Changed element "offer_price_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "offer_prompt_panel":
-											Unchanged field "type": "panel".
-											Changed field "controls":
-												Changed control:
-													Changed element "offer_prompt":
-														Unchanged field "type": "label".
-														Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "store_offer_title":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "store_layout":
-	Changed element "future_promo_image_with_border":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "date":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "past_promo_button_content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "date":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "today_gift_icon_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "today_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "sync_iaps_to_xbl":
-	Changed element "description_label_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "line1":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "tabbed_upsell":
-	Changed element "label_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "label_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "token_faq":
-	Changed element "token_content_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "token_info_text":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "win10_trial_conversion":
-	Changed element "collection_main_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "include_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "include_label@win10_trial_conversion.label_panel":
-								Changed field "font_type" from "#smooth_font" to "smooth".
-	Changed element "pack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "packtitle@win10_trial_conversion.label_panel":
-					Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "packdesc@win10_trial_conversion.label_panel":
-					Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "world_conversion_error_report":
-	Changed element "terms_and_conditions":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
+							element "error_dropdown@settings_common.option_dropdown":
+								field "$variables":
+									variable "$button_type_panel": "world_conversion_error_report.error_dropdown_panel"
+									variable "$show_option_label": false
+									variable "$option_label": "#report_reason_dropdown_toggle_label"
+									variable "$dropdown_content": "world_conversion_error_report.report_dropdown_content"
+									variable "$dropdown_area": "main_panel"
+									variable "$dropdown_name": "report_reason_dropdown"
+									variable "$options_dropdown_toggle_label_binding": "#report_reason_dropdown_toggle_label"
+									variable "$dropdown_scroll_content_size":
+										item 0: "100%"
+										item 1: 116
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "ignored": "$hide_report_reason_dropdown"
+					field "size": ["100%", 2]
+			control element "terms_and_conditions@world_conversion_error_report.terms_and_conditions": field "size": ["100%", "fill"]
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "report_button@common_buttons.dark_text_button":
+					field "size": ["100%", 30]
+					field "$variables":
+						variable "$pressed_button_name": "button.report"
+						variable "$button_text": "worldConversionErrorReport.button.reportAndSend"
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "view_terms@common_buttons.dark_text_button":
+					field "size": ["100%", 30]
+					field "$variables":
+						variable "$pressed_button_name": "button.view_terms"
+						variable "$button_text": "worldConversionErrorReport.terms.viewTerms"
+			control:
+				element "padding_4":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "back_button@common_buttons.dark_text_button":
+					field "size": ["100%", 30]
+					field "$variables":
+						variable "$pressed_button_name": "button.back"
+						variable "$button_text": "gui.goBack"
+	element "error_dropdown_panel":
+		field "type": "stack_panel"
+		field "size": ["100% - 12px", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "label_panel":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "controls": control element "report_label@world_conversion_error_report.report_label": empty
+			control:
+				element "arrow_panel":
+					field "type": "panel"
+					field "layer": 1
+					field "size": ["100%c", "100%"]
+					field "controls": control element "arrow@settings_common.arrow_image": empty
+	element "gamepad_helpers":
+		field "type": "panel"
+		field "layer": 2
+		field "controls":
+			control:
+				element "gamepad_helper_a@common.gamepad_helper_a":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": ["-10%", "-5%"]
+			control:
+				element "gamepad_helper_b@common.gamepad_helper_b":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": ["10%", "-5%"]
+	element "report_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "size": ["100%", "100%c"]
+		field "$variables":
+			variable "$show_option_label": false
+			variable "$radio_buttons":
+				item 0:
+					item "mobs@settings_common.radio_with_label":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#mobs"
+						item "$radio_label_text": "worldConversionErrorReport.dropdown.mobs"
+				item 1:
+					item "terrain@settings_common.radio_with_label":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#terrain"
+						item "$radio_label_text": "worldConversionErrorReport.dropdown.terrain"
+				item 2:
+					item "items_missing@settings_common.radio_with_label":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#items_missing"
+						item "$radio_label_text": "worldConversionErrorReport.dropdown.itemsMissing"
+				item 3:
+					item "item_interaction@settings_common.radio_with_label":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#item_interaction"
+						item "$radio_label_text": "worldConversionErrorReport.dropdown.itemInteraction"
+				item 4:
+					item "world_conversion@settings_common.radio_with_label":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#world_conversion_failed"
+						item "$radio_label_text": "worldConversionErrorReport.dropdown.worldConversion"
+	element "report_label@common.new_button_label":
+		field "layer": 2
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "size": ["100%", "default"]
+		field "text": "$options_dropdown_toggle_label_binding"
+		field "bindings": binding field "binding_name": "$options_dropdown_toggle_label_binding"
+	element "terms_and_conditions":
+		field "type": "label"
+		field "text": "worldConversionErrorReport.terms.agreementForBeta"
+		field "size": ["100%", "default"]
+		field "font_type": "smooth"
+		field "color": "$body_text_color"
+	element "world_conversion_error_report_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "$variables": variable "$screen_content": "world_conversion_error_report.world_conversion_error_report_screen_content"
+	element "world_conversion_error_report_screen_content":
+		field "type": "panel"
+		field "controls":
+			control element "gamepad_helpers@world_conversion_error_report.gamepad_helpers": empty
+			control element "main_panel@world_conversion_error_report.dialog": field "layer": 1
 Changed namespace "world_section":
 	Changed element "game_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 53 (+1, -0)
-			Added control:
+			Total control: 52 (+0, -1)
+			Removed control:
 				element "show_border_effect@settings_common.option_toggle":
 					field "$variables":
 						variable "$tts_section_header": "createWorldScreen.cheatSettings"
@@ -2643,92 +988,3 @@ Changed namespace "world_section":
 						variable "$toggle_name": "show_border_effect"
 						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
 						variable "$toggle_binding_condition": "always_when_visible"
-Changed namespace "world_templates":
-	Changed element "realms_plus_banner":
-		Unchanged field "type": "panel".
-		Changed field "$variables":
-			Changed variable "$banner_content":
-				Changed item 2:
-					Changed item "expiration_timer":
-						Changed item "font_type" from "#smooth_font" to "smooth".
-Changed namespace "xbl_console_signin":
-	Changed element "main_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "message_label_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "message_label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-						Changed control:
-							Changed element "message_label_line2":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "website_message_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "banner_1@xbl_console_signin.banner_fill":
-					Changed field "controls":
-						Changed control:
-							Changed element "url_label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "code_message_label":
-					Unchanged field "type": "label".
-					Changed field "font_type" from "#smooth_font" to "smooth".
-			Changed control:
-				Changed element "banner_2@xbl_console_signin.banner_fill":
-					Changed field "controls":
-						Changed control:
-							Changed element "code_label":
-								Unchanged field "type": "label".
-								Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "xbl_first_launch":
-	Changed element "message_label":
-		Unchanged field "type": "label".
-		Changed field "font_type" from "#smooth_font" to "smooth".
-Changed namespace "xbl_report_user":
-	Changed element "report_dropdown_content@settings_common.option_radio_dropdown_group":
-		Changed field "$variables":
-			Changed variable "$radio_buttons":
-				Added item 5:
-					item "child_sexual_exploitation_or_abuse@settings_common.radio_with_label":
-						item "min_size":
-							item 0: "100%"
-							item 1: 22
-						item "$toggle_state_binding_name": "#child_sexual_exploitation_or_abuse"
-						item "$radio_label_text": "xbox.report.childSexualExploitationOrAbuse"
-				Added item 6:
-					item "terrorism_or_violent_extremism@settings_common.radio_with_label":
-						item "min_size":
-							item 0: "100%"
-							item 1: 22
-						item "$toggle_state_binding_name": "#terrorism_or_violent_extremism"
-						item "$radio_label_text": "xbox.report.terrorismOrViolentExtremism"
-				Added item 7:
-					item "hate_speech@settings_common.radio_with_label":
-						item "min_size":
-							item 0: "100%"
-							item 1: 22
-						item "$toggle_state_binding_name": "#hate_speech"
-						item "$radio_label_text": "xbox.report.hateSpeech"
-				Added item 8:
-					item "imminent_harm@settings_common.radio_with_label":
-						item "min_size":
-							item 0: "100%"
-							item 1: 22
-						item "$toggle_state_binding_name": "#imminent_harm"
-						item "$radio_label_text": "xbox.report.imminentHarm"
-				Added item 9:
-					item "non-consensual_intimate_imagery@settings_common.radio_with_label":
-						item "min_size":
-							item 0: "100%"
-							item 1: 22
-						item "$toggle_state_binding_name": "#non-consensual_intimate_imagery"
-						item "$radio_label_text": "xbox.report.nonConsensualIntimateImagery"

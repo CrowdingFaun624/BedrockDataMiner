@@ -1,259 +1,135 @@
-Difference of "materials" between "a0.16.0_build4" (beta of "a0.16.0") and "a0.16.0_build5" (beta of "a0.16.0").
+Difference of "materials" between "a0.16.2" and "a0.17.0.1" (beta of "1.0.0").
 
+Total material: 11 (+1, -0)
 Changed material "entity.material":
 	Changed resource pack "core":
 		Changed field "materials":
-			Total material: 54 (+1, -0)
-			Changed material "beacon_beam_transparent:entity":
-				Changed field "fragmentShader" from "shaders/current_color.fragment" to "shaders/color_texture.fragment".
-			Added material "guardian_ghost:entity_alphablend": field "defines": definition "USE_COLOR_MASK".
+			Total material: 56 (+4, -2)
+			Added material "entity_beam:entity_nocull":
+				field "defines":
+					definition "ALPHA_TEST"
+					definition "COLOR_BASED"
+					definition "USE_UV_ANIM"
+				field "samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureWrap": "Repeat"
+			Added material "entity_beam_additive:entity_alphablend":
+				field "defines":
+					definition "COLOR_BASED"
+					definition "NO_TEXTURE"
+				field "states":
+					statement "Blending"
+					statement "DisableDepthWrite"
+				field "blendSrc": "SourceAlpha"
+				field "blendDst": "One"
+			Added material "entity_dissolve_layer0:entity":
+				field "defines": definition "TINTED_ALPHA_TEST"
+				field "states": statement "DisableColorWrite"
+			Added material "entity_dissolve_layer1:entity": field "depthFunc": "Equal".
+			Removed material "entity_guardian_beam:entity_nocull":
+				field "defines":
+					definition "ALPHA_TEST"
+					definition "COLOR_BASED"
+					definition "USE_UV_ANIM"
+				field "samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureWrap": "Repeat"
+				field "vertexFields":
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
+					vertex field field "field": "Color"
+			Removed material "guardian_phantom:entity": field "states": statement "Blending".
+Changed material "hologram.material":
+	Changed resource pack "core":
+		Changed field "materials":
+			Total material: 29 (+4, -0)
+			Added material "holo_coord_frame":
+				field "depthFunc": "LessEqual"
+				field "vertexShader": "shaders/color.vertex"
+				field "vrGeometryShader": "shaders/color.geometry"
+				field "fragmentShader": "shaders/color.fragment"
+			Added material "holo_hand":
+				field "depthFunc": "LessEqual"
+				field "defines": definition "TEXEL_AA"
+				field "samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureFilter": "TexelAA"
+					sampler state:
+						field "samplerIndex": 1
+						field "textureFilter": "TexelAA"
+				field "vertexShader": "shaders/uv.vertex"
+				field "vrGeometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture_ccolor.fragment"
+			Added material "holo_hand_pointer":
+				field "states":
+					statement "Blending"
+					statement "DisableDepthWrite"
+				field "blendSrc": "SourceAlpha"
+				field "blendDst": "OneMinusSrcAlpha"
+				field "depthFunc": "LessEqual"
+				field "vertexShader": "shaders/color.vertex"
+				field "vrGeometryShader": "shaders/color.geometry"
+				field "fragmentShader": "shaders/color.fragment"
+			Added material "holo_hud_quad":
+				field "states":
+					statement "Blending"
+					statement "DisableCulling"
+					statement "DisableDepthWrite"
+				field "samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureFilter": "Bilinear"
+				field "blendSrc": "SourceAlpha"
+				field "blendDst": "OneMinusSrcAlpha"
+				field "depthFunc": "LessEqual"
+				field "vertexShader": "shaders/uv.vertex"
+				field "vrGeometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture_ccolor.fragment"
+Added material "portal.material":
+	resource pack "core":
+		field "materials":
+			material "portal_base":
+				field "defines":
+					definition "ENABLE_FOG"
+					definition "END_PORTAL"
+				field "states":
+					statement "Blending"
+					statement "DisableDepthWrite"
+				field "vertexShader": "shaders/end_portal.vertex"
+				field "vrGeometryShader": "shaders/end_portal.geometry"
+				field "fragmentShader": "shaders/end_portal.fragment"
+				field "blendSrc": "One"
+				field "blendDst": "SourceAlpha"
+				field "samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureFilter": "Point"
+						field "textureWrap": "Repeat"
+					sampler state:
+						field "samplerIndex": 1
+						field "textureFilter": "Point"
+						field "textureWrap": "Repeat"
+			material "portal_base_fog:portal_base": empty
 Changed material "sky.material":
 	Changed resource pack "core":
 		Changed field "materials":
-			Total material: 6 (+3, -0)
-			Added material "skyplane_below_water:skyplane":
-				field "states": statement "EnableStencilTest"
-				field "frontFace": field "stencilFunc": "NotEqual"
-				field "backFace": field "stencilFunc": "NotEqual"
-				field "stencilRef": 2
-				field "stencilReadMask": 255
-			Added material "stars_below_water:stars":
-				field "states": statement "EnableStencilTest"
-				field "frontFace": field "stencilFunc": "Equal"
-				field "backFace": field "stencilFunc": "Equal"
-				field "stencilRef": 2
-				field "stencilReadMask": 255
-			Added material "sun_moon_below_water:sun_moon":
-				field "states": statement "EnableStencilTest"
-				field "frontFace": field "stencilFunc": "Equal"
-				field "backFace": field "stencilFunc": "Equal"
-				field "stencilRef": 2
-				field "stencilReadMask": 255
-Changed material "terrain.material":
-	Changed resource pack "core":
-		Changed field "materials":
-			Total material: 26 (+1, -0)
-			Added material "terrain_water_below_stencil":
-				field "vertexShader": "shaders/renderchunk.vertex"
-				field "vrGeometryShader": "shaders/renderchunk.geometry"
-				field "fragmentShader": "shaders/renderchunk.fragment"
+			Total material: 7 (+1, -0)
+			Added material "end_sky":
 				field "states":
+					statement "DisableAlphaWrite"
 					statement "DisableDepthWrite"
-					statement "EnableStencilTest"
-					statement "InvertCulling"
-					statement "StencilWrite"
-				field "defines": definition "BYPASS_PIXEL_SHADER"
+				field "msaaSupport": "MSAA"
+				field "vertexShader": "shaders/uv_repeat.vertex"
+				field "vrGeometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture_ccolor.fragment"
 				field "vertexFields":
 					vertex field field "field": "Position"
-					vertex field field "field": "UV1"
-					vertex field field "field": "Color"
 					vertex field field "field": "UV0"
-				field "frontFace":
-					field "stencilFunc": "Always"
-					field "stencilFailOp": "Keep"
-					field "stencilDepthFailOp": "Keep"
-					field "stencilPassOp": "Replace"
-				field "backFace":
-					field "stencilFunc": "Always"
-					field "stencilFailOp": "Keep"
-					field "stencilDepthFailOp": "Keep"
-					field "stencilPassOp": "Replace"
-				field "stencilRef": 2
-				field "stencilReadMask": 255
-				field "stencilWriteMask": 2
-Changed material "ui.material":
-	Total resource pack: 1 (+0, -1)
-	Changed resource pack "core":
-		Changed field "materials":
-			Changed material "animated_texture_blit":
-				Changed field "vertexShader" from "shaders/uv_blend.vertex" to "shaders/uv_blend_flipbook.vertex".
-	Removed resource pack "extra":
-		field "materials":
-			material "animated_texture_blit":
-				field "states":
-					statement "DisableCulling"
-					statement "DisableDepthTest"
-					statement "EnableStencilTest"
-				field "frontFace":
-					field "stencilFunc": "Equal"
-					field "stencilFailOp": "Keep"
-					field "stencilDepthFailOp": "Keep"
-					field "stencilPassOp": "Keep"
-				field "backFace":
-					field "stencilFunc": "Equal"
-					field "stencilFailOp": "Keep"
-					field "stencilDepthFailOp": "Keep"
-					field "stencilPassOp": "Keep"
-				field "stencilReadMask": 240
-				field "stencilWriteMask": 240
-				field "vertexShader": "shaders/uv_blend.vertex"
-				field "geometryShader": "shaders/uv_blend.geometry"
-				field "fragmentShader": "shaders/texture_blend.fragment"
-			material "stitch_mip0":
-				field "states":
-					statement "DisableCulling"
-					statement "DisableDepthTest"
-				field "vertexShader": "shaders/stitch_blit.vertex"
-				field "fragmentShader": "shaders/stitch_blit.fragment"
-			material "stitch_mip1:stitch_mip0": field "defines": definition "BLUR_RADIUS 2"
-			material "stitch_mip2:stitch_mip0": field "defines": definition "BLUR_RADIUS 4"
-			material "stitch_mip3:stitch_mip0": field "defines": definition "BLUR_RADIUS 8"
-			material "stitch_mip4:stitch_mip0": field "defines": definition "BLUR_RADIUS 16"
-			material "stitch_mip_cheap:stitch_mip0":
-				field "defines": definition "BLUR_RADIUS 2"
 				field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
-						field "textureFilter": "Bilinear"
-			material "ui_base":
-				field "states":
-					statement "Blending"
-					statement "DisableDepthTest"
-					statement "EnableStencilTest"
-				field "frontFace":
-					field "stencilFunc": "Equal"
-					field "stencilFailOp": "Keep"
-					field "stencilDepthFailOp": "Keep"
-					field "stencilPassOp": "Keep"
-				field "backFace":
-					field "stencilFunc": "Equal"
-					field "stencilFailOp": "Keep"
-					field "stencilDepthFailOp": "Keep"
-					field "stencilPassOp": "Keep"
-				field "stencilReadMask": 240
-				field "stencilWriteMask": 240
-			material "ui_crosshair:ui_invert_overlay":
-				field "vertexShader": "shaders/uv.vertex"
-				field "geometryShader": "shaders/uv.geometry"
-				field "fragmentShader": "shaders/texture.fragment"
-			material "ui_cubemap:ui_base":
-				field "vertexShader": "shaders/uv.vertex"
-				field "geometryShader": "shaders/uv.geometry"
-				field "fragmentShader": "shaders/texture.fragment"
-				field "samplerStates":
-					sampler state:
-						field "samplerIndex": 0
-						field "textureFilter": "Bilinear"
-			material "ui_fill_color:ui_base":
-				field "vertexShader": "shaders/position.vertex"
-				field "geometryShader": "shaders/position.geometry"
-				field "fragmentShader": "shaders/current_color.fragment"
-			material "ui_fill_gradient:ui_base":
-				field "states": statement "DisableDepthWrite"
-				field "vertexShader": "shaders/color.vertex"
-				field "geometryShader": "shaders/color.geometry"
-				field "fragmentShader": "shaders/color.fragment"
-			material "ui_fill_stencil:ui_base":
-				field "vertexShader": "shaders/position.vertex"
-				field "geometryShader": "shaders/position.geometry"
-				field "fragmentShader": "shaders/current_color.fragment"
-				field "states":
-					statement "DisableColorWrite"
-					statement "DisableDepthWrite"
-					statement "EnableStencilTest"
-					statement "StencilWrite"
-				field "frontFace":
-					field "stencilFunc": "Always"
-					field "stencilFailOp": "Replace"
-					field "stencilDepthFailOp": "Replace"
-					field "stencilPassOp": "Replace"
-				field "backFace":
-					field "stencilFunc": "Always"
-					field "stencilFailOp": "Replace"
-					field "stencilDepthFailOp": "Replace"
-					field "stencilPassOp": "Replace"
-				field "stencilRefOverride": 0
-			material "ui_grayscale:ui_base":
-				field "vertexShader": "shaders/uv.vertex"
-				field "fragmentShader": "shaders/color_grayscale.fragment"
-				field "alphaDst": "DestColor"
-			material "ui_inventory_item_glint:ui_item_glint":
-				field "blendSrc": "SourceColor"
-				field "blendDst": "One"
-				field "states": statement "EnableStencilTest"
-				field "frontFace": field "stencilFunc": "Equal"
-				field "backFace": field "stencilFunc": "Equal"
-				field "stencilRef": 1
-				field "stencilReadMask": 255
-				field "stencilWriteMask": 255
-				field "defines": definition "INVENTORY"
-			material "ui_invert_overlay:ui_base":
-				field "blendSrc": "OneMinusDestColor"
-				field "blendDst": "OneMinusSrcColor"
-				field "vertexShader": "shaders/position.vertex"
-				field "geometryShader": "shaders/position.geometry"
-				field "fragmentShader": "shaders/flat_white.fragment"
-			material "ui_item:ui_base":
-				field "vertexShader": "shaders/color_uv.vertex"
-				field "geometryShader": "shaders/color_uv.geometry"
-				field "fragmentShader": "shaders/color_texture.fragment"
-				field "defines":
-					definition "ALPHA_TEST"
-					definition "ENABLE_VERTEX_TINT_MASK"
-			material "ui_item_glint:ui_base":
-				field "vertexShader": "shaders/color_uv.vertex"
-				field "geometryShader": "shaders/color_uv.geometry"
-				field "fragmentShader": "shaders/color_texture.fragment"
-				field "defines":
-					definition "ENABLE_VERTEX_TINT_MASK"
-					definition "GLINT"
-				field "samplerStates":
-					sampler state:
-						field "samplerIndex": 1
 						field "textureWrap": "Repeat"
-						field "textureFilter": "Bilinear"
-				field "stencilReadMask": 240
-				field "stencilWriteMask": 255
-			material "ui_item_glint_stencil:ui_item":
-				field "vertexShader": "shaders/color_uv.vertex"
-				field "geometryShader": "shaders/color_uv.geometry"
-				field "fragmentShader": "shaders/color_texture.fragment"
-				field "states":
-					statement "EnableStencilTest"
-					statement "StencilWrite"
-				field "frontFace":
-					field "stencilFunc": "Equal"
-					field "stencilPassOp": "Replace"
-				field "backFace":
-					field "stencilFunc": "Equal"
-					field "stencilPassOp": "Replace"
-				field "stencilRef": 1
-				field "stencilReadMask": 240
-				field "stencilWriteMask": 15
-				field "defines":
-					definition "ALPHA_TEST"
-					definition "ENABLE_VERTEX_TINT_MASK"
-			material "ui_item_unglint_stencil:ui_item_glint_stencil":
-				field "states":
-					statement "DisableColorWrite"
-					statement "DisableDepthWrite"
-					statement "EnableStencilTest"
-					statement "StencilWrite"
-				field "stencilRef": 0
-			material "ui_text:ui_texture_and_color": field "fragmentShader": "shaders/text.fragment"
-			material "ui_text_smooth:ui_text":
-				field "defines": definition "SMOOTH"
-				field "samplerStates":
-					sampler state:
-						field "samplerIndex": 0
-						field "textureFilter": "Bilinear"
-			material "ui_texture_and_color:ui_base":
-				field "vertexShader": "shaders/color_uv.vertex"
-				field "geometryShader": "shaders/color_uv.geometry"
-				field "fragmentShader": "shaders/color_texture.fragment"
-			material "ui_texture_and_color_blur:ui_texture_and_color":
-				field "samplerStates":
-					sampler state:
-						field "samplerIndex": 0
-						field "textureFilter": "Bilinear"
-			material "ui_texture_and_color_tint:ui_texture_and_color": field "defines": definition "ENABLE_VERTEX_TINT_MASK"
-			material "ui_textured:ui_base":
-				field "vertexShader": "shaders/uv.vertex"
-				field "geometryShader": "shaders/uv.geometry"
-				field "fragmentShader": "shaders/texture.fragment"
-			material "ui_textured_and_glcolor:ui_base":
-				field "states": statement "DisableDepthWrite"
-				field "vertexShader": "shaders/uv.vertex"
-				field "geometryShader": "shaders/uv.geometry"
-				field "fragmentShader": "shaders/texture_ccolor.fragment"
-				field "alphaDst": "DestColor"

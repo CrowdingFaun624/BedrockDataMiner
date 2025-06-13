@@ -1,130 +1,315 @@
-Difference of "ui" between "1.17.30.23" (beta of "1.17.30") and "1.17.30.24" (beta of "1.17.30").
+Difference of "ui" between "1.18.0.20" (beta of "1.18.0") and "1.18.0.21" (beta of "1.18.0").
 
-Changed namespace "common_buttons":
-	Changed element "horizontal_form_fitting":
-		Unchanged field "type": "panel".
-		Changed field "size":
-			Unchanged item 0: "100%c".
-			Changed item 1 from "100%" to "100%c".
-Changed namespace "pause":
-	Total element: 76 (+2, -3)
-	Moved element from "change_profile_button_gamepad@common_buttons.light_content_button" to "change_profile_button_gamepad@common_buttons.light_content_form_fitting_button".
-	Changed element "change_profile_button_gamepad@common_buttons.light_content_form_fitting_button":
-		Changed field "size":
-			Changed item 0 from 70 to "100%".
-			Changed item 1 from 26 to "100%c".
-		Changed field "$variables":
-			Total variable: 10 (+4, -1)
-			Removed variable "$button_content_offset":
-				item 0: 3
-				item 1: 2
-			Changed variable "$button_content" from "pause.change_profile_button_panel" to "pause.dressing_room_controller_button_content".
-			Added variable "$button_content_size_override":
-				item 0: "100%c - 4px"
-				item 1: "100%c - 4px"
-			Added variable "$button_offset":
-				item 0: -3
-				item 1: 1
-			Added variable "$new_ui_label_offset":
-				item 0: 0
-				item 1: -1
-			Added variable "$text_alignment": "left".
-	Removed element "change_profile_button_panel":
-		field "type": "panel"
-		field "size": [70, 26]
-		field "controls":
-			control:
-				element "enabled_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%", "100%"]
-					field "controls":
-						control:
-							element "button_x@common.gamepad_helper_x":
-								field "layer": 3
-								field "$variables": variable "$gamepad_helper_visible_binding_type": "none"
-						control element "skin_icon_panel@pause.profile_skin_icon_panel": field "size": ["100%c", 26]
-					field "bindings":
-						binding:
-							field "binding_name": "#can_change_skin"
-							field "binding_name_override": "#visible"
-			control:
-				element "disabled_panel@pause.profile_skin_icon_panel":
-					field "size": ["100%", 26]
-					field "bindings":
-						binding:
-							field "binding_name": "(not #can_change_skin)"
-							field "binding_name_override": "#visible"
-	Removed element "change_skin_panel":
-		field "type": "stack_panel"
-		field "orientation": "horizontal"
-		field "size": [49, 26]
-		field "controls":
-			control:
-				element "button_x@common.gamepad_helper_x":
-					field "layer": 3
-					field "$variables": variable "$gamepad_helper_visible_binding_type": "none"
-			control:
-				element "skin_icon_panel":
-					field "type": "panel"
-					field "size": ["100%c", 26]
-					field "controls": control element "change_skin_icon@pause.change_skin_icon": field "offset": [0, 2]
-	Added element "controller_button_label@common_buttons.new_ui_binding_button_label":
-		field "size": ["100%", "100%c"]
-		field "$variables":
-			variable "$anchor": "left_middle"
-			variable "$button_text": "profileScreen.header"
-			variable "$button_text_binding_type": "none"
-			variable "$button_binding_condition": "none"
-			variable "$button_text_grid_collection_name": ""
-	Added element "dressing_room_controller_button_content":
-		field "type": "panel"
-		field "size": ["100%c", "100%cm"]
-		field "min_size": [82, 22]
-		field "controls":
-			control:
-				element "button_x@common.gamepad_helper_x":
-					field "anchor_from": "left_middle"
-					field "anchor_to": "left_middle"
-					field "bindings":
-						binding:
-							field "binding_name": "#can_change_skin"
-							field "binding_name_override": "#visible"
-					field "$variables": variable "$gamepad_helper_visible_binding_type": "none"
-			control:
-				element "button_label_panel":
-					field "type": "panel"
-					field "size": ["100%c", "100%c"]
-					field "anchor_from": "right_middle"
-					field "anchor_to": "right_middle"
-					field "controls":
-						control:
-							element "button_label_text_left@pause.controller_button_label":
-								field "size": ["default", "default"]
-								field "max_size": [75, 20]
-	Removed element "profile_skin_icon_panel":
-		field "type": "panel"
-		field "controls":
-			control:
-				element "profile_label":
-					field "type": "label"
-					field "text": "profileScreen.header"
-					field "size": ["default", 10]
-					field "color": "$light_button_default_text_color"
-	Changed element "skin_viewer_panel":
-		Unchanged field "type": "input_panel".
+Total namespace: 198 (+2, -0)
+Changed namespace "common":
+	Changed element "base_screen":
+		Unchanged field "type": "screen".
 		Changed field "controls":
 			Changed control:
-				Changed element "paper_doll_panel":
+				Changed element "variables_button_mappings_and_controls":
+					Unchanged field "type": "input_panel".
+					Changed field "variables":
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 43 (+1, -0)
+								Added variable "$storage_migration_progress_size":
+									item 0: 290
+									item 1: 100
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 43 (+1, -0)
+								Added variable "$storage_migration_progress_size":
+									item 0: 290
+									item 1: 100
+Changed namespace "common_store":
+	Total element: 157 (+6, -0)
+	Added element "banner_button@common_buttons.light_content_button":
+		field "size": ["100%c", 16]
+		field "layer": 4
+		field "bindings":
+			binding:
+				field "binding_name": "#promo_page_is_ready"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$button_state_panel": "common_buttons.new_ui_width_fitting_button_panel"
+			variable "$button_type_panel": "common_buttons.width_fitting_button_content_panel"
+			variable "$button_content": "common_store.promo_banner_button_content"
+			variable "$button_size_override":
+				item 0: "100%c + 8px"
+				item 1: "100%"
+			variable "$anchor": "bottom_left"
+			variable "$focus_id": "banner_button"
+			variable "$focus_override_up": "banner_full_button"
+			variable "$pressed_button_name": "button.promotion_page"
+	Changed element "promo_banner_image":
+		Unchanged field "type": "image".
+		Changed field "size":
+			Unchanged item 0: "100%".
+			Changed item 1 from "14.43%x" to "13.67%x".
+	Changed element "promo_banner_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "promo_banner_panel_content":
 					Unchanged field "type": "panel".
 					Changed field "controls":
+						Total control: 4 (+1, -1)
 						Changed control:
-							Changed element "paper_doll":
-								Unchanged field "type": "custom".
-								Changed field "bindings":
-									Total binding: 3 (+1, -0)
-									Added binding field "binding_name": "#paper_doll_skin".
-								Added field "use_selected_skin": false.
+							Changed element "banner_text_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "size":
+									Changed item 0 from "40%" to "100% - 10px".
+									Changed item 1 from "fill" to "100%sm - 10px".
+								Changed field "controls":
+									Total control: 2 (+2, -2)
+									Removed control element "banner_title@common_store.promo_banner_title": empty.
+									Removed control:
+										element "banner_description":
+											field "type": "label"
+											field "size": ["100%", "default"]
+											field "font_type": "smooth"
+											field "font_scale_factor": 0.8
+											field "color": "$body_text_color"
+											field "text": "#banner_description_text"
+											field "bindings": binding field "binding_name": "#banner_description_text"
+									Added control:
+										element "banner_title@common_store.sdl_text_minecraftTen_aligned_panel":
+											field "$variables":
+												variable "$aligned_text_scale_factor": 1.2
+												variable "$aligned_text": "#banner_title_text"
+												variable "$aligned_text_color": "#title_text_color"
+												variable "$text_color_binding_type": "global"
+												variable "$alignment_binding_type": "global"
+												variable "$left_padding_visible_binding": "#banner_title_left_padding_visible"
+												variable "$right_padding_visible_binding": "#banner_title_right_padding_visible"
+									Added control:
+										element "description@common_store.sdl_text_aligned_panel":
+											field "$variables":
+												variable "$aligned_text_scale_factor": 0.8
+												variable "$aligned_text": "#banner_description_text"
+												variable "$aligned_text_color": "#description_text_color"
+												variable "$text_color_binding_type": "global"
+												variable "$alignment_binding_type": "global"
+												variable "$left_padding_visible_binding": "#banner_description_left_padding_visible"
+												variable "$right_padding_visible_binding": "#banner_description_right_padding_visible"
+						Removed control:
+							element "banner_button@common_buttons.light_content_button":
+								field "size": ["100%c", 16]
+								field "min_size": ["40%", 16]
+								field "max_size": ["100%", 16]
+								field "offset": [5, -8]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "layer": 4
+								field "bindings":
+									binding:
+										field "binding_name": "#promo_page_is_ready"
+										field "binding_name_override": "#enabled"
+								field "$variables":
+									variable "$button_state_panel": "common_buttons.new_ui_width_fitting_button_panel"
+									variable "$button_type_panel": "common_buttons.width_fitting_button_content_panel"
+									variable "$button_content": "common_store.promo_banner_button_content"
+									variable "$button_size_override":
+										item 0: "100%c + 8px"
+										item 1: "100%"
+									variable "$anchor": "bottom_left"
+									variable "$focus_id": "banner_button"
+									variable "$focus_override_up": "banner_full_button"
+									variable "$pressed_button_name": "button.promotion_page"
+						Added control:
+							element "button_stack_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100% - 10px", "100%cm"]
+								field "offset": [5, -7]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "controls":
+									control:
+										element "left_offset":
+											field "type": "panel"
+											field "size": [5, "100%sm"]
+											field "bindings":
+												binding:
+													field "binding_name": "$left_padding_visible_binding"
+													field "binding_name_override": "#visible"
+									control:
+										element "banner_button@common_store.sdl_content_aligned_panel":
+											field "$variables":
+												variable "$aligned_text_scale_factor": 0.8
+												variable "$aligned_control": "common_store.banner_button"
+												variable "$aligned_text": "#banner_description_text"
+												variable "$aligned_text_color": "#description_text_color"
+												variable "$text_color_binding_type": "global"
+												variable "$alignment_binding_type": "global"
+									control:
+										element "right_offset":
+											field "type": "panel"
+											field "size": [5, "100%sm"]
+											field "bindings":
+												binding:
+													field "binding_name": "$right_padding_visible_binding"
+													field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$left_padding_visible_binding": "#banner_button_left_padding_visible"
+									variable "$right_padding_visible_binding": "#banner_button_right_padding_visible"
+	Added element "sdl_aligned_minecraftTen_text@common.minecraftTenLabel":
+		field "size": ["default", "default"]
+		field "max_size": ["100%", "default"]
+		field "font_scale_factor": "$aligned_text_scale_factor"
+		field "color": "$aligned_text_color"
+		field "text": "$aligned_text"
+		field "bindings":
+			binding:
+				field "binding_name": "$aligned_text"
+				field "binding_type": "$alignment_binding_type"
+				field "binding_collection_name": "$alignment_collection_name"
+			binding:
+				field "binding_name": "$aligned_text_color"
+				field "binding_type": "$text_color_binding_type"
+				field "binding_collection_name": "$alignment_collection_name"
+				field "binding_name_override": "#color"
+	Added element "sdl_aligned_text":
+		field "type": "label"
+		field "size": ["default", "default"]
+		field "max_size": ["40%", 20]
+		field "font_type": "$aligned_text_font_type"
+		field "font_scale_factor": "$aligned_text_scale_factor"
+		field "color": "$aligned_text_color"
+		field "text": "$aligned_text"
+		field "bindings":
+			binding:
+				field "binding_name": "$aligned_text"
+				field "binding_type": "$alignment_binding_type"
+				field "binding_collection_name": "$alignment_collection_name"
+			binding:
+				field "binding_name": "$aligned_text_color"
+				field "binding_type": "$text_color_binding_type"
+				field "binding_collection_name": "$alignment_collection_name"
+				field "binding_name_override": "#color"
+	Added element "sdl_content_aligned_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%cm"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "left__padding_panel":
+					field "size": ["fill", "100%sm"]
+					field "type": "panel"
+					field "bindings":
+						binding:
+							field "binding_name": "$left_padding_visible_binding"
+							field "binding_type": "$alignment_binding_type"
+							field "binding_collection_name": "$alignment_collection_name"
+							field "binding_name_override": "#visible"
+			control element "control@$aligned_control": empty
+			control:
+				element "right_padding_panel":
+					field "size": ["fill", "100%sm"]
+					field "type": "panel"
+					field "bindings":
+						binding:
+							field "binding_name": "$right_padding_visible_binding"
+							field "binding_type": "$alignment_binding_type"
+							field "binding_collection_name": "$alignment_collection_name"
+							field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$left_padding_visible_binding|default": ""
+			variable "$right_padding_visible_binding|default": ""
+			variable "$alignment_binding_type|default": "none"
+			variable "$alignment_collection_name|default": ""
+			variable "$aligned_control|default": "common.empty_panel"
+	Added element "sdl_text_aligned_panel@common_store.sdl_content_aligned_panel":
+		field "$variables":
+			variable "$aligned_control": "common_store.sdl_aligned_text"
+			variable "$aligned_text_font_type|default": "smooth"
+			variable "$aligned_text_scale_factor|default": 1
+			variable "$aligned_text_color|default": "$body_text_color"
+			variable "$aligned_text|default": ""
+			variable "$text_color_binding_type|default": "none"
+	Added element "sdl_text_minecraftTen_aligned_panel@common_store.sdl_content_aligned_panel":
+		field "$variables":
+			variable "$aligned_control": "common_store.sdl_aligned_minecraftTen_text"
+			variable "$aligned_text_scale_factor|default": 1
+			variable "$aligned_text_color|default": "$body_text_color"
+			variable "$aligned_text|default": ""
+			variable "$text_color_binding_type|default": "none"
+Changed namespace "general_section":
+	Total element: 115 (+1, -0)
+	Added element "new_create_world_grid_item@settings_common.radio_with_label":
+		field "bindings":
+			binding:
+				field "binding_name": "#default_focus_precedence"
+				field "binding_type": "collection"
+				field "binding_condition": "visible"
+				field "binding_collection_name": "dev_new_create_world_screen_radio"
+		field "$variables":
+			variable "$toggle_state_binding_name": "#initial_selected"
+			variable "$radio_label_text": "#description"
+			variable "$radio_label_bindings":
+				item 0:
+					item "binding_name": "#description"
+					item "binding_type": "collection"
+					item "binding_condition": "once"
+					item "binding_collection_name": "dev_new_create_world_screen_radio"
+			variable "$radio_toggle_group": true
+			variable "$toggle_binding_type": "collection"
+			variable "$toggle_name": "dev_new_create_world_screen_radio"
+			variable "$toggle_grid_collection_name": "dev_new_create_world_screen_radio"
+			variable "$option_enabled_binding_name": ""
+	Changed element "ui_debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 28 (+5, -0)
+			Added control:
+				element "new_create_world_screen_radio_label":
+					field "type": "label"
+					field "text": "New Create World Screen (requires the infrastructure)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "new_create_world_screen_radio_label_disabled":
+					field "type": "label"
+					field "text": "New Create World Screen (requires the infrastructure)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "alpha": 0.5
+					field "bindings":
+						binding:
+							field "binding_name": "(not #core_ui_enabled)"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "new_create_world_screen_radio_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Added control:
+				element "new_create_world_screen_radio_button":
+					field "type": "grid"
+					field "size": ["100%", "100%c"]
+					field "grid_item_template": "general_section.new_create_world_grid_item"
+					field "grid_dimension_binding": "#dev_new_create_world_screen_radio_dimension"
+					field "collection_name": "dev_new_create_world_screen_radio"
+					field "bindings":
+						binding:
+							field "binding_name": "#dev_new_create_world_screen_radio_dimension"
+							field "binding_condition": "visible"
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+			Added control:
+				element "new_create_world_screen_radio_button_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+Changed namespace "persona":
+	Changed element "offer_coin_purchase_button@common_buttons.light_content_button":
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#is_coin_purchase_enabled"
+				field "binding_name_override": "#enabled"
 Changed namespace "play":
 	Changed element "server_scroll_panel@play.common_scroll_pane":
 		Changed field "controls":
@@ -132,5 +317,387 @@ Changed namespace "play":
 				Changed element "stack_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 6 (+0, -1)
-						Removed control element "add_server_button@play.add_server_toggle_button": empty.
+						Total control: 7 (+1, -0)
+						Changed control:
+							Changed element "servers_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "more_servers_panel":
+											Unchanged field "type": "stack_panel".
+											Changed field "controls":
+												Total control: 6 (+0, -1)
+												Removed control element "add_server_button@play.add_server_toggle_button": empty.
+						Added control element "add_server_button@play.add_server_toggle_button": empty.
+Added namespace "storage_migration_common":
+	element "base_button@common_buttons.light_text_button":
+		field "size": ["100% - 14px", 30]
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "bottom_middle"
+	element "base_child_control":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100% - 1px"
+							item 1: "100% - 2px"
+						variable "$scroll_view_port_size":
+							item 0: "100% - 4px"
+							item 1: "100% - 4px"
+						variable "$scroll_view_port_offset":
+							item 0: 3
+							item 1: 2
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100% - 2px"
+						variable "$show_background": false
+	element "continue_out_of_space_button@storage_migration_common.base_button":
+		field "bindings":
+			binding:
+				field "binding_name": "#has_file_space_available"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.retry"
+			variable "$button_text": "storage_migration.button.continue"
+	element "error_icon_and_description":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "100%cm"]
+		field "controls":
+			control:
+				element "error_image":
+					field "type": "image"
+					field "size": [9, 12]
+					field "texture": "textures/ui/ErrorGlyph"
+			control:
+				element "description@storage_migration_common.label":
+					field "text": "#file_size_needed"
+					field "size": ["fill", "default"]
+					field "bindings": binding field "binding_name": "#file_size_needed"
+		field "$variables": variable "$error_description|default": ""
+	element "file_size_description":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "description@storage_migration_common.label":
+					field "text": "$description_text"
+					field "size": ["100%", "default"]
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [0, 14]
+			control:
+				element "size_stack":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%cm"]
+					field "controls":
+						control:
+							element "file_text@storage_migration_common.label":
+								field "text": "$file_text"
+								field "size": ["default", "default"]
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": [2, 0]
+						control:
+							element "file_size_total@storage_migration_common.label":
+								field "text": "#file_size_total"
+								field "size": ["default", "default"]
+								field "bindings": binding field "binding_name": "#file_size_total"
+						control:
+							element "padding_2":
+								field "type": "panel"
+								field "size": [2, 0]
+						control:
+							element "file_size_available@storage_migration_common.label":
+								field "text": "#file_size_available"
+								field "size": ["default", "default"]
+								field "visible": false
+								field "bindings":
+									binding field "binding_name": "#file_size_available"
+									binding:
+										field "binding_name": "#supports_available_space_query"
+										field "binding_name_override": "#visible"
+					field "$variables": variable "$file_text|default": "storage_migration.resume_transfer.need_to_move"
+			control:
+				element "file_location@storage_migration_common.label":
+					field "text": "#file_location"
+					field "size": ["100%", "default"]
+					field "bindings": binding field "binding_name": "#file_location"
+		field "$variables": variable "$description_text|default": "storage_migration.resume_transfer.description"
+	element "file_size_description_with_error":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control element "file_size@storage_migration_common.file_size_description": empty
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [0, 14]
+			control element "error_icon_and_description@storage_migration_common.error_icon_and_description": empty
+	element "finished_main_menu_button@storage_migration_common.base_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.main_menu"
+			variable "$button_text": "storage_migration.button.main_menu"
+	element "get_started_button@storage_migration_common.base_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.next"
+			variable "$button_text": "storage_migration.button.get_started"
+	element "go_to_faq_button@storage_migration_common.base_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.faq"
+			variable "$button_text": "storage_migration.button.go_to_faq"
+	element "label":
+		field "type": "label"
+		field "size": ["100%", "default"]
+		field "font_type": "smooth"
+		field "line_padding": 1.5
+		field "color": "$body_text_color"
+	element "modal_no_buttons@common_dialogs.main_panel_no_buttons":
+		field "size": [300, 180]
+		field "$variables":
+			variable "$title_size":
+				item 0: "100% - 14px"
+				item 1: 10
+			variable "$show_close_button": false
+			variable "$child_control": "storage_migration_common.base_child_control"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+	element "modal_one_button@common_dialogs.main_panel_one_button":
+		field "size": [300, 180]
+		field "$variables":
+			variable "$title_size":
+				item 0: "100% - 14px"
+				item 1: 10
+			variable "$show_close_button": false
+			variable "$child_control": "storage_migration_common.base_child_control"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+	element "modal_two_buttons@common_dialogs.main_panel_two_buttons":
+		field "size": [300, 180]
+		field "$variables":
+			variable "$title_size":
+				item 0: "100% - 14px"
+				item 1: 10
+			variable "$show_close_button": false
+			variable "$child_control": "storage_migration_common.base_child_control"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+	element "next_button@storage_migration_common.base_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.next"
+			variable "$button_text": "storage_migration.button.next"
+	element "progress_panel":
+		field "type": "panel"
+		field "size": "$storage_migration_progress_size"
+		field "controls":
+			control:
+				element "common_panel@common.common_panel":
+					field "$variables":
+						variable "$dialog_background": "dialog_background_hollow_3"
+						variable "$show_close_button": false
+			control:
+				element "base_content":
+					field "type": "panel"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": ["100%-12px", "100%-12px"]
+					field "offset": [6, 6]
+					field "controls":
+						control:
+							element "progress_title_text@progress.progress_title_text":
+								field "color": "$title_text_color"
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "offset": [0, 3]
+						control:
+							element "progress_bar_text@progress.progress_bar_text":
+								field "localize": false
+								field "size": ["default", 40]
+								field "max_size": ["100% - 8px", 40]
+								field "offset": [0, -3]
+			control:
+				element "inside_content":
+					field "type": "stack_panel"
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "size": ["100%-12px", "100%c"]
+					field "controls":
+						control:
+							element "size_label":
+								field "type": "label"
+								field "text_alignment": "center"
+								field "size": ["100%", "default"]
+								field "text": "#file_size_progress"
+								field "color": "$body_text_color"
+								field "bindings": binding field "binding_name": "#file_size_progress"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 8]
+						control:
+							element "loading_bar_panel":
+								field "type": "panel"
+								field "size": ["100%", "100%c"]
+								field "controls":
+									control element "fancy_progress_loading_bars@progress.fancy_progress_loading_bars": empty
+									control element "progress_loading_bars@progress.progress_loading_bars": field "offset": [0, 0]
+						control:
+							element "padding_3":
+								field "type": "panel"
+								field "size": [0, 14]
+		field "$variables":
+			variable "$button_state_default_base": "common.button_state_default"
+			variable "$button_state_hover_base": "common.button_state_hover"
+			variable "$button_state_pressed_base": "common.button_state_pressed"
+	element "resume_transfer@storage_migration_common.modal_one_button":
+		field "size": [300, 160]
+		field "$variables":
+			variable "$show_close_button": false
+			variable "$text_name": "storage_migration.resume_transfer.title"
+			variable "$button_panel": "storage_migration_common.resume_transfer_button"
+			variable "$tts_label_panel": "storage_migration_common.resume_transfer_content"
+	element "resume_transfer_button@storage_migration_common.base_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.start_transfer"
+			variable "$button_text": "storage_migration.button.resume"
+	element "resume_transfer_content":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "controls": control element "file_size@storage_migration_common.file_size_description": empty
+	element "retry_button@storage_migration_common.base_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.retry"
+			variable "$button_text": "storage_migration.button.retry"
+	element "retry_help_button_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "controls":
+			control element "retry@storage_migration_common.retry_button": field "size": ["50% - 1.5px", "100%"]
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [3, 0]
+			control element "help@storage_migration_common.go_to_faq_button": field "size": ["50% - 1.5px", "100%"]
+	element "start_transfer@storage_migration_common.modal_one_button":
+		field "size": [300, 160]
+		field "$variables":
+			variable "$text_name": "storage_migration.start_transfer.uwp.title"
+			variable "$button_panel": "storage_migration_common.start_transfer_button"
+			variable "$tts_label_panel": "storage_migration_common.start_transfer_content"
+	element "start_transfer_button@storage_migration_common.base_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.start_transfer"
+			variable "$button_text": "storage_migration.button.start"
+	element "start_transfer_content@storage_migration_common.file_size_description":
+		field "$variables":
+			variable "$file_text": "storage_migration.start_transfer.total_file_size"
+			variable "$description_text|default": "storage_migration.start_transfer.description"
+	element "start_transfer_out_of_space_button@storage_migration_common.base_button":
+		field "bindings":
+			binding:
+				field "binding_name": "#has_file_space_available"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.start_transfer"
+			variable "$button_text": "storage_migration.button.start"
+	element "transfer_error_out_of_space@storage_migration_common.modal_one_button":
+		field "$variables":
+			variable "$text_name": "storage_migration.transfer_error_out_of_space.title"
+			variable "$button_panel": "storage_migration_common.continue_out_of_space_button"
+			variable "$tts_label_panel": "storage_migration_common.transfer_error_out_of_space_content"
+	element "transfer_error_out_of_space_content@storage_migration_common.file_size_description_with_error":
+		field "$variables":
+			variable "$file_text": "storage_migration.transfer_error_out_of_space.files_left"
+			variable "$description_text": "storage_migration.description.out_of_space"
+Added namespace "storage_migration_generic":
+	element "finished@storage_migration_common.modal_no_buttons":
+		field "$variables":
+			variable "$text_name": "storage_migration.finished.generic.title"
+			variable "$tts_label_panel": "storage_migration_generic.finished_content"
+	element "finished_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 4px", "100%c + 10px"]
+		field "controls": control element "description@storage_migration_common.label": field "text": "storage_migration.finished.generic.description"
+	element "modal_screen_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "modal_progress_panel_no_cancel@storage_migration_common.progress_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "#progress_panel_visible"
+							field "binding_name_override": "#visible"
+			control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "intro": "start_transfer@storage_migration_generic.start_transfer"
+						control id "start_transfer_out_of_space": "start_transfer_out_of_space@storage_migration_generic.start_transfer_out_of_space"
+						control id "resume_transfer": "resume_transfer@storage_migration_common.resume_transfer"
+						control id "resume_transfer_out_of_space": "resume_transfer_out_of_space@storage_migration_generic.resume_transfer_out_of_space"
+						control id "finished_transfered": "finished@storage_migration_generic.finished"
+						control id "transfer_error": "transfer_error@storage_migration_generic.transfer_error"
+						control id "transfer_error_out_of_space": "transfer_error_out_of_space@storage_migration_common.transfer_error_out_of_space"
+						control id "start_transfer": "start_transfer@storage_migration_generic.start_transfer"
+						control id "finished_already_transfered": "finished@storage_migration_generic.finished"
+						control id "finished_with_error": "transfer_error@storage_migration_generic.transfer_error"
+		field "$variables":
+			variable "$button_state_default_base": "progress.normal_stroke_button"
+			variable "$button_state_hover_base": "progress.normal_stroke_button"
+			variable "$button_state_pressed_base": "progress.normal_stroke_button"
+	element "resume_transfer_out_of_space@storage_migration_common.modal_one_button":
+		field "$variables":
+			variable "$text_name": "storage_migration.resume_transfer.title"
+			variable "$button_panel": "storage_migration_common.continue_out_of_space_button"
+			variable "$tts_label_panel": "storage_migration_generic.resume_transfer_out_of_space_content"
+	element "resume_transfer_out_of_space_content@storage_migration_common.file_size_description_with_error": field "$variables": variable "$description_text": "storage_migration.resume_transfer.description.out_of_space"
+	element "start_transfer@storage_migration_common.start_transfer": field "$variables": variable "$text_name": "storage_migration.start_transfer.generic.title"
+	element "start_transfer_out_of_space@storage_migration_common.start_transfer":
+		field "$variables":
+			variable "$text_name": "storage_migration.start_transfer.generic.title"
+			variable "$tts_label_panel": "storage_migration_generic.start_transfer_out_of_space_content"
+			variable "$button_panel": "storage_migration_common.start_transfer_out_of_space_button"
+	element "start_transfer_out_of_space_content":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "controls":
+			control element "base_start_content@storage_migration_common.start_transfer_content": field "$variables": variable "$description_text": "storage_migration.description.out_of_space"
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [0, 14]
+			control element "error_icon_and_description@storage_migration_common.error_icon_and_description": empty
+	element "storage_migration_generic_screen@common.base_screen": field "$variables": variable "$screen_content": "storage_migration_generic.modal_screen_content"
+	element "transfer_error@storage_migration_common.modal_one_button":
+		field "$variables":
+			variable "$text_name": "storage_migration.transfer_error.title"
+			variable "$button_panel": "storage_migration_common.retry_button"
+			variable "$tts_label_panel": "storage_migration_generic.transfer_error_content"
+	element "transfer_error_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 4px", "100%c + 10px"]
+		field "controls":
+			control:
+				element "description@storage_migration_common.label":
+					field "text": "#transfer_error_description"
+					field "bindings": binding field "binding_name": "#transfer_error_description"
+	element "transfer_error_out_of_space@storage_migration_common.transfer_error_out_of_space": field "$variables": variable "$show_close_button": true
+Changed namespace "world_section":
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 52 (+1, -0)
+			Added control:
+				element "always_day_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$tts_section_header": "createWorldScreen.cheatSettings"
+						variable "$option_label": "createWorldScreen.alwaysDay"
+						variable "$option_binding_name": "#always_day"
+						variable "$option_enabled_binding_name": "#always_day_enabled"
+						variable "$toggle_name": "always_day"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+						variable "$toggle_binding_condition": "always_when_visible"

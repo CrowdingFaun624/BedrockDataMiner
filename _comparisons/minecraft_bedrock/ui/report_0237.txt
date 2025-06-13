@@ -1,91 +1,229 @@
-Difference of "ui" between "1.18.0.24" (beta of "1.18.0") and "1.18.0.25" (beta of "1.18.0").
+Difference of "ui" between "1.18.10.22" (beta of "1.18.10") and "1.18.10.24" (beta of "1.18.10").
 
-Changed namespace "general_section":
-	Total element: 114 (+0, -1)
-	Removed element "render_distance_popup@common.static_tooltip_popup_with_image_and_text":
-		field "size": ["100% - 4px", "100%cm + 8px"]
-		field "anchor_from": "top_middle"
-		field "anchor_to": "bottom_middle"
-		field "$variables":
-			variable "$tooltip_panel_offset":
-				item 0: 0
-				item 1: -10
-			variable "$tooltip_popup_image": "textures/ui/infobulb"
-			variable "$tooltip_button_binding_type": "global"
-			variable "$tooltip_button_collection_name": ""
-			variable "$tooltip_popup_visible_binding": "#render_distance_warning_tooltip_visible"
-			variable "$tooltip_text_binding_name": "#render_distance_performance_tooltip_text"
-			variable "$tooltip_chevron_anchor": "bottom_right"
-			variable "$tooltip_popup_chevron_offset":
-				item 0: "-30%x"
-				item 1: "100%y - 3px"
-	Changed element "render_distance_warning":
-		Unchanged field "type": "panel".
+Changed namespace "cloud_upload":
+	Changed element "cloud_upload_screen@progress.progress_screen":
+		Changed field "$variables":
+			Total variable: 2 (+1, -0)
+			Added variable "$cloud_upload_progress_screen_size":
+				item 0: 290
+				item 1: 200
+Changed namespace "common":
+	Changed element "base_screen":
+		Unchanged field "type": "screen".
 		Changed field "controls":
-			Total control: 1 (+0, -1)
 			Changed control:
-				Changed element "render_distance_warning_image@general_section.render_distance_warning_image":
-					Removed field "controls":
-						control:
-							element "hover_detection_input_panel":
-								field "type": "input_panel"
-								field "consume_hover_events": false
-								field "focus_enabled": true
-								field "button_mappings":
-									button mapping:
-										field "to_button_id": "button.render_distance_warning_is_hovered"
-										field "mapping_type": "pressed"
-			Removed control element "render_distance_popup@general_section.render_distance_popup": empty.
-	Changed element "video_section":
+				Changed element "variables_button_mappings_and_controls":
+					Unchanged field "type": "input_panel".
+					Changed field "variables":
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 42 (+0, -1)
+								Removed variable "$cloud_upload_progress_screen_size":
+									item 0: 290
+									item 1: 200
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 42 (+0, -1)
+								Removed variable "$cloud_upload_progress_screen_size":
+									item 0: 290
+									item 1: 200
+Changed namespace "common_store":
+	Total element: 202 (+1, -0)
+	Added element "error_image_animation":
+		field "anim_type": "flip_book"
+		field "initial_uv": [0, 0]
+		field "frame_count": "$failure_anim_frame_step"
+		field "frame_step": 194
+		field "fps": 4
+		field "reversible": false
+	Changed element "progress_loading":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Changed item 0 from "100%" to "100%cm".
+			Changed item 1 from "100%" to "50%".
+		Changed field "controls":
+			Total control: 4 (+3, -1)
+			Removed control element "progress_loading_outline@common_store.banner_fill": field "visible": "(not $hide_progress_loading_outline)".
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 3 (+3, -3)
+						Removed control:
+							element "centerer_0":
+								field "type": "panel"
+								field "size": ["100%", "100%c"]
+								field "controls":
+									control:
+										element "store_failure_text":
+											field "type": "label"
+											field "layer": "($baseLayer + 1)"
+											field "color": "$body_text_color"
+											field "text_alignment": "center"
+											field "ignored": "$hide_failure_text"
+											field "size": ["100%-4px", "default"]
+											field "font_type": "smooth"
+											field "font_scale_factor": 1.2
+											field "text": "$store_failure_text"
+											field "alpha": 0
+											field "anims": animation "@common_store.failure_text_wait_animation"
+											field "bindings":
+												binding:
+													field "binding_name": "$store_failure_text"
+													field "binding_type": "$store_failure_text_binding_type"
+											field "$variables":
+												variable "$store_failure_text|default": "store.connection.failed.body"
+												variable "$store_failure_text_binding_type|default": "none"
+						Removed control:
+							element "centerer_1":
+								field "type": "panel"
+								field "size": ["100%", "100%c + 8px"]
+								field "controls": control element "progress_loading_spinner@common_store.progress_loading_spinner": field "layer": "($baseLayer + 1)"
+						Removed control:
+							element "centerer_2":
+								field "type": "panel"
+								field "size": ["100%", "100%c"]
+								field "controls":
+									control:
+										element "store_failure_code":
+											field "type": "label"
+											field "layer": "($baseLayer + 1)"
+											field "color": "$body_text_color"
+											field "text_alignment": "center"
+											field "ignored": "$hide_failure_text"
+											field "size": ["100%-4px", "default"]
+											field "text": "#store_failure_code"
+											field "alpha": 0
+											field "anims": animation "@common_store.failure_text_wait_animation"
+											field "bindings": binding field "binding_name": "#store_failure_code"
+						Added control:
+							element "top_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%sm", "100%cm"]
+								field "controls":
+									control:
+										element "error_glyph_panel":
+											field "type": "panel"
+											field "size": ["100%c", "100%c"]
+											field "controls":
+												control:
+													element "error_image":
+														field "type": "image"
+														field "size": [13, 20]
+														field "offset": [0, 2]
+														field "texture": "textures/ui/ErrorGlyph"
+														field "alpha": 0
+														field "anims": animation "@common_store.failure_text_wait_animation"
+									control:
+										element "padding":
+											field "type": "panel"
+											field "size": [4, "100%sm"]
+									control:
+										element "store_failure_text":
+											field "type": "label"
+											field "layer": "($baseLayer + 1)"
+											field "color": "$body_text_color"
+											field "text_alignment": "left"
+											field "size": ["fill", "default"]
+											field "font_type": "smooth"
+											field "font_scale_factor": 1.2
+											field "text": "#store_failure_text"
+											field "alpha": 0
+											field "anims": animation "@common_store.failure_text_wait_animation"
+											field "bindings":
+												binding:
+													field "binding_name": "#store_failure_text"
+													field "binding_type": "global"
+						Added control:
+							element "padding":
+								field "type": "panel"
+								field "size": ["100%sm", "fill"]
+						Added control:
+							element "image":
+								field "type": "image"
+								field "size": [194, 80]
+								field "alpha": 0
+								field "anims": animation "@common_store.failure_text_wait_animation"
+								field "uv_size": [194, 80]
+								field "uv": "@common_store.error_image_animation"
+								field "disable_anim_fast_forward": true
+								field "bindings":
+									binding:
+										field "binding_name": "#store_failure_image"
+										field "binding_name_override": "#texture"
+					Added field "ignored": "$hide_failure_text".
+					Added field "size": ["100%cm", "100% - 8px"].
+					Added field "layer": 2.
+			Added control:
+				element "centerer":
+					field "type": "panel"
+					field "size": ["100%sm", "100%c + 8px"]
+					field "layer": 0
+					field "controls": control element "progress_loading_spinner@common_store.progress_loading_spinner": empty
+			Added control:
+				element "progress_loading_outline@common_store.banner_fill":
+					field "visible": "(not $hide_failure_text) or (not $hide_progress_loading_outline)"
+					field "size": ["100%sm + 8px", "100%"]
+					field "layer": 1
+					field "alpha": 0
+					field "anims": animation "@common_store.failure_text_wait_animation"
+			Added control:
+				element "store_failure_code":
+					field "ignored": "$hide_failure_text"
+					field "type": "label"
+					field "color": "$e_color_format"
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "top_left"
+					field "text_alignment": "left"
+					field "size": ["100%sm-4px", "default"]
+					field "layer": 3
+					field "offset": [1, 2]
+					field "text": "#store_failure_code"
+					field "alpha": 0
+					field "anims": animation "@common_store.failure_text_wait_animation"
+					field "bindings": binding field "binding_name": "#store_failure_code"
+Changed namespace "general_section":
+	Changed element "accessibility_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 50 (+1, -0)
-			Added control:
-				element "render_distance_warning_text":
-					field "type": "panel"
-					field "size": ["100%", "100%cm + 16px"]
-					field "controls":
-						control:
-							element "render_distance_popup@common.static_tooltip_popup_with_image_and_text":
-								field "size": ["100% - 4px", "100%cm + 8px"]
-								field "anchor_from": "top_middle"
-								field "anchor_to": "top_middle"
-								field "$variables":
-									variable "$tooltip_panel_offset":
-										item 0: 0
-										item 1: 6
-									variable "$tooltip_popup_image": "textures/ui/WarningGlyph"
-									variable "$tooltip_button_binding_type": "global"
-									variable "$tooltip_button_collection_name": ""
-									variable "$tooltip_popup_visible_binding": "#render_distance_warning_visible"
-									variable "$tooltip_text_binding_name": "#render_distance_performance_tooltip_text"
-									variable "$tooltip_chevron_anchor": "top_right"
-									variable "$tooltip_popup_chevron_offset":
-										item 0: "-30%x"
-										item 1: "-10px"
-									variable "$tooltip_popup_chevron_texture": "textures/ui/tooltip_inverted_chevron"
-					field "bindings":
-						binding:
-							field "binding_name": "#render_distance_warning_visible"
-							field "binding_name_override": "#visible"
-Changed namespace "storage_migration_generic":
-	Changed element "modal_screen_content":
+			Changed control:
+				Changed element "option_toggle0@settings_common.option_toggle":
+					Changed field "ignored" from "(not $text_to_speech_supported or not $platform_tts_exists)" to "(not $supports_flite_tts or not $platform_tts_exists)".
+			Changed control:
+				Changed element "option_toggle1@settings_common.option_toggle":
+					Changed field "ignored" from "(not $text_to_speech_supported)" to "(not $supports_flite_tts)".
+			Changed control:
+				Changed element "option_toggle2@settings_common.option_toggle":
+					Changed field "ignored" from "(not $text_to_speech_supported)" to "(not $supports_flite_tts)".
+			Changed control:
+				Changed element "option_toggle3@settings_common.option_toggle":
+					Changed field "ignored" from "(not $text_to_speech_supported)" to "(not $supports_flite_tts)".
+Changed namespace "hud":
+	Changed element "item_name_text_root":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "popup_dialog_factory":
-					Unchanged field "type": "factory".
-					Changed field "control_ids":
-						Changed control id "transfer_error_out_of_space" from "transfer_error_out_of_space@storage_migration_common.transfer_error_out_of_space" to "transfer_error_out_of_space@storage_migration_generic.transfer_error_out_of_space".
-	Changed element "resume_transfer_out_of_space@storage_migration_common.modal_one_button":
+				Changed element "item_text_aligner":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 4 (+1, -0)
+						Added control:
+							element "armor_buffer@common.empty_panel":
+								field "visible": false
+								field "size": ["100%sm", 8]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_armor_visible"
+										field "binding_name_override": "#visible"
+Changed namespace "progress":
+	Changed element "cancel_button@common_buttons.light_text_button":
 		Changed field "$variables":
-			Total variable: 4 (+1, -0)
-			Added variable "$show_close_button": true.
-	Changed element "start_transfer_out_of_space@storage_migration_common.start_transfer":
-		Changed field "$variables":
-			Total variable: 4 (+1, -0)
-			Added variable "$show_close_button": true.
-	Changed element "transfer_error@storage_migration_common.modal_one_button":
-		Changed field "$variables":
-			Total variable: 4 (+1, -0)
-			Added variable "$show_close_button": true.
+			Total variable: 3 (+1, -0)
+			Changed variable "$button_text" from "gui.cancel" to "#cancel_button_text".
+			Added variable "$button_text_binding_type": "global".
+Changed namespace "world_recovery":
+	Changed element "description_label":
+		Unchanged field "type": "label".
+		Changed field "text" from "world_recovery.description" to "#recovery_text".
+		Added field "bindings": binding field "binding_name": "#recovery_text".

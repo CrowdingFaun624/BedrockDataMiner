@@ -1,16 +1,47 @@
-Difference of "animation_controllers" between "1.16.0.61" (beta of "1.16.0") and "1.16.0.63" (beta of "1.16.0").
+Difference of "animation_controllers" between "1.16.20.53" (beta of "1.16.20") and "1.16.20.54" (beta of "1.16.20").
 
-Changed file "player.animation_controllers.json":
+Changed file "piglin.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.player.root":
+			Changed animation controller "controller.animation.piglin.attack":
 				Changed field "states":
-					Changed state "first_person":
-						Changed field "animations":
-							Total animation dict: 7 (+1, -1)
-							Removed animation dict animation "first_person_walk": "variable.bob_animation".
-							Added animation dict animation "first_person_walk": "!variable.bob_animation".
-					Changed state "third_person":
-						Changed field "animations":
-							Total animation dict: 25 (+1, -0)
-							Added animation dict animation "fishing_rod": "query.get_equipped_item_name == 'fishing_rod'".
+					Total state: 5 (+1, -0)
+					Changed state "default":
+						Changed field "transitions":
+							Total transition list: 4 (+2, -1)
+							Removed transition list transition "melee_attack": "variable.has_target && query.variant == 1 && variable.attack_time >= 0.0 && !query.is_admiring".
+							Added transition list transition "hand_attack": "variable.has_target && query.variant == 1 && !query.is_item_equipped && variable.attack_time >= 0.0 && !query.is_admiring".
+							Added transition list transition "melee_attack": "variable.has_target && query.variant == 1 && query.is_item_equipped && variable.attack_time >= 0.0 && !query.is_admiring".
+					Added state "hand_attack":
+						field "animations": animation dict "hand_attack"
+						field "transitions": transition list transition "default": "query.is_item_equipped || !variable.has_target || variable.attack_time < 0.0 ||  query.is_admiring"
+					Changed state "melee_attack":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "default": "!variable.has_target || variable.attack_time < 0.0 ||  query.is_admiring".
+							Added transition list transition "default": "!query.is_item_equipped || !variable.has_target || variable.attack_time < 0.0 ||  query.is_admiring".
+Changed file "vindicator.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.vindicator.base":
+				Changed field "states":
+					Total state: 4 (+2, -0)
+					Changed state "default":
+						Removed field "animations":
+							animation dict "vindicator_base"
+							animation dict "vindicator_attack"
+							animation dict "vindicator_walk"
+						Changed field "transitions":
+							Total transition list: 3 (+2, -0)
+							Added transition list transition "hand_attack": "!query.is_item_equipped && variable.has_target && variable.attack_time >= 0.0".
+							Added transition list transition "melee_attack": "query.is_item_equipped && variable.has_target && variable.attack_time >= 0.0".
+					Added state "hand_attack":
+						field "blend_transition": 0.2
+						field "blend_via_shortest_path": true
+						field "animations": animation dict "vindicator_hand_attack"
+						field "transitions": transition list transition "default": "query.is_item_equipped || !variable.has_target || variable.attack_time < 0.0 || query.is_celebrating"
+					Added state "melee_attack":
+						field "blend_transition": 0.2
+						field "blend_via_shortest_path": true
+						field "animations": animation dict "vindicator_attack"
+						field "transitions": transition list transition "default": "!query.is_item_equipped || !variable.has_target || variable.attack_time < 0.0 || query.is_celebrating"

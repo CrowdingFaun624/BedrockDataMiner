@@ -1,51 +1,41 @@
-Difference of "particles" between "1.21.70.23" (beta of "1.21.70") and "1.21.70.24" (beta of "1.21.70").
+Difference of "particles" between "1.21.72" and "1.21.80.20" (beta of "1.21.80").
+Unable to create data files for 1 file between: "1.21.73"
 
-Total particle: 178 (+0, -1)
-Removed particle "azalea_leaves_particle.json":
+Total particle: 179 (+1, -0)
+Added particle "magic_critical_hit.json":
 	resource pack "core":
-		field "format_version": "1.21.60"
+		field "format_version": "1.10.0"
 		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:azalea_leaves_particle"
+				field "identifier": "minecraft:magic_critical_hit_emitter"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
-					field "texture": "textures/particle/biome_tinted_leaves_atlas"
+					field "texture": "textures/particle/particles"
 			field "components":
-				field "minecraft:emitter_initialization": field "creation_expression": "v.fall_acc = -0.3; v.wind_acc = 10; v.curve_len = 15;"
-				field "minecraft:emitter_lifetime_expression":
-					field "activation_expression": 1
-					field "expiration_expression": 0
-				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_box":
-					field "offset": [0.5, -0.075, 0.5]
-					field "half_dimensions": [0.5, 0.0, 0.5]
-					field "direction": "outwards"
+				field "minecraft:emitter_lifetime_once": field "active_time": 0.15
+				field "minecraft:emitter_rate_steady":
+					field "spawn_rate": 520
+					field "max_particles": 16
+				field "minecraft:emitter_shape_point":
+					field "offset": [0.0, "Math.random(-0.9, -0.5)", 0.0]
+					field "direction": ["Math.random(-0.75, 0.75)", "Math.random(-1.0, 1.0)", "Math.random(-0.75, 0.75)"]
 				field "minecraft:particle_appearance_billboard":
-					field "size": ["v.particle_random_1 > 0.5 ? 0.1 : 0.15", "v.particle_random_1 > 0.5 ? 0.1 : 0.15"]
+					field "size": ["0.10 + variable.particle_random_1*0.05", "0.10 + variable.particle_random_1*0.05"]
 					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_width": 28
-						field "texture_height": 21
-						field "uv": ["math.floor(v.particle_random_1 * 4) * 7", "math.floor(v.particle_random_2 * 3) * 7"]
-						field "uv_size": [7, 7]
+						field "texture_width": 128
+						field "texture_height": 128
+						field "uv": [16, 32]
+						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_appearance_tinting": field "color": color [0.439, 0.573, 0.176, 1.0]
-				field "minecraft:particle_initial_speed": [0.0, -0.021, 0.0]
-				field "minecraft:particle_initial_spin":
-					field "rotation": "math.random(0, 360)"
-					field "rotation_rate": "math.random(-30, 30)"
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": 15
-				field "minecraft:particle_motion_collision":
-					field "collision_drag": 10
-					field "collision_radius": 0.075
-					field "expire_on_contact": true
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "gradient":
+							color ["variable.particle_random_1*0.3 + 0.6", "variable.particle_random_2*0.3+ 0.6", 0.8, 1.0]
+							color [0.5, 0.5, 0.8, 1.0]
+						field "interpolant": "variable.particle_age/variable.particle_lifetime"
+				field "minecraft:particle_initial_speed": "Math.random(10.0, 20.0)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "6.0 / (Math.random(0.0, 16.0) + 12.0)"
 				field "minecraft:particle_motion_dynamic":
-					field "linear_acceleration": ["math.cos((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)", "v.fall_acc", "math.sin((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)"]
-					field "rotation_acceleration": "v.particle_random_4 > 0.5 ? -5 : 5"
-Changed particle "biome_tinted_leaves_particle.json":
-	Changed resource pack "core":
-		Changed field "particle_effect":
-			Changed field "components":
-				Total field: 12 (+1, -1)
-				Removed field "minecraft:emitter_rate_instant": field "num_particles": 1.
-				Added field "minecraft:emitter_rate_manual": field "max_particles": 2000.
+					field "linear_acceleration": [0, -12.0, 0]
+					field "linear_drag_coefficient": 10

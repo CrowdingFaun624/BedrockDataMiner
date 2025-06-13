@@ -1,250 +1,284 @@
-Difference of "entities" between "1.21.50.25" (beta of "1.21.50") and "1.21.50.26" (beta of "1.21.50").
+Difference of "entities" between "1.21.60.24" (beta of "1.21.60") and "1.21.60.25" (beta of "1.21.60").
 
 Changed entity "creaking.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:creaking".
-				Changed description "properties":
-					Total property: 2 (+1, -0)
-					Added property "minecraft:creaking_swaying_ticks":
-						field "type": "int"
-						field "client_sync": true
-						field "default": 0
-						field "range": [0, 6]
 			Changed field "component_groups":
-				Total component group: 9 (+0, -1)
-				Changed component group "minecraft:hostile":
-					Total component: 1 (+0, -1)
-					Removed component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "filters":
-									filter property "any_of":
-										filter:
-											filter property "test": "has_target"
-											filter property "value": false
-										filter:
-											filter property "test": "actor_health"
-											filter property "subject": "target"
-											filter property "value": 0
-										filter:
-											filter property "test": "target_distance"
-											filter property "operator": ">"
-											filter property "value": 24
-								field "event": "minecraft:become_neutral"
-					Changed component "minecraft:looked_at":
-						Changed field "look_at_locations":
-							Total location: 3 (+3, -3)
-							Removed location "head".
-							Removed location "body".
-							Removed location "feet".
-							Added location field "location": "head".
-							Added location field "location": "body".
-							Added location:
-								field "location": "feet"
-								field "vertical_offset": 0.5
-				Changed component group "minecraft:neutral":
-					Changed component "minecraft:looked_at":
-						Changed field "look_at_locations":
-							Total location: 3 (+3, -3)
-							Removed location "head".
-							Removed location "body".
-							Removed location "feet".
-							Added location field "location": "head".
-							Added location field "location": "body".
-							Added location:
-								field "location": "feet"
-								field "vertical_offset": 0.5
-					Changed component "minecraft:behavior.random_stroll":
-						Changed field "speed_multiplier" from 0.5 to 0.3.
 				Changed component group "minecraft:spawned_by_creaking_heart":
-					Changed component "minecraft:damage_sensor":
+					Changed component "minecraft:environment_sensor":
 						Changed field "triggers":
-							Total trigger: 5 (+1, -0)
 							Changed trigger:
-								Changed field "on_damage":
-									Changed field "event" from "minecraft:attacked_by_player" to "minecraft:damaged_by_player".
-								Unchanged field "cause": "all".
-							Changed trigger:
-								Changed field "on_damage":
-									Changed field "event" from "minecraft:attacked_by_mob" to "minecraft:damaged_by_entity".
-								Unchanged field "cause": "all".
-							Added trigger:
-								field "on_damage": field "event": "minecraft:damaged_by_entity"
-								field "cause": "projectile"
-								field "deals_damage": "no_but_side_effects_apply"
-				Removed component group "minecraft:swaying":
-					component "minecraft:behavior.timer_flag_1":
-						field "priority": 0
-						field "cooldown_range": 0.0
-						field "duration_range": [0.3, 0.3]
-						field "on_end":
-							field "event": "minecraft:stop_swaying"
-							field "target": "self"
-				Changed component group "minecraft:twitching":
-					Total component: 1 (+1, -1)
-					Added component "minecraft:behavior.timer_flag_1":
-						field "priority": 0
-						field "cooldown_range": 0.0
-						field "duration_range": [2.25, 2.25]
-						field "on_end":
-							field "event": "minecraft:crumble"
-							field "target": "self"
-					Removed component "minecraft:behavior.timer_flag_2":
-						field "priority": 0
-						field "cooldown_range": 0.0
-						field "duration_range": [2.25, 2.25]
-						field "on_end":
-							field "event": "minecraft:crumble"
-							field "target": "self"
+								Changed field "filters":
+									Changed filter property "all_of":
+										Total filter: 2 (+1, -1)
+										Removed filter:
+											filter property "test": "enum_property"
+											filter property "domain": "minecraft:creaking_state"
+											filter property "operator": "not"
+											filter property "value": "twitching"
+										Changed filter:
+											Changed filter property "any_of":
+												Total filter: 3 (+2, -1)
+												Removed filter filter property "test": "is_daytime".
+												Added filter:
+													filter property "test": "hourly_clock_time"
+													filter property "operator": ">"
+													filter property "value": 23400
+												Added filter:
+													filter property "test": "hourly_clock_time"
+													filter property "operator": "<="
+													filter property "value": 12600
+										Added filter:
+											filter property "none_of":
+												filter:
+													filter property "test": "enum_property"
+													filter property "domain": "minecraft:creaking_state"
+													filter property "value": "twitching"
+												filter filter property "test": "has_nametag"
+				Changed component group "minecraft:spawned_by_player":
+					Total component: 3 (+0, -1)
+					Removed component "minecraft:nameable": empty.
 			Changed field "components":
-				Total component: 13 (+1, -0)
-				Added component "minecraft:environment_sensor":
-					field "triggers":
-						trigger:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "enum_property"
-												filter property "domain": "minecraft:creaking_state"
-												filter property "value": "hostile_observed"
-											filter:
-												filter property "test": "enum_property"
-												filter property "domain": "minecraft:creaking_state"
-												filter property "value": "hostile_unobserved"
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "has_target"
-												filter property "value": false
-											filter:
-												filter property "test": "actor_health"
-												filter property "subject": "target"
-												filter property "value": 0
-											filter:
-												filter property "test": "target_distance"
-												filter property "operator": ">"
-												filter property "value": 24
-							field "event": "minecraft:become_neutral"
-						trigger:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "test": "int_property"
-										filter property "domain": "minecraft:creaking_swaying_ticks"
-										filter property "operator": ">"
-										filter property "value": 0
-									filter:
-										filter property "test": "int_property"
-										filter property "domain": "minecraft:creaking_swaying_ticks"
-										filter property "operator": "<="
-										filter property "value": 5
-							field "event": "minecraft:increment_swaying_ticks"
-						trigger:
-							field "filters":
-								filter property "test": "int_property"
-								filter property "domain": "minecraft:creaking_swaying_ticks"
-								filter property "operator": ">"
-								filter property "value": 5
-							field "event": "minecraft:reset_swaying_ticks"
+				Total component: 14 (+1, -0)
+				Added component "minecraft:nameable": empty.
 			Changed field "events":
-				Total event: 12 (+3, -3)
-				Removed event "minecraft:attacked_by_mob": field "trigger": "minecraft:start_swaying".
-				Added event "minecraft:damaged_by_entity": field "trigger": "minecraft:increment_swaying_ticks".
-				Moved event from "minecraft:attacked_by_player" to "minecraft:damaged_by_player".
+				Changed event "minecraft:damaged_by_entity":
+					Added field "emit_vibration": field "vibration": "entity_act".
 				Changed event "minecraft:damaged_by_player":
-					Changed field "trigger" from "minecraft:start_swaying" to "minecraft:increment_swaying_ticks".
-				Added event "minecraft:increment_swaying_ticks": field "set_property": property "minecraft:creaking_swaying_ticks": "math.clamp(query.property('minecraft:creaking_swaying_ticks') + 1, 0, 6)".
-				Added event "minecraft:reset_swaying_ticks": field "set_property": property "minecraft:creaking_swaying_ticks": "0".
-				Removed event "minecraft:start_swaying": field "add": field "component_groups": component group "minecraft:swaying".
-				Removed event "minecraft:stop_swaying": field "remove": field "component_groups": component group "minecraft:swaying".
-Changed entity "mooshroom.json":
+					Added field "emit_vibration": field "vibration": "entity_act".
+Changed entity "enderman.json":
 	Changed behavior pack "core":
-		Changed field "format_version" from "1.21.0" to "1.21.50".
 		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Total component group: 19 (+2, -0)
-				Changed component group "minecraft:cow_adult":
-					Changed component "minecraft:interact":
-						Changed field "interactions":
-							Total interaction: 17 (+2, -0)
-							Added interaction:
-								field "on_interact":
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "test": "has_equipment"
-												filter property "subject": "other"
-												filter property "domain": "hand"
-												filter property "value": "open_eyeblossom"
-											filter:
-												filter property "test": "is_family"
-												filter property "subject": "other"
-												filter property "value": "player"
-											filter:
-												filter property "test": "is_variant"
-												filter property "subject": "self"
-												filter property "operator": "=="
-												filter property "value": 1
-											filter:
-												filter property "test": "is_mark_variant"
-												filter property "subject": "self"
-												filter property "operator": "!="
-												filter property "value": 11
-									field "event": "minecraft:ate_open_eyeblossom"
-									field "target": "self"
-								field "use_item": true
-								field "play_sounds": "eat"
-								field "particle_on_start":
-									field "particle_type": "smoke"
-									field "particle_y_offset": 0.25
-									field "particle_offset_towards_interactor": true
-								field "interact_text": "action.interact.feed"
-							Added interaction:
-								field "on_interact":
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "test": "has_equipment"
-												filter property "subject": "other"
-												filter property "domain": "hand"
-												filter property "value": "closed_eyeblossom"
-											filter:
-												filter property "test": "is_family"
-												filter property "subject": "other"
-												filter property "value": "player"
-											filter:
-												filter property "test": "is_variant"
-												filter property "subject": "self"
-												filter property "operator": "=="
-												filter property "value": 1
-											filter:
-												filter property "test": "is_mark_variant"
-												filter property "subject": "self"
-												filter property "operator": "!="
-												filter property "value": 12
-									field "event": "minecraft:ate_closed_eyeblossom"
-									field "target": "self"
-								field "use_item": true
-								field "play_sounds": "eat"
-								field "particle_on_start":
-									field "particle_type": "smoke"
-									field "particle_y_offset": 0.25
-									field "particle_offset_towards_interactor": true
-								field "interact_text": "action.interact.feed"
-				Added component group "minecraft:mooshroom_brown_fed_closed_eyeblossom": component "minecraft:mark_variant": field "value": 12.
-				Added component group "minecraft:mooshroom_brown_fed_open_eyeblossom": component "minecraft:mark_variant": field "value": 11.
 			Changed field "components":
-				Changed component "minecraft:damage_sensor":
-					Changed field "triggers":
-						Changed trigger:
-							Changed field "deals_damage" from false to "no".
-						Changed trigger:
-							Changed field "deals_damage" from false to "no".
-			Changed field "events":
-				Total event: 22 (+2, -0)
-				Added event "minecraft:ate_closed_eyeblossom": field "add": field "component_groups": component group "minecraft:mooshroom_brown_fed_closed_eyeblossom".
-				Added event "minecraft:ate_open_eyeblossom": field "add": field "component_groups": component group "minecraft:mooshroom_brown_fed_open_eyeblossom".
+				Changed component "minecraft:looked_at":
+					Removed field "looked_at_cooldown": 5.0.
+					Added field "min_looked_at_duration": 0.25.
+Changed entity "pig.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.21.60"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:pig"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:climate_variant":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "temperate"
+						field "values":
+							possible property "cold"
+							possible property "temperate"
+							possible property "warm"
+				description "spawn_category": "creature"
+			field "component_groups":
+				component group "minecraft:pig_adult":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "breeds_with":
+							field "mate_type": "minecraft:pig"
+							field "baby_type": "minecraft:pig"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+						field "breed_items":
+							item "beetroot"
+							item "carrot"
+							item "potato"
+						field "property_inheritance": property "minecraft:climate_variant": empty
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/pig.json"
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
+				component group "minecraft:pig_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item "carrot"
+							item "beetroot"
+							item "potato"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.1
+				component group "minecraft:pig_saddled":
+					component "minecraft:boostable":
+						field "speed_multiplier": 1.35
+						field "duration": 3.0
+						field "boost_items":
+							item:
+								field "item": "carrotOnAStick"
+								field "damage": 2
+								field "replace_item": "fishing_rod"
+					component "minecraft:is_saddled": empty
+					component "minecraft:item_controllable": field "control_items": "carrotOnAStick"
+					component "minecraft:loot": field "table": "loot_tables/entities/pig_saddled.json"
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "interact_text": "action.interact.ride.horse"
+						field "family_types": family "player"
+						field "seats": field "position": [0.0, 0.63, 0.0]
+					component "minecraft:behavior.controlled_by_player": field "priority": 0
+				component group "minecraft:pig_transform":
+					component "minecraft:transformation":
+						field "into": "minecraft:pig_zombie"
+						field "transformation_sound": "mob.pig.death"
+						field "delay": 0.5
+				component group "minecraft:pig_unsaddled":
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "test": "has_equipment"
+										filter property "subject": "other"
+										filter property "domain": "hand"
+										filter property "value": "saddle"
+									field "event": "minecraft:on_saddled"
+								field "use_item": true
+								field "play_sounds": "saddle"
+								field "equip_item_slot": "slot.armor.body"
+								field "interact_text": "action.interact.saddle"
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family "zombie"
+						field "seats": field "position": [0.0, 0.63, 0.0]
+			field "components":
+				component "minecraft:balloonable": field "mass": 0.9
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.9
+					field "height": 0.9
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "on_damage":
+							field "filters":
+								filter:
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "value": "lightning"
+								filter:
+									filter property "test": "is_difficulty"
+									filter property "operator": "!="
+									filter property "value": "peaceful"
+							field "event": "become_zombie"
+						field "deals_damage": "no"
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health":
+					field "value": 10
+					field "max": 10
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_water": true
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "mob"
+						family "pig"
+				component "minecraft:behavior.float": field "priority": 2
+				component "minecraft:behavior.look_at_player":
+					field "priority": 8
+					field "look_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+					field "target_dist": 0.0
+					field "track_target": true
+				component "minecraft:behavior.panic":
+					field "priority": 3
+					field "speed_multiplier": 1.25
+				component "minecraft:behavior.random_look_around": field "priority": 9
+				component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.tempt":
+					field "priority": 5
+					field "speed_multiplier": 1.2
+					field "items":
+						item "beetroot"
+						item "carrot"
+						item "carrotOnAStick"
+						item "potato"
+			field "events":
+				event "become_zombie":
+					field "add": field "component_groups": component group "minecraft:pig_transform"
+					field "remove": empty
+				event "minecraft:ageable_grow_up":
+					field "add":
+						field "component_groups":
+							component group "minecraft:pig_adult"
+							component group "minecraft:pig_unsaddled"
+					field "remove": field "component_groups": component group "minecraft:pig_baby"
+				event "minecraft:entity_born":
+					field "add": field "component_groups": component group "minecraft:pig_baby"
+					field "remove": empty
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "randomize":
+								randomize item:
+									field "trigger": "minecraft:spawn_adult"
+									field "weight": 95
+								randomize item:
+									field "weight": 5
+									field "add": field "component_groups": component group "minecraft:pig_baby"
+						sequence item 1:
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "spawns_warm_variant_farm_animals"
+							field "set_property": property "minecraft:climate_variant": "warm"
+						sequence item 2:
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "spawns_cold_variant_farm_animals"
+							field "set_property": property "minecraft:climate_variant": "cold"
+				event "minecraft:on_saddled":
+					field "add": field "component_groups": component group "minecraft:pig_saddled"
+					field "remove": field "component_groups": component group "minecraft:pig_unsaddled"
+				event "minecraft:spawn_adult":
+					field "add":
+						field "component_groups":
+							component group "minecraft:pig_adult"
+							component group "minecraft:pig_unsaddled"
+Changed entity "strider.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 23 (+1, -0)
+				Added component "minecraft:movement_sound_distance_offset": field "value": 0.6.

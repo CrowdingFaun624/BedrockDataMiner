@@ -1,35 +1,285 @@
-Difference of "entities" between "1.18.20.23" (beta of "1.18.30") and "1.18.20.25" (beta of "1.18.30").
+Difference of "entities" between "1.18.30.26" (beta of "1.18.30") and "1.18.30.28" (beta of "1.18.30").
 
-Changed entity "frog.json":
+Total entity: 112 (+1, -0)
+Changed entity "allay.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 2 (+2, -0)
+				Added component group "pickup_item":
+					component "minecraft:behavior.pickup_items":
+						field "priority": 2
+						field "max_dist": 60
+						field "search_height": 30
+						field "goal_radius": 2.2
+						field "speed_multiplier": 0.8
+						field "pickup_based_on_chance": false
+						field "can_pickup_any_item": false
+						field "can_pickup_to_hand_or_equipment": false
+						field "pickup_same_items_as_in_hand": true
+				Added component group "pickup_item_delay":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 5
+						field "time_down_event": field "event": "pickup_item_delay_complete"
 			Changed field "components":
-				Changed component "minecraft:behavior.tempt":
-					Added field "can_tempt_vertically": true.
-Changed entity "player.json":
+				Total component: 31 (+4, -1)
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 0.8 to 0.6.
+					Changed field "height" from 0.8 to 0.6.
+				Added component "minecraft:damage_sensor":
+					field "triggers":
+						trigger:
+							field "on_damage":
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "player"
+										filter:
+											filter property "test": "is_owner"
+											filter property "subject": "other"
+											filter property "value": true
+							field "deals_damage": false
+				Added component "minecraft:follow_range": field "value": 1024.
+				Changed component "minecraft:behavior.float":
+					Changed field "priority" from 6 to 7.
+				Changed component "minecraft:behavior.follow_owner":
+					Changed field "priority" from 5 to 6.
+					Added field "ignore_vibration": false.
+				Changed component "minecraft:behavior.go_and_give_items_to_noteblock":
+					Added field "on_item_throw":
+						event:
+							field "event": "pickup_item_delay"
+							field "target": "self"
+				Changed component "minecraft:behavior.go_and_give_items_to_owner":
+					Added field "on_item_throw":
+						event:
+							field "event": "pickup_item_delay"
+							field "target": "self"
+				Changed component "minecraft:behavior.look_at_player":
+					Changed field "priority" from 7 to 8.
+				Removed component "minecraft:behavior.pickup_items":
+					field "priority": 2
+					field "max_dist": 30
+					field "search_height": 30
+					field "goal_radius": 2.2
+					field "speed_multiplier": 0.8
+					field "pickup_based_on_chance": false
+					field "can_pickup_any_item": false
+					field "can_pickup_to_hand_or_equipment": false
+					field "pickup_same_items_as_in_hand": true
+				Changed component "minecraft:behavior.random_hover":
+					Changed field "priority" from 8 to 9.
+				Added component "minecraft:behavior.random_look_around": field "priority": 8.
+				Added component "minecraft:behavior.stay_near_noteblock":
+					field "priority": 5
+					field "speed": 2.0
+					field "start_distance": 10
+					field "stop_distance": 2
+			Changed field "events":
+				Total event: 3 (+3, -0)
+				Added event "minecraft:entity_spawned": field "add": field "component_groups": component group "pickup_item".
+				Added event "pickup_item_delay":
+					field "add": field "component_groups": component group "pickup_item_delay"
+					field "remove": field "component_groups": component group "pickup_item"
+				Added event "pickup_item_delay_complete":
+					field "add": field "component_groups": component group "pickup_item"
+					field "remove": field "component_groups": component group "pickup_item_delay"
+Added entity "chest_boat.json":
+	behavior pack "experimental":
+		field "format_version": "1.18.10"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:chest_boat"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
+			field "component_groups":
+				component group "minecraft:above_bubble_column_down":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": false
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+						field "drag_down_on_buoyancy_removed": 0.7
+					component "minecraft:out_of_control": empty
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 3
+						field "time_down_event":
+							field "event": "minecraft:sink"
+							field "target": "self"
+				component group "minecraft:above_bubble_column_up":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": false
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+						field "drag_down_on_buoyancy_removed": 0.7
+					component "minecraft:out_of_control": empty
+				component group "minecraft:can_ride":
+					component "minecraft:rideable":
+						field "seat_count": 2
+						field "interact_text": "action.interact.ride.boat"
+						field "pull_in_entities": true
+						field "seats":
+							seat:
+								field "position": [0.0, -0.2, 0.0]
+								field "min_rider_count": 0
+								field "max_rider_count": 1
+								field "rotate_rider_by": -90
+								field "lock_rider_rotation": 90
+							seat:
+								field "position": [0.2, -0.2, 0.0]
+								field "min_rider_count": 2
+								field "max_rider_count": 2
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+							seat:
+								field "position": [-0.6, -0.2, 0.0]
+								field "min_rider_count": 2
+								field "max_rider_count": 2
+								field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0"
+								field "lock_rider_rotation": 90
+				component group "minecraft:floating":
+					component "minecraft:buoyant":
+						field "base_buoyancy": 1.0
+						field "apply_gravity": true
+						field "simulate_waves": true
+						field "big_wave_probability": 0.03
+						field "big_wave_speed": 10.0
+						field "liquid_blocks":
+							block "minecraft:flowing_water"
+							block "minecraft:water"
+			field "components":
+				component "minecraft:balloonable": empty
+				component "minecraft:buoyant":
+					field "base_buoyancy": 1.0
+					field "apply_gravity": true
+					field "simulate_waves": true
+					field "big_wave_probability": 0.03
+					field "big_wave_speed": 10.0
+					field "liquid_blocks":
+						block "minecraft:flowing_water"
+						block "minecraft:water"
+				component "minecraft:collision_box":
+					field "width": 1.4
+					field "height": 0.455
+				component "minecraft:conditional_bandwidth_optimization":
+					field "default_values":
+						field "max_optimized_distance": 60.0
+						field "max_dropped_ticks": 20
+						field "use_motion_prediction_hints": true
+					field "conditional_values":
+						condition:
+							field "max_optimized_distance": 0.0
+							field "max_dropped_ticks": 0
+							field "use_motion_prediction_hints": true
+							field "conditional_values":
+								filter:
+									filter property "test": "is_moving"
+									filter property "subject": "self"
+									filter property "operator": "=="
+									filter property "value": true
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:inside_block_notifier":
+					field "block_list":
+						block:
+							field "block":
+								field "name": "minecraft:bubble_column"
+								field "states": state "drag_down": true
+							field "entered_block_event":
+								field "event": "minecraft:entered_bubble_column_down"
+								field "target": "self"
+							field "exited_block_event":
+								field "event": "minecraft:exited_bubble_column"
+								field "target": "self"
+						block:
+							field "block":
+								field "name": "minecraft:bubble_column"
+								field "states": state "drag_down": false
+							field "entered_block_event":
+								field "event": "minecraft:entered_bubble_column_up"
+								field "target": "self"
+							field "exited_block_event":
+								field "event": "minecraft:exited_bubble_column"
+								field "target": "self"
+				component "minecraft:inventory":
+					field "container_type": "chest_boat"
+					field "inventory_size": 27
+					field "can_be_siphoned_from": true
+				component "minecraft:is_stackable": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:rideable":
+					field "seat_count": 1
+					field "interact_text": "action.interact.ride.boat"
+					field "pull_in_entities": true
+					field "seats":
+						seat:
+							field "position": [0.2, -0.2, 0.0]
+							field "min_rider_count": 0
+							field "max_rider_count": 1
+							field "rotate_rider_by": -90
+							field "lock_rider_rotation": 90
+				component "minecraft:type_family":
+					field "family":
+						family "boat"
+						family "inanimate"
+			field "events":
+				event "minecraft:entered_bubble_column_down":
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_down"
+					field "remove": field "component_groups": component group "minecraft:floating"
+				event "minecraft:entered_bubble_column_up":
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_up"
+					field "remove": field "component_groups": component group "minecraft:floating"
+				event "minecraft:exited_bubble_column":
+					field "add":
+						field "component_groups":
+							component group "minecraft:can_ride"
+							component group "minecraft:floating"
+					field "remove":
+						field "component_groups":
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
+				event "minecraft:sink":
+					field "remove":
+						field "component_groups":
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
+							component group "minecraft:can_ride"
+							component group "minecraft:floating"
+Changed entity "hoglin.json":
 	Changed behavior pack "core":
-		Changed field "format_version" from "1.18.10" to "1.18.20".
+		Changed field "format_version" from "1.18.20" to "1.18.30".
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 23 (+1, -0)
-				Added component "minecraft:exhaustion_values":
-					field "heal": 6
-					field "jump": 0.05
-					field "sprint_jump": 0.2
-					field "mine": 0.005
-					field "attack": 0.1
-					field "damage": 0.1
-					field "walk": 0.0
-					field "sprint": 0.01
-					field "swim": 0.01
-				Changed component "minecraft:player.exhaustion":
-					Changed field "max" from 4 to 20.
-				Changed component "minecraft:player.saturation":
-					Changed field "value" from 20 to 5.
-					Added field "max": 20.
-Changed entity "turtle.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.tempt":
-					Added field "can_tempt_vertically": true.
+			Changed field "component_groups":
+				Changed component group "minecraft:hoglin_baby":
+					Total component: 12 (+1, -0)
+					Added component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+						field "reach_multiplier": 1.0
+						field "cooldown_time": 0.75

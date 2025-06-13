@@ -1,10 +1,21 @@
-Difference of "entities" between "1.20.60.20" (beta of "1.20.60") and "1.20.60.21" (beta of "1.20.60").
+Difference of "entities" between "1.20.60.24" (beta of "1.20.60") and "1.20.60.25" (beta of "1.20.60").
 
-Changed entity "breeze.json":
-	Changed behavior pack "experimental":
+Changed entity "bee.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.18.20" to "1.20.60".
 		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:bee".
+				Removed description "is_experimental": false.
+			Changed field "component_groups":
+				Changed component group "look_for_food":
+					Changed component "minecraft:behavior.move_to_block":
+						Changed field "target_blocks":
+							Changed block from "minecraft:double_plant:8" to "minecraft:double_plant:0".
+							Changed block from "minecraft:double_plant:12" to "minecraft:double_plant:1".
+							Changed block from "minecraft:double_plant:9" to "minecraft:double_plant:4".
+							Changed block from "minecraft:double_plant:13" to "minecraft:double_plant:5".
 			Changed field "components":
-				Total component: 29 (+1, -0)
 				Changed component "minecraft:damage_sensor":
 					Changed field "triggers" from:
 						field "cause": "fall"
@@ -14,11 +25,65 @@ Changed entity "breeze.json":
 							field "cause": "fall"
 							field "deals_damage": false
 						trigger:
-							field "cause": "projectile"
+							field "on_damage":
+								field "filters":
+									filter property "test": "is_block"
+									filter property "subject": "block"
+									filter property "value": "minecraft:sweet_berry_bush"
 							field "deals_damage": false
-				Added component "minecraft:reflect_projectiles":
-					field "reflected_projectiles":
-						projectile "arrow"
-						projectile "trident"
-					field "azimuth_angle": "Math.random(0.0, 359.0)"
-					field "reflection_scale": "0.5"
+Changed entity "breeze.json":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:reflect_projectiles":
+					Changed field "reflected_projectiles":
+						Total projectile: 18 (+16, -0)
+						Added projectile "dragon_fireball".
+						Added projectile "ender_pearl".
+						Added projectile "evocation_fang".
+						Added projectile "experience_bottle".
+						Added projectile "fireball".
+						Added projectile "ice_bomb".
+						Added projectile "lingering_potion".
+						Added projectile "llama_spit".
+						Added projectile "shulker_bullet".
+						Added projectile "small_fireball".
+						Added projectile "snowball".
+						Added projectile "splash_potion".
+						Added projectile "thrownegg".
+						Added projectile "thrownenderpearl".
+						Added projectile "thrownicebomb".
+						Added projectile "wither_skull".
+					Changed field "azimuth_angle" from "Math.random(0.0, 359.0)" to "180.0 + Math.random(-20.0, 20.0)".
+					Changed field "reflection_scale" from "0.5" to "0.25".
+Changed entity "xp_orb.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.20.60".
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:xp_orb".
+				Removed description "is_experimental": false.
+			Changed field "components":
+				Changed component "minecraft:pushable":
+					Changed field "is_pushable" from true to false.
+Changed entity "zoglin.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.18.30" to "1.20.60".
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:zoglin".
+				Removed description "is_experimental": false.
+			Changed field "component_groups":
+				Changed component group "zoglin_adult":
+					Changed component "minecraft:type_family":
+						Changed field "family":
+							Total family: 5 (+1, -0)
+							Added family "monster".
+				Changed component group "zoglin_baby":
+					Changed component "minecraft:type_family":
+						Changed field "family":
+							Total family: 5 (+1, -0)
+							Added family "monster".
+			Changed field "components":
+				Changed component "minecraft:experience_reward":
+					Removed field "on_bred": "Math.Random(1,7)".

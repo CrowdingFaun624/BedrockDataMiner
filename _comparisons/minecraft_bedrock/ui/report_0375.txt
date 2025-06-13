@@ -1,5 +1,72 @@
-Difference of "ui" between "1.21.50.25" (beta of "1.21.50") and "1.21.50.26" (beta of "1.21.50").
+Difference of "ui" between "1.21.60.24" (beta of "1.21.60") and "1.21.60.25" (beta of "1.21.60").
 
+Changed namespace "book":
+	Changed element "book_buttons_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 2 (+1, -2)
+			Removed control:
+				element "sign_button@common_buttons.light_text_form_fitting_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#editable"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$form_fitting_min_size":
+							item 0: 100
+							item 1: 0
+						variable "$pressed_button_name": "button.sign_book"
+						variable "$button_text": "book.signButton"
+			Removed control:
+				element "export_button@common_buttons.light_text_form_fitting_button":
+					field "ignored": "(not $education_edition)"
+					field "bindings":
+						binding:
+							field "binding_name": "(not #editable)"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$form_fitting_min_size":
+							item 0: 100
+							item 1: 0
+						variable "$pressed_button_name": "button.export_book"
+						variable "$button_text": "book.export"
+			Added control:
+				element "sign_export_buttons":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%cm"]
+					field "use_child_anchors": true
+					field "controls":
+						control:
+							element "left_spacer":
+								field "type": "panel"
+								field "size": ["fill", "100%sm"]
+						control:
+							element "sign_button@common_buttons.light_text_form_fitting_button":
+								field "bindings":
+									binding:
+										field "binding_name": "#editable"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$form_fitting_min_size":
+										item 0: 100
+										item 1: 0
+									variable "$pressed_button_name": "button.sign_book"
+									variable "$button_text": "book.signButton"
+						control:
+							element "export_button@common_buttons.light_text_form_fitting_button":
+								field "ignored": "(not $education_edition)"
+								field "$variables":
+									variable "$form_fitting_min_size":
+										item 0: 100
+										item 1: 0
+									variable "$pressed_button_name": "button.export_book"
+									variable "$button_text": "book.export"
+						control:
+							element "right_spacer":
+								field "type": "panel"
+								field "size": ["fill", "100%sm"]
+		Added field "size": ["100%", "100%cm"].
 Changed namespace "common":
 	Total element: 317 (+2, -0)
 	Added element "label_hover":
@@ -13,40 +80,60 @@ Changed namespace "common":
 					field "visible": "$visible_hover"
 		field "$variables": variable "$visible_hover|default": true
 	Added element "tts_activate_sibling@common.button":
-		field "sound_volume": 1.0
+		field "sound_volume": 0
 		field "size": ["100%sm", "100%sm"]
 		field "focus_enabled": true
 		field "tts_inherit_siblings": true
 		field "controls":
-			control element "default@common.empty_panel": field "visible": false
+			control element "default@common.empty_panel": empty
 			control element "pressed@common.label_hover": empty
 			control element "hover@common.label_hover": empty
 		field "$variables":
 			variable "$pressed_button_name": "button.focus_filler"
 			variable "$button_tts_name": ""
+	Changed element "underline":
+		Unchanged field "type": "image".
+		Changed field "$variables":
+			Total variable: 2 (+1, -0)
+			Added variable "$underline_color|default": "$f_color_format".
+		Added field "color": "$underline_color".
+Changed namespace "common_buttons":
+	Changed element "underline_button@common.button":
+		Changed field "controls":
+			Changed control:
+				Changed element "default":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "label_default@common.single_line_label":
+								Changed field "$variables":
+									Changed variable "$underline_control":
+										Changed item 0:
+											Changed item "underline_default@common.underline":
+												Added item "$underline_color": "$underline_default_color".
+		Changed field "$variables":
+			Total variable: 7 (+1, -0)
+			Added variable "$underline_default_color|default": "$generic_button_text_color".
 Changed namespace "common_store":
-	Changed element "search_header_stack":
-		Unchanged field "type": "stack_panel".
-		Added field "visible": false.
-Changed namespace "controls_section":
-	Changed element "touch_section":
+	Changed element "style_header_panel":
+		Removed field "ignored": "$is_subscription_screen".
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "common_touch_settings":
-					Unchanged field "type": "stack_panel".
+				Changed element "row_header":
+					Unchanged field "type": "panel".
 					Changed field "controls":
-						Total control: 23 (+1, -0)
-						Added control:
-							element "option_show_block_select_button@settings_common.option_toggle":
-								field "ignored": "$education_edition"
-								field "$variables":
-									variable "$option_label": "options.showBlockSelectButton"
-									variable "$option_binding_name": "#show_block_select_button"
-									variable "$option_enabled_binding_name": "#show_block_select_button_enabled"
-									variable "$toggle_name": "show_block_select_button"
-									variable "$has_option_description": true
-									variable "$option_description": "options.showBlockSelectButton.message"
+						Changed control:
+							Changed element "label_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "on_sale_banner":
+											Unchanged field "type": "image".
+											Added field "ignored": "$is_subscription_screen".
+									Changed control:
+										Changed element "time_remaining_label@common_store.label":
+											Added field "ignored": "$is_subscription_screen".
 Changed namespace "csb":
 	Total element: 30 (+0, -2)
 	Removed element "label_hover":
@@ -92,11 +179,6 @@ Changed namespace "csb_buy":
 						Changed control:
 							Moved element from "tts_hover@csb.tts_activate_sibling" to "tts_hover@common.tts_activate_sibling".
 Changed namespace "csb_content":
-	Changed element "content_description":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Moved element from "tts_border@csb.tts_activate_sibling" to "tts_border@common.tts_activate_sibling".
 	Changed element "csb_content_section@csb.section_base":
 		Changed field "controls":
 			Changed control:
@@ -135,148 +217,262 @@ Changed namespace "csb_landing":
 					Changed field "controls":
 						Changed control:
 							Moved element from "tts_hover@csb.tts_activate_sibling" to "tts_hover@common.tts_activate_sibling".
-Changed namespace "general_section":
-	Changed element "content_memory_tier_dropdown_content@settings_common.option_radio_dropdown_group":
-		Changed field "$variables":
-			Changed variable "$radio_buttons":
-				Changed item 0:
-					Removed item "memory_tier_undetermined@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_undetermined"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.undetermined"
-					Added item "memory_tier_superLow@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_superLow"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.superLow"
-				Changed item 1:
-					Removed item "memory_tier_superLow@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_superLow"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.superLow"
-					Added item "memory_tier_low@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_low"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.low"
-				Changed item 2:
-					Removed item "memory_tier_low@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_low"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.low"
-					Added item "memory_tier_mid@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_mid"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.mid"
-				Changed item 3:
-					Removed item "memory_tier_mid@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_mid"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.mid"
-					Added item "memory_tier_high@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_high"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.high"
-				Changed item 4:
-					Removed item "memory_tier_high@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_high"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.high"
-					Added item "memory_tier_superHigh@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_superHigh"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.superHigh"
-				Removed item 5:
-					item "memory_tier_superHigh@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#memory_tier_superHigh"
-						item "$radio_label_text": "options.creator.deviceInfoMemoryTier.superHigh"
-	Changed element "debug_section":
+Changed namespace "csb_packs":
+	Changed element "scrolling_content_stack":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 83 (+2, -0)
-			Added control:
-				element "log_area@settings_common.option_text_edit":
-					field "$variables":
-						variable "$option_label": "Log Area"
-						variable "$option_binding_name": "#log_area_text_box"
-						variable "$max_text_edit_length": 2000
-						variable "$text_box_name": "log_area_text_box"
-			Added control:
-				element "log_priority@settings_common.option_text_edit":
-					field "$variables":
-						variable "$option_label": "Log Priority"
-						variable "$option_binding_name": "#log_priority_text_box"
-						variable "$max_text_edit_length": 2000
-						variable "$text_box_name": "log_priority_text_box"
-	Changed element "general_tab_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "ecomode_label_header":
-					Removed field "ignored": "(not $supports_ecomode_toggle)".
-					Unchanged field "type": "label".
-			Changed control:
-				Changed element "paddingEcoMode":
-					Removed field "ignored": "(not $supports_ecomode_toggle)".
-					Unchanged field "type": "panel".
-			Changed control:
-				Changed element "ecomode_enabled_toggle@settings_common.option_toggle":
-					Removed field "ignored": "(not $supports_ecomode_toggle)".
-Changed namespace "manage_feed":
-	Changed element "manage_player_gamer_pic":
-		field "type": "image"
-		field "texture": "#manage_gamerpic_texture"
-		field "size": [18, 18]
-		field "layer": 0
-		field "texture_file_system": "#manage_gamerpic_texture_source"
-		field "bindings":
-			binding:
-				field "binding_name": "#manage_gamerpic_texture"
-				field "binding_name_override": "#texture"
-				field "binding_type": "collection"
-				field "binding_collection_name": "manage_feed_collection"
-			binding:
-				field "binding_name": "#manage_gamerpic_texture_source"
-				field "binding_name_override": "#texture_file_system"
-				field "binding_type": "collection"
-				field "binding_collection_name": "manage_feed_collection"
-			binding:
-				field "binding_name": "#manage_gamerpic_visible"
-				field "binding_type": "collection"
-				field "binding_collection_name": "manage_feed_collection"
-				field "binding_name_override": "#visible"
-		field "type": "custom"
-		field "renderer": "profile_image_renderer"
-		field "size": [18, 18]
-		field "layer": 0
-		field "bindings":
-			binding:
-				field "binding_name": "#manage_profile_image_options"
-				field "binding_name_override": "#profile_image_options"
-				field "binding_type": "collection"
-				field "binding_collection_name": "manage_feed_collection"
-			binding:
-				field "binding_name": "#manage_gamerpic_visible"
-				field "binding_type": "collection"
-				field "binding_collection_name": "manage_feed_collection"
-				field "binding_name_override": "#visible"
-	Changed element "manage_player_pic_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 1 (+1, -1)
-			Removed control element "manage_player_gamer_pic@manage_feed.manage_player_gamer_pic": empty.
-			Added control element "manage_player_gamer_pic@manage_feed.manage_player_gamer_pic": empty.
-Changed namespace "pdp":
-	Changed element "description_inner_panel":
+			Total control: 2 (+0, -2)
+			Removed control:
+				element "view_all_packs_title_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "view_all_packs_title@common.minecraftTenLabel":
+								field "size": ["default", "default"]
+								field "max_size": ["100%", "default"]
+								field "color": "$store_white_text_color"
+								field "font_type": "MinecraftTenEmoticon"
+								field "text": "store.csb.viewAllPacksTitle"
+			Removed control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 4]
+Changed namespace "csb_subscription_panel":
+	Changed element "csb_container":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "description_stack_panel":
+				Changed element "panel_contents":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "description_text_panel_collapsed":
+							Changed element "content_container":
 								Unchanged field "type": "stack_panel".
 								Changed field "controls":
 									Changed control:
-										Changed element "description_text_collapsed@pdp.description_label":
-											Added field "$variables":
-												variable "$contents_max_size":
-													item 0: "fill"
-													item 1: 17
-Changed namespace "persona":
-	Changed element "emote_play_again_button@common_buttons.light_text_button":
-		Changed field "bindings":
-			Changed binding:
-				Changed field "binding_name" from "#is_play_again_button_enabled" to "#is_play_again_button_visible".
+										Changed element "side_stack_right":
+											Unchanged field "type": "stack_panel".
+											Changed field "controls":
+												Changed control:
+													Changed element "interior_content_stack":
+														Unchanged field "type": "stack_panel".
+														Changed field "controls":
+															Changed control:
+																Changed element "ln_01_container":
+																	Unchanged field "type": "stack_panel".
+																	Changed field "controls":
+																		Changed control:
+																			Changed element "bullet_holder_01":
+																				Unchanged field "type": "stack_panel".
+																				Changed field "controls":
+																					Changed control:
+																						Changed element "bullet_01":
+																							Unchanged field "type": "label".
+																							Changed field "font_type" from "Minecraft" to "smooth".
+															Changed control:
+																Changed element "ln_02_container":
+																	Unchanged field "type": "stack_panel".
+																	Changed field "controls":
+																		Changed control:
+																			Changed element "bullet_holder_02":
+																				Unchanged field "type": "stack_panel".
+																				Changed field "controls":
+																					Changed control:
+																						Changed element "bullet_02":
+																							Unchanged field "type": "label".
+																							Changed field "font_type" from "Minecraft" to "smooth".
+Changed namespace "general_section":
+	Total element: 204 (+1, -0)
+	Changed element "creator_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 7 (+1, -0)
+			Added control element "diagnostics_toggle_panel@general_section.diagnostics_toggles_panel": empty.
+	Changed element "debugger_toggles_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "primary_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 6 (+0, -1)
+						Removed control:
+							element "serverbound_client_diagnostics_toggle@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.creator.serverboundClientDiagnosticsEnabled"
+									variable "$option_binding_name": "#serverbound_client_diagnostics_enabled"
+									variable "$toggle_name": "serverbound_client_diagnostics_enabled"
+	Added element "diagnostics_toggles_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "bindings":
+			binding:
+				field "binding_name": "#diagnostics_options_enabled"
+				field "binding_name_override": "#enabled"
+		field "controls":
+			control:
+				element "section_panel_1":
+					field "type": "panel"
+					field "size": ["100%", "100%c + 14px"]
+					field "controls":
+						control:
+							element "section_divider":
+								field "type": "image"
+								field "size": ["100% - 30px", 1]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "layer": 3
+								field "texture": "textures/ui/list_item_divider_line_light"
+			control:
+				element "primary_panel":
+					field "type": "stack_panel"
+					field "controls":
+						control:
+							element "heading":
+								field "type": "label"
+								field "text": "options.creator.diagnosticsHeading"
+								field "color": "$body_text_color"
+						control:
+							element "spacer":
+								field "type": "panel"
+								field "size": ["100%", 7]
+						control:
+							element "serverbound_client_diagnostics_toggle@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.creator.serverboundClientDiagnosticsEnabled"
+									variable "$option_binding_name": "#serverbound_client_diagnostics_enabled"
+									variable "$toggle_name": "serverbound_client_diagnostics_enabled"
+						control:
+							element "diagnostics_capture_buttons":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%", 30]
+								field "controls":
+									control:
+										element "clear_diagnostics_capture_files@settings_common.action_button":
+											field "size": ["100%", "100%"]
+											field "$variables":
+												variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+												variable "$pressed_button_name": "button.clear_diagnostics_captures"
+												variable "$button_text": "options.creator.diagnosticsClearCaptures"
+	Changed element "edu_debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 11 (+0, -1)
+			Removed control:
+				element "edu_cloud_resumable_upload@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_eduCloudResumableUpload"
+						variable "$option_binding_name": "#dev_edu_cloud_resumable_upload"
+						variable "$option_enabled_binding_name": "#dev_edu_cloud_resumable_upload_enabled"
+						variable "$toggle_name": "dev_edu_cloud_resumable_upload"
+	Changed element "general_tab_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 56 (+1, -0)
+			Changed control:
+				Moved element from "websocket_option_toggle@settings_common.option_toggle" to "websockets_enabled_toggle@settings_common.option_toggle".
+				Changed element "websockets_enabled_toggle@settings_common.option_toggle":
+					Changed field "$variables":
+						Changed variable "$option_label" from "options.websocketEncryption" to "options.websocketsEnabled".
+						Changed variable "$option_binding_name" from "#websocket_encryption" to "#websockets_enabled".
+						Changed variable "$option_enabled_binding_name" from "#websocket_encryption_enabled" to "#websockets_enabled_enabled".
+						Changed variable "$toggle_name" from "websocket_encryption" to "websockets_enabled".
+			Added control:
+				element "websocket_encryption_toggle@settings_common.option_toggle":
+					field "ignored": "($console_edition)"
+					field "bindings":
+						binding:
+							field "binding_name": "#websocket_encryption_visible"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.websocketEncryption"
+						variable "$option_binding_name": "#websocket_encryption"
+						variable "$option_enabled_binding_name": "#websocket_encryption_enabled"
+						variable "$toggle_name": "websocket_encryption"
+	Changed element "global_texture_pack_section@resource_packs.selected_stack_panel":
+		Changed field "$variables":
+			Total variable: 67 (+1, -0)
+			Added variable "$addon_stacking_warning_visibility_binding": "#addon_stacking_warning_visible_global".
+Changed namespace "panorama":
+	Changed element "pan_left_button@common_store.cycle_pack_left_button":
+		Changed field "$variables":
+			Total variable: 10 (+1, -0)
+			Added variable "$focus_id": "screenshot_pan_left".
+	Changed element "pan_right_button@common_store.cycle_pack_right_button":
+		Changed field "$variables":
+			Total variable: 10 (+1, -0)
+			Added variable "$focus_id": "screenshot_pan_right".
+	Changed element "panorama_view":
+		Unchanged field "type": "panel".
+		Changed field "$variables":
+			Total variable: 5 (+1, -0)
+			Added variable "$focus_enabled": true.
+Changed namespace "pause":
+	Total element: 87 (+1, -0)
+	Moved element from "info_panel_background@pause.transparent_background" to "info_panel_background@pause.non_transparent_background".
+	Changed element "info_panel_background@pause.non_transparent_background":
+		Changed field "size":
+			Unchanged item 0: "200%".
+			Changed item 1 from "100%" to "120%".
+		Added field "offset": [0, "-10%"].
+	Added element "non_transparent_background":
+		field "type": "image"
+		field "texture": "textures/ui/menubackground"
+		field "layer": 1
+		field "alpha": 1
+Changed namespace "persona_sdl":
+	Changed element "appearance_preset_side_panel":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Changed item 0 from 100 to "80%y".
+			Unchanged item 1: "100%sm".
+		Changed field "controls":
+			Changed control:
+				Changed element "appearance_presets_panel":
+					Unchanged field "type": "panel".
+					Changed field "variables":
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 14 (+2, -0)
+								Added variable "$left_appearance_size": "$large_preset_appearance_size".
+								Added variable "$right_appearance_size": "$small_preset_appearance_size".
+					Changed field "controls":
+						Changed control:
+							Changed element "left_appearance_preset@persona_sdl.persona_appearance_preset_panel":
+								Changed field "size" from "$preset_appearance_size" to "$left_appearance_size".
+						Changed control:
+							Changed element "right_appearance_preset@persona_sdl.persona_appearance_preset_panel":
+								Changed field "size" from "$preset_appearance_size" to "$right_appearance_size".
+					Changed field "$variables":
+						Total variable: 15 (+2, -0)
+						Added variable "$left_appearance_size": "$small_preset_appearance_size".
+						Added variable "$right_appearance_size": "$large_preset_appearance_size".
+		Changed field "$variables":
+			Total variable: 15 (+1, -0)
+			Moved variable from "$preset_appearance_size" to "$large_preset_appearance_size".
+			Changed variable "$large_preset_appearance_min_size":
+				Changed item 1 from 105 to 85.
+			Changed variable "$small_preset_appearance_min_size":
+				Changed item 1 from 95 to 75.
+			Added variable "$small_preset_appearance_size":
+				item 0: "51.2821%y"
+				item 1: "80%"
+	Changed element "persona_preset_main_panel@persona_sdl.persona_appearance_preset_panel":
+		Changed field "size" from [61.53852, 120] to "$persona_preset_size".
+		Changed field "$variables":
+			Total variable: 7 (+1, -0)
+			Added variable "$persona_preset_size|default":
+				item 0: "51.2821%y"
+				item 1: 120
+		Added field "variables":
+			variable:
+				field "requires": "$pocket_edition"
+				field "$variables":
+					variable "$persona_preset_size":
+						item 0: "51.2821%y"
+						item 1: 100
 Changed namespace "play":
 	Total element: 295 (+0, -2)
 	Changed element "cloud_upload_and_edit_world_stack_panel":
@@ -336,6 +532,18 @@ Changed namespace "play":
 						variable "$secondary_header_button": "play.cloud_upload_and_edit_world_stack_panel"
 						variable "$secondary_visible": "$local_world_edit_button_visible"
 		field "$variables": variable "$local_world_edit_button_visible|default": true
+	Changed element "network_world_player_count":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "count@play.world_list_text":
+					Changed field "bindings":
+						Total binding: 2 (+1, -0)
+						Added binding:
+							field "binding_type": "collection"
+							field "binding_name": "#network_world_player_count_visible"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "$collection_name"
 	Removed element "ownership_verification_in_progress_content":
 		field "type": "stack_panel"
 		field "orientation": "vertical"
@@ -377,74 +585,278 @@ Changed namespace "play":
 				field "binding_collection_name": "local_worlds"
 				field "binding_name": "#is_ownership_verification_in_progress"
 				field "binding_name_override": "#visible"
-Changed namespace "realms_allowlist":
-	Changed element "gamer_pic":
-		field "type": "image"
-		field "texture": "#texture"
-		field "texture_file_system": "#texture_file_system"
-		field "bindings":
-			binding:
-				field "binding_name": "#gamerpic_texture"
-				field "binding_name_override": "#texture"
-				field "binding_type": "collection"
-				field "binding_collection_name": "$collection_binding_name"
-			binding:
-				field "binding_name": "#gamerpic_texture_file_system"
-				field "binding_name_override": "#texture_file_system"
-				field "binding_type": "collection"
-				field "binding_collection_name": "$collection_binding_name"
-		field "type": "custom"
-		field "renderer": "profile_image_renderer"
-		field "bindings":
-			binding:
-				field "binding_name": "#profile_image_options"
-				field "binding_type": "collection"
-				field "binding_collection_name": "$collection_binding_name"
-	Changed element "gamerpic_panel":
+	Changed element "servers_content_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 5 (+0, -2)
+			Removed control element "more_servers_divider@common.horizontal_divider": empty.
+			Removed control element "more_servers_panel@play.manually_added_servers_scrolling_content": empty.
+Changed namespace "popup_dialog":
+	Total element: 41 (+2, -0)
+	Added element "modal_checkbox_button@common.checkbox":
+		field "size": ["100%", 30]
+		field "anchor_to": "bottom_left"
+		field "anchor_from": "bottom_left"
+		field "tts_control_type_order_priority": 100
+		field "tts_value_order_priority": 101
+		field "controls":
+			control:
+				element "header_description_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls":
+						control:
+							element "checkbox_visuals@common.toggle_visuals":
+								field "size": [30, "100%"]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+						control:
+							element "buffer_panel":
+								field "type": "panel"
+								field "layer": 3
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$light_button_default_text_color"
+											field "text": "$toggle_label_text"
+											field "size": ["default", "default"]
+											field "anchor_from": "left_middle"
+											field "anchor_to": "left_middle"
+						control:
+							element "padding_panel":
+								field "type": "panel"
+								field "size": [30, "100%"]
+		field "$variables":
+			variable "$toggle_name": "$popup_dialog_checkbox_button_name"
+			variable "$toggle_state_binding_name": "#modal_checkbox_state"
+			variable "$toggle_label_text|default": "#modal_rightcancel_button_text"
+			variable "$toggle_enabled_binding_type": "global"
+	Changed element "modal_dialog_popup":
 		Unchanged field "type": "panel".
+		Changed field "variables":
+			Total variable: 7 (+1, -0)
+			Added variable:
+				field "requires": "$two_buttons_checkbox_visible"
+				field "$variables":
+					variable "$modal_screen_size":
+						item 0: 214
+						item 1: 190
+					variable "$dialog_background_override": "dialog_background_hollow_6"
+					variable "$button_panel": "popup_dialog.two_buttons_checkbox_panel"
+					variable "$modal_panel_label_size":
+						item 0: "100% - 16px"
+						item 1: "100% - 124px"
+	Changed element "modal_input_panel@common.input_panel":
+		Changed field "$variables":
+			Total variable: 5 (+1, -0)
+			Added variable "$popup_dialog_checkbox_button_name|default": "popup_dialog.checkbox_button".
+	Added element "two_buttons_checkbox_panel":
+		field "type": "panel"
+		field "debug": "red"
+		field "anchor_to": "bottom_middle"
+		field "anchor_from": "bottom_middle"
+		field "size": ["100%-14px", 90]
+		field "offset": [0, -7]
+		field "controls":
+			control element "left@popup_dialog.modal_left_button": field "size": ["100%", "33% - 1px"]
+			control element "middle@popup_dialog.modal_middle_button": field "size": ["100%", "33% - 1px"]
+			control element "checkbox@popup_dialog.modal_checkbox_button": field "size": ["100%", "33% - 1px"]
+Changed namespace "realmsPlus_packs":
+	Changed element "scrolling_content_stack":
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 2 (+1, -1)
+			Total control: 2 (+0, -2)
 			Removed control:
-				element "gamer_pic@realms_allowlist.gamer_pic":
-					field "layer": 1
-					field "size": ["100% - 2px", "100% - 2px"]
+				element "view_all_packs_title_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "view_all_packs_title@common.minecraftTenLabel":
+								field "size": ["default", "default"]
+								field "max_size": ["100%", "default"]
+								field "color": "$store_white_text_color"
+								field "font_type": "MinecraftTenEmoticon"
+								field "text": "store.realmsPlus.viewAllPacksTitle"
+			Removed control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 4]
+Changed namespace "realms_world_section":
+	Changed element "panel_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 41 (+2, -0)
 			Added control:
-				element "gamer_pic@realms_allowlist.gamer_pic":
-					field "layer": 1
-					field "size": ["100% - 2px", "100% - 2px"]
-	Changed element "linked_account_blocked_panel@realms_common.main_banner":
-		Changed field "controls":
-			Changed control:
-				Changed element "progress@progress.progress_loading_bars":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "source_property_name" from "(#texture = '')" to "(#profile_image_options = '')".
-	Changed element "linked_account_panel@realms_common.main_banner":
-		Changed field "controls":
-			Changed control:
-				Changed element "progress@progress.progress_loading_bars":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "source_property_name" from "(#texture = '')" to "(#profile_image_options = '')".
-	Changed element "linked_user_stack_panel":
+				element "player_sleep_toggle@settings_common.option_toggle":
+					field "ignored": "$realm_no_world_edit"
+					field "$variables":
+						variable "$tts_section_header": "createWorldScreen.worldSettings"
+						variable "$option_label": "createWorldScreen.playerSleep"
+						variable "$option_binding_name": "#player_sleep"
+						variable "$option_enabled_binding_name": "#player_sleep_enabled"
+						variable "$toggle_name": "player_sleep"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+						variable "$toggle_binding_condition": "always_when_visible"
+			Added control:
+				element "player_sleep_percentage_slider@settings_common.option_slider":
+					field "ignored": "$realm_no_world_edit"
+					field "$variables":
+						variable "$tts_section_header": "createWorldScreen.worldSettings"
+						variable "$option_label": "#player_sleep_percentage_slider_label"
+						variable "$slider_name": "player_sleep_percentage"
+						variable "$has_option_description": true
+						variable "$option_description": "createWorldScreen.playerSleepPercentageDescription"
+						variable "$slider_value_binding_name": "#player_sleep_percentage"
+						variable "$option_enabled_binding_name": "#player_sleep_percentage_enabled"
+						variable "$slider_tts_text_value": "#player_sleep_percentage_text_value"
+						variable "$slider_steps_binding_name": "#player_sleep_percentage_steps"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+Changed namespace "resource_packs":
+	Total element: 124 (+3, -0)
+	Added element "addon_header_control":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "layer": 3
+		field "controls":
+			control:
+				element "header_description_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "controls":
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+						control:
+							element "description_center_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "text": "resourcePack.warning.multiple.addon"
+											field "color": "$black_color"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": [2, "100%"]
+						control:
+							element "link_center_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "controls":
+									control:
+										element "addon_link_button@common_buttons.underline_button":
+											field "size": ["100%c", "100%c"]
+											field "offset": [0, 1]
+											field "$variables":
+												variable "$pressed_button_name": "button.addonLink"
+												variable "$single_label_size":
+													item 0: "default"
+													item 1: "default"
+												variable "$single_line_font_scale_factor": 1.0
+												variable "$font_type": "default"
+												variable "$dark_button_default_text_color": "$black_color"
+												variable "$underline_default_color": "$black_color"
+												variable "$single_line_label_text": "resourcePack.warning.multiple.addon.link"
+						control:
+							element "padding_2":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+		field "$variables":
+			variable "$black_color":
+				item 0: 0.0
+				item 1: 0.0
+				item 2: 0.0
+	Added element "addon_panel_bg":
+		field "type": "panel"
+		field "controls":
+			control element "black_background@resource_packs.black_image": field "layer": 1
+			control:
+				element "yellow@resource_packs.yellow_image":
+					field "size": ["100%-2px", "100%-2px"]
+					field "layer": 2
+	Changed element "selected_stack_panel":
 		Unchanged field "type": "stack_panel".
-		Changed field "bindings":
-			Changed binding:
-				Changed field "source_property_name" from "(not (#texture = ''))" to "(not (#profile_image_options = ''))".
-	Changed element "xbl_profile_panel@realms_common.main_banner":
 		Changed field "controls":
+			Total control: 16 (+2, -0)
 			Changed control:
-				Changed element "progress@progress.progress_loading_bars":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "source_property_name" from "(#texture = '')" to "(#profile_image_options = '')".
-	Changed element "xbl_user_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "bindings":
-			Changed binding:
-				Changed field "source_property_name" from "(not (#texture = ''))" to "(not (#profile_image_options = ''))".
+				Changed element "top_panel":
+					Unchanged field "type": "panel".
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$focus_override_down": "addon_stacking_warning_panel".
+			Changed control:
+				Changed element "selected_packs_title_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$focus_override_up": "addon_stacking_warning_panel".
+			Changed control:
+				Moved element from "offset_1" to "offset_2".
+			Added control:
+				element "addon_stacking_warning_panel":
+					field "type": "panel"
+					field "size": ["100%", 30]
+					field "controls":
+						control element "addon_panel_bg@resource_packs.addon_panel_bg": empty
+						control element "header_control@resource_packs.addon_header_control": empty
+					field "bindings":
+						binding:
+							field "binding_name": "$addon_stacking_warning_visibility_binding"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$focus_id": "addon_stacking_warning_panel"
+			Added control:
+				element "offset_1":
+					field "type": "panel"
+					field "size": ["100%", "2px"]
+	Added element "yellow_image":
+		field "type": "image"
+		field "texture": "textures/ui/White"
+		field "color": [1.0, 0.9098, 0.4]
+Changed namespace "sdl_dropdowns":
+	Changed element "sdl_rows_toggle@common_toggles.light_content_toggle":
+		Changed field "$variables":
+			Total variable: 29 (+1, -0)
+			Added variable "$sdl_label_bindings":
+				item 0:
+					item "binding_type": "$store_factory_collection_details"
+					item "binding_collection_name": "$store_factory_collection_name"
+					item "binding_collection_prefix": "$store_factory_collection_prefix"
+				item 1:
+					item "binding_type": "$sdl_label_binding_type"
+					item "binding_collection_name": "$sdl_label_collection_name"
+					item "binding_name": "$sdl_label_binding_name"
+				item 2:
+					item "binding_type": "$sdl_label_binding_type"
+					item "binding_collection_name": "$sdl_label_collection_name"
+					item "binding_name": "$sdl_label_text_color"
+					item "binding_name_override": "#color"
+				item 3:
+					item "binding_type": "$sdl_label_binding_type"
+					item "binding_collection_name": "$sdl_label_collection_name"
+					item "binding_name": "$sdl_label_font_type"
+					item "binding_name_override": "#font_type"
+				item 4:
+					item "binding_type": "$sdl_label_binding_type"
+					item "binding_collection_name": "$sdl_label_collection_name"
+					item "binding_name": "$sdl_label_font_scalar"
+					item "binding_name_override": "#font_scale_factor"
+				item 5:
+					item "binding_type": "$sdl_label_binding_type"
+					item "binding_collection_name": "$sdl_label_collection_name"
+					item "binding_name": "$sdl_label_alignment"
+					item "binding_name_override": "#text_alignment"
 Changed namespace "sdl_text_row":
-	Total element: 4 (+0, -1)
+	Total element: 6 (+0, -1)
 	Removed element "label_hover":
 		field "type": "panel"
 		field "size": ["100%", "100%"]
@@ -457,7 +869,18 @@ Changed namespace "sdl_text_row":
 					field "offset": [0, 2]
 					field "anchor_to": "top_middle"
 					field "anchor_from": "top_middle"
-	Changed element "sdl_text_row":
+	Changed element "sdl_header_component_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "header_internals@sdl_text_row.label_button":
+					Changed field "controls":
+						Total control: 3 (+2, -2)
+						Removed control element "pressed@sdl_text_row.label_hover": empty.
+						Removed control element "hover@sdl_text_row.label_hover": empty.
+						Added control element "pressed@sdl_text_row.label_hover": empty.
+						Added control element "hover@sdl_text_row.label_hover": empty.
+	Changed element "sdl_text_row_component_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
@@ -471,6 +894,28 @@ Changed namespace "sdl_text_row":
 								field "size": ["100%", "100%"]
 						control element "pressed@sdl_text_row.label_hover": empty
 						control element "hover@sdl_text_row.label_hover": empty
+Changed namespace "server_form":
+	Changed element "custom_dropdown":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "dropdown@settings_common.option_dropdown":
+					Changed field "$variables":
+						Changed variable "$dropdown_area" from "generated_form" to "inside_header_panel".
+		Added field "layer": 2.
+	Changed element "dynamic_button":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "panel_name":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "image":
+								Unchanged field "type": "image".
+								Changed field "offset":
+									Changed item 0 from -2 to 0.
+									Unchanged item 1: 0.
 Changed namespace "start":
 	Total element: 75 (+3, -26)
 	Removed element "ai_lesson_crafter_button@common_buttons.light_content_button":
@@ -648,6 +1093,7 @@ Changed namespace "start":
 		Changed field "size":
 			Changed item 0 from "237%y" to 25.
 			Changed item 1 from "100%" to 25.
+		Removed field "allow_debug_missing_texture": false.
 		Added field "anchor_to": "bottom_left".
 		Added field "anchor_from": "bottom_left".
 	Moved element from "gathering_button@common_buttons.light_text_form_fitting_button" to "gathering_button@common_buttons.light_text_button".
@@ -1195,6 +1641,10 @@ Changed namespace "start":
 							field "requires": "(not $showing_new_player_flow_buttons)"
 							field "$variables": variable "$anim_type": 1.0
 					Removed field "alpha": "$anim_type".
+					Removed field "bindings":
+						binding:
+							field "binding_name": "#online_stack_visible"
+							field "binding_name_override": "#visible"
 	Changed element "store_button@common_buttons.light_content_button":
 		Removed field "bindings":
 			binding:
@@ -1408,3 +1858,13 @@ Changed namespace "start":
 		field "anchor_from": "top_right"
 		field "anchor_to": "top_right"
 		field "bindings": binding field "binding_name": "#version"
+Changed namespace "world_section":
+	Changed element "addon_section@resource_packs.selected_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "$variables":
+			Total variable: 67 (+1, -0)
+			Added variable "$addon_stacking_warning_visibility_binding": "#addon_stacking_warning_visible_addon".
+	Changed element "level_texture_pack_section@resource_packs.selected_stack_panel":
+		Changed field "$variables":
+			Total variable: 68 (+1, -0)
+			Added variable "$addon_stacking_warning_visibility_binding": "#addon_stacking_warning_visible_level".

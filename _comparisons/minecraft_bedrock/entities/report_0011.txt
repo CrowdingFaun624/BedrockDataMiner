@@ -1,12 +1,66 @@
-Difference of "entities" between "1.0.5.0" (beta of "1.0.5") and "1.0.5.3" (beta of "1.0.5").
+Difference of "entities" between "1.0.5" and "1.0.6.0" (beta of "1.0.6").
 
-Changed entity "shulker_bullet.json":
+Changed entity "skeleton_horse.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 6 (+2, -0)
+				Changed component group "minecraft:skeleton_horse_adult":
+					Total component: 3 (+1, -0)
+					Added component "minecraft:tamemount":
+						field "minTemper": 100
+						field "maxTemper": 101
+						field "feed_text": "action.interact.feed"
+						field "ride_text": "action.interact.mount"
+						field "feedItems": empty
+						field "autoRejectItems":
+							item field "item": "horsearmorleather"
+							item field "item": "horsearmoriron"
+							item field "item": "horsearmorgold"
+							item field "item": "horsearmordiamond"
+							item field "item": "saddle"
+						field "tame_event":
+							field "event": "minecraft:on_tame"
+							field "target": "self"
+				Added component group "minecraft:skeleton_horse_saddled":
+					component "minecraft:inventory":
+						field "inventory_size": 2
+						field "container_type": "horse"
+					component "minecraft:is_tamed": empty
+					component "minecraft:behavior.player_ride_tamed": empty
+				Added component group "minecraft:skeleton_horse_tamed":
+					component "minecraft:equippable":
+						field "slots":
+							slot:
+								field "item": "saddle"
+								field "on_equip": field "event": "minecraft:skeleton_horse_saddled"
+					component "minecraft:inventory":
+						field "inventory_size": 2
+						field "container_type": "horse"
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:shulker_bullet".
-				Changed component "minecraft:projectile":
-					Changed field "onHit":
-						Changed field "mob_effect":
-							Unchanged field "effect": "levitation".
-							Changed field "amplifier" from 8 to 1.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeletonhorse".
+				Changed component "minecraft:rideable":
+					Changed field "family_types":
+						Total family: 2 (+1, -0)
+						Added family "player".
+			Changed field "events":
+				Total event: 7 (+2, -0)
+				Added event "minecraft:on_tame":
+					field "add": field "component_groups": component group "minecraft:skeleton_horse_tamed"
+					field "remove": field "component_groups": component group "minecraft:skeleton_horse_adult"
+				Added event "minecraft:skeleton_horse_saddled":
+					field "add": field "component_groups": component group "minecraft:skeleton_horse_saddled"
+					field "remove": field "component_groups": component group "minecraft:skeleton_horse_tamed"
+Changed entity "slime.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:slime_large":
+					Changed component "minecraft:movement":
+						Changed field "value" from 0.25 to 0.6.
+				Changed component group "minecraft:slime_medium":
+					Changed component "minecraft:movement":
+						Changed field "value" from 0.22 to 0.4.
+				Changed component group "minecraft:slime_small":
+					Changed component "minecraft:movement":
+						Changed field "value" from 0.21 to 0.3.

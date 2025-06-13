@@ -1,54 +1,34 @@
-Difference of "render_controllers" between "1.16.230.56" (beta of "1.17.0") and "1.17.0.50" (beta of "1.17.0").
+Difference of "render_controllers" between "1.17.2" and "1.17.10.20" (beta of "1.17.10").
 
-Changed file "item_default.render_controllers.json":
-	Total resource pack: 2 (+1, -0)
-	Added resource pack "experimental":
-		field "format_version": "1.10"
+Total file: 100 (+2, -0)
+Added file "ender_crystal.render_controllers.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
 		field "render_controllers":
-			render controller "controller.render.item_default":
-				field "geometry": "geometry.default"
-				field "materials": material dict material "*": "variable.is_enchanted ? material.enchanted : material.default"
-				field "textures":
-					texture "texture.default"
-					texture "texture.enchanted"
-Changed file "player.render_controllers.json":
-	Total resource pack: 2 (+1, -0)
-	Added resource pack "experimental":
-		field "format_version": "1.8.0"
+			render controller "controller.render.ender_crystal":
+				field "geometry": "Geometry.default"
+				field "part_visibility": part visibility dict part visibility "base": "query.show_bottom"
+				field "materials": material dict material "*": "Material.default"
+				field "textures": texture "Texture.default"
+Added file "ender_dragon.render_controllers.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
 		field "render_controllers":
-			render controller "controller.render.player.first_person":
+			render controller "controller.render.ender_dragon_death_main_pass":
+				field "geometry": "Geometry.default"
+				field "materials": material dict material "*": "Material.dissolve_1"
+				field "textures": texture "Texture.default"
+			render controller "controller.render.ender_dragon_death_pre_pass":
+				field "geometry": "Geometry.default"
+				field "materials": material dict material "*": "Material.dissolve_0"
+				field "textures": texture "Texture.exploding"
+				field "part_visibility": part visibility dict part visibility "*": "query.death_ticks > 1.0"
+				field "is_hurt_color":
+					channel "r": "this"
+					channel "g": "this"
+					channel "b": "this"
+					channel "a": "query.death_ticks > 1.0 ? variable.death_alpha : this"
+			render controller "controller.render.ender_dragon_default":
 				field "geometry": "Geometry.default"
 				field "materials": material dict material "*": "Material.default"
 				field "textures": texture "Texture.default"
-				field "part_visibility":
-					part visibility dict part visibility "*": false
-					part visibility dict part visibility "rightArm": "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'"
-					part visibility dict part visibility "rightSleeve": "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'"
-					part visibility dict part visibility "leftArm": "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
-					part visibility dict part visibility "leftSleeve": "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
-			render controller "controller.render.player.map":
-				field "geometry": "Geometry.default"
-				field "materials": material dict material "*": "Material.default"
-				field "textures": texture "Texture.default"
-				field "part_visibility":
-					part visibility dict part visibility "*": false
-					part visibility dict part visibility "head": true
-					part visibility dict part visibility "hat": true
-					part visibility dict part visibility "helmet": true
-			render controller "controller.render.player.third_person":
-				field "geometry": "Geometry.default"
-				field "materials": material dict material "*": "Material.default"
-				field "textures": texture "Texture.default"
-				field "part_visibility":
-					part visibility dict part visibility "*": true
-					part visibility dict part visibility "helmet": "variable.helmet_layer_visible"
-					part visibility dict part visibility "leftLegging": "variable.leg_layer_visible"
-					part visibility dict part visibility "rightLegging": "variable.leg_layer_visible"
-					part visibility dict part visibility "leftBoot": "variable.boot_layer_visible"
-					part visibility dict part visibility "rightBoot": "variable.boot_layer_visible"
-					part visibility dict part visibility "leftSock": "variable.boot_layer_visible && variable.leg_layer_visible"
-					part visibility dict part visibility "rightSock": "variable.boot_layer_visible && variable.leg_layer_visible"
-					part visibility dict part visibility "bodyArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "leftArmArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "rightArmArmor": "variable.chest_layer_visible && !query.has_cape"
-					part visibility dict part visibility "belt": "variable.chest_layer_visible && variable.leg_layer_visible"

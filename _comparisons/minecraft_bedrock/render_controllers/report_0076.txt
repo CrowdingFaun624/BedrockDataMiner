@@ -1,12 +1,36 @@
-Difference of "render_controllers" between "1.20.70.21" (beta of "1.20.71") and "1.20.70.22" (beta of "1.20.71").
+Difference of "render_controllers" between "1.20.73" and "1.20.80.20" (beta of "1.20.80").
 
 Changed file "armadillo.render_controllers.json":
-	Changed resource pack "experimental":
+	Moved resource pack from "experimental" to "core".
+Changed file "wolf_armor.render_controllers.json":
+	Moved resource pack from "experimental" to "core".
+	Changed resource pack "core":
 		Changed field "render_controllers":
-			Changed render controller "controller.render.armadillo":
-				Changed field "part_visibility":
-					Total part visibility dict: 5 (+2, -2)
-					Removed part visibility dict part visibility "back_r_leg": "!variable.use_rolled_up_model".
-					Removed part visibility dict part visibility "back_l_leg": "!variable.use_rolled_up_model".
-					Added part visibility dict part visibility "left_hind_leg": "!variable.use_rolled_up_model".
-					Added part visibility dict part visibility "right_hind_leg": "!variable.use_rolled_up_model".
+			Changed render controller "controller.render.wolf_armor":
+				Removed field "rebuild_animation_matrices": true.
+				Changed field "geometry" from "Geometry.overlay" to "Geometry.default".
+				Changed field "materials":
+					Total material dict: 1 (+1, -1)
+					Removed material dict material "*": "Material.overlay".
+					Added material dict material "*": "Material.default".
+				Changed field "textures":
+					Total texture: 2 (+2, -1)
+					Added texture "Array.cracks[variable.cracks_index]".
+					Removed texture "Texture.overlay".
+					Added texture "variable.is_dyed ? Texture.dyed : Texture.default".
+				Removed field "part_visibility":
+					part visibility dict part visibility "head": "variable.has_armor"
+					part visibility dict part visibility "body": "variable.has_armor"
+					part visibility dict part visibility "upperBody": "variable.has_armor"
+					part visibility dict part visibility "leg0": "variable.has_armor"
+					part visibility dict part visibility "leg1": "variable.has_armor"
+					part visibility dict part visibility "leg2": "variable.has_armor"
+					part visibility dict part visibility "leg3": "variable.has_armor"
+					part visibility dict part visibility "tail": "variable.has_armor"
+				Added field "arrays":
+					field "textures":
+						array "Array.cracks":
+							array item "Texture.cracked_high"
+							array item "Texture.cracked_low"
+							array item "Texture.cracked_medium"
+							array item "Texture.cracked_none"

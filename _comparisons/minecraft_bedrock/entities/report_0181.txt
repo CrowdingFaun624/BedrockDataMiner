@@ -1,26 +1,641 @@
-Difference of "entities" between "1.19.60.24" (beta of "1.19.60") and "1.19.60.25" (beta of "1.19.60").
+Difference of "entities" between "1.19.73" and "1.19.80.20" (beta of "1.19.80").
 
-Changed entity "ender_dragon.json":
+Changed entity "bee.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.18.20"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:bee"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:has_nectar":
+						field "type": "bool"
+						field "client_sync": true
+						field "default": "query.had_component_group('has_nectar')"
+			field "component_groups":
+				component group "abort_shelter_detection":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "abort_sheltering"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "weather"
+											filter property "operator": "=="
+											filter property "value": "clear"
+										filter:
+											filter property "test": "is_daytime"
+											filter property "value": true
+				component group "angry_bee":
+					component "minecraft:angry":
+						field "duration": 25
+						field "broadcastAnger": true
+						field "broadcastRange": 20
+						field "broadcast_filters":
+							filter property "test": "is_family"
+							filter property "operator": "!="
+							filter property "value": "pacified"
+						field "calm_event":
+							field "event": "calmed_down"
+							field "target": "self"
+					component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "attack_once": true
+						field "speed_multiplier": 1.4
+						field "on_attack":
+							field "event": "countdown_to_perish_event"
+							field "target": "self"
+				component group "bee_adult":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "breeds_with":
+							field "mate_type": "minecraft:bee"
+							field "baby_type": "minecraft:bee"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+						field "breed_items":
+							item "minecraft:azalea_leaves_flowered"
+							item "minecraft:cherry_leaves"
+							item "minecraft:double_plant:0"
+							item "minecraft:double_plant:1"
+							item "minecraft:double_plant:4"
+							item "minecraft:double_plant:5"
+							item "minecraft:flowering_azalea"
+							item "minecraft:mangrove_propagule"
+							item "minecraft:pink_petals"
+							item "minecraft:red_flower"
+							item "minecraft:wither_rose"
+							item "minecraft:yellow_flower"
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
+				component group "bee_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item "minecraft:red_flower"
+							item "minecraft:yellow_flower"
+							item "minecraft:wither_rose"
+							item "minecraft:double_plant:0"
+							item "minecraft:double_plant:1"
+							item "minecraft:double_plant:4"
+							item "minecraft:double_plant:5"
+							item "minecraft:flowering_azalea"
+							item "minecraft:azalea_leaves_flowered"
+							item "minecraft:mangrove_propagule"
+							item "minecraft:cherry_leaves"
+							item "minecraft:pink_petals"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 11
+						field "speed_multiplier": 1.1
+				component group "countdown_to_perish":
+					component "minecraft:mark_variant": field "value": 1
+					component "minecraft:timer":
+						field "looping": false
+						field "time": [10, 60]
+						field "randomInterval": true
+						field "time_down_event":
+							field "event": "perish_event"
+							field "target": "self"
+					component "minecraft:type_family":
+						field "family":
+							family "arthropod"
+							family "bee"
+							family "mob"
+							family "pacified"
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+						field "force": true
+				component group "default_sound":
+					component "minecraft:ambient_sound_interval":
+						field "event_name": "ambient"
+						field "range": 0.0
+						field "value": 0.0
+				component group "easy_attack": component "minecraft:attack": field "damage": 2
+				component group "escape_fire":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": [20, 50]
+						field "randomInterval": true
+						field "time_down_event":
+							field "event": "stop_panicking_after_fire"
+							field "target": "self"
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+						field "force": true
+				component group "find_hive":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 180
+						field "time_down_event":
+							field "event": "find_hive_timeout"
+							field "target": "self"
+					component "minecraft:behavior.move_to_block":
+						field "priority": 10
+						field "search_range": 16
+						field "search_height": 10
+						field "tick_interval": 1
+						field "goal_radius": 0.633
+						field "target_blocks":
+							block "bee_nest"
+							block "beehive"
+						field "on_reach":
+							event:
+								field "event": "minecraft:bee_returned_to_hive"
+								field "target": "block"
+				component group "hard_attack":
+					component "minecraft:attack":
+						field "damage": 2
+						field "effect_name": "poison"
+						field "effect_duration": 18
+				component group "has_nectar":
+					component "minecraft:grows_crop":
+						field "charges": 10
+						field "chance": 0.03
+				component group "hive_full":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": [5, 20]
+						field "randomInterval": true
+						field "time_down_event":
+							field "event": "find_hive_event"
+							field "target": "self"
+				component group "look_for_food":
+					component "minecraft:ambient_sound_interval":
+						field "event_name": "ambient.pollinate"
+						field "range": 3.0
+						field "value": 2.0
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 180
+						field "time_down_event": field "event": "find_flower_timeout"
+					component "minecraft:behavior.move_to_block":
+						field "priority": 10
+						field "tick_interval": 1
+						field "start_chance": 0.5
+						field "search_range": 6
+						field "search_height": 4
+						field "goal_radius": 1.0
+						field "stay_duration": 20.0
+						field "target_selection_method": "random"
+						field "target_offset": [0, 0.25, 0]
+						field "target_block_filters":
+							filter property "test": "is_waterlogged"
+							filter property "subject": "block"
+							filter property "operator": "=="
+							filter property "value": false
+						field "target_blocks":
+							block "minecraft:azalea_leaves_flowered"
+							block "minecraft:cherry_leaves"
+							block "minecraft:double_plant:12"
+							block "minecraft:double_plant:13"
+							block "minecraft:double_plant:8"
+							block "minecraft:double_plant:9"
+							block "minecraft:flowering_azalea"
+							block "minecraft:mangrove_propagule"
+							block "minecraft:pink_petals"
+							block "minecraft:red_flower"
+							block "minecraft:wither_rose"
+							block "minecraft:yellow_flower"
+						field "on_stay_completed":
+							event:
+								field "event": "collected_nectar"
+								field "target": "self"
+				component group "normal_attack":
+					component "minecraft:attack":
+						field "damage": 2
+						field "effect_name": "poison"
+						field "effect_duration": 10
+				component group "perish":
+					component "minecraft:hurt_on_condition":
+						field "damage_conditions":
+							damage condition:
+								field "cause": "none"
+								field "damage_per_tick": 999
+				component group "return_to_home":
+					component "minecraft:behavior.go_home":
+						field "priority": 4
+						field "speed_multiplier": 1.0
+						field "interval": 1
+						field "goal_radius": 1.2
+						field "on_home":
+							event:
+								field "filters":
+									filter property "any_of":
+										filter:
+											filter property "test": "is_block"
+											filter property "subject": "block"
+											filter property "value": "minecraft:bee_nest"
+										filter:
+											filter property "test": "is_block"
+											filter property "subject": "block"
+											filter property "value": "minecraft:beehive"
+								field "event": "minecraft:bee_returned_to_hive"
+								field "target": "block"
+							event:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_block"
+											filter property "subject": "block"
+											filter property "operator": "!="
+											filter property "value": "minecraft:bee_nest"
+										filter:
+											filter property "test": "is_block"
+											filter property "subject": "block"
+											filter property "operator": "!="
+											filter property "value": "minecraft:beehive"
+								field "event": "find_hive_event"
+								field "target": "self"
+						field "on_failed":
+							event:
+								field "event": "find_hive_event"
+								field "target": "self"
+				component group "shelter_detection":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "event": "seek_shelter"
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "is_daytime"
+													filter property "value": false
+												filter:
+													filter property "test": "weather"
+													filter property "operator": "=="
+													filter property "value": "precipitation"
+										filter:
+											filter property "test": "bool_property"
+											filter property "domain": "minecraft:has_nectar"
+											filter property "operator": "!="
+										filter:
+											filter property "test": "has_biome_tag"
+											filter property "value": "overworld"
+				component group "take_nearest_target":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 5
+						field "time_down_event":
+							field "event": "calmed_down"
+							field "target": "self"
+					component "minecraft:behavior.nearest_attackable_target":
+						field "priority": 2
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "value": "player"
+								field "max_dist": 10
+				component group "track_attacker": component "minecraft:behavior.hurt_by_target": field "priority": 1
+			field "components":
+				component "minecraft:balloonable": field "mass": 0.5
+				component "minecraft:block_sensor":
+					field "sensor_radius": 16
+					field "sources":
+						filter:
+							filter property "test": "has_silk_touch"
+							filter property "subject": "other"
+							filter property "value": false
+					field "on_break":
+						event:
+							field "block_list":
+								block "minecraft:bee_nest"
+								block "minecraft:beehive"
+							field "on_block_broken": "hive_destroyed"
+				component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				component "minecraft:can_fly": empty
+				component "minecraft:collision_box":
+					field "width": 0.55
+					field "height": 0.5
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "deals_damage": false
+				component "minecraft:flying_speed": field "value": 0.15
+				component "minecraft:follow_range": field "value": 1024
+				component "minecraft:game_event_movement_tracking": field "emit_flap": true
+				component "minecraft:health":
+					field "value": 10
+					field "max": 10
+				component "minecraft:home":
+					field "restriction_radius": 22
+					field "home_block_list":
+						block "minecraft:bee_nest"
+						block "minecraft:beehive"
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.hover": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.hover":
+					field "can_path_over_water": true
+					field "can_sink": false
+					field "can_pass_doors": false
+					field "can_path_from_air": true
+					field "avoid_water": true
+					field "avoid_damage_blocks": true
+					field "avoid_sun": false
+				component "minecraft:on_target_acquired":
+					field "event": "attacked"
+					field "target": "self"
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "arthropod"
+						family "bee"
+						family "mob"
+				component "minecraft:behavior.float": field "priority": 19
+				component "minecraft:behavior.move_towards_home_restriction": field "priority": 9
+				component "minecraft:behavior.random_hover":
+					field "priority": 12
+					field "xz_dist": 8
+					field "y_dist": 8
+					field "y_offset": -1
+					field "interval": 1
+					field "hover_height": [1, 4]
+				component "minecraft:behavior.tempt":
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "within_radius": 8
+					field "can_tempt_vertically": true
+					field "items":
+						item "minecraft:azalea_leaves_flowered"
+						item "minecraft:cherry_leaves"
+						item "minecraft:double_plant:0"
+						item "minecraft:double_plant:1"
+						item "minecraft:double_plant:4"
+						item "minecraft:double_plant:5"
+						item "minecraft:flowering_azalea"
+						item "minecraft:mangrove_propagule"
+						item "minecraft:pink_petals"
+						item "minecraft:red_flower"
+						item "minecraft:wither_rose"
+						item "minecraft:yellow_flower"
+			field "events":
+				event "abort_sheltering":
+					field "add":
+						field "component_groups":
+							component group "look_for_food"
+							component group "shelter_detection"
+					field "remove":
+						field "component_groups":
+							component group "abort_shelter_detection"
+							component group "escape_fire"
+							component group "return_to_home"
+				event "attacked":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "angry_bee"
+							field "remove": field "component_groups": component group "take_nearest_target"
+						sequence item 1:
+							field "add": field "component_groups": component group "easy_attack"
+							field "filters":
+								filter property "test": "is_difficulty"
+								filter property "value": "easy"
+							field "remove":
+								field "component_groups":
+									component group "hard_attack"
+									component group "normal_attack"
+						sequence item 2:
+							field "add": field "component_groups": component group "normal_attack"
+							field "filters":
+								filter property "test": "is_difficulty"
+								filter property "value": "normal"
+							field "remove":
+								field "component_groups":
+									component group "easy_attack"
+									component group "hard_attack"
+						sequence item 3:
+							field "add": field "component_groups": component group "hard_attack"
+							field "filters":
+								filter property "test": "is_difficulty"
+								filter property "value": "hard"
+							field "remove":
+								field "component_groups":
+									component group "easy_attack"
+									component group "normal_attack"
+				event "calmed_down":
+					field "add":
+						field "component_groups":
+							component group "return_to_home"
+							component group "shelter_detection"
+					field "remove":
+						field "component_groups":
+							component group "angry_bee"
+							component group "take_nearest_target"
+				event "collected_nectar":
+					field "add":
+						field "component_groups":
+							component group "default_sound"
+							component group "has_nectar"
+							component group "return_to_home"
+					field "remove": field "component_groups": component group "look_for_food"
+					field "set_property": property "minecraft:has_nectar": true
+				event "countdown_to_perish_event":
+					field "add": field "component_groups": component group "countdown_to_perish"
+					field "remove":
+						field "component_groups":
+							component group "angry_bee"
+							component group "collect_nectar"
+							component group "escape_fire"
+							component group "find_hive"
+							component group "hive_full"
+							component group "look_for_food"
+							component group "take_nearest_target"
+							component group "track_attacker"
+				event "find_flower_timeout":
+					field "add": field "component_groups": component group "return_to_home"
+					field "remove": field "component_groups": component group "look_for_food"
+				event "find_hive_event":
+					field "add": field "component_groups": component group "find_hive"
+					field "remove":
+						field "component_groups":
+							component group "hive_full"
+							component group "return_to_home"
+				event "find_hive_timeout":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "look_for_food"
+							field "filters":
+								filter property "test": "bool_property"
+								filter property "operator": "!="
+								filter property "domain": "minecraft:has_nectar"
+							field "remove":
+								field "component_groups":
+									component group "escape_fire"
+									component group "find_hive"
+						sequence item 1:
+							field "add": field "component_groups": component group "return_to_home"
+							field "filters":
+								filter property "test": "bool_property"
+								filter property "domain": "minecraft:has_nectar"
+							field "remove": field "component_groups": component group "find_hive"
+				event "hive_destroyed":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "take_nearest_target"
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "self"
+								filter property "operator": "!="
+								filter property "value": "pacified"
+							field "remove": field "component_groups": component group "escape_fire"
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group "bee_adult"
+					field "remove": field "component_groups": component group "bee_baby"
+				event "minecraft:entity_born":
+					field "add":
+						field "component_groups":
+							component group "bee_baby"
+							component group "look_for_food"
+							component group "shelter_detection"
+							component group "track_attacker"
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "randomize":
+								randomize item:
+									field "weight": 95
+									field "add": field "component_groups": component group "bee_adult"
+								randomize item:
+									field "weight": 5
+									field "add": field "component_groups": component group "bee_baby"
+						sequence item 1:
+							field "add":
+								field "component_groups":
+									component group "look_for_food"
+									component group "shelter_detection"
+									component group "track_attacker"
+				event "minecraft:exited_disturbed_hive":
+					field "add": field "component_groups": component group "take_nearest_target"
+					field "remove":
+						field "component_groups":
+							component group "abort_shelter_detection"
+							component group "escape_fire"
+							component group "find_hive"
+							component group "has_nectar"
+							component group "return_to_home"
+							component group "shelter_detection"
+					field "set_property": property "minecraft:has_nectar": false
+				event "minecraft:exited_hive":
+					field "add":
+						field "component_groups":
+							component group "look_for_food"
+							component group "shelter_detection"
+					field "remove":
+						field "component_groups":
+							component group "abort_shelter_detection"
+							component group "find_hive"
+							component group "has_nectar"
+							component group "return_to_home"
+					field "set_property": property "minecraft:has_nectar": false
+				event "minecraft:exited_hive_on_fire": field "add": field "component_groups": component group "escape_fire"
+				event "minecraft:hive_full":
+					field "add": field "component_groups": component group "hive_full"
+					field "remove":
+						field "component_groups":
+							component group "find_hive"
+							component group "return_to_home"
+				event "perish_event": field "add": field "component_groups": component group "perish"
+				event "seek_shelter":
+					field "add":
+						field "component_groups":
+							component group "abort_shelter_detection"
+							component group "default_sound"
+							component group "return_to_home"
+					field "remove":
+						field "component_groups":
+							component group "collect_nectar"
+							component group "look_for_food"
+							component group "shelter_detection"
+				event "stop_panicking_after_fire": field "remove": field "component_groups": component group "escape_fire"
+Changed entity "boat.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.18.10" to "1.19.80".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:can_ride":
+					Changed component "minecraft:rideable":
+						Added field "passenger_max_width": 1.375.
+			Changed field "components":
+				Changed component "minecraft:rideable":
+					Added field "passenger_max_width": 1.375.
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:can_ride_bamboo":
+					Changed component "minecraft:rideable":
+						Added field "passenger_max_width": 1.375.
+				Changed component group "minecraft:can_ride_default":
+					Changed component "minecraft:rideable":
+						Added field "passenger_max_width": 1.375.
+Changed entity "chest_boat.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:ender_dragon".
-				Changed description "is_spawnable" from false to true.
-Changed entity "iron_golem.json":
+			Changed field "component_groups":
+				Changed component group "minecraft:can_ride":
+					Changed component "minecraft:rideable":
+						Added field "passenger_max_width": 1.375.
+			Changed field "components":
+				Changed component "minecraft:rideable":
+					Added field "passenger_max_width": 1.375.
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:can_ride_bamboo":
+					Changed component "minecraft:rideable":
+						Added field "passenger_max_width": 1.375.
+				Changed component group "minecraft:can_ride_default":
+					Changed component "minecraft:rideable":
+						Added field "passenger_max_width": 1.375.
+Changed entity "panda.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:iron_golem".
-				Changed description "is_spawnable" from false to true.
-Changed entity "snow_golem.json":
+			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 1.7 to 1.3.
+					Changed field "height" from 1.5 to 1.25.
+Changed entity "polar_bear.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:snow_golem".
-				Changed description "is_spawnable" from false to true.
-Changed entity "wither.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:wither".
-				Changed description "is_spawnable" from false to true.
+			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 1.3 to 1.4.

@@ -1,49 +1,25 @@
-Difference of "animations" between "1.18.0.20" (beta of "1.18.0") and "1.18.0.21" (beta of "1.18.0").
+Difference of "animations" between "1.18.10.20" (beta of "1.18.10") and "1.18.10.21" (beta of "1.18.10").
 
-Changed file "shield.animation.json":
+Changed file "axolotl.animation.json":
 	Changed resource pack "core":
 		Changed field "animations":
-			Changed animation "animation.shield.wield_main_hand_first_person":
+			Changed animation "animation.axolotl.walk_floor":
+				Added field "anim_time_update": "0.5 * query.modified_distance_moved".
+			Changed animation "animation.axolotl.walk_floor_underwater":
+				Added field "anim_time_update": "0.5 * query.modified_distance_moved".
+Changed file "player_firstperson.animation.json":
+	Changed resource pack "core":
+		Changed field "animations":
+			Total animation: 15 (+1, -0)
+			Added animation "animation.player.first_person.shield_block":
+				field "loop": true
+				field "bones":
+					bone "leftarm": field "position": [0.0, "-10.0 * (1.0 - context.player_offhand_arm_height)", 0.0]
+					bone "rightarm": field "position": [0.0, "query.get_equipped_item_name('off_hand') != 'shield' ? -10.0 * (1.0 - variable.player_arm_height) : 0.0", 0.0]
+			Changed animation "animation.player.first_person.swap_item":
 				Changed field "bones":
-					Changed bone "shield":
+					Changed bone "leftarm":
 						Changed field "position":
-							Changed vector item 0 from 5.3 to "variable.main_hand_first_person_pos_x".
-							Changed vector item 1 from 26.0 to "variable.main_hand_first_person_pos_y".
-							Changed vector item 2 from 0.4 to "variable.main_hand_first_person_pos_z".
-						Changed field "rotation":
-							Changed vector item 0 from 91.0 to "variable.main_hand_first_person_rot_x".
-							Changed vector item 1 from 65.0 to "variable.main_hand_first_person_rot_y".
-							Changed vector item 2 from -43.0 to "variable.main_hand_first_person_rot_z".
-			Changed animation "animation.shield.wield_main_hand_first_person_blocking":
-				Changed field "loop" from true to "hold_on_last_frame".
-				Changed field "bones":
-					Changed bone "shield":
-						Changed field "position" from [-2, -3.0, -2] to:
-							timestamp "0": ["variable.main_hand_first_person_pos_x - 2", "variable.main_hand_first_person_pos_y", "variable.main_hand_first_person_pos_z"]
-							timestamp "0.1": ["variable.main_hand_first_person_pos_x - 2", "variable.main_hand_first_person_pos_y - 3", "variable.main_hand_first_person_pos_z - 2"]
-						Changed field "rotation":
-							Changed vector item 0 from 0.0 to "variable.main_hand_first_person_rot_x".
-							Changed vector item 1 from -12.0 to "variable.main_hand_first_person_rot_y - 12.0".
-							Changed vector item 2 from 0.0 to "variable.main_hand_first_person_rot_z".
-			Changed animation "animation.shield.wield_off_hand_first_person":
-				Changed field "bones":
-					Changed bone "shield":
-						Changed field "position":
-							Changed vector item 0 from -13.5 to "variable.off_hand_first_person_pos_x".
-							Changed vector item 1 from -5.8 to "variable.off_hand_first_person_pos_y".
-							Changed vector item 2 from "(query.get_equipped_item_name == 'bow') && (query.main_hand_item_use_duration > 0.0f) ? -25.0 : 5.1" to "variable.is_using_bow ? variable.off_hand_first_person_with_bow_pos_z : variable.off_hand_first_person_pos_z".
-						Changed field "rotation":
-							Changed vector item 0 from 1.0 to "variable.off_hand_first_person_rot_x".
-							Changed vector item 1 from 176.0 to "variable.off_hand_first_person_rot_y".
-							Changed vector item 2 from -2.5 to "variable.off_hand_first_person_rot_z".
-			Changed animation "animation.shield.wield_off_hand_first_person_blocking":
-				Changed field "loop" from true to "hold_on_last_frame".
-				Changed field "bones":
-					Changed bone "shield":
-						Changed field "position" from [0.5, 4.2, 1.5] to:
-							timestamp "0": ["variable.off_hand_first_person_pos_x + 0.5", "variable.off_hand_first_person_pos_y", "variable.is_using_bow ? variable.off_hand_first_person_with_bow_pos_z : variable.off_hand_first_person_pos_z"]
-							timestamp "0.1": ["variable.off_hand_first_person_pos_x + 0.5", "variable.off_hand_first_person_pos_y + 4.2", "variable.is_using_bow ? variable.off_hand_first_person_with_bow_pos_z : variable.off_hand_first_person_pos_z + 1.5"]
-						Changed field "rotation":
-							Changed vector item 0 from 0.0 to "variable.off_hand_first_person_rot_x".
-							Changed vector item 1 from 0.0 to "variable.off_hand_first_person_rot_y".
-							Changed vector item 2 from 10.0 to "variable.off_hand_first_person_rot_z + 10.0".
+							Unchanged vector item 0: 0.0.
+							Changed vector item 1 from "(query.get_equipped_item_name('off_hand') == 'map' || query.get_equipped_item_name('off_hand') == 'shield') ? 0.0 : -10.0 * (1.0 - variable.player_arm_height)" to "(query.get_equipped_item_name('off_hand') == 'map' || query.get_equipped_item_name('off_hand') == 'shield') ? 0.0 : -10.0 * (1.0 - context.player_offhand_arm_height)".
+							Unchanged vector item 2: 0.0.

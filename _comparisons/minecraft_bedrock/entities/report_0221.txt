@@ -1,135 +1,145 @@
-Difference of "entities" between "1.21.0.20" (beta of "1.21.0") and "1.21.0.21" (beta of "1.21.0").
+Difference of "entities" between "1.21.2" and "1.21.10.20" (beta of "1.21.20").
 
-Total entity: 122 (+1, -0)
-Added entity "ominous_item_spawner.json":
-	behavior pack "experimental":
-		field "format_version": "1.20.80"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:ominous_item_spawner"
-				description "is_spawnable": false
-				description "is_summonable": false
-Changed entity "player.json":
-	Added behavior pack "experimental":
-		field "format_version": "1.18.20"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:player"
-				description "is_experimental": false
-				description "is_spawnable": false
-				description "is_summonable": false
-				description "spawn_category": "creature"
-			field "component_groups":
-				component group "minecraft:add_raid_omen":
-					component "minecraft:spell_effects":
-						field "add_effects":
-							effect:
-								field "effect": "raid_omen"
-								field "duration": 30
-								field "display_on_screen_animation": true
-						field "remove_effects": "bad_omen"
-					component "minecraft:timer":
-						field "time": [0.0, 0.0]
-						field "looping": false
-						field "time_down_event":
-							field "event": "minecraft:clear_add_raid_omen"
-							field "target": "self"
-				component group "minecraft:clear_raid_omen_spell_effect": component "minecraft:spell_effects": empty
-				component group "minecraft:raid_trigger":
-					component "minecraft:raid_trigger":
-						field "triggered_event":
-							field "event": "minecraft:remove_raid_trigger"
-							field "target": "self"
-			field "components":
-				component "minecraft:attack": field "damage": 1
-				component "minecraft:block_climber": empty
-				component "minecraft:breathable":
-					field "total_supply": 15
-					field "suffocate_time": -1
-					field "inhale_time": 3.75
-					field "generates_bubbles": false
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "width": 0.6
-					field "height": 1.8
-				component "minecraft:conditional_bandwidth_optimization": empty
-				component "minecraft:environment_sensor":
-					field "triggers":
-						field "filters":
-							filter property "all_of":
-								filter:
-									filter property "test": "has_mob_effect"
-									filter property "subject": "self"
-									filter property "value": "bad_omen"
-								filter:
-									filter property "test": "is_in_village"
-									filter property "subject": "self"
-									filter property "value": true
-						field "event": "minecraft:gain_raid_omen"
-				component "minecraft:exhaustion_values":
-					field "heal": 6
-					field "jump": 0.05
-					field "sprint_jump": 0.2
-					field "mine": 0.005
-					field "attack": 0.1
-					field "damage": 0.1
-					field "walk": 0.0
-					field "sprint": 0.1
-					field "swim": 0.01
-				component "minecraft:experience_reward": field "on_death": "Math.Min(query.player_level * 7, 100)"
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "filters":
-								filter property "test": "in_lava"
-								filter property "subject": "self"
-								filter property "operator": "=="
-								filter property "value": true
-							field "cause": "lava"
-							field "damage_per_tick": 4
-				component "minecraft:insomnia": field "days_until_insomnia": 3
-				component "minecraft:is_hidden_when_invisible": empty
-				component "minecraft:loot": field "table": "loot_tables/empty.json"
-				component "minecraft:movement": field "value": 0.1
-				component "minecraft:nameable":
-					field "always_show": true
-					field "allow_name_tag_renaming": false
-				component "minecraft:physics": field "push_towards_closest_space": true
-				component "minecraft:player.exhaustion":
-					field "value": 0
-					field "max": 20
-				component "minecraft:player.experience":
-					field "value": 0
-					field "max": 1
-				component "minecraft:player.level":
-					field "value": 0
-					field "max": 24791
-				component "minecraft:player.saturation":
-					field "value": 5
-					field "max": 20
-				component "minecraft:pushable":
-					field "is_pushable": false
-					field "is_pushable_by_piston": true
-				component "minecraft:rideable":
-					field "seat_count": 2
-					field "family_types": family "parrot_tame"
-					field "pull_in_entities": true
-					field "seats":
-						seat:
-							field "position": [0.4, -0.2, -0.1]
-							field "min_rider_count": 0
-							field "max_rider_count": 0
-							field "lock_rider_rotation": 0
-						seat:
-							field "position": [-0.4, -0.2, -0.1]
-							field "min_rider_count": 1
-							field "max_rider_count": 2
-							field "lock_rider_rotation": 0
-				component "minecraft:type_family": field "family": family "player"
-			field "events":
-				event "minecraft:clear_add_raid_omen":
-					field "add": field "component_groups": component group "minecraft:clear_raid_omen_spell_effect"
-					field "remove": field "component_groups": component group "minecraft:add_raid_omen"
-				event "minecraft:gain_raid_omen": field "add": field "component_groups": component group "minecraft:add_raid_omen"
-				event "minecraft:remove_raid_trigger": field "remove": field "component_groups": component group "minecraft:raid_trigger"
-				event "minecraft:trigger_raid": field "add": field "component_groups": component group "minecraft:raid_trigger"
+Changed entity "bogged.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:melee_attack":
+					Changed component "minecraft:attack":
+						Unchanged field "damage": 3.
+						Removed field "effect_name": "slowness".
+						Removed field "effect_duration": 10.
+Changed entity "camel.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.10".
+Changed entity "donkey.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.10".
+Changed entity "horse.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.10".
+Changed entity "iron_golem.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:preferred_path":
+					Unchanged field "max_fall_blocks": 1.
+					Unchanged field "jump_cost": 5.
+					Unchanged field "default_block_cost": 1.5.
+					Changed field "preferred_path_blocks":
+						Changed block category:
+							Unchanged field "cost": 1.
+							Changed field "blocks":
+								Total block: 83 (+16, -0)
+								Added block "brick_double_slab".
+								Added block "chiseled_stone_bricks".
+								Changed block from "double_stone_slab" to "cobblestone_double_slab".
+								Added block "cracked_stone_bricks".
+								Added block "dark_prismarine_slab".
+								Added block "mossy_cobblestone".
+								Added block "mossy_stone_bricks".
+								Added block "nether_brick_double_slab".
+								Added block "prismarine_brick_slab".
+								Added block "prismarine_slab".
+								Added block "purpur_slab".
+								Added block "quartz_double_slab".
+								Added block "red_nether_brick_slab".
+								Changed block from "stone_slab2" to "red_sandstone_slab".
+								Added block "sandstone_double_slab".
+								Added block "smooth_sandstone_slab".
+								Added block "smooth_stone_double_slab".
+								Added block "stone_brick_double_slab".
+								Changed block from "stonebrick" to "stone_bricks".
+Changed entity "llama.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.10".
+Changed entity "mule.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.10".
+Changed entity "trader_llama.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.10".
+Changed entity "villager_v2.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "adult":
+					Changed component "minecraft:preferred_path":
+						Unchanged field "max_fall_blocks": 1.
+						Unchanged field "jump_cost": 20.
+						Unchanged field "default_block_cost": 3.
+						Changed field "preferred_path_blocks":
+							Changed block category:
+								Unchanged field "cost": 1.
+								Changed field "blocks":
+									Total block: 83 (+16, -0)
+									Added block "brick_double_slab".
+									Added block "chiseled_stone_bricks".
+									Changed block from "double_stone_slab" to "cobblestone_double_slab".
+									Added block "cracked_stone_bricks".
+									Added block "dark_prismarine_slab".
+									Added block "mossy_cobblestone".
+									Added block "mossy_stone_bricks".
+									Added block "nether_brick_double_slab".
+									Added block "prismarine_brick_slab".
+									Added block "prismarine_slab".
+									Added block "purpur_slab".
+									Added block "quartz_double_slab".
+									Added block "red_nether_brick_slab".
+									Changed block from "stone_slab2" to "red_sandstone_slab".
+									Added block "sandstone_double_slab".
+									Added block "smooth_sandstone_slab".
+									Added block "smooth_stone_double_slab".
+									Added block "stone_brick_double_slab".
+									Changed block from "stonebrick" to "stone_bricks".
+				Changed component group "baby":
+					Changed component "minecraft:preferred_path":
+						Unchanged field "max_fall_blocks": 1.
+						Unchanged field "jump_cost": 5.
+						Unchanged field "default_block_cost": 1.5.
+						Changed field "preferred_path_blocks":
+							Changed block category:
+								Unchanged field "cost": 1.
+								Changed field "blocks":
+									Total block: 83 (+16, -0)
+									Added block "brick_double_slab".
+									Added block "chiseled_stone_bricks".
+									Changed block from "double_stone_slab" to "cobblestone_double_slab".
+									Added block "cracked_stone_bricks".
+									Added block "dark_prismarine_slab".
+									Added block "mossy_cobblestone".
+									Added block "mossy_stone_bricks".
+									Added block "nether_brick_double_slab".
+									Added block "prismarine_brick_slab".
+									Added block "prismarine_slab".
+									Added block "purpur_slab".
+									Added block "quartz_double_slab".
+									Added block "red_nether_brick_slab".
+									Changed block from "stone_slab2" to "red_sandstone_slab".
+									Added block "sandstone_double_slab".
+									Added block "smooth_sandstone_slab".
+									Added block "smooth_stone_double_slab".
+									Added block "stone_brick_double_slab".
+									Changed block from "stonebrick" to "stone_bricks".
+Changed entity "wind_charge_projectile.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:wind_charge_projectile".
+				Changed description "is_summonable" from false to true.
+Changed entity "wolf.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.20.80" to "1.21.10".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:wolf_armorable":
+					Changed component "minecraft:interact":
+						Changed field "interactions":
+							Changed interaction:
+								Changed field "equip_item_slot" from "slot.armor.chest" to "slot.armor.body".
+							Changed interaction:
+								Changed field "drop_item_slot" from "slot.armor.chest" to "slot.armor.body".
+							Changed interaction:
+								Changed field "repair_entity_item":
+									Changed field "slot" from "slot.armor.chest" to "slot.armor.body".
+									Unchanged field "amount": 8.

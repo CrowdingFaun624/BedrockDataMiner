@@ -1,39 +1,87 @@
-Difference of "animations" between "1.12.0.6" (beta of "1.12.0") and "1.12.0.9" (beta of "1.12.0").
+Difference of "animations" between "1.13.0.1" (beta of "1.13.0") and "1.13.0.2" (beta of "1.13.0").
 
-Changed file "iron_golem.animation.json":
+Changed file "player.animation.json":
 	Changed resource pack "core":
 		Changed field "animations":
-			Changed animation "animation.iron_golem.walk":
+			Total animation: 33 (+2, -0)
+			Changed animation "animation.player.bow_equipped":
 				Changed field "bones":
-					Total bone: 4 (+2, -0)
-					Added bone "body": field "rotation": [0.0, 0.0, "2.0 * (Math.abs(Math.mod(query.modified_distance_moved + 6, 13.0) - 6.5) - 3.25)"].
-					Added bone "head": field "rotation": [0.0, 0.0, "2.0 * (Math.abs(Math.mod(query.modified_distance_moved + 6, 13.0) - 6.5) - 3.25)"].
-Changed file "ocelot.animation.json":
+					Changed bone "leftarm":
+						Changed field "rotation":
+							Changed vector item 0 from "-85.0 + query.target_x_rotation" to "-90.0 + query.target_x_rotation - query.is_sneaking * 15.0 - this".
+							Unchanged vector item 1: "27.5 + query.target_y_rotation".
+							Unchanged vector item 2: 0.0.
+					Changed bone "rightarm":
+						Changed field "rotation":
+							Changed vector item 0 from "-70.0 + query.target_x_rotation" to "-90.0 + query.target_x_rotation - query.is_sneaking * 15.0 - this".
+							Unchanged vector item 1: "-5.0 + query.target_y_rotation".
+							Unchanged vector item 2: 0.0.
+			Changed animation "animation.player.crossbow_hold":
+				Changed field "bones":
+					Changed bone "leftarm":
+						Changed field "rotation":
+							Changed vector item 0 from "query.is_swimming ? 0 : -85.94 + query.target_x_rotation -this" to "query.is_swimming ? 0.0 : -93.0 + query.target_x_rotation - query.is_sneaking * 27.0 -this".
+							Changed vector item 1 from "query.is_swimming ? 0 : 34.38 + math.clamp(query.target_y_rotation, -45, 25) -this" to "query.is_swimming ? 0.0 : 42.0 + math.clamp(query.target_y_rotation, -45.0, 5.0) -this".
+							Changed vector item 2 from 0.0 to "query.is_sneaking * -15.0".
+					Changed bone "rightarm":
+						Changed field "rotation":
+							Changed vector item 0 from "query.is_swimming ? 0 : -90.0 + 5.73 + query.target_x_rotation -this" to "query.is_swimming ? 0.0 : -93.0 + query.target_x_rotation - query.is_sneaking * 27.0 -this".
+							Changed vector item 1 from "query.is_swimming ? 0 : -17.19 + math.clamp(query.target_y_rotation, -25, 45) -this" to "query.is_swimming ? 0.0 : math.clamp(query.target_y_rotation, -60.0, 45.0) -this".
+							Unchanged vector item 2: 0.0.
+			Changed animation "animation.player.move.arms.statue_of_liberty":
+				Changed field "bones":
+					Changed bone "leftarm":
+						Changed field "rotation":
+							Changed vector item 0 from "(math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed) * 57.3" to "variable.tcos0".
+							Unchanged vector item 1: 0.0.
+							Unchanged vector item 2: 0.0.
+					Changed bone "rightarm":
+						Changed field "rotation":
+							Changed vector item 0 from 180.0 to "variable.is_holding_right || variable.attack > 0.0  ? variable.tcos1 : 180.0".
+							Unchanged vector item 1: 0.0.
+							Changed vector item 2 from -17.20000076293945 to "variable.is_holding_right || variable.attack > 0.0 ? 0.0 : -17.2".
+			Changed animation "animation.player.shield_block_off_hand":
+				Changed field "bones":
+					Changed bone "leftitem":
+						Changed field "position":
+							Changed vector item 0 from 1.0 to "1.0 + query.item_is_charged * 1.5".
+							Changed vector item 1 from -3.0 to "-3.0 + query.item_is_charged".
+							Unchanged vector item 2: 0.0.
+						Changed field "rotation":
+							Changed vector item 0 from 0.0 to "query.item_is_charged * 30.0".
+							Changed vector item 1 from 70.0 to "70.0 - query.item_is_charged * 60.0".
+							Changed vector item 2 from 65.0 to "65.0 - query.item_is_charged * 15.0".
+			Changed animation "animation.player.swim":
+				Changed field "bones":
+					Total bone: 3 (+0, -2)
+					Removed bone "leftleg": field "rotation": ["math.lerp(0.0, math.cos(query.life_time * 390.0 + 180.0) * 17.2, variable.swim_amount)", 0.0, 0.0].
+					Removed bone "rightleg": field "rotation": ["math.lerp(0.0, math.cos(query.life_time * 390.0) * 17.2, variable.swim_amount)", 0.0, 0.0].
+			Added animation "animation.player.swim.legs":
+				field "loop": true
+				field "override_previous_animation": true
+				field "bones":
+					bone "leftleg": field "rotation": ["math.lerp(0.0, math.cos(query.life_time * 390.0 + 180.0) * 17.2, variable.swim_amount)", 0.0, 0.0]
+					bone "rightleg": field "rotation": ["math.lerp(0.0, math.cos(query.life_time * 390.0) * 17.2, variable.swim_amount)", 0.0, 0.0]
+			Added animation "animation.player.swim.legs.single":
+				field "loop": true
+				field "override_previous_animation": true
+				field "bones":
+					bone "leftleg": field "rotation": ["math.lerp(0.0, math.cos(query.life_time * 390.0) * 17.2, variable.swim_amount)", 0.0, 0.0]
+					bone "rightleg": field "rotation": ["math.lerp(0.0, math.cos(query.life_time * 390.0) * 17.2, variable.swim_amount)", 0.0, 0.0]
+Changed file "player_firstperson.animation.json":
 	Changed resource pack "core":
 		Changed field "animations":
-			Changed animation "animation.ocelot.sit":
+			Total animation: 9 (+1, -0)
+			Changed animation "animation.player.first_person.base_pose":
 				Changed field "bones":
-					Total bone: 8 (+1, -0)
-					Changed bone "backlegl":
+					Changed bone "rightarm":
 						Changed field "position":
-							Unchanged vector item 0: 0.0.
-							Changed vector item 1 from "1.0 - this" to "-2.0 - this".
-							Changed vector item 2 from "-2.0 - this" to "6.0 - this".
-					Changed bone "backlegr":
-						Changed field "position":
-							Unchanged vector item 0: 0.0.
-							Changed vector item 1 from "1.0 - this" to "-2.0 - this".
-							Changed vector item 2 from "-2.0 - this" to "6.0 - this".
-					Changed bone "body":
-						Removed field "position": [0.0, "-3.0 - this", "3.0 - this"].
-					Changed bone "frontlegl":
-						Changed field "position":
-							Unchanged vector item 0: 0.0.
-							Changed vector item 1 from "-4.5 - this" to "-1.5 - this".
-							Changed vector item 2 from "-1.0 - this" to "-7.0 - this".
-					Changed bone "frontlegr":
-						Changed field "position":
-							Unchanged vector item 0: 0.0.
-							Changed vector item 1 from "-4.5 - this" to "-1.5 - this".
-							Changed vector item 2 from "-1.0 - this" to "-7.0 - this".
-					Added bone "head": field "position": [0.0, -2.0, 0.0].
+							Unchanged vector item 0: 12.5.
+							Changed vector item 1 from "-10.5 - (1.0 - variable.player_height) * 0.6" to "-10.5 - (1.0 - variable.player_height) * 8.0".
+							Unchanged vector item 2: 12.0.
+			Added animation "animation.player.first_person.vr_attack_rotation":
+				field "loop": true
+				field "bones":
+					bone "rightarm":
+						field "position": ["5.0 * variable.hand_attack_x_position", "(variable.hand_attack_y_position - 0.8) * 8.75 + 5.0", "variable.hand_attack_z_position * 15.0"]
+						field "rotation": ["30.7 * math.sin(variable.first_person_rotation_factor * variable.attack_time * -180.0 - 45.0) * 1.5", 0.0, "21.8 * math.sin(variable.first_person_rotation_factor * variable.attack_time * 200.0 + 30.0) * 1.25"]

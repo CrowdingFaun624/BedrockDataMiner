@@ -1,17 +1,38 @@
-Difference of "animation_controllers" between "1.17.41" and "1.18.0.20" (beta of "1.18.0").
+Difference of "animation_controllers" between "1.18.10.20" (beta of "1.18.10") and "1.18.10.21" (beta of "1.18.10").
 
-Changed file "axolotl.animation_controllers.json":
+Changed file "player.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.axolotl.move":
+			Changed animation controller "controller.animation.player.root":
 				Changed field "states":
-					Changed state "idle":
+					Changed state "first_person":
 						Changed field "animations":
-							Total animation dict: 4 (+1, -1)
-							Removed animation dict animation "idle_floor": "!query.is_in_water && query.is_on_ground".
-							Added animation dict animation "idle_floor": "!query.is_in_water".
-					Changed state "moving":
+							Total animation dict: 9 (+2, -1)
+							Removed animation dict "first_person_swap_item".
+							Added animation dict animation "first_person_swap_item": "!query.blocking".
+							Added animation dict animation "first_person_shield_block": "query.blocking".
+Changed file "shield.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.shield.wield":
+				Changed field "states":
+					Total state: 2 (+0, -1)
+					Removed state "blocking":
+						field "animations":
+							animation dict animation "wield_main_hand_first_person_block": "query.get_equipped_item_name('off_hand') != 'shield' && query.get_equipped_item_name == 'shield' && c.item_slot == 'main_hand'"
+							animation dict animation "wield_off_hand_first_person_block": "query.get_equipped_item_name('off_hand') == 'shield' && c.item_slot != 'main_hand'"
+						field "transitions":
+							transition list transition "default": "!query.blocking"
+							transition list transition "third_person": "!c.is_first_person"
+					Changed state "default":
 						Changed field "animations":
-							Total animation dict: 4 (+1, -1)
-							Removed animation dict animation "walk_floor": "!query.is_in_water && query.is_on_ground".
-							Added animation dict animation "walk_floor": "!query.is_in_water".
+							Total animation dict: 4 (+4, -2)
+							Removed animation dict animation "wield_main_hand_first_person": "c.item_slot == 'main_hand'".
+							Removed animation dict animation "wield_off_hand_first_person": "c.item_slot != 'main_hand'".
+							Added animation dict animation "wield_main_hand_first_person": "!variable.is_blocking_main_hand && c.item_slot == 'main_hand'".
+							Added animation dict animation "wield_off_hand_first_person": "!variable.is_blocking_off_hand && c.item_slot == 'off_hand'".
+							Added animation dict animation "wield_main_hand_first_person_block": "variable.is_blocking_main_hand && c.item_slot == 'main_hand'".
+							Added animation dict animation "wield_off_hand_first_person_block": "variable.is_blocking_off_hand && c.item_slot == 'off_hand'".
+						Changed field "transitions":
+							Total transition list: 1 (+0, -1)
+							Removed transition list transition "blocking": "query.blocking".

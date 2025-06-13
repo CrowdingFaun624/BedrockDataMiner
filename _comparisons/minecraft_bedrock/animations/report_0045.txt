@@ -1,11 +1,32 @@
-Difference of "animations" between "1.16.100.55" (beta of "1.16.100") and "1.16.100.56" (beta of "1.16.100").
+Difference of "animations" between "1.16.200.51" (beta of "1.16.200") and "1.16.200.52" (beta of "1.16.200").
 
-Changed file "vindicator.animation.json":
-	Changed resource pack "core":
-		Changed field "animations":
-			Changed animation "animation.vindicator.base":
-				Changed field "bones":
-					Changed bone "leftarm":
-						Removed field "scale": "query.is_angry ? 1.0 : 0.0".
-					Changed bone "rightarm":
-						Removed field "scale": "query.is_angry ? 1.0 : 0.0".
+Total file: 115 (+1, -0)
+Added file "goat.animation.json":
+	resource pack "experimental":
+		field "format_version": "1.8.0"
+		field "animations":
+			animation "animation.goat.attack":
+				field "loop": true
+				field "bones": bone "head": field "rotation": ["variable.attack_head_rot", 0, 0]
+			animation "animation.goat.baby_scaling":
+				field "loop": true
+				field "bones":
+					bone "head":
+						field "position": [0.0, 10.0, 4.0]
+						field "scale": 1.4
+			animation "animation.goat.look_at_target":
+				field "loop": true
+				field "bones":
+					bone "head":
+						field "relative_to": field "rotation": "entity"
+						field "rotation": ["math.clamp(query.target_x_rotation, -40, 40)", "math.clamp(query.target_y_rotation, -45, 25)", 0]
+			animation "animation.goat.ram_attack":
+				field "loop": true
+				field "bones": bone "head": field "rotation": ["variable.ram_head_rot", 0, 0]
+			animation "animation.goat.walk":
+				field "loop": true
+				field "bones":
+					bone "left_back_leg": field "rotation": ["variable.tcos_left_side * 0.5", 0.0, 0.0]
+					bone "left_front_leg": field "rotation": ["-variable.tcos_left_side * 0.5", 0.0, 0.0]
+					bone "right_back_leg": field "rotation": ["variable.tcos_right_side * 0.5", 0.0, 0.0]
+					bone "right_front_leg": field "rotation": ["-variable.tcos_right_side * 0.5", 0.0, 0.0]

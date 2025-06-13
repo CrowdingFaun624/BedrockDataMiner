@@ -1,34 +1,86 @@
-Difference of "entities" between "1.2.20.2" (beta of "1.4.0") and "1.4.0".
+Difference of "entities" between "1.5.0.4" (beta of "1.5.0") and "1.5.0.7" (beta of "1.5.0").
 
-Changed entity "dolphin.json":
+Changed entity "drowned.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:dolphin".
-				Changed component "minecraft:navigation.generic":
-					Added field "can_sink": false.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:drowned".
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Removed filter property "any_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "player"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "snowgolem"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "irongolem"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "villager"
+								Added filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "snowgolem"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "irongolem"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "villager"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "in_water"
+												filter property "subject": "other"
+												filter property "value": true
+											filter:
+												filter property "test": "is_brightness"
+												filter property "subject": "other"
+												filter property "operator": "<"
+												filter property "value": 0.49
 Changed entity "fish.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "height" from 0.2 to 0.3.
 				Unchanged component "minecraft:identifier": field "id": "minecraft:cod".
-				Changed component "minecraft:behavior.avoid_mob_type":
-					Changed field "entity_types":
-						Changed entity type:
-							Moved field from "max_distance" to "max_dist".
-Changed entity "squid.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:squid".
-				Changed component "minecraft:navigation.walk":
-					Added field "can_sink": false.
 Changed entity "tropicalfish.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 0.2 to 0.4.
+					Changed field "height" from 0.2 to 0.4.
 				Unchanged component "minecraft:identifier": field "id": "minecraft:tropicalfish".
-				Changed component "minecraft:behavior.avoid_mob_type":
-					Changed field "entity_types":
-						Changed entity type:
-							Moved field from "max_distance" to "max_dist".
+Changed entity "zombie_villager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 23 (+1, -0)
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_villager".
+				Added component "minecraft:behavior.stomp_turtle_egg":
+					field "priority": 4
+					field "speed_multiplier": 1
+					field "search_range": 24
+					field "search_height": 3
+					field "goal_radius": 1.14
+					field "interval": 20

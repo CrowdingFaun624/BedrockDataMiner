@@ -1,387 +1,534 @@
-Difference of "ui" between "1.16.0.59" (beta of "1.16.0") and "1.16.0.60" (beta of "1.16.0").
+Difference of "ui" between "1.16.10" and "1.16.20.50" (beta of "1.16.20").
 
-Changed namespace "general_section":
-	Changed element "automation_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 10 (+0, -1)
-			Removed control:
-				element "automation_ingestion_endpoint_text_box@settings_common.option_text_edit":
-					field "$variables":
-						variable "$option_label": "Ingestion Endpoint"
-						variable "$max_text_edit_length": 2000
-						variable "$text_box_name": "automation_ingestion_endpoint"
-						variable "$option_binding_name": "#automation_ingestion_endpoint"
-Changed namespace "pdp":
-	Changed element "download_progress":
-		Unchanged field "type": "image".
-		Changed field "controls":
-			Changed control:
-				Changed element "stacker":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "sizer_text":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "download_progress_text":
-											Unchanged field "type": "label".
-											Changed field "bindings":
-												Changed binding:
-													Added field "binding_condition": "always_when_visible".
-						Changed control:
-							Changed element "sizer_bar":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "download_progress_bar@common_store.store_progress_bar_icon":
-											Changed field "$variables":
-												Changed variable "$progress_bindings":
-													Changed item 0:
-														Added item "binding_condition": "always_when_visible".
-	Changed element "download_progress_small@purchase_common.banner_fill":
-		Changed field "controls":
-			Changed control:
-				Changed element "stacker":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "sizer_text":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "download_progress_text":
-											Unchanged field "type": "label".
-											Changed field "bindings":
-												Changed binding:
-													Added field "binding_condition": "always_when_visible".
-						Changed control:
-							Changed element "sizer_bar":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "download_progress_bar@common_store.store_progress_bar_icon":
-											Changed field "$variables":
-												Changed variable "$progress_bindings":
-													Changed item 0:
-														Added item "binding_condition": "always_when_visible".
-Changed namespace "play":
-	Total element: 242 (+5, -1)
-	Changed element "add_server_toggle_button@common_toggles.light_text_toggle":
-		Changed field "$variables":
-			Total variable: 9 (+0, -2)
-			Removed variable "$toggle_on_hover_binding_type": "global".
-			Changed variable "$toggle_on_hover_binding_name" from "#toggle_on_hover" to "none".
-			Removed variable "$toggle_tab_focus_binding_type": "global".
-			Changed variable "$toggle_tab_focus_binding_name" from "#navigation_tab_focus_precedence" to "none".
-	Changed element "additional_server_info_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "server_info_stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "join_server_button@common_buttons.light_text_button":
-								Changed field "$variables":
-									Changed variable "$pressed_button_name" from "button.menu_network_world_item" to "button.menu_network_server_item".
-	Removed element "additional_server_toggle_base@common_toggles.dark_image_toggle_collection":
-		field "size": ["100%", "100%"]
-		field "bindings":
-			binding:
-				field "binding_type": "collection_details"
-				field "binding_collection_name": "$collection_name"
-			binding:
-				field "binding_name": "#cross_platform_enabled"
-				field "binding_name_override": "#enabled"
-			binding:
-				field "binding_type": "collection"
-				field "binding_name": "#additional_server_toggle_index"
-				field "binding_collection_name": "third_party_server_network_worlds"
-		field "$variables":
-			variable "$radio_toggle_group": true
-			variable "$toggle_name": "server_navigation_toggle"
-			variable "$toggle_grid_collection_name": "$collection_name"
-			variable "$toggle_tab_focus_binding_type": "global"
-			variable "$toggle_state_binding_name": "#toggle_state"
-			variable "$toggle_tab_focus_binding_name": "#navigation_tab_focus_precedence"
-			variable "$toggle_on_hover_binding_type": "global"
-			variable "$toggle_on_hover_binding_name": "#toggle_on_hover"
-			variable "$focus_override_right": "right_panel"
-			variable "$button_content": "play.additional_server_toggle_content"
-			variable "$toggle_group_forced_index": "#additional_server_toggle_index"
-	Changed element "featured_server_world_item":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 1 (+1, -1)
-			Removed control element "server_button@play.third_party_server_toggle_base": empty.
-			Added control:
-				element "server_button@play.server_toggle_base":
-					field "$variables":
-						variable "$button_content": "play.server_button_content_panel"
-						variable "$toggle_index_binding_name": "#third_party_toggle_index"
-	Added element "high_ping_popup_cancel_button@common_buttons.light_text_button":
-		field "button_mappings":
-			button mapping:
-				field "from_button_id": "button.menu_select"
-				field "to_button_id": "$pressed_button_name"
-				field "mapping_type": "pressed"
-			button mapping:
-				field "from_button_id": "button.menu_ok"
-				field "to_button_id": "$pressed_button_name"
-				field "mapping_type": "focused"
-		field "$variables":
-			variable "$pressed_button_name": "button.cancel_join_server"
-			variable "$button_text": "gui.cancel"
-	Added element "high_ping_popup_content_stack_panel":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100% - 8px", "100%c"]
-		field "layer": 5
-		field "controls":
-			control:
-				element "pad_0":
-					field "type": "panel"
-					field "size": ["100%", 10]
-			control:
-				element "ping_images_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "controls":
-						control:
-							element "ping_images_stack_panel":
-								field "type": "stack_panel"
-								field "orientation": "horizontal"
-								field "size": ["100%c", 20]
-								field "controls":
-									control:
-										element "medium_connection":
-											field "type": "image"
-											field "size": [20, "100%"]
-											field "texture": "textures/ui/Ping_Yellow_Dark"
-									control:
-										element "pad":
-											field "type": "panel"
-											field "size": [30, "100%"]
-									control:
-										element "low_connection":
-											field "type": "image"
-											field "size": [20, "100%"]
-											field "texture": "textures/ui/Ping_Red_Dark"
-			control:
-				element "pad_1":
-					field "type": "panel"
-					field "size": ["100%", 10]
-			control:
-				element "text_line_1":
-					field "type": "label"
-					field "size": ["100%", "default"]
-					field "font_type": "smooth"
-					field "text": "networkWorld.highPingWarning.line1"
-					field "color": "$main_header_text_color"
-			control:
-				element "pad_2":
-					field "type": "panel"
-					field "size": ["100%", 10]
-			control:
-				element "text_line_2":
-					field "type": "label"
-					field "size": ["100%", "default"]
-					field "font_type": "smooth"
-					field "text": "networkWorld.highPingWarning.line2"
-					field "color": "$main_header_text_color"
-			control:
-				element "pad_3":
-					field "type": "panel"
-					field "size": ["100%", 10]
-	Added element "high_ping_popup_join_button@common_buttons.light_text_button":
-		field "button_mappings":
-			button mapping:
-				field "from_button_id": "button.menu_select"
-				field "to_button_id": "$pressed_button_name"
-				field "mapping_type": "pressed"
-			button mapping:
-				field "from_button_id": "button.menu_ok"
-				field "to_button_id": "$pressed_button_name"
-				field "mapping_type": "focused"
-		field "$variables":
-			variable "$pressed_button_name": "button.join_server_anyway"
-			variable "$button_text": "networkWorld.join"
-	Changed element "more_servers_grid":
-		Unchanged field "type": "grid".
-		Changed field "$variables":
-			Total variable: 2 (+1, -0)
-			Added variable "$toggle_index_binding_name": "#additional_server_toggle_index".
-	Changed element "more_servers_world_item":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Moved element from "additional_server_toggle_base@play.additional_server_toggle_base" to "additional_server_toggle_base@play.server_toggle_base".
-				Changed element "additional_server_toggle_base@play.server_toggle_base":
-					Added field "$variables":
-						variable "$button_content": "play.additional_server_toggle_content"
-						variable "$toggle_index_binding_name": "#additional_server_toggle_index"
-			Changed control:
-				Changed element "network_server_world_edit_button@play.network_server_world_edit_button":
-					Added field "$variables": variable "$focus_override_right": "right_panel".
-	Changed element "play_screen_content":
+Changed namespace "beacon":
+	Changed element "usable_items_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "popup_dialog_factory":
-					Unchanged field "type": "factory".
-					Changed field "control_ids":
-						Total control id: 2 (+1, -0)
-						Added control id "high_ping_warning": "@play.popup_dialog_high_ping".
-	Added element "popup_dialog_high_ping@popup_dialog.modal_input_panel":
-		field "size": ["100%", "100%"]
-		field "controls":
-			control element "high_ping_popup_background@play.join_by_code_popup_background": field "layer": 0
-			control element "high_ping_popup_content@play.popup_two_buttons": field "layer": 1
-			control:
-				element "gamepad_helpers@common.gamepad_helpers_a_and_b":
-					field "layer": 1
-					field "anchor_from": "bottom_middle"
-					field "anchor_to": "bottom_middle"
-					field "offset": [0, "31px"]
-	Added element "popup_two_buttons":
-		field "type": "panel"
-		field "size": [250, 170]
-		field "anchor_from": "center"
-		field "anchor_to": "center"
-		field "controls":
-			control element "common_panel@common.common_panel": field "$variables": variable "$dialog_background": "dialog_background_hollow_2"
-			control element "title_label@common_dialogs.title_label": empty
-			control:
-				element "panel_indent":
-					field "type": "panel"
-					field "size": ["100% - 16px", "100% - 99px"]
-					field "offset": [0, 35]
-					field "anchor_from": "top_middle"
-					field "anchor_to": "top_middle"
-					field "controls": control element "inside_header_panel@$child_control": empty
-			control:
-				element "button_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100% - 14px", 30]
-					field "anchor_from": "bottom_middle"
-					field "anchor_to": "bottom_middle"
-					field "offset": [0, -7]
-					field "controls":
-						control element "left_button_panel@play.high_ping_popup_join_button": field "size": ["fill", "100%"]
-						control:
-							element "pad":
-								field "type": "panel"
-								field "size": [6, "100%"]
-						control element "right_button_panel@play.high_ping_popup_cancel_button": field "size": ["fill", "100%"]
-		field "$variables":
-			variable "$text_name": "networkWorld.highPingWarning.title"
-			variable "$child_control": "play.high_ping_popup_content_stack_panel"
-	Changed element "server_content_area":
-		Unchanged field "type": "panel".
-		Removed field "focus_nagivation_mode_down": "$focus_nagivation_mode_override_down".
-		Removed field "focus_nagivation_mode_up": "$focus_nagivation_mode_override_up".
-		Removed field "focus_nagivation_mode_left": "$focus_nagivation_mode_override_left".
-		Removed field "focus_nagivation_mode_right": "$focus_nagivation_mode_override_right".
-		Changed field "$variables":
-			Total variable: 2 (+1, -4)
-			Removed variable "$focus_nagivation_mode_override_down|default": "contained".
-			Removed variable "$focus_nagivation_mode_override_up|default": "contained".
-			Removed variable "$focus_nagivation_mode_override_left|default": "".
-			Removed variable "$focus_nagivation_mode_override_right|default": "".
-			Added variable "$default_focus_precedence": 2.
-	Changed element "server_scroll_content@play.common_content":
-		Changed field "controls":
-			Changed control:
-				Changed element "show_servers_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "left_panel":
-								Unchanged field "type": "panel".
-								Removed field "focus_nagivation_mode_down": "$focus_nagivation_mode_override_down".
-								Removed field "focus_nagivation_mode_up": "$focus_nagivation_mode_override_up".
-								Removed field "focus_nagivation_mode_left": "$focus_nagivation_mode_override_left".
-								Removed field "focus_nagivation_mode_right": "$focus_nagivation_mode_override_right".
-								Changed field "$variables":
-									Total variable: 2 (+2, -4)
-									Removed variable "$focus_nagivation_mode_override_down|default": "contained".
-									Removed variable "$focus_nagivation_mode_override_up|default": "contained".
-									Removed variable "$focus_nagivation_mode_override_left|default": "".
-									Removed variable "$focus_nagivation_mode_override_right|default": "".
-									Added variable "$focus_id": "left_panel".
-									Added variable "$default_focus_precedence": 1.
+				Changed element "netherite@beacon.item_renderer":
 					Added field "bindings":
 						binding:
-							field "binding_name": "(not #feature_server_message_visible)"
+							field "binding_name": "#supports_netherite"
 							field "binding_name_override": "#visible"
-	Changed element "server_scroll_panel@play.common_scroll_pane":
+			Changed control:
+				Changed element "item_seperator_0@beacon.item_seperator":
+					Added field "bindings":
+						binding:
+							field "binding_name": "#supports_netherite"
+							field "binding_name_override": "#visible"
+Changed namespace "beacon_pocket":
+	Changed element "usable_items_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "netherite@beacon_pocket.item_renderer":
+					Added field "bindings":
+						binding:
+							field "binding_name": "#supports_netherite"
+							field "binding_name_override": "#visible"
+			Changed control:
+				Changed element "item_seperator_0@beacon_pocket.item_seperator":
+					Added field "bindings":
+						binding:
+							field "binding_name": "#supports_netherite"
+							field "binding_name_override": "#visible"
+Changed namespace "common_dialogs":
+	Changed element "main_panel_small_title_one_button":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "panel_indent":
+					Unchanged field "type": "panel".
+					Changed field "size" from "$main_panel_size" to ["100% - 16px", "100% - 59px"].
+			Changed control:
+				Changed element "bottom_button_panel@$button_panel":
+					Changed field "size" from "$button_panel_size" to ["100% - 14px", 30].
+		Changed field "$variables":
+			Total variable: 3 (+0, -2)
+			Removed variable "$button_panel_size|default":
+				item 0: "100% - 14px"
+				item 1: 30
+			Removed variable "$main_panel_size|default":
+				item 0: "100% - 16px"
+				item 1: "100% - 59px"
+Changed namespace "general_section":
+	Total element: 83 (+0, -1)
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 76 (+0, -5)
+			Removed control:
+				element "sunsetting_use_overrides_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_sunset_overrides"
+						variable "$option_binding_name": "#dev_use_sunset_overrides"
+						variable "$option_enabled_binding_name": "#dev_use_sunset_overrides_enabled"
+						variable "$toggle_name": "dev_use_sunset_overrides"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "150%"
+			Removed control:
+				element "padding_sunsetting":
+					field "type": "panel"
+					field "size": ["100%", 3]
+					field "bindings":
+						binding:
+							field "binding_name": "#sunsetting_override_enabled"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "sunseting_state_toggle@settings_common.option_toggle":
+					field "bindings":
+						binding:
+							field "binding_name": "#sunsetting_override_enabled"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.dev_sunset_state"
+						variable "$option_binding_name": "#dev_sunset_state"
+						variable "$option_enabled_binding_name": "#dev_sunset_state_enabled"
+						variable "$toggle_name": "dev_sunset_state"
+			Removed control:
+				element "sunsetting_tier_dropdown@settings_common.option_dropdown":
+					field "bindings":
+						binding:
+							field "binding_name": "#sunsetting_override_enabled"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.dev_sunsetting_tier"
+						variable "$dropdown_content": "general_section.dev_sunsetting_tier_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "dev_sunsetting_tier_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_sunsetting_tier_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#dev_sunsetting_tier_dropdown_enabled"
+			Removed control:
+				element "padding_sunsetting_2":
+					field "type": "panel"
+					field "size": ["100%", 3]
+					field "bindings":
+						binding:
+							field "binding_name": "#sunsetting_override_enabled"
+							field "binding_name_override": "#visible"
+	Removed element "dev_sunsetting_tier_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "sunsetting_tier1@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#sunsetting_tier1"
+						item "$radio_label_text": "options.dev_sunsetting_tier.one"
+				item 1:
+					item "sunsetting_not_pending@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#sunsetting_not_pending"
+						item "$radio_label_text": "options.dev_sunsetting_tier.not_pending"
+	Changed element "realms_button_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "right_button@common_buttons.light_content_button":
+					Changed field "bindings":
+						Total binding: 1 (+0, -1)
+						Removed binding:
+							field "binding_name": "#right_button_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$realm_collection_name"
+							field "binding_condition": "once"
+	Changed element "view_subscriptions_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 14 (+0, -1)
+			Removed control element "sunsetting_label@play.realm_warning_tip": field "$variables": variable "$realms_warning_text": "#device_sunsetting_text".
+Changed namespace "patch_notes":
+	Total element: 18 (+0, -4)
+	Changed element "patch_notes_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "scrolling_panel@common.scrolling_panel":
+					Changed field "$variables":
+						Changed variable "$scroll_size":
+							Changed item 1 from "100% - 4px" to "100%-4px".
+	Removed element "sunsetting_button_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "60px"]
+		field "controls":
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 10]
+			control:
+				element "more_info_button@common_buttons.light_text_button":
+					field "size": ["100%", "20px"]
+					field "$variables":
+						variable "$button_text": "sunsetting.popup.moreInfo"
+						variable "$pressed_button_name": "sunsetting.moreInfo"
+						variable "$button_focus_precedence": 1
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 1]
+			control:
+				element "continue_button@common_buttons.light_text_button":
+					field "size": ["100%", "20px"]
+					field "$variables":
+						variable "$button_text": "patchNotes.continue"
+						variable "$pressed_button_name": "button.menu_exit"
+						variable "$button_focus_precedence": 2
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": ["100%", 1]
+			control:
+				element "sunsetting_toggle_panel@progress.do_not_show_checkbox":
+					field "size": ["100%", 10]
+					field "$variables":
+						variable "$toggle_name": "sunsetting_do_not_show_again"
+						variable "$toggle_state_binding_name": "#sunsetting_do_not_show_again"
+						variable "$toggle_label_text": "sunsetting.popup.dontshow"
+	Removed element "sunsetting_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "$variables":
+						variable "$scrolling_content": "patch_notes.scroll_content"
+						variable "$show_background": false
+						variable "$scroll_size":
+							item 0: 4
+							item 1: "100% - 4px"
+						variable "$scrolling_pane_size|default":
+							item 0: "100%"
+							item 1: "92%"
+						variable "$main_panel_size":
+							item 0: "100% - 16px"
+							item 1: "100% - 89px"
+						variable "$always_handle_scrolling": true
+	Removed element "sunsetting_dialog@common_dialogs.main_panel_small_title_one_button":
+		field "size": "$patch_notes_screen_size"
+		field "$variables":
+			variable "$custom_title_label": "common_dialogs.standard_title_label"
+			variable "$text_name": "#dialog_title"
+			variable "$title_text_binding_type": "global"
+			variable "$use_custom_title_control": true
+			variable "$child_control": "patch_notes.sunsetting_content"
+			variable "$button_panel": "patch_notes.sunsetting_button_panel"
+			variable "$button_panel_size":
+				item 0: "100% - 14px"
+				item 1: 60
+	Removed element "sunsetting_screen@common.base_screen": field "$variables": variable "$screen_content": "patch_notes.sunsetting_dialog".
+Changed namespace "pdp":
+	Total element: 114 (+0, -3)
+	Removed element "info_bulb_image":
+		field "type": "image"
+		field "texture": "textures/ui/infobulb"
+		field "size": [15, 15]
+	Removed element "info_bulb_image_small":
+		field "type": "image"
+		field "texture": "textures/ui/infobulb_darkborder_small"
+		field "size": [7, 9]
+	Removed element "realms_incompatable_content":
+		field "type": "image"
+		field "texture": "textures/ui/disabledButton"
+		field "layer": 2
+		field "controls":
+			control:
+				element "realms_content_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "offset": [0, 5]
+					field "controls":
+						control element "info_bulb_image@pdp.info_bulb_image_small": field "layer": 3
+						control:
+							element "padding":
+								field "type": "panel"
+								field "size": [2, "100%"]
+						control:
+							element "realms_incompatable_button_label":
+								field "type": "label"
+								field "text": "sunsetting.store.incompatible"
+								field "color": "$light_button_locked_text_color"
+								field "layer": 3
+	Changed element "summary_text_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "in_realms_plus_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Total control: 1 (+0, -1)
+						Changed control:
+							Changed element "in_realms_plus_button@pdp.in_realms_plus_button":
+								Removed field "bindings":
+									binding:
+										field "binding_name": "(not #realms_incompatible_button_visible)"
+										field "binding_name_override": "#visible"
+						Removed control:
+							element "realms_disabled_button@common_buttons.dynamic_tooltip_notification_panel":
+								field "size": ["100% - 4px", "20px"]
+								field "button_mappings":
+									button mapping:
+										field "from_button_id": "button.menu_select"
+										field "to_button_id": "button.menu_store_error"
+										field "mapping_type": "pressed"
+									button mapping:
+										field "to_button_id": "button.is_hovered"
+										field "mapping_type": "pressed"
+								field "consume_hover_events": true
+								field "focus_enabled": true
+								field "bindings":
+									binding:
+										field "binding_name": "#realms_incompatible_button_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$dynamic_tooltip_button_visibility_binding_name": "#realms_incompatible_button_visible"
+									variable "$tooltip_popup_visible_binding": "#realms_incompatible_tooltip_visible"
+									variable "$tooltip_text_binding_name": "#marketplace_incompatable_popup_text"
+									variable "$override_tooltip_popup_image": true
+									variable "$tooltip_popup_override_image_panel": "pdp.info_bulb_image"
+									variable "$tool_tip_text_max_size":
+										item 0: "190px"
+										item 1: "default"
+									variable "$tooltip_panel_offset":
+										item 0: -40
+										item 1: -10
+									variable "$tooltip_panel_content": "pdp.realms_incompatable_content"
+Changed namespace "play":
+	Total element: 243 (+0, -3)
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
 		Changed field "controls":
 			Changed control:
 				Changed element "stack_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 8 (+0, -1)
+						Total control: 14 (+0, -1)
+						Removed control element "friends_screen_warning@play.realm_warning_tip": empty.
+	Removed element "game_tip_item_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100% - 8px", "100%cm + 6px"]
+		field "controls":
+			control:
+				element "info_bulb":
+					field "type": "image"
+					field "layer": 13
+					field "size": [15, 19]
+					field "texture": "textures/ui/infobulb"
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [2, 0]
+			control:
+				element "label_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["fill", "100%c"]
+					field "controls":
+						control:
+							element "padding_vertical":
+								field "type": "panel"
+								field "size": [0, 1]
+						control:
+							element "realms_warning_text":
+								field "type": "label"
+								field "size": ["100%", "default"]
+								field "text": "$label_text"
+								field "color": "$body_text_color"
+								field "layer": 3
+								field "bindings":
+									binding:
+										field "binding_name": "$label_text"
+										field "binding_name_override": "$label_text"
+										field "binding_type": "$label_text_binding_type"
+								field "$variables":
+									variable "$label_text|default": "#label_text"
+									variable "$label_text_binding_type|default": "global"
+						control:
+							element "padding_vertical_1":
+								field "type": "panel"
+								field "size": [0, 1]
+			control:
+				element "more_info_button@common_buttons.light_text_form_fitting_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.realms_warning_more_info"
+						variable "$button_text": "playscreen.realmsWarning.moreinfo"
+		field "$variables":
+			variable "$game_tip_text|default": ""
+			variable "$label_text": "$game_tip_text"
+	Changed element "games_factory_object":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "games_factory_panel":
+					Unchanged field "type": "image".
+					Changed field "controls":
 						Changed control:
-							Changed element "featured_servers_panel":
+							Changed element "top_panel":
 								Unchanged field "type": "stack_panel".
+								Changed field "size":
+									Unchanged item 0: "100% - 8px".
+									Changed item 1 from 40 to "100%cm".
 								Changed field "controls":
-									Total control: 6 (+2, -0)
 									Changed control:
-										Moved element from "padding_1" to "padding_3".
+										Changed element "game_image_panel":
+											Unchanged field "type": "panel".
+											Changed field "size":
+												Unchanged item 0: "50%".
+												Changed item 1 from "100%" to "100%sm".
+											Changed field "controls":
+												Changed control:
+													Changed element "game_image":
+														Unchanged field "type": "image".
+														Removed field "offset": [0, -4].
+											Added field "min_size": ["50%", 30].
 									Changed control:
-										Changed element "third_party_featured_grid@play.third_party_featured_server_grid":
-											Changed field "$variables":
-												Total variable: 2 (+1, -0)
-												Added variable "$toggle_index_binding_name": "#third_party_toggle_index".
-									Added control:
-										element "more_servers_label@common.minecraftTenLabel":
-											field "size": ["default", "default"]
-											field "text": "thirdPartyWorld.Featured"
-											field "color": "$dark_button_default_text_color"
-									Added control:
-										element "padding_1":
-											field "type": "panel"
-											field "size": ["100%", 2]
-											field "bindings":
-												binding:
-													field "binding_name": "#loading_servers_progress_visible"
-													field "binding_name_override": "#visible"
-								Changed field "$variables":
-									Total variable: 2 (+1, -0)
-									Added variable "$focus_id": "featured_servers_panel".
-								Added field "focus_container": true.
-								Added field "use_last_focus": true.
+										Changed element "padding":
+											Unchanged field "type": "panel".
+											Changed field "size":
+												Unchanged item 0: 4.
+												Changed item 1 from "100%" to "100%sm".
+									Changed control:
+										Changed element "game_title_panel":
+											Unchanged field "type": "stack_panel".
+											Changed field "size":
+												Unchanged item 0: "fill".
+												Changed item 1 from "100%" to "100%c".
+											Added field "min_size": ["fill", 30].
+								Added field "min_size": ["100% - 8px", 30].
 						Changed control:
-							Changed element "more_servers_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "$variables":
-									Total variable: 2 (+1, -0)
-									Added variable "$focus_id": "more_servers_panel".
-								Added field "focus_container": true.
-								Added field "use_last_focus": true.
-						Removed control:
-							element "focus_reset_input_panel":
-								field "type": "input_panel"
-								field "focus_enabled": true
-								field "size": ["100%", 4]
-	Moved element from "third_party_server_toggle_base@common_toggles.dark_image_toggle_collection" to "server_toggle_base@common_toggles.dark_image_toggle_collection".
-	Changed element "server_toggle_base@common_toggles.dark_image_toggle_collection":
-		Changed field "bindings":
-			Total binding: 4 (+1, -1)
-			Changed binding:
-				Changed field "binding_collection_name" from "third_party_server_network_worlds" to "$collection_name".
-			Removed binding:
-				field "binding_type": "collection"
-				field "binding_name": "#third_party_toggle_index"
-				field "binding_collection_name": "third_party_server_network_worlds"
-			Added binding:
-				field "binding_type": "collection"
-				field "binding_name": "$toggle_index_binding_name"
-				field "binding_collection_name": "$collection_name"
+							Changed element "bottom_panel":
+								Unchanged field "type": "panel".
+								Changed field "size":
+									Unchanged item 0: "100% - 8px".
+									Changed item 1 from "100%c" to "100%c + 4px".
+								Removed field "offset": [0, -4].
+	Removed element "realm_warning_tip":
+		field "type": "image"
+		field "texture": "textures/ui/greyBorder"
+		field "layer": 1
+		field "size": ["100%", "100%cm"]
+		field "controls":
+			control:
+				element "padding_vertical":
+					field "type": "panel"
+					field "size": [0, 8]
+			control:
+				element "info_panel@play.game_tip_item_panel":
+					field "offset": [0, 4]
+					field "$variables": variable "$game_tip_text": "$realms_warning_text"
+		field "bindings":
+			binding:
+				field "binding_name": "#device_sunsetting"
+				field "binding_name_override": "#visible"
+		field "$variables": variable "$realms_warning_text|default": "#realms_warning_text"
+	Changed element "server_scroll_content@play.common_content":
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "severs_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%"]
+					field "controls":
+						control:
+							element "offset_panel":
+								field "type": "panel"
+								field "size": ["100% - 4px", "100%cm"]
+								field "controls":
+									control:
+										element "servers_sunsetting_warning@play.realm_warning_tip":
+											field "size": ["100% - 2px", "100%cm - 2px"]
+											field "offset": [2, 2]
+								field "bindings":
+									binding:
+										field "binding_name": "#device_sunsetting"
+										field "binding_name_override": "#visible"
+						control element "show_servers_panel@play.show_servers_panel": empty
+			Added control:
+				element "show_servers_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #feature_server_message_visible)"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "left_panel":
+								field "type": "panel"
+								field "size": ["50% - 1px", "100%"]
+								field "controls":
+									control:
+										element "scrolling_panel@play.scrolling_offsets":
+											field "size": ["100%", "100% - 4px"]
+											field "offset": [0, 2]
+											field "layer": 1
+											field "$variables": variable "$scrolling_content": "play.server_scroll_panel"
+						control:
+							element "divider_panel":
+								field "type": "panel"
+								field "size": [3, "100%"]
+								field "controls":
+									control:
+										element "main_divider":
+											field "type": "image"
+											field "size": [3, "100% - 4px"]
+											field "tiled": "y"
+											field "texture": "textures/ui/HowToPlayDivider"
+											field "layer": 10
+						control element "right_panel@play.server_content_area": empty
+	Removed element "show_servers_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "fill"]
+		field "bindings":
+			binding:
+				field "binding_name": "(not #feature_server_message_visible)"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "left_panel":
+					field "type": "panel"
+					field "size": ["50% - 1px", "100%"]
+					field "controls":
+						control:
+							element "scrolling_panel@play.scrolling_offsets":
+								field "size": ["100%", "100% - 4px"]
+								field "offset": [0, 2]
+								field "layer": 1
+								field "$variables": variable "$scrolling_content": "play.server_scroll_panel"
+			control:
+				element "divider_panel":
+					field "type": "panel"
+					field "size": [3, "100%"]
+					field "controls":
+						control:
+							element "main_divider":
+								field "type": "image"
+								field "size": [3, "100% - 4px"]
+								field "tiled": "y"
+								field "texture": "textures/ui/HowToPlayDivider"
+								field "layer": 10
+			control element "right_panel@play.server_content_area": empty
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 17 (+0, -1)
+			Removed control element "play_screen_warning@play.realm_warning_tip": empty.
+Changed namespace "progress":
+	Changed element "do_not_show_checkbox@common.checkbox":
+		Changed field "controls":
+			Changed control:
+				Changed element "header_description_stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "buffer_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "label":
+											Unchanged field "type": "label".
+											Changed field "text" from "$toggle_label_text" to "onlinePlay.doNotShowAgain".
 		Changed field "$variables":
-			Total variable: 10 (+0, -1)
-			Moved variable from "$focus_override_right" to "$focus_override_right|default".
-			Removed variable "$button_content": "play.server_button_content_panel".
-			Changed variable "$toggle_group_forced_index" from "#third_party_toggle_index" to "$toggle_index_binding_name".
+			Total variable: 3 (+0, -1)
+			Removed variable "$toggle_label_text|default": "onlinePlay.doNotShowAgain".

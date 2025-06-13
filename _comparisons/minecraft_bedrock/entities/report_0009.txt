@@ -1,219 +1,74 @@
-Difference of "entities" between "1.0.4.0" (beta of "1.0.4") and "1.0.4".
-Unable to create data files for 1 file between: "1.0.4.1"
+Difference of "entities" between "1.0.4" and "1.0.5.0" (beta of "1.0.5").
 
-Changed entity "villager.json":
+Total entity: 70 (+1, -0)
+Added entity "command_block_minecart.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "format_version": 0.1
+			field "component_groups":
+				component group "minecraft:command_block_active":
+					component "minecraft:rail_sensor":
+						field "check_block_types": true
+						field "eject_on_activate": false
+						field "eject_on_deactivate": false
+						field "tick_command_block_on_activate": true
+						field "tick_command_block_on_deactivate": false
+						field "on_deactivate": field "event": "minecraft:command_block_deactivate"
+				component group "minecraft:command_block_inactive":
+					component "minecraft:rail_sensor":
+						field "check_block_types": false
+						field "eject_on_activate": false
+						field "eject_on_deactivate": false
+						field "tick_command_block_on_activate": true
+						field "tick_command_block_on_deactivate": false
+						field "on_activate": field "event": "minecraft:command_block_activate"
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.5
+					field "height": 0.9
+				component "minecraft:identifier": field "id": "minecraft:minecartcommandblock"
+				component "minecraft:inventory":
+					field "container_type": "minecart_command_block"
+					field "inventory_size": 1
+				component "minecraft:item_command_block":
+					field "ticks_per_command": 4
+					field "current_tick_count": 0
+					field "ticking": false
+				component "minecraft:rail_movement": empty
+				component "minecraft:type_family": field "family": family "minecart"
+			field "events":
+				event "minecraft:command_block_activate":
+					field "add": field "component_groups": component group "minecraft:command_block_active"
+					field "remove": field "component_groups": component group "minecraft:command_block_inactive"
+				event "minecraft:command_block_deactivate":
+					field "add": field "component_groups": component group "minecraft:command_block_inactive"
+					field "remove": field "component_groups": component group "minecraft:command_block_active"
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group "minecraft:command_block_inactive"
+Changed entity "fireballlarge.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:fireball.large".
+				Changed component "minecraft:projectile":
+					Changed field "uncertaintyBase" from 16 to 0.
+					Changed field "uncertaintyMultiplier" from 4 to 0.
+Changed entity "magmacube.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "behavior_non_peasant":
-					Total component: 1 (+1, -1)
-					Added component "minecraft:shareables":
-						field "items":
-							item:
-								field "item": "minecraft:bread"
-								field "want_amount": 3
-								field "surplus_amount": 6
-							item:
-								field "item": "minecraft:carrot"
-								field "want_amount": 12
-								field "surplus_amount": 24
-							item:
-								field "item": "minecraft:potato"
-								field "want_amount": 12
-								field "surplus_amount": 24
-							item:
-								field "item": "minecraft:beetroot"
-								field "want_amount": 12
-								field "surplus_amount": 24
-					Removed component "minecraft:behavior.share_items":
-						field "priority": 8
-						field "filters": filter property "other_with_families": "villager"
-						field "target_entity_items":
-							item:
-								field "max_count": 3
-								field "item": "minecraft:bread"
-							item:
-								field "max_count": 12
-								field "item": "minecraft:carrot"
-							item:
-								field "max_count": 12
-								field "item": "minecraft:potato"
-							item:
-								field "max_count": 12
-								field "item": "minecraft:beetroot"
-						field "items_filter":
-							item:
-								field "min_count": 6
-								field "item": "minecraft:bread"
-							item:
-								field "min_count": 24
-								field "item": "minecraft:carrot"
-							item:
-								field "min_count": 24
-								field "item": "minecraft:potato"
-							item:
-								field "min_count": 24
-								field "item": "minecraft:beetroot"
-				Changed component group "behavior_peasant":
-					Total component: 2 (+1, -1)
-					Added component "minecraft:shareables":
-						field "items":
-							item:
-								field "item": "minecraft:bread"
-								field "want_amount": 3
-								field "surplus_amount": 6
-							item:
-								field "item": "minecraft:carrot"
-								field "want_amount": 60
-								field "surplus_amount": 4
-							item:
-								field "item": "minecraft:potato"
-								field "want_amount": 60
-								field "surplus_amount": 24
-							item:
-								field "item": "minecraft:beetroot"
-								field "want_amount": 60
-								field "surplus_amount": 24
-							item:
-								field "item": "minecraft:wheat"
-								field "want_amount": 45
-								field "surplus_amount": 18
-								field "craft_into": "minecraft:bread"
-					Removed component "minecraft:behavior.share_items":
-						field "priority": 8
-						field "filters": filter property "other_with_families": "villager"
-						field "target_entity_items":
-							item:
-								field "max_count": 3
-								field "item": "minecraft:bread"
-							item:
-								field "max_count": 12
-								field "item": "minecraft:carrot"
-							item:
-								field "max_count": 12
-								field "item": "minecraft:potato"
-							item:
-								field "max_count": 12
-								field "item": "minecraft:beetroot"
-						field "items_filter":
-							item:
-								field "min_count": 6
-								field "item": "minecraft:bread"
-							item:
-								field "min_count": 24
-								field "item": "minecraft:carrot"
-							item:
-								field "min_count": 24
-								field "item": "minecraft:potato"
-							item:
-								field "min_count": 24
-								field "item": "minecraft:beetroot"
-							item:
-								field "min_count": 18
-								field "item": "minecraft:wheat"
-								field "craft_into": "minecraft:bread"
-			Changed field "components":
-				Total component: 22 (+1, -0)
-				Unchanged component "minecraft:identifier": field "id": "minecraft:villager".
-				Changed component "minecraft:behavior.pickup_items":
-					Removed field "items":
-						item "minecraft:beetroot"
-						item "minecraft:beetroot_seeds"
-						item "minecraft:bread"
-						item "minecraft:carrots"
-						item "minecraft:potatoes"
-						item "minecraft:wheat"
-					Added field "max_dist": 3.
-					Added field "goal_radius": 2.
-					Added field "speed_multiplier": 0.5.
-				Added component "minecraft:behavior.share_items":
-					field "priority": 8
-					field "max_dist": 3
-					field "goal_radius": 2.0
-					field "speed_multiplier": 0.5
-					field "entity_types": entity type field "filters": filter property "other_with_families": family "villager"
-			Changed field "events":
-				Changed event "minecraft:entity_spawned":
-					Changed field "sequence":
-						Changed sequence item 0:
-							Changed field "filters":
-								Moved filter property from "self_without_components" to "without_components".
-						Changed sequence item 1:
-							Changed field "filters":
-								Moved filter property from "self_without_components" to "without_components".
-Changed entity "zombie_villager.json":
+				Changed component group "minecraft:slime_large":
+					Changed component "minecraft:movement":
+						Changed field "value" from 0.25 to 0.75.
+				Changed component group "minecraft:slime_medium":
+					Changed component "minecraft:movement":
+						Changed field "value" from 0.22 to 0.66.
+				Changed component group "minecraft:slime_small":
+					Changed component "minecraft:movement":
+						Changed field "value" from 0.2 to 0.6.
+Changed entity "zombie_pigman.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "events":
-				Changed event "minecraft:entity_spawned":
-					Removed field "randomize":
-						randomize item:
-							field "weight": 9500
-							field "add": field "component_groups": component group "adult"
-							field "remove": empty
-						randomize item:
-							field "weight": 425
-							field "add": field "component_groups": component group "baby"
-							field "remove": empty
-						randomize item:
-							field "weight": 75
-							field "add":
-								field "component_groups":
-									component group "baby"
-									component group "jockey"
-							field "remove": empty
-					Added field "sequence":
-						sequence item 0:
-							field "filters": filter property "without_components": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 9500
-									field "add": field "component_groups": component group "adult"
-									field "remove": empty
-								randomize item:
-									field "weight": 425
-									field "add": field "component_groups": component group "baby"
-									field "remove": empty
-								randomize item:
-									field "weight": 75
-									field "add":
-										field "component_groups":
-											component group "baby"
-											component group "jockey"
-									field "remove": empty
-						sequence item 1:
-							field "filters": filter property "without_components": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 5
-									field "add": field "component_groups": component group "farmer"
-								randomize item:
-									field "weight": 5
-									field "add": field "component_groups": component group "fisherman"
-								randomize item:
-									field "weight": 5
-									field "add": field "component_groups": component group "shepherd"
-								randomize item:
-									field "weight": 5
-									field "add": field "component_groups": component group "fletcher"
-								randomize item:
-									field "weight": 20
-									field "add": field "component_groups": component group "librarian"
-								randomize item:
-									field "weight": 20
-									field "add": field "component_groups": component group "cleric"
-								randomize item:
-									field "weight": 6
-									field "add": field "component_groups": component group "armorer"
-								randomize item:
-									field "weight": 6
-									field "add": field "component_groups": component group "weaponsmith"
-								randomize item:
-									field "weight": 6
-									field "add": field "component_groups": component group "toolsmith"
-								randomize item:
-									field "weight": 10
-									field "add": field "component_groups": component group "butcher"
-								randomize item:
-									field "weight": 10
-									field "add": field "component_groups": component group "leatherworker"
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:pig_zombie".
+				Changed component "minecraft:behavior.melee_attack":
+					Changed field "speed_multiplier" from 1 to 1.5.

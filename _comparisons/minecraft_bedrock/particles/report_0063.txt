@@ -1,49 +1,48 @@
-Difference of "particles" between "1.20.70.20" (beta of "1.20.71") and "1.20.70.21" (beta of "1.20.71").
+Difference of "particles" between "1.20.70.22" (beta of "1.20.71") and "1.20.70.24" (beta of "1.20.71").
 
-Total particle: 148 (+1, -0)
-Changed particle "small_flame.json":
-	Changed resource pack "experimental":
-		Changed field "particle_effect":
-			Changed field "components":
-				Total field: 10 (+2, -2)
-				Removed field "minecraft:emitter_lifetime_looping": field "active_time": 1.
-				Added field "minecraft:emitter_lifetime_once": field "active_time": 0.15.
-				Added field "minecraft:emitter_rate_instant": field "num_particles": 1.
-				Removed field "minecraft:emitter_rate_steady":
-					field "spawn_rate": "Math.random(1,3)"
-					field "max_particles": 8
-				Changed field "minecraft:emitter_shape_box":
-					Changed field "direction":
-						Changed vector item 0 from 0 to "variable.direction.x".
-						Changed vector item 1 from 0 to "variable.direction.y".
-						Changed vector item 2 from 0 to "variable.direction.z".
-				Changed field "minecraft:particle_initial_speed" from 0 to "variable.particle_initial_speed".
-				Changed field "minecraft:particle_lifetime_expression":
-					Changed field "max_lifetime" from "Math.random(0.6,2.2)" to "Math.random(0.6, 2.2)".
-				Changed field "minecraft:particle_motion_dynamic":
-					Added field "linear_acceleration": [0.0, 0.0, 0.0].
-					Added field "linear_drag_coefficient": 0.96.
-Added particle "vault_connection.json":
+Total particle: 149 (+1, -0)
+Added particle "breeze_wind_explosion.json":
 	resource pack "experimental":
 		field "format_version": "1.10.0"
 		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:vault_connection_particle"
+				field "identifier": "minecraft:breeze_wind_explosion_emitter"
 				field "basic_render_parameters":
-					field "material": "particles_blend"
-					field "texture": "textures/particle/vault_connection"
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/gust"
 			field "components":
-				field "minecraft:emitter_lifetime_once": empty
-				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_point": empty
+				field "minecraft:emitter_lifetime_once": field "active_time": 0.4
+				field "minecraft:emitter_rate_steady":
+					field "spawn_rate": 120
+					field "max_particles": 50
+				field "minecraft:emitter_shape_custom": field "offset": ["Math.random(-4, 4)", "Math.random(-4, 4)", "Math.random(-4, 4)"]
 				field "minecraft:particle_appearance_billboard":
-					field "size": ["variable.particle_random_1 * 0.075 + 0.03", "variable.particle_random_1 * 0.075 + 0.03"]
+					field "size": [1.0, 1.0]
 					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_width": 8
-						field "texture_height": 8
-						field "uv": [0, 0]
-						field "uv_size": [8, 8]
-				field "minecraft:particle_appearance_tinting": field "color": color ["variable.particle_random_3 * 0.54 + 0.36", "variable.particle_random_3 * 0.54 + 0.36", "variable.particle_random_3 * 0.6 + 0.4", "math.lerp((math.clamp(variable.particle_age / variable.particle_lifetime, 0.2, 0.8) - 0.2) / 0.6, 0.0, 0.6)"]
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.5, 2.5)"
-				field "minecraft:particle_motion_parametric": field "relative_position": ["variable.pos = 1 - (variable.particle_age / variable.particle_lifetime); return variable.direction.x * variable.pos;", "variable.direction.y * variable.pos - Math.pow((1 - variable.pos), 3) * 1.2", "variable.direction.z * variable.pos"]
+						field "texture_width": 384
+						field "texture_height": 32
+						field "flipbook":
+							field "base_UV": [0, 0]
+							field "size_UV": [32, 32]
+							field "step_UV": [32, 0]
+							field "frames_per_second": 12
+							field "max_frame": 12
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_initial_speed": 0.0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random( 0.8, 0.9 )"
+Changed particle "wind_explosion.json":
+	Changed resource pack "experimental":
+		Changed field "particle_effect":
+			Changed field "components":
+				Changed field "minecraft:emitter_rate_steady":
+					Changed field "spawn_rate" from 120 to 30.
+					Changed field "max_particles" from 50 to 10.
+				Changed field "minecraft:emitter_shape_custom":
+					Changed field "offset":
+						Changed vector item 0 from "Math.random(-4, 4)" to "Math.random(-1, 1)".
+						Changed vector item 1 from "Math.random(-4, 4)" to "Math.random(-1, 1)".
+						Changed vector item 2 from "Math.random(-4, 4)" to "Math.random(-1, 1)".
+				Changed field "minecraft:particle_lifetime_expression":
+					Changed field "max_lifetime" from "Math.random( 0.8, 0.9 )" to "Math.random( 0.6, 0.8 )".

@@ -1,534 +1,1212 @@
-Difference of "ui" between "1.16.10" and "1.16.20.50" (beta of "1.16.20").
+Difference of "ui" between "1.16.100.53" (beta of "1.16.100") and "1.16.100.54" (beta of "1.16.100").
 
-Changed namespace "beacon":
-	Changed element "usable_items_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "netherite@beacon.item_renderer":
-					Added field "bindings":
-						binding:
-							field "binding_name": "#supports_netherite"
-							field "binding_name_override": "#visible"
-			Changed control:
-				Changed element "item_seperator_0@beacon.item_seperator":
-					Added field "bindings":
-						binding:
-							field "binding_name": "#supports_netherite"
-							field "binding_name_override": "#visible"
-Changed namespace "beacon_pocket":
-	Changed element "usable_items_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "netherite@beacon_pocket.item_renderer":
-					Added field "bindings":
-						binding:
-							field "binding_name": "#supports_netherite"
-							field "binding_name_override": "#visible"
-			Changed control:
-				Changed element "item_seperator_0@beacon_pocket.item_seperator":
-					Added field "bindings":
-						binding:
-							field "binding_name": "#supports_netherite"
-							field "binding_name_override": "#visible"
-Changed namespace "common_dialogs":
-	Changed element "main_panel_small_title_one_button":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "panel_indent":
-					Unchanged field "type": "panel".
-					Changed field "size" from "$main_panel_size" to ["100% - 16px", "100% - 59px"].
-			Changed control:
-				Changed element "bottom_button_panel@$button_panel":
-					Changed field "size" from "$button_panel_size" to ["100% - 14px", 30].
-		Changed field "$variables":
-			Total variable: 3 (+0, -2)
-			Removed variable "$button_panel_size|default":
-				item 0: "100% - 14px"
-				item 1: 30
-			Removed variable "$main_panel_size|default":
-				item 0: "100% - 16px"
-				item 1: "100% - 59px"
 Changed namespace "general_section":
-	Total element: 83 (+0, -1)
-	Changed element "debug_section":
+	Total element: 90 (+6, -0)
+	Changed element "video_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 76 (+0, -5)
+			Total control: 45 (+2, -2)
 			Removed control:
-				element "sunsetting_use_overrides_toggle@settings_common.option_toggle":
+				element "particle_render_distance_slider@settings_common.option_slider":
+					field "ignored": "($is_holographic or $education_ios)"
 					field "$variables":
-						variable "$option_label": "options.dev_sunset_overrides"
-						variable "$option_binding_name": "#dev_use_sunset_overrides"
-						variable "$option_enabled_binding_name": "#dev_use_sunset_overrides_enabled"
-						variable "$toggle_name": "dev_use_sunset_overrides"
-						variable "$dropdown_scroll_content_size":
-							item 0: "100%"
-							item 1: "150%"
+						variable "$option_label": "#particle_render_distance_slider_label"
+						variable "$slider_name": "particle_render_distance"
+						variable "$slider_value_binding_name": "#particle_render_distance"
+						variable "$slider_tts_text_value": "#particle_render_distance_text_value"
+						variable "$option_enabled_binding_name": "#particle_render_distance_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
 			Removed control:
-				element "padding_sunsetting":
-					field "type": "panel"
-					field "size": ["100%", 3]
-					field "bindings":
-						binding:
-							field "binding_name": "#sunsetting_override_enabled"
-							field "binding_name_override": "#visible"
-			Removed control:
-				element "sunseting_state_toggle@settings_common.option_toggle":
-					field "bindings":
-						binding:
-							field "binding_name": "#sunsetting_override_enabled"
-							field "binding_name_override": "#visible"
+				element "vr_particle_render_distance_slider@settings_common.option_slider":
+					field "ignored": "($pocket_edition or not $is_holographic)"
 					field "$variables":
-						variable "$option_label": "options.dev_sunset_state"
-						variable "$option_binding_name": "#dev_sunset_state"
-						variable "$option_enabled_binding_name": "#dev_sunset_state_enabled"
-						variable "$toggle_name": "dev_sunset_state"
-			Removed control:
-				element "sunsetting_tier_dropdown@settings_common.option_dropdown":
-					field "bindings":
-						binding:
-							field "binding_name": "#sunsetting_override_enabled"
-							field "binding_name_override": "#visible"
+						variable "$option_label": "#vr_particle_render_distance_slider_label"
+						variable "$slider_name": "vr_particle_render_distance"
+						variable "$slider_value_binding_name": "#vr_particle_render_distance"
+						variable "$slider_tts_text_value": "#vr_particle_render_distance_text_value"
+						variable "$option_enabled_binding_name": "#vr_particle_render_distance_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "vr_hand_pointer_visible@settings_common.option_toggle":
+					field "ignored": "(not $is_holographic or not $supports_hand_controllers)"
 					field "$variables":
-						variable "$option_label": "options.dev_sunsetting_tier"
-						variable "$dropdown_content": "general_section.dev_sunsetting_tier_dropdown_content"
-						variable "$dropdown_area": "content_area"
-						variable "$dropdown_name": "dev_sunsetting_tier_dropdown"
-						variable "$options_dropdown_toggle_label_binding": "#dev_sunsetting_tier_dropdown_toggle_label"
-						variable "$option_enabled_binding_name": "#dev_sunsetting_tier_dropdown_enabled"
-			Removed control:
-				element "padding_sunsetting_2":
-					field "type": "panel"
-					field "size": ["100%", 3]
-					field "bindings":
-						binding:
-							field "binding_name": "#sunsetting_override_enabled"
-							field "binding_name_override": "#visible"
-	Removed element "dev_sunsetting_tier_dropdown_content@settings_common.option_radio_dropdown_group":
+						variable "$option_label": "options.vrHandPointer"
+						variable "$option_binding_name": "#vr_hand_pointer"
+						variable "$option_enabled_binding_name": "#vr_hand_pointer_enabled"
+						variable "$toggle_name": "vr_hand_pointer"
+			Added control:
+				element "vr_hands_visible@settings_common.option_toggle":
+					field "ignored": "(not $is_holographic or not $supports_hand_controllers)"
+					field "$variables":
+						variable "$option_label": "options.vrHandsVisible"
+						variable "$option_binding_name": "#vr_hands_visible"
+						variable "$option_enabled_binding_name": "#vr_hands_visible_enabled"
+						variable "$toggle_name": "vr_hands_visible"
+	Added element "vr_camera_movement_dropdown_content@settings_common.option_radio_dropdown_group":
 		field "$variables":
 			variable "$radio_buttons":
 				item 0:
-					item "sunsetting_tier1@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#sunsetting_tier1"
-						item "$radio_label_text": "options.dev_sunsetting_tier.one"
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_camera_movement_radio_snap"
+						item "$radio_label_text": "options.vr.cameraMovement.snap"
 				item 1:
-					item "sunsetting_not_pending@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#sunsetting_not_pending"
-						item "$radio_label_text": "options.dev_sunsetting_tier.not_pending"
-	Changed element "realms_button_panel":
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_camera_movement_radio_classic"
+						item "$radio_label_text": "options.vr.cameraMovement.classic"
+				item 2:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_camera_movement_radio_wheel"
+						item "$radio_label_text": "options.vr.cameraMovement.wheel"
+				item 3:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_camera_movement_radio_snap_wheel"
+						item "$radio_label_text": "options.vr.cameraMovement.snapWheel"
+	Added element "vr_head_steering_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_head_steering_radio_gaze"
+						item "$radio_label_text": "options.vr.headSteering.followGaze"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_head_steering_radio_player"
+						item "$radio_label_text": "options.vr.headSteering.followPlayer"
+	Added element "vr_hud_position_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_hud_position_radio_drift"
+						item "$radio_label_text": "options.vr.hudPosition.drift"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "ignored": "(not $supports_hand_controllers)"
+						item "$toggle_state_binding_name": "#vr_hud_position_radio_offhand"
+						item "$radio_label_text": "options.vr.hudPosition.offhand"
+				item 2:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_hud_position_radio_fixed"
+						item "$radio_label_text": "options.vr.hudPosition.fixed"
+	Added element "vr_jump_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_jump_radio_linear"
+						item "$radio_label_text": "options.vr.jump.linear"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_jump_radio_classic"
+						item "$radio_label_text": "options.vr.jump.classic"
+	Added element "vr_movement_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_movement_radio_linear"
+						item "$radio_label_text": "options.vr.movement.linear"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_movement_radio_classic"
+						item "$radio_label_text": "options.vr.movement.classic"
+	Changed element "vr_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
+			Total control: 15 (+12, -1)
 			Changed control:
-				Changed element "right_button@common_buttons.light_content_button":
-					Changed field "bindings":
-						Total binding: 1 (+0, -1)
-						Removed binding:
-							field "binding_name": "#right_button_visible"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-							field "binding_collection_name": "$realm_collection_name"
-							field "binding_condition": "once"
-	Changed element "view_subscriptions_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 14 (+0, -1)
-			Removed control element "sunsetting_label@play.realm_warning_tip": field "$variables": variable "$realms_warning_text": "#device_sunsetting_text".
-Changed namespace "patch_notes":
-	Total element: 18 (+0, -4)
-	Changed element "patch_notes_content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "scrolling_panel@common.scrolling_panel":
+				Moved element from "option_toggle_0@settings_common.option_toggle" to "option_toggle_snap_sound@settings_common.option_toggle".
+				Changed element "option_toggle_snap_sound@settings_common.option_toggle":
 					Changed field "$variables":
-						Changed variable "$scroll_size":
-							Changed item 1 from "100% - 4px" to "100%-4px".
-	Removed element "sunsetting_button_panel":
+						Changed variable "$option_label" from "options.comfortControls" to "options.vr.snapSound".
+						Changed variable "$option_binding_name" from "#comfort_controls" to "#vr_snap_sound".
+						Changed variable "$option_enabled_binding_name" from "#comfort_controls_enabled" to "#vr_snap_sound_enabled".
+						Changed variable "$toggle_name" from "comfort_controls" to "vr_snap_sound".
+			Changed control:
+				Moved element from "option_toggle_1@settings_common.option_toggle" to "option_toggle_variable_snap_angle@settings_common.option_toggle".
+				Changed element "option_toggle_variable_snap_angle@settings_common.option_toggle":
+					Changed field "$variables":
+						Changed variable "$option_label" from "options.ShowComfortSelectScreen" to "options.vr.variableSnapAngle".
+						Changed variable "$option_binding_name" from "#show_comfort_select_screen" to "#vr_variable_snap_angle".
+						Changed variable "$option_enabled_binding_name" from "#show_comfort_select_screen_enabled" to "#vr_variable_snap_angle_enabled".
+						Changed variable "$toggle_name" from "show_comfort_select_screen" to "vr_variable_snap_angle".
+			Changed control:
+				Changed element "option_toggle_2@settings_common.option_toggle":
+					Removed field "ignored": "(not $is_living_room_mode and not $is_pregame)".
+			Removed control:
+				element "things_to_hide_while_playing_in_living_room_mode":
+					field "ignored": "($is_living_room_mode and not $is_pregame)"
+					field "type": "stack_panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "option_toggle_0@settings_common.option_toggle":
+								field "bindings":
+									binding:
+										field "binding_name": "#device_has_positional_tracking"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$option_label": "options.vrHMDdisplacement"
+									variable "$option_binding_name": "#vr_hmd_displacement"
+									variable "$option_enabled_binding_name": "#vr_hmd_displacement_enabled"
+									variable "$toggle_name": "vr_hmd_displacement"
+						control:
+							element "option_toggle_1@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.vrLinearJump"
+									variable "$option_binding_name": "#vr_linear_jump"
+									variable "$option_enabled_binding_name": "#vr_linear_jump_enabled"
+									variable "$toggle_name": "vr_linear_jump"
+						control:
+							element "option_toggle_2@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.vrLinearMotion"
+									variable "$option_binding_name": "#vr_linear_motion"
+									variable "$option_enabled_binding_name": "#vr_linear_motion_enabled"
+									variable "$toggle_name": "vr_linear_motion"
+						control:
+							element "option_toggle_3@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.stickyMining"
+									variable "$option_binding_name": "#sticky_mining"
+									variable "$option_enabled_binding_name": "#sticky_mining_enabled"
+									variable "$toggle_name": "sticky_mining"
+						control:
+							element "option_toggle_4@settings_common.option_toggle":
+								field "ignored": "($is_mobile_vr)"
+								field "$variables":
+									variable "$option_label": "options.stickyMiningHand"
+									variable "$option_binding_name": "#sticky_mining_hand"
+									variable "$option_enabled_binding_name": "#sticky_mining_hand_enabled"
+									variable "$toggle_name": "sticky_mining_hand"
+						control:
+							element "option_toggle_5@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.vrHudDrifts"
+									variable "$option_binding_name": "#vr_hud_drifts"
+									variable "$option_enabled_binding_name": "#vr_hud_drifts_enabled"
+									variable "$toggle_name": "vr_hud_drifts"
+						control element "option_group_label@settings_common.option_group_label": field "$variables": variable "$text": "options.vrTurningOptions"
+						control:
+							element "option_toggle_6@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.vrHeadSteering"
+									variable "$option_binding_name": "#vr_head_steering"
+									variable "$option_enabled_binding_name": "#vr_head_steering_enabled"
+									variable "$toggle_name": "vr_head_steering"
+						control:
+							element "option_toggle_7@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.StutterTurn"
+									variable "$option_binding_name": "#stutter_turn"
+									variable "$option_enabled_binding_name": "#stutter_turn_enabled"
+									variable "$toggle_name": "stutter_turn"
+						control:
+							element "option_toggle_8@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.StutterConstantAngleOrTime"
+									variable "$option_binding_name": "#stutter_constant_angle_or_time"
+									variable "$option_enabled_binding_name": "#stutter_constant_angle_or_time_enabled"
+									variable "$toggle_name": "stutter_constant_angle_or_time"
+						control:
+							element "option_toggle_9@settings_common.option_toggle":
+								field "$variables":
+									variable "$option_label": "options.StutterTurnSound"
+									variable "$option_binding_name": "#stutter_turn_sound"
+									variable "$option_enabled_binding_name": "#stutter_turn_sound_enabled"
+									variable "$toggle_name": "stutter_turn_sound"
+						control:
+							element "option_toggle_10@settings_common.option_toggle":
+								field "ignored": "($is_mobile_vr and $is_publish)"
+								field "$variables":
+									variable "$option_label": "options.vrRollTurning"
+									variable "$option_binding_name": "#vr_roll_turn"
+									variable "$option_enabled_binding_name": "#vr_roll_turn_enabled"
+									variable "$toggle_name": "vr_roll_turn"
+						control:
+							element "option_toggle_11@settings_common.option_toggle":
+								field "ignored": "($is_mobile_vr)"
+								field "$variables":
+									variable "$option_label": "options.vrHandControlsItem"
+									variable "$option_binding_name": "#vr_hand_controls_item"
+									variable "$option_enabled_binding_name": "#vr_hand_controls_item_enabled"
+									variable "$toggle_name": "vr_hand_controls_item"
+						control:
+							element "option_toggle_12@settings_common.option_toggle":
+								field "ignored": "($is_mobile_vr)"
+								field "$variables":
+									variable "$option_label": "options.vrHandControlsHUD"
+									variable "$option_binding_name": "#vr_hand_controls_hud"
+									variable "$option_enabled_binding_name": "#vr_hand_controls_hud_enabled"
+									variable "$toggle_name": "vr_hand_controls_hud"
+						control:
+							element "option_toggle_13@settings_common.option_toggle":
+								field "ignored": "($is_mobile_vr)"
+								field "$variables":
+									variable "$option_label": "options.vrHandPointer"
+									variable "$option_binding_name": "#vr_hand_pointer"
+									variable "$option_enabled_binding_name": "#vr_hand_pointer_enabled"
+									variable "$toggle_name": "vr_hand_pointer"
+						control:
+							element "option_toggle_14@settings_common.option_toggle":
+								field "ignored": "($is_mobile_vr)"
+								field "$variables":
+									variable "$option_label": "options.vrHandsVisible"
+									variable "$option_binding_name": "#vr_hands_visible"
+									variable "$option_enabled_binding_name": "#vr_hands_visible_enabled"
+									variable "$toggle_name": "vr_hands_visible"
+			Added control element "living_room_subheader@settings_common.subsection_title": field "$variables": variable "$text": "options.vr.subheaderLivingRoom".
+			Added control element "immersive_subheader@settings_common.subsection_title": field "$variables": variable "$text": "options.vr.subheaderImmersive".
+			Added control:
+				element "option_toggle_0@settings_common.option_toggle":
+					field "bindings":
+						binding:
+							field "binding_name": "#device_has_positional_tracking"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.vrHMDdisplacement"
+						variable "$option_binding_name": "#vr_hmd_displacement"
+						variable "$option_enabled_binding_name": "#vr_hmd_displacement_enabled"
+						variable "$toggle_name": "vr_hmd_displacement"
+			Added control:
+				element "vr_camera_movement_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.vr.cameraMovement"
+						variable "$dropdown_content": "general_section.vr_camera_movement_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "vr_camera_movement_dropdown"
+						variable "$option_enabled_binding_name": "#vr_camera_moement_dropdown_enabled"
+						variable "$options_dropdown_toggle_label_binding": "#vr_camera_movement_dropdown_toggle_label"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "145%"
+			Added control:
+				element "vr_snap_angle_slider@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#vr_snap_angle_slider_label"
+						variable "$slider_name": "vr_snap_angle"
+						variable "$slider_value_binding_name": "#vr_snap_angle"
+						variable "$slider_tts_text_value": "#vr_snap_angle_text_value"
+						variable "$option_enabled_binding_name": "#vr_snap_angle_enabled"
+						variable "$slider_steps_binding_name": "#vr_snap_angle_steps"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "vr_movement_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.vr.movement"
+						variable "$dropdown_content": "general_section.vr_movement_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "vr_movement_dropdown"
+						variable "$option_enabled_binding_name": "#vr_movement_dropdown_enabled"
+						variable "$options_dropdown_toggle_label_binding": "#vr_movement_dropdown_toggle_label"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "145%"
+			Added control:
+				element "vr_jump_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.vr.jump"
+						variable "$dropdown_content": "general_section.vr_jump_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "vr_jump_dropdown"
+						variable "$option_enabled_binding_name": "#vr_jump_dropdown_enabled"
+						variable "$options_dropdown_toggle_label_binding": "#vr_jump_dropdown_toggle_label"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "145%"
+			Added control:
+				element "vr_head_steering_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.vr.headSteering"
+						variable "$dropdown_content": "general_section.vr_head_steering_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "vr_head_steering_dropdown"
+						variable "$option_enabled_binding_name": "#vr_head_steering_dropdown_enabled"
+						variable "$options_dropdown_toggle_label_binding": "#vr_head_steering_dropdown_toggle_label"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "145%"
+			Added control:
+				element "vr_sticky_mining_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.vr.stickyMining"
+						variable "$dropdown_content": "general_section.vr_sticky_mining_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "vr_sticky_mining_dropdown"
+						variable "$option_enabled_binding_name": "#vr_sticky_mining_dropdown_enabled"
+						variable "$options_dropdown_toggle_label_binding": "#vr_sticky_mining_dropdown_toggle_label"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "145%"
+			Added control:
+				element "vr_hud_position_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.vr.hudPosition"
+						variable "$dropdown_content": "general_section.vr_hud_position_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "vr_hud_position_dropdown"
+						variable "$option_enabled_binding_name": "#vr_hud_position_dropdown_enabled"
+						variable "$options_dropdown_toggle_label_binding": "#vr_hud_position_dropdown_toggle_label"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "145%"
+			Added control:
+				element "vr_hud_distance_slider@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#vr_hud_distance_slider_label"
+						variable "$slider_name": "vr_hud_distance"
+						variable "$slider_value_binding_name": "#vr_hud_distance"
+						variable "$slider_tts_text_value": "#vr_hud_distance_text_value"
+						variable "$option_enabled_binding_name": "#vr_hud_distance_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "option_toggle_11@settings_common.option_toggle":
+					field "ignored": "(not $supports_hand_controllers)"
+					field "$variables":
+						variable "$option_label": "options.vrHandControlsItem"
+						variable "$option_binding_name": "#vr_hand_controls_item"
+						variable "$option_enabled_binding_name": "#vr_hand_controls_item_enabled"
+						variable "$toggle_name": "vr_hand_controls_item"
+	Added element "vr_sticky_mining_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_sticky_mining_radio_lock"
+						item "$radio_label_text": "options.vr.stickyMining.lockOn"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "ignored": "(not $supports_hand_controllers)"
+						item "$toggle_state_binding_name": "#vr_sticky_mining_radio_controller"
+						item "$radio_label_text": "options.vr.stickyMining.handControllerOnly"
+				item 2:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#vr_sticky_mining_radio_disabled"
+						item "$radio_label_text": "options.vr.stickyMining.disabled"
+Changed namespace "how_to_play":
+	Total element: 145 (+2, -0)
+	Changed element "section_content_panels":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "general_tips_sections":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 73 (+1, -0)
+						Added control element "vr_section@how_to_play.vr_section": field "ignored": "(not $is_holographic)".
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "how_to_play_selector_pane":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 84 (+1, -0)
+						Changed control:
+							Moved element from "controls_button@how_to_play.controls_button" to "vr_button@how_to_play.vr_button".
+							Changed element "vr_button@how_to_play.vr_button":
+								Added field "ignored": "(not $is_holographic)".
+						Changed control:
+							Moved element from "hud_button@how_to_play.hud_button" to "controls_button@how_to_play.controls_button".
+						Changed control:
+							Moved element from "inventory_button@how_to_play.inventory_button" to "hud_button@how_to_play.hud_button".
+						Changed control:
+							Moved element from "crafting_button@how_to_play.crafting_button" to "inventory_button@how_to_play.inventory_button".
+						Changed control:
+							Moved element from "world_builder_button@how_to_play.world_builder_button" to "crafting_button@how_to_play.crafting_button".
+						Changed control:
+							Moved element from "permission_blocks_button@how_to_play.permission_blocks_button" to "world_builder_button@how_to_play.world_builder_button".
+						Changed control:
+							Moved element from "chalkboard_button@how_to_play.chalkboard_button" to "permission_blocks_button@how_to_play.permission_blocks_button".
+						Changed control:
+							Moved element from "chemistry_button@how_to_play.chemistry_button" to "chalkboard_button@how_to_play.chalkboard_button".
+						Changed control:
+							Moved element from "npc_button@how_to_play.npc_button" to "chemistry_button@how_to_play.chemistry_button".
+						Changed control:
+							Moved element from "camera_button@how_to_play.camera_button" to "npc_button@how_to_play.npc_button".
+						Changed control:
+							Moved element from "portfolio_button@how_to_play.portfolio_button" to "camera_button@how_to_play.camera_button".
+						Changed control:
+							Moved element from "classroom_mode_button@how_to_play.classroom_mode_button" to "portfolio_button@how_to_play.portfolio_button".
+						Changed control:
+							Moved element from "code_builder_button@how_to_play.code_builder_button" to "classroom_mode_button@how_to_play.classroom_mode_button".
+						Changed control:
+							Moved element from "tools_button@how_to_play.tools_button" to "code_builder_button@how_to_play.code_builder_button".
+						Changed control:
+							Moved element from "weapons_button@how_to_play.weapons_button" to "tools_button@how_to_play.tools_button".
+						Changed control:
+							Moved element from "nightfall_button@how_to_play.nightfall_button" to "weapons_button@how_to_play.weapons_button".
+						Changed control:
+							Moved element from "navigation_button@how_to_play.navigation_button" to "nightfall_button@how_to_play.nightfall_button".
+						Changed control:
+							Moved element from "chat_button@how_to_play.chat_button" to "navigation_button@how_to_play.navigation_button".
+						Changed control:
+							Moved element from "crafting_table_button@how_to_play.crafting_table_button" to "chat_button@how_to_play.chat_button".
+						Changed control:
+							Moved element from "furnace_button@how_to_play.furnace_button" to "crafting_table_button@how_to_play.crafting_table_button".
+						Changed control:
+							Moved element from "anvil_button@how_to_play.anvil_button" to "furnace_button@how_to_play.furnace_button".
+						Changed control:
+							Moved element from "enchanting_table_button@how_to_play.enchanting_table_button" to "anvil_button@how_to_play.anvil_button".
+						Changed control:
+							Moved element from "brewing_stand_button@how_to_play.brewing_stand_button" to "enchanting_table_button@how_to_play.enchanting_table_button".
+						Changed control:
+							Moved element from "banners_button@how_to_play.banners_button" to "brewing_stand_button@how_to_play.brewing_stand_button".
+						Changed control:
+							Moved element from "fireworks_button@how_to_play.fireworks_button" to "banners_button@how_to_play.banners_button".
+						Changed control:
+							Moved element from "cauldron_button@how_to_play.cauldron_button" to "fireworks_button@how_to_play.fireworks_button".
+						Changed control:
+							Moved element from "book_and_quill_button@how_to_play.book_and_quill_button" to "cauldron_button@how_to_play.cauldron_button".
+						Changed control:
+							Moved element from "loom_button@how_to_play.loom_button" to "book_and_quill_button@how_to_play.book_and_quill_button".
+						Changed control:
+							Moved element from "armor_button@how_to_play.armor_button" to "loom_button@how_to_play.loom_button".
+						Changed control:
+							Moved element from "armor_stand_button@how_to_play.armor_stand_button" to "armor_button@how_to_play.armor_button".
+						Changed control:
+							Moved element from "beacons_button@how_to_play.beacons_button" to "armor_stand_button@how_to_play.armor_stand_button".
+						Changed control:
+							Moved element from "conduits_button@how_to_play.conduits_button" to "beacons_button@how_to_play.beacons_button".
+						Changed control:
+							Moved element from "beds_button@how_to_play.beds_button" to "conduits_button@how_to_play.conduits_button".
+						Changed control:
+							Moved element from "blocks_button@how_to_play.blocks_button" to "beds_button@how_to_play.beds_button".
+						Changed control:
+							Moved element from "chests_button@how_to_play.chests_button" to "blocks_button@how_to_play.blocks_button".
+						Changed control:
+							Moved element from "dyes_button@how_to_play.dyes_button" to "chests_button@how_to_play.chests_button".
+						Changed control:
+							Moved element from "ender_chest_button@how_to_play.ender_chest_button" to "dyes_button@how_to_play.dyes_button".
+						Changed control:
+							Moved element from "farming_button@how_to_play.farming_button" to "ender_chest_button@how_to_play.ender_chest_button".
+						Changed control:
+							Moved element from "fishing_button@how_to_play.fishing_button" to "farming_button@how_to_play.farming_button".
+						Changed control:
+							Moved element from "mounts_button@how_to_play.mounts_button" to "fishing_button@how_to_play.fishing_button".
+						Changed control:
+							Moved element from "nether_portals_button@how_to_play.nether_portals_button" to "mounts_button@how_to_play.mounts_button".
+						Changed control:
+							Moved element from "pets_button@how_to_play.pets_button" to "nether_portals_button@how_to_play.nether_portals_button".
+						Changed control:
+							Moved element from "raids_button@how_to_play.raids_button" to "pets_button@how_to_play.pets_button".
+						Changed control:
+							Moved element from "ranching_button@how_to_play.ranching_button" to "raids_button@how_to_play.raids_button".
+						Changed control:
+							Moved element from "scaffolding_button@how_to_play.scaffolding_button" to "ranching_button@how_to_play.ranching_button".
+						Changed control:
+							Moved element from "structure_blocks_button@how_to_play.structure_blocks_button" to "scaffolding_button@how_to_play.scaffolding_button".
+						Changed control:
+							Moved element from "transportation_button@how_to_play.transportation_button" to "structure_blocks_button@how_to_play.structure_blocks_button".
+						Changed control:
+							Moved element from "trading_button@how_to_play.trading_button" to "transportation_button@how_to_play.transportation_button".
+						Changed control:
+							Moved element from "game_settings_button@how_to_play.game_settings_button" to "trading_button@how_to_play.trading_button".
+						Changed control:
+							Moved element from "difficulty_button@how_to_play.difficulty_button" to "game_settings_button@how_to_play.game_settings_button".
+						Changed control:
+							Moved element from "adventure_mode_button@how_to_play.adventure_mode_button" to "difficulty_button@how_to_play.difficulty_button".
+						Changed control:
+							Moved element from "creative_mode_button@how_to_play.creative_mode_button" to "adventure_mode_button@how_to_play.adventure_mode_button".
+						Changed control:
+							Moved element from "commands_button@how_to_play.commands_button" to "creative_mode_button@how_to_play.creative_mode_button".
+						Changed control:
+							Moved element from "host_and_player_options_button@how_to_play.host_and_player_options_button" to "commands_button@how_to_play.commands_button".
+						Changed control:
+							Moved element from "command_blocks_button@how_to_play.command_blocks_button" to "host_and_player_options_button@how_to_play.host_and_player_options_button".
+						Changed control:
+							Moved element from "redstone_button@how_to_play.redstone_button" to "command_blocks_button@how_to_play.command_blocks_button".
+						Changed control:
+							Moved element from "hoppers_button@how_to_play.hoppers_button" to "redstone_button@how_to_play.redstone_button".
+						Changed control:
+							Moved element from "droppers_button@how_to_play.droppers_button" to "hoppers_button@how_to_play.hoppers_button".
+						Changed control:
+							Moved element from "dispensers_button@how_to_play.dispensers_button" to "droppers_button@how_to_play.droppers_button".
+						Changed control:
+							Moved element from "jukebox_button@how_to_play.jukebox_button" to "dispensers_button@how_to_play.dispensers_button".
+						Changed control:
+							Moved element from "eye_of_ender_button@how_to_play.eye_of_ender_button" to "jukebox_button@how_to_play.jukebox_button".
+						Changed control:
+							Moved element from "the_end_button@how_to_play.the_end_button" to "eye_of_ender_button@how_to_play.eye_of_ender_button".
+						Changed control:
+							Moved element from "end_cities_button@how_to_play.end_cities_button" to "the_end_button@how_to_play.the_end_button".
+						Changed control:
+							Moved element from "elytra_button@how_to_play.elytra_button" to "end_cities_button@how_to_play.end_cities_button".
+						Changed control:
+							Moved element from "shulker_boxes_button@how_to_play.shulker_boxes_button" to "elytra_button@how_to_play.elytra_button".
+						Changed control:
+							Changed element "multiplayer_button@how_to_play.multiplayer_button":
+								Changed field "$variables":
+									Changed variable "$toggle_group_forced_index" from 65 to 66.
+						Changed control:
+							Changed element "realms_button@how_to_play.realms_button":
+								Changed field "$variables":
+									Changed variable "$toggle_group_forced_index" from 66 to 67.
+						Changed control:
+							Changed element "servers_button@how_to_play.servers_button":
+								Changed field "$variables":
+									Changed variable "$toggle_group_forced_index" from 67 to 68.
+						Changed control:
+							Moved element from "the_store_button@how_to_play.the_store_button" to "resource_and_behavior_packs_button@how_to_play.resource_and_behavior_packs_button".
+							Changed element "resource_and_behavior_packs_button@how_to_play.resource_and_behavior_packs_button":
+								Changed field "$variables":
+									Changed variable "$toggle_group_forced_index" from 68 to 70.
+						Changed control:
+							Moved element from "resource_and_behavior_packs_button@how_to_play.resource_and_behavior_packs_button" to "the_store_button@how_to_play.the_store_button".
+						Added control element "shulker_boxes_button@how_to_play.shulker_boxes_button": field "$variables": variable "$toggle_group_forced_index": 65.
+	Added element "vr_button@how_to_play_common.section_toggle_button": field "$variables": variable "$section_topic": "vr".
+	Added element "vr_section@how_to_play_common.main_sections":
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "vr_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control element "header_1@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.1"
+			control element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.1"
+			control element "padding_1@how_to_play_common.padding": empty
+			control element "paragraph_2_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.vr.text.2.keyboard"
+			control element "paragraph_2_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.vr.text.2.gamepad"
+			control element "paragraph_2_rift_controller@how_to_play_common.paragraph_rift_controller": field "$variables": variable "$text": "howtoplay.vr.text.2.rift_controller"
+			control element "paragraph_2_windowsmr_controller@how_to_play_common.paragraph_windowsmr_controller": field "$variables": variable "$text": "howtoplay.vr.text.2.windowsmr_controller"
+			control element "padding_2@how_to_play_common.padding": empty
+			control element "header_2@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.2"
+			control element "paragraph_3_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.vr.text.3.keyboard"
+			control element "paragraph_3_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.vr.text.3.gamepad"
+			control element "paragraph_3_rift_controller@how_to_play_common.paragraph_rift_controller": field "$variables": variable "$text": "howtoplay.vr.text.3.rift_controller"
+			control element "paragraph_3_windowsmr_controller@how_to_play_common.paragraph_windowsmr_controller": field "$variables": variable "$text": "howtoplay.vr.text.3.windowsmr_controller"
+			control element "padding_3@how_to_play_common.padding": empty
+			control element "paragraph_4@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.4"
+			control element "padding_centerCursor@how_to_play_common.padding": empty
+			control element "header_centerCursor@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.centerCursor"
+			control element "paragraph_centerCursor_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.centerCursor.1"
+			control element "padding_4@how_to_play_common.padding": empty
+			control element "header_3@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.3"
+			control element "paragraph_5@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.5"
+			control element "padding_5@how_to_play_common.padding": empty
+			control element "paragraph_6@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.6"
+			control element "padding_6@how_to_play_common.padding": empty
+			control element "paragraph_7_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.vr.text.7.keyboard"
+			control element "paragraph_7_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.vr.text.7.gamepad"
+			control element "paragraph_7_rift_controller@how_to_play_common.paragraph_rift_controller": field "$variables": variable "$text": "howtoplay.vr.text.7.rift_controller"
+			control element "paragraph_7_windowsmr_controller@how_to_play_common.paragraph_windowsmr_controller": field "$variables": variable "$text": "howtoplay.vr.text.7.windowsmr_controller"
+			control element "padding_snapWheel@how_to_play_common.padding": empty
+			control element "paragraph_snapWheel_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.vr.text.snapWheel.keyboard"
+			control element "paragraph_snapWheel_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.vr.text.snapWheel.gamepad"
+			control element "paragraph_snapWheel_rift_controller@how_to_play_common.paragraph_rift_controller": field "$variables": variable "$text": "howtoplay.vr.text.snapWheel.rift_controller"
+			control element "paragraph_snapWheel_windowsmr_controller@how_to_play_common.paragraph_windowsmr_controller": field "$variables": variable "$text": "howtoplay.vr.text.snapWheel.windowsmr_controller"
+			control element "padding_7@how_to_play_common.padding": empty
+			control element "header_4@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.4"
+			control element "paragraph_8@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.8"
+			control element "padding_8@how_to_play_common.padding": empty
+			control element "header_5@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.5"
+			control element "paragraph_9_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.vr.text.9.keyboard"
+			control element "paragraph_9_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.vr.text.9.gamepad"
+			control element "paragraph_9_rift_controller@how_to_play_common.paragraph_rift_controller": field "$variables": variable "$text": "howtoplay.vr.text.9.rift_controller"
+			control element "paragraph_9_windowsmr_controller@how_to_play_common.paragraph_windowsmr_controller": field "$variables": variable "$text": "howtoplay.vr.text.9.windowsmr_controller"
+			control element "padding_9@how_to_play_common.padding": empty
+			control element "header_6@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.6"
+			control element "paragraph_10@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.10"
+			control element "padding_10@how_to_play_common.padding": empty
+			control element "header_7@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.7"
+			control element "paragraph_11@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.11"
+			control element "padding_11@how_to_play_common.padding": empty
+			control element "paragraph_12@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.12"
+			control element "padding_12@how_to_play_common.padding": empty
+			control element "header_8@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.8"
+			control element "paragraph_13@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.13"
+			control element "padding_13@how_to_play_common.padding": empty
+			control element "paragraph_14@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.14"
+			control element "padding_14@how_to_play_common.padding": empty
+			control element "header_9@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.9"
+			control element "paragraph_15@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.15"
+			control element "padding_15@how_to_play_common.padding": empty
+			control element "header_10@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.10"
+			control element "paragraph_16@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.16"
+			control element "padding_16@how_to_play_common.padding": empty
+			control element "paragraph_17@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.17"
+			control element "padding_17@how_to_play_common.padding": empty
+			control element "header_11@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.11"
+			control element "paragraph_18@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.18"
+			control element "padding_18@how_to_play_common.padding": field "ignored": "(not $supports_hand_controllers)"
+			control:
+				element "paragraph_19@how_to_play_common.paragraph":
+					field "ignored": "(not $supports_hand_controllers)"
+					field "$variables": variable "$text": "howtoplay.vr.text.19"
+			control element "padding_19@how_to_play_common.padding": empty
+			control element "paragraph_20@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.20"
+			control element "padding_20@how_to_play_common.padding": empty
+			control element "header_12@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.12"
+			control element "paragraph_21@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.21"
+			control element "padding_21@how_to_play_common.padding": empty
+			control element "paragraph_22@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.22"
+			control element "padding_22@how_to_play_common.padding": field "ignored": "(not $supports_hand_controllers)"
+			control:
+				element "paragraph_23@how_to_play_common.paragraph":
+					field "ignored": "(not $supports_hand_controllers)"
+					field "$variables": variable "$text": "howtoplay.vr.text.23"
+			control element "padding_hud_distance@how_to_play_common.padding": empty
+			control element "header_hud_distance@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.vr.header.hudDistance"
+			control element "paragraph_hud_distance_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.vr.text.hudDistance.1"
+			control element "padding_24@how_to_play_common.padding": field "ignored": "(not $supports_hand_controllers)"
+			control:
+				element "header_14@how_to_play_common.header":
+					field "ignored": "(not $supports_hand_controllers)"
+					field "$variables": variable "$text": "howtoplay.vr.header.14"
+			control:
+				element "paragraph_25@how_to_play_common.paragraph":
+					field "ignored": "(not $supports_hand_controllers)"
+					field "$variables": variable "$text": "howtoplay.vr.text.25"
+Changed namespace "hud":
+	Changed element "hud_content":
+		Unchanged field "type": "panel".
+		Changed field "variables":
+			Total variable: 2 (+1, -0)
+			Added variable:
+				field "requires": "($compress_hud_width)"
+				field "$variables":
+					variable "$hud_size":
+						item 0: "90%"
+						item 1: "100%"
+		Changed field "$variables":
+			Total variable: 2 (+1, -0)
+			Added variable "$hud_size":
+				item 0: "100%"
+				item 1: "100%"
+		Added field "size": "$hud_size".
+Changed namespace "settings":
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 8 (+2, -0)
+			Changed control:
+				Changed element "controls_and_settings_selector_pane":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 19 (+0, -2)
+						Removed control:
+							element "vr_button@general_section.vr_button":
+								field "ignored": "(not $is_holographic)"
+								field "$variables":
+									variable "$toggle_group_forced_index": "$vr_forced_index"
+									variable "$tts_section_header": "$general_section_header"
+						Removed control:
+							element "how_to_play_button@general_section.how_to_play_button":
+								field "$variables":
+									variable "$toggle_group_forced_index": "$how_to_play_index"
+									variable "$tts_section_header": "$general_section_header"
+			Added control:
+				element "vr_button@general_section.vr_button":
+					field "ignored": "(not $is_holographic or not $include_controls_and_settings_sections)"
+					field "$variables": variable "$toggle_group_forced_index": "$vr_forced_index"
+			Added control:
+				element "how_to_play_button@general_section.how_to_play_button":
+					field "ignored": "(not $include_controls_and_settings_sections)"
+					field "$variables": variable "$toggle_group_forced_index": "$how_to_play_index"
+Changed namespace "settings_common":
+	Total element: 76 (+1, -0)
+	Added element "subsection_title":
 		field "type": "stack_panel"
 		field "orientation": "vertical"
-		field "size": ["100%", "60px"]
+		field "size": ["100%", "100%c + 10px"]
+		field "controls":
+			control:
+				element "spacer_0":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			control:
+				element "sizer_0":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "title":
+								field "type": "label"
+								field "color": "$main_header_text_color"
+								field "text_alignment": "center"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "layer": 3
+								field "text": "$text"
+			control:
+				element "spacer_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "sizer_1":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "section_divider":
+								field "type": "image"
+								field "size": ["100% - 4px", 1]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "layer": 3
+								field "texture": "textures/ui/list_item_divider_line_light"
+		field "$variables": variable "$text|default": ""
+Changed namespace "start":
+	Changed element "gamepad_helpers":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "gamepad_helper_y_and_padding":
+					Unchanged field "type": "panel".
+					Changed field "bindings":
+						Changed binding:
+							Added field "binding_condition": "always".
+	Changed element "start_screen@common.base_screen":
+		Changed field "button_mappings":
+			Total button mapping: 3 (+1, -0)
+			Added button mapping:
+				field "ignored": "(not $can_swap_vr_mode)"
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.menu_swap_vr_mode"
+				field "mapping_type": "global"
+Changed namespace "vr_align_screen":
+	Total element: 9 (+4, -0)
+	Moved element from "text_message" to "advancement_prompt_label".
+	Changed element "advancement_prompt_label":
+		Unchanged field "type": "label".
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Changed binding:
+				Changed field "binding_name" from "#message" to "#advancement_prompt".
+			Added binding:
+				field "binding_name": "#advancement_prompt_tts"
+				field "binding_name_override": "#text_tts"
+		Added field "text_tts": "#text_tts".
+		Added field "text_alignment": "center".
+	Moved element from "warning_label" to "controller_prompt_label".
+	Changed element "controller_prompt_label":
+		Unchanged field "type": "label".
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#warning" to "#controller_prompt".
+			Changed binding:
+				Changed field "binding_name" from "#showwarning" to "#show_controller_prompt".
+		Added field "text_alignment": "center".
+	Added element "focus_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["90%", "100%c"]
 		field "controls":
 			control:
 				element "padding_0":
 					field "type": "panel"
-					field "size": ["100%", 10]
-			control:
-				element "more_info_button@common_buttons.light_text_button":
-					field "size": ["100%", "20px"]
-					field "$variables":
-						variable "$button_text": "sunsetting.popup.moreInfo"
-						variable "$pressed_button_name": "sunsetting.moreInfo"
-						variable "$button_focus_precedence": 1
+					field "size": ["100%", 5]
+			control element "vrinfo_label@vr_align_screen.vrinfo_label": empty
 			control:
 				element "padding_1":
 					field "type": "panel"
-					field "size": ["100%", 1]
+					field "size": ["100%", 15]
+			control element "recalibration_label@vr_align_screen.recalibration_label": empty
 			control:
-				element "continue_button@common_buttons.light_text_button":
-					field "size": ["100%", "20px"]
-					field "$variables":
-						variable "$button_text": "patchNotes.continue"
-						variable "$pressed_button_name": "button.menu_exit"
-						variable "$button_focus_precedence": 2
+				element "padding_recalibration":
+					field "type": "panel"
+					field "size": ["100%", 15]
+					field "bindings":
+						binding:
+							field "binding_name": "#show_recalibration_text"
+							field "binding_name_override": "#visible"
+			control element "controller_prompt_label@vr_align_screen.controller_prompt_label": empty
 			control:
 				element "padding_2":
 					field "type": "panel"
-					field "size": ["100%", 1]
-			control:
-				element "sunsetting_toggle_panel@progress.do_not_show_checkbox":
 					field "size": ["100%", 10]
-					field "$variables":
-						variable "$toggle_name": "sunsetting_do_not_show_again"
-						variable "$toggle_state_binding_name": "#sunsetting_do_not_show_again"
-						variable "$toggle_label_text": "sunsetting.popup.dontshow"
-	Removed element "sunsetting_content":
-		field "type": "panel"
-		field "controls":
-			control:
-				element "scrolling_panel@common.scrolling_panel":
-					field "$variables":
-						variable "$scrolling_content": "patch_notes.scroll_content"
-						variable "$show_background": false
-						variable "$scroll_size":
-							item 0: 4
-							item 1: "100% - 4px"
-						variable "$scrolling_pane_size|default":
-							item 0: "100%"
-							item 1: "92%"
-						variable "$main_panel_size":
-							item 0: "100% - 16px"
-							item 1: "100% - 89px"
-						variable "$always_handle_scrolling": true
-	Removed element "sunsetting_dialog@common_dialogs.main_panel_small_title_one_button":
-		field "size": "$patch_notes_screen_size"
-		field "$variables":
-			variable "$custom_title_label": "common_dialogs.standard_title_label"
-			variable "$text_name": "#dialog_title"
-			variable "$title_text_binding_type": "global"
-			variable "$use_custom_title_control": true
-			variable "$child_control": "patch_notes.sunsetting_content"
-			variable "$button_panel": "patch_notes.sunsetting_button_panel"
-			variable "$button_panel_size":
-				item 0: "100% - 14px"
-				item 1: 60
-	Removed element "sunsetting_screen@common.base_screen": field "$variables": variable "$screen_content": "patch_notes.sunsetting_dialog".
-Changed namespace "pdp":
-	Total element: 114 (+0, -3)
-	Removed element "info_bulb_image":
-		field "type": "image"
-		field "texture": "textures/ui/infobulb"
-		field "size": [15, 15]
-	Removed element "info_bulb_image_small":
-		field "type": "image"
-		field "texture": "textures/ui/infobulb_darkborder_small"
-		field "size": [7, 9]
-	Removed element "realms_incompatable_content":
-		field "type": "image"
-		field "texture": "textures/ui/disabledButton"
-		field "layer": 2
-		field "controls":
-			control:
-				element "realms_content_stack_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "offset": [0, 5]
-					field "controls":
-						control element "info_bulb_image@pdp.info_bulb_image_small": field "layer": 3
-						control:
-							element "padding":
-								field "type": "panel"
-								field "size": [2, "100%"]
-						control:
-							element "realms_incompatable_button_label":
-								field "type": "label"
-								field "text": "sunsetting.store.incompatible"
-								field "color": "$light_button_locked_text_color"
-								field "layer": 3
-	Changed element "summary_text_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "in_realms_plus_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Total control: 1 (+0, -1)
-						Changed control:
-							Changed element "in_realms_plus_button@pdp.in_realms_plus_button":
-								Removed field "bindings":
-									binding:
-										field "binding_name": "(not #realms_incompatible_button_visible)"
-										field "binding_name_override": "#visible"
-						Removed control:
-							element "realms_disabled_button@common_buttons.dynamic_tooltip_notification_panel":
-								field "size": ["100% - 4px", "20px"]
-								field "button_mappings":
-									button mapping:
-										field "from_button_id": "button.menu_select"
-										field "to_button_id": "button.menu_store_error"
-										field "mapping_type": "pressed"
-									button mapping:
-										field "to_button_id": "button.is_hovered"
-										field "mapping_type": "pressed"
-								field "consume_hover_events": true
-								field "focus_enabled": true
-								field "bindings":
-									binding:
-										field "binding_name": "#realms_incompatible_button_visible"
-										field "binding_name_override": "#visible"
-								field "$variables":
-									variable "$dynamic_tooltip_button_visibility_binding_name": "#realms_incompatible_button_visible"
-									variable "$tooltip_popup_visible_binding": "#realms_incompatible_tooltip_visible"
-									variable "$tooltip_text_binding_name": "#marketplace_incompatable_popup_text"
-									variable "$override_tooltip_popup_image": true
-									variable "$tooltip_popup_override_image_panel": "pdp.info_bulb_image"
-									variable "$tool_tip_text_max_size":
-										item 0: "190px"
-										item 1: "default"
-									variable "$tooltip_panel_offset":
-										item 0: -40
-										item 1: -10
-									variable "$tooltip_panel_content": "pdp.realms_incompatable_content"
-Changed namespace "play":
-	Total element: 243 (+0, -3)
-	Changed element "friends_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 14 (+0, -1)
-						Removed control element "friends_screen_warning@play.realm_warning_tip": empty.
-	Removed element "game_tip_item_panel":
-		field "type": "stack_panel"
-		field "orientation": "horizontal"
-		field "size": ["100% - 8px", "100%cm + 6px"]
-		field "controls":
-			control:
-				element "info_bulb":
-					field "type": "image"
-					field "layer": 13
-					field "size": [15, 19]
-					field "texture": "textures/ui/infobulb"
-			control:
-				element "padding_1":
-					field "type": "panel"
-					field "size": [2, 0]
-			control:
-				element "label_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["fill", "100%c"]
-					field "controls":
-						control:
-							element "padding_vertical":
-								field "type": "panel"
-								field "size": [0, 1]
-						control:
-							element "realms_warning_text":
-								field "type": "label"
-								field "size": ["100%", "default"]
-								field "text": "$label_text"
-								field "color": "$body_text_color"
-								field "layer": 3
-								field "bindings":
-									binding:
-										field "binding_name": "$label_text"
-										field "binding_name_override": "$label_text"
-										field "binding_type": "$label_text_binding_type"
-								field "$variables":
-									variable "$label_text|default": "#label_text"
-									variable "$label_text_binding_type|default": "global"
-						control:
-							element "padding_vertical_1":
-								field "type": "panel"
-								field "size": [0, 1]
-			control:
-				element "more_info_button@common_buttons.light_text_form_fitting_button":
-					field "$variables":
-						variable "$pressed_button_name": "button.realms_warning_more_info"
-						variable "$button_text": "playscreen.realmsWarning.moreinfo"
-		field "$variables":
-			variable "$game_tip_text|default": ""
-			variable "$label_text": "$game_tip_text"
-	Changed element "games_factory_object":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "games_factory_panel":
-					Unchanged field "type": "image".
-					Changed field "controls":
-						Changed control:
-							Changed element "top_panel":
-								Unchanged field "type": "stack_panel".
-								Changed field "size":
-									Unchanged item 0: "100% - 8px".
-									Changed item 1 from 40 to "100%cm".
-								Changed field "controls":
-									Changed control:
-										Changed element "game_image_panel":
-											Unchanged field "type": "panel".
-											Changed field "size":
-												Unchanged item 0: "50%".
-												Changed item 1 from "100%" to "100%sm".
-											Changed field "controls":
-												Changed control:
-													Changed element "game_image":
-														Unchanged field "type": "image".
-														Removed field "offset": [0, -4].
-											Added field "min_size": ["50%", 30].
-									Changed control:
-										Changed element "padding":
-											Unchanged field "type": "panel".
-											Changed field "size":
-												Unchanged item 0: 4.
-												Changed item 1 from "100%" to "100%sm".
-									Changed control:
-										Changed element "game_title_panel":
-											Unchanged field "type": "stack_panel".
-											Changed field "size":
-												Unchanged item 0: "fill".
-												Changed item 1 from "100%" to "100%c".
-											Added field "min_size": ["fill", 30].
-								Added field "min_size": ["100% - 8px", 30].
-						Changed control:
-							Changed element "bottom_panel":
-								Unchanged field "type": "panel".
-								Changed field "size":
-									Unchanged item 0: "100% - 8px".
-									Changed item 1 from "100%c" to "100%c + 4px".
-								Removed field "offset": [0, -4].
-	Removed element "realm_warning_tip":
-		field "type": "image"
-		field "texture": "textures/ui/greyBorder"
-		field "layer": 1
-		field "size": ["100%", "100%cm"]
-		field "controls":
-			control:
-				element "padding_vertical":
-					field "type": "panel"
-					field "size": [0, 8]
-			control:
-				element "info_panel@play.game_tip_item_panel":
-					field "offset": [0, 4]
-					field "$variables": variable "$game_tip_text": "$realms_warning_text"
-		field "bindings":
-			binding:
-				field "binding_name": "#device_sunsetting"
-				field "binding_name_override": "#visible"
-		field "$variables": variable "$realms_warning_text|default": "#realms_warning_text"
-	Changed element "server_scroll_content@play.common_content":
-		Changed field "controls":
-			Total control: 2 (+1, -1)
-			Removed control:
-				element "severs_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["100%", "100%"]
-					field "controls":
-						control:
-							element "offset_panel":
-								field "type": "panel"
-								field "size": ["100% - 4px", "100%cm"]
-								field "controls":
-									control:
-										element "servers_sunsetting_warning@play.realm_warning_tip":
-											field "size": ["100% - 2px", "100%cm - 2px"]
-											field "offset": [2, 2]
-								field "bindings":
-									binding:
-										field "binding_name": "#device_sunsetting"
-										field "binding_name_override": "#visible"
-						control element "show_servers_panel@play.show_servers_panel": empty
-			Added control:
-				element "show_servers_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%", "100%"]
 					field "bindings":
 						binding:
-							field "binding_name": "(not #feature_server_message_visible)"
+							field "binding_name": "#show_controller_prompt"
 							field "binding_name_override": "#visible"
-					field "controls":
-						control:
-							element "left_panel":
-								field "type": "panel"
-								field "size": ["50% - 1px", "100%"]
-								field "controls":
-									control:
-										element "scrolling_panel@play.scrolling_offsets":
-											field "size": ["100%", "100% - 4px"]
-											field "offset": [0, 2]
-											field "layer": 1
-											field "$variables": variable "$scrolling_content": "play.server_scroll_panel"
-						control:
-							element "divider_panel":
-								field "type": "panel"
-								field "size": [3, "100%"]
-								field "controls":
-									control:
-										element "main_divider":
-											field "type": "image"
-											field "size": [3, "100% - 4px"]
-											field "tiled": "y"
-											field "texture": "textures/ui/HowToPlayDivider"
-											field "layer": 10
-						control element "right_panel@play.server_content_area": empty
-	Removed element "show_servers_panel":
-		field "type": "stack_panel"
-		field "orientation": "horizontal"
-		field "size": ["100%", "fill"]
+			control element "advancement_prompt_label@vr_align_screen.advancement_prompt_label": empty
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 5]
+	Added element "main_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls": control element "focus_panel@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "vr_align_screen.focus_panel"
+	Added element "recalibration_label":
+		field "type": "label"
+		field "layer": 2
+		field "size": ["100%", "default"]
+		field "shadow": true
+		field "text": "#text"
+		field "text_tts": "#text_tts"
+		field "text_alignment": "center"
+		field "line_padding": 10.0
+		field "color": "$body_text_color"
 		field "bindings":
 			binding:
-				field "binding_name": "(not #feature_server_message_visible)"
+				field "binding_name": "#recalibration_text"
+				field "binding_name_override": "#text"
+			binding:
+				field "binding_name": "#recalibration_text_tts"
+				field "binding_name_override": "#text_tts"
+			binding:
+				field "binding_name": "#show_recalibration_text"
 				field "binding_name_override": "#visible"
+	Added element "vr_align_dialog@common_dialogs.form_fitting_main_panel_no_buttons":
+		field "size": [340, "100%c"]
+		field "$variables":
+			variable "$show_close_button": "$can_quit"
+			variable "$child_control": "vr_align_screen.main_panel"
+			variable "$text_name": "vr.alignscreen.title"
+	Changed element "vr_align_screen@common.base_screen":
+		Changed field "button_mappings":
+			Changed button mapping:
+				Added field "ignored": "(not $can_quit)".
+	Changed element "vr_align_screen_content":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["70%", "default"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "offset": [0, 40]
 		field "controls":
+			control element "vrinfo_label@vrinfo_label": empty
 			control:
-				element "left_panel":
+				element "spacing_gap_1":
 					field "type": "panel"
-					field "size": ["50% - 1px", "100%"]
-					field "controls":
-						control:
-							element "scrolling_panel@play.scrolling_offsets":
-								field "size": ["100%", "100% - 4px"]
-								field "offset": [0, 2]
-								field "layer": 1
-								field "$variables": variable "$scrolling_content": "play.server_scroll_panel"
+					field "size": [0, 30]
+			control element "warning_label@warning_label": empty
 			control:
-				element "divider_panel":
+				element "spacing_gap_2":
 					field "type": "panel"
-					field "size": [3, "100%"]
-					field "controls":
-						control:
-							element "main_divider":
-								field "type": "image"
-								field "size": [3, "100% - 4px"]
-								field "tiled": "y"
-								field "texture": "textures/ui/HowToPlayDivider"
-								field "layer": 10
-			control element "right_panel@play.server_content_area": empty
-	Changed element "worlds_stack_panel":
+					field "size": [0, 10]
+					field "bindings":
+						binding:
+							field "binding_name": "#showwarning"
+							field "binding_name_override": "#visible"
+			control element "text_message@text_message": empty
+		field "type": "panel"
+		field "controls": control element "dialog@vr_align_screen.vr_align_dialog": empty
+	Changed element "vrinfo_label":
+		Unchanged field "type": "label".
+		Added field "text_alignment": "center".
+Changed namespace "world_section":
+	Total element: 32 (+1, -0)
+	Added element "debug_biome_override_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_random_biome"
+						item "$radio_label_text": "random_biome"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_basalt_deltas"
+						item "$radio_label_text": "basalt_deltas"
+				item 2:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_soulsand_valley"
+						item "$radio_label_text": "soulsand_valley"
+				item 3:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_crimson_forest"
+						item "$radio_label_text": "crimson_forest"
+				item 4:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_warped_forest"
+						item "$radio_label_text": "warped_forest"
+				item 5:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_hell"
+						item "$radio_label_text": "hell"
+				item 6:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_desert"
+						item "$radio_label_text": "desert"
+				item 7:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_extreme_hills"
+						item "$radio_label_text": "extreme_hills"
+				item 8:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_forest"
+						item "$radio_label_text": "forest"
+				item 9:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_taiga"
+						item "$radio_label_text": "taiga"
+				item 10:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_swampland"
+						item "$radio_label_text": "swampland"
+				item 11:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_river"
+						item "$radio_label_text": "river"
+				item 12:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_frozen_river"
+						item "$radio_label_text": "frozen_river"
+				item 13:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_ice_plains"
+						item "$radio_label_text": "ice_plains"
+				item 14:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_ice_mountains"
+						item "$radio_label_text": "ice_mountains"
+				item 15:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mushroom_island"
+						item "$radio_label_text": "mushroom_island"
+				item 16:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mushroom_island_shore"
+						item "$radio_label_text": "mushroom_island_shore"
+				item 17:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_beach"
+						item "$radio_label_text": "beach"
+				item 18:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_desert_hills"
+						item "$radio_label_text": "desert_hills"
+				item 19:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_forest_hills"
+						item "$radio_label_text": "forest_hills"
+				item 20:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_taiga_hills"
+						item "$radio_label_text": "taiga_hills"
+				item 21:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_extreme_hills_edge"
+						item "$radio_label_text": "extreme_hills_edge"
+				item 22:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_jungle"
+						item "$radio_label_text": "jungle"
+				item 23:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_jungle_hills"
+						item "$radio_label_text": "jungle_hills"
+				item 24:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_jungle_edge"
+						item "$radio_label_text": "jungle_edge"
+				item 25:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_stone_beach"
+						item "$radio_label_text": "stone_beach"
+				item 26:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_cold_beach"
+						item "$radio_label_text": "cold_beach"
+				item 27:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_birch_forest"
+						item "$radio_label_text": "birch_forest"
+				item 28:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_birch_forest_hills"
+						item "$radio_label_text": "birch_forest_hills"
+				item 29:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_roofed_forest"
+						item "$radio_label_text": "roofed_forest"
+				item 30:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_cold_taiga"
+						item "$radio_label_text": "cold_taiga"
+				item 31:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_cold_taiga_hills"
+						item "$radio_label_text": "cold_taiga_hills"
+				item 32:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mega_taiga"
+						item "$radio_label_text": "mega_taiga"
+				item 33:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mega_taiga_hills"
+						item "$radio_label_text": "mega_taiga_hills"
+				item 34:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_extreme_hills_plus_trees"
+						item "$radio_label_text": "extreme_hills_plus_trees"
+				item 35:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_savanna"
+						item "$radio_label_text": "savanna"
+				item 36:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_savanna_plateau"
+						item "$radio_label_text": "savanna_plateau"
+				item 37:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mesa"
+						item "$radio_label_text": "mesa"
+				item 38:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mesa_plateau_stone"
+						item "$radio_label_text": "mesa_plateau_stone"
+				item 39:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mesa_plateau"
+						item "$radio_label_text": "mesa_plateau"
+				item 40:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_ocean"
+						item "$radio_label_text": "ocean"
+				item 41:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_deep_ocean"
+						item "$radio_label_text": "deep_ocean"
+				item 42:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_warm_ocean"
+						item "$radio_label_text": "warm_ocean"
+				item 43:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_deep_warm_ocean"
+						item "$radio_label_text": "deep_warm_ocean"
+				item 44:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_lukewarm_ocean"
+						item "$radio_label_text": "lukewarm_ocean"
+				item 45:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_deep_lukewarm_ocean"
+						item "$radio_label_text": "deep_lukewarm_ocean"
+				item 46:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_cold_ocean"
+						item "$radio_label_text": "cold_ocean"
+				item 47:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_deep_cold_ocean"
+						item "$radio_label_text": "deep_cold_ocean"
+				item 48:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_frozen_ocean"
+						item "$radio_label_text": "frozen_ocean"
+				item 49:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_deep_frozen_ocean"
+						item "$radio_label_text": "deep_frozen_ocean"
+				item 50:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_bamboo_jungle"
+						item "$radio_label_text": "bamboo_jungle"
+				item 51:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_bamboo_jungle_hills"
+						item "$radio_label_text": "bamboo_jungle_hills"
+				item 52:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_sunflower_plains"
+						item "$radio_label_text": "sunflower_plains"
+				item 53:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_swampland_mutated"
+						item "$radio_label_text": "swampland_mutated"
+				item 54:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_ice_plains_spikes"
+						item "$radio_label_text": "ice_plains_spikes"
+				item 55:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_cold_taiga_mutated"
+						item "$radio_label_text": "cold_taiga_mutated"
+				item 56:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_savanna_mutated"
+						item "$radio_label_text": "savanna_mutated"
+				item 57:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_savanna_plateau_mutated"
+						item "$radio_label_text": "savanna_plateau_mutated"
+				item 58:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_roofed_forest_mutated"
+						item "$radio_label_text": "roofed_forest_mutated"
+				item 59:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_desert_mutated"
+						item "$radio_label_text": "desert_mutated"
+				item 60:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_flower_forest"
+						item "$radio_label_text": "flower_forest"
+				item 61:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_taiga_mutated"
+						item "$radio_label_text": "taiga_mutated"
+				item 62:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_jungle_mutated"
+						item "$radio_label_text": "jungle_mutated"
+				item 63:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_jungle_edge_mutated"
+						item "$radio_label_text": "jungle_edge_mutated"
+				item 64:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mesa_bryce"
+						item "$radio_label_text": "mesa_bryce"
+				item 65:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mesa_plateau_stone_mutated"
+						item "$radio_label_text": "mesa_plateau_stone_mutated"
+				item 66:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_mesa_plateau_mutated"
+						item "$radio_label_text": "mesa_plateau_mutated"
+				item 67:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_birch_forest_mutated"
+						item "$radio_label_text": "birch_forest_mutated"
+				item 68:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_birch_forest_hills_mutated"
+						item "$radio_label_text": "birch_forest_hills_mutated"
+				item 69:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_redwood_taiga_mutated"
+						item "$radio_label_text": "redwood_taiga_mutated"
+				item 70:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_extreme_hills_mutated"
+						item "$radio_label_text": "extreme_hills_mutated"
+				item 71:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_extreme_hills_plus_trees_mutated"
+						item "$radio_label_text": "extreme_hills_plus_trees_mutated"
+				item 72:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_redwood_taiga_hills_mutated"
+						item "$radio_label_text": "redwood_taiga_hills_mutated"
+				item 73:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_biome_override_plains"
+						item "$radio_label_text": "plains"
+	Changed element "debug_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 17 (+0, -1)
-			Removed control element "play_screen_warning@play.realm_warning_tip": empty.
-Changed namespace "progress":
-	Changed element "do_not_show_checkbox@common.checkbox":
-		Changed field "controls":
-			Changed control:
-				Changed element "header_description_stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "buffer_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "label":
-											Unchanged field "type": "label".
-											Changed field "text" from "$toggle_label_text" to "onlinePlay.doNotShowAgain".
-		Changed field "$variables":
-			Total variable: 3 (+0, -1)
-			Removed variable "$toggle_label_text|default": "onlinePlay.doNotShowAgain".
+			Total control: 4 (+1, -0)
+			Added control:
+				element "biome_override_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "Biome override"
+						variable "$dropdown_content": "world_section.debug_biome_override_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "debug_biome_override_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#debug_biome_override_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#debug_biome_override_dropdown_dropdown_enabled"
+						variable "$selection_highlight_offset":
+							item 0: -2
+							item 1: 1
+						variable "$selection_highlight_size":
+							item 0: "100%"
+							item 1: "100% + 1px"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"

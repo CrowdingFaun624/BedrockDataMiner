@@ -1,102 +1,24 @@
-Difference of "ui" between "1.16.100.58" (beta of "1.16.100") and "1.16.100.59" (beta of "1.16.100").
+Difference of "ui" between "1.16.201" and "1.16.210.50" (beta of "1.16.210").
 
-Changed namespace "common":
-	Changed element "common_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "close_button_holder":
-					Unchanged field "type": "panel".
-					Changed field "ignored" from "(not $enable_close_button)" to "(not $show_close_button)".
-		Changed field "$variables":
-			Moved variable from "$enable_close_button|default" to "$show_close_button|default".
-Changed namespace "common_dialogs":
-	Changed element "main_panel_no_buttons":
-		Unchanged field "type": "panel".
-		Changed field "$variables":
-			Total variable: 3 (+0, -1)
-			Removed variable "$enable_close_button|default": true.
 Changed namespace "general_section":
-	Total element: 91 (+1, -0)
-	Added element "consumable_not_extendable":
-		field "type": "panel"
-		field "size": ["100%", "100%cm"]
-		field "controls":
-			control:
-				element "panel_content":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%", "100%cm"]
-					field "controls":
-						control element "padded_icon_0@common.empty_panel": field "size": [3, 0]
-						control:
-							element "limited_status_image":
-								field "type": "image"
-								field "size": [15, 19]
-								field "bilinear": true
-								field "texture": "textures/ui/infobulb"
-								field "layer": 1
-						control element "padded_icon_1@common.empty_panel": field "size": [3, 0]
-						control:
-							element "label_panel":
-								field "type": "panel"
-								field "size": ["fill", "100%c"]
-								field "controls":
-									control:
-										element "name_label2":
-											field "type": "label"
-											field "color": "$main_header_text_color"
-											field "font_type": "smooth"
-											field "size": ["100%", "default"]
-											field "text": "$warning_text"
-											field "bindings": "$text_bindings"
-											field "$variables":
-												variable "$warning_text|default": "options.viewSubscriptions.consumableToSubscriptionTransitionInfo"
-												variable "$text_bindings|default": empty
-		field "$variables": variable "$realm_collection_name|default": ""
-	Changed element "realms_subscription_panel":
+	Changed element "automation_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 8 (+2, -0)
 			Changed control:
-				Moved element from "pad_3" to "pad_4".
+				Moved element from "automation_stress_test_run_count_text_box@settings_common.option_text_edit" to "automation_soak_test_duration_minutes_text_box@settings_common.option_text_edit".
+				Changed element "automation_soak_test_duration_minutes_text_box@settings_common.option_text_edit":
+					Changed field "$variables":
+						Changed variable "$option_label" from "Stress Test Run Count" to "Soak Test Duration (Minutes)".
+						Changed variable "$text_box_name" from "automation_stress_test_run_count" to "automation_soak_test_duration_minutes".
+						Changed variable "$option_binding_name" from "#automation_stress_test_run_count" to "#automation_soak_test_duration_minutes".
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 81 (+1, -0)
 			Added control:
-				element "lower_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%cm"]
-					field "controls":
-						control:
-							element "black_background@general_section.background":
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "size": ["100%", "100%sm"]
-						control:
-							element "consumable_not_extendable@general_section.consumable_not_extendable":
-								field "layer": 3
-								field "$variables":
-									variable "$tooltip_button_collection_name": "$realm_collection_name"
-									variable "$warning_text": "options.viewSubscriptions.consumableToSubscriptionTransitionInfo"
-					field "bindings":
-						binding:
-							field "binding_name": "#consumable_not_extendable_visible"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-							field "binding_collection_name": "$realm_collection_name"
-							field "binding_condition": "once"
-			Added control:
-				element "pad_3":
-					field "type": "panel"
-					field "size": ["100%", 6]
-					field "bindings":
-						binding:
-							field "binding_name": "#consumable_not_extendable_visible"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-							field "binding_collection_name": "$realm_collection_name"
-							field "binding_condition": "once"
-Changed namespace "pause":
-	Moved element from "change_profile_button_gamepad@common_buttons.light_text_form_fitting_button" to "change_profile_button_gamepad@common_buttons.light_content_button".
-	Changed element "change_profile_button_gamepad@common_buttons.light_content_button":
-		Changed field "size":
-			Changed item 0 from 75 to 70.
-			Unchanged item 1: 26.
+				element "option_toggle_remote_imgui@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.remote_imgui_toggle"
+						variable "$option_binding_name": "#remote_imgui"
+						variable "$option_enabled_binding_name": "#remote_imgui_enabled"
+						variable "$toggle_name": "remote_imgui"

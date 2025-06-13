@@ -1,47 +1,61 @@
-Difference of "entities_client" between "1.21.62" and "1.21.70.20" (beta of "1.21.70").
+Difference of "entities_client" between "1.21.70.20" (beta of "1.21.70") and "1.21.70.22" (beta of "1.21.70").
 
-Changed entity "cow.entity.json":
+Changed entity "chicken.entity.json":
 	Total resource pack: 2 (+1, -0)
 	Added resource pack "experimental":
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
 				field "animations":
-					animation "baby_transform": "animation.cow.baby_transform"
+					animation "baby_transform": "animation.chicken.baby_transform"
+					animation "general": "animation.chicken.general"
 					animation "look_at_target": "animation.common.look_at_target"
-					animation "setup": "animation.cow.setup"
-					animation "walk": "animation.quadruped.walk"
+					animation "move": "animation.chicken.move"
 				field "geometry":
-					geometry "cold": "geometry.cow.cold"
-					geometry "default": "geometry.cow.v2"
-					geometry "warm": "geometry.cow.warm"
-				field "identifier": "minecraft:cow"
+					geometry "cold": "geometry.chicken.cold"
+					geometry "default": "geometry.chicken.v2"
+					geometry "warm": "geometry.chicken.v2"
+				field "identifier": "minecraft:chicken"
 				field "materials":
-					materials "cold": "cow_cold"
-					materials "default": "cow"
-				field "min_engine_version": "1.8.0"
-				field "render_controllers": render controller "controller.render.cow.v2"
+					materials "cold": "chicken_cold"
+					materials "default": "chicken"
+					materials "legs": "chicken_legs"
+				field "min_engine_version": "1.12.0"
+				field "render_controllers": render controller "controller.render.chicken.v2"
 				field "scripts":
 					field "pre_animation":
 						script "t.variant = query.property('minecraft:climate_variant');"
 						script "v.index = (t.variant == 'temperate') ? 0 : ((t.variant == 'warm') ? 1 : 2);"
 						script "v.is_cold = t.variant == 'cold';"
 					field "animate":
-						script "setup"
-						script script item "walk": "query.modified_move_speed"
+						script "general"
+						script script item "move": "query.modified_move_speed"
 						script "look_at_target"
 						script script item "baby_transform": "query.is_baby"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
-					field "texture_index": 1
+					field "texture_index": 0
 				field "textures":
-					texture "cold": "textures/entity/cow/cow_cold"
-					texture "default": "textures/entity/cow/cow_v2"
-					texture "warm": "textures/entity/cow/cow_warm"
-Changed entity "pig.entity.json":
-	Changed resource pack "experimental":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Unchanged field "identifier": "minecraft:pig".
-				Changed field "textures":
-					Moved texture from "temperate" to "default".
+					texture "cold": "textures/entity/chicken/chicken_cold"
+					texture "default": "textures/entity/chicken/chicken_v2"
+					texture "warm": "textures/entity/chicken/chicken_warm"
+Changed entity "egg.entity.json":
+	Total resource pack: 2 (+1, -0)
+	Added resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animations": animation "flying": "animation.actor.billboard"
+				field "geometry": geometry "default": "geometry.item_sprite"
+				field "identifier": "minecraft:egg"
+				field "materials": materials "default": "egg"
+				field "render_controllers": render controller "controller.render.egg"
+				field "scripts":
+					field "pre_animation":
+						script "t.variant = query.property('minecraft:climate_variant');"
+						script "v.index = (t.variant == 'temperate') ? 0 : ((t.variant == 'warm') ? 1 : 2);"
+					field "animate": script "flying"
+				field "textures":
+					texture "cold": "textures/items/blue_egg"
+					texture "default": "textures/items/egg"
+					texture "warm": "textures/items/brown_egg"

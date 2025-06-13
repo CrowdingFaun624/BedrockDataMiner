@@ -1,389 +1,1301 @@
-Difference of "ui" between "1.15.0.56" (beta of "1.16.0") and "1.16.0.51" (beta of "1.16.0").
+Difference of "ui" between "1.16.0.61" (beta of "1.16.0") and "1.16.0.63" (beta of "1.16.0").
 
-Changed namespace "settings":
-	Changed element "section_content_panels":
+Changed namespace "common":
+	Changed element "base_screen":
+		Unchanged field "type": "screen".
+		Changed field "controls":
+			Changed control:
+				Changed element "variables_button_mappings_and_controls":
+					Unchanged field "type": "input_panel".
+					Changed field "variables":
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 39 (+1, -0)
+								Added variable "$extra_large_max_screen_size":
+									item 0: 370
+									item 1: "100% - 50px"
+Changed namespace "general_section":
+	Changed element "accessibility_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 6 (+1, -0)
+			Added control:
+				element "text_background_opacity_slider@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#text_background_opacity_slider_label"
+						variable "$slider_name": "text_background_opacity"
+						variable "$slider_value_binding_name": "#text_background_opacity"
+						variable "$slider_tts_text_value": "#text_background_opacity_text_value"
+						variable "$option_enabled_binding_name": "#text_background_opacity_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+Changed namespace "hud":
+	Total element: 103 (+8, -0)
+	Added element "anim_actionbar_text_background_alpha_out":
+		field "anim_type": "alpha"
+		field "easing": "in_expo"
+		field "duration": 3
+		field "from": 0.6
+		field "to": 0
+		field "destroy_at_end": "hud_actionbar_text"
+	Added element "anim_item_name_background_alpha":
+		field "anim_type": "alpha"
+		field "easing": "in_expo"
+		field "destroy_at_end": "item_text_label"
+		field "duration": 2
+		field "from": 0.6
+		field "to": 0
+	Added element "anim_subtitle_background_alpha_in":
+		field "anim_type": "alpha"
+		field "play_event": "anim_subtitle_text_alpha_in_play_event"
+		field "easing": "linear"
+		field "duration": "$title_fade_in_time"
+		field "from": 0
+		field "to": "$title_alpha"
+		field "next": "@hud.anim_subtitle_background_alpha_stay"
+	Added element "anim_subtitle_background_alpha_out":
+		field "anim_type": "alpha"
+		field "easing": "linear"
+		field "duration": "$title_fade_out_time"
+		field "from": "$title_alpha"
+		field "to": 0
+		field "end_event": "hud_subtitle_text_complete"
+	Added element "anim_subtitle_background_alpha_stay":
+		field "anim_type": "wait"
+		field "duration": "$title_stay_time"
+		field "next": "@hud.anim_subtitle_background_alpha_out"
+	Added element "anim_title_background_alpha_in":
+		field "anim_type": "alpha"
+		field "easing": "linear"
+		field "duration": "$title_fade_in_time"
+		field "from": 0
+		field "to": "$title_alpha"
+		field "next": "@hud.anim_title_background_alpha_stay"
+	Added element "anim_title_background_alpha_out":
+		field "anim_type": "alpha"
+		field "easing": "linear"
+		field "duration": "$title_fade_out_time"
+		field "from": "$title_alpha"
+		field "to": 0
+		field "destroy_at_end": "hud_title_text"
+		field "end_event": "hud_title_text_complete"
+	Added element "anim_title_background_alpha_stay":
+		field "anim_type": "wait"
+		field "duration": "$title_stay_time"
+		field "next": "@hud.anim_title_background_alpha_out"
+	Changed element "creative_above_interact_button_item_text@hud.item_name_text":
+		field "offset": [0, -22]
+		field "offset": [0, -22]
+	Changed element "creative_item_name_text@hud.item_name_text":
+		field "offset": [0, -12]
+		field "offset": [0, -12]
+	Changed element "hud_actionbar_text":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "offset": [0, "50%-68px"]
+		field "controls":
+			control:
+				element "actionbar_message":
+					field "type": "label"
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "color": "$tool_tip_text"
+					field "text": "$actionbar_text"
+					field "localize": false
+					field "alpha": "@hud.anim_actionbar_text_alpha_out"
+		field "type": "image"
+		field "size": ["100%c + 12px", "100%c + 5px"]
+		field "offset": [0, "50%-68px"]
+		field "texture": "textures/ui/hud_tip_text_background"
+		field "alpha": "@hud.anim_actionbar_text_background_alpha_out"
+		field "controls":
+			control:
+				element "actionbar_message":
+					field "type": "label"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "color": "$tool_tip_text"
+					field "layer": 1
+					field "text": "$actionbar_text"
+					field "localize": false
+					field "alpha": "@hud.anim_actionbar_text_alpha_out"
+	Changed element "hud_tip_text@hud.item_name_text":
+		field "offset": [0, "50%-68px"]
+		field "controls":
+			control:
+				element "item_text_label":
+					field "type": "label"
+					field "layer": 31
+					field "color": "$tool_tip_text"
+					field "text": "#text"
+					field "shadow": true
+					field "alpha": "@hud.anim_item_name_text_alpha"
+					field "bindings":
+						binding:
+							field "binding_name": "#tip_text"
+							field "binding_name_override": "#text"
+		field "type": "image"
+		field "size": ["100%c + 12px", "100%c + 5px"]
+		field "offset": [0, "50%-68px"]
+		field "texture": "textures/ui/hud_tip_text_background"
+		field "alpha": "@hud.anim_item_name_background_alpha"
+		field "controls":
+			control:
+				element "item_text_label":
+					field "type": "label"
+					field "layer": 31
+					field "color": "$tool_tip_text"
+					field "text": "#text"
+					field "shadow": true
+					field "alpha": "@hud.anim_item_name_text_alpha"
+					field "bindings":
+						binding:
+							field "binding_name": "#tip_text"
+							field "binding_name_override": "#text"
+	Changed element "hud_title_text":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "title_frame":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from "100%c" to "100%cm".
+					Changed field "controls":
+						Total control: 2 (+1, -0)
+						Changed control:
+							Changed element "title":
+								Unchanged field "type": "label".
+								Changed field "shadow" from true to "$show_shadow".
+								Removed field "size": ["100%", "default"].
+								Added field "layer": 1.
+								Added field "variables":
+									variable:
+										field "requires": "(not $title_shadow)"
+										field "$variables": variable "$show_shadow": false
+									variable:
+										field "requires": "$title_shadow"
+										field "$variables": variable "$show_shadow": true
+								Added field "offset": [0, 1].
+						Added control:
+							element "title_background":
+								field "type": "image"
+								field "size": ["100%sm + 6px", "100%sm - 1px"]
+								field "texture": "textures/ui/hud_tip_text_background"
+								field "alpha": "@hud.anim_title_background_alpha_in"
+			Changed control:
+				Changed element "subtitle_frame":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from "100%c" to "100%cm".
+					Changed field "controls":
+						Total control: 2 (+1, -0)
+						Changed control:
+							Changed element "subtitle":
+								Unchanged field "type": "label".
+								Changed field "shadow" from true to "$show_shadow".
+								Removed field "size": ["100%", "default"].
+								Changed field "variables":
+									Total variable: 4 (+2, -0)
+									Added variable:
+										field "requires": "(not $title_shadow)"
+										field "$variables": variable "$show_shadow": false
+									Added variable:
+										field "requires": "$title_shadow"
+										field "$variables": variable "$show_shadow": true
+								Added field "layer": 1.
+						Added control:
+							element "subtitle_background":
+								field "type": "image"
+								field "size": ["100%sm + 4px", "100%sm - 1px"]
+								field "texture": "textures/ui/hud_tip_text_background"
+								field "variables":
+									variable:
+										field "requires": "$subtitle_initially_visible"
+										field "$variables": variable "$subtitle_bg": "@hud.anim_title_background_alpha_in"
+									variable:
+										field "requires": "(not $subtitle_initially_visible)"
+										field "$variables": variable "$subtitle_bg": "@hud.anim_subtitle_background_alpha_in"
+								field "alpha": "$subtitle_bg"
+	Changed element "item_name_text":
+		field "type": "panel"
+		field "size": [100, 10]
+		field "controls":
+			control:
+				element "item_text_label":
+					field "type": "label"
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "text_alignment": "center"
+					field "layer": 31
+					field "color": "$tool_tip_text"
+					field "text": "#text"
+					field "shadow": true
+					field "alpha": "@hud.anim_item_name_text_alpha"
+					field "bindings":
+						binding:
+							field "binding_name": "#item_text"
+							field "binding_name_override": "#text"
+		field "type": "image"
+		field "size": ["100%c + 12px", "100%c + 5px"]
+		field "texture": "textures/ui/hud_tip_text_background"
+		field "alpha": "@hud.anim_item_name_background_alpha"
+		field "controls":
+			control:
+				element "item_text_label":
+					field "type": "label"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "text_alignment": "center"
+					field "layer": 31
+					field "color": "$tool_tip_text"
+					field "text": "#text"
+					field "alpha": "@hud.anim_item_name_text_alpha"
+					field "bindings":
+						binding:
+							field "binding_name": "#item_text"
+							field "binding_name_override": "#text"
+	Changed element "survival_above_interact_button_item_text@hud.item_name_text":
+		field "offset": [0, -42]
+		field "offset": [0, -42]
+	Changed element "survival_item_name_text@hud.item_name_text":
+		field "variables":
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables":
+					variable "$offset":
+						item 0: 0
+						item 1: -10
+		field "offset": "$offset"
+		field "$variables":
+			variable "$offset|default":
+				item 0: 0
+				item 1: -32
+		field "variables":
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables":
+					variable "$offset":
+						item 0: 0
+						item 1: -10
+		field "offset": "$offset"
+		field "$variables":
+			variable "$offset|default":
+				item 0: 0
+				item 1: -32
+Changed namespace "npc_interact":
+	Total element: 64 (+1, -0)
+	Added element "npc_message@npc_interact.multiline_text_edit_control":
+		field "size": ["100%", "100%cm"]
+		field "enabled": "$enabled"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "max_length": 1000
+		field "constrain_to_rect": false
+		field "variables":
+			variable:
+				field "requires": "(not $is_worldbuilder)"
+				field "$variables":
+					variable "$place_holder_text": ""
+					variable "$enabled": false
+		field "bindings": empty
+		field "locked_control": "background"
+		field "default_control": "background"
+		field "hover_control": "background"
+		field "pressed_control": "background"
+		field "text_control": "label"
+		field "place_holder_control": "place_holder"
+		field "controls":
+			control:
+				element "label@common.text_edit_box_label":
+					field "layer": 1
+					field "size": ["100%", "default"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+			control:
+				element "visibility_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "place_holder@common.text_edit_box_place_holder_label":
+								field "layer": 1
+								field "size": ["100%", "default"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+					field "bindings":
+						binding:
+							field "binding_type": "view"
+							field "source_control_name": "label"
+							field "source_property_name": "(#item_name = '')"
+							field "target_property_name": "#visible"
+							field "resolve_sibling_scope": true
+			control element "background@common.empty_panel": field "size": ["100%", "100%sm"]
+		field "$variables":
+			variable "$enabled": true
+			variable "$text_background_default": "npc_interact.edit_box_background"
+			variable "$text_background_hover": "npc_interact.edit_box_background"
+			variable "$text_box_text_color": "$npc_dialog_text_color"
+			variable "$text_box_name": "student_message_bubble"
+			variable "$text_edit_box_content_binding_name": "#dialogtext"
+			variable "$color": "$npc_dialog_text_color"
+			variable "$disabled_alpha": 1
+			variable "$text_edit_box_placeholder_content_binding_name": "#placeholder_dialog_text"
+			variable "$text_alpha": 1
+			variable "$locked_text_alpha": "$disabled_alpha"
+			variable "$locked_color": "$color"
+	Changed element "student_message_bubble":
+		Unchanged field "type": "image".
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "message@npc_interact.multiline_text_edit_control":
+					field "enabled": "$enabled"
+					field "offset": [8, 4]
+					field "size": ["100% - 13px", "100% - 7px"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "max_length": 0
+					field "constrain_to_rect": true
+					field "variables":
+						variable:
+							field "requires": "(not $is_worldbuilder)"
+							field "$variables":
+								variable "$place_holder_text": ""
+								variable "$enabled": false
+					field "bindings": empty
+					field "$variables":
+						variable "$enabled": true
+						variable "$text_background_default": "npc_interact.edit_box_background"
+						variable "$text_background_hover": "npc_interact.edit_box_background"
+						variable "$text_box_text_color": "$npc_dialog_text_color"
+						variable "$text_box_name": "student_message_bubble"
+						variable "$text_edit_box_content_binding_name": "#dialogtext"
+						variable "$color": "$npc_dialog_text_color"
+						variable "$disabled_alpha": 1
+						variable "$text_edit_box_placeholder_content_binding_name": "#placeholder_dialog_text"
+			Added control:
+				element "text_scroll@common.scrolling_panel":
+					field "size": ["100% - 7px", "100% - 6px"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "offset": [3, 2]
+					field "$variables":
+						variable "$always_handle_scrolling": true
+						variable "$scrolling_content": "npc_interact.npc_message"
+						variable "$show_background": false
+						variable "$scroll_bar_left_padding_size":
+							item 0: 0
+							item 1: 0
+						variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100% - 4px"
+						variable "$scroll_size_touch": "$scroll_size"
+Changed namespace "persona":
+	Total element: 202 (+1, -0)
+	Changed element "emote_image@common.empty_panel":
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "valid":
+					field "type": "image"
+					field "texture": "#texture"
+					field "size": [42, 42]
+					field "property_bag": "$property_bag"
+					field "bindings":
+						binding:
+							field "binding_name": "#emote_image"
+							field "binding_name_override": "#texture"
+							field "binding_condition": "always"
+						binding:
+							field "binding_name": "#emote_image_file_system"
+							field "binding_name_override": "#texture_file_system"
+							field "binding_condition": "always"
+						binding:
+							field "binding_name": "#emote_image_tint"
+							field "binding_name_override": "#color"
+							field "binding_condition": "always"
+						binding:
+							field "binding_name": "#emote_is_valid"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+			Added control:
+				element "emote_preview":
+					field "type": "panel"
+					field "size": [42, 42]
+					field "property_bag": "$property_bag"
+					field "bindings":
+						binding:
+							field "binding_name": "#emote_is_valid"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+					field "controls":
+						control:
+							element "valid":
+								field "type": "image"
+								field "size": ["100%", "100%"]
+								field "texture": "#texture"
+								field "property_bag": "$property_bag"
+								field "bindings":
+									binding:
+										field "binding_name": "#emote_image"
+										field "binding_name_override": "#texture"
+										field "binding_condition": "always"
+									binding:
+										field "binding_name": "#emote_image_file_system"
+										field "binding_name_override": "#texture_file_system"
+										field "binding_condition": "always"
+									binding:
+										field "binding_name": "#emote_image_tint"
+										field "binding_name_override": "#color"
+										field "binding_condition": "always"
+									binding:
+										field "binding_name": "#image_is_valid"
+										field "binding_name_override": "#visible"
+										field "binding_condition": "always"
+						control:
+							element "valid_no_image":
+								field "type": "panel"
+								field "size": ["100%", "100%"]
+								field "property_bag": "$property_bag"
+								field "bindings":
+									binding:
+										field "binding_name": "(not #image_is_valid)"
+										field "binding_name_override": "#visible"
+										field "binding_condition": "always"
+								field "controls":
+									control:
+										element "valid_text":
+											field "type": "label"
+											field "size": ["100%", 13]
+											field "text_alignment": "center"
+											field "color": "$dark_button_default_text_color"
+											field "font_scale_factor": 1.5
+											field "shadow": true
+											field "property_bag": "$property_bag"
+											field "text": "#text"
+											field "bindings":
+												binding:
+													field "binding_name": "#emote_index_name"
+													field "binding_name_override": "#text"
+													field "binding_condition": "always"
+	Changed element "emote_offer_section_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "emote_offer_scroll_panel@persona.scroll_section":
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from "100%" to "fill".
+	Changed element "emote_wheel_screen_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "root_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "emotes_panel@common_dialogs.main_panel":
+								Changed field "controls":
+									Changed control:
+										Changed element "emote_wheel@persona.selection_wheel":
+											Changed field "controls":
+												Total control: 7 (+6, -18)
+												Removed control element "state_0@persona.wheel_state": field "texture": "textures/ui/emote_wheel_select_0".
+												Removed control:
+													element "image_0@persona.emote_image":
+														field "offset": [-31, -52]
+														field "$variables": variable "$property_bag": item "#index": 0
+												Removed control:
+													element "touch_label_0@persona.touch_name_label":
+														field "offset": [-102, -54]
+														field "text_alignment": "right"
+														field "property_bag": field "#index": 0
+												Removed control element "state_1@persona.wheel_state": field "texture": "textures/ui/emote_wheel_select_1".
+												Removed control:
+													element "image_1@persona.emote_image":
+														field "offset": [-62, 0]
+														field "$variables": variable "$property_bag": item "#index": 1
+												Removed control:
+													element "touch_label_1@persona.touch_name_label":
+														field "offset": [-132, 0]
+														field "text_alignment": "right"
+														field "property_bag": field "#index": 1
+												Removed control element "state_2@persona.wheel_state": field "texture": "textures/ui/emote_wheel_select_2".
+												Removed control:
+													element "image_2@persona.emote_image":
+														field "offset": [-31, 52]
+														field "$variables": variable "$property_bag": item "#index": 2
+												Removed control:
+													element "touch_label_2@persona.touch_name_label":
+														field "offset": [-103, 54]
+														field "text_alignment": "right"
+														field "property_bag": field "#index": 2
+												Removed control element "state_3@persona.wheel_state": field "texture": "textures/ui/emote_wheel_select_3".
+												Removed control:
+													element "image_3@persona.emote_image":
+														field "offset": [31, 52]
+														field "$variables": variable "$property_bag": item "#index": 3
+												Removed control:
+													element "touch_label_3@persona.touch_name_label":
+														field "offset": [102, 54]
+														field "property_bag": field "#index": 3
+												Removed control element "state_4@persona.wheel_state": field "texture": "textures/ui/emote_wheel_select_4".
+												Removed control:
+													element "image_4@persona.emote_image":
+														field "offset": [62, 0]
+														field "$variables": variable "$property_bag": item "#index": 4
+												Removed control:
+													element "touch_label_4@persona.touch_name_label":
+														field "offset": [133, 0]
+														field "property_bag": field "#index": 4
+												Removed control element "state_5@persona.wheel_state": field "texture": "textures/ui/emote_wheel_select_5".
+												Removed control:
+													element "image_5@persona.emote_image":
+														field "offset": [31, -52]
+														field "$variables": variable "$property_bag": item "#index": 5
+												Removed control:
+													element "touch_label_5@persona.touch_name_label":
+														field "offset": [102, -54]
+														field "property_bag": field "#index": 5
+												Added control:
+													element "emote_slot_0_content@persona.emote_wheel_slot_content":
+														field "$variables":
+															variable "$emote_slot_index": 0
+															variable "$emote_slot_name": "emote_slot_0"
+															variable "$wheel_state_texture": "textures/ui/emote_wheel_select_0"
+															variable "$emote_image_offset":
+																item 0: -31
+																item 1: -52
+															variable "$emote_touch_label_offset":
+																item 0: -102
+																item 1: -54
+												Added control:
+													element "emote_slot_1_content@persona.emote_wheel_slot_content":
+														field "$variables":
+															variable "$emote_slot_index": 1
+															variable "$emote_slot_name": "emote_slot_1"
+															variable "$wheel_state_texture": "textures/ui/emote_wheel_select_1"
+															variable "$emote_image_offset":
+																item 0: 31
+																item 1: -52
+															variable "$emote_touch_label_offset":
+																item 0: 102
+																item 1: -54
+												Added control:
+													element "emote_slot_2_content@persona.emote_wheel_slot_content":
+														field "$variables":
+															variable "$emote_slot_index": 2
+															variable "$emote_slot_name": "emote_slot_2"
+															variable "$wheel_state_texture": "textures/ui/emote_wheel_select_2"
+															variable "$emote_image_offset":
+																item 0: 62
+																item 1: 0
+															variable "$emote_touch_label_offset":
+																item 0: 133
+																item 1: 0
+												Added control:
+													element "emote_slot_3_content@persona.emote_wheel_slot_content":
+														field "$variables":
+															variable "$emote_slot_index": 3
+															variable "$emote_slot_name": "emote_slot_3"
+															variable "$wheel_state_texture": "textures/ui/emote_wheel_select_3"
+															variable "$emote_image_offset":
+																item 0: 31
+																item 1: 52
+															variable "$emote_touch_label_offset":
+																item 0: 102
+																item 1: 54
+												Added control:
+													element "emote_slot_4_content@persona.emote_wheel_slot_content":
+														field "$variables":
+															variable "$emote_slot_index": 4
+															variable "$emote_slot_name": "emote_slot_4"
+															variable "$wheel_state_texture": "textures/ui/emote_wheel_select_4"
+															variable "$emote_image_offset":
+																item 0: -31
+																item 1: 52
+															variable "$emote_touch_label_offset":
+																item 0: -103
+																item 1: 54
+												Added control:
+													element "emote_slot_5_content@persona.emote_wheel_slot_content":
+														field "$variables":
+															variable "$emote_slot_index": 5
+															variable "$emote_slot_name": "emote_slot_5"
+															variable "$wheel_state_texture": "textures/ui/emote_wheel_select_5"
+															variable "$emote_image_offset":
+																item 0: -62
+																item 1: 0
+															variable "$emote_touch_label_offset":
+																item 0: -132
+																item 1: 0
+											Changed field "state_controls":
+												Total control: 7 (+6, -6)
+												Removed control "state_0".
+												Removed control "state_1".
+												Removed control "state_2".
+												Removed control "state_3".
+												Removed control "state_4".
+												Removed control "state_5".
+												Added control "emote_slot_0".
+												Added control "emote_slot_1".
+												Added control "emote_slot_2".
+												Added control "emote_slot_3".
+												Added control "emote_slot_4".
+												Added control "emote_slot_5".
+											Changed field "$variables":
+												Total variable: 3 (+1, -0)
+												Added variable "$button_focus_precedence": 10.
+											Added field "focus_identifier": "emote_wheel".
+											Added field "focus_change_left": "FOCUS_OVERRIDE_STOP".
+											Added field "focus_change_right": "FOCUS_OVERRIDE_STOP".
+											Added field "focus_change_up": "FOCUS_OVERRIDE_STOP".
+			Changed control:
+				Changed element "dressing_room_button_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "dressing_room_button@common_buttons.light_text_button":
+								Added field "focus_change_down": "FOCUS_OVERRIDE_STOP".
+								Added field "focus_change_left": "emote_wheel".
+								Added field "focus_change_right": "emote_wheel".
+	Added element "emote_wheel_slot_content":
+		field "type": "panel"
+		field "controls":
+			control element "$emote_slot_name@persona.wheel_state": empty
+			control:
+				element "image_0@persona.emote_image":
+					field "offset": "$emote_image_offset"
+					field "$variables": variable "$property_bag": item "#index": "$emote_slot_index"
+			control:
+				element "touch_label_0@persona.touch_name_label":
+					field "offset": "$emote_touch_label_offset"
+					field "text_alignment": "right"
+					field "property_bag": field "#index": "$emote_slot_index"
+	Changed element "offer_state_info":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "world_sections":
+				Changed element "offer_state_info_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "sale_ribbon@persona.icon_image":
+								Changed field "size":
+									Changed item 0 from 11 to 9.
+									Changed item 1 from 10 to 6.
+								Changed field "texture" from "textures/ui/icon_saleribbon" to "textures/ui/slot_sale".
+	Changed element "selection_wheel":
+		Unchanged field "type": "selection_wheel".
+		Changed field "focus_enabled" from false to true.
+		Removed field "focus_magnet_enabled": false.
+		Changed field "button_mappings":
+			Total button mapping: 13 (+10, -0)
+			Added button mapping:
+				field "from_button_id": "button.slot1"
+				field "to_button_id": "button.select_emote_slot_0"
+				field "mapping_type": "global"
+			Added button mapping:
+				field "from_button_id": "button.slot2"
+				field "to_button_id": "button.select_emote_slot_1"
+				field "mapping_type": "global"
+			Added button mapping:
+				field "from_button_id": "button.slot3"
+				field "to_button_id": "button.select_emote_slot_2"
+				field "mapping_type": "global"
+			Added button mapping:
+				field "from_button_id": "button.slot4"
+				field "to_button_id": "button.select_emote_slot_3"
+				field "mapping_type": "global"
+			Added button mapping:
+				field "from_button_id": "button.slot5"
+				field "to_button_id": "button.select_emote_slot_4"
+				field "mapping_type": "global"
+			Added button mapping:
+				field "from_button_id": "button.slot6"
+				field "to_button_id": "button.select_emote_slot_5"
+				field "mapping_type": "global"
+			Added button mapping:
+				field "from_button_id": "button.menu_right"
+				field "to_button_id": "$iterate_right_button_name"
+				field "mapping_type": "global"
+				field "consume_event": false
+			Added button mapping:
+				field "from_button_id": "button.inventory_right"
+				field "to_button_id": "$iterate_right_button_name"
+				field "mapping_type": "global"
+				field "consume_event": false
+			Added button mapping:
+				field "from_button_id": "button.menu_left"
+				field "to_button_id": "$iterate_left_button_name"
+				field "mapping_type": "global"
+				field "consume_event": false
+			Added button mapping:
+				field "from_button_id": "button.inventory_left"
+				field "to_button_id": "$iterate_left_button_name"
+				field "mapping_type": "global"
+				field "consume_event": false
+		Changed field "$variables":
+			Total variable: 12 (+2, -0)
+			Added variable "$iterate_left_button_name|default": "button.iterate_selection_left".
+			Added variable "$iterate_right_button_name|default": "button.iterate_selection_right".
+		Added field "iterate_left_button_name": "$iterate_left_button_name".
+		Added field "iterate_right_button_name": "$iterate_right_button_name".
+	Changed element "wheel_state":
+		Unchanged field "type": "image".
+		Added field "texture": "$wheel_state_texture".
+Changed namespace "play":
+	Changed element "add_server_toggle_button@common_toggles.light_text_toggle":
+		Changed field "$variables":
+			Total variable: 10 (+1, -0)
+			Changed variable "$focus_override_up" from "close_button" to "left_panel".
+			Changed variable "$toggle_tab_focus_binding_name" from "none" to "#navigation_tab_focus_precedence".
+			Added variable "$toggle_tab_focus_binding_type": "global".
+	Changed element "additional_server_info_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "server_info_stack_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 4 (+1, -0)
-						Added control:
-							element "debug_section@world_section.debug_section":
-								field "ignored": "$is_publish"
-								field "visible": false
-Changed namespace "world_section":
-	Total element: 30 (+4, -0)
-	Added element "debug_button@settings_common.section_toggle_base":
-		field "$variables":
-			variable "$toggle_view_binding_name": "world_debug_button_toggle"
-			variable "$glyph_texture": "textures/ui/debug_glyph"
-			variable "$glyph_color_texture": "textures/ui/debug_glyph_color"
-			variable "$glyph_size":
-				item 0: 15
-				item 1: 15
-			variable "$button_text": "options.debug"
-			variable "$toggle_property_bag": item "#panel_title": "options.debugTitle"
-	Added element "debug_section":
-		field "type": "stack_panel"
-		field "size": ["100%", "100%c"]
-		field "anchor_from": "top_left"
-		field "anchor_to": "top_left"
-		field "bindings":
-			binding:
-				field "binding_type": "view"
-				field "source_control_name": "world_debug_button_toggle"
-				field "source_property_name": "#toggle_state"
-				field "target_property_name": "#visible"
-		field "controls":
-			control:
-				element "flat_nether_toggle@settings_common.option_toggle":
-					field "$variables":
-						variable "$option_label": "Flat Nether"
-						variable "$option_binding_name": "#flat_nether"
-						variable "$option_enabled_binding_name": "#flat_nether_enabled"
-						variable "$toggle_name": "flat_nether"
-			control:
-				element "spawn_dimension_dropdown@settings_common.option_dropdown_no_scroll":
-					field "$variables":
-						variable "$option_label": "Spawn Dimension"
-						variable "$dropdown_content": "world_section.debug_spawn_dimension_dropdown_content"
-						variable "$dropdown_area": "content_area"
-						variable "$dropdown_name": "debug_spawn_dimension_dropdown"
-						variable "$options_dropdown_toggle_label_binding": "#debug_spawn_dimension_dropdown_toggle_label"
-						variable "$option_enabled_binding_name": "#debug_spawn_dimension_dropdown_enabled"
-						variable "$selection_highlight_offset":
-							item 0: -2
-							item 1: 1
-						variable "$selection_highlight_size":
-							item 0: "100%"
-							item 1: "100% + 1px"
-						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
-			control:
-				element "spawn_biome_dropdown@settings_common.option_dropdown":
-					field "$variables":
-						variable "$option_label": "Spawn Biome"
-						variable "$dropdown_content": "world_section.debug_spawn_biome_dropdown_content"
-						variable "$dropdown_area": "content_area"
-						variable "$dropdown_name": "debug_spawn_biome_dropdown"
-						variable "$options_dropdown_toggle_label_binding": "#debug_spawn_biome_dropdown_toggle_label"
-						variable "$option_enabled_binding_name": "#debug_spawn_biome_dropdown_enabled"
-						variable "$selection_highlight_offset":
-							item 0: -2
-							item 1: 1
-						variable "$selection_highlight_size":
-							item 0: "100%"
-							item 1: "100% + 1px"
-						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
-	Added element "debug_spawn_biome_dropdown_content@settings_common.option_radio_dropdown_group":
-		field "$variables":
-			variable "$radio_buttons":
-				item 0:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_random_biome"
-						item "$radio_label_text": "random_biome"
-				item 1:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_soulsand_valley"
-						item "$radio_label_text": "soulsand_valley"
-				item 2:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_crimson_forest"
-						item "$radio_label_text": "crimson_forest"
-				item 3:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_warped_forest"
-						item "$radio_label_text": "warped_forest"
-				item 4:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_hell"
-						item "$radio_label_text": "hell"
-				item 5:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_plains"
-						item "$radio_label_text": "plains"
-				item 6:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_desert"
-						item "$radio_label_text": "desert"
-				item 7:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills"
-						item "$radio_label_text": "extreme_hills"
-				item 8:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_forest"
-						item "$radio_label_text": "forest"
-				item 9:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_taiga"
-						item "$radio_label_text": "taiga"
-				item 10:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_swampland"
-						item "$radio_label_text": "swampland"
-				item 11:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_river"
-						item "$radio_label_text": "river"
-				item 12:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_frozen_river"
-						item "$radio_label_text": "frozen_river"
-				item 13:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_ice_plains"
-						item "$radio_label_text": "ice_plains"
-				item 14:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_ice_mountains"
-						item "$radio_label_text": "ice_mountains"
-				item 15:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mushroom_island"
-						item "$radio_label_text": "mushroom_island"
-				item 16:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mushroom_island_shore"
-						item "$radio_label_text": "mushroom_island_shore"
-				item 17:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_beach"
-						item "$radio_label_text": "beach"
-				item 18:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_desert_hills"
-						item "$radio_label_text": "desert_hills"
-				item 19:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_forest_hills"
-						item "$radio_label_text": "forest_hills"
-				item 20:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_taiga_hills"
-						item "$radio_label_text": "taiga_hills"
-				item 21:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills_edge"
-						item "$radio_label_text": "extreme_hills_edge"
-				item 22:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_jungle"
-						item "$radio_label_text": "jungle"
-				item 23:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_jungle_hills"
-						item "$radio_label_text": "jungle_hills"
-				item 24:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_jungle_edge"
-						item "$radio_label_text": "jungle_edge"
-				item 25:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_stone_beach"
-						item "$radio_label_text": "stone_beach"
-				item 26:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_cold_beach"
-						item "$radio_label_text": "cold_beach"
-				item 27:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_birch_forest"
-						item "$radio_label_text": "birch_forest"
-				item 28:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_birch_forest_hills"
-						item "$radio_label_text": "birch_forest_hills"
-				item 29:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_roofed_forest"
-						item "$radio_label_text": "roofed_forest"
-				item 30:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_cold_taiga"
-						item "$radio_label_text": "cold_taiga"
-				item 31:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_cold_taiga_hills"
-						item "$radio_label_text": "cold_taiga_hills"
-				item 32:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mega_taiga"
-						item "$radio_label_text": "mega_taiga"
-				item 33:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mega_taiga_hills"
-						item "$radio_label_text": "mega_taiga_hills"
-				item 34:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills_plus_trees"
-						item "$radio_label_text": "extreme_hills_plus_trees"
-				item 35:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_savanna"
-						item "$radio_label_text": "savanna"
-				item 36:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_savanna_plateau"
-						item "$radio_label_text": "savanna_plateau"
-				item 37:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mesa"
-						item "$radio_label_text": "mesa"
-				item 38:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_plateau_stone"
-						item "$radio_label_text": "mesa_plateau_stone"
-				item 39:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_plateau"
-						item "$radio_label_text": "mesa_plateau"
-				item 40:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_ocean"
-						item "$radio_label_text": "ocean"
-				item 41:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_deep_ocean"
-						item "$radio_label_text": "deep_ocean"
-				item 42:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_warm_ocean"
-						item "$radio_label_text": "warm_ocean"
-				item 43:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_deep_warm_ocean"
-						item "$radio_label_text": "deep_warm_ocean"
-				item 44:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_lukewarm_ocean"
-						item "$radio_label_text": "lukewarm_ocean"
-				item 45:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_deep_lukewarm_ocean"
-						item "$radio_label_text": "deep_lukewarm_ocean"
-				item 46:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_cold_ocean"
-						item "$radio_label_text": "cold_ocean"
-				item 47:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_deep_cold_ocean"
-						item "$radio_label_text": "deep_cold_ocean"
-				item 48:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_frozen_ocean"
-						item "$radio_label_text": "frozen_ocean"
-				item 49:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_deep_frozen_ocean"
-						item "$radio_label_text": "deep_frozen_ocean"
-				item 50:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_bamboo_jungle"
-						item "$radio_label_text": "bamboo_jungle"
-				item 51:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_bamboo_jungle_hills"
-						item "$radio_label_text": "bamboo_jungle_hills"
-				item 52:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_sunflower_plains"
-						item "$radio_label_text": "sunflower_plains"
-				item 53:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_swampland_mutated"
-						item "$radio_label_text": "swampland_mutated"
-				item 54:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_ice_plains_spikes"
-						item "$radio_label_text": "ice_plains_spikes"
-				item 55:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_cold_taiga_mutated"
-						item "$radio_label_text": "cold_taiga_mutated"
-				item 56:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_savanna_mutated"
-						item "$radio_label_text": "savanna_mutated"
-				item 57:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_savanna_plateau_mutated"
-						item "$radio_label_text": "savanna_plateau_mutated"
-				item 58:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_roofed_forest_mutated"
-						item "$radio_label_text": "roofed_forest_mutated"
-				item 59:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_desert_mutated"
-						item "$radio_label_text": "desert_mutated"
-				item 60:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_flower_forest"
-						item "$radio_label_text": "flower_forest"
-				item 61:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_taiga_mutated"
-						item "$radio_label_text": "taiga_mutated"
-				item 62:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_jungle_mutated"
-						item "$radio_label_text": "jungle_mutated"
-				item 63:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_jungle_edge_mutated"
-						item "$radio_label_text": "jungle_edge_mutated"
-				item 64:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_bryce"
-						item "$radio_label_text": "mesa_bryce"
-				item 65:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_plateau_stone_mutated"
-						item "$radio_label_text": "mesa_plateau_stone_mutated"
-				item 66:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_plateau_mutated"
-						item "$radio_label_text": "mesa_plateau_mutated"
-				item 67:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_birch_forest_mutated"
-						item "$radio_label_text": "birch_forest_mutated"
-				item 68:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_birch_forest_hills_mutated"
-						item "$radio_label_text": "birch_forest_hills_mutated"
-				item 69:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_redwood_taiga_mutated"
-						item "$radio_label_text": "redwood_taiga_mutated"
-				item 70:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills_mutated"
-						item "$radio_label_text": "extreme_hills_mutated"
-				item 71:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills_plus_trees_mutated"
-						item "$radio_label_text": "extreme_hills_plus_trees_mutated"
-				item 72:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_redwood_taiga_hills_mutated"
-						item "$radio_label_text": "redwood_taiga_hills_mutated"
-	Added element "debug_spawn_dimension_dropdown_content@settings_common.option_radio_dropdown_group":
-		field "$variables":
-			variable "$radio_buttons":
-				item 0:
-					item "debug_spawn_in_overworld_toggle@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_overworld"
-						item "$radio_label_text": "Overworld"
-				item 1:
-					item "debug_spawn_in_nether_toggle@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_spawn_in_nether"
-						item "$radio_label_text": "Nether"
-	Changed element "selector_pane_content":
+						Changed control:
+							Changed element "join_server_button@common_buttons.light_text_button":
+								Changed field "$variables":
+									Total variable: 3 (+1, -0)
+									Added variable "$focus_override_left": "left_panel".
+	Changed element "description_section_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 10 (+1, -0)
-			Added control element "debug_button@world_section.debug_button": field "ignored": "$is_publish".
+			Changed control:
+				Changed element "read_more_panel":
+					Unchanged field "type": "image".
+					Changed field "controls":
+						Changed control:
+							Changed element "description_read_more_button_panel@common_buttons.read_button":
+								Changed field "$variables":
+									Total variable: 5 (+1, -0)
+									Added variable "$focus_override_left": "left_panel".
+						Changed control:
+							Changed element "description_read_less_button_panel@common_buttons.read_button":
+								Changed field "$variables":
+									Total variable: 5 (+1, -0)
+									Added variable "$focus_override_left": "left_panel".
+	Changed element "more_servers_world_item":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "network_server_world_edit_button@play.network_server_world_edit_button":
+					Changed field "$variables":
+						Changed variable "$focus_override_right" from "right_panel" to "right_side".
+	Changed element "news_section_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "read_more_panel":
+					Unchanged field "type": "image".
+					Changed field "controls":
+						Changed control:
+							Changed element "news_read_more_button_panel@common_buttons.read_button":
+								Changed field "$variables":
+									Total variable: 5 (+1, -0)
+									Added variable "$focus_override_left": "left_panel".
+						Changed control:
+							Changed element "news_read_less_button_panel@common_buttons.read_button":
+								Changed field "$variables":
+									Total variable: 5 (+1, -0)
+									Added variable "$focus_override_left": "left_panel".
+	Changed element "screenshots_section_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "nagivation_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "left_arrow_button@common_buttons.light_content_button":
+								Changed field "$variables":
+									Total variable: 4 (+2, -0)
+									Added variable "$focus_override_right": "right_arrow_button".
+									Added variable "$focus_override_left": "left_panel".
+						Changed control:
+							Changed element "right_arrow_button@common_buttons.light_content_button":
+								Changed field "$variables":
+									Total variable: 3 (+1, -0)
+									Added variable "$focus_id": "right_arrow_button".
+	Changed element "server_content_area":
+		Unchanged field "type": "panel".
+		Removed field "focus_container": true.
+		Removed field "use_last_focus": false.
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control:
+				element "add_server_pane@play.add_server_info_panel":
+					field "bindings":
+						binding:
+							field "binding_type": "view"
+							field "source_control_name": "add_server_toggle_button"
+							field "source_property_name": "#toggle_state"
+							field "target_property_name": "#visible"
+			Added control:
+				element "add_server_pane@play.add_server_info_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "#add_server_info_visible"
+							field "binding_name_override": "#visible"
+		Changed field "$variables":
+			Total variable: 1 (+0, -1)
+			Changed variable "$focus_id" from "right_panel" to "right_side".
+			Removed variable "$default_focus_precedence": 2.
+	Changed element "server_scroll_content@play.common_content":
+		Changed field "controls":
+			Changed control:
+				Changed element "show_servers_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "left_panel":
+								Unchanged field "type": "panel".
+								Removed field "focus_container": true.
+								Removed field "use_last_focus": true.
+								Removed field "$variables":
+									variable "$focus_id": "left_panel"
+									variable "$default_focus_precedence": 1
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 7 (+1, -2)
+						Removed control:
+							element "featured_servers_panel":
+								field "type": "stack_panel"
+								field "size": ["100%", "100%c"]
+								field "ignored": "$ignore_3rd_party_servers"
+								field "focus_container": true
+								field "use_last_focus": true
+								field "controls":
+									control:
+										element "more_servers_label@common.minecraftTenLabel":
+											field "size": ["default", "default"]
+											field "text": "thirdPartyWorld.Featured"
+											field "color": "$dark_button_default_text_color"
+									control:
+										element "padding_1":
+											field "type": "panel"
+											field "size": ["100%", 2]
+											field "bindings":
+												binding:
+													field "binding_name": "#loading_servers_progress_visible"
+													field "binding_name_override": "#visible"
+									control:
+										element "loading_featured_panel@play.label_background":
+											field "size": ["100%", 40]
+											field "controls":
+												control element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
+												control element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+											field "bindings":
+												binding:
+													field "binding_name": "#loading_servers_progress_visible"
+													field "binding_name_override": "#visible"
+									control:
+										element "padding_2":
+											field "type": "panel"
+											field "size": ["100%", 2]
+									control:
+										element "third_party_featured_grid@play.third_party_featured_server_grid":
+											field "$variables":
+												variable "$tts_section_header": "$third_party_featured_servers"
+												variable "$toggle_index_binding_name": "#third_party_toggle_index"
+									control:
+										element "padding_3":
+											field "type": "panel"
+											field "size": ["100%", 2]
+								field "bindings":
+									binding:
+										field "binding_name": "#featured_servers_visible_and_available"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
+									variable "$focus_id": "featured_servers_panel"
+						Removed control:
+							element "more_servers_panel":
+								field "type": "stack_panel"
+								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+								field "size": ["100%", "100%c"]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_network_available_and_multiplayer_visible"
+										field "binding_name_override": "#visible"
+								field "focus_container": true
+								field "use_last_focus": true
+								field "controls":
+									control element "more_servers_divider@common.horizontal_divider": empty
+									control:
+										element "padding_0":
+											field "type": "panel"
+											field "size": ["100%", 2]
+									control:
+										element "more_servers_label@common.minecraftTenLabel":
+											field "size": ["default", "default"]
+											field "text": "thirdPartyWorld.Additional"
+											field "color": "$dark_button_default_text_color"
+											field "bindings":
+												binding:
+													field "binding_name": "#is_additional_server_label_visible"
+													field "binding_name_override": "#visible"
+									control:
+										element "padding_1":
+											field "type": "panel"
+											field "size": ["100%", 2]
+									control element "more_servers_grid@play.more_servers_grid": empty
+									control:
+										element "padding_3":
+											field "type": "panel"
+											field "size": ["100%", 4]
+											field "bindings":
+												binding:
+													field "binding_name": "#servers_grid_visible"
+													field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$tts_section_header": "networkWorld.more_servers"
+									variable "$focus_id": "more_servers_panel"
+						Added control:
+							element "servers_panel":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "size": ["100%", "100%c"]
+								field "controls":
+									control:
+										element "featured_servers_panel":
+											field "type": "stack_panel"
+											field "size": ["100%", "100%c"]
+											field "ignored": "$ignore_3rd_party_servers"
+											field "controls":
+												control:
+													element "loading_featured_panel@play.label_background":
+														field "size": ["100%", 40]
+														field "controls":
+															control element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
+															control element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+														field "bindings":
+															binding:
+																field "binding_name": "#loading_servers_progress_visible"
+																field "binding_name_override": "#visible"
+												control:
+													element "padding_1":
+														field "type": "panel"
+														field "size": ["100%", 2]
+												control:
+													element "featured_servers_label@common.minecraftTenLabel":
+														field "size": ["default", "default"]
+														field "text": "thirdPartyWorld.Featured"
+														field "color": "$dark_button_default_text_color"
+												control:
+													element "padding_2":
+														field "type": "panel"
+														field "size": ["100%", 2]
+												control element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
+												control:
+													element "padding_3":
+														field "type": "panel"
+														field "size": ["100%", 2]
+											field "bindings":
+												binding:
+													field "binding_name": "#featured_servers_visible_and_available"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
+												variable "$focus_id": "featured_servers_panel"
+									control:
+										element "more_servers_panel":
+											field "type": "stack_panel"
+											field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+											field "size": ["100%", "100%c"]
+											field "bindings":
+												binding:
+													field "binding_name": "#is_network_available_and_multiplayer_visible"
+													field "binding_name_override": "#visible"
+											field "controls":
+												control element "more_servers_divider@common.horizontal_divider": empty
+												control:
+													element "padding_0":
+														field "type": "panel"
+														field "size": ["100%", 2]
+												control:
+													element "more_servers_label@common.minecraftTenLabel":
+														field "size": ["default", "default"]
+														field "text": "thirdPartyWorld.Additional"
+														field "color": "$dark_button_default_text_color"
+														field "bindings":
+															binding:
+																field "binding_name": "#is_additional_server_label_visible"
+																field "binding_name_override": "#visible"
+												control:
+													element "padding_1":
+														field "type": "panel"
+														field "size": ["100%", 2]
+												control element "more_servers_grid@play.more_servers_grid": empty
+												control:
+													element "padding_3":
+														field "type": "panel"
+														field "size": ["100%", 4]
+														field "bindings":
+															binding:
+																field "binding_name": "#servers_grid_visible"
+																field "binding_name_override": "#visible"
+											field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
+								field "$variables": variable "$focus_id": "left_panel"
+	Changed element "server_toggle_base@common_toggles.dark_image_toggle_collection":
+		Changed field "$variables":
+			Total variable: 12 (+2, -0)
+			Added variable "$focus_override_right": "right_side".
+			Added variable "$button_content": "play.server_button_content_panel".
+	Changed element "third_party_featured_server_grid":
+		Unchanged field "type": "grid".
+		Changed field "$variables":
+			Total variable: 2 (+1, -0)
+			Added variable "$toggle_index_binding_name": "#third_party_toggle_index".
+	Changed element "third_party_server_info_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "server_info_stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "join_server_button@common_buttons.light_text_button":
+								Changed field "$variables":
+									Total variable: 3 (+1, -0)
+									Added variable "$focus_override_left": "left_panel".
+Changed namespace "profile":
+	Total element: 47 (+1, -0)
+	Added element "buttons_sides_padding_panel":
+		field "type": "panel"
+		field "variables":
+			variable:
+				field "requires": "$supports_xbl_achievements"
+				field "$variables":
+					variable "$sides_padding_size":
+						item 0: "5%"
+						item 1: 0
+			variable:
+				field "requires": "(not $supports_xbl_achievements)"
+				field "$variables":
+					variable "$sides_padding_size":
+						item 0: "27%"
+						item 1: 0
+		field "size": "$sides_padding_size"
+	Changed element "lower_button_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "left_padding@profile.sides_padding_panel" to "left_padding@profile.buttons_sides_padding_panel".
+			Changed control:
+				Moved element from "right_padding@profile.sides_padding_panel" to "right_padding@profile.buttons_sides_padding_panel".
+	Changed element "sides_padding_panel":
+		Unchanged field "type": "panel".
+		Removed field "variables":
+			variable:
+				field "requires": "$supports_xbl_achievements"
+				field "$variables":
+					variable "$sides_padding_size":
+						item 0: "5%"
+						item 1: 0
+			variable:
+				field "requires": "(not $supports_xbl_achievements)"
+				field "$variables":
+					variable "$sides_padding_size":
+						item 0: "27%"
+						item 1: 0
+		Changed field "size" from "$sides_padding_size" to ["5%", 0].
+Changed namespace "smithing_table":
+	Total element: 16 (+4, -0)
+	Changed element "icon_and_text_panel":
+		Unchanged field "type": "panel".
+		Changed field "offset":
+			Changed item 0 from 0 to "7%".
+			Changed item 1 from "5%" to 0.
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control element "smithing_icon_panel@smithing_table.smithing_icon_panel": empty.
+	Added element "ingot_image@smithing_table.smithing_image":
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "layer": 1
+		field "offset": [1, 1]
+		field "size": [16, 16]
+		field "texture": "textures/ui/ingot_image"
+	Changed element "recipe_grid":
+		Unchanged field "type": "grid".
+		Changed field "controls":
+			Changed control:
+				Changed element "material_item_slot@smithing_table.smithing_table_item_slot":
+					Changed field "$variables":
+						Total variable: 8 (+1, -0)
+						Added variable "$cell_overlay_ref": "smithing_table.ingot_image".
+	Added element "smithing_icon":
+		field "type": "image"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "texture": "textures/ui/smithing_icon"
+		field "size": [30, 30]
+		field "layer": 1
+	Added element "smithing_icon_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls": control element "smithing_icon@smithing_table.smithing_icon": empty
+	Added element "smithing_image": field "type": "image".
+	Changed element "upgrade_label":
+		Unchanged field "type": "label".
+		Added field "anchor_from": "center".
+		Added field "anchor_to": "center".
+		Added field "size": ["80%", "30%"].
+		Added field "offset": ["30%", 0].
+Changed namespace "smithing_table_pocket":
+	Total element: 14 (+1, -0)
+	Added element "ingot_image@smithing_table.smithing_image":
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "size": [16, 16]
+		field "texture": "textures/ui/ingot_image"
+	Changed element "slots_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "material_slot@common.pocket_ui_large_container_item":
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$cell_overlay_ref": "smithing_table_pocket.ingot_image".
+Changed namespace "store_inventory":
+	Changed element "content_area":
+		Unchanged field "type": "panel".
+		Changed field "use_last_focus" from false to true.
+		Changed field "focus_nagivation_mode_down" from "$focus_nagivation_mode_override_down" to "contained".
+		Changed field "focus_nagivation_mode_up" from "$focus_nagivation_mode_override_up" to "contained".
+		Changed field "focus_nagivation_mode_left" from "$focus_nagivation_mode_override_left" to "none".
+		Changed field "focus_nagivation_mode_right" from "$focus_nagivation_mode_override_right" to "stop".
+		Changed field "controls":
+			Changed control:
+				Changed element "control":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "scrolling_panel@common.scrolling_panel":
+								field "size": ["100%", "fill"]
+								field "$variables":
+									variable "$scrolling_content": "store_inventory.right_pane_factory"
+									variable "$show_background": false
+									variable "$scroll_size":
+										item 0: "5px"
+										item 1: "100% - 8px"
+									variable "$scroll_bar_left_padding_size":
+										item 0: 4
+										item 1: 0
+						Added control element "right_pane_factory@store_inventory.right_pane_factory": empty.
+		Changed field "$variables":
+			Total variable: 1 (+1, -4)
+			Removed variable "$focus_nagivation_mode_override_down|default": "contained".
+			Removed variable "$focus_nagivation_mode_override_up|default": "contained".
+			Removed variable "$focus_nagivation_mode_override_left|default": "".
+			Removed variable "$focus_nagivation_mode_override_right|default": "".
+			Added variable "$focus_id": "right_side".
+	Changed element "dropdown_button_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "title_label@common.minecraftTenLabel":
+					Changed field "max_size":
+						Changed item 0 from "35%" to "fill".
+						Unchanged item 1: 10.
+					Added field "priority": 0.
+					Added field "text_alignment": "left".
+			Changed control:
+				Moved element from "fill_pad" to "pad_0".
+				Changed element "pad_0":
+					Unchanged field "type": "panel".
+					Added field "priority": 0.
+			Changed control:
+				Changed element "icon_panel":
+					Unchanged field "type": "panel".
+					Added field "priority": 2.
+			Changed control:
+				Moved element from "pad_0" to "pad_1".
+				Changed element "pad_1":
+					Unchanged field "type": "panel".
+					Added field "priority": 2.
+			Changed control:
+				Changed element "count_panel":
+					Unchanged field "type": "panel".
+					Added field "priority": 1.
+			Changed control:
+				Moved element from "pad_1" to "pad_2".
+				Changed element "pad_2":
+					Unchanged field "type": "panel".
+					Added field "priority": 1.
+			Changed control:
+				Changed element "right_carrot":
+					Unchanged field "type": "panel".
+					Added field "priority": 0.
+			Changed control:
+				Changed element "down_carrot":
+					Unchanged field "type": "panel".
+					Added field "priority": 0.
+		Added field "use_priority": true.
+	Changed element "inventory_left_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 7 (+0, -1)
+			Removed control:
+				element "focus_reset_input_panel":
+					field "type": "input_panel"
+					field "focus_enabled": true
+					field "size": ["100%", 4]
+		Added field "focus_container": true.
+		Added field "use_last_focus": false.
+		Added field "focus_nagivation_mode_left": "".
+		Added field "focus_nagivation_mode_right": "".
+		Added field "focus_nagivation_mode_down": "".
+		Added field "focus_nagivation_mode_up": "".
+		Added field "$variables":
+			variable "$focus_id": "left_side"
+			variable "$focus_override_right": "right_side"
+	Changed element "realms_plus_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "dropdown_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "dropdown_stack_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Total control: 7 (+2, -2)
+									Removed control element "current_toggle@store_inventory.current_toggle": empty.
+									Removed control element "removed_toggle@store_inventory.removed_toggle": empty.
+									Added control:
+										element "current_toggle@store_inventory.current_toggle":
+											field "focus_container": true
+											field "use_last_focus": false
+											field "$variables": variable "$focus_id": "current_toggle"
+									Added control:
+										element "removed_toggle@store_inventory.removed_toggle":
+											field "focus_container": true
+											field "use_last_focus": false
+											field "$variables": variable "$focus_id": "removed_toggle"
+Changed namespace "structure_editor":
+	Changed element "export_disabled_label":
+		Unchanged field "type": "label".
+		Changed field "color" from "$tool_tip_text" to "$structure_editor_text".
+	Changed element "save_message_text":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "save_message_label":
+					Unchanged field "type": "label".
+					Changed field "color" from "$tool_tip_text" to "$structure_editor_text".

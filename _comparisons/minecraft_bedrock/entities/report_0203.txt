@@ -1,31 +1,128 @@
-Difference of "entities" between "1.20.40.21" (beta of "1.20.40") and "1.20.40.22" (beta of "1.20.40").
+Difference of "entities" between "1.20.51" and "1.20.60.20" (beta of "1.20.60").
 
-Changed entity "camel.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:camel_sitting":
-					Total component: 2 (+0, -1)
-					Removed component "minecraft:persist_sit": empty.
-			Changed field "components":
-				Changed component "minecraft:behavior.random_look_around_and_sit":
-					Added field "continue_sitting_on_reload": true.
-Changed entity "sniffer.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:sniffer".
-				Changed description "is_experimental" from true to false.
-			Changed field "component_groups":
-				Changed component group "stand_up":
-					Changed component "minecraft:behavior.timer_flag_2":
-						Added field "control_flags": ["move"].
-			Changed field "components":
-				Changed component "minecraft:behavior.timer_flag_1":
-					Added field "control_flags": ["look", "move"].
-Changed entity "witch.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.look_at_player":
-					Changed field "look_distance" from 8.0 to 16.0.
+Total entity: 118 (+2, -0)
+Added entity "breeze.json":
+	behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:breeze"
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "components":
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.6
+					field "height": 1.77
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "deals_damage": false
+				component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component "minecraft:follow_range": field "value": 32.0
+				component "minecraft:health":
+					field "value": 30
+					field "max": 30
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:knockback_resistance": field "value": 0.0
+				component "minecraft:movement": field "value": 0.4
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "avoid_damage_blocks": true
+				component "minecraft:persistent": empty
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "breeze"
+						family "mob"
+						family "monster"
+				component "minecraft:behavior.fire_at_target":
+					field "projectile_def": "minecraft:wind_charge_projectile"
+					field "priority": 2
+					field "attack_range": [2, 16]
+					field "attack_cooldown": 0.5
+					field "pre_shoot_delay": 0.75
+					field "post_shoot_delay": 0.2
+					field "ranged_fov": 90.0
+					field "owner_anchor": 2
+					field "owner_offset": [0.0, 0.2, 0.0]
+					field "target_anchor": 0
+					field "target_offset": [0.0, 0.3, 0.0]
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 3
+				component "minecraft:behavior.jump_around_target": field "priority": 4
+				component "minecraft:behavior.look_at_player":
+					field "priority": 6
+					field "look_distance": 16
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 1
+					field "within_radius": 24
+					field "scan_interval": 10
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "player"
+							field "max_dist": 24
+					field "must_see": true
+				component "minecraft:behavior.random_look_around": field "priority": 7
+				component "minecraft:behavior.random_stroll":
+					field "priority": 5
+					field "speed_multiplier": 1.0
+Added entity "wind_charge_projectile.json":
+	behavior pack "experimental":
+		field "format_version": "1.12.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:wind_charge_projectile"
+				description "is_spawnable": false
+				description "is_summonable": false
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.4
+					field "height": 0.4
+				component "minecraft:conditional_bandwidth_optimization":
+					field "default_values":
+						field "max_optimized_distance": 80.0
+						field "max_dropped_ticks": 7
+						field "use_motion_prediction_hints": true
+				component "minecraft:physics": empty
+				component "minecraft:projectile":
+					field "on_hit":
+						field "impact_damage":
+							field "damage": 1
+							field "knockback": true
+						field "remove_on_hit": empty
+					field "power": 0.7
+					field "gravity": 0.0
+					field "inertia": 1.0
+					field "liquid_inertia": 1.0
+					field "uncertainty_base": 5.0
+					field "uncertainty_multiplier": 4.0
+					field "reflect_on_hurt": true
+				component "minecraft:pushable":
+					field "is_pushable": false
+					field "is_pushable_by_piston": true

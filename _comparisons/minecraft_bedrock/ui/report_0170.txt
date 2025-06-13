@@ -1,65 +1,47 @@
-Difference of "ui" between "1.16.0.63" (beta of "1.16.0") and "1.16.0.64" (beta of "1.16.0").
+Difference of "ui" between "1.16.40" and "1.16.100.50" (beta of "1.16.100").
+Unable to create data files for 4 files between: "1.16.42", "1.16.50", "1.16.60", "1.16.61"
 
-Total namespace: 208 (+0, -1)
-Removed namespace "invalid_account":
-	element "content_panel":
-		field "type": "panel"
-		field "controls":
-			control:
-				element "main_panel@common_dialogs.main_panel_two_buttons":
-					field "size": [250, 200]
-					field "$variables":
-						variable "$text_name": "store.invalidAccount.title"
-						variable "$child_control": "invalid_account.message"
-						variable "$top_button_panel": "invalid_account.get_help_button"
-						variable "$bottom_button_panel": "invalid_account.go_back_button"
-	element "get_help_button@common_buttons.hyperlink_button":
-		field "property_bag": field "#hyperlink": "https://aka.ms/MCWin10Purchases"
-		field "$variables": variable "$button_text": "store.invalidAccount.getHelp"
-	element "go_back_button@common_buttons.light_text_button":
-		field "$variables":
-			variable "$pressed_button_name": "button.go_back"
-			variable "$button_text": "gui.goBack"
-	element "invalid_account_for_purchase_screen@common.base_screen":
-		field "button_mappings":
-			button mapping:
-				field "from_button_id": "button.menu_cancel"
-				field "to_button_id": "button.menu_exit"
-				field "mapping_type": "global"
-		field "force_render_below": true
-		field "$variables":
-			variable "$screen_animations":
-				item 0: "@common.screen_exit_animation_push_fade"
-				item 1: "@common.screen_exit_animation_pop_fade"
-				item 2: "@common.screen_entrance_animation_push_fade"
-				item 3: "@common.screen_entrance_animation_pop_fade"
-			variable "$background_animations":
-				item 0: "@common.screen_exit_animation_push_fade"
-				item 1: "@common.screen_exit_animation_pop_fade"
-				item 2: "@common.screen_entrance_animation_push_fade"
-				item 3: "@common.screen_entrance_animation_pop_fade"
-			variable "$screen_background_control": "coin_purchase.background"
-			variable "$screen_content": "invalid_account.content_panel"
-	element "message":
-		field "type": "label"
-		field "size": ["100% - 4px", "100%"]
-		field "text": "store.invalidAccount.description"
-		field "color": "$body_text_color"
-Changed namespace "realms_create":
-	Changed element "scroll_stack_panel":
+Changed namespace "general_section":
+	Changed element "automation_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 10 (+1, -0)
-			Changed control:
-				Changed element "toc@stack_item":
-					Removed field "ignored": "$hide_terms_and_conditions".
+			Total control: 11 (+1, -0)
 			Added control:
-				element "realms_terms_info@settings_common.option_info_label":
-					field "layer": 3
-					field "size": ["100% - 4px", "100%c"]
+				element "automation_stress_test_run_count_text_box@settings_common.option_text_edit":
 					field "$variables":
-						variable "$container_text_binding_name": "#realms_terms_info"
-						variable "$used_fontsize": "normal"
-						variable "$used_fonttype": "smooth"
-						variable "$show_option_label": false
-						variable "$show_for_ios|default": false
+						variable "$text_edit_box_text_type": "NumberChars"
+						variable "$option_label": "Stress Test Run Count"
+						variable "$max_text_edit_length": 20
+						variable "$text_box_name": "automation_stress_test_run_count"
+						variable "$option_binding_name": "#automation_stress_test_run_count"
+	Changed element "dev_debug_hud_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Changed variable "$radio_buttons":
+				Changed item 15:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_lock_contention" to "#debug_hud_radio_spatial_packet_optimizations".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.lock_contention" to "options.dev_enableDebugHudOverlay.spatial_packet_optimizations".
+				Changed item 16:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_hbui" to "#debug_hud_radio_lock_contention".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.hbui" to "options.dev_enableDebugHudOverlay.lock_contention".
+				Added item 17:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_hud_radio_hbui"
+						item "$radio_label_text": "options.dev_enableDebugHudOverlay.hbui"
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 32 (+1, -0)
+			Added control:
+				element "font_license_popup_button@settings_common.action_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.font_license_popup"
+						variable "$button_text": "options.font_license"
+						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+	Changed element "video_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "particle_render_distance_slider@settings_common.option_slider":
+					Changed field "ignored" from "($pocket_edition or $is_holographic or $education_ios)" to "($is_holographic or $education_ios)".

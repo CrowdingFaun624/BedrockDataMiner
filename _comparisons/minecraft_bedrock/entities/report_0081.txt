@@ -1,95 +1,131 @@
-Difference of "entities" between "1.13.0.13" (beta of "1.13.0") and "1.13.0.15" (beta of "1.13.0").
+Difference of "entities" between "1.14.0.1" (beta of "1.14.0") and "1.14.0.2" (beta of "1.14.0").
 
-Changed entity "llama.json":
+Changed entity "bee.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 20 (+1, -0)
-				Added component group "minecraft:llama_defend_trader":
-					component "minecraft:angry":
-						field "duration": 10
-						field "calm_event":
-							field "event": "minecraft:on_calm"
+				Changed component group "bee_adult":
+					Changed component "minecraft:breedable":
+						Changed field "breed_items":
+							Changed item from "minecraft:double_plant:8" to "minecraft:double_plant:0".
+							Changed item from "minecraft:double_plant:12" to "minecraft:double_plant:1".
+							Changed item from "minecraft:double_plant:9" to "minecraft:double_plant:4".
+							Changed item from "minecraft:double_plant:13" to "minecraft:double_plant:5".
+				Changed component group "bee_baby":
+					Changed component "minecraft:ageable":
+						Changed field "feed_items":
+							Total item: 7 (+4, -4)
+							Removed item "minecraft:double_plant:8".
+							Removed item "minecraft:double_plant:9".
+							Removed item "minecraft:double_plant:12".
+							Removed item "minecraft:double_plant:13".
+							Added item "minecraft:double_plant:0".
+							Added item "minecraft:double_plant:1".
+							Added item "minecraft:double_plant:4".
+							Added item "minecraft:double_plant:5".
+				Changed component group "find_hive":
+					Changed component "minecraft:timer":
+						Changed field "time_down_event":
+							Changed field "event" from "return_to_home_event" to "find_hive_timeout".
+					Changed component "minecraft:behavior.move_to_block":
+						Removed field "search_count": 0.
+						Removed field "interval": 20.
+						Changed field "goal_radius" from 1.2 to 0.633.
+						Removed field "target_offset": [0.5, 0.5, 0.5].
+						Added field "tick_interval": 1.
+				Changed component group "hive_full":
+					Changed component "minecraft:timer":
+						Changed field "time":
+							Changed range item 0 from 10 to 5.
+							Changed range item 1 from 90 to 20.
+				Changed component group "look_for_food":
+					Changed component "minecraft:behavior.move_to_block":
+						Removed field "interval": 0.
+						Removed field "search_count": 0.
+						Changed field "goal_radius" from 1.2 to 1.0.
+						Added field "tick_interval": 1.
+						Added field "target_offset": [0, 0.25, 0].
+				Changed component group "return_to_home":
+					Changed component "minecraft:behavior.go_home":
+						Changed field "priority" from 10 to 4.
+						Changed field "interval" from 0 to 1.
+						Added field "on_failed":
+							field "event": "find_hive_event"
 							field "target": "self"
-					component "minecraft:behavior.ranged_attack":
-						field "priority": 2
-						field "attack_radius": 64
-						field "charge_shoot_trigger": 2
-						field "charge_charged_trigger": 1
-				Changed component group "minecraft:llama_wandering_trader":
-					Total component: 3 (+1, -0)
-					Added component "minecraft:on_friendly_anger":
-						field "event": "minecraft:defend_wandering_trader"
-						field "target": "self"
+				Changed component group "shelter_detection":
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Changed trigger:
+								Changed field "filters":
+									Changed filter property "all_of":
+										Total filter: 3 (+1, -0)
+										Added filter:
+											filter property "test": "has_biome_tag"
+											filter property "value": "overworld"
+				Changed component group "take_nearest_target":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Added field "priority": 2.
+			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 0.4 to 0.55.
+					Changed field "height" from 0.4 to 0.5.
+				Changed component "minecraft:behavior.tempt":
+					Changed field "items":
+						Changed item from "minecraft:double_plant:8" to "minecraft:double_plant:0".
+						Changed item from "minecraft:double_plant:12" to "minecraft:double_plant:1".
+						Changed item from "minecraft:double_plant:9" to "minecraft:double_plant:4".
+						Changed item from "minecraft:double_plant:13" to "minecraft:double_plant:5".
 			Changed field "events":
-				Total event: 12 (+1, -0)
-				Added event "minecraft:defend_wandering_trader": field "add": field "component_groups": component group "minecraft:llama_defend_trader".
-				Changed event "minecraft:on_calm":
+				Total event: 17 (+1, -1)
+				Changed event "calmed_down":
+					Added field "add":
+						field "component_groups":
+							component group "return_to_home"
+							component group "shelter_detection"
+				Changed event "countdown_to_perish_event":
 					Changed field "remove":
 						Changed field "component_groups":
-							Total component group: 3 (+1, -0)
-							Added component group "minecraft:llama_defend_trader".
-Changed entity "wandering_trader.json":
+							Total component group: 7 (+1, -0)
+							Added component group "find_hive".
+				Added event "find_hive_timeout":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "look_for_food"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:is_charged"
+							field "remove": field "component_groups": component group "find_hive"
+						sequence item 1:
+							field "add": field "component_groups": component group "return_to_home"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+							field "remove": field "component_groups": component group "find_hive"
+				Changed event "minecraft:exited_disturbed_hive":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 1 (+0, -1)
+							Removed component group "shelter_detection".
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 5 (+4, -0)
+							Added component group "find_hive".
+							Added component group "has_nectar".
+							Added component group "return_to_home".
+							Added component group "shelter_detection".
+				Removed event "return_to_home_event":
+					field "add": field "component_groups": component group "return_to_home"
+					field "remove": field "component_groups": component group "find_hive"
+Changed entity "tnt.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:scared":
-					Changed component "minecraft:angry":
-						Added field "broadcastAnger": true.
-						Added field "broadcastRange": 10.
-						Added field "broadcast_targets": entity "llama".
-						Added field "broadcast_filters":
-							filter property "test": "is_leashed_to"
-							filter property "subject": "other"
-							filter property "value": true
+				Changed component group "from_explosion":
+					Changed component "minecraft:explode":
+						Unchanged field "power": 4.
+						Removed field "allow_damage_underwater": false.
 			Changed field "components":
-				Changed component "minecraft:damage_sensor":
-					Changed field "triggers":
-						Changed trigger:
-							Unchanged field "cause": "entity_attack".
-							Changed field "on_damage":
-								Removed field "filters":
-									filter property "test": "is_family"
-									filter property "subject": "other"
-									filter property "operator": "!="
-									filter property "value": "player"
-						Changed trigger:
-							Unchanged field "cause": "projectile".
-							Changed field "on_damage":
-								Removed field "filters":
-									filter property "test": "is_family"
-									filter property "subject": "other"
-									filter property "operator": "!="
-									filter property "value": "player"
-						Changed trigger:
-							Unchanged field "cause": "magic".
-							Changed field "on_damage":
-								Removed field "filters":
-									filter property "test": "is_family"
-									filter property "subject": "other"
-									filter property "operator": "!="
-									filter property "value": "player"
-				Changed component "minecraft:behavior.drink_potion":
-					Changed field "potions":
-						Changed potion:
-							Unchanged field "id": 7.
-							Changed field "filters":
-								Changed filter property "all_of":
-									Changed filter:
-										Changed filter property "any_of":
-											Total filter: 2 (+1, -1)
-											Removed filter:
-												filter property "test": "has_component"
-												filter property "subject": "self"
-												filter property "value": "minecraft:angry"
-											Added filter:
-												filter property "all_of":
-													filter:
-														filter property "test": "has_component"
-														filter property "subject": "self"
-														filter property "value": "minecraft:angry"
-													filter:
-														filter property "test": "is_family"
-														filter property "subject": "target"
-														filter property "operator": "!="
-														filter property "value": "player"
+				Changed component "minecraft:explode":
+					Unchanged field "power": 4.
+					Removed field "allow_damage_underwater": false.

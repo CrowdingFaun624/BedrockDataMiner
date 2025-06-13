@@ -1,51 +1,683 @@
-Difference of "ui" between "1.16.20.52" (beta of "1.16.20") and "1.16.20.53" (beta of "1.16.20").
+Difference of "ui" between "1.16.100.54" (beta of "1.16.100") and "1.16.100.55" (beta of "1.16.100").
 
-Changed namespace "crafting":
-	Changed element "container_gamepad_helpers_second_row":
-		Unchanged field "type": "stack_panel".
-		Changed field "size":
-			Changed item 0 from "100%c" to "100%".
-			Changed item 1 from "100%c" to 26.
+Changed namespace "common":
+	Total element: 272 (+5, -0)
+	Changed element "container_item":
+		Unchanged field "type": "input_panel".
 		Changed field "controls":
-			Total control: 5 (+3, -0)
+			Total control: 6 (+5, -3)
 			Changed control:
-				Moved element from "thumbstick_visibility" to "left_thumbstick_visibility".
-				Changed element "left_thumbstick_visibility":
+				Changed element "item_cell":
 					Unchanged field "type": "panel".
-					Changed field "size":
-						Unchanged item 0: "100%c".
-						Changed item 1 from "100%c" to "100%".
+					Changed field "controls":
+						Total control: 3 (+1, -1)
+						Changed control:
+							Changed element "item":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Total control: 2 (+1, -1)
+									Removed control element "stack_count_label@common.stack_count_label": field "layer": 8.
+									Changed control:
+										Changed element "$item_renderer@$item_renderer":
+											Changed field "layer" from 5 to 7.
+									Added control element "stack_count_label@common.stack_count_label": field "layer": 9.
+								Added field "layer": 0.
+						Removed control element "durability_bar@common.durability_bar": field "layer": 6.
+						Added control element "durability_bar@common.durability_bar": field "layer": 8.
+					Added field "layer": 0.
+			Removed control element "item_cell_overlay_ref@$cell_overlay_ref": field "layer": 2.
+			Removed control element "item_selected_image@common.slot_selected": field "layer": 3.
+			Removed control element "item_button_ref@$button_ref": field "layer": 4.
+			Added control element "item_cell_overlay_ref@$cell_overlay_ref": field "layer": 3.
+			Added control element "item_selected_image@common.slot_selected": field "layer": 4.
+			Added control element "item_button_ref@$button_ref": field "layer": 5.
+			Added control:
+				element "container_item_lock_overlay@common.container_item_lock_overlay":
+					field "size": "$item_renderer_size"
+					field "offset": [1, 1]
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "layer": 6
+			Added control element "item_lock_cell_image@common.item_lock_cell_image": field "layer": 2.
+	Added element "container_item_lock_overlay":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "container_item_lock_yellow@common.container_item_lock_yellow":
+					field "bindings":
+						binding:
+							field "binding_name": "#item_lock_in_inventory"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$item_collection_name"
+			control:
+				element "container_item_lock_red@common.container_item_lock_red":
+					field "bindings":
+						binding:
+							field "binding_name": "#item_lock_in_slot"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$item_collection_name"
+	Added element "container_item_lock_red":
+		field "type": "image"
+		field "texture": "textures/ui/item_lock_red"
+	Added element "container_item_lock_yellow":
+		field "type": "image"
+		field "texture": "textures/ui/item_lock_yellow"
+	Changed element "inventory_icon_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 4 (+1, -0)
+			Added control element "selected_item_lock_overlay@common.inventory_selected_item_lock_overlay": empty.
+	Changed element "inventory_selected_icon_button":
+		Unchanged field "type": "button".
+		Changed field "controls":
+			Total control: 3 (+0, -1)
+			Removed control element "durability_bar_grabbed@common.durability_bar_grabbed": empty.
+	Added element "inventory_selected_item_lock_overlay":
+		field "type": "panel"
+		field "size": [21, 21]
+		field "offset": [-1, -2]
+		field "layer": 55
+		field "controls":
+			control:
+				element "container_item_lock_yellow@common.container_item_lock_yellow":
+					field "bindings":
+						binding:
+							field "binding_name": "#inventory_selected_item_lock_in_inventory"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+			control:
+				element "container_item_lock_red@common.container_item_lock_red":
+					field "bindings":
+						binding:
+							field "binding_name": "#inventory_selected_item_lock_in_slot"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+	Added element "item_lock_cell_image":
+		field "type": "image"
+		field "texture": "textures/ui/cell_image_lock"
+		field "bindings":
+			binding:
+				field "binding_name": "#item_lock"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$item_collection_name"
+Changed namespace "common_buttons":
+	Changed element "underline_button@common.button":
+		Changed field "controls":
+			Changed control:
+				Changed element "default":
+					Unchanged field "type": "panel".
+					Changed field "size" from ["100%c", 10] to "$underline_button_size".
+			Changed control:
+				Changed element "hover":
+					Unchanged field "type": "panel".
+					Changed field "size" from ["100%c", 10] to "$underline_button_size".
+		Changed field "$variables":
+			Total variable: 6 (+1, -0)
+			Added variable "$underline_button_size|default":
+				item 0: "100%c"
+				item 1: "100%c"
+Changed namespace "confirm_msa_unlink":
+	Changed element "description_label_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 10 (+2, -0)
+			Added control element "divider_2@confirm_msa_unlink.horizontal_divider": field "ignored": "(not $is_realms_enabled)".
+			Added control:
+				element "confirm_2@confirm_msa_unlink.confirm_checkbox":
+					field "ignored": "(not $is_realms_enabled)"
+					field "$variables":
+						variable "$checkbox_text": "options.unlink_msa.confirm.checkbox3"
+						variable "$toggle_name": "confirm_2"
+						variable "$toggle_state_binding_name": "#confirm_2"
+						variable "$toggle_enabled_binding_name": "#confirm_2_enabled"
+Changed namespace "crafting":
+	Changed element "inventory_container_item@common.container_item":
+		Changed field "controls":
+			Total control: 6 (+5, -3)
+			Changed control:
+				Changed element "item_cell":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Total control: 4 (+2, -2)
+						Changed control:
+							Changed element "item":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Total control: 2 (+1, -1)
+									Removed control element "stack_count_label@common.stack_count_label": field "layer": 8.
+									Changed control:
+										Changed element "$item_renderer@$item_renderer":
+											Changed field "layer" from 5 to 7.
+									Added control element "stack_count_label@common.stack_count_label": field "layer": 10.
+								Added field "layer": 0.
+						Removed control element "durability_bar@common.durability_bar": field "layer": 6.
+						Removed control element "$overlay_image_control_name@$overlay_images": field "layer": 7.
+						Added control element "durability_bar@common.durability_bar": field "layer": 8.
+						Added control element "$overlay_image_control_name@$overlay_images": field "layer": 9.
+					Added field "layer": 0.
+			Removed control element "item_cell_overlay_ref@$cell_overlay_ref": field "layer": 2.
+			Removed control element "item_selected_image@common.slot_selected": field "layer": 3.
+			Removed control element "item_button_ref@$button_ref": field "layer": 4.
+			Added control element "item_cell_overlay_ref@$cell_overlay_ref": field "layer": 3.
+			Added control element "item_selected_image@common.slot_selected": field "layer": 4.
+			Added control element "item_button_ref@$button_ref": field "layer": 5.
+			Added control:
+				element "container_item_lock_overlay@common.container_item_lock_overlay":
+					field "size": "$item_renderer_size"
+					field "offset": [1, 1]
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "layer": 6
+			Added control element "item_lock_cell_image@common.item_lock_cell_image": field "layer": 2.
+Changed namespace "hud":
+	Total element: 105 (+2, -0)
+	Added element "container_item_lock_overlay@common.container_item_lock_overlay": field "$variables": variable "$item_collection_name": "$hotbar_collection_name".
+	Changed element "gui_hotbar_grid_item":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "hotbar_parent":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Total control: 4 (+2, -1)
+						Changed control:
+							Changed element "item_icon@hotbar_hud_item_icon":
+								Added field "layer": 3.
+						Changed control:
+							Changed element "item_count@common.stack_count_label":
+								Added field "layer": 4.
+						Removed control element "item_dura@item_durability": empty.
+						Added control element "item_dura@item_durability": field "layer": 5.
+						Added control:
+							element "container_item_lock_overlay@hud.container_item_lock_overlay":
+								field "layer": 6
+								field "size": [16, 16]
+	Changed element "hud_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 2 (+0, -1)
+			Removed control element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty.
+	Changed element "hud_title_text":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "title_frame":
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "gamepad_helper_thumbstick_left@common.gamepad_helper_thumbstick_left":
-								Removed field "$variables":
-									variable "$gamepad_helper_size":
-										item 0: "100%c"
-										item 1: 20
+							Changed element "title_background":
+								Unchanged field "type": "image".
+								Changed field "size":
+									Changed item 0 from "100%sm + 6px" to "100%sm + 30px".
+									Changed item 1 from "100%sm - 1px" to "100%sm + 6px".
+						Changed control:
+							Changed element "title":
+								Unchanged field "type": "label".
+								Changed field "offset":
+									Unchanged item 0: 0.
+									Changed item 1 from 1 to 6.
+			Changed control:
+				Changed element "subtitle_frame":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "subtitle_background":
+								Unchanged field "type": "image".
+								Changed field "size":
+									Changed item 0 from "100%sm + 4px" to "100%sm + 20px".
+									Changed item 1 from "100%sm - 1px" to "100%sm + 5px".
+								Added field "offset": [0, 16].
+						Changed control:
+							Changed element "subtitle":
+								Unchanged field "type": "label".
+								Added field "offset": [1, 19].
+		Added field "offset": [0, -19].
+	Added element "item_lock_cell_image@common.item_lock_cell_image": field "$variables": variable "$item_collection_name": "$hotbar_collection_name".
+Changed namespace "persona":
+	Total element: 203 (+3, -2)
+	Added element "achievement_text_button@common_buttons.light_text_form_fitting_button":
+		field "variables":
+			variable:
+				field "requires": "(not $is_low_memory_device)"
+				field "$variables":
+					variable "$button_offset":
+						item 0: 3
+						item 1: 1
+					variable "$button_pressed_offset":
+						item 0: 3
+						item 1: 0
+		field "$variables":
+			variable "$font_type": "MinecraftTen"
+			variable "$focus_id": "offer_coin_purchase_button"
+			variable "$persona_focus_precedence": 3
+	Changed element "category_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "unselect_category_button@persona.category_select_button_panel":
+					Changed field "$variables":
+						Total variable: 5 (+2, -0)
+						Changed variable "$content_image_binding_name" from "textures/ui/dropdown_chevron" to "textures/ui/chevron_white_down".
+						Added variable "$default_text_color": "$light_button_hover_text_color".
+						Added variable "$default_button_texture": "textures/ui/button_borderless_lightpressed".
+	Changed element "classic_skin_sections":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "realms_plus_enabler@common.empty_panel":
+					Removed field "ignored": "(not $is_persona_features_enabled)".
+			Changed control:
+				Changed element "realms_plus_skin_packs@persona.persona_purchasable_skin_pack_grid_panel":
+					Removed field "ignored": "(not $is_persona_features_enabled)".
+	Moved element from "collect_achievement@common_buttons.light_content_button" to "collect_achievement@persona.achievement_text_button".
+	Changed element "collect_achievement@persona.achievement_text_button":
+		Changed field "$variables":
+			Total variable: 2 (+0, -2)
+			Moved variable from "$button_content" to "$button_text".
+			Changed variable "$button_text" from "persona.collect_achievement_label" to "dr.collect_achievement_item".
+			Removed variable "$focus_id": "offer_coin_purchase_button".
+			Removed variable "$persona_focus_precedence": 3.
+	Removed element "collect_achievement_label":
+		field "type": "label"
+		field "font_type": "MinecraftTen"
+		field "text": "dr.collect_achievement_item"
+		field "color": "$text_color"
+	Changed element "cycle_featured_content_section":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "cycle_featured_content":
+					Unchanged field "type": "stack_panel".
+					Changed field "size":
+						Changed item 0 from "100%" to "100% - 4px".
+						Changed item 1 from "100%" to "100% - 2px".
+					Changed field "controls":
+						Total control: 3 (+1, -1)
+						Removed control:
+							element "featured_offer_grid@persona.persona_piece_offer_grid":
+								field "size": ["300%y", "100%"]
+								field "min_size": ["300%y", "100%"]
+								field "clip_state_change_event": ""
+								field "grid_dimensions": [3, 1]
+								field "maximum_grid_items": 3
+								field "$variables":
+									variable "$persona_piece_size":
+										item 0: "100%y - 1px"
+										item 1: "100%"
+									variable "$pressed_button_function": "button.apply_persona_piece"
+									variable "$controller_left_bumper_mapping": "button.cycle_featured_pieces_left"
+									variable "$controller_right_bumper_mapping": "button.cycle_featured_pieces_right"
+						Added control:
+							element "featured_offer_grid_panel":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "featured_offer_grid@persona.persona_piece_offer_grid":
+											field "size": ["100%", "33%x"]
+											field "max_size": ["100%", "100%"]
+											field "clip_state_change_event": ""
+											field "grid_dimensions": [3, 1]
+											field "maximum_grid_items": 3
+											field "$variables":
+												variable "$persona_piece_size":
+													item 0: "33%"
+													item 1: "100%"
+												variable "$pressed_button_function": "button.apply_persona_piece"
+												variable "$controller_left_bumper_mapping": "button.cycle_featured_pieces_left"
+												variable "$controller_right_bumper_mapping": "button.cycle_featured_pieces_right"
+					Added field "anchor_from": "bottom_middle".
+					Added field "anchor_to": "bottom_middle".
+	Changed element "emote_piece_section":
+		Removed field "ignored": "(not $is_persona_features_enabled)".
+		Unchanged field "type": "stack_panel".
+	Changed element "emotes_right_info_panel@persona.right_info_panel":
+		Removed field "ignored": "(not $is_persona_features_enabled)".
+	Changed element "emotes_section@persona.dialog_background_object":
+		Removed field "ignored": "(not $is_persona_features_enabled)".
+	Changed element "emotes_tab@persona.top_tab":
+		Removed field "ignored": "(not $is_persona_features_enabled)".
+	Changed element "featured_piece_offer_list_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 4 (+1, -0)
 			Added control:
-				element "fill_panel":
+				element "custom_section_piece_list":
 					field "type": "panel"
-					field "size": ["fill", 0]
-			Added control:
-				element "right_thumbstick_visibility":
-					field "type": "panel"
-					field "size": ["100%c", "100%"]
-					field "controls":
-						control:
-							element "gamepad_helper_thumbstick_right@common.gamepad_helper_thumbstick_right":
+					field "size": ["100%", "100%c"]
+					field "controls": control element "custom_piece_offer_grid@persona.persona_piece_offer_grid": empty
+					field "$variables":
+						variable "$persona_piece_prefix": "custom_section"
+						variable "$persona_piece_collection_name": "custom_section_collection"
+						variable "$piece_grid_dimension_binding": "#custom_section_piece_offer_list_count"
+						variable "$piece_grid_visible_binding_name": "#is_custom_section_piece_offer_list_visible"
+						variable "$pressed_button_function": "button.apply_custom_section_piece_offer"
+	Changed element "featured_piece_offer_section_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "center_featured_header_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Moved element from "featured_header" to "featured_header@common.minecraftTenLabel".
+							Changed element "featured_header@common.minecraftTenLabel":
+								Removed field "type": "label".
+								Removed field "font_type": "MinecraftTen".
+								Removed field "offset": [0, -2].
+	Changed element "featured_piece_section":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Unchanged item 0: "100%".
+			Changed item 1 from "40.74%x + 2px" to "35%".
+	Changed element "info_text_box":
+		Unchanged field "type": "stack_panel".
+		Changed field "anchor_to" from "top_right" to "top_left".
+		Changed field "anchor_from" from "top_right" to "top_left".
+		Changed field "controls":
+			Changed control:
+				Changed element "discription_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "orientation" from "horizontal" to "vertical".
+					Changed field "controls":
+						Total control: 2 (+2, -2)
+						Removed control:
+							element "lock_state_icon_panel":
+								field "type": "panel"
+								field "size": [15, "100%"]
 								field "bindings":
 									binding:
-										field "binding_name": "#gamepad_helper_rs_visible"
+										field "binding_name": "#is_offer_achievement"
 										field "binding_name_override": "#visible"
-										field "binding_condition": "always"
+								field "controls":
+									control:
+										element "locked_state_icon@persona.icon_image":
+											field "size": [12, 11]
+											field "anchor_to": "top_middle"
+											field "anchor_from": "top_middle"
+											field "bindings":
+												binding:
+													field "binding_name": "#achievement_offer_lock_state_texture"
+													field "binding_name_override": "#texture"
+						Removed control:
+							element "description_label":
+								field "type": "label"
+								field "size": ["fill", "100%"]
+								field "layer": 2
+								field "color": "$right_side_default_text_color"
+								field "text": "#right_panel_description"
+								field "font_type": "smooth"
+								field "bindings": binding field "binding_name": "#right_panel_description"
+						Added control:
+							element "summary_author_button_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%c"]
+								field "bindings":
+									binding:
+										field "binding_name": "(not (#creator_label = ''))"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "summary_author_button@common_buttons.underline_button":
+											field "offset": [2, -1]
+											field "layer": 2
+											field "$variables":
+												variable "$pressed_button_name": "button.seeMoreBy"
+												variable "$single_label_size":
+													item 0: "default"
+													item 1: 10
+												variable "$single_line_label_offset":
+													item 0: 0
+													item 1: 0
+												variable "$single_line_font_scale_factor": 1
+												variable "$single_line_label_color": "$right_side_default_text_color"
+												variable "$single_line_label_text": "#creator_label"
+												variable "$label_text_bindings": item 0: item "binding_name": "$single_line_label_text"
+						Added control:
+							element "description_label_vert_stack":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "size": ["100%", "fill"]
+								field "bindings":
+									binding:
+										field "binding_name": "(not (#right_panel_description = ''))"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "description_label_panel":
+											field "type": "stack_panel"
+											field "orientation": "horizontal"
+											field "size": ["100%", "fill"]
+											field "controls":
+												control:
+													element "lock_state_icon_panel":
+														field "type": "panel"
+														field "size": [15, "100%"]
+														field "bindings":
+															binding:
+																field "binding_name": "#is_offer_achievement"
+																field "binding_name_override": "#visible"
+														field "controls":
+															control:
+																element "locked_state_icon@persona.icon_image":
+																	field "size": [12, 11]
+																	field "anchor_to": "top_middle"
+																	field "anchor_from": "top_middle"
+																	field "bindings":
+																		binding:
+																			field "binding_name": "#achievement_offer_lock_state_texture"
+																			field "binding_name_override": "#texture"
+												control:
+													element "description_label":
+														field "type": "label"
+														field "size": ["fill", "100%"]
+														field "layer": 2
+														field "color": "$right_side_default_text_color"
+														field "text": "#right_panel_description"
+														field "font_type": "smooth"
+														field "bindings": binding field "binding_name": "#right_panel_description"
+			Changed control:
+				Changed element "mid_padding":
+					Unchanged field "type": "panel".
+					Added field "bindings":
+						binding:
+							field "binding_name": "#currency_purchase_visible"
+							field "binding_name_override": "#visible"
+	Added element "loading_icon":
+		field "type": "image"
+		field "layer": 1
+		field "texture": "textures/ui/mine_chop_dig_animation"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": [30, 30]
+		field "uv_size": [10, 10]
+		field "uv": "@persona.pick_axe_animation"
+		field "color": [1, 1, 1, 1]
+	Added element "pick_axe_animation":
+		field "anim_type": "flip_book"
+		field "initial_uv": [0, 0]
+		field "frame_count": 91
+		field "frame_step": 10
+		field "fps": 30
+		field "reversible": false
+		field "easing": "linear"
+	Changed element "right_side_stack":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "emote_info_panel@persona.piece_list_right_side_section":
+					Removed field "ignored": "(not $is_persona_features_enabled)".
+	Changed element "skin_viewer_panel":
+		Unchanged field "type": "input_panel".
+		Changed field "controls":
+			Total control: 4 (+1, -0)
 			Added control:
-				element "buffer_panel_right":
-					field "type": "panel"
-					field "size": [10, 0]
-	Changed element "inventory_screen_base@common.inventory_screen_common":
-		Changed field "button_mappings":
-			Total button mapping: 18 (+1, -0)
-			Added button mapping:
-				field "from_button_id": "button.controller_secondary_select_right"
-				field "to_button_id": "button.clear_selected_recipe"
-				field "mapping_type": "global"
+				element "persona_updating@persona.loading_icon":
+					field "anchor_to": "top_right"
+					field "anchor_from": "top_right"
+					field "bindings":
+						binding:
+							field "binding_name": "#persona_is_updating"
+							field "binding_name_override": "#visible"
+	Moved element from "view_achievement@common_buttons.light_content_button" to "view_achievement@persona.achievement_text_button".
+	Changed element "view_achievement@persona.achievement_text_button":
+		Changed field "$variables":
+			Total variable: 2 (+0, -2)
+			Moved variable from "$button_content" to "$button_text".
+			Changed variable "$button_text" from "persona.view_achievement_label" to "store.view_achievement".
+			Removed variable "$focus_id": "offer_coin_purchase_button".
+			Removed variable "$persona_focus_precedence": 3.
+	Removed element "view_achievement_label":
+		field "type": "label"
+		field "font_type": "MinecraftTen"
+		field "text": "store.view_achievement"
+		field "color": "$text_color"
+Changed namespace "smithing_table_pocket":
+	Total element: 16 (+2, -0)
+	Changed element "slots_panel":
+		Unchanged field "type": "panel".
+		Changed field "anchor_from" from "left_middle" to "top_left".
+		Changed field "anchor_to" from "left_middle" to "top_left".
+		Changed field "controls":
+			Changed control:
+				Changed element "input_slot@common.pocket_ui_large_container_item":
+					Changed field "anchor_from" from "left_middle" to "top_left".
+					Changed field "anchor_to" from "left_middle" to "top_left".
+			Changed control:
+				Changed element "material_slot@common.pocket_ui_large_container_item":
+					Changed field "anchor_from" from "left_middle" to "top_left".
+					Changed field "anchor_to" from "left_middle" to "top_left".
+			Changed control:
+				Changed element "result_slot@common.pocket_ui_large_container_item":
+					Changed field "anchor_from" from "left_middle" to "top_left".
+					Changed field "anchor_to" from "left_middle" to "top_left".
+			Changed control:
+				Changed element "plus_sign@smithing_table_pocket.upgrade_label":
+					Changed field "offset":
+						Unchanged item 0: 38.
+						Changed item 1 from 0 to 11.
+					Changed field "anchor_from" from "left_middle" to "top_left".
+					Changed field "anchor_to" from "left_middle" to "top_left".
+			Changed control:
+				Changed element "arrow":
+					Unchanged field "type": "image".
+					Changed field "anchor_from" from "left_middle" to "top_left".
+					Changed field "anchor_to" from "left_middle" to "top_left".
+					Changed field "offset":
+						Unchanged item 0: 83.
+						Changed item 1 from 0 to 8.
+	Added element "smithing_icon":
+		field "type": "image"
+		field "texture": "textures/ui/smithing_icon"
+		field "size": [30, 30]
+		field "anchor_from": "bottom_left"
+		field "anchor_to": "bottom_left"
+	Added element "smithing_icon_panel":
+		field "type": "panel"
+		field "controls": control element "smithing_icon@smithing_table_pocket.smithing_icon": empty
+	Changed element "smithing_table_contents_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control element "slots_panel@smithing_table_pocket.slots_panel": field "offset": [0, -2]
+			control element "smithing_table_title_and_text_panel@smithing_table_pocket.smithing_table_title_and_text_panel": field "offset": [-108, -30]
+		field "type": "stack_panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control element "smithing_table_title_and_text_panel@smithing_table_pocket.smithing_table_title_and_text_panel": field "size": ["100%", "50%"]
+			control element "slots_panel@smithing_table_pocket.slots_panel": field "size": ["100%", "50%"]
+	Changed element "smithing_table_half_screen@smithing_table_pocket.half_screen":
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "smithing_table_contents_panel@smithing_table_pocket.smithing_table_contents_panel": field "layer": 2.
+			Added control element "smithing_table_contents_panel@smithing_table_pocket.smithing_table_contents_panel": field "layer": 2.
+	Changed element "smithing_table_title_and_text_panel":
+		Unchanged field "type": "panel".
+		Changed field "anchor_from" from "left_middle" to "bottom_left".
+		Changed field "anchor_to" from "left_middle" to "bottom_left".
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control:
+				element "upgrade_label@smithing_table_pocket.upgrade_label":
+					field "layer": 1
+					field "offset": [5, -8]
+			Added control:
+				element "smithing_icon_panel@smithing_table_pocket.smithing_icon_panel":
+					field "layer": 1
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "offset": [-5, -10]
+			Added control:
+				element "upgrade_label@smithing_table_pocket.upgrade_label":
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "layer": 1
+					field "offset": [40, -20]
+Changed namespace "world_section":
+	Total element: 33 (+1, -0)
+	Added element "experimental_toggle@settings_common.option_toggle":
+		field "ignored": "$education_edition"
+		field "bindings":
+			binding:
+				field "binding_name": "#show_experimental_toggle"
+				field "binding_name_override": "#visible"
+			binding:
+				field "binding_name": "#experimental_toggle_enabled"
+				field "binding_type": "collection"
+				field "binding_name_override": "#enabled"
+				field "binding_collection_name": "experimental_toggles"
+		field "$variables":
+			variable "$tts_section_header": "createWorldScreen.worldSettings"
+			variable "$toggle_tts_header_binding_type": "collection"
+			variable "$toggle_tts_header_binding_collection_name": "experimental_toggles"
+			variable "$option_label": "#text"
+			variable "$option_binding_name": "#experimental_toggle_value"
+			variable "$option_enabled_binding_name": "#experimental_toggle_enabled"
+			variable "$toggle_name": "experimental_toggle"
+			variable "$toggle_grid_collection_name": "experimental_toggles"
+			variable "$toggle_collection_details_type": "collection_details"
+			variable "$toggle_collection_detail_name": "experimental_toggles"
+			variable "$toggle_binding_type": "collection"
+			variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+			variable "$label_bindings":
+				item 0:
+					item "binding_name": "#experimental_toggle_text"
+					item "binding_name_override": "#text"
+					item "binding_type": "collection"
+					item "binding_collection_name": "experimental_toggles"
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 55 (+2, -1)
+			Removed control:
+				element "experimental_gameplay_toggle@settings_common.option_toggle":
+					field "ignored": "$education_edition"
+					field "bindings":
+						binding:
+							field "binding_name": "#show_experimental_gameplay"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$tts_section_header": "createWorldScreen.worldSettings"
+						variable "$option_label": "createWorldScreen.experimentalgameplay"
+						variable "$option_binding_name": "#experimental_gameplay"
+						variable "$option_enabled_binding_name": "#experimental_gameplay_enabled"
+						variable "$toggle_name": "experimental_gameplay"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+			Added control element "experimental_toggles_label@settings_common.option_group_label": field "$variables": variable "$text": "createWorldScreen.experimentalgameplay".
+			Added control:
+				element "experimental_toggles":
+					field "ignored": "$education_edition"
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "factory":
+						field "name": "experimental_toggle_factory"
+						field "control_name": "world_section.experimental_toggle"
+					field "collection_name": "experimental_toggles"
+					field "bindings":
+						binding:
+							field "binding_name": "#experimental_toggle_count"
+							field "binding_name_override": "#collection_length"

@@ -1,10 +1,37 @@
-Difference of "animation_controllers" between "1.16.210" and "1.16.220.50" (beta of "1.16.220").
+Difference of "animation_controllers" between "1.16.220.51" (beta of "1.16.220") and "1.16.220.52" (beta of "1.16.220").
 
-Total file: 55 (+1, -0)
-Added file "goat.animation_controllers.json":
-	resource pack "experimental":
-		field "format_version": "1.10.0"
-		field "animation_controllers":
-			animation controller "controller.animation.goat.move":
-				field "initial_state": "default"
-				field "states": state "default": field "animations": animation dict animation "walk": "query.modified_move_speed"
+Changed file "drowned.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.drowned.attack.rotations":
+				Changed field "states":
+					Total state: 2 (+0, -1)
+					Changed state "default":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -2)
+							Removed transition list transition "one_hand_attack": "query.is_item_equipped('off_hand')".
+							Removed transition list transition "spear_attack": "variable.is_brandishing_spear && !query.is_item_equipped('off_hand')".
+							Added transition list transition "one_hand_attack": "query.is_item_equipped('off_hand') || variable.is_brandishing_spear".
+					Changed state "one_hand_attack":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -2)
+							Removed transition list transition "default": "!query.is_item_equipped('off_hand')".
+							Removed transition list transition "spear_attack": "variable.is_brandishing_spear && !query.is_item_equipped('off_hand')".
+							Added transition list transition "default": "!query.is_item_equipped('off_hand') && !variable.is_brandishing_spear".
+					Removed state "spear_attack":
+						field "animations":
+							animation dict "zombie_attack_bare_hand"
+							animation dict "attack_rotations"
+						field "transitions":
+							transition list transition "default": "!query.is_item_equipped('off_hand') && !variable.is_brandishing_spear"
+							transition list transition "one_hand_attack": "query.is_item_equipped('off_hand')"
+Changed file "player.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.player.root":
+				Changed field "states":
+					Changed state "first_person":
+						Changed field "animations":
+							Total animation dict: 9 (+1, -1)
+							Removed animation dict animation "first_person_walk": "!variable.bob_animation".
+							Added animation dict animation "first_person_walk": "variable.bob_animation".

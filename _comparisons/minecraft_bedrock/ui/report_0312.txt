@@ -1,276 +1,676 @@
-Difference of "ui" between "1.19.70.23" (beta of "1.19.70") and "1.19.70.24" (beta of "1.19.70").
+Difference of "ui" between "1.20.0.21" (beta of "1.20.0") and "1.20.0.22" (beta of "1.20.0").
 
-Changed namespace "play":
-	Total element: 273 (+9, -0)
-	Changed element "create_new_world_button@common_buttons.light_text_button":
-		Changed field "variables":
-			Total variable: 3 (+1, -0)
-			Added variable:
-				field "requires": "$is_editor_mode_enabled"
-				field "$variables": variable "$button_text": "playscreen.editor.create"
-	Added element "editor_play_screen_panel@play.play_screen_panel":
-		field "$variables":
-			variable "$navigation_tab": "play.editor_tab_navigation_panel_layout"
-			variable "$tab_content_panel": "play.editor_tab_content_panel_layout"
-	Added element "editor_server_content_panel":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control element "lan_servers_panel@play.lan_servers_scroll_content": empty
-			control:
-				element "servers_divider@common.horizontal_divider":
-					field "bindings":
-						binding:
-							field "binding_name": "#lan_grid_visible"
-							field "binding_name_override": "#visible"
-			control element "more_servers_panel@play.manually_added_servers_scrolling_content": empty
-		field "$variables": variable "$focus_id": "left_panel"
-	Added element "editor_settings_image_content":
-		field "type": "image"
-		field "size": [14, 14]
-		field "layer": 2
-		field "texture": "textures/ui/icon_setting"
-		field "color": "white"
-	Added element "editor_settings_menu_button@common_buttons.light_content_button":
-		field "layer": 1
-		field "offset": [0, -3]
-		field "size": [24, 24]
-		field "anchor_from": "center"
-		field "anchor_to": "center"
-		field "focus_identifier": "close_button"
-		field "focus_change_left": "FOCUS_OVERRIDE_STOP"
-		field "focus_change_up": "FOCUS_OVERRIDE_STOP"
-		field "focus_change_right": "FOCUS_OVERRIDE_STOP"
-		field "$variables":
-			variable "$pressed_button_name": "button.editor_settings"
-			variable "$button_content": "play.editor_settings_image_content"
-	Added element "editor_tab_content_panel_layout@play.common_tab_content_panel_type":
-		field "controls":
-			control element "worlds_tab_content@play.worlds_tab_content_panel": empty
-			control element "server_tab_content_panel@play.server_tab_content_panel": empty
-		field "$variables": variable "$server_scroll_panel_content": "play.editor_server_content_panel"
-	Added element "editor_tab_navigation_panel_layout@play.common_tab_navigation_panel_layout":
-		field "controls":
-			control element "world_navigation_tab@play.world_navigation_tab": field "size": ["33%", "100%"]
-			control element "server_navigation_tab@play.server_navigation_tab": field "size": ["33%", "100%"]
-	Changed element "friends_scroll_panel@play.common_scroll_pane":
+Changed namespace "common":
+	Changed element "filtered_item_renderer":
+		Unchanged field "type": "custom".
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#decorated_pot_shards" to "#decorated_pot_sherds".
+	Changed element "inventory_selected_icon@common.item_renderer":
+		Changed field "bindings":
+			Total binding: 9 (+1, -1)
+			Removed binding:
+				field "binding_name": "#inventory_selected_decorated_pot_shards"
+				field "binding_name_override": "#decorated_pot_shards"
+				field "binding_condition": "always_when_visible"
+			Added binding:
+				field "binding_name": "#inventory_selected_decorated_pot_sherds"
+				field "binding_name_override": "#decorated_pot_sherds"
+				field "binding_condition": "always_when_visible"
+	Changed element "item_renderer":
+		Unchanged field "type": "custom".
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#decorated_pot_shards" to "#decorated_pot_sherds".
+Changed namespace "common_buttons":
+	Changed element "text_body_focus_border_for_controller_button@common.button":
+		Changed field "default_control" from "" to "default".
 		Changed field "controls":
+			Total control: 3 (+1, -0)
 			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 15 (+1, -1)
-						Removed control:
-							element "lan_grid@play.label_content_template":
-								field "bindings":
-									binding:
-										field "binding_name": "#lan_grid_visible"
-										field "binding_name_override": "#visible"
-								field "$variables":
-									variable "$label_content_label": "networkWorld.lan_label"
-									variable "$label_content_content": "play.network_world_item_grid"
-									variable "$network_world_grid_item_template": "play.network_world_item"
-									variable "$network_world_icon": "play.lan_icon"
-									variable "$network_world_item_grid_dimension_binding": "#lan_network_world_item_grid_dimension"
-									variable "$collection_name": "lan_network_worlds"
-									variable "$tts_section_header": "$label_content_label"
-						Added control element "lan_grid@play.lan_servers_scroll_content": empty.
-	Added element "lan_servers_scroll_content@play.label_content_template":
-		field "bindings":
-			binding:
-				field "binding_name": "#lan_grid_visible"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$label_content_label": "networkWorld.lan_label"
-			variable "$label_content_content": "play.network_world_item_grid"
-			variable "$network_world_grid_item_template": "play.network_world_item"
-			variable "$network_world_icon": "play.lan_icon"
-			variable "$network_world_item_grid_dimension_binding": "#lan_network_world_item_grid_dimension"
-			variable "$collection_name": "lan_network_worlds"
-			variable "$tts_section_header": "$label_content_label"
-	Added element "manually_added_servers_scrolling_content":
-		field "type": "stack_panel"
-		field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
-		field "size": ["100%", "100%c"]
-		field "bindings":
-			binding:
-				field "binding_name": "#is_network_available_and_multiplayer_visible"
-				field "binding_name_override": "#visible"
-		field "controls":
-			control:
-				element "padding_0":
-					field "type": "panel"
-					field "size": ["100%", 2]
-			control:
-				element "more_servers_label@common.minecraftTenLabel":
-					field "size": ["default", "default"]
-					field "text": "thirdPartyWorld.Additional"
-					field "color": "$dark_button_default_text_color"
-					field "bindings":
-						binding:
-							field "binding_name": "#is_additional_server_label_visible"
-							field "binding_name_override": "#visible"
-			control:
-				element "padding_1":
-					field "type": "panel"
-					field "size": ["100%", 2]
-			control element "more_servers_grid@play.more_servers_grid": empty
-			control:
-				element "padding_3":
-					field "type": "panel"
-					field "size": ["100%", 4]
-					field "bindings":
-						binding:
-							field "binding_name": "#servers_grid_visible"
-							field "binding_name_override": "#visible"
-		field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
-	Changed element "play_screen_content":
-		Unchanged field "type": "panel".
-		Changed field "variables":
-			Total variable: 3 (+1, -0)
-			Changed variable:
-				Changed field "requires" from "(not $education_edition)" to "(not $education_edition and not $is_editor_mode_enabled)".
-			Changed variable:
-				Changed field "requires" from "$education_edition" to "($education_edition and not $is_editor_mode_enabled)".
-			Added variable:
-				field "requires": "(not $education_edition and $is_editor_mode_enabled)"
-				field "$variables": variable "$main_panel": "play.editor_play_screen_panel"
-	Changed element "server_scroll_content@play.common_content":
-		Changed field "controls":
-			Changed control:
-				Changed element "feature_server_message_panel":
-					Unchanged field "type": "stack_panel".
+				Changed element "hover@common.empty_panel":
 					Changed field "controls":
 						Changed control:
-							Changed element "feature_server_message_panel@play.dark_label_background":
-								Changed field "controls":
-									Changed control:
-										Changed element "label_panel_layout":
-											Unchanged field "type": "panel".
-											Changed field "size":
-												Changed item 0 from "100%" to "97%".
-												Unchanged item 1: "100%c + 8px".
-											Changed field "controls":
-												Changed control:
-													Changed element "label":
-														Unchanged field "type": "label".
-														Removed field "text_alignment": "center".
-	Changed element "server_scroll_panel@play.common_scroll_pane":
-		Added field "$variables": variable "$server_scroll_panel_content|default": "play.servers_content_panel".
-	Added element "servers_content_panel":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
+							Changed element "focus_border@common_buttons.focus_border":
+								Removed field "bindings":
+									binding:
+										field "binding_name": "#is_using_gamepad"
+										field "binding_name_override": "#visible"
+			Added control element "default@common.empty_panel": field "size": ["100%", 0].
+		Added field "hover_control": "hover".
+Changed namespace "common_store":
+	Changed element "cycle_pack_button@common_buttons.light_content_button":
+		Changed field "variables":
+			Changed variable:
+				Changed field "$variables":
+					Changed variable "$cycle_pack_bindings":
+						Added item 3: item "binding_name": "$cycle_pack_button_accessibility_text".
+		Changed field "$variables":
+			Changed variable "$cycle_pack_bindings|default":
+				Added item 3: item "binding_name": "$cycle_pack_button_accessibility_text".
+	Changed element "cycle_pack_left_button@common_store.cycle_pack_button":
+		Changed field "$variables":
+			Total variable: 8 (+1, -1)
+			Removed variable "$cycle_pack_bindings":
+				item 0:
+					item "binding_type": "$cycle_pack_button_factory_collection_details"
+					item "binding_collection_name": "$cycle_pack_button_factory_collection_name"
+					item "binding_collection_prefix": "$cycle_pack_button_factory_collection_prefix"
+				item 1:
+					item "binding_type": "$cycle_pack_button_collection_details"
+					item "binding_collection_name": "$cycle_pack_button_collection"
+				item 2:
+					item "binding_type": "$cycle_pack_button_binding_type"
+					item "binding_collection_name": "$cycle_pack_button_collection"
+					item "binding_name": "$cycle_pack_button_enabled"
+					item "binding_name_override": "#enabled"
+				item 3: item "binding_name": "#cycle_left_button_accessibility_text"
+			Added variable "$cycle_pack_button_accessibility_text": "#cycle_left_button_accessibility_text".
+	Changed element "cycle_pack_right_button@common_store.cycle_pack_button":
+		Changed field "$variables":
+			Total variable: 7 (+1, -1)
+			Removed variable "$cycle_pack_bindings":
+				item 0:
+					item "binding_type": "$cycle_pack_button_factory_collection_details"
+					item "binding_collection_name": "$cycle_pack_button_factory_collection_name"
+					item "binding_collection_prefix": "$cycle_pack_button_factory_collection_prefix"
+				item 1:
+					item "binding_type": "$cycle_pack_button_collection_details"
+					item "binding_collection_name": "$cycle_pack_button_collection"
+				item 2:
+					item "binding_type": "$cycle_pack_button_binding_type"
+					item "binding_collection_name": "$cycle_pack_button_collection"
+					item "binding_name": "$cycle_pack_button_enabled"
+					item "binding_name_override": "#enabled"
+				item 3: item "binding_name": "#cycle_right_button_accessibility_text"
+			Added variable "$cycle_pack_button_accessibility_text": "#cycle_right_button_accessibility_text".
+Changed namespace "general_section":
+	Changed element "gamertag_controls":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "realms_invites":
+					Changed field "ignored" from "(not $is_realms_enabled or not $is_pregame)" to "(not $is_realms_enabled or not $is_pregame or $pre_release)".
+					Unchanged field "type": "panel".
+	Changed element "realms_button_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "left_button_panel":
+					Unchanged field "type": "panel".
+					Added field "ignored": "$pre_release".
+			Changed control:
+				Changed element "pad_1":
+					Unchanged field "type": "panel".
+					Added field "ignored": "$pre_release".
+	Changed element "view_subscriptions_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "active_available_divider@common.section_divider":
+					Added field "ignored": "$pre_release".
+			Changed control:
+				Changed element "realms_plus_header_label@common.minecraftTenLabel":
+					Added field "ignored": "$pre_release".
+			Changed control:
+				Changed element "pad_0":
+					Unchanged field "type": "panel".
+					Added field "ignored": "$pre_release".
+			Changed control:
+				Changed element "realms_plus_buy_offer@general_section.realms_subscription_main":
+					Added field "ignored": "$pre_release".
+			Changed control:
+				Changed element "pad_1":
+					Unchanged field "type": "panel".
+					Added field "ignored": "$pre_release".
+			Changed control:
+				Changed element "additional_realms_buy_offer@general_section.realms_subscription_main":
+					Added field "ignored": "$pre_release".
+			Changed control:
+				Changed element "pad_3":
+					Unchanged field "type": "panel".
+					Added field "ignored": "$pre_release".
+Changed namespace "hud":
+	Changed element "hud_player_renderer":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "hud_player":
+					Unchanged field "type": "custom".
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "#paper_doll_renderer_visible" to "#paper_doll_visible".
+Changed namespace "persona":
+	Total element: 345 (+4, -1)
+	Changed element "category_featured_offer_content@common.horizontal_stack_panel":
+		Changed field "controls":
+			Changed control:
+				Changed element "category_featured_offer_grid_panel":
+					Unchanged field "type": "stack_panel".
+					Removed field "collection_name": "$piece_section_collection_name".
+					Changed field "controls":
+						Changed control:
+							Changed element "category_featured_offer_grid@persona.persona_piece_offer_grid":
+								Removed field "collection_index": 0.
+	Changed element "category_featured_offer_panel":
+		Unchanged field "type": "panel".
+		Changed field "$variables":
+			Total variable: 10 (+1, -1)
+			Changed variable "$persona_piece_collection_name" from "($info_panel_prefix + '_collection')" to "piece_collection".
+			Changed variable "$piece_grid_dimension_binding" from "('#' + $info_panel_prefix + '_grid_dimension_binding')" to "'#' + $piece_section_collection_prefix + '_grid_dimension_binding'".
+			Changed variable "$pressed_button_function" from "('button.' + $info_panel_prefix)" to "('button.' + $piece_section_collection_prefix)".
+			Changed variable "$input_progress_loading_binding_type" from "global" to "$piece_section_binding_type".
+			Changed variable "$input_progress_loading_binding_name" from "('#is_' + $info_panel_prefix + '_section_loading')" to "('#is_' + $piece_section_collection_prefix + '_section_loading')".
+			Removed variable "$ignore_piece_offer_grid_visible_bind": false.
+			Changed variable "$piece_grid_visible_binding_name" from "('#is_' + $info_panel_prefix + '_offers_visible'" to "('#is_' + $piece_section_collection_prefix + '_offers_visible'".
+			Added variable "$input_progress_loading_collection_name": "$piece_section_collection_name".
+	Changed element "cycle_featured_content_section":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "cycle_featured_content@common.horizontal_stack_panel":
+					Changed field "$variables":
+						Total variable: 4 (+0, -2)
+						Removed variable "$persona_piece_collection_name": "featured_collection".
+						Removed variable "$piece_section_binding_type": "none".
+	Changed element "featured_info_panel@persona.right_side_dialog_panel":
 		field "size": ["100%", "100%c"]
+		field "$variables":
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$title_bar_color": "$dressing_room_dark_button_color"
+			variable "$rarity_title_background_alpha|default": 0.0
+			variable "$title_bar_alpha": 0.0
+			variable "$info_title_control": "persona.title_rarity_background_image"
+			variable "$info_content_control": "persona.right_info_panel"
+			variable "$right_info_content_control": "persona.category_featured_offer_panel"
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100%c + 2px"
+			variable "$right_side_dialog_bg_size":
+				item 0: "100% - 2px"
+				item 1: "100%c"
+			variable "$offer_info_section_content_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_content_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_and_selection_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_bottom_section_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$right_info_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$right_info_panel_content_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$ignore_right_side_buttom_buttons": true
+			variable "$ignore_special_banner": true
+			variable "$ignore_piece_selected": true
+			variable "$ignore_cycle_buttons": true
+		field "size": ["100%", "100%c"]
+		field "$variables":
+			variable "$ignore_right_side_dialog_visible_binding": true
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$title_bar_color": "$dressing_room_dark_button_color"
+			variable "$rarity_title_background_alpha": 0.0
+			variable "$title_bar_alpha": 0.0
+			variable "$info_title_control": "persona.title_rarity_background_image"
+			variable "$info_content_control": "persona.right_info_panel"
+			variable "$right_info_content_control": "persona.category_featured_offer_panel"
+			variable "$info_panel_prefix": "piece"
+			variable "$input_progress_loading_collection_binding_type": "collection_details"
+			variable "$input_progress_loading_prefix": "$info_panel_prefix"
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$right_side_dialog_bg_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$offer_info_section_content_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_content_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_and_selection_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_bottom_section_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$right_info_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$right_info_panel_content_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$ignore_right_side_buttom_buttons": true
+			variable "$ignore_special_banner": true
+			variable "$ignore_piece_selected": true
+			variable "$ignore_cycle_buttons": true
+	Added element "featured_section_factory@persona.piece_section_factory":
+		field "size": ["100%", "100%c + 4px"]
+		field "$variables":
+			variable "$piece_section_collection_binding_name": "#featured_section_content"
+			variable "$piece_section_control_ids":
+				item "featured_row": "persona.persona_category_featured_info_panel"
+				item "realms_row": "persona.persona_category_main_realms_info_panel"
+	Changed element "persona_category_featured_info_panel@persona.featured_info_panel":
+		field "$variables":
+			variable "$info_panel_prefix": "category_featured"
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$right_side_dialog_bg_size":
+				item 0: "100%"
+				item 1: "100%c"
+		field "$variables":
+			variable "$title_binding_type": "none"
+			variable "$title_binding": "dr.header.featured"
+	Changed element "persona_category_grid_panel@common.vertical_stack_panel":
+		Changed field "controls":
+			Total control: 2 (+1, -2)
+			Removed control element "main@persona.persona_category_main_featured_info_panel": empty.
+			Removed control element "category@persona.persona_category_featured_info_panel": empty.
+			Added control:
+				element "section_wrapper":
+					field "type": "input_panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control element "featured_section_factory@persona.featured_section_factory": empty
+		Changed field "$variables":
+			Total variable: 1 (+0, -1)
+			Removed variable "$title_binding": "#featured_title".
+	Removed element "persona_category_main_featured_info_panel@persona.featured_info_panel":
+		field "$variables":
+			variable "$info_panel_prefix": "main_featured"
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$right_side_dialog_bg_size":
+				item 0: "100%"
+				item 1: "100%c"
+	Added element "persona_category_main_realms_info_panel@persona.featured_info_panel":
+		field "ignored": "(not #is_right_info_main_realms_panel_visible)"
+		field "$variables": variable "$title_binding": "#realms_title"
+	Changed element "persona_getting_started_panel@persona.right_side_dialog_panel":
+		field "size": ["100%", 65]
+		field "$variables":
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$ignore_special_banner|default": true
+			variable "$info_title_control": "persona.persona_getting_started_title"
+			variable "$title_bar_texture": "textures/ui/White"
+			variable "$title_bar_alpha": "$dressing_room_panel_alpha"
+			variable "$info_content_control": "persona.persona_getting_started_description_area"
+			variable "$info_bottom_section_size":
+				item 0: "100%"
+				item 1: "100% - 12px"
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100% - 2px"
+			variable "$right_side_dialog_bg_size":
+				item 0: "100% - 2px"
+				item 1: "100% - 2px"
+			variable "$info_panel_prefix": "getting_started"
+		field "size": ["100%", 65]
+		field "$variables":
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$ignore_special_banner|default": true
+			variable "$info_title_control": "persona.persona_getting_started_title"
+			variable "$title_bar_texture": "textures/ui/White"
+			variable "$title_bar_alpha": "$dressing_room_panel_alpha"
+			variable "$info_content_control": "persona.persona_getting_started_description_area"
+			variable "$info_bottom_section_size":
+				item 0: "100%"
+				item 1: "100% - 12px"
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100% - 2px"
+			variable "$right_side_dialog_bg_size":
+				item 0: "100% - 2px"
+				item 1: "100% - 2px"
+			variable "$info_panel_prefix": "getting_started"
+	Changed element "persona_section_factory_panel":
+		Unchanged field "type": "panel".
+		Added field "$variables":
+			variable "$piece_section_collection_binding_name": "#piece_sections"
+			variable "$piece_section_control_ids":
+				item "featured_piece_section": "persona.piece_section"
+				item "owned_piece_section": "persona.owned_piece_section"
+				item "piece_section": "persona.piece_section"
+				item "unknown_section": "persona.empty_section"
+	Changed element "piece_section_factory":
+		Unchanged field "type": "stack_panel".
+		Changed field "factory":
+			Changed field "control_ids" to "$piece_section_control_ids" from:
+				control id "featured_piece_section": "persona.piece_section"
+				control id "owned_piece_section": "persona.owned_piece_section"
+				control id "piece_section": "persona.piece_section"
+				control id "unknown_section": "persona.empty_section"
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#piece_sections" to "$piece_section_collection_binding_name".
+	Changed element "popup_dialog__restricted_content_popup@popup_dialog.popup_dialog":
+		Changed field "controls":
+			Changed control:
+				Changed element "popup@common.dialog_background_hollow_2":
+					Changed field "size":
+						Unchanged item 0: "46%".
+						Changed item 1 from "56%" to "100%c".
+					Changed field "controls":
+						Total control: 3 (+1, -3)
+						Removed control element "modal@persona.popup_frame_background": empty.
+						Changed control:
+							Changed element "title_label":
+								Unchanged field "type": "label".
+								Added field "size": ["100% - 18px", "default"].
+						Removed control:
+							element "popup_dialog_message":
+								field "type": "label"
+								field "layer": 2
+								field "size": ["100% - 18px", "default"]
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "offset": [0, 25]
+								field "text_alignment": "center"
+								field "text": "dr.modal.restricted_content_text"
+								field "color": "$dressing_room_right_side_default_text_color"
+						Removed control:
+							element "image":
+								field "type": "image"
+								field "size": ["60%", "50%x"]
+								field "layer": 2
+								field "texture": "textures/ui/warning_sad_steve"
+								field "anchor_from": "bottom_middle"
+								field "anchor_to": "bottom_middle"
+								field "offset": [0, -43]
+						Added control:
+							element "modal@persona.popup_frame_background":
+								field "size": ["100%", "100%c + 25px"]
+								field "controls":
+									control:
+										element "popup_dialog_message":
+											field "type": "label"
+											field "layer": 2
+											field "size": ["100% - 18px", "default"]
+											field "anchor_from": "top_middle"
+											field "anchor_to": "top_middle"
+											field "offset": [0, 8]
+											field "text_alignment": "center"
+											field "text": "dr.modal.restricted_content_text"
+											field "color": "$dressing_room_right_side_default_text_color"
+									control:
+										element "image":
+											field "type": "image"
+											field "size": ["60%", "50%x"]
+											field "layer": 2
+											field "texture": "textures/ui/warning_sad_steve"
+											field "anchor_from": "bottom_middle"
+											field "anchor_to": "bottom_middle"
+											field "offset": [0, -25]
+	Changed element "progress_loading_input_panel":
+		Unchanged field "type": "input_panel".
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_type": "$input_progress_loading_collection_binding_type"
+				field "binding_collection_name": "$input_progress_loading_collection_name"
+				field "binding_collection_prefix": "$input_progress_loading_prefix"
+		Changed field "$variables":
+			Total variable: 5 (+2, -0)
+			Added variable "$input_progress_loading_collection_binding_type|default": "none".
+			Added variable "$input_progress_loading_prefix|default": "".
+	Changed element "purchase_buttons@common.horizontal_stack_panel":
+		Changed field "controls":
+			Total control: 11 (+1, -0)
+			Added control element "realms_redeem_button_panel@realms_redeem_button": empty.
+	Added element "realms_redeem_button@common_buttons.light_content_button":
+		field "size": ["40%", "100%"]
+		field "bindings":
+			binding:
+				field "binding_name": "#realms_redeem_button_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$pressed_button_name": "button.redeem_realms_item"
+			variable "$button_content": "persona.realms_redeem_button_content"
+	Added element "realms_redeem_button_content@common.empty_panel":
 		field "controls":
 			control:
-				element "featured_servers_panel":
-					field "type": "stack_panel"
-					field "size": ["100%", "100%c"]
-					field "ignored": "$ignore_3rd_party_servers"
-					field "controls":
-						control:
-							element "loading_featured_panel@play.label_background":
-								field "size": ["100%", 40]
-								field "controls":
-									control element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
-									control element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
-								field "bindings":
-									binding:
-										field "binding_name": "#loading_servers_progress_visible"
-										field "binding_name_override": "#visible"
-						control:
-							element "padding_1":
-								field "type": "panel"
-								field "size": ["100%", 2]
-						control:
-							element "featured_servers_label@common.minecraftTenLabel":
-								field "size": ["default", "default"]
-								field "text": "thirdPartyWorld.Featured"
-								field "color": "$dark_button_default_text_color"
-						control:
-							element "padding_2":
-								field "type": "panel"
-								field "size": ["100%", 2]
-						control element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
-						control:
-							element "padding_3":
-								field "type": "panel"
-								field "size": ["100%", 2]
-					field "bindings":
-						binding:
-							field "binding_name": "#featured_servers_visible_and_available"
-							field "binding_name_override": "#visible"
+				element "realms_plus_icon@realmsPlus.markdown_background":
+					field "size": ["100% + 4px", "100%  + 4px"]
+					field "offset": ["-2px", "2px"]
 					field "$variables":
-						variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
-						variable "$focus_id": "featured_servers_panel"
-			control element "more_servers_divider@common.horizontal_divider": empty
-			control element "more_servers_panel@play.manually_added_servers_scrolling_content": empty
-		field "$variables": variable "$focus_id": "left_panel"
-	Changed element "sync_legacy_worlds_button@common_buttons.light_text_button":
+						variable "$pack_icon_size":
+							item 0: "100%"
+							item 1: "100% - 2px"
+						variable "$banner_size":
+							item 0: 14
+							item 1: "100%"
+			control:
+				element "realms_text_label":
+					field "type": "label"
+					field "layer": 2
+					field "size": ["100%", 10]
+					field "max_size": ["100%", "100%"]
+					field "text_alignment": "center"
+					field "text": "persona.realms.redeem"
+					field "color": "$text_color"
+	Changed element "right_side_classic_skin_featured_panel@persona.right_side_dialog_panel":
+		field "size": ["100%", "100%c + 4px"]
+		field "$variables":
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100%c + 2px"
+			variable "$right_side_dialog_bg_size":
+				item 0: "100% - 2px"
+				item 1: "100%c"
+			variable "$rarity_title_background_alpha|default": "$dressing_room_panel_alpha"
+			variable "$info_title_control": "persona.title_rarity_background_image"
+			variable "$info_content_control": "persona.classic_skin_featured_panel_content"
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$offer_info_section_content_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_content_panel_size":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$info_and_selection_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_bottom_section_size":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$ignore_cycle_buttons": true
+			variable "$info_panel_prefix": "classic_skin_featured"
+		field "size": ["100%", "100%c + 4px"]
+		field "$variables":
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100%c + 2px"
+			variable "$right_side_dialog_bg_size":
+				item 0: "100% - 2px"
+				item 1: "100%c"
+			variable "$rarity_title_background_alpha|default": "$dressing_room_panel_alpha"
+			variable "$info_title_control": "persona.title_rarity_background_image"
+			variable "$info_content_control": "persona.classic_skin_featured_panel_content"
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$offer_info_section_content_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_content_panel_size":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$info_and_selection_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$info_bottom_section_size":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$ignore_cycle_buttons": true
+			variable "$info_panel_prefix": "classic_skin_featured"
+	Changed element "right_side_color_picker_panel@persona.right_side_dialog_panel":
+		field "size": ["100%", "100%c + 2px"]
+		field "$variables":
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: 63
+			variable "$info_title_control": "persona.color_picker_info_panel_title"
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$info_panel_prefix": "color_picker"
+		field "size": ["100%", "100%c + 2px"]
+		field "$variables":
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: 63
+			variable "$info_title_control": "persona.color_picker_info_panel_title"
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$info_panel_prefix": "color_picker"
+	Changed element "right_side_dialog_panel":
+		field "type": "panel"
+		field "bindings":
+			binding:
+				field "binding_name": "$right_side_dialog_visible_binding"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "right_side_dialog@persona.dialog_background_object":
+					field "size": "$right_side_dialog_size"
+					field "anchor_to": "top_middle"
+					field "anchor_from": "top_middle"
+					field "$variables": variable "$dialog_bg_size": "$right_side_dialog_bg_size"
+		field "$variables":
+			variable "$right_side_dialog_bg_size|default":
+				item 0: "100% - 2px"
+				item 1: "100% - 2px"
+			variable "$right_side_dialog_visible_binding|default": "('#is_right_info_' + $info_panel_prefix +'_panel_visible')"
+		field "type": "input_panel"
+		field "bindings":
+			binding:
+				field "binding_name": "$right_side_dialog_visible_binding"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "right_side_dialog@persona.dialog_background_object":
+					field "size": "$right_side_dialog_size"
+					field "anchor_to": "top_middle"
+					field "anchor_from": "top_middle"
+					field "$variables": variable "$dialog_bg_size": "$right_side_dialog_bg_size"
+		field "$variables":
+			variable "$right_side_dialog_bg_size|default":
+				item 0: "100% - 2px"
+				item 1: "100% - 2px"
+			variable "$right_side_dialog_visible_binding|default": "('#is_right_info_' + $info_panel_prefix +'_panel_visible')"
+	Changed element "right_side_offer_info_skins@persona.right_side_dialog_panel":
+		field "size": ["100%", 65]
+		field "$variables":
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100% - 2px"
+			variable "$title_rarity_stack_size":
+				item 0: "100% - 2px"
+				item 1: 10
+			variable "$info_title_control": "persona.right_panel_classic_skins_title"
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$info_content_control": "persona.right_panel_classic_skin_content"
+			variable "$info_panel_prefix": "classic_skin"
+		field "size": ["100%", 65]
+		field "$variables":
+			variable "$right_side_dialog_size":
+				item 0: "100%"
+				item 1: "100% - 2px"
+			variable "$title_rarity_stack_size":
+				item 0: "100% - 2px"
+				item 1: 10
+			variable "$info_title_control": "persona.right_panel_classic_skins_title"
+			variable "$persona_dialog_content": "persona.offer_info_section_content"
+			variable "$info_content_control": "persona.right_panel_classic_skin_content"
+			variable "$info_panel_prefix": "classic_skin"
+	Changed element "right_side_stack@common.vertical_stack_panel":
+		Changed field "controls":
+			Total control: 8 (+3, -3)
+			Removed control element "getting_started@persona.persona_getting_started_panel": empty.
+			Removed control element "color_picker_info_panel@persona.right_side_color_picker_panel": empty.
+			Removed control element "offer_info_panel_skins@persona.right_side_offer_info_skins": empty.
+			Added control element "getting_started@persona.persona_getting_started_panel": empty.
+			Added control element "color_picker_info_panel@persona.right_side_color_picker_panel": empty.
+			Added control element "offer_info_panel_skins@persona.right_side_offer_info_skins": empty.
+	Changed element "title_rarity_positionable_title":
+		Unchanged field "type": "label".
+		Changed field "bindings":
+			Changed binding:
+				Added field "binding_type": "$title_binding_type".
 		Changed field "$variables":
 			Total variable: 3 (+1, -0)
-			Changed variable "$button_text" from "playscreen.syncLegacyWorlds" to "#sync_legacy_button_text".
-			Added variable "$button_text_binding_type": "global".
-	Changed element "tab_navigation_panel_layout":
-		Unchanged field "type": "stack_panel".
+			Added variable "$title_binding_type|default": "global".
+Changed namespace "profile":
+	Total element: 125 (+1, -1)
+	Changed element "featured_persona_pieces_content_panel@common.vertical_stack_panel":
 		Changed field "controls":
 			Total control: 2 (+1, -1)
-			Removed control element "close_navigation_tab@play.close_navigation_tab": field "size": ["100%y", "100%"].
-			Added control:
-				element "close_navigation_tab":
-					field "size": ["100%y", "100%"]
-					field "type": "panel"
-					field "variables":
-						variable:
-							field "requires": "$is_editor_mode_enabled"
-							field "$variables": variable "$end_tab_control": "play.editor_settings_menu_button"
-					field "controls": control element "close_button@$end_tab_control": empty
-					field "$variables": variable "$end_tab_control|default": "play.close_navigation_tab"
-	Changed element "world_list_label_with_color_panel":
+			Removed control element "featured_pieces@profile.featured_pieces_info_panel": empty.
+			Added control element "featured_pieces@profile.featured_pieces_info_panel": empty.
+	Added element "featured_pieces_info_panel":
+		field "type": "collection_panel"
+		field "collection_name": "$piece_section_collection_name"
+		field "controls": control element "right_info_content@profile.featured_pieces_category_offer_panel": field "collection_index": 0
+		field "$variables":
+			variable "$ignore_piece_offer_grid_visible_bind": false
+			variable "$piece_section_collection_details": "collection_details"
+			variable "$piece_section_binding_type": "collection"
+			variable "$piece_section_collection_prefix": "piece_section"
+			variable "$piece_section_collection_name": "piece_section_collection"
+			variable "$info_panel_prefix": "piece_section"
+	Removed element "featured_pieces_info_panel@common.empty_panel":
+		field "controls": control element "right_info_content@profile.featured_pieces_category_offer_panel": empty
+		field "$variables": variable "$info_panel_prefix": "featured"
+Changed namespace "realmsPlus":
+	Changed element "markdown_background":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "list_label":
-					Unchanged field "type": "label".
-					Added field "bindings":
-						binding:
-							field "binding_type": "$label_binding_type"
-							field "binding_name": "$label_text"
-							field "binding_name_override": "$label_text"
-					Added field "$variables":
-						variable "$label_text|default": "b"
-						variable "$label_binding_type|default": "none"
-	Changed element "world_navigation_tab@play.top_tab":
-		Added field "variables":
-			variable:
-				field "requires": "$is_editor_mode_enabled"
-				field "$variables": variable "$tab_text_name": "playscreen.editor.worlds"
-	Changed element "worlds_stack_panel":
-		Unchanged field "type": "stack_panel".
+				Changed element "banner_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "banner@common_store.markdown_banner":
+								Changed field "$variables":
+									Changed variable "$banner_content|default":
+										Changed item 0:
+											Changed item "realms_icon_panel":
+												Changed item "controls":
+													Changed item 0:
+														Changed item "realms_icon":
+															Changed item "size" to "$pack_icon_size" from:
+																item 0: 8
+																item 1: 10
+		Changed field "$variables":
+			Total variable: 9 (+1, -0)
+			Added variable "$pack_icon_size|default":
+				item 0: 8
+				item 1: 10
+Changed namespace "realmsPlus_content":
+	Changed element "realms_plus_content_chevron@realmsPlus.markdown_background":
+		Removed field "$variables":
+			variable "$pack_icon_size":
+				item 0: 6
+				item 1: 8
+Changed namespace "store_item_list":
+	Changed element "store_offer_grid_item":
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "worlds_label@play.world_list_label_with_color_panel":
-					Changed field "variables":
-						Total variable: 2 (+1, -0)
-						Changed variable:
-							Changed field "requires" from "$pre_release" to "($pre_release and not $is_editor_mode_enabled)".
-						Added variable:
-							field "requires": "$is_editor_mode_enabled"
-							field "$variables": variable "$label_text": "playscreen.editor.worlds"
-			Changed control:
-				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
-					Changed field "$variables":
-						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
-			Changed control:
-				Changed element "legacy_world_item_grid@play.legacy_world_item_grid":
-					Changed field "$variables":
-						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
-			Changed control:
-				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
-					Changed field "$variables":
-						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
-			Changed control:
-				Changed element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid":
-					Changed field "$variables":
-						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+				Changed element "frame@common_store.store_description_background":
+					Changed field "controls":
+						Changed control:
+							Changed element "offer_price_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "ratings":
+											Unchanged field "type": "panel".
+											Changed field "bindings":
+												Changed binding:
+													Changed field "binding_name" from "#rating_visible" to "#ratings_visible".

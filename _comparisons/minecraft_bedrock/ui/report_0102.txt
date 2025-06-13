@@ -1,72 +1,115 @@
-Difference of "ui" between "1.7.0.5" (beta of "1.7.0") and "1.7.0.7" (beta of "1.7.0").
+Difference of "ui" between "1.8.0.10" (beta of "1.8.0") and "1.8.0.11" (beta of "1.8.0").
 
-Changed namespace "coin_purchase":
-	Total element: 12 (+0, -1)
-	Changed element "coins_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "text_padding":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Moved element from "coins_without_bonus@coin_purchase.white_label" to "coins_with_bonus".
-							Changed element "coins_with_bonus":
-								Changed field "text" from "#coins_without_bonus" to "#coins_with_bonus".
-								Changed field "bindings":
-									Changed binding:
-										Changed field "binding_name" from "#coins_without_bonus" to "#coins_with_bonus".
-								Added field "type": "label".
-								Added field "color": "$coin_color".
-	Removed element "white_label":
-		field "type": "label"
-		field "color": "$generic_button_text_color"
-Changed namespace "realms_create":
-	Changed element "realms_create_screen@common.base_screen":
-		Changed field "button_mappings":
-			Changed button mapping:
-				Changed field "from_button_id" from "button.controller_secondary_select" to "button.controller_select".
-Changed namespace "tabbed_upsell":
-	Changed element "content_image_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 3 (+1, -1)
-			Removed control element "text_panell@tabbed_upsell.text_panel": empty.
-			Added control:
-				element "scrolling_panel@common.scrolling_panel":
-					field "size": ["60% - 5px", "100%"]
-					field "$variables":
-						variable "$scrolling_content": "tabbed_upsell.text_panel"
-						variable "$show_background": false
-						variable "$scroll_size":
-							item 0: "5px"
-							item 1: "100% - 4px"
-						variable "$scroll_bar_left_padding_size":
-							item 0: 1
-							item 1: 0
-	Changed element "label_panel":
+Changed namespace "common_store":
+	Changed element "offer_price_markdown_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "label_text":
+				Changed element "offer_price":
 					Unchanged field "type": "label".
-					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from "100%" to "default".
-					Removed field "max_size": ["100%", "100%"].
-	Changed element "text_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "size":
-			Changed item 0 from "60% - 5px" to "100%".
-			Changed item 1 from "100%" to "default".
+					Changed field "offset" from [0, 1] to "$offer_price_offset".
+		Added field "$variables":
+			variable "$offer_price_offset|default":
+				item 0: 0
+				item 1: 1
+	Changed element "store_offer_grid_item":
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "tab_content_description_panel@tabbed_upsell.label_panel":
-					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from "fill" to "100%c".
+				Changed element "frame@$offer_background_asset":
+					Changed field "controls":
+						Changed control:
+							Changed element "durable_offer_info_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "title_label_padding_stack":
+											Unchanged field "type": "panel".
+											Changed field "controls":
+												Changed control:
+													Changed element "title_label_vert_stack_panel":
+														Unchanged field "type": "stack_panel".
+														Changed field "controls":
+															Changed control:
+																Changed element "sales_banner":
+																	Unchanged field "type": "stack_panel".
+																	Changed field "controls":
+																		Changed control:
+																			Changed element "fill_panel_with_markdown":
+																				Unchanged field "type": "stack_panel".
+																				Changed field "controls":
+																					Total control: 3 (+1, -1)
+																					Removed control element "markdown_panel@common_store.offer_price_markdown_panel": empty.
+																					Added control:
+																						element "markdown_panel@common_store.offer_price_markdown_panel":
+																							field "$variables":
+																								variable "$offer_price_offset":
+																									item 0: 0
+																									item 1: 3
+Changed namespace "mashup":
+	Changed element "bundle_grid_item":
+		Unchanged field "type": "panel".
+		Changed field "controls":
 			Changed control:
-				Changed element "tab_content_description_panel_second@tabbed_upsell.label_panel":
+				Changed element "button_and_content":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "bg":
+								Unchanged field "type": "image".
+								Changed field "controls":
+									Changed control:
+										Changed element "bundle_panel_pdp":
+											Unchanged field "type": "panel".
+											Changed field "size":
+												Unchanged item 0: "100%".
+												Changed item 1 from 124 to 84.
+											Removed field "min_size": ["100%", "22.5%x"].
+	Changed element "glyph_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "item_glyph_count_panel":
+					Unchanged field "type": "stack_panel".
 					Changed field "size":
-						Unchanged item 0: "100%".
-						Changed item 1 from "20%" to "100%c".
+						Unchanged item 0: "100%c".
+						Changed item 1 from "100%cm" to 10.
+					Changed field "controls":
+						Total control: 5 (+2, -1)
+						Removed control:
+							element "glyph":
+								field "type": "image"
+								field "size": [9, 9]
+								field "texture": "$item_glyph_texture"
+								field "color": "$dark_button_secondary_default_text_color"
+								field "bilinear": true
+						Changed control:
+							Moved element from "item_glyph_padding" to "left_item_glyph_padding".
+							Changed element "left_item_glyph_padding":
+								Unchanged field "type": "panel".
+								Changed field "size":
+									Unchanged item 0: 2.
+									Changed item 1 from 0 to "100%".
+						Changed control:
+							Changed element "item_glyph_count_panel_label":
+								Unchanged field "type": "label".
+								Changed field "size":
+									Unchanged item 0: "default".
+									Changed item 1 from 10 to "100%".
+						Added control:
+							element "glyph_icon_panel":
+								field "type": "panel"
+								field "size": [7, "100%"]
+								field "controls":
+									control:
+										element "glyph_icon":
+											field "type": "image"
+											field "size": [7, 7]
+											field "offset": [0, 1]
+											field "texture": "$item_glyph_texture"
+											field "color": "$dark_button_secondary_default_text_color"
+											field "bilinear": true
+						Added control:
+							element "center_item_glyph_padding":
+								field "type": "panel"
+								field "size": [2, "100%"]

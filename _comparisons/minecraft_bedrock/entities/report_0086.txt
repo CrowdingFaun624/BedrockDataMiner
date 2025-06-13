@@ -1,9 +1,81 @@
-Difference of "entities" between "1.14.0.4" (beta of "1.14.0") and "1.14.0.6" (beta of "1.14.0").
-Unable to create data files for 1 file between: "1.14.0.5"
+Difference of "entities" between "1.14.1.3" (beta of "1.14.1") and "1.14.2.50" (beta of "1.14.20").
+Unable to create data files for 1 file between: "1.14.1"
 
 Changed entity "bee.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 19 (+1, -0)
+				Changed component group "angry_bee":
+					Changed component "minecraft:behavior.melee_attack":
+						Changed field "priority" from 2 to 3.
+				Changed component group "bee_adult":
+					Changed component "minecraft:behavior.breed":
+						Changed field "priority" from 4 to 6.
+				Changed component group "bee_baby":
+					Changed component "minecraft:behavior.follow_parent":
+						Changed field "priority" from 6 to 8.
+				Added component group "escape_fire":
+					component "minecraft:timer":
+						field "looping": false
+						field "time": [20, 50]
+						field "randomInterval": true
+						field "time_down_event":
+							field "event": "stop_panicking_after_fire"
+							field "target": "self"
+					component "minecraft:behavior.panic":
+						field "priority": 4
+						field "speed_multiplier": 1.25
+						field "force": true
+				Changed component group "find_hive":
+					Changed component "minecraft:behavior.move_to_block":
+						Changed field "priority" from 10 to 11.
+				Changed component group "look_for_food":
+					Changed component "minecraft:behavior.move_to_block":
+						Changed field "priority" from 10 to 11.
+				Changed component group "return_to_home":
+					Changed component "minecraft:behavior.go_home":
+						Changed field "priority" from 4 to 5.
+				Changed component group "take_nearest_target":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "priority" from 2 to 3.
+				Changed component group "track_attacker":
+					Changed component "minecraft:behavior.hurt_by_target":
+						Changed field "priority" from 1 to 2.
 			Changed field "components":
-				Changed component "minecraft:navigation.hover":
-					Removed field "can_pass_doors": false.
+				Changed component "minecraft:behavior.float":
+					Changed field "priority" from 19 to 20.
+				Changed component "minecraft:behavior.random_hover":
+					Changed field "priority" from 11 to 12.
+				Changed component "minecraft:behavior.tempt":
+					Changed field "priority" from 5 to 7.
+			Changed field "events":
+				Total event: 19 (+2, -0)
+				Changed event "abort_sheltering":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 3 (+1, -0)
+							Added component group "escape_fire".
+				Changed event "countdown_to_perish_event":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 8 (+1, -0)
+							Added component group "escape_fire".
+				Changed event "find_hive_timeout":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "remove":
+								Changed field "component_groups":
+									Total component group: 2 (+1, -0)
+									Added component group "escape_fire".
+				Changed event "hive_destroyed":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Added field "remove": field "component_groups": component group "escape_fire".
+				Changed event "minecraft:exited_disturbed_hive":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 6 (+1, -0)
+							Added component group "escape_fire".
+				Added event "minecraft:exited_hive_on_fire": field "add": field "component_groups": component group "escape_fire".
+				Added event "stop_panicking_after_fire": field "remove": field "component_groups": component group "escape_fire".

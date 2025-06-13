@@ -1,93 +1,2024 @@
-Difference of "entities" between "1.15.0.53" (beta of "1.16.0") and "1.15.0.54" (beta of "1.16.0").
+Difference of "entities" between "1.16.0.55" (beta of "1.16.0") and "1.16.0.57" (beta of "1.16.0").
 
-Changed entity "creeper.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:charged_exploding":
-					Changed component "minecraft:explode":
-						Unchanged field "power": 6.
-						Removed field "allow_damage_underwater": true.
-				Changed component group "minecraft:exploding":
-					Changed component "minecraft:explode":
-						Unchanged field "power": 3.
-						Removed field "allow_damage_underwater": true.
-				Changed component group "minecraft:forced_charged_exploding":
-					Changed component "minecraft:explode":
-						Unchanged field "power": 6.
-						Removed field "allow_damage_underwater": true.
-				Changed component group "minecraft:forced_exploding":
-					Changed component "minecraft:explode":
-						Unchanged field "power": 3.
-						Removed field "allow_damage_underwater": true.
-Changed entity "dolphin.json":
+Total entity: 103 (+2, -0)
+Changed entity "drowned.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 27 (+1, -0)
-				Added component "minecraft:leashable":
-					field "soft_distance": 4.0
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-Changed entity "ender_crystal.json":
+				Total component: 31 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 28 (+1, -0)
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_sword".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_sword".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:netherite_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 2
+				Added component "minecraft:behavior.equip_item": field "priority": 3.
+Changed entity "hoglin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "crystal_exploding":
-					Changed component "minecraft:explode":
-						Unchanged field "power": 6.
-						Removed field "allow_damage_underwater": true.
-Changed entity "fireball.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:exploding":
-					Changed component "minecraft:explode":
-						Unchanged field "power": 1.
-						Removed field "allow_damage_underwater": true.
-Changed entity "iron_golem.json":
+				Total component group: 9 (+5, -0)
+				Changed component group "angry_hoglin":
+					Changed component "minecraft:angry":
+						Added field "angry_sound": "angry".
+						Added field "sound_interval":
+							field "range_max": 5.0
+							field "range_min": 2.0
+				Added component group "become_zombie":
+					component "minecraft:transformation":
+						field "into": "minecraft:zoglin"
+						field "keep_level": true
+				Added component group "huntable_adult":
+					component "minecraft:type_family":
+						field "family":
+							family "hoglin"
+							family "hoglin_adult"
+							family "hoglin_huntable"
+							family "mob"
+				Changed component group "minecraft:hoglin_adult":
+					Total component: 12 (+2, -1)
+					Changed component "minecraft:attack":
+						Changed field "damage" from 6 to [3, 9].
+					Added component "minecraft:movement": field "value": 0.3.
+					Removed component "minecraft:type_family":
+						field "family":
+							family "hoglin"
+							family "hoglin_adult"
+							family "mob"
+					Changed component "minecraft:behavior.breed":
+						Changed field "priority" from 4 to 3.
+						Changed field "speed_multiplier" from 1.0 to 0.6.
+					Added component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+						field "reach_multiplier": 2.5
+						field "cooldown_time": 2
+				Changed component group "minecraft:hoglin_baby":
+					Total component: 12 (+2, -0)
+					Changed component "minecraft:attack":
+						Changed field "damage" from 1 to 0.5.
+					Added component "minecraft:movement": field "value": 0.36.
+					Changed component "minecraft:rideable":
+						Changed field "seat_count" from 1 to 3.
+						Changed field "seats" from:
+							field "position": [0.0, 0.9, -0.3]
+							field "lock_rider_rotation": 0
+						to:
+							seat:
+								field "position": [0.0, 0.9, -0.3]
+								field "lock_rider_rotation": 0
+							seat:
+								field "position": [0.0, 2.4, -0.3]
+								field "lock_rider_rotation": 0
+							seat:
+								field "position": [0.0, 3.9, -0.3]
+								field "lock_rider_rotation": 0
+					Changed component "minecraft:behavior.follow_parent":
+						Changed field "speed_multiplier" from 1.1 to 1.
+					Added component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "speed_multiplier": 1
+						field "track_target": true
+						field "reach_multiplier": 1.0
+						field "cooldown_time": 0.75
+					Changed component "minecraft:behavior.panic":
+						Changed field "speed_multiplier" from 1.25 to 1.
+				Added component group "start_zombification":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "filters":
+								filter property "test": "in_nether"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "stop_zombification_event"
+					component "minecraft:is_shaking": empty
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 15
+						field "time_down_event": field "event": "become_zombie_event"
+				Added component group "unhuntable_adult":
+					component "minecraft:type_family":
+						field "family":
+							family "hoglin"
+							family "hoglin_adult"
+							family "mob"
+				Added component group "zombification_sensor":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "filters":
+								filter property "test": "in_nether"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": false
+							field "event": "start_zombification_event"
+			Changed field "components":
+				Total component: 18 (+0, -2)
+				Removed component "minecraft:movement": field "value": 0.25.
+				Changed component "minecraft:behavior.avoid_block":
+					Changed field "walk_speed_modifier" from 1.0 to 0.4.
+					Changed field "sprint_speed_modifier" from 1.5 to 1.
+					Changed field "target_blocks":
+						Total block: 2 (+1, -0)
+						Added block "minecraft:portal".
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "sprint_speed_multiplier" from 1.9 to 1.
+					Added field "avoid_mob_sound": "retreat".
+					Added field "sound_interval":
+						field "range_max": 5.0
+						field "range_min": 2.0
+				Removed component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "speed_multiplier": 1.4
+					field "track_target": true
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "priority" from 3 to 4.
+				Changed component "minecraft:behavior.random_stroll":
+					Changed field "speed_multiplier" from 1.0 to 0.4.
+			Changed field "events":
+				Total event: 13 (+4, -0)
+				Added event "become_zombie_event": field "add": field "component_groups": component group "become_zombie".
+				Changed event "minecraft:ageable_grow_up":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "huntable_adult".
+				Changed event "spawn_adult":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 3 (+2, -0)
+							Added component group "huntable_adult".
+							Added component group "zombification_sensor".
+				Added event "spawn_adult_unhuntable":
+					field "add":
+						field "component_groups":
+							component group "minecraft:hoglin_adult"
+							component group "unhuntable_adult"
+							component group "zombification_sensor"
+				Changed event "spawn_baby":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "zombification_sensor".
+				Added event "start_zombification_event":
+					field "add": field "component_groups": component group "start_zombification"
+					field "remove": field "component_groups": component group "zombification_sensor"
+				Added event "stop_zombification_event":
+					field "add": field "component_groups": component group "zombification_sensor"
+					field "remove": field "component_groups": component group "start_zombification"
+Changed entity "husk.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
+				Total component: 31 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Added component "minecraft:behavior.equip_item": field "priority": 2.
+Changed entity "llama.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:despawn":
+					Changed field "filters":
+						Changed filter property "any_of":
+							Changed filter:
+								Changed filter property "all_of":
+									Total filter: 3 (+1, -0)
+									Added filter:
+										filter property "test": "is_leashed"
+										filter property "subject": "self"
+										filter property "value": false
+							Changed filter:
+								Changed filter property "all_of":
+									Total filter: 5 (+1, -0)
+									Added filter:
+										filter property "test": "is_leashed"
+										filter property "subject": "self"
+										filter property "value": false
+Changed entity "piglin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 14 (+2, -0)
+				Changed component group "alert_for_attack_targets":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "priority" from 3 to 4.
+						Changed field "entity_types":
+							Changed entity type:
+								Changed field "filters":
+									Changed filter property "all_of":
+										Total filter: 4 (+1, -0)
+										Changed filter:
+											Unchanged filter property "test": "is_family".
+											Unchanged filter property "subject": "other".
+											Changed filter property "value" from "hoglin" to "hoglin_huntable".
+										Added filter:
+											filter property "test": "is_family"
+											filter property "subject": "self"
+											filter property "value": "piglin_hunter"
+				Changed component group "angry":
+					Changed component "minecraft:angry":
+						Added field "angry_sound": "angry".
+						Added field "sound_interval":
+							field "range_max": 5.0
+							field "range_min": 2.0
+				Changed component group "become_zombie":
+					Changed component "minecraft:transformation":
+						Added field "transformation_sound": "converted_to_zombified".
+				Added component group "hunter":
+					component "minecraft:type_family":
+						field "family":
+							family "monster"
+							family "piglin"
+							family "piglin_hunter"
+				Changed component group "melee_unit":
+					Changed component "minecraft:behavior.melee_attack":
+						Changed field "priority" from 4 to 5.
+						Changed field "speed_multiplier" from 1.25 to 1.0.
+				Added component group "not_hunter":
+					component "minecraft:type_family":
+						field "family":
+							family "monster"
+							family "piglin"
+				Changed component group "piglin_adult":
+					Total component: 7 (+2, -2)
+					Removed component "minecraft:admire_item":
+						field "duration": 8
+						field "cooldown_after_being_attacked": 10
+					Added component "minecraft:barter":
+						field "barter_table": "loot_tables/entities/piglin_barter.json"
+						field "cooldown_after_being_attacked": 20
+					Changed component "minecraft:block_sensor":
+						Changed field "on_break":
+							Changed event:
+								Changed field "block_list":
+									Total block: 9 (+3, -0)
+									Added block "minecraft:gilded_blackstone".
+									Added block "minecraft:gold_ore".
+									Added block "minecraft:nether_gold_ore".
+					Changed component "minecraft:celebrate_hunt":
+						Added field "celebrate_sound": "celebrate".
+						Added field "sound_interval":
+							field "range_max": 5.0
+							field "range_min": 2.0
+					Changed component "minecraft:interact":
+						Changed field "interactions":
+							Changed interaction:
+								Removed field "spawn_items": field "table": "loot_tables/entities/piglin_barter.json".
+								Added field "barter": true.
+								Added field "admire": true.
+					Added component "minecraft:movement": field "value": 0.35.
+					Removed component "minecraft:behavior.barter":
+						field "priority": 2
+						field "max_dist": 10
+						field "goal_radius": 1
+						field "speed_multiplier": 1.1
+				Changed component group "piglin_baby":
+					Total component: 5 (+1, -0)
+					Added component "minecraft:movement": field "value": 0.42.
+					Changed component "minecraft:behavior.panic":
+						Changed field "speed_multiplier" from 1.25 to 1.1.
+				Changed component group "ranged_unit":
+					Changed component "minecraft:behavior.ranged_attack":
+						Changed field "priority" from 4 to 5.
+						Changed field "speed_multiplier" from 1.5 to 1.0.
+				Changed component group "take_target_as_response_to_block_break":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "priority" from 3 to 4.
+			Changed field "components":
+				Total component: 29 (+5, -3)
+				Added component "minecraft:admire_item":
+					field "duration": 8
+					field "cooldown_after_being_attacked": 20
+				Removed component "minecraft:economy_trade_table":
+					field "display_name": "entity.piglin"
+					field "table": "trading/economy_trades/piglin_trades.json"
+					field "persist_trades": true
+					field "show_trade_screen": false
+				Added component "minecraft:equip_item": empty.
+				Changed component "minecraft:health":
+					Changed field "value" from 24 to 16.
+					Changed field "max" from 24 to 16.
+				Changed component "minecraft:inventory":
+					Changed field "inventory_size" from 3 to 8.
+				Removed component "minecraft:movement": field "value": 0.35.
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 52 (+34, -0)
+						Changed item:
+							Unchanged field "item": "minecraft:golden_sword".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_axe".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_hoe".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_pickaxe".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_shovel".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_rail".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_helmet".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_chestplate".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_leggings".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_boots".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_apple".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_carrot".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:gold_block".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:gold_nugget".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:gold_ore".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:horsearmorgold".
+							Removed field "want_amount": 1.
+							Removed field "surplus_amount": 1.
+							Added field "stored_in_inventory": true.
+						Changed item:
+							Unchanged field "item": "minecraft:porkchop".
+							Added field "consume_item": true.
+						Changed item:
+							Unchanged field "item": "minecraft:cooked_porkchop".
+							Added field "consume_item": true.
+						Added item:
+							field "item": "minecraft:appleEnchanted"
+							field "priority": 2
+							field "admire": true
+							field "stored_in_inventory": true
+						Added item:
+							field "item": "minecraft:nether_gold_ore"
+							field "priority": 2
+							field "admire": true
+							field "stored_in_inventory": true
+						Added item:
+							field "item": "minecraft:gilded_blackstone"
+							field "priority": 2
+							field "admire": true
+							field "stored_in_inventory": true
+						Added item:
+							field "item": "minecraft:crossbow"
+							field "priority": 2
+						Added item:
+							field "item": "minecraft:netherite_helmet"
+							field "priority": 3
+						Added item:
+							field "item": "minecraft:diamond_helmet"
+							field "priority": 4
+						Added item:
+							field "item": "minecraft:chainmail_helmet"
+							field "priority": 5
+						Added item:
+							field "item": "minecraft:iron_helmet"
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:leather_helmet"
+							field "priority": 7
+						Added item:
+							field "item": "minecraft:netherite_chestplate"
+							field "priority": 3
+						Added item:
+							field "item": "minecraft:diamond_chestplate"
+							field "priority": 4
+						Added item:
+							field "item": "minecraft:chainmail_chestplate"
+							field "priority": 5
+						Added item:
+							field "item": "minecraft:iron_chestplate"
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:leather_chestplate"
+							field "priority": 7
+						Added item:
+							field "item": "minecraft:netherite_leggings"
+							field "priority": 3
+						Added item:
+							field "item": "minecraft:diamond_leggings"
+							field "priority": 4
+						Added item:
+							field "item": "minecraft:chainmail_leggings"
+							field "priority": 5
+						Added item:
+							field "item": "minecraft:iron_leggings"
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:leather_leggings"
+							field "priority": 7
+						Added item:
+							field "item": "minecraft:netherite_boots"
+							field "priority": 3
+						Added item:
+							field "item": "minecraft:diamond_boots"
+							field "priority": 4
+						Added item:
+							field "item": "minecraft:chainmail_boots"
+							field "priority": 5
+						Added item:
+							field "item": "minecraft:iron_boots"
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:bell"
+							field "priority": 2
+							field "admire": true
+							field "stored_in_inventory": true
+						Added item:
+							field "item": "minecraft:clock"
+							field "priority": 2
+							field "admire": true
+							field "stored_in_inventory": true
+						Added item:
+							field "item": "minecraft:speckled_melon"
+							field "priority": 2
+							field "admire": true
+							field "stored_in_inventory": true
+						Added item:
+							field "item": "minecraft:light_weighted_pressure_plate"
+							field "priority": 2
+							field "admire": true
+							field "stored_in_inventory": true
+						Added item:
+							field "item": "minecraft:leather_boots"
+							field "priority": 7
+						Added item:
+							field "item": "minecraft:netherite_sword"
+							field "priority": 3
+						Added item:
+							field "item": "minecraft:diamond_sword"
+							field "priority": 4
+						Added item:
+							field "item": "minecraft:iron_sword"
+							field "priority": 5
+						Added item:
+							field "item": "minecraft:stone_sword"
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:wooden_sword"
+							field "priority": 7
+						Added item:
+							field "item": "minecraft:gold_ingot"
+							field "priority": 1
+							field "pickup_limit": 1
+							field "admire": true
+							field "barter": true
+				Removed component "minecraft:type_family":
+					field "family":
+						family "monster"
+						family "piglin"
+				Added component "minecraft:behavior.admire_item":
+					field "priority": 1
+					field "admire_item_sound": "admire"
+					field "sound_interval":
+						field "range_max": 5.0
+						field "range_min": 2.0
+				Changed component "minecraft:behavior.avoid_block":
+					Changed field "sprint_speed_modifier" from 1.2 to 1.1.
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Added field "avoid_mob_sound": "retreat".
+					Added field "sound_interval":
+						field "range_max": 5.0
+						field "range_min": 2.0
+				Added component "minecraft:behavior.barter": field "priority": 1.
+				Added component "minecraft:behavior.equip_item": field "priority": 2.
+				Changed component "minecraft:behavior.pickup_items":
+					Changed field "priority" from 1 to 3.
+					Changed field "speed_multiplier" from 1.2 to 0.8.
+					Added field "cooldown_after_being_attacked": 20.0.
 				Changed component "minecraft:behavior.random_stroll":
 					Changed field "speed_multiplier" from 1 to 0.6.
-Changed entity "ocelot.json":
+			Changed field "events":
+				Total event: 16 (+3, -0)
+				Changed event "spawn_adult_melee":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 6 (+1, -0)
+							Added component group "hunter".
+				Added event "spawn_adult_melee_no_hunting":
+					field "add":
+						field "component_groups":
+							component group "alert_for_attack_targets"
+							component group "attack_cooldown"
+							component group "melee_unit"
+							component group "not_hunter"
+							component group "piglin_adult"
+							component group "zombification_sensor"
+				Added event "spawn_adult_no_hunting":
+					field "randomize":
+						randomize item:
+							field "trigger": "spawn_adult_ranged_no_hunting"
+							field "weight": 1
+						randomize item:
+							field "trigger": "spawn_adult_melee_no_hunting"
+							field "weight": 1
+				Changed event "spawn_adult_ranged":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 6 (+1, -0)
+							Added component group "hunter".
+				Added event "spawn_adult_ranged_no_hunting":
+					field "add":
+						field "component_groups":
+							component group "alert_for_attack_targets"
+							component group "attack_cooldown"
+							component group "not_hunter"
+							component group "piglin_adult"
+							component group "ranged_unit"
+							component group "zombification_sensor"
+				Changed event "spawn_baby":
+					Changed field "randomize":
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 3 (+1, -0)
+									Added component group "not_hunter".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 4 (+1, -0)
+									Added component group "not_hunter".
+Changed entity "pillager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 24 (+1, -0)
-				Added component "minecraft:leashable":
-					field "soft_distance": 4.0
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-Changed entity "polar_bear.json":
+				Total component: 29 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Added component "minecraft:behavior.equip_item": field "priority": 3.
+Changed entity "skeleton.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 22 (+1, -0)
-				Added component "minecraft:leashable":
+				Total component: 32 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 27 (+1, -0)
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_sword".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_sword".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_sword".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:bow".
+							Changed field "priority" from 5 to 6.
+						Added item:
+							field "item": "minecraft:netherite_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+				Added component "minecraft:behavior.equip_item": field "priority": 3.
+Changed entity "snowball.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.12.0" to "1.16.0".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:projectile":
+					Added field "offset": [0, -0.1, 0].
+Changed entity "stray.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 32 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 27 (+1, -0)
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_sword".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_sword".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_sword".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:bow".
+							Changed field "priority" from 5 to 6.
+						Added item:
+							field "item": "minecraft:netherite_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+				Added component "minecraft:behavior.equip_item": field "priority": 3.
+Added entity "strider.json":
+	behavior pack "core":
+		field "format_version": "1.14.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:strider"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "component_groups":
+				component group "minecraft:detect_suffocating":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "in_lava"
+										filter property "subject": "self"
+										filter property "operator": "=="
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "subject": "self"
+										filter property "operator": "=="
+										filter property "value": false
+							field "event": "start_suffocating"
+				component group "minecraft:start_suffocating":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "stop_suffocating"
+					component "minecraft:is_shaking": empty
+				component group "minecraft:strider_adult":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "breeds_with":
+							field "mate_type": "minecraft:strider"
+							field "baby_type": "minecraft:strider"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+						field "breed_items": item "warped_fungus"
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/strider.json"
+					component "minecraft:type_family":
+						field "family":
+							family "mob"
+							family "strider"
+							family "strider_adult"
+					component "minecraft:behavior.breed":
+						field "priority": 4
+						field "speed_multiplier": 1.0
+				component group "minecraft:strider_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items": item "warped_fungus"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:collision_box":
+						field "width": 0.85
+						field "height": 0.85
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:type_family":
+						field "family":
+							family "mob"
+							family "strider"
+							family "strider_baby"
+					component "minecraft:behavior.follow_parent":
+						field "priority": 6
+						field "speed_multiplier": 1.1
+				component group "minecraft:strider_parent_jockey":
+					component "minecraft:addrider":
+						field "entity_type": "minecraft:strider"
+						field "spawn_event": "spawn_baby"
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family "strider"
+						field "seats": field "position": [0.0, 1.6, 0.0]
+				component group "minecraft:strider_piglin_jockey":
+					component "minecraft:addrider":
+						field "entity_type": "minecraft:zombie_pigman"
+						field "spawn_event": "spawn_zombified_piglin_rider"
+					component "minecraft:rideable":
+						field "priority": 0
+						field "seat_count": 1
+						field "crouching_skip_interact": true
+						field "family_types":
+							family "player"
+							family "zombie_pigman"
+						field "interact_text": "action.interact.ride.strider"
+						field "seats": field "position": [0.0, 1.8, -0.2]
+				component group "minecraft:strider_saddled":
+					component "minecraft:boostable":
+						field "speed_multiplier": 2.0
+						field "duration": 16.0
+						field "boost_items":
+							item:
+								field "item": "warped_fungus_on_a_stick"
+								field "damage": 1
+								field "replace_item": "fishing_rod"
+					component "minecraft:is_saddled": empty
+					component "minecraft:item_controllable": field "control_items": "warped_fungus_on_a_stick"
+					component "minecraft:loot": field "table": "loot_tables/entities/strider_saddled.json"
+					component "minecraft:rideable":
+						field "priority": 0
+						field "seat_count": 1
+						field "crouching_skip_interact": true
+						field "family_types": family "player"
+						field "interact_text": "action.interact.ride.strider"
+						field "seats": field "position": [0.0, 1.6, -0.2]
+					component "minecraft:behavior.controlled_by_player":
+						field "priority": 0
+						field "mount_speed_multiplier": 2.5
+				component group "minecraft:strider_unsaddled":
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "test": "has_equipment"
+										filter property "subject": "other"
+										filter property "domain": "hand"
+										filter property "value": "saddle"
+									field "event": "minecraft:on_saddled"
+								field "use_item": true
+								field "play_sounds": "saddle"
+								field "interact_text": "action.interact.saddle"
+				component group "minecraft:zombified_piglin_rider": component "minecraft:equipment": field "table": "loot_tables/entities/zombified_piglin_rider_gear.json"
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.9
+					field "height": 1.7
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "deals_damage": false
+				component "minecraft:despawn":
+					field "filters":
+						filter property "any_of":
+							filter:
+								filter property "all_of":
+									filter:
+										filter property "test": "is_persistent"
+										filter property "value": false
+									filter:
+										filter property "test": "distance_to_nearest_player"
+										filter property "operator": ">"
+										filter property "value": 54
+							filter:
+								filter property "all_of":
+									filter:
+										filter property "test": "is_persistent"
+										filter property "value": false
+									filter:
+										filter property "test": "inactivity_timer"
+										filter property "subject": "self"
+										filter property "value": 30
+									filter:
+										filter property "test": "random_chance"
+										filter property "value": 800
+									filter:
+										filter property "test": "distance_to_nearest_player"
+										filter property "operator": ">"
+										filter property "value": 32
+				component "minecraft:fire_immune": true
+				component "minecraft:health":
+					field "value": 15
+					field "max": 15
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_water_or_rain"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "drowning"
+							field "damage_per_tick": 1
+				component "minecraft:jump.static": empty
+				component "minecraft:lava_movement": field "value": 0.2
+				component "minecraft:leashable":
 					field "soft_distance": 4.0
 					field "hard_distance": 6.0
 					field "max_distance": 10.0
-Changed entity "wither_skull.json":
+				component "minecraft:movement": field "value": 0.16
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_lava": true
+					field "avoid_water": true
+					field "can_sink": false
+					field "can_walk_in_lava": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family "mob"
+						family "strider"
+				component "minecraft:behavior.look_at_player":
+					field "priority": 9
+					field "look_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.move_to_lava":
+					field "priority": 7
+					field "search_range": 16
+					field "search_height": 10
+					field "goal_radius": 0.9
+					field "search_count": 30
+				component "minecraft:behavior.panic":
+					field "priority": 3
+					field "speed_multiplier": 1.1
+					field "panic_sound": "panic"
+					field "sound_interval":
+						field "range_max": 3.0
+						field "range_min": 1.0
+				component "minecraft:behavior.random_look_around": field "priority": 10
+				component "minecraft:behavior.random_stroll":
+					field "priority": 8
+					field "speed_multiplier": 0.8
+				component "minecraft:behavior.rise_to_liquid_level":
+					field "priority": 0
+					field "liquid_y_offset": 0.25
+					field "rise_delta": 0.01
+					field "sink_delta": 0.01
+				component "minecraft:behavior.tempt":
+					field "priority": 5
+					field "speed_multiplier": 1.2
+					field "items":
+						item "warped_fungus"
+						item "warped_fungus_on_a_stick"
+					field "tempt_sound": "tempt"
+					field "sound_interval":
+						field "range_max": 5.0
+						field "range_min": 2.0
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "add":
+						field "component_groups":
+							component group "minecraft:strider_adult"
+							component group "minecraft:strider_unsaddled"
+					field "remove": field "component_groups": component group "minecraft:strider_baby"
+				event "minecraft:entity_born": field "trigger": "spawn_baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "trigger": "spawn_adult"
+							field "weight": 40
+						randomize item:
+							field "trigger": "spawn_adult_piglin_jockey"
+							field "weight": 2
+						randomize item:
+							field "trigger": "spawn_adult_parent_jockey"
+							field "weight": 8
+						randomize item:
+							field "trigger": "spawn_baby"
+							field "weight": 50
+				event "minecraft:on_saddled":
+					field "add": field "component_groups": component group "minecraft:strider_saddled"
+					field "remove": field "component_groups": component group "minecraft:strider_unsaddled"
+				event "spawn_adult":
+					field "add":
+						field "component_groups":
+							component group "minecraft:detect_suffocating"
+							component group "minecraft:strider_adult"
+							component group "minecraft:strider_unsaddled"
+				event "spawn_adult_parent_jockey":
+					field "add":
+						field "component_groups":
+							component group "minecraft:detect_suffocating"
+							component group "minecraft:strider_adult"
+							component group "minecraft:strider_parent_jockey"
+							component group "minecraft:strider_unsaddled"
+				event "spawn_adult_piglin_jockey":
+					field "add":
+						field "component_groups":
+							component group "minecraft:detect_suffocating"
+							component group "minecraft:strider_adult"
+							component group "minecraft:strider_piglin_jockey"
+							component group "minecraft:strider_saddled"
+				event "spawn_baby":
+					field "add":
+						field "component_groups":
+							component group "minecraft:detect_suffocating"
+							component group "minecraft:strider_baby"
+				event "spawn_zombified_piglin_rider": field "add": field "component_groups": component group "minecraft:zombified_piglin_rider"
+				event "start_suffocating": field "add": field "component_groups": component group "minecraft:start_suffocating"
+				event "stop_suffocating":
+					field "add": field "component_groups": component group "minecraft:detect_suffocating"
+					field "remove": field "component_groups": component group "minecraft:start_suffocating"
+Changed entity "vex.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.charge_attack":
+					Added field "speed_multiplier": 3.0.
+Changed entity "villager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:exploding":
-					Changed component "minecraft:explode":
-						Unchanged field "power": 1.
-						Removed field "allow_damage_underwater": true.
-Changed entity "wither_skull_dangerous.json":
+				Changed component group "behavior_non_peasant":
+					Changed component "minecraft:shareables":
+						Changed field "items":
+							Changed item:
+								Unchanged field "item": "minecraft:bread".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:carrot".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:potato".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot".
+								Added field "stored_in_inventory": true.
+				Changed component group "behavior_peasant":
+					Changed component "minecraft:shareables":
+						Changed field "items":
+							Changed item:
+								Unchanged field "item": "minecraft:bread".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:carrot".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:potato".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:wheat_seeds".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot_seeds".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:wheat".
+								Added field "stored_in_inventory": true.
+			Changed field "components":
+				Changed component "minecraft:behavior.pickup_items":
+					Added field "can_pickup_to_hand_or_equipment": false.
+Changed entity "villager_v2.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:exploding":
-					Changed component "minecraft:explode":
-						Unchanged field "power": 1.
-						Removed field "allow_damage_underwater": true.
+				Changed component group "behavior_non_peasant":
+					Changed component "minecraft:shareables":
+						Changed field "items":
+							Changed item:
+								Unchanged field "item": "minecraft:bread".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:carrot".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:potato".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot".
+								Added field "stored_in_inventory": true.
+				Changed component group "behavior_peasant":
+					Changed component "minecraft:shareables":
+						Changed field "items":
+							Changed item:
+								Unchanged field "item": "minecraft:bread".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:carrot".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:potato".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:wheat_seeds".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot_seeds".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:wheat".
+								Added field "stored_in_inventory": true.
+				Changed component group "work_schedule_farmer":
+					Changed component "minecraft:shareables":
+						Changed field "items":
+							Changed item:
+								Unchanged field "item": "minecraft:bread".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:carrot".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:potato".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:wheat_seeds".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot_seeds".
+								Added field "stored_in_inventory": true.
+							Changed item:
+								Unchanged field "item": "minecraft:wheat".
+								Added field "stored_in_inventory": true.
+			Changed field "components":
+				Changed component "minecraft:behavior.pickup_items":
+					Added field "can_pickup_to_hand_or_equipment": false.
+Changed entity "wither_skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 29 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 54 (+9, -0)
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_sword".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_sword".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_sword".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_shovel".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_shovel".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_shovel".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_shovel".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_shovel".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_pickaxe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_pickaxe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_pickaxe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_pickaxe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_pickaxe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_axe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_axe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_axe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_axe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_axe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_hoe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_hoe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_hoe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_hoe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_hoe".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_helmet".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:chainmail_helmet".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_helmet".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_helmet".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:leather_helmet".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_chestplate".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:chainmail_chestplate".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_chestplate".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_chestplate".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:leather_chestplate".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_leggings".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:chainmail_leggings".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_leggings".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_leggings".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:leather_leggings".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_boots".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:chainmail_boots".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_boots".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_boots".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:leather_boots".
+							Changed field "priority" from 4 to 5.
+						Added item:
+							field "item": "minecraft:netherite_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						Added item:
+							field "item": "minecraft:netherite_shovel"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:netherite_pickaxe"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:netherite_axe"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:netherite_hoe"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 6
+						Added item:
+							field "item": "minecraft:netherite_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						Added item:
+							field "item": "minecraft:netherite_chestplate"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						Added item:
+							field "item": "minecraft:netherite_leggings"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						Added item:
+							field "item": "minecraft:netherite_boots"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+				Added component "minecraft:behavior.equip_item": field "priority": 3.
+Added entity "zoglin.json":
+	behavior pack "core":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:zoglin"
+				description "is_experimental": false
+				description "is_spawnable": false
+				description "is_summonable": true
+			field "component_groups":
+				component group "zoglin_adult":
+					component "minecraft:attack": field "damage": [3, 8]
+					component "minecraft:collision_box":
+						field "width": 0.9
+						field "height": 0.9
+					component "minecraft:custom_hit_test":
+						field "hitboxes":
+							hitbox:
+								field "width": 2.0
+								field "height": 1.75
+								field "pivot": [0, 1, 0]
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/zoglin.json"
+					component "minecraft:type_family":
+						field "family":
+							family "mob"
+							family "undead"
+							family "zoglin"
+							family "zoglin_adult"
+					component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component group "zoglin_baby":
+					component "minecraft:attack": field "damage": 1
+					component "minecraft:collision_box":
+						field "width": 0.85
+						field "height": 0.85
+					component "minecraft:custom_hit_test":
+						field "hitboxes":
+							hitbox:
+								field "width": 1.0
+								field "height": 0.85
+								field "pivot": [0, 0.5, 0]
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:type_family":
+						field "family":
+							family "mob"
+							family "undead"
+							family "zoglin"
+							family "zoglin_baby"
+			field "components":
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+					field "breathes_water": true
+				component "minecraft:can_climb": empty
+				component "minecraft:despawn":
+					field "filters":
+						filter property "any_of":
+							filter:
+								filter property "all_of":
+									filter:
+										filter property "test": "is_persistent"
+										filter property "value": false
+									filter:
+										filter property "test": "distance_to_nearest_player"
+										filter property "operator": ">"
+										filter property "value": 54
+							filter:
+								filter property "all_of":
+									filter:
+										filter property "test": "is_persistent"
+										filter property "value": false
+									filter:
+										filter property "test": "inactivity_timer"
+										filter property "subject": "self"
+										filter property "value": 30
+									filter:
+										filter property "test": "random_chance"
+										filter property "value": 800
+									filter:
+										filter property "test": "distance_to_nearest_player"
+										filter property "operator": ">"
+										filter property "value": 32
+				component "minecraft:fire_immune": true
+				component "minecraft:health":
+					field "value": 40
+					field "max": 40
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "is_amphibious": true
+					field "can_path_over_water": false
+					field "avoid_water": true
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:behavior.look_at_player":
+					field "priority": 8
+					field "look_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "speed_multiplier": 1.4
+					field "track_target": true
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 3
+					field "within_radius": 16.0
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": "zoglin"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": "creeper"
+							field "max_dist": 16
+					field "must_see": true
+				component "minecraft:behavior.random_look_around": field "priority": 9
+				component "minecraft:behavior.random_stroll":
+					field "priority": 7
+					field "speed_multiplier": 1.0
+			field "events":
+				event "minecraft:as_adult": field "add": field "component_groups": component group "zoglin_adult"
+				event "minecraft:as_baby": field "add": field "component_groups": component group "zoglin_baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "weight": 95
+							field "add": field "component_groups": component group "zoglin_adult"
+						randomize item:
+							field "weight": 5
+							field "add": field "component_groups": component group "zoglin_baby"
+				event "minecraft:entity_transformed":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "zoglin_baby"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "subject": "other"
+								filter property "value": "minecraft:is_baby"
+						sequence item 1:
+							field "add": field "component_groups": component group "zoglin_adult"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "subject": "other"
+								filter property "operator": "!="
+								filter property "value": "minecraft:is_baby"
+Changed entity "zombie.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 30 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 26 (+1, -0)
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_sword".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_sword".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_sword".
+							Changed field "priority" from 4 to 5.
+						Added item:
+							field "item": "minecraft:netherite_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+				Added component "minecraft:behavior.equip_item": field "priority": 2.
+Changed entity "zombie_pigman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 28 (+2, -1)
+				Removed component "minecraft:burns_in_daylight": false.
+				Added component "minecraft:equip_item": empty.
+				Added component "minecraft:behavior.equip_item": field "priority": 3.
+Changed entity "zombie_villager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 29 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 26 (+1, -0)
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_sword".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_sword".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_sword".
+							Changed field "priority" from 4 to 5.
+						Added item:
+							field "item": "minecraft:netherite_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+				Added component "minecraft:behavior.equip_item": field "priority": 3.
+Changed entity "zombie_villager_v2.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 29 (+2, -0)
+				Added component "minecraft:equip_item": empty.
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 26 (+1, -0)
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_sword".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_sword".
+							Changed field "priority" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:wooden_sword".
+							Changed field "priority" from 4 to 5.
+						Added item:
+							field "item": "minecraft:netherite_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+				Added component "minecraft:behavior.equip_item": field "priority": 3.
+			Changed field "events":
+				Total event: 7 (+2, -0)
+				Changed event "from_village":
+					Changed field "sequence":
+						Total sequence item: 2 (+0, -8)
+						Changed sequence item 0:
+							Added field "trigger": "minecraft:entity_spawned".
+							Removed field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:variant"
+							Removed field "randomize":
+								randomize item:
+									field "weight": 9500
+									field "add": field "component_groups": component group "adult"
+									field "remove": empty
+								randomize item:
+									field "weight": 425
+									field "add": field "component_groups": component group "baby"
+									field "remove": empty
+								randomize item:
+									field "weight": 75
+									field "add":
+										field "component_groups":
+											component group "baby"
+											component group "jockey"
+									field "remove": empty
+						Changed sequence item 1:
+							Added field "add": field "component_groups": component group "from_abandoned_village".
+							Removed field "randomize":
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_0"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_1"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_2"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_3"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_4"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_5"
+						Removed sequence item 2:
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:variant"
+							field "randomize":
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "unskilled"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "nitwit"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "farmer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "fisherman"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "shepherd"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "fletcher"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "librarian"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "cartographer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "cleric"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "armorer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "weaponsmith"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "toolsmith"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "butcher"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "leatherworker"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "mason"
+						Removed sequence item 3:
+							field "add": field "component_groups": component group "desert_villager"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "desert"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mesa"
+						Removed sequence item 4:
+							field "add": field "component_groups": component group "jungle_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "jungle"
+						Removed sequence item 5:
+							field "add": field "component_groups": component group "savanna_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "savanna"
+						Removed sequence item 6:
+							field "add": field "component_groups": component group "snow_villager"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "cold"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "ocean"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "frozen"
+						Removed sequence item 7:
+							field "add": field "component_groups": component group "swamp_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "swamp"
+						Removed sequence item 8:
+							field "add": field "component_groups": component group "taiga_villager"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "taiga"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "extreme_hills"
+						Removed sequence item 9: field "add": field "component_groups": component group "from_abandoned_village".
+				Added event "minecraft:add_biome_and_skin":
+					field "sequence":
+						sequence item 0:
+							field "randomize":
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_0"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_1"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_2"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_3"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_4"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "villager_skin_5"
+						sequence item 1:
+							field "add": field "component_groups": component group "desert_villager"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "desert"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mesa"
+						sequence item 2:
+							field "add": field "component_groups": component group "jungle_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "jungle"
+						sequence item 3:
+							field "add": field "component_groups": component group "savanna_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "savanna"
+						sequence item 4:
+							field "add": field "component_groups": component group "snow_villager"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "cold"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "ocean"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "frozen"
+						sequence item 5:
+							field "add": field "component_groups": component group "swamp_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "swamp"
+						sequence item 6:
+							field "add": field "component_groups": component group "taiga_villager"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "taiga"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "extreme_hills"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "operator": "!="
+										filter property "value": "cold"
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Total sequence item: 3 (+0, -6)
+						Changed sequence item 1:
+							Added field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:variant"
+							Changed field "randomize":
+								Total randomize item: 15 (+9, -0)
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "unskilled".
+											Removed component group "villager_skin_0".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "nitwit".
+											Removed component group "villager_skin_1".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "farmer".
+											Removed component group "villager_skin_2".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "fisherman".
+											Removed component group "villager_skin_3".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "shepherd".
+											Removed component group "villager_skin_4".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 1 (+1, -1)
+											Added component group "fletcher".
+											Removed component group "villager_skin_5".
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "librarian"
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "cartographer"
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "cleric"
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "armorer"
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "weaponsmith"
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "toolsmith"
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "butcher"
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "leatherworker"
+								Added randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "mason"
+						Changed sequence item 2:
+							Added field "trigger": "minecraft:add_biome_and_skin".
+							Removed field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:variant"
+							Removed field "randomize":
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "unskilled"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "nitwit"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "farmer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "fisherman"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "shepherd"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "fletcher"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "librarian"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "cartographer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "cleric"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "armorer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "weaponsmith"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "toolsmith"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "butcher"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "leatherworker"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "mason"
+						Removed sequence item 3:
+							field "add": field "component_groups": component group "desert_villager"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "desert"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mesa"
+						Removed sequence item 4:
+							field "add": field "component_groups": component group "jungle_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "jungle"
+						Removed sequence item 5:
+							field "add": field "component_groups": component group "savanna_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "savanna"
+						Removed sequence item 6:
+							field "add": field "component_groups": component group "snow_villager"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "cold"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "ocean"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "frozen"
+						Removed sequence item 7:
+							field "add": field "component_groups": component group "swamp_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "swamp"
+						Removed sequence item 8:
+							field "add": field "component_groups": component group "taiga_villager"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "taiga"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "extreme_hills"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "operator": "!="
+										filter property "value": "cold"
+				Added event "minecraft:spawn_skilled_adult":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group "adult"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:variant"
+						sequence item 1:
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:variant"
+							field "randomize":
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "farmer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "fisherman"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "shepherd"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "fletcher"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "librarian"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "cartographer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "cleric"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "armorer"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "weaponsmith"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "toolsmith"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "butcher"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "leatherworker"
+								randomize item:
+									field "weight": 1
+									field "add": field "component_groups": component group "mason"
+						sequence item 2: field "trigger": "minecraft:add_biome_and_skin"

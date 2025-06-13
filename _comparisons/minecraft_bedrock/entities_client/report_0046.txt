@@ -1,103 +1,80 @@
-Difference of "entities_client" between "1.16.0.53" (beta of "1.16.0") and "1.16.0.55" (beta of "1.16.0").
-Unable to create data files for 1 file between: "1.16.0.54"
+Difference of "entities_client" between "1.16.0.55" (beta of "1.16.0") and "1.16.0.57" (beta of "1.16.0").
 
-Total entity: 142 (+4, -0)
-Added entity "dragon_fireball.entity.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations": animation "face_player": "animation.actor.billboard"
-				field "geometry": geometry "default": "geometry.fireball"
-				field "identifier": "minecraft:dragon_fireball"
-				field "materials": materials "default": "fireball"
-				field "render_controllers": render controller "controller.render.fireball"
-				field "scripts":
-					field "scale": "2.0"
-					field "animate": script "face_player"
-				field "textures": texture "default": "textures/items/dragon_fireball"
-Added entity "experience_orb.entity.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations": animation "face_player": "animation.actor.billboard"
-				field "geometry": geometry "default": "geometry.experience_orb"
-				field "identifier": "minecraft:xp_orb"
-				field "materials": materials "default": "experience_orb"
-				field "render_controllers": render controller "controller.render.experience_orb"
-				field "scripts":
-					field "scale": "0.3"
-					field "pre_animation":
-						script "variable.u = Math.mod(query.texture_frame_index, 4) * 16.0 / 64.0;"
-						script "variable.v = math.round(query.texture_frame_index / 4) * 16.0 / 64.0;"
-					field "animate": script "face_player"
-				field "textures": texture "default": "textures/entity/experience_orb"
-Added entity "fireball.entity.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations": animation "face_player": "animation.actor.billboard"
-				field "geometry": geometry "default": "geometry.fireball"
-				field "identifier": "minecraft:fireball"
-				field "materials": materials "default": "fireball"
-				field "render_controllers": render controller "controller.render.fireball"
-				field "scripts":
-					field "scale": "2.0"
-					field "animate": script "face_player"
-				field "textures": texture "default": "textures/items/fireball"
-Changed entity "npc.entity.json":
+Total entity: 144 (+2, -0)
+Changed entity "iron_golem.entity.json":
 	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Added field "animations":
-					animation "baby_transform": "animation.npc.baby_transform"
-					animation "general": "animation.npc.general"
-					animation "look_at_target": "animation.common.look_at_target"
-					animation "move": "animation.npc.move"
-				Unchanged field "identifier": "minecraft:npc".
-				Added field "materials": materials "default": "npc".
-				Added field "render_controllers": render controller "controller.render.npc".
-				Added field "scripts":
-					field "animate":
-						script "general"
-						script script item "move": "query.modified_move_speed"
-						script "look_at_target"
-						script script item "baby_transform": "query.is_baby"
-				Added field "textures":
-					texture "npc_1": "textures/entity/npc/npc_1"
-					texture "npc_10": "textures/entity/npc/npc_10"
-					texture "npc_2": "textures/entity/npc/npc_2"
-					texture "npc_3": "textures/entity/npc/npc_3"
-					texture "npc_4": "textures/entity/npc/npc_4"
-					texture "npc_5": "textures/entity/npc/npc_5"
-					texture "npc_6": "textures/entity/npc/npc_6"
-					texture "npc_7": "textures/entity/npc/npc_7"
-					texture "npc_8": "textures/entity/npc/npc_8"
-					texture "npc_9": "textures/entity/npc/npc_9"
-					texture "npc_scientist_1": "textures/entity/npc/npc_scientist_1"
-					texture "npc_scientist_10": "textures/entity/npc/npc_scientist_10"
-					texture "npc_scientist_2": "textures/entity/npc/npc_scientist_2"
-					texture "npc_scientist_3": "textures/entity/npc/npc_scientist_3"
-					texture "npc_scientist_4": "textures/entity/npc/npc_scientist_4"
-					texture "npc_scientist_5": "textures/entity/npc/npc_scientist_5"
-					texture "npc_scientist_6": "textures/entity/npc/npc_scientist_6"
-					texture "npc_scientist_7": "textures/entity/npc/npc_scientist_7"
-					texture "npc_scientist_8": "textures/entity/npc/npc_scientist_8"
-					texture "npc_scientist_9": "textures/entity/npc/npc_scientist_9"
-Added entity "small_fireball.entity.json":
+				Unchanged field "identifier": "minecraft:iron_golem".
+				Changed field "scripts":
+					Changed field "pre_animation":
+						Changed script from "variable.modified_tcos0 = (Math.cos(query.modified_distance_moved * 13.5) * query.modified_move_speed / variable.gliding_speed_value) * 25.0;" to "variable.modified_tcos0 = Math.clamp(((Math.cos(query.modified_distance_moved * 13.5) * Math.min(query.modified_move_speed, 0.6) / variable.gliding_speed_value) * 25.0), -12.5, 12.5);".
+Changed entity "piglin.entity.json":
+	Changed resource pack "core":
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Changed field "animation_controllers":
+					Total animation controller group: 11 (+1, -0)
+					Added animation controller group animation controller "pigln_admire": "controller.animation.piglin.admire".
+				Changed field "animations":
+					Total animation: 18 (+1, -0)
+					Added animation "admire": "animation.piglin.admire".
+				Unchanged field "identifier": "minecraft:piglin".
+Added entity "strider.entity.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
-				field "animations": animation "face_player": "animation.actor.billboard"
-				field "geometry": geometry "default": "geometry.fireball"
-				field "identifier": "minecraft:small_fireball"
-				field "materials": materials "default": "fireball"
-				field "render_controllers": render controller "controller.render.fireball"
+				field "animations":
+					animation "bristle_flow": "animation.strider.bristle_flow"
+					animation "look_at_target": "animation.strider.look_at_target.default"
+					animation "walk": "animation.strider.walk"
+				field "geometry": geometry "default": "geometry.strider"
+				field "identifier": "minecraft:strider"
+				field "materials": materials "default": "strider"
+				field "render_controllers": render controller "controller.render.strider"
 				field "scripts":
-					field "scale": "0.5"
-					field "animate": script "face_player"
-				field "textures": texture "default": "textures/items/fireball"
+					field "pre_animation":
+						script "variable.animation_speed = Math.min(query.modified_move_speed, 0.25);"
+						script "variable.speed = 85.9437;"
+						script "variable.bristle_flow=Math.cos(query.modified_distance_moved * variable.speed + 180) * variable.animation_speed;"
+						script "variable.bristle_range_mod=1;"
+						script "variable.bristle_speed_mod=1;"
+					field "animate":
+						script "look_at_target"
+						script "walk"
+						script "bristle_flow"
+				field "spawn_egg":
+					field "base_color": "#9c3436"
+					field "overlay_color": "#4d494d"
+				field "textures":
+					texture "default": "textures/entity/strider/strider"
+					texture "saddled": "textures/entity/strider/strider_saddled"
+					texture "suffocated": "textures/entity/strider/strider_suffocated"
+					texture "suffocated_saddled": "textures/entity/strider/strider_suffocated_saddled"
+Added entity "zoglin.entity.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animations":
+					animation "attack": "animation.hoglin.attack"
+					animation "look_at_target": "animation.hoglin.look_at_target"
+					animation "walk": "animation.hoglin.walk"
+				field "geometry": geometry "default": "geometry.hoglin"
+				field "identifier": "minecraft:zoglin"
+				field "materials": materials "default": "zoglin"
+				field "render_controllers": render controller "controller.render.zoglin"
+				field "scripts":
+					field "pre_animation":
+						script "variable.tcos_right_side = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
+						script "variable.tcos_left_side = -variable.tcos_right_side;"
+						script "variable.attack_head_rot =  Math.sin(variable.attack_time * 180.0) * -37.3;"
+					field "animate":
+						script "walk"
+						script "look_at_target"
+						script script item "attack": "variable.has_target && variable.attack_time >= 0.0"
+				field "spawn_egg":
+					field "base_color": "#c66e55"
+					field "overlay_color": "#e6e6e6"
+				field "textures": texture "default": "textures/entity/zoglin/zoglin"

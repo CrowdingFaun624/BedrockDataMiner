@@ -1,42 +1,28 @@
-Difference of "animation_controllers" between "1.20.10.21" (beta of "1.20.10") and "1.20.10.23" (beta of "1.20.10").
+Difference of "animation_controllers" between "1.20.40.21" (beta of "1.20.40") and "1.20.40.22" (beta of "1.20.40").
 
-Changed file "agent.animation_controllers.json":
+Changed file "camel.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.agent.move":
+			Changed animation controller "controller.animation.camel.general":
 				Changed field "states":
-					Total state: 3 (+1, -0)
+					Changed state "dashing":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "idling": "(query.is_on_ground || query.is_in_water || query.is_riding) && !variable.moving".
+							Removed transition list transition "moving": "(query.is_on_ground || query.is_in_water || query.is_riding) && variable.moving".
+							Added transition list transition "idling": "(query.is_on_ground || query.is_in_water || query.is_in_lava || query.is_riding) && !variable.moving".
+							Added transition list transition "moving": "(query.is_on_ground || query.is_in_water || query.is_in_lava || query.is_riding) && variable.moving".
+					Changed state "idling":
+						Changed field "transitions":
+							Total transition list: 3 (+1, -1)
+							Removed transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_riding".
+							Added transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_in_lava && !query.is_riding".
 					Changed state "moving":
+						Changed field "animations":
+							Total animation dict: 1 (+1, -1)
+							Removed animation dict animation "moving": "math.min(1.0, math.lerp(0.2, 1.5, query.modified_move_speed))".
+							Added animation dict animation "moving": "math.min(1.0, math.lerp(0.4, 1.25, query.modified_move_speed))".
 						Changed field "transitions":
-							Total transition list: 2 (+2, -1)
-							Removed transition list transition "swinging_arms": "variable.agent.swinganimationtick > 0".
-							Added transition list transition "swinging_arms": "variable.agent.anim_state == 2".
-							Added transition list transition "shrug": "variable.agent.anim_state == 3".
-					Added state "shrug":
-						field "animations": animation dict "shrug"
-						field "transitions": transition list transition "moving": "variable.agent.anim_state == 1"
-					Changed state "swinging_arms":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "moving": "variable.agent.swinganimationtick <= 0".
-							Added transition list transition "moving": "variable.agent.anim_state == 1".
-Changed file "humanoid.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.humanoid.look_at_target":
-				Changed field "states":
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 2 (+1, -1)
-							Removed transition list transition "swimming": "query.is_swimming".
-							Added transition list transition "swimming": "query.is_swimming || query.is_crawling".
-					Changed state "gliding":
-						Changed field "transitions":
-							Total transition list: 2 (+1, -1)
-							Removed transition list transition "swimming": "query.is_swimming".
-							Added transition list transition "swimming": "query.is_swimming || query.is_crawling".
-					Changed state "swimming":
-						Changed field "transitions":
-							Total transition list: 2 (+1, -1)
-							Removed transition list transition "default": "!query.is_swimming".
-							Added transition list transition "default": "!query.is_swimming && !query.is_crawling".
+							Total transition list: 3 (+1, -1)
+							Removed transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_riding".
+							Added transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_in_lava && !query.is_riding".

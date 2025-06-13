@@ -1,196 +1,389 @@
-Difference of "ui" between "1.14.30" and "1.14.60".
-Unable to create data files for 1 file between: "1.14.41"
+Difference of "ui" between "1.15.0.56" (beta of "1.16.0") and "1.16.0.51" (beta of "1.16.0").
 
-Changed namespace "common_dialogs":
-	Total element: 23 (+2, -0)
-	Added element "dialog_background_hollow_6@common_dialogs.dialog_background_hollow_common:":
-		field "size": ["100%", "100%c"]
-		field "texture": "dialog_background_hollow_6"
-	Added element "main_panel_three_buttons":
-		field "type": "panel"
-		field "anchor_from": "center"
-		field "anchor_to": "center"
-		field "controls":
-			control element "common_panel@common.common_panel": field "$variables": variable "$dialog_background": "dialog_background_hollow_6"
-			control element "title_label@common_dialogs.title_label": empty
-			control:
-				element "panel_indent":
-					field "type": "panel"
-					field "size": ["100% - 16px", "100% - 131px"]
-					field "offset": [0, 23]
-					field "anchor_from": "top_middle"
-					field "anchor_to": "top_middle"
-					field "controls": control element "inside_header_panel@$child_control": empty
-			control:
-				element "top_button_panel@$top_button_panel":
-					field "size": ["100% - 14px", 30]
-					field "offset": [0, -71]
-					field "anchor_from": "bottom_middle"
-					field "anchor_to": "bottom_middle"
-			control:
-				element "middle_button_panel@$middle_button_panel":
-					field "size": ["100% - 14px", 30]
-					field "offset": [0, -39]
-					field "anchor_from": "bottom_middle"
-					field "anchor_to": "bottom_middle"
-			control:
-				element "bottom_button_panel@$bottom_button_panel":
-					field "size": ["100% - 14px", 30]
-					field "offset": [0, -7]
-					field "anchor_from": "bottom_middle"
-					field "anchor_to": "bottom_middle"
-		field "$variables":
-			variable "$text_name|default": ""
-			variable "$top_button_panel|default": "common.empty_panel"
-			variable "$middle_button_panel|default": "common.empty_panel"
-			variable "$bottom_button_panel|default": "common.empty_panel"
-Changed namespace "general_section":
-	Changed element "debug_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 74 (+1, -0)
-			Added control:
-				element "reset_online_safety_option@settings_common.action_button":
-					field "$variables":
-						variable "$pressed_button_name": "button.dev_reset_online_safety_option"
-						variable "$button_text": "Reset Online Safety Dialog Option"
-	Changed element "profile_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 31 (+1, -0)
-			Changed control:
-				Changed element "unlink_msa_account@settings_common.action_button":
-					Changed field "ignored" from "(not $is_pregame) or ($is_publish and (not $is_berwick))" to "((not $is_pregame) or ($is_publish and (not $is_berwick)))".
-			Added control:
-				element "only_allow_trusted_skins_toggle@settings_common.option_toggle":
-					field "$variables":
-						variable "$option_label": "options.onlyTrustedSkinsAllowed"
-						variable "$option_binding_name": "#only_trusted_skins_allowed"
-						variable "$option_enabled_binding_name": "#only_trusted_skins_allowed_enabled"
-						variable "$toggle_name": "only_trusted_skins_allowed"
-Changed namespace "play":
-	Changed element "label_content_template":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "label_panel":
-					Unchanged field "type": "panel".
-					Removed field "variables":
-						variable:
-							field "requires": "$use_expanded_label_size"
-							field "$variables":
-								variable "$label_size":
-									item 0: "100%"
-									item 1: 13
-					Changed field "$variables":
-						Changed variable "$label_size|default":
-							Changed item 1 from 10 to "default".
-	Changed element "no_local_worlds_switch_setting":
+Changed namespace "settings":
+	Changed element "section_content_panels":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "bg@play.label_background":
+				Changed element "world_sections":
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Changed control:
-							Changed element "no_local_worlds_switch_setting@play.label_content_template":
-								Changed field "$variables":
-									Total variable: 4 (+0, -1)
-									Removed variable "$label_size":
-										item 0: "100%"
-										item 1: "default"
-Changed namespace "progress":
-	Total element: 67 (+6, -0)
-	Added element "do_not_show_checkbox@common.checkbox":
-		field "size": ["100%", 30]
+						Total control: 4 (+1, -0)
+						Added control:
+							element "debug_section@world_section.debug_section":
+								field "ignored": "$is_publish"
+								field "visible": false
+Changed namespace "world_section":
+	Total element: 30 (+4, -0)
+	Added element "debug_button@settings_common.section_toggle_base":
+		field "$variables":
+			variable "$toggle_view_binding_name": "world_debug_button_toggle"
+			variable "$glyph_texture": "textures/ui/debug_glyph"
+			variable "$glyph_color_texture": "textures/ui/debug_glyph_color"
+			variable "$glyph_size":
+				item 0: 15
+				item 1: 15
+			variable "$button_text": "options.debug"
+			variable "$toggle_property_bag": item "#panel_title": "options.debugTitle"
+	Added element "debug_section":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
 		field "anchor_from": "top_left"
 		field "anchor_to": "top_left"
-		field "tts_control_type_order_priority": 100
-		field "tts_value_order_priority": 101
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "world_debug_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
 		field "controls":
 			control:
-				element "header_description_stack_panel":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%", "100%"]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "controls":
-						control:
-							element "checkbox_visuals@common.toggle_visuals":
-								field "size": [30, "100%"]
-								field "anchor_from": "left_middle"
-								field "anchor_to": "left_middle"
-						control:
-							element "buffer_panel":
-								field "type": "panel"
-								field "layer": 3
-								field "size": ["fill", "100%"]
-								field "controls":
-									control:
-										element "label":
-											field "type": "label"
-											field "color": "$light_button_default_text_color"
-											field "text": "onlinePlay.doNotShowAgain"
-											field "size": ["default", "default"]
-											field "anchor_from": "center"
-											field "anchor_to": "center"
-						control:
-							element "another_panel":
-								field "type": "panel"
-								field "size": [30, "100%"]
+				element "flat_nether_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "Flat Nether"
+						variable "$option_binding_name": "#flat_nether"
+						variable "$option_enabled_binding_name": "#flat_nether_enabled"
+						variable "$toggle_name": "flat_nether"
+			control:
+				element "spawn_dimension_dropdown@settings_common.option_dropdown_no_scroll":
+					field "$variables":
+						variable "$option_label": "Spawn Dimension"
+						variable "$dropdown_content": "world_section.debug_spawn_dimension_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "debug_spawn_dimension_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#debug_spawn_dimension_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#debug_spawn_dimension_dropdown_enabled"
+						variable "$selection_highlight_offset":
+							item 0: -2
+							item 1: 1
+						variable "$selection_highlight_size":
+							item 0: "100%"
+							item 1: "100% + 1px"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+			control:
+				element "spawn_biome_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "Spawn Biome"
+						variable "$dropdown_content": "world_section.debug_spawn_biome_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "debug_spawn_biome_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#debug_spawn_biome_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#debug_spawn_biome_dropdown_enabled"
+						variable "$selection_highlight_offset":
+							item 0: -2
+							item 1: 1
+						variable "$selection_highlight_size":
+							item 0: "100%"
+							item 1: "100% + 1px"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+	Added element "debug_spawn_biome_dropdown_content@settings_common.option_radio_dropdown_group":
 		field "$variables":
-			variable "$toggle_name": "online_safety_do_not_show_again"
-			variable "$toggle_state_binding_name": "#online_safety_do_not_show_again"
-			variable "$toggle_enabled_binding_type": "global"
-	Added element "online_safety_back_button@popup_dialog.popup_dialog_button":
-		field "size": "$button_size"
+			variable "$radio_buttons":
+				item 0:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_random_biome"
+						item "$radio_label_text": "random_biome"
+				item 1:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_soulsand_valley"
+						item "$radio_label_text": "soulsand_valley"
+				item 2:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_crimson_forest"
+						item "$radio_label_text": "crimson_forest"
+				item 3:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_warped_forest"
+						item "$radio_label_text": "warped_forest"
+				item 4:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_hell"
+						item "$radio_label_text": "hell"
+				item 5:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_plains"
+						item "$radio_label_text": "plains"
+				item 6:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_desert"
+						item "$radio_label_text": "desert"
+				item 7:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills"
+						item "$radio_label_text": "extreme_hills"
+				item 8:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_forest"
+						item "$radio_label_text": "forest"
+				item 9:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_taiga"
+						item "$radio_label_text": "taiga"
+				item 10:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_swampland"
+						item "$radio_label_text": "swampland"
+				item 11:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_river"
+						item "$radio_label_text": "river"
+				item 12:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_frozen_river"
+						item "$radio_label_text": "frozen_river"
+				item 13:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_ice_plains"
+						item "$radio_label_text": "ice_plains"
+				item 14:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_ice_mountains"
+						item "$radio_label_text": "ice_mountains"
+				item 15:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mushroom_island"
+						item "$radio_label_text": "mushroom_island"
+				item 16:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mushroom_island_shore"
+						item "$radio_label_text": "mushroom_island_shore"
+				item 17:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_beach"
+						item "$radio_label_text": "beach"
+				item 18:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_desert_hills"
+						item "$radio_label_text": "desert_hills"
+				item 19:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_forest_hills"
+						item "$radio_label_text": "forest_hills"
+				item 20:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_taiga_hills"
+						item "$radio_label_text": "taiga_hills"
+				item 21:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills_edge"
+						item "$radio_label_text": "extreme_hills_edge"
+				item 22:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_jungle"
+						item "$radio_label_text": "jungle"
+				item 23:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_jungle_hills"
+						item "$radio_label_text": "jungle_hills"
+				item 24:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_jungle_edge"
+						item "$radio_label_text": "jungle_edge"
+				item 25:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_stone_beach"
+						item "$radio_label_text": "stone_beach"
+				item 26:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_cold_beach"
+						item "$radio_label_text": "cold_beach"
+				item 27:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_birch_forest"
+						item "$radio_label_text": "birch_forest"
+				item 28:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_birch_forest_hills"
+						item "$radio_label_text": "birch_forest_hills"
+				item 29:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_roofed_forest"
+						item "$radio_label_text": "roofed_forest"
+				item 30:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_cold_taiga"
+						item "$radio_label_text": "cold_taiga"
+				item 31:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_cold_taiga_hills"
+						item "$radio_label_text": "cold_taiga_hills"
+				item 32:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mega_taiga"
+						item "$radio_label_text": "mega_taiga"
+				item 33:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mega_taiga_hills"
+						item "$radio_label_text": "mega_taiga_hills"
+				item 34:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills_plus_trees"
+						item "$radio_label_text": "extreme_hills_plus_trees"
+				item 35:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_savanna"
+						item "$radio_label_text": "savanna"
+				item 36:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_savanna_plateau"
+						item "$radio_label_text": "savanna_plateau"
+				item 37:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mesa"
+						item "$radio_label_text": "mesa"
+				item 38:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_plateau_stone"
+						item "$radio_label_text": "mesa_plateau_stone"
+				item 39:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_plateau"
+						item "$radio_label_text": "mesa_plateau"
+				item 40:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_ocean"
+						item "$radio_label_text": "ocean"
+				item 41:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_deep_ocean"
+						item "$radio_label_text": "deep_ocean"
+				item 42:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_warm_ocean"
+						item "$radio_label_text": "warm_ocean"
+				item 43:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_deep_warm_ocean"
+						item "$radio_label_text": "deep_warm_ocean"
+				item 44:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_lukewarm_ocean"
+						item "$radio_label_text": "lukewarm_ocean"
+				item 45:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_deep_lukewarm_ocean"
+						item "$radio_label_text": "deep_lukewarm_ocean"
+				item 46:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_cold_ocean"
+						item "$radio_label_text": "cold_ocean"
+				item 47:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_deep_cold_ocean"
+						item "$radio_label_text": "deep_cold_ocean"
+				item 48:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_frozen_ocean"
+						item "$radio_label_text": "frozen_ocean"
+				item 49:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_deep_frozen_ocean"
+						item "$radio_label_text": "deep_frozen_ocean"
+				item 50:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_bamboo_jungle"
+						item "$radio_label_text": "bamboo_jungle"
+				item 51:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_bamboo_jungle_hills"
+						item "$radio_label_text": "bamboo_jungle_hills"
+				item 52:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_sunflower_plains"
+						item "$radio_label_text": "sunflower_plains"
+				item 53:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_swampland_mutated"
+						item "$radio_label_text": "swampland_mutated"
+				item 54:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_ice_plains_spikes"
+						item "$radio_label_text": "ice_plains_spikes"
+				item 55:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_cold_taiga_mutated"
+						item "$radio_label_text": "cold_taiga_mutated"
+				item 56:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_savanna_mutated"
+						item "$radio_label_text": "savanna_mutated"
+				item 57:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_savanna_plateau_mutated"
+						item "$radio_label_text": "savanna_plateau_mutated"
+				item 58:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_roofed_forest_mutated"
+						item "$radio_label_text": "roofed_forest_mutated"
+				item 59:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_desert_mutated"
+						item "$radio_label_text": "desert_mutated"
+				item 60:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_flower_forest"
+						item "$radio_label_text": "flower_forest"
+				item 61:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_taiga_mutated"
+						item "$radio_label_text": "taiga_mutated"
+				item 62:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_jungle_mutated"
+						item "$radio_label_text": "jungle_mutated"
+				item 63:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_jungle_edge_mutated"
+						item "$radio_label_text": "jungle_edge_mutated"
+				item 64:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_bryce"
+						item "$radio_label_text": "mesa_bryce"
+				item 65:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_plateau_stone_mutated"
+						item "$radio_label_text": "mesa_plateau_stone_mutated"
+				item 66:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_mesa_plateau_mutated"
+						item "$radio_label_text": "mesa_plateau_mutated"
+				item 67:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_birch_forest_mutated"
+						item "$radio_label_text": "birch_forest_mutated"
+				item 68:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_birch_forest_hills_mutated"
+						item "$radio_label_text": "birch_forest_hills_mutated"
+				item 69:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_redwood_taiga_mutated"
+						item "$radio_label_text": "redwood_taiga_mutated"
+				item 70:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills_mutated"
+						item "$radio_label_text": "extreme_hills_mutated"
+				item 71:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_extreme_hills_plus_trees_mutated"
+						item "$radio_label_text": "extreme_hills_plus_trees_mutated"
+				item 72:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_redwood_taiga_hills_mutated"
+						item "$radio_label_text": "redwood_taiga_hills_mutated"
+	Added element "debug_spawn_dimension_dropdown_content@settings_common.option_radio_dropdown_group":
 		field "$variables":
-			variable "$pressed_button_name": "button.back"
-			variable "$button_text": "onlinePlay.Back"
-	Added element "online_safety_description":
-		field "type": "label"
-		field "size": ["100%-4px", "default"]
-		field "color": "$body_text_color"
-		field "text": "onlinePlay.message"
-	Added element "online_safety_dialog@common_dialogs.main_panel_three_buttons":
-		field "size": [300, 200]
-		field "layer": 101
-		field "$variables":
-			variable "$fill_alpha": 1
-			variable "$text_name": "onlinePlay.notRated"
-			variable "$description_text": "onlinePlay.message"
-			variable "$button_size":
-				item 0: "100%"
-				item 1: 30
-			variable "$show_close_button": false
-			variable "$child_control": "progress.online_safety_label_panel"
-			variable "$top_button_panel": "progress.do_not_show_checkbox"
-			variable "$middle_button_panel": "progress.online_safety_proceed_button"
-			variable "$bottom_button_panel": "progress.online_safety_back_button"
-	Added element "online_safety_label_panel@common.scrolling_panel":
-		field "layer": 1
-		field "anchor_from": "top_middle"
-		field "anchor_to": "top_middle"
-		field "$variables":
-			variable "$scrolling_pane_size":
-				item 0: "100% - 1px"
-				item 1: "100% - 3px"
-			variable "$scrolling_pane_offset":
-				item 0: 2
-				item 1: 2
-			variable "$scrolling_content": "progress.online_safety_description"
-			variable "$scroll_size":
-				item 0: 5
-				item 1: "100% - 4px"
-			variable "$show_background": false
-			variable "$always_handle_scrolling": true
-	Added element "online_safety_proceed_button@popup_dialog.popup_dialog_button":
-		field "size": "$button_size"
-		field "$variables":
-			variable "$pressed_button_name": "button.proceed"
-			variable "$button_text": "onlinePlay.proceed"
-	Changed element "popup_dialog_factory":
-		Unchanged field "type": "factory".
-		Changed field "control_ids":
-			Total control id: 8 (+1, -0)
-			Added control id "online_safety_dialog": "online_safety_dialog@progress.online_safety_dialog".
+			variable "$radio_buttons":
+				item 0:
+					item "debug_spawn_in_overworld_toggle@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_overworld"
+						item "$radio_label_text": "Overworld"
+				item 1:
+					item "debug_spawn_in_nether_toggle@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_spawn_in_nether"
+						item "$radio_label_text": "Nether"
+	Changed element "selector_pane_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 10 (+1, -0)
+			Added control element "debug_button@world_section.debug_button": field "ignored": "$is_publish".

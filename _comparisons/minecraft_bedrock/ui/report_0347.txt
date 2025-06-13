@@ -1,5 +1,21 @@
-Difference of "ui" between "1.21.0.25" (beta of "1.21.0") and "1.21.0.26" (beta of "1.21.0").
+Difference of "ui" between "1.21.10.23" (beta of "1.21.20") and "1.21.10.24" (beta of "1.21.20").
 
+Changed namespace "common":
+	Changed element "scroll_background_and_viewport":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "scrolling_view_port":
+					Unchanged field "type": "panel".
+					Changed field "clips_children" from true to "$scroll_view_port_clips_children".
+					Added field "$variables": variable "$scroll_view_port_clips_children|default": true.
+	Changed element "scroll_view_control":
+		Unchanged field "type": "scroll_view".
+		Changed field "$variables":
+			Total variable: 7 (+1, -0)
+			Added variable "$scroll_view_control_anchor|default": "center".
+		Added field "anchor_to": "$scroll_view_control_anchor".
+		Added field "anchor_from": "$scroll_view_control_anchor".
 Changed namespace "play":
 	Total element: 283 (+0, -9)
 	Removed element "anim_realms_stories_icon":
@@ -18,6 +34,19 @@ Changed namespace "play":
 	Changed element "feed_icon":
 		Unchanged field "type": "image".
 		Removed field "visible": "(not $is_realms_stories_enabled)".
+	Changed element "label_content_template":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "label_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "label_panel_layout":
+								Unchanged field "type": "panel".
+								Changed field "size":
+									Unchanged item 0: "100%-4px".
+									Changed item 1 from "100%c+2px" to "100%c".
 	Changed element "legacy_world_item":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
@@ -170,14 +199,6 @@ Changed namespace "play":
 								Changed field "size":
 									Changed item 0 from "100%y" to "100%c - 1px".
 									Changed item 1 from "100%" to "100% + 1px".
-	Changed element "server_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 6 (+1, -0)
-						Added control element "server_content@$server_scroll_panel_content": empty.
 	Changed element "servers_content_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
@@ -270,3 +291,58 @@ Changed namespace "realms_slots":
 			Total control: 1 (+1, -1)
 			Removed control element "realms_stories_icon@play.realms_stories_icon": field "$variables": variable "$glyph_color": "$light_glyph_hover_color".
 			Added control element "realms_stories_icon@play.realms_stories_icon": field "$variables": variable "$glyph_color": "$light_glyph_hover_color".
+Changed namespace "sidebar_navigation":
+	Total element: 51 (+1, -0)
+	Added element "platform_store_icon_spacing":
+		field "type": "panel"
+		field "size": ["100%", 40]
+		field "bindings":
+			binding:
+				field "binding_name": "#showing_platform_store_icon"
+				field "binding_name_override": "#visible"
+	Changed element "root_section_content_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "verbose_sidebar_screen_Nav@sidebar_navigation.sidebar_screen_nav_option_factory_panel": empty.
+			Added control element "verbose_sidebar_screen_Nav@sidebar_navigation.sidebar_screen_nav_option_factory_panel": empty.
+	Changed element "sidebar_screen_nav_option_factory_panel":
+		field "ignored": "$store_disabled"
+		field "type": "panel"
+		field "size": ["100%", "35% - 26px"]
+		field "controls": control element "button@sidebar_navigation.verbose_screen_nav_option_panel": empty
+		field "ignored": "$store_disabled"
+		field "type": "stack_panel"
+		field "size": ["100%", "fill"]
+		field "controls":
+			control:
+				element "fill_panel":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+			control element "button@sidebar_navigation.verbose_screen_nav_option_panel": empty
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": ["100%", 26]
+			control element "platform_icon_padding@sidebar_navigation.platform_store_icon_spacing": empty
+Changed namespace "store_layout":
+	Changed element "character_creator_sdl_section_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "sdl_scroll_section@store_layout.sdl_scrolling_section_panel":
+					Added field "variables":
+						variable:
+							field "requires": "$is_ps4"
+							field "$variables":
+								variable "$scroll_view_control_anchor": "top_left"
+								variable "$scroll_view_control_size":
+									item 0: "100%"
+									item 1: "100% - 25px"
+								variable "$scroll_view_port_panel_size":
+									item 0: "100%"
+									item 1: "100% + 25px"
+								variable "$scroll_view_port_size":
+									item 0: "100%"
+									item 1: "100% - 25px"
+								variable "$scroll_view_port_clips_children": false

@@ -1,50 +1,106 @@
-Difference of "ui" between "1.18.10" and "1.18.12".
-Unable to create data files for 1 file between: "1.18.11"
+Difference of "ui" between "1.18.30.20" (beta of "1.18.30") and "1.18.30.22" (beta of "1.18.30").
 
-Changed namespace "play":
-	Changed element "add_server_toggle_button@common_toggles.light_text_toggle":
-		Changed field "visible" from "(not $is_console)" to "(not $ignore_add_servers)".
-	Changed element "close_navigation_tab":
-		Unchanged field "type": "panel".
+Changed namespace "common_buttons":
+	Changed element "underline_button@common.button":
 		Changed field "controls":
-			Changed control:
-				Changed element "x_image@common.light_close_button":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "binding_name" from "(not #gamepad_helper_visible)" to "(not #exit_button_visible)".
-	Changed element "common_content":
-		Unchanged field "type": "input_panel".
-		Removed field "focus_nagivation_mode_down": "contained".
-		Removed field "focus_nagivation_mode_up": "contained".
-		Removed field "focus_nagivation_mode_right": "contained".
-		Removed field "focus_nagivation_mode_left": "contained".
-		Added field "focus_navigation_mode_down": "contained".
-		Added field "focus_navigation_mode_up": "contained".
-		Added field "focus_navigation_mode_right": "contained".
-		Added field "focus_navigation_mode_left": "contained".
-	Changed element "no_local_worlds_launch_help@common_buttons.light_text_button":
+			Total control: 3 (+1, -0)
+			Added control:
+				element "pressed":
+					field "type": "panel"
+					field "size": "$underline_button_size"
+					field "controls":
+						control:
+							element "label_hover@common.single_line_label":
+								field "$variables":
+									variable "$single_line_label_color|default":
+										item 0: 0.215
+										item 1: 0.839
+										item 2: 0.118
+									variable "$underline_control": item 0: item "underline_hover@common.underline": item "$texture": "textures/ui/underline_focus"
+Changed namespace "common_store":
+	Changed element "cycle_pack_left_button@common_store.cycle_pack_button":
 		Changed field "$variables":
-			Total variable: 3 (+1, -0)
-			Changed variable "$button_text" from "localWorld.no_local_worlds_button_label" to "#no_local_worlds_launch_help_button_label".
-			Added variable "$button_text_binding_type": "global".
-	Changed element "no_local_worlds_switch_setting":
-		Unchanged field "type": "panel".
+			Total variable: 5 (+1, -0)
+			Added variable "$focus_id|default": "left_cycle_button".
+	Changed element "cycle_pack_right_button@common_store.cycle_pack_button":
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$focus_id|default": "right_cycle_button".
+Changed namespace "controls_section":
+	Changed element "touch_section":
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
+			Total control: 2 (+0, -1)
+			Removed control:
+				element "new_touch_control_schemes_settings":
+					field "type": "stack_panel"
+					field "size": ["100%", "100%c"]
+					field "bindings":
+						binding:
+							field "binding_name": "#new_touch_control_schemes_settings"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "interaction_model_dropdown@settings_common.option_dropdown":
+								field "$variables":
+									variable "$option_label": "options.interactionmodel"
+									variable "$dropdown_content": "controls_section.interaction_model_dropdown_content"
+									variable "$dropdown_area": "content_area"
+									variable "$dropdown_name": "interaction_model_dropdown"
+									variable "$option_enabled_binding_name": "#intereaction_model_dropdown_enabled"
+									variable "$options_dropdown_toggle_label_binding": "#interaction_model_dropdown_toggle_label"
+									variable "$dropdown_scroll_content_size":
+										item 0: "100%"
+										item 1: "200%"
 			Changed control:
-				Changed element "bg@play.label_background":
+				Changed element "common_touch_settings":
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
+						Total control: 20 (+2, -0)
 						Changed control:
-							Changed element "no_local_worlds_get_help@play.label_content_template":
-								Changed field "$variables":
-									Total variable: 5 (+1, -0)
-									Changed variable "$label_content_label" from "localWorld.no_local_worlds_present_external" to "#no_local_worlds_help_label".
-									Changed variable "$information_panel_label_text" from "localWorld.no_local_worlds_present_external" to "#no_local_worlds_help_label".
-									Added variable "$label_content_label_binding_type": "global".
-	Changed element "screenshots_section_panel":
+							Changed element "option_slider_1@settings_common.option_slider":
+								Removed field "bindings":
+									binding:
+										field "binding_name": "(not #touch_controls_v2)"
+										field "binding_name_override": "#visible"
+						Added control:
+							element "option_enable_new_touch_control_schemes_button@settings_common.option_toggle":
+								field "bindings":
+									binding:
+										field "binding_name": "#new_touch_control_schemes_preview_enabled"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$option_label": "options.enableNewTouchControlSchemes"
+									variable "$option_binding_name": "#enable_new_touch_control_schemes"
+									variable "$option_enabled_binding_name": "#enable_new_touch_control_schemes_enabled"
+									variable "$toggle_name": "enable_new_touch_control_schemes"
+						Added control:
+							element "interaction_model_dropdown@settings_common.option_dropdown":
+								field "bindings":
+									binding:
+										field "binding_name": "#new_touch_control_schemes_settings"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$option_label": "options.interactionmodel"
+									variable "$dropdown_content": "controls_section.interaction_model_dropdown_content"
+									variable "$dropdown_area": "content_area"
+									variable "$dropdown_name": "interaction_model_dropdown"
+									variable "$option_enabled_binding_name": "#intereaction_model_dropdown_enabled"
+									variable "$options_dropdown_toggle_label_binding": "#interaction_model_dropdown_toggle_label"
+									variable "$dropdown_scroll_content_size":
+										item 0: "100%"
+										item 1: "200%"
+Changed namespace "persona_deprecated":
+	Changed element "category_featured_offer_content":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Moved element from "nagivation_panel" to "navigation_panel".
-	Changed element "world_item_grid_base":
-		Unchanged field "type": "grid".
-		Removed field "ttsSectionContainer": true.
+				Changed element "left_cycle_button@persona_deprecated.left_cycle_button":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_id": "left_featured_cycle_button".
+			Changed control:
+				Changed element "right_cycle_button@persona_deprecated.right_cycle_button":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_id": "right_featured_cycle_button".

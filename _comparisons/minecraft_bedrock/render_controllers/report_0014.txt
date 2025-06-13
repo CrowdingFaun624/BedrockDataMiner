@@ -1,10 +1,149 @@
-Difference of "render_controllers" between "1.11.4" and "1.12.0.2" (beta of "1.12.0").
+Difference of "render_controllers" between "1.12.1" and "1.13.0.1" (beta of "1.13.0").
 
-Changed file "bow.render_controllers.json":
+Total file: 75 (+6, -0)
+Added file "balloon.render_controllers.json":
+	resource pack "education":
+		field "format_version": "1.10.0"
+		field "render_controllers":
+			render controller "controller.render.balloon":
+				field "geometry": "Geometry.default"
+				field "materials": material dict material "*": "Material.default"
+				field "textures": texture "Texture.default"
+Added file "cape.render_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.player.cape":
+				field "rebuild_animation_matrices": true
+				field "geometry": "Geometry.cape"
+				field "materials": material dict material "*": "Material.cape"
+				field "textures": texture "Texture.cape"
+				field "part_visibility": part visibility dict part visibility "cape": "(query.armor_texture_slot(1) != 5) && variable.is_third_person"
+Added file "fishing_hook.render_controllers.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "render_controllers":
+			render controller "controller.render.fishing_hook":
+				field "geometry": "Geometry.default"
+				field "materials": material dict material "*": "Material.default"
+				field "textures": texture "Texture.default"
+Added file "fox.render_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.fox":
+				field "arrays":
+					field "textures":
+						array "Array.skins":
+							array item "Texture.arctic"
+							array item "Texture.red"
+				field "geometry": "Geometry.default"
+				field "part_visibility":
+					part visibility dict part visibility "leg*": "!query.is_sleeping"
+					part visibility dict part visibility "head": "!query.is_sleeping"
+					part visibility dict part visibility "head_sleeping": "query.is_sleeping"
+				field "materials": material dict material "*": "Material.default"
+				field "textures": texture "Array.skins[query.variant]"
+Added file "guardian.render_controllers.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "render_controllers":
+			render controller "controller.render.guardian":
+				field "geometry": "Geometry.default"
+				field "materials": material dict material "*": "query.is_ghost ? Material.ghost : Material.default"
+				field "textures": texture "query.is_elder ? Texture.elder : Texture.default"
+Changed file "horse.render_controllers.json":
 	Changed resource pack "core":
 		Changed field "render_controllers":
-			Changed render controller "controller.render.bow":
+			Changed render controller "controller.render.horse":
+				Changed field "arrays":
+					Changed field "textures":
+						Total array: 4 (+1, -0)
+						Changed array "Array.base":
+							Total array item: 5 (+0, -7)
+							Removed array item "Texture.base_black".
+							Removed array item "Texture.base_brown".
+							Removed array item "Texture.base_chestnut".
+							Removed array item "Texture.base_creamy".
+							Removed array item "Texture.base_darkbrown".
+							Removed array item "Texture.base_gray".
+							Removed array item "Texture.base_white".
+						Added array "Array.variant":
+							array item "Texture.base_black"
+							array item "Texture.base_brown"
+							array item "Texture.base_brown"
+							array item "Texture.base_chestnut"
+							array item "Texture.base_creamy"
+							array item "Texture.base_darkbrown"
+							array item "Texture.base_gray"
+							array item "Texture.base_white"
 				Changed field "materials":
-					Total material dict: 1 (+1, -1)
-					Removed material dict material "*": "variable.is_enchanted ? material.enchanted : material.default".
-					Added material dict material "*": "query.is_enchanted ? material.enchanted : material.default".
+					Total material dict: 4 (+1, -1)
+					Removed material dict material "*": "Material.default".
+					Added material dict material "*": "(query.armor_texture_slot(1) == 1.0) ? Material.horse_leather_armor : Material.default".
+				Changed field "textures":
+					Total texture: 3 (+3, -3)
+					Added texture "Array.armor[query.armor_texture_slot(1)]".
+					Removed texture "Array.armor[variable.ArmorTextureIndex]".
+					Removed texture "Array.base[variable.BaseTextureIndex]".
+					Added texture "Array.markings[query.mark_variant]".
+					Removed texture "Array.markings[variable.MarkingsTextureIndex]".
+					Added texture "variable.horse.is_horse ? Array.variant[query.variant] : Array.base[query.sub_variant] ".
+				Added field "part_visibility":
+					part visibility dict part visibility "*saddle*": "query.is_saddled"
+					part visibility dict part visibility "SaddleMouthLine": "query.is_saddled && query.has_rider"
+					part visibility dict part visibility "SaddleMouthLineR": "query.is_saddled && query.has_rider"
+					part visibility dict part visibility "Ear*": "!variable.horse.large_ears"
+					part visibility dict part visibility "MuleEar*": "variable.horse.large_ears"
+					part visibility dict part visibility "Bag*": "query.is_chested"
+Added file "player.render_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "render_controllers":
+			render controller "controller.render.player":
+				field "geometry": "Geometry.default"
+				field "materials": material dict material "*": "Material.default"
+				field "textures": texture "Texture.default"
+				field "part_visibility":
+					part visibility dict part visibility "*": "variable.is_third_person"
+					part visibility dict part visibility "rightArm": "variable.is_third_person || !query.is_selected_item || query.get_equipped_item_name == 'map'"
+					part visibility dict part visibility "rightSleeve": "variable.is_third_person || !query.is_selected_item"
+					part visibility dict part visibility "leftArm": "variable.is_third_person || (query.get_equipped_item_name == 'map' && query.get_equipped_item_name(1) != 'shield') || (query.get_equipped_item_name(1) == 'map' && !query.main_hand_item_is_charged) || (!query.main_hand_item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))"
+					part visibility dict part visibility "leftSleeve": "variable.is_third_person"
+					part visibility dict part visibility "helmet": "variable.is_third_person && variable.helmet_layer_visible"
+					part visibility dict part visibility "leftLegging": "variable.is_third_person && variable.leg_layer_visible"
+					part visibility dict part visibility "rightLegging": "variable.is_third_person && variable.leg_layer_visible"
+					part visibility dict part visibility "leftBoot": "variable.is_third_person && variable.boot_layer_visible"
+					part visibility dict part visibility "rightBoot": "variable.is_third_person && variable.boot_layer_visible"
+					part visibility dict part visibility "leftSock": "variable.is_third_person && (variable.boot_layer_visible && variable.leg_layer_visible)"
+					part visibility dict part visibility "rightSock": "variable.is_third_person && (variable.boot_layer_visible && variable.leg_layer_visible)"
+					part visibility dict part visibility "bodyArmor": "variable.is_third_person && variable.chest_layer_visible && !query.has_cape"
+					part visibility dict part visibility "leftArmArmor": "variable.is_third_person && variable.chest_layer_visible && !query.has_cape"
+					part visibility dict part visibility "rightArmArmor": "variable.is_third_person && variable.chest_layer_visible && !query.has_cape"
+					part visibility dict part visibility "belt": "variable.is_third_person && (variable.chest_layer_visible && variable.leg_layer_visible)"
+Changed file "rabbit.render_controllers.json":
+	Changed resource pack "core":
+		Changed field "render_controllers":
+			Changed render controller "controller.render.rabbit":
+				Changed field "arrays":
+					Changed field "textures":
+						Changed array "Array.skins":
+							Total array item: 6 (+0, -1)
+							Removed array item "Texture.toast".
+				Changed field "textures":
+					Total texture: 1 (+1, -1)
+					Removed texture "Array.skins[query.variant]".
+					Added texture "query.get_name == 'toast' ? Texture.toast : Array.skins[query.variant]".
+Changed file "villager_v2.render_controllers.json":
+	Changed resource pack "core":
+		Changed field "render_controllers":
+			Changed render controller "controller.render.villager_v2_level":
+				Changed field "arrays":
+					Changed field "textures":
+						Changed array "Array.levels":
+							Total array item: 5 (+2, -0)
+							Added array item "Texture.level_emerald".
+							Added array item "Texture.level_stone".
+				Changed field "part_visibility":
+					Changed part visibility dict:
+						Changed part visibility "*" from "!query.is_baby" to "!query.is_baby && variable.profession_index != 0 && variable.profession_index != 14".

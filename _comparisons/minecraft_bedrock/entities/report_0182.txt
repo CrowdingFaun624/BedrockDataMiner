@@ -1,152 +1,346 @@
-Difference of "entities" between "1.19.63" and "1.19.70.20" (beta of "1.19.70").
+Difference of "entities" between "1.19.80.20" (beta of "1.19.80") and "1.19.80.21" (beta of "1.19.80").
 
-Changed entity "ender_crystal.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:collision_box":
-					Changed field "width" from 0.98 to 2.
-					Changed field "height" from 0.98 to 2.
-Changed entity "horse.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:horse_tamed":
-					Changed component "minecraft:breedable":
-						Added field "mutation_factor":
-							field "extra_variant": 0.2
-							field "variant": 0.111
-						Added field "mutation_strategy": "random".
-						Added field "random_variant_mutation_interval": [0, 7].
-						Added field "random_extra_variant_mutation_interval": [0, 5].
-Changed entity "witch.json":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.16.0" to "1.19.60".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 28 (+2, -0)
-				Added component "minecraft:shooter":
-					field "power": 0.75
-					field "def": "minecraft:splash_potion"
-					field "aux_val": 23
-					field "sound": "throw"
-					field "projectiles":
-						projectile:
-							field "def": "minecraft:splash_potion"
-							field "aux_val": 17
+Changed entity "frog.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:frog"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "component_groups":
+				component group "cold_frog": component "minecraft:variant": field "value": 1
+				component group "pregnant":
+					component "minecraft:behavior.lay_egg":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+						field "search_range": 10
+						field "search_height": 3
+						field "goal_radius": 1.7
+						field "target_blocks": block "minecraft:water"
+						field "target_materials_above_block": block "Air"
+						field "allow_laying_from_below": true
+						field "use_default_animation": false
+						field "lay_seconds": 2
+						field "egg_type": "minecraft:frog_spawn"
+						field "lay_egg_sound": "lay_spawn"
+						field "on_lay":
+							field "event": "laid_egg"
+							field "target": "self"
+					component "minecraft:behavior.move_to_water":
+						field "priority": 3
+						field "search_range": 20
+						field "search_height": 5
+						field "goal_radius": 1.5
+				component group "temperate_frog": component "minecraft:variant": field "value": 0
+				component group "warm_frog": component "minecraft:variant": field "value": 2
+			field "components":
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+					field "breathes_water": true
+					field "breathes_air": true
+					field "generates_bubbles": false
+				component "minecraft:breedable":
+					field "require_tame": false
+					field "causes_pregnancy": true
+					field "breeds_with":
+						field "mate_type": "minecraft:frog"
+						field "baby_type": "minecraft:tadpole"
+						field "breed_event": field "event": "become_pregnant"
+					field "breed_items": item "slime_ball"
+				component "minecraft:collision_box":
+					field "width": 0.5
+					field "height": 0.55
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "fall"
+						field "deals_damage": true
+						field "damage_modifier": -5
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component "minecraft:health": field "value": 10
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable": empty
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.amphibious": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "is_amphibious": true
+					field "can_path_over_water": true
+					field "can_swim": true
+					field "can_walk": true
+					field "can_sink": false
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable": empty
+				component "minecraft:type_family":
+					field "family":
+						family "frog"
+						family "mob"
+				component "minecraft:underwater_movement": field "value": 0.15
+				component "minecraft:behavior.breed": field "priority": 4
+				component "minecraft:behavior.croak":
+					field "priority": 9
+					field "interval": [10, 20]
+					field "duration": 4.5
+					field "filters":
+						filter property "all_of":
+							filter:
+								filter property "test": "in_water"
+								filter property "value": false
+							filter:
+								filter property "test": "in_lava"
+								filter property "value": false
+				component "minecraft:behavior.eat_mob":
+					field "priority": 7
+					field "run_speed": 2.0
+					field "eat_animation_time": 0.3
+					field "pull_in_force": 0.75
+					field "reach_mob_distance": 1.75
+					field "eat_mob_sound": "tongue"
+					field "loot_table": "loot_tables/entities/frog.json"
+				component "minecraft:behavior.jump_to_block":
+					field "priority": 10
+					field "search_width": 8
+					field "search_height": 4
+					field "minimum_path_length": 2
+					field "minimum_distance": 1
+					field "scale_factor": 0.6
+					field "max_velocity": 1
+					field "cooldown_range": [5, 7]
+					field "preferred_blocks":
+						block "minecraft:big_dripleaf"
+						block "minecraft:waterlily"
+					field "preferred_blocks_chance": 0.5
+					field "forbidden_blocks": block "minecraft:water"
+				component "minecraft:behavior.look_at_player":
+					field "priority": 12
+					field "target_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.move_to_land":
+					field "priority": 6
+					field "search_range": 30
+					field "search_height": 8
+					field "search_count": 80
+					field "goal_radius": 2
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 8
+					field "within_radius": 16
+					field "entity_types":
+						entity type:
 							field "filters":
 								filter property "all_of":
 									filter:
-										filter property "test": "target_distance"
-										filter property "subject": "self"
-										filter property "value": 8.0
-										filter property "operator": ">="
-									filter:
-										filter property "none_of":
-											filter:
-												filter property "test": "has_mob_effect"
-												filter property "subject": "other"
-												filter property "value": "slowness"
-						projectile:
-							field "def": "minecraft:splash_potion"
-							field "aux_val": 25
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "test": "actor_health"
+										filter property "test": "is_family"
 										filter property "subject": "other"
-										filter property "value": 8
-										filter property "operator": ">="
+										filter property "value": "slime"
 									filter:
-										filter property "none_of":
-											filter:
-												filter property "test": "has_mob_effect"
-												filter property "subject": "other"
-												filter property "value": "poison"
-						projectile:
-							field "def": "minecraft:splash_potion"
-							field "aux_val": 34
+										filter property "test": "is_variant"
+										filter property "subject": "other"
+										filter property "operator": "=="
+										filter property "value": 1
+							field "max_dist": 16
+						entity type:
 							field "filters":
 								filter property "all_of":
 									filter:
-										filter property "test": "target_distance"
-										filter property "subject": "self"
-										filter property "value": 3
-										filter property "operator": "<="
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "magmacube"
 									filter:
-										filter property "none_of":
-											filter:
-												filter property "test": "has_mob_effect"
-												filter property "subject": "other"
-												filter property "value": "weakness"
-							field "chance": 0.25
-					field "magic": true
-				Added component "minecraft:behavior.drink_potion":
+										filter property "test": "is_variant"
+										filter property "subject": "other"
+										filter property "operator": "=="
+										filter property "value": 1
+							field "max_dist": 16
+					field "must_see": true
+				component "minecraft:behavior.panic":
 					field "priority": 1
-					field "speed_modifier": -0.25
-					field "potions":
-						potion:
-							field "id": 19
-							field "chance": 0.15
+					field "speed_multiplier": 2.0
+				component "minecraft:behavior.random_stroll": field "priority": 11
+				component "minecraft:behavior.tempt":
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "can_tempt_vertically": true
+					field "items": item "slime_ball"
+			field "events":
+				event "become_pregnant": field "add": field "component_groups": component group "pregnant"
+				event "laid_egg": field "remove": field "component_groups": component group "pregnant"
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0: field "add": field "component_groups": component group "temperate_frog"
+						sequence item 1:
+							field "add": field "component_groups": component group "warm_frog"
 							field "filters":
-								filter property "all_of":
+								filter property "any_of":
 									filter:
-										filter property "test": "is_underwater"
-										filter property "subject": "self"
-										filter property "value": true
+										filter property "test": "has_biome_tag"
+										filter property "value": "desert"
 									filter:
-										filter property "none_of":
+										filter property "test": "has_biome_tag"
+										filter property "value": "jungle"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "savanna"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mesa"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "nether"
+									filter:
+										filter property "all_of":
 											filter:
-												filter property "test": "has_mob_effect"
-												filter property "subject": "self"
-												filter property "value": "water_breathing"
-						potion:
-							field "id": 12
-							field "chance": 0.15
+												filter property "test": "has_biome_tag"
+												filter property "value": "warm"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "ocean"
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "lukewarm"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "ocean"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mangrove_swamp"
+						sequence item 2:
+							field "add": field "component_groups": component group "cold_frog"
 							field "filters":
-								filter property "all_of":
+								filter property "any_of":
 									filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "on_fire"
-												filter property "subject": "self"
-												filter property "value": true
-											filter:
-												filter property "test": "on_hot_block"
-												filter property "subject": "self"
-												filter property "value": true
+										filter property "test": "has_biome_tag"
+										filter property "value": "mountain"
 									filter:
-										filter property "none_of":
+										filter property "all_of":
 											filter:
-												filter property "test": "has_mob_effect"
-												filter property "subject": "self"
-												filter property "value": "fire_resistance"
-						potion:
-							field "id": 21
-							field "chance": 0.05
+												filter property "test": "has_biome_tag"
+												filter property "value": "mountains"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "meadow"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "cherry_grove"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "stony_peaks"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "ice"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "cold"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "frozen"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "the_end"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "deep_dark"
+				event "minecraft:entity_transformed":
+					field "sequence":
+						sequence item 0: field "add": field "component_groups": component group "temperate_frog"
+						sequence item 1:
+							field "add": field "component_groups": component group "warm_frog"
 							field "filters":
-								filter property "all_of":
+								filter property "any_of":
 									filter:
-										filter property "test": "is_missing_health"
-										filter property "subject": "self"
-										filter property "value": true
-						potion:
-							field "id": 14
-							field "chance": 0.25
-							field "filters":
-								filter property "all_of":
+										filter property "test": "has_biome_tag"
+										filter property "value": "desert"
 									filter:
-										filter property "test": "has_target"
-										filter property "subject": "self"
-										filter property "value": true
+										filter property "test": "has_biome_tag"
+										filter property "value": "jungle"
 									filter:
-										filter property "none_of":
+										filter property "test": "has_biome_tag"
+										filter property "value": "savanna"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mesa"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "nether"
+									filter:
+										filter property "all_of":
 											filter:
-												filter property "test": "has_mob_effect"
-												filter property "subject": "self"
-												filter property "value": "speed"
+												filter property "test": "has_biome_tag"
+												filter property "value": "warm"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "ocean"
 									filter:
-										filter property "test": "target_distance"
-										filter property "subject": "self"
-										filter property "value": 11.0
-										filter property "operator": ">="
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "lukewarm"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "ocean"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mangrove_swamp"
+						sequence item 2:
+							field "add": field "component_groups": component group "cold_frog"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mountain"
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "mountains"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "meadow"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "cherry_grove"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "stony_peaks"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "ice"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "cold"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "frozen"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "the_end"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "deep_dark"
+				event "spawn_cold": field "add": field "component_groups": component group "cold_frog"
+				event "spawn_temperate": field "add": field "component_groups": component group "temperate_frog"
+				event "spawn_warm": field "add": field "component_groups": component group "warm_frog"

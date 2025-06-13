@@ -1,8 +1,51 @@
-Difference of "particles" between "1.21.70.22" (beta of "1.21.70") and "1.21.70.23" (beta of "1.21.70").
+Difference of "particles" between "1.21.70.23" (beta of "1.21.70") and "1.21.70.24" (beta of "1.21.70").
 
-Changed particle "azalea_leaves_particle.json":
-	Moved resource pack from "experimental" to "core".
+Total particle: 178 (+0, -1)
+Removed particle "azalea_leaves_particle.json":
+	resource pack "core":
+		field "format_version": "1.21.60"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:azalea_leaves_particle"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/biome_tinted_leaves_atlas"
+			field "components":
+				field "minecraft:emitter_initialization": field "creation_expression": "v.fall_acc = -0.3; v.wind_acc = 10; v.curve_len = 15;"
+				field "minecraft:emitter_lifetime_expression":
+					field "activation_expression": 1
+					field "expiration_expression": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_box":
+					field "offset": [0.5, -0.075, 0.5]
+					field "half_dimensions": [0.5, 0.0, 0.5]
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["v.particle_random_1 > 0.5 ? 0.1 : 0.15", "v.particle_random_1 > 0.5 ? 0.1 : 0.15"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 28
+						field "texture_height": 21
+						field "uv": ["math.floor(v.particle_random_1 * 4) * 7", "math.floor(v.particle_random_2 * 3) * 7"]
+						field "uv_size": [7, 7]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color [0.439, 0.573, 0.176, 1.0]
+				field "minecraft:particle_initial_speed": [0.0, -0.021, 0.0]
+				field "minecraft:particle_initial_spin":
+					field "rotation": "math.random(0, 360)"
+					field "rotation_rate": "math.random(-30, 30)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 15
+				field "minecraft:particle_motion_collision":
+					field "collision_drag": 10
+					field "collision_radius": 0.075
+					field "expire_on_contact": true
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": ["math.cos((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)", "v.fall_acc", "math.sin((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)"]
+					field "rotation_acceleration": "v.particle_random_4 > 0.5 ? -5 : 5"
 Changed particle "biome_tinted_leaves_particle.json":
-	Moved resource pack from "experimental" to "core".
-Changed particle "firefly_particle.json":
-	Moved resource pack from "experimental" to "core".
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Total field: 12 (+1, -1)
+				Removed field "minecraft:emitter_rate_instant": field "num_particles": 1.
+				Added field "minecraft:emitter_rate_manual": field "max_particles": 2000.

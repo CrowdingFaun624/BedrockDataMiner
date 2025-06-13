@@ -1,47 +1,250 @@
-Difference of "ui" between "1.16.40" and "1.16.100.50" (beta of "1.16.100").
-Unable to create data files for 4 files between: "1.16.42", "1.16.50", "1.16.60", "1.16.61"
+Difference of "ui" between "1.16.100.56" (beta of "1.16.100") and "1.16.100.57" (beta of "1.16.100").
 
-Changed namespace "general_section":
-	Changed element "automation_section":
-		Unchanged field "type": "stack_panel".
+Changed namespace "chat":
+	Changed element "keyboard_button@chat.small_button":
+		Changed field "bindings":
+			Total binding: 3 (+1, -0)
+			Added binding:
+				field "binding_name": "#keyboard_button_visible"
+				field "binding_name_override": "#visible"
+Changed namespace "coin_purchase":
+	Changed element "coin_purchase_screen_content":
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 11 (+1, -0)
-			Added control:
-				element "automation_stress_test_run_count_text_box@settings_common.option_text_edit":
-					field "$variables":
-						variable "$text_edit_box_text_type": "NumberChars"
-						variable "$option_label": "Stress Test Run Count"
-						variable "$max_text_edit_length": 20
-						variable "$text_box_name": "automation_stress_test_run_count"
-						variable "$option_binding_name": "#automation_stress_test_run_count"
-	Changed element "dev_debug_hud_dropdown_content@settings_common.option_radio_dropdown_group":
+			Changed control:
+				Changed element "dialog@common_dialogs.main_panel_no_buttons":
+					Changed field "$variables":
+						Total variable: 6 (+1, -0)
+						Added variable "$close_button_visible_binding_name": "#close_visible".
+Changed namespace "common":
+	Changed element "common_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "close_button_holder":
+					Unchanged field "type": "panel".
+					Changed field "ignored" from "(not $show_close_button)" to "(not $enable_close_button)".
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "#close_button_visible" to "$close_button_visible_binding_name".
 		Changed field "$variables":
-			Changed variable "$radio_buttons":
-				Changed item 15:
-					Changed item "@settings_common.radio_with_label":
-						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_lock_contention" to "#debug_hud_radio_spatial_packet_optimizations".
-						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.lock_contention" to "options.dev_enableDebugHudOverlay.spatial_packet_optimizations".
-				Changed item 16:
-					Changed item "@settings_common.radio_with_label":
-						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_hbui" to "#debug_hud_radio_lock_contention".
-						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.hbui" to "options.dev_enableDebugHudOverlay.lock_contention".
-				Added item 17:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#debug_hud_radio_hbui"
-						item "$radio_label_text": "options.dev_enableDebugHudOverlay.hbui"
-	Changed element "profile_section":
+			Total variable: 11 (+1, -0)
+			Moved variable from "$show_close_button|default" to "$enable_close_button|default".
+			Added variable "$close_button_visible_binding_name|default": "#close_button_visible".
+Changed namespace "common_dialogs":
+	Changed element "main_panel_no_buttons":
+		Unchanged field "type": "panel".
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$enable_close_button|default": true.
+Changed namespace "general_section":
+	Changed element "accessibility_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 32 (+1, -0)
+			Total control: 7 (+1, -0)
 			Added control:
-				element "font_license_popup_button@settings_common.action_button":
+				element "camera_shake_toggle@settings_common.option_toggle":
+					field "ignored": "($is_holographic and $is_reality_mode and not $is_pregame)"
 					field "$variables":
-						variable "$pressed_button_name": "button.font_license_popup"
-						variable "$button_text": "options.font_license"
-						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
-	Changed element "video_section":
+						variable "$option_label": "options.screenShake"
+						variable "$option_binding_name": "#camera_shake"
+						variable "$option_enabled_binding_name": "#camera_shake_enabled"
+						variable "$toggle_name": "camera_shake"
+	Changed element "gamertag_controls":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "particle_render_distance_slider@settings_common.option_slider":
-					Changed field "ignored" from "($pocket_edition or $is_holographic or $education_ios)" to "($is_holographic or $education_ios)".
+				Changed element "xboxlive_deep_link_buttons":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Total control: 7 (+2, -0)
+						Changed control:
+							Moved element from "action_button_0@settings_common.action_button" to "change_gamertag_button@settings_common.action_button".
+							Changed element "change_gamertag_button@settings_common.action_button":
+								Changed field "ignored" from "($is_windows_10_mobile)" to "($is_windows_10_mobile or $is_ios or $is_android)".
+						Changed control:
+							Moved element from "action_button_1@settings_common.action_button" to "manage_account_button@settings_common.action_button".
+							Changed element "manage_account_button@settings_common.action_button":
+								Added field "ignored": "($is_ios or $is_android)".
+						Added control:
+							element "change_gamertag_button_mobile@settings_common.link_button":
+								field "ignored": "(not ($is_windows_10_mobile or $is_ios or $is_android))"
+								field "size": ["50% - 1px", 30]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "property_bag": field "#hyperlink": "https://social.xbox.com/changegamertag"
+								field "$variables": variable "$button_text": "options.changeGamertag"
+						Added control:
+							element "manage_account_button_mobile@settings_common.link_button":
+								field "ignored": "(not ($is_ios or $is_android))"
+								field "size": "$manage_button_size"
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "property_bag": field "#hyperlink": "https://account.xbox.com/Settings"
+								field "$variables": variable "$button_text": "options.manageAccount"
+	Changed element "video_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 46 (+1, -0)
+			Changed control:
+				Changed element "vr_mirror_texture@settings_common.option_toggle":
+					Changed field "ignored" from "($gear_vr or not $is_holographic)" to "($gear_vr or $psvr or not $is_holographic)".
+			Added control:
+				element "camera_shake_toggle@settings_common.option_toggle":
+					field "ignored": "($is_holographic and $is_reality_mode and not $is_pregame)"
+					field "$variables":
+						variable "$option_label": "options.screenShake"
+						variable "$option_binding_name": "#camera_shake"
+						variable "$option_enabled_binding_name": "#camera_shake_enabled"
+						variable "$toggle_name": "camera_shake"
+Changed namespace "how_to_play_common":
+	Changed element "toggle_button_control":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "tab_button_text":
+					Unchanged field "type": "label".
+					Changed field "size":
+						Changed item 0 from "100% - 38px" to "100% - 10px".
+						Unchanged item 1: "default".
+Changed namespace "hud":
+	Changed element "creative_above_interact_button_item_text@hud.item_name_text":
+		Changed field "offset":
+			Unchanged item 0: 0.
+			Changed item 1 from -22 to -30.
+	Changed element "creative_item_name_text@hud.item_name_text":
+		Changed field "offset":
+			Unchanged item 0: 0.
+			Changed item 1 from -12 to -20.
+	Changed element "item_name_text":
+		Unchanged field "type": "image".
+		Changed field "controls":
+			Changed control:
+				Changed element "item_text_label":
+					Unchanged field "type": "label".
+					Added field "max_size": [200, "default"].
+		Added field "anchor_from": "bottom_middle".
+		Added field "anchor_to": "bottom_middle".
+	Changed element "survival_above_interact_button_item_text@hud.item_name_text":
+		Changed field "offset":
+			Unchanged item 0: 0.
+			Changed item 1 from -42 to -50.
+	Changed element "survival_item_name_text@hud.item_name_text":
+		Changed field "variables":
+			Changed variable:
+				Changed field "$variables":
+					Changed variable "$offset":
+						Changed item 1 from -10 to -18.
+		Changed field "$variables":
+			Changed variable "$offset|default":
+				Changed item 1 from -32 to -40.
+Changed namespace "npc_interact":
+	Total element: 66 (+2, -0)
+	Added element "close_text@common.gamepad_helper_b": field "$variables": variable "$gamepad_description": "npc_interact.gamepad_helper_exit_text".
+	Added element "gamepad_helper_exit_text":
+		field "type": "label"
+		field "text": "controller.buttonTip.exit"
+		field "color": "$gamepad_description_text_color"
+	Changed element "npc_screen_contents":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 3 (+1, -0)
+			Added control:
+				element "npc_screen_close@npc_interact.close_text":
+					field "anchor_to": "bottom_left"
+					field "anchor_from": "bottom_left"
+					field "offset": [20, 0]
+Changed namespace "persona":
+	Total element: 202 (+0, -1)
+	Moved element from "achievement_text_button@common_buttons.light_text_form_fitting_button" to "achievement_text_button@common_buttons.light_text_button".
+	Changed element "achievement_text_button@common_buttons.light_text_button":
+		Changed field "variables":
+			Changed variable:
+				Changed field "$variables":
+					Changed variable "$button_offset":
+						Changed item 0 from 3 to 0.
+						Changed item 1 from 1 to -3.
+	Changed element "emotes_right_side_bottom_buttons@persona.right_side_bottom_buttons":
+		Changed field "controls":
+			Changed control:
+				Changed element "play_again@common_buttons.light_text_button":
+					Changed field "size":
+						Changed item 0 from "50% - 6px" to "30%".
+						Unchanged item 1: "100%".
+	Changed element "info_text_box":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Moved element from "discription_panel" to "description_panel".
+				Changed element "description_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "summary_author_button_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "summary_author_button@common_buttons.underline_button":
+											Added field "bindings":
+												binding:
+													field "binding_name": "(not #emotes_active)"
+													field "binding_name_override": "#enabled"
+	Changed element "persona_tabs":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 2 (+0, -1)
+			Removed control element "persona_tabs@persona.persona_tabs_no_cape": empty.
+	Removed element "persona_tabs_no_cape":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control element "customization_tab@persona.customization_tab": empty
+			control element "skins_tab@persona.skins_tab": empty
+			control element "emotes_tab@persona.emotes_tab": field "$variables": variable "$is_right_most_tab": true
+		field "bindings":
+			binding:
+				field "binding_name": "(not #has_capes)"
+				field "binding_name_override": "#visible"
+	Changed element "persona_tabs_with_cape":
+		Unchanged field "type": "stack_panel".
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#has_capes"
+				field "binding_name_override": "#visible"
+	Changed element "purchase_buttons":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "coin_purchase_panel@persona.purchase_button_panel":
+					Changed field "size":
+						Changed item 0 from "50% - 1px" to "50% - 2px".
+						Unchanged item 1: "100%".
+			Changed control:
+				Changed element "view_achievement_button@persona.view_achievement":
+					Changed field "size":
+						Changed item 0 from "50% - 1px" to "68% - 1px".
+						Unchanged item 1: "100%".
+			Changed control:
+				Changed element "collect_achievement_button@persona.collect_achievement":
+					Changed field "size":
+						Changed item 0 from "50% - 1px" to "32% - 1px".
+						Unchanged item 1: "100%".
+Changed namespace "profile":
+	Changed element "edit_appearance_preset_button@common_buttons.light_text_button":
+		Added field "bindings":
+			binding:
+				field "binding_name": "#enable_edit_appearance"
+				field "binding_name_override": "#enabled"
+				field "binding_condition": "always"
+	Changed element "persona_main_preset_panel":
+		Unchanged field "type": "input_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "persona_preset@profile.persona_appearance_preset_panel":
+					Changed field "bindings":
+						Total binding: 2 (+1, -0)
+						Added binding:
+							field "binding_name": "#enable_edit_appearance"
+							field "binding_name_override": "#enabled"
+							field "binding_condition": "always"

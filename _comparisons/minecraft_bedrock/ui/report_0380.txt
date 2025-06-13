@@ -1,600 +1,318 @@
-Difference of "ui" between "1.21.60.21" (beta of "1.21.60") and "1.21.60.23" (beta of "1.21.60").
+Difference of "ui" between "1.21.70.23" (beta of "1.21.70") and "1.21.70.24" (beta of "1.21.70").
 
-Changed namespace "common":
-	Total element: 315 (+0, -2)
-	Removed element "label_hover":
-		field "type": "panel"
-		field "size": ["100%", "100%"]
-		field "controls":
-			control:
-				element "hover@common.focus_border_white":
-					field "size": ["100%", "100%"]
-					field "offset": [0, 2]
-					field "visible": "$visible_hover"
-		field "$variables": variable "$visible_hover|default": true
-	Removed element "tts_activate_sibling@common.button":
-		field "sound_volume": 1.0
-		field "size": ["100%sm", "100%sm"]
-		field "focus_enabled": true
-		field "tts_inherit_siblings": true
-		field "controls":
-			control element "default@common.empty_panel": field "visible": false
-			control element "pressed@common.label_hover": empty
-			control element "hover@common.label_hover": empty
-		field "$variables":
-			variable "$pressed_button_name": "button.focus_filler"
-			variable "$button_tts_name": ""
-Changed namespace "csb":
-	Total element: 32 (+2, -0)
-	Added element "label_hover":
-		field "type": "panel"
-		field "size": ["100%", "100%"]
-		field "controls":
-			control:
-				element "hover@common.focus_border_white":
-					field "size": ["100%", "100%"]
-					field "offset": [0, 2]
-					field "visible": "$visible_hover"
-		field "$variables": variable "$visible_hover|default": true
-	Added element "tts_activate_sibling@common.button":
-		field "sound_volume": 1.0
-		field "size": ["100%sm", "100%sm"]
-		field "focus_enabled": true
-		field "tts_inherit_siblings": true
-		field "controls":
-			control element "default@csb.label_hover": field "$variables": variable "$visible_hover": false
-			control element "pressed@csb.label_hover": field "$variables": variable "$visible_hover": true
-			control element "hover@csb.label_hover": field "$variables": variable "$visible_hover": true
-		field "$variables":
-			variable "$pressed_button_name": "button.focus_filler"
-			variable "$button_tts_name": ""
-Changed namespace "csb_buy":
-	Changed element "content_description":
+Changed namespace "csb_subscription_panel":
+	Changed element "csb_buy_container":
+		Changed field "ignored" from "$pre_release" to "($pre_release or $left_button_ignored)".
+		Unchanged field "type": "panel".
+	Changed element "csb_container":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Moved element from "tts_hover@common.tts_activate_sibling" to "tts_hover@csb.tts_activate_sibling".
-	Changed element "title_text":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Moved element from "tts_hover@common.tts_activate_sibling" to "tts_hover@csb.tts_activate_sibling".
-	Changed element "trial_image_and_description":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "description_text":
-					Unchanged field "type": "panel".
+				Changed element "panel_contents":
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Moved element from "tts_hover@common.tts_activate_sibling" to "tts_hover@csb.tts_activate_sibling".
-Changed namespace "csb_content":
-	Total element: 12 (+0, -2)
-	Removed element "content_description":
-		field "type": "panel"
-		field "size": ["100%", "100%cm - 2px"]
-		field "controls":
-			control:
-				element "content_description_label":
-					field "type": "label"
-					field "size": ["100% - 1px", "default"]
-					field "offset": [1, 0]
-					field "text": "#content_section_text"
-					field "color": "$body_text_color"
-					field "font_type": "smooth"
-					field "bindings":
-						binding:
-							field "binding_name": "#content_section_text"
-							field "binding_type": "collection"
-							field "binding_collection_name": "content_sections"
-			control:
-				element "tts_border@common.tts_activate_sibling":
-					field "size": ["100%sm", "100%sm + 2px"]
-					field "offset": [0, -2]
-	Removed element "content_text_section":
-		field "type": "stack_panel"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control element "content_description@csb_content.content_description": empty
-			control element "padding@common.empty_panel": field "size": ["100%", 4]
-	Changed element "csb_content_section@csb.section_base":
-		Changed field "controls":
-			Total control: 6 (+0, -2)
-			Changed control:
-				Changed element "popular_packs_label_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
+							Changed element "content_container":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Total control: 3 (+1, -1)
+									Removed control:
+										element "side_image_stack_left":
+											field "type": "stack_panel"
+											field "orientation": "horizontal"
+											field "size": ["40%", "100%"]
+											field "controls":
+												control:
+													element "csb_image":
+														field "type": "image"
+														field "size": ["default", "default"]
+														field "keep_ratio": false
+														field "anchor_from": "top_left"
+														field "anchor_to": "top_left"
+														field "layer": 3
+														field "texture": "textures/ui/csb_subscribe_banner"
+									Changed control:
+										Changed element "padding_02":
+											Unchanged field "type": "panel".
+											Changed field "size":
+												Changed item 0 from 5 to 4.
+												Changed item 1 from "100%" to "100%sm".
+									Changed control:
+										Changed element "side_stack_right":
+											Unchanged field "type": "stack_panel".
+											Changed field "size":
+												Changed item 0 from "45%" to "fill".
+												Changed item 1 from "100px" to "100%sm".
+											Changed field "controls":
+												Changed control:
+													Changed element "interior_content_stack":
+														Unchanged field "type": "stack_panel".
+														Removed field "size": ["100%", "100%"].
+														Changed field "controls":
+															Total control: 5 (+0, -2)
+															Changed control:
+																Changed element "panel_label@common.minecraftTenLabel":
+																	Added field "size": ["100%", "default"].
+															Removed control:
+																element "interior_top_padding":
+																	field "type": "panel"
+																	field "size": ["100%", 2]
+															Removed control:
+																element "description_panel":
+																	field "type": "stack_panel"
+																	field "anchor_to": "top_left"
+																	field "orientation": "vertical"
+																	field "size": ["100%", 10]
+																	field "controls":
+																		control:
+																			element "interior_label_panel":
+																				field "type": "panel"
+																				field "size": ["100%", "100%"]
+																				field "controls":
+																					control:
+																						element "panel_label":
+																							field "type": "label"
+																							field "text": "options.csbSubheading"
+																							field "font_type": "smooth"
+																							field "offset": [2, -1]
+																							field "font_scale_factor": 0.7
+																							field "size": ["default", "default"]
+																							field "max_size": ["100% - 4px", "100%"]
+																							field "color": "$0_color_format"
+																							field "anchor_from": "left_middle"
+																							field "anchor_to": "left_middle"
+																							field "layer": 3
+																					control:
+																						element "background_panel":
+																							field "type": "image"
+																							field "size": ["100%sm + 4px", "80%"]
+																							field "anchor_from": "left_middle"
+																							field "anchor_to": "left_middle"
+																							field "keep_ratio": false
+																							field "texture": "textures/ui/White"
+																							field "color": "$csb_secondary_panel_background"
+															Changed control:
+																Changed element "ln_01_container":
+																	Unchanged field "type": "stack_panel".
+																	Changed field "size":
+																		Unchanged item 0: "100%".
+																		Changed item 1 from "15%+5px" to 12.
+																	Changed field "controls":
+																		Changed control:
+																			Changed element "panel_details_ln1":
+																				Unchanged field "type": "label".
+																				Changed field "font_scale_factor" from 0.8 to 0.6.
+															Changed control:
+																Changed element "ln_02_container":
+																	Unchanged field "type": "stack_panel".
+																	Changed field "size":
+																		Unchanged item 0: "100%".
+																		Changed item 1 from "15%" to 12.
+																	Changed field "controls":
+																		Changed control:
+																			Changed element "panel_details_ln3":
+																				Unchanged field "type": "label".
+																				Changed field "font_scale_factor" from 0.8 to 0.6.
+									Added control:
+										element "side_image_stack_left":
+											field "type": "panel"
+											field "size": ["177.8%y", 70]
+											field "controls":
+												control:
+													element "csb_image":
+														field "type": "image"
+														field "size": ["177.8%y", "100%"]
+														field "keep_ratio": true
+														field "anchor_from": "top_left"
+														field "anchor_to": "top_left"
+														field "layer": 3
+														field "texture": "textures/ui/subscription_MarketplacePass"
 						Changed control:
-							Moved element from "tts_border@common.tts_activate_sibling" to "tts_border@csb.tts_activate_sibling".
-			Removed control element "content_description@csb_content.content_description": empty.
-			Removed control element "section_divider@csb.full_width_section_divider": empty.
-	Changed element "pack_type_description":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "description_nesting_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Moved element from "tts_border@common.tts_activate_sibling" to "tts_border@csb.tts_activate_sibling".
-Changed namespace "csb_landing":
-	Changed element "info_text_body":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Moved element from "tts_border@common.tts_activate_sibling" to "tts_border@csb.tts_activate_sibling".
-	Changed element "title_stack":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "gradient_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Moved element from "tts_hover@common.tts_activate_sibling" to "tts_hover@csb.tts_activate_sibling".
-			Changed control:
-				Changed element "gradient_panel2":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Moved element from "tts_hover@common.tts_activate_sibling" to "tts_hover@csb.tts_activate_sibling".
+							Changed element "csb_buttons":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "button_panel_padding":
+											Unchanged field "type": "panel".
+											Added field "ignored": "$left_button_ignored".
+									Changed control:
+										Changed element "csb_info_button@common_buttons.light_content_button":
+											Changed field "$variables":
+												Changed variable "$button_text" from "options.viewSubscriptions.button.info" to "options.viewSubscriptions.button.addMarketplacePass".
 Changed namespace "general_section":
-	Total element: 203 (+2, -0)
-	Changed element "advanced_graphics_options_section":
+	Total element: 207 (+0, -3)
+	Removed element "csb_buy_label@common.minecraftTenLabel":
+		field "text": "#csb_price"
+		field "color": "$text_color"
+		field "offset": [0, -1]
+		field "bindings": binding field "binding_name": "#csb_price"
+	Removed element "csb_cancel_label@common.minecraftTenLabel":
+		field "text": "gui.cancel"
+		field "color": "$text_color"
+		field "offset": [0, -1]
+	Removed element "csb_info_label@common.minecraftTenLabel":
+		field "text": "options.viewSubscriptions.button.info"
+		field "color": "$text_color"
+		field "offset": [0, -1]
+	Changed element "deferred_platform_override_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Changed variable "$radio_buttons":
+				Changed item 4:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#console_gen8" to "#console".
+						Changed item "$radio_label_text" from "Console Gen 8" to "Console".
+				Changed item 5:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#console_gen8_5" to "#console_gen8".
+						Changed item "$radio_label_text" from "Console Gen 8.5" to "Console Gen 8".
+				Changed item 6:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#console_gen9" to "#console_gen8_5".
+						Changed item "$radio_label_text" from "Console Gen 9" to "Console Gen 8.5".
+				Changed item 7:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#pc" to "#console_gen9".
+						Changed item "$radio_label_text" from "PC" to "Console Gen 9".
+				Added item 8:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#pc"
+						item "$radio_label_text": "PC"
+	Changed element "realms_button_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 15 (+1, -0)
+			Changed control:
+				Changed element "left_button_panel":
+					Changed field "ignored" from "$pre_release" to "($pre_release or $left_button_ignored)".
+					Unchanged field "type": "panel".
+			Changed control:
+				Changed element "pad_1":
+					Changed field "ignored" from "$pre_release" to "($pre_release or $left_button_ignored)".
+					Unchanged field "type": "panel".
+	Changed element "realms_subscription_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 8 (+1, -1)
+			Removed control element "top_panel@general_section.realms_subscription_main": empty.
 			Added control:
-				element "upscaling_mode@settings_common.option_dropdown":
-					field "bindings":
-						binding:
-							field "binding_name": "#graphics_mode_is_deferred"
-							field "binding_name_override": "#visible"
+				element "top_panel@general_section.realms_subscription_main":
 					field "$variables":
-						variable "$option_label": "options.upscalingMode"
-						variable "$dropdown_content": "general_section.upscaling_mode_dropdown_content"
-						variable "$dropdown_area": "content_area"
-						variable "$dropdown_name": "upscaling_mode_dropdown"
-						variable "$options_dropdown_toggle_label_binding": "#upscaling_mode_toggle_label"
-						variable "$option_enabled_binding_name": "#upscaling_mode_dropdown_enabled"
-						variable "$dropdown_scroll_content_size":
-							item 0: "100%"
-							item 1: "175%"
-	Added element "new_player_permissions_screen_grid_item@settings_common.radio_with_label":
-		field "bindings":
-			binding:
-				field "binding_name": "#default_focus_precedence"
-				field "binding_type": "collection"
-				field "binding_condition": "visible"
-				field "binding_collection_name": "dev_new_player_permissions_screen_radio"
-		field "$variables":
-			variable "$toggle_state_binding_name": "#initial_selected"
-			variable "$radio_label_text": "#description"
-			variable "$radio_label_bindings":
-				item 0:
-					item "binding_name": "#description"
-					item "binding_type": "collection"
-					item "binding_condition": "once"
-					item "binding_collection_name": "dev_new_player_permissions_screen_radio"
-			variable "$radio_toggle_group": true
-			variable "$toggle_binding_type": "collection"
-			variable "$toggle_name": "dev_new_player_permissions_screen_radio"
-			variable "$toggle_grid_collection_name": "dev_new_player_permissions_screen_radio"
-			variable "$option_enabled_binding_name": ""
-	Changed element "ui_debug_section":
+						variable "$left_button_ignored": false
+						variable "$right_button_label_text": "options.viewSubscriptions.button.info"
+	Changed element "right_button_label@common.minecraftTenLabel":
+		Changed field "text" from "options.viewSubscriptions.button.info" to "$right_button_label_text".
+	Changed element "view_subscriptions_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 72 (+4, -0)
-			Added control:
-				element "new_player_permissions_radio_label":
-					field "type": "label"
-					field "text": "New Player Permissions Screen"
-					field "size": ["100%", "default"]
-					field "color": "$body_text_color"
-			Added control:
-				element "new_player_permissions_screen_radio_label_spacer":
-					field "type": "panel"
-					field "size": ["100%", 3]
-			Added control:
-				element "new_player_permissions_screen_radio_button":
-					field "type": "grid"
-					field "size": ["100%", "100%c"]
-					field "grid_item_template": "general_section.new_player_permissions_screen_grid_item"
-					field "grid_dimension_binding": "#dev_new_player_permissions_screen_radio_dimension"
-					field "collection_name": "dev_new_player_permissions_screen_radio"
-					field "bindings":
-						binding:
-							field "binding_name": "#dev_new_player_permissions_screen_radio_dimension"
-							field "binding_condition": "visible"
-			Added control:
-				element "new_player_permissions_screen_radio_button_spacer":
-					field "type": "panel"
-					field "size": ["100%", 10]
-	Added element "upscaling_mode_dropdown_content@settings_common.option_radio_dropdown_group":
-		field "$variables":
-			variable "$radio_buttons":
-				item 0:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#upscaling_mode_radio_taau"
-						item "$radio_label_text": "options.upscalingModeOptions.taau"
-				item 1:
-					item "@settings_common.radio_with_label":
-						item "$toggle_state_binding_name": "#upscaling_mode_radio_bilinear"
-						item "$radio_label_text": "options.upscalingModeOptions.bilinear"
-Changed namespace "hud":
-	Changed element "root_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
+			Total control: 20 (+0, -2)
 			Changed control:
-				Changed element "editor_volume_highlight_rend@editor_volume_highlight_renderer":
-					Added field "ignored": "(not $is_editor_mode_enabled)".
-Changed namespace "pause":
-	Total element: 86 (+3, -0)
-	Added element "feedback_button@common_buttons.light_content_button":
-		field "size": [24, 24]
-		field "$variables":
-			variable "$button_pressed_offset":
-				item 0: 0
-				item 1: 0
-			variable "$button_content": "pause.feedback_icon"
-			variable "$pressed_button_name": "button.feedback_button_pressed"
-	Added element "feedback_icon":
-		field "type": "image"
-		field "texture": "textures/ui/Feedback"
-		field "layer": 3
-		field "size": [16, 16]
-	Added element "feedback_icon_button":
-		field "type": "panel"
-		field "controls":
-			control:
-				element "feedback_button@pause.feedback_button":
-					field "ignored": "$education_edition"
-					field "$variables": variable "$focus_override_left": "FOCUS_OVERRIDE_STOP"
-		field "$variables":
-			variable "$button_tts_header": "accessibility.start.feedback"
-			variable "$pressed_button_name": "button.feedback"
-	Moved element from "menu_background@common.empty_image" to "menu_background@pause.transparent_background".
-	Changed element "menu_background@pause.transparent_background":
-		Added field "alpha": 0.
-	Moved element from "menu_button_control@common.empty_image" to "menu_button_control@pause.transparent_background".
-	Changed element "menu_button_control@pause.transparent_background":
-		Removed field "color": [0, 0, 0].
-		Added field "alpha": 0.
-	Changed element "the_icon_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
+				Changed element "csb_purchased_with_cancel@csb_subscription_panel.csb_container":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$left_button_ignored": false.
 			Changed control:
-				Changed element "stacked_column":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 11 (+3, -0)
-						Added control:
-							element "feedback_btn@pause.column_frame":
-								field "ignored": "$education_edition"
-								field "size": [28, 32]
-								field "controls":
-									control:
-										element "feedback_icon_button@pause.feedback_icon_button":
-											field "variables":
-												variable:
-													field "requires": "$feedback_button_focus"
-													field "$variables": variable "$focus_id": "icon_panel_main_focus"
-						Added control:
-							element "feedback_padding":
-								field "type": "panel"
-								field "size": ["2%", 0]
-						Added control:
-							element "pause_padding_left":
-								field "type": "panel"
-								field "size": ["2%", 0]
-								field "bindings":
-									binding:
-										field "binding_name": "#pause_annoucement_visible"
-										field "binding_name_override": "#visible"
-Changed namespace "play":
-	Total element: 297 (+1, -1)
-	Added element "crossplatform_disabled_panel@play.dark_label_background":
-		field "size": ["100%", "100%c + 8px"]
-		field "bindings":
-			binding:
-				field "binding_name": "(not #cross_platform_enabled)"
-				field "binding_name_override": "#visible"
-		field "controls":
-			control:
-				element "disable_text":
-					field "type": "label"
-					field "color": "$dark_button_default_text_color"
-					field "size": ["100% - 8px", "default"]
-					field "layer": 1
-					field "shadow": false
-					field "font_type": "smooth"
-					field "text": "$cross_platform_information_text"
-	Removed element "crossplatform_disabled_panel@play.information_panel":
-		field "bindings":
-			binding:
-				field "binding_name": "(not #cross_platform_enabled)"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$information_label_font": "smooth"
-			variable "$information_panel_label_text": "$cross_platform_information_text"
-	Changed element "friends_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
+				Changed element "csb_purchased_with_buy@csb_subscription_panel.csb_container":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$left_button_ignored": true.
 			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 16 (+1, -1)
-						Removed control:
-							element "friends_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-								field "ignored": "(not $is_realms_enabled)"
-								field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.friends"
-						Added control:
-							element "friends_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-								field "ignored": "(not $is_realms_enabled)"
-								field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.friends"
-	Changed element "network_world_item":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 1 (+0, -1)
+				Changed element "realms_plus_header_label@common.minecraftTenLabel":
+					Changed field "text" from "#available_or_additional_subscriptions_text" to "options.viewSubscriptions.additionalSubscriptions".
+					Removed field "bindings": binding field "binding_name": "#available_or_additional_subscriptions_text".
 			Removed control:
-				element "tts_border@common.tts_activate_sibling":
-					field "size": ["100%sm", "100%sm - 1px"]
+				element "realms_plus_buy_offer@general_section.realms_subscription_main":
+					field "ignored": "$pre_release"
 					field "bindings":
 						binding:
-							field "binding_name": "(not #cross_platform_enabled)"
+							field "binding_name": "#can_buy_more_subscriptions"
 							field "binding_name_override": "#visible"
-					field "offset": [0, -2]
-	Changed element "network_world_player_count":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "count@play.world_list_text":
-					Changed field "bindings":
-						Total binding: 1 (+0, -1)
-						Removed binding:
 							field "binding_type": "collection"
-							field "binding_name": "#network_world_player_count_visible"
-							field "binding_name_override": "#visible"
-							field "binding_collection_name": "$collection_name"
-	Changed element "realms_world_item":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 4 (+1, -1)
-			Removed control:
-				element "realms_button_panel":
-					field "type": "panel"
-					field "size": ["fill", "100% + 1px"]
-					field "controls":
-						control:
-							element "realms_world_item_button@play.realms_world_item_button":
-								field "size": ["100%", "100%"]
-								field "layer": 1
-						control:
-							element "tts_border@common.tts_activate_sibling":
-								field "size": ["100%sm", "100%sm - 1px"]
-								field "bindings":
-									binding:
-										field "binding_name": "(not #cross_platform_enabled)"
-										field "binding_name_override": "#visible"
-								field "offset": [0, -2]
-			Added control:
-				element "realms_world_item_button@play.realms_world_item_button":
-					field "size": ["fill", "100% + 1px"]
-					field "layer": 1
-	Changed element "server_scroll_panel@play.common_scroll_pane":
-		Changed field "controls":
-			Changed control:
-				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 6 (+1, -1)
-						Removed control element "servers_crossplatform_disabled_panel@play.crossplatform_disabled_panel": field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.servers".
-						Added control element "servers_crossplatform_disabled_panel@play.crossplatform_disabled_panel": field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.servers".
-	Changed element "worlds_stack_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 24 (+1, -1)
-			Removed control:
-				element "worlds_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-					field "ignored": "(not $is_realms_enabled)"
-					field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.realms"
-			Added control:
-				element "worlds_crossplatform_disabled_panel@play.crossplatform_disabled_panel":
-					field "ignored": "(not $is_realms_enabled)"
-					field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.realms"
-Changed namespace "sdl_text_row":
-	Total element: 5 (+1, -0)
-	Added element "label_hover":
-		field "type": "panel"
-		field "size": ["100%", "100%"]
-		field "anchor_to": "top_middle"
-		field "anchor_from": "top_middle"
-		field "controls":
-			control:
-				element "hover@common.focus_border_white":
-					field "size": ["100%", "100%"]
-					field "offset": [0, 2]
-					field "anchor_to": "top_middle"
-					field "anchor_from": "top_middle"
-	Changed element "sdl_text_row":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Moved element from "text_row_selector@common.tts_activate_sibling" to "text_row_internals@sdl_text_row.label_button".
-				Changed element "text_row_internals@sdl_text_row.label_button":
-					Added field "tts_inherit_siblings": true.
-					Added field "controls":
-						control:
-							element "default":
-								field "type": "panel"
-								field "size": ["100%", "100%"]
-						control element "pressed@sdl_text_row.label_hover": empty
-						control element "hover@sdl_text_row.label_hover": empty
-Changed namespace "start":
-	Changed element "start_screen_content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "online_button_stack":
-					Unchanged field "type": "stack_panel".
-					Added field "bindings":
-						binding:
-							field "binding_name": "#online_stack_visible"
-							field "binding_name_override": "#visible"
-Changed namespace "store_layout":
-	Total element: 43 (+8, -0)
-	Changed element "character_creator_screen@store_layout.character_creator_base_screen":
-		Changed field "$variables":
-			Total variable: 2 (+1, -0)
-			Added variable "$requires_restore_button": false.
-	Added element "default_nav_label_panel":
-		field "type": "panel"
-		field "size": ["fill", "100%"]
-		field "controls":
-			control:
-				element "button_text_label@common_buttons.new_ui_binding_button_label":
-					field "layer": 5
-					field "bindings":
-						binding:
-							field "binding_type": "$store_factory_collection_details"
-							field "binding_collection_name": "$store_factory_collection_name"
-							field "binding_collection_prefix": "$store_factory_collection_prefix"
-						binding:
-							field "binding_type": "$nav_button_binding_type"
-							field "binding_collection_name": "$nav_button_collection_name"
-							field "binding_name": "$button_text"
+							field "binding_collection_name": "$realm_collection_name"
 					field "$variables":
-						variable "$button_text": "#nav_button_label"
-						variable "$button_text_size":
-							item 0: "100%"
-							item 1: "default"
-						variable "$button_text_max_size":
-							item 0: "100%"
-							item 1: 20
-						variable "$text_alignment": "left"
-	Added element "default_styled_button_text_label@common_buttons.new_ui_binding_button_label":
-		field "layer": 5
-		field "bindings":
-			binding:
-				field "binding_type": "$store_factory_collection_details"
-				field "binding_collection_name": "$store_factory_collection_name"
-				field "binding_collection_prefix": "$store_factory_collection_prefix"
-			binding:
-				field "binding_type": "$nav_button_binding_type"
-				field "binding_collection_name": "$nav_button_collection_name"
-				field "binding_name": "$button_text"
-			binding:
-				field "binding_type": "$nav_button_binding_type"
-				field "binding_collection_name": "$nav_button_collection_name"
-				field "binding_name": "#tab_button_label_alignment"
-				field "binding_name_override": "#text_alignment"
-			binding:
-				field "binding_type": "$nav_button_binding_type"
-				field "binding_collection_name": "$nav_button_collection_name"
-				field "binding_name": "#tab_button_label_font_type"
-				field "binding_name_override": "#font_type"
-			binding:
-				field "binding_type": "$nav_button_binding_type"
-				field "binding_collection_name": "$nav_button_collection_name"
-				field "binding_name": "#tab_button_label_text_color"
-				field "binding_name_override": "#color"
-		field "$variables":
-			variable "$button_text": "#nav_button_label"
-			variable "$button_text_size":
-				item 0: "100%"
-				item 1: "default"
-			variable "$button_text_max_size":
-				item 0: "100%"
-				item 1: 20
-	Changed element "dressing_room_color_picker_screen@store_layout.character_creator_screen":
-		Changed field "$variables":
-			Total variable: 3 (+1, -0)
-			Added variable "$requires_restore_button": false.
-	Changed element "expanded_appearance_view_screen@store_layout.character_creator_base_screen":
-		Changed field "$variables":
-			Total variable: 2 (+1, -0)
-			Added variable "$requires_restore_button": false.
-	Changed element "nav_button_content":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 3 (+1, -1)
+						variable "$realm_collection_name": "realms_plus_subscriptions_collection"
+						variable "$right_pressed_button_name": "button.realms_plus_right_button"
+						variable "$left_pressed_button_name": "button.realms_plus_buy_button"
+						variable "$left_button_label_bindings":
+							item 0:
+								item "binding_name": "#price_text"
+								item "binding_type": "collection"
+								item "binding_collection_name": "$realm_collection_name"
+						variable "$left_button_visible_bindings": empty
+						variable "$left_button_text": "#price_text"
+						variable "$name": "options.viewSubscriptions.tenPlayers"
+						variable "$name_bindings": empty
+						variable "$description": "#upsell_text"
+						variable "$description_bindings":
+							item 0:
+								item "binding_name": "#upsell_text"
+								item "binding_type": "collection"
+								item "binding_collection_name": "$realm_collection_name"
 			Removed control:
-				element "label_panel":
+				element "pad_1":
+					field "ignored": "$pre_release"
 					field "type": "panel"
-					field "size": ["fill", "100%"]
-					field "controls":
-						control:
-							element "button_text_label@common_buttons.new_ui_binding_button_label":
-								field "layer": 5
-								field "bindings":
-									binding:
-										field "binding_type": "$store_factory_collection_details"
-										field "binding_collection_name": "$store_factory_collection_name"
-										field "binding_collection_prefix": "$store_factory_collection_prefix"
-									binding:
-										field "binding_type": "$nav_button_binding_type"
-										field "binding_collection_name": "$nav_button_collection_name"
-										field "binding_name": "$button_text"
-								field "$variables":
-									variable "$button_text": "#nav_button_label"
-									variable "$button_text_size":
-										item 0: "100%"
-										item 1: "default"
-									variable "$button_text_max_size":
-										item 0: "100%"
-										item 1: 20
-									variable "$text_alignment": "left"
-			Added control element "label_panel@$nav_button_label_type": empty.
-		Changed field "$variables":
-			Total variable: 3 (+1, -0)
-			Added variable "$nav_button_label_type|default": "store_layout.default_nav_label_panel".
-	Added element "nav_button_fill_styled@store_layout.nav_button_standard":
-		field "size": ["fill", "100%"]
-		field "$variables": variable "$nav_button_label_type": "store_layout.styled_nav_label_panel"
-	Added element "nav_button_fill_styled_mc10@store_layout.nav_button_standard":
-		field "size": ["fill", "100%"]
-		field "$variables": variable "$nav_button_label_type": "store_layout.styled_nav_label_panel_minecraftTen"
-	Changed element "nav_button_grid_panel":
+					field "size": ["100%", 6]
+			Changed control:
+				Changed element "additional_realms_buy_offer@general_section.realms_subscription_main":
+					Changed field "$variables":
+						Total variable: 8 (+2, -6)
+						Removed variable "$left_button_label_bindings":
+							item 0:
+								item "binding_name": "#price_text"
+								item "binding_type": "collection"
+								item "binding_collection_name": "$realm_collection_name"
+						Removed variable "$left_button_visible_bindings": empty.
+						Changed variable "$image_controls":
+							Changed item 0:
+								Changed item "image":
+									Changed item "texture" from "textures/ui/realms_art_icon" to "textures/ui/subscription_Realms".
+						Removed variable "$image_size":
+							item 0: "85.1315%y"
+							item 1: 70
+						Removed variable "$left_button_text": "#price_text".
+						Changed variable "$name" from "options.viewSubscriptions.twoPlayers" to "options.viewSubscriptions.realmsServer".
+						Removed variable "$name_bindings": empty.
+						Changed variable "$description" from "#upsell_text" to "options.viewSubscriptions.addRealmsServer.Body".
+						Removed variable "$description_bindings":
+							item 0:
+								item "binding_name": "#upsell_text"
+								item "binding_type": "collection"
+								item "binding_collection_name": "$realm_collection_name"
+						Added variable "$left_button_ignored": true.
+						Added variable "$right_button_label_text": "options.viewSubscriptions.addRealmsServer.button".
+			Changed control:
+				Changed element "pad_8":
+					Removed field "ignored": "$pre_release".
+					Unchanged field "type": "panel".
+			Changed control:
+				Changed element "csb_buy_panel@csb_subscription_panel.csb_container":
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$left_button_ignored": true.
+Changed namespace "persona_sdl":
+	Moved element from "info_text_summary_author_button@common_buttons.underline_button" to "author_button@common_buttons.underline_button".
+	Changed element "author_button@common_buttons.underline_button":
+		Added field "focus_identifier": "author_button".
+		Added field "focus_enabled": true.
+		Added field "focus_change_up": "open_color_picker_button".
+	Changed element "default_right_side_stack@persona_sdl.ride_side_stack_base":
+		Changed field "controls":
+			Changed control:
+				Changed element "offer_related_info_panels":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Moved element from "piece_offer_info_panel@persona.piece_list_right_side_section" to "piece_offer_info_panel@persona_sdl.piece_list_right_side_section".
+	Changed element "expand_appearance_preview_button@common_buttons.light_content_button":
+		Added field "focus_change_left": "open_color_picker_button".
+	Changed element "info_text_summary_button_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "nav_button_grid":
-					Unchanged field "type": "stack_panel".
-					Changed field "factory":
-						Changed field "control_ids":
-							Total control id: 6 (+4, -0)
-							Added control id "nav_button_standard_styled": "@store_layout.nav_button_standard_styled".
-							Added control id "nav_button_standard_styled_mc10": "@store_layout.nav_button_standard_styled_mc10".
-							Added control id "nav_button_fill_styled": "@store_layout.nav_button_fill_styled".
-							Added control id "nav_button_fill_styled_mc10": "@store_layout.nav_button_fill_styled_mc10".
-	Added element "nav_button_standard_styled@store_layout.nav_button_standard": field "$variables": variable "$nav_button_label_type": "store_layout.styled_nav_label_panel".
-	Added element "nav_button_standard_styled_mc10@store_layout.nav_button_standard": field "$variables": variable "$nav_button_label_type": "store_layout.styled_nav_label_panel_minecraftTen".
-	Changed element "non_scrollable_sdl_screen@store_layout.sdl_base_screen":
+				Moved element from "summary_author_button@persona_sdl.info_text_summary_author_button" to "summary_author_button@persona_sdl.author_button".
+		Added field "$variables": variable "$focus_id": "author_button".
+	Changed element "open_color_picker_button@common_buttons.light_content_button":
 		Changed field "$variables":
-			Total variable: 3 (+1, -0)
-			Added variable "$requires_restore_button": false.
-	Changed element "skin_selector_screen@store_layout.sdl_base_screen":
-		Changed field "$variables":
-			Total variable: 4 (+1, -0)
-			Added variable "$requires_restore_button": false.
-	Changed element "store_data_driven_modal_one_button_screen@store_layout.store_data_driven_screen_base":
-		Changed field "$variables":
-			Total variable: 6 (+1, -0)
-			Added variable "$requires_restore_button": false.
-	Added element "styled_nav_label_panel":
-		field "type": "panel"
-		field "size": ["fill", "100%"]
-		field "controls": control element "button_text_label@store_layout.default_styled_button_text_label": empty
-	Added element "styled_nav_label_panel_minecraftTen":
-		field "type": "panel"
-		field "size": ["fill", "100%"]
-		field "controls":
-			control:
-				element "button_text_label@store_layout.default_styled_button_text_label":
-					field "font_type": "MinecraftTen"
-					field "backup_font_type": "UIFont"
-					field "variables":
-						variable:
-							field "requires": "(not $is_low_memory_device)"
-							field "font_scale_factor": 1.39
-							field "offset": [0, -2]
+			Total variable: 9 (+2, -0)
+			Added variable "$focus_override_down": "author_button".
+			Added variable "$focus_override_right": "skin_preview_button".
+		Added field "focus_enabled": true.

@@ -1,605 +1,639 @@
-Difference of "ui" between "1.19.30.20" (beta of "1.19.30") and "1.19.30.21" (beta of "1.19.30").
+Difference of "ui" between "1.19.40.20" (beta of "1.19.40") and "1.19.40.21" (beta of "1.19.40").
 
-Total namespace: 207 (+1, -1)
-Changed namespace "chat":
-	Changed element "chat_header@common_store.store_top_bar":
-		Changed field "controls":
-			Changed control:
-				Changed element "title_panel":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "chat_header_content_area":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Total control: 5 (+1, -0)
-									Added control:
-										element "icon":
-											field "type": "image"
-											field "texture": "textures/ui/xbox_face_button_up"
-											field "layer": 2
-											field "size": [16, 16]
-											field "bindings":
-												binding:
-													field "binding_name": "#is_using_gamepad"
-													field "binding_name_override": "#visible"
-	Changed element "text_edit_box@common.text_edit_box":
-		Changed field "button_mappings":
-			Total button mapping: 18 (+1, -0)
-			Added button mapping:
-				field "from_button_id": "button.controller_secondary_select"
-				field "to_button_id": "button.chat_paste_coordinates"
-				field "handle_select": true
-				field "handle_deselect": false
-				field "mapping_type": "global"
-Changed namespace "controls_section":
-	Changed element "keyboard_and_mouse_section":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "keyboard_section":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 3 (+1, -0)
-						Added control:
-							element "control_alt_chords_standard_keyboard_section":
-								field "type": "stack_panel"
-								field "size": ["100%", "100%c"]
-								field "bindings":
-									binding:
-										field "binding_name": "#show_standard_copy_coordinates_keys"
-										field "binding_name_override": "#visible"
-								field "controls":
-									control element "option_group_label@settings_common.option_group_label": field "$variables": variable "$text": "options.control_alt_keybinds_section"
-									control:
-										element "control_alt_chord_keymapping_grid@controls_section.keymapping_grid":
-											field "$variables":
-												variable "$keymapping_grid_dimension": "#keyboard_standard_control_alt_chord_grid_dimension"
-												variable "$keymapping_collection": "keyboard_standard_control_alt_chord_collection"
-			Changed control:
-				Changed element "full_keyboard_section":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 4 (+1, -0)
-						Added control:
-							element "control_alt_chords_full_keyboard_section":
-								field "type": "stack_panel"
-								field "size": ["100%", "100%c"]
-								field "bindings":
-									binding:
-										field "binding_name": "#show_full_copy_coordinates_keys"
-										field "binding_name_override": "#visible"
-								field "controls":
-									control element "option_group_label@settings_common.option_group_label": field "$variables": variable "$text": "options.control_alt_keybinds_section"
-									control:
-										element "control_alt_chord_keymapping_grid@controls_section.keymapping_grid":
-											field "$variables":
-												variable "$keymapping_grid_dimension": "#keyboard_full_control_alt_chord_grid_dimension"
-												variable "$keymapping_collection": "keyboard_full_control_alt_chord_collection"
-Changed namespace "crafting":
-	Changed element "inventory_container_item@common.container_item":
-		Changed field "controls":
-			Total control: 7 (+1, -0)
-			Added control:
-				element "item_container_transfer_mode_overlay@common.item_container_transfer_mode_overlay":
-					field "size": "$item_renderer_size"
-					field "offset": [1, 1]
-					field "anchor_to": "top_left"
-					field "anchor_from": "top_left"
-					field "layer": 10
-Changed namespace "general_section":
-	Changed element "creator_toggles_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 5 (+1, -0)
-			Added control:
-				element "creator_setting_button":
-					field "type": "stack_panel"
-					field "orientation": "horizontal"
-					field "size": ["100%", 30]
-					field "bindings":
-						binding:
-							field "binding_name": "#show_keybinds_button"
-							field "binding_name_override": "#visible"
-					field "controls":
-						control:
-							element "go_to_keybinds@settings_common.action_button":
-								field "size": ["100%", "100%"]
-								field "bindings":
-									binding:
-										field "binding_name": "#go_to_keybinds"
-										field "binding_name_override": "#enabled"
-								field "$variables":
-									variable "$pressed_button_name": "button.go_to_keybinds"
-									variable "$button_text": "options.go_to_keybinds"
-						control:
-							element "creator_settings_section_label_spacer":
-								field "type": "panel"
-								field "size": ["1%", "100%"]
-Changed namespace "persona":
-	Changed element "persona_screen_content":
+Changed namespace "common":
+	Changed element "highlight_slot_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "popup_dialog_factory":
-					Unchanged field "type": "factory".
-					Changed field "control_ids":
-						Total control id: 8 (+1, -1)
-						Removed control id "dcast_character_select_popup": "@persona_dcast_character_screen.popup_dialog__dcast_character_select".
-						Added control id "cast_character_select_popup": "@persona_cast_character_screen.popup_dialog__cast_character_select".
-Added namespace "persona_cast_character_screen":
-	element "cast_character_button_content_panel":
-		field "type": "panel"
+				Changed element "highlight@common.highlight_slot":
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "(not #using_touch)" to "(#not_using_touch_or_bundle_selected)".
+			Changed control:
+				Changed element "white_border@common.white_border_slot":
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "(not #using_touch)" to "(#not_using_touch_or_bundle_selected)".
+Changed namespace "common_store":
+	Changed element "hero_offer_details_title":
+		Unchanged field "type": "label".
+		Added field "enable_profanity_filter": false.
+	Changed element "store_offer_title":
+		Unchanged field "type": "label".
+		Added field "enable_profanity_filter": false.
+	Changed element "suggested_content_offers_grid_item":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@common_store.banner_fill":
+					Changed field "controls":
+						Changed control:
+							Changed element "title_label_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "title":
+											Unchanged field "type": "label".
+											Added field "enable_profanity_filter": false.
+Changed namespace "crafting":
+	Changed element "scroll_grid":
+		Unchanged field "type": "grid".
+		Removed field "layer": 1.
+Changed namespace "crafting_pocket":
+	Changed element "both_panels":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 5 (+1, -1)
+			Removed control element "left_panel@crafting_pocket.left_panel": field "size": ["fill", "100%"].
+			Added control element "left_panel@crafting_pocket.left_panel": field "size": ["fill", "100%"].
+	Changed element "left_panel":
+		field "type": "input_panel"
+		field "size": ["100%", "100%"]
+		field "layer": 2
 		field "controls":
 			control:
-				element "cast_single_character_content_visible_panel":
-					field "type": "panel"
-					field "controls":
-						control:
-							element "cast_single_character_button_content@persona_cast_character_screen.in_use_grid_item":
-								field "size": ["100% - 2px", "100% - 2px"]
-								field "$variables": variable "$in_use_grid_collection_name": "$cast_single_character_collection_name"
-	element "cast_character_select_main":
-		field "type": "panel"
-		field "size": ["100% - 16px", "100% - 65px"]
-		field "anchor_to": "center"
-		field "anchor_from": "center"
-		field "offset": [0, -9.5]
-		field "controls":
+				element "left_background@common.common_panel":
+					field "$variables":
+						variable "$dialog_background": "common.dialog_background_opaque"
+						variable "$show_close_button": false
 			control:
-				element "background_image":
-					field "type": "image"
-					field "size": ["100%", "100%"]
-					field "texture": "textures/ui/White"
-					field "color": "black"
-					field "alpha": 0.8
-			control element "cast_grid@persona_cast_character_screen.cast_scroll_view_panel": empty
-	element "cast_grid_with_buttons":
-		field "type": "panel"
-		field "size": ["50%", "100%c"]
-		field "controls":
-			control:
-				element "top_spacing":
-					field "type": "panel"
-					field "size": ["100%", 4]
-			control:
-				element "cast_grid":
-					field "type": "grid"
-					field "size": ["100%", "100%c"]
-					field "grid_item_template": "persona_cast_character_screen.cast_single_character_button_panel"
-					field "grid_dimension_binding": "#cast_character_options_dimensions"
-					field "collection_name": "cast_character_options"
+				element "recipe_book_tab_content@crafting_pocket.recipe_book_tab_content":
 					field "bindings":
 						binding:
 							field "binding_type": "global"
-							field "binding_name": "#cast_character_options_dimensions"
-					field "$variables": variable "$cast_single_character_collection_name": "cast_character_options"
-	element "cast_scroll_view_panel@common.scrolling_panel":
-		field "anchor_to": "top_left"
-		field "anchor_from": "top_left"
-		field "$variables":
-			variable "$show_background": false
-			variable "$scroll_size":
-				item 0: 5
-				item 1: "100% - 4px"
-			variable "$scrolling_content": "persona_cast_character_screen.cast_grid_with_buttons"
-			variable "$comment_panel_size":
-				item 0: "40% - 1px"
-				item 1: "100%c"
-	element "cast_single_character_button_panel":
-		field "type": "panel"
-		field "size": ["33%", "100%x"]
-		field "layer": 10
-		field "controls":
+							field "binding_name": "(not #is_left_tab_inventory)"
+							field "binding_name_override": "#visible"
 			control:
-				element "button_outline":
-					field "type": "image"
-					field "size": ["100%-2px", "100%-2px"]
-					field "anchor_from": "top_left"
-					field "anchor_to": "top_left"
-					field "texture": "textures/ui/White"
-					field "color": "$dressing_room_semi_dark_bg_color"
-					field "controls":
-						control:
-							element "cast_character_button@common.button":
-								field "max_size": ["100%-2px", "100%-2px"]
-								field "anchor_from": "center"
-								field "anchor_to": "center"
-								field "controls":
-									control:
-										element "background_image":
-											field "type": "image"
-											field "size": ["100%", "100%"]
-											field "anchor_from": "top_left"
-											field "anchor_to": "top_left"
-											field "texture": "textures/ui/White"
-											field "color": "$dressing_room_dark_bg_color"
-									control element "default@common.empty_panel": empty
-									control element "hover@persona.focus_border": empty
-									control element "pressed@persona.focus_border": empty
-									control element "cast_character_content@persona_cast_character_screen.cast_character_button_content_panel": empty
-								field "button_mappings":
-									button mapping:
-										field "from_button_id": "button.menu_select"
-										field "to_button_id": "$pressed_button_name"
-										field "mapping_type": "pressed"
-									button mapping:
-										field "from_button_id": "button.menu_ok"
-										field "to_button_id": "$pressed_button_name"
-										field "mapping_type": "focused"
-									button mapping:
-										field "to_button_id": "button.asset_button_hovered"
-										field "mapping_type": "pressed"
-									button mapping:
-										field "ignored": "($controller_left_bumper_mapping = '')"
-										field "from_button_id": "button.menu_tab_left"
-										field "to_button_id": "$controller_left_bumper_mapping"
-										field "mapping_type": "focused"
-									button mapping:
-										field "ignored": "($controller_right_bumper_mapping = '')"
-										field "from_button_id": "button.menu_tab_right"
-										field "to_button_id": "$controller_right_bumper_mapping"
-										field "mapping_type": "focused"
-								field "$variables":
-									variable "$controller_left_bumper_mapping|default": ""
-									variable "$controller_right_bumper_mapping|default": ""
+				element "inventory_tab_content@crafting_pocket.inventory_tab_content":
 					field "bindings":
 						binding:
-							field "binding_name": "#cast_button_visible"
+							field "binding_type": "global"
+							field "binding_name": "#is_left_tab_inventory"
 							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-							field "binding_collection_name": "$cast_single_character_collection_name"
-		field "$variables": variable "$pressed_button_name": "button.cast_single_character_button"
-	element "in_use_grid_item":
-		field "type": "image"
-		field "layer": 5
-		field "size": [20, 20]
-		field "fill": true
-		field "bindings":
-			binding:
-				field "binding_type": "collection"
-				field "binding_collection_name": "$in_use_grid_collection_name"
-				field "binding_name": "#in_use_texture"
-				field "binding_name_override": "#texture"
-			binding:
-				field "binding_type": "collection"
-				field "binding_collection_name": "$in_use_grid_collection_name"
-				field "binding_name": "#in_use_texture_file_system"
-				field "binding_name_override": "#texture_file_system"
-	element "popup_cast_character_select_bg@common_dialogs.dialog_background_hollow_2":
-		field "size": ["100%", "100%"]
-		field "controls":
-			control:
-				element "title_panel":
-					field "type": "label"
-					field "text": "menu.cast_select_title"
-					field "layer": 2
-					field "offset": [0, 8]
-					field "color": "$profile_create_character_selected_color"
-					field "anchor_from": "top_middle"
-					field "anchor_to": "top_middle"
-			control element "popup_inner_contents@persona_cast_character_screen.cast_character_select_main": empty
-			control:
-				element "popup_bottom_bar":
-					field "type": "stack_panel"
-					field "size": ["95%", 32]
-					field "offset": [0, -6]
-					field "anchor_from": "bottom_middle"
-					field "anchor_to": "bottom_middle"
-					field "orientation": "horizontal"
-					field "controls":
-						control:
-							element "Select_Button@common_buttons.light_text_button":
-								field "size": ["70%", "100%"]
-								field "$variables":
-									variable "$pressed_button_name": "button.cast_select"
-									variable "$button_text": "gui.select"
-						control:
-							element "empty_space":
-								field "type": "panel"
-								field "size": [2, 0]
-						control:
-							element "Back_Button@common_buttons.light_text_button":
-								field "size": ["30%", "100%"]
-								field "$variables":
-									variable "$pressed_button_name": "button.cast_back"
-									variable "$button_text": "gui.back"
-		field "$variables":
-			variable "$section_content_size":
-				item 0: "100%"
-				item 1: "100% - 16px"
-	element "popup_dialog__cast_character_select@popup_dialog.popup_dialog":
-		field "size": ["100%", "100%"]
-		field "layer": 990
-		field "button_mappings":
-			button mapping:
-				field "from_button_id": "button.menu_cancel"
-				field "to_button_id": "$close_button_to_button_id"
-				field "mapping_type": "global"
-			button mapping:
-				field "from_button_id": "button.menu_ok"
-				field "to_button_id": "$close_button_to_button_id"
-				field "mapping_type": "focused"
-			button mapping:
-				field "from_button_id": "button.menu_left"
-				field "to_button_id": "$close_button_to_button_id"
-				field "mapping_type": "global"
-		field "controls":
-			control:
-				element "background_image":
-					field "type": "image"
-					field "size": ["100%", "100% + 64px"]
-					field "texture": "textures/ui/White"
-					field "color": "$dressing_room_dark_bg_color"
-					field "alpha": 0.8
-			control:
-				element "popup_background@persona_cast_character_screen.popup_cast_character_select_bg":
-					field "anchor_from": "top_middle"
-					field "anchor_to": "top_middle"
-					field "offset": [0, 21]
-					field "size": ["107%y", "80%"]
-					field "$variables":
-						variable "$persona_popup_title_text": "menu.cast_select_title"
-						variable "$persona_popup_title_size":
-							item 0: "100% - 20px"
-							item 1: "100% - 21px"
-						variable "$persona_popup_title_font_type": "MinecraftTen"
-						variable "$show_close_button": true
-		field "$variables":
-			variable "$section_content_size":
-				item 0: "100%"
-				item 1: "100% - 16px"
-			variable "$close_button_to_button_id": "button.close_dialog"
-Removed namespace "persona_dcast_character_screen":
-	element "dcast_character_select_content@common.empty_panel":
 		field "type": "panel"
 		field "size": ["100%", "100%"]
 		field "controls":
 			control:
-				element "background_image":
-					field "type": "image"
-					field "texture": "textures/ui/White"
-					field "color": "$dressing_room_dark_bg_color"
-					field "alpha": "$dressing_room_background_alpha"
+				element "left_background@common.common_panel":
 					field "$variables":
-						variable "$dialog_bg_size|default":
-							item 0: "100% - 2px"
-							item 1: "100% - 2px"
-		field "$variables": variable "$close_button_visible_binding_type": "global"
-	element "dcast_single_character_button@common_buttons.light_button_assets":
-		field "bindings": empty
-		field "$variables":
-			variable "$button_size_override":
-				item 0: 20
-				item 1: 20
-			variable "$button_content": "coin_purchase.button_content"
-			variable "$pressed_button_name": "button.purchase_coins"
-			variable "$dcast_character_factory_binding_type": "collection_details"
-			variable "$dcast_character_factory_collection_details": "collection_details"
-			variable "$dcast_character_factory_collection_name": "factory_collection"
-	element "popup_dcast_character_select_bg@common_dialogs.dialog_background_hollow_2":
-		field "size": ["100%", "100%"]
+						variable "$dialog_background": "common.dialog_background_opaque"
+						variable "$show_close_button": false
+			control:
+				element "recipe_book_tab_content@crafting_pocket.recipe_book_tab_content":
+					field "bindings":
+						binding:
+							field "binding_type": "global"
+							field "binding_name": "(not #is_left_tab_inventory)"
+							field "binding_name_override": "#visible"
+			control:
+				element "inventory_tab_content@crafting_pocket.inventory_tab_content":
+					field "bindings":
+						binding:
+							field "binding_type": "global"
+							field "binding_name": "#is_left_tab_inventory"
+							field "binding_name_override": "#visible"
+	Changed element "recipe_inventory_screen_content_pocket":
+		Unchanged field "type": "input_panel".
+		Changed field "controls":
+			Total control: 6 (+1, -1)
+			Removed control:
+				element "root_panel@common.root_panel":
+					field "layer": 1
+					field "size": ["100%", "100%"]
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "controls":
+						control element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+						control element "gamepad_cursor@common.gamepad_cursor_button": empty
+						control element "hold_icon@common.inventory_take_progress_icon_button": empty
+						control element "hotbar_and_panels@crafting_pocket.hotbar_and_panels": empty
+			Added control:
+				element "base_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%"]
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "controls":
+						control:
+							element "root_panel@common.root_panel":
+								field "layer": 4
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "offset": ["33px", "2px"]
+								field "size": ["100% - 66px", "100% - 38px"]
+						control element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+						control element "gamepad_cursor@common.gamepad_cursor_button": empty
+						control element "hold_icon@common.inventory_take_progress_icon_button": empty
+						control element "hotbar_and_panels@crafting_pocket.hotbar_and_panels": empty
+		Changed field "button_mappings":
+			Total button mapping: 13 (+0, -5)
+			Removed button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.container_reset_held"
+				field "mapping_type": "pressed"
+			Removed button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.container_reset_held"
+				field "mapping_type": "pressed"
+			Removed button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.container_reset_held"
+				field "mapping_type": "pressed"
+			Removed button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "button.container_reset_held"
+				field "mapping_type": "pressed"
+			Removed button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.container_reset_held"
+				field "mapping_type": "pressed"
+	Changed element "right_panel":
+		Unchanged field "type": "input_panel".
+		Removed field "layer": 5.
+	Changed element "right_tab_navigation_panel_pocket":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "content":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "close":
+								Unchanged field "type": "image".
+								Changed field "controls":
+									Total control: 3 (+1, -0)
+									Changed control:
+										Changed element "close_button@common.light_close_button":
+											Added field "layer": 2.
+									Added control:
+										element "nodrop_zone@common.root_panel":
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "size": ["100%", "100%"]
+	Changed element "scroll_background_image":
+		Unchanged field "type": "image".
+		Removed field "layer": 2.
+Changed namespace "edu_common":
+	Total element: 76 (+2, -0)
+	Added element "search_bar_and_home_button":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", 18]
+		field "offset": [0, 1]
+		field "layer": 5
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
 		field "controls":
 			control:
+				element "search_bar":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "search_bar@common.text_edit_box":
+								field "size": [100, 16]
+								field "offset": [1, 0]
+								field "max_length": 50
+								field "property_bag": field "#property_field": "#item_name"
+								field "$variables":
+									variable "$place_holder_text": "library.search.placeholder"
+									variable "$text_box_name": "search_text"
+			control:
+				element "search_button@common_buttons.light_glyph_button":
+					field "size": [18, 18]
+					field "$variables":
+						variable "$pressed_button_name": "button.library_search"
+						variable "$button_content": "edu_common.search_button_content"
+						variable "$button_tts_header": "store.search.button"
+			control element "search_pad@common.empty_panel": field "size": [2, "100%"]
+			control element "home_button@edu_common.home_button": field "size": [18, 18]
+			control element "end_pad@common.empty_panel": field "size": [3, "100%"]
+	Added element "search_button_content":
+		field "type": "image"
+		field "texture": "textures/ui/spyglass_flat"
+		field "size": [12, 12]
+Changed namespace "expanded_skin_pack":
+	Changed element "expanded_skin_pack_screen@common.base_screen":
+		Changed field "$variables":
+			Total variable: 7 (+1, -0)
+			Added variable "$screen_bg_content": "persona.persona_screen_background_content".
+	Changed element "skin_picker_screen_content@common.common_panel":
+		Unchanged field "type": "panel".
+		Added field "layer": 1.
+Changed namespace "general_section":
+	Total element: 129 (+1, -0)
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 83 (+1, -0)
+			Added control:
+				element "option_dropdown_identity_mode@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.dev_identityMode"
+						variable "$dropdown_content": "general_section.dev_identityMode_content"
+						variable "$option_enabled_binding_name": "#dev_identity_mode_dropdown_enabled"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "dev_identity_mode_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_identity_mode_dropdown_toggle_label"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "200%"
+	Added element "dev_identityMode_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					item "dev_identityMode_adal@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#identity_mode_adal"
+						item "$radio_label_text": "options.dev_identity_mode_adal"
+				item 1:
+					item "dev_identityMode_oneauth@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#identity_mode_oneauth"
+						item "$radio_label_text": "options.dev_identity_mode_oneauth"
+Changed namespace "horse_pocket":
+	Changed element "base_grid_panel":
+		Unchanged field "type": "panel".
+		Removed field "layer": 3.
+		Changed field "controls":
+			Total control: 3 (+2, -2)
+			Removed control element "panel_outline@panel_outline": field "layer": 2.
+			Removed control element "dark_bg@dark_bg": empty.
+			Added control element "panel_outline@panel_outline": field "layer": 4.
+			Added control element "dark_bg@dark_bg": field "layer": 3.
+	Changed element "horse_panel":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 7 (+1, -1)
+			Removed control:
+				element "root_panel@common.root_panel":
+					field "size": ["100%-8px", "100%-4px"]
+					field "layer": 1
+					field "controls":
+						control element "hold_icon@common.inventory_take_progress_icon_button": empty
+						control:
+							element "bg@common.common_panel":
+								field "size": ["100% - 29px", "100%"]
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "layer": 1
+								field "$variables":
+									variable "$dialog_background": "dialog_background_opaque"
+									variable "$show_close_button": false
+						control element "interactive_tabs@horse_pocket.interactive_tabs": empty
+						control:
+							element "close_button@horse_pocket.close_button":
+								field "focus_enabled": false
+								field "offset": [7, 4]
+								field "layer": 5
+						control:
+							element "inventory@horse_pocket.half_screen_inventory":
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "offset": [30, 0]
+								field "$variables":
+									variable "$container_size": 36
+									variable "$pane_collection": "combined_hotbar_and_inventory_items"
+						control:
+							element "equipment@horse_pocket.equip_middle_screen":
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "offset": [15, 0]
+								field "layer": 1
+						control:
+							element "chest_tab":
+								field "type": "panel"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "visible": false
+								field "controls":
+									control element "visual_tabs_chest@horse_pocket.visual_tabs_chest": empty
+									control:
+										element "chest@horse_pocket.half_screen_chest":
+											field "anchor_from": "top_right"
+											field "anchor_to": "top_right"
+											field "$variables":
+												variable "$container_size": "$chest_size"
+												variable "$pane_collection": "container_items"
+								field "bindings":
+									binding:
+										field "binding_type": "view"
+										field "source_control_name": "chest_tab_interactive"
+										field "source_property_name": "#toggle_state"
+										field "target_property_name": "#visible"
+						control:
+							element "renderer_tab":
+								field "type": "panel"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "controls":
+									control element "visual_tabs_equip@horse_pocket.visual_tabs_equip": empty
+									control:
+										element "renderer@horse_pocket.half_screen_renderer":
+											field "anchor_from": "right_middle"
+											field "anchor_to": "right_middle"
+								field "bindings":
+									binding:
+										field "binding_type": "view"
+										field "source_control_name": "renderer_tab_interactive"
+										field "source_property_name": "#toggle_state"
+										field "target_property_name": "#visible"
+			Added control:
+				element "base_panel":
+					field "type": "panel"
+					field "size": ["100%-8px", "100%-4px"]
+					field "controls":
+						control:
+							element "root_panel@common.root_panel":
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "size": ["100% - 29px", "100%"]
+						control element "hold_icon@common.inventory_take_progress_icon_button": empty
+						control:
+							element "bg@common.common_panel":
+								field "size": ["100% - 29px", "100%"]
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "layer": 1
+								field "$variables":
+									variable "$dialog_background": "dialog_background_opaque"
+									variable "$show_close_button": false
+						control element "interactive_tabs@horse_pocket.interactive_tabs": empty
+						control:
+							element "close_button@horse_pocket.close_button":
+								field "focus_enabled": false
+								field "offset": [7, 4]
+								field "layer": 5
+						control:
+							element "inventory@horse_pocket.half_screen_inventory":
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "offset": [30, 0]
+								field "$variables":
+									variable "$container_size": 36
+									variable "$pane_collection": "combined_hotbar_and_inventory_items"
+						control:
+							element "equipment@horse_pocket.equip_middle_screen":
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "offset": [15, 0]
+								field "layer": 1
+						control:
+							element "chest_tab":
+								field "type": "panel"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "visible": false
+								field "controls":
+									control element "visual_tabs_chest@horse_pocket.visual_tabs_chest": empty
+									control:
+										element "chest@horse_pocket.half_screen_chest":
+											field "anchor_from": "top_right"
+											field "anchor_to": "top_right"
+											field "$variables":
+												variable "$container_size": "$chest_size"
+												variable "$pane_collection": "container_items"
+								field "bindings":
+									binding:
+										field "binding_type": "view"
+										field "source_control_name": "chest_tab_interactive"
+										field "source_property_name": "#toggle_state"
+										field "target_property_name": "#visible"
+						control:
+							element "renderer_tab":
+								field "type": "panel"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "controls":
+									control element "visual_tabs_equip@horse_pocket.visual_tabs_equip": empty
+									control:
+										element "renderer@horse_pocket.half_screen_renderer":
+											field "anchor_from": "right_middle"
+											field "anchor_to": "right_middle"
+								field "bindings":
+									binding:
+										field "binding_type": "view"
+										field "source_control_name": "renderer_tab_interactive"
+										field "source_property_name": "#toggle_state"
+										field "target_property_name": "#visible"
+	Changed element "visual_tabs_equip":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control element "close_tab@horse_pocket.close_tab": empty.
+			Added control:
+				element "close_tab@horse_pocket.close_tab":
+					field "controls":
+						control:
+							element "nodrop_zone@common.root_panel":
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "size": ["100%", "100%"]
+Changed namespace "hud":
+	Changed element "anim_item_name_background_alpha_in":
+		Unchanged field "anim_type": "alpha".
+		Changed field "to" from "$text_background_alpha" to "$title_alpha".
+	Changed element "anim_item_name_background_alpha_out":
+		Unchanged field "anim_type": "alpha".
+		Changed field "from" from "$text_background_alpha" to "$title_alpha".
+	Changed element "anim_subtitle_background_alpha_in":
+		Unchanged field "anim_type": "alpha".
+		Changed field "to" from "$text_background_alpha" to "$title_alpha".
+	Changed element "anim_subtitle_background_alpha_out":
+		Unchanged field "anim_type": "alpha".
+		Changed field "from" from "$text_background_alpha" to "$title_alpha".
+	Changed element "anim_title_background_alpha_in":
+		Unchanged field "anim_type": "alpha".
+		Changed field "to" from "$text_background_alpha" to "$title_alpha".
+	Changed element "anim_title_background_alpha_out":
+		Unchanged field "anim_type": "alpha".
+		Changed field "from" from "$text_background_alpha" to "$title_alpha".
+	Changed element "hud_title_text":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "title_frame":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "title":
+								Unchanged field "type": "label".
+								Changed field "variables":
+									Changed variable:
+										Changed field "requires" from "(not $text_shadow)" to "(not $title_shadow)".
+									Changed variable:
+										Changed field "requires" from "$text_shadow" to "$title_shadow".
+			Changed control:
+				Changed element "subtitle_frame":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "subtitle":
+								Unchanged field "type": "label".
+								Changed field "variables":
+									Changed variable:
+										Changed field "requires" from "(not $text_shadow)" to "(not $title_shadow)".
+									Changed variable:
+										Changed field "requires" from "$text_shadow" to "$title_shadow".
+	Changed element "item_name_text_root":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "item_text_aligner":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "item_text_control":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "item_text_label":
+											Unchanged field "type": "label".
+											Changed field "variables":
+												Changed variable:
+													Changed field "requires" from "(not $text_shadow)" to "(not $title_shadow)".
+												Changed variable:
+													Changed field "requires" from "$text_shadow" to "$title_shadow".
+Changed namespace "persona":
+	Changed element "color_grid_icon":
+		Unchanged field "type": "image".
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control:
+				element "selected@persona.selected_border":
+					field "bindings":
+						binding:
+							field "binding_name": "#color_selected"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "color_collection"
+Changed namespace "persona_cast_character_screen":
+	Total element: 13 (+2, -0)
+	Changed element "cast_character_screen_right_side_model":
+		Unchanged field "type": "input_panel".
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control element "skin_model_loading_anim@persona_cast_character_screen.character_loading_anim_panel": empty.
+	Changed element "cast_scroll_view_panel@common.scrolling_panel":
+		Added field "focus_container": true.
+		Added field "focus_wrap_enabled": false.
+		Added field "focus_navigation_mode_left": "stop".
+		Added field "focus_navigation_mode_right": "stop".
+		Added field "focus_navigation_mode_up": "stop".
+	Added element "character_loading_anim@persona.loading_icon":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+	Added element "character_loading_anim_panel":
+		field "type": "image"
+		field "size": ["100%c + 12px", "100%c + 6px"]
+		field "texture": "textures/ui/Banners"
+		field "layer": 600
+		field "controls": control element "character_loading_anim@persona_cast_character_screen.character_loading_anim": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#is_character_loading"
+				field "binding_name_override": "#visible"
+	Changed element "popup_cast_character_select_bg@common_dialogs.dialog_background_hollow_2":
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Changed control:
+				Changed element "top_bar":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Total control: 2 (+1, -1)
+						Removed control element "close_button_holder@common_dialogs.common_close_button_holder": field "$variables": variable "$close_button_to_button_id": "button.close_dialog".
+						Added control element "close_button_holder@common_dialogs.common_close_button_holder": empty.
+			Removed control:
 				element "popup_bottom_bar":
 					field "type": "stack_panel"
 					field "size": ["95%", 32]
 					field "offset": [0, -6]
+					field "layer": 50
 					field "anchor_from": "bottom_middle"
 					field "anchor_to": "bottom_middle"
 					field "orientation": "horizontal"
-					field "controls":
-						control:
-							element "Select_Button@common_buttons.light_text_button":
-								field "size": ["70%", "100%"]
-								field "$variables":
-									variable "$pressed_button_name": "button.dcast_select"
-									variable "$button_text": "gui.select"
-						control:
-							element "empty_space":
-								field "type": "panel"
-								field "size": [2, 0]
-						control:
-							element "Back_Button@common_buttons.light_text_button":
-								field "size": ["30%", "100%"]
-								field "$variables":
-									variable "$pressed_button_name": "button.dcast_back"
-									variable "$button_text": "gui.back"
-		field "$variables":
-			variable "$section_content_size":
-				item 0: "100%"
-				item 1: "100% - 16px"
-			variable "$persona_popup_title_text|default": "dr.classic_skins.select_skin.title"
-			variable "$persona_popup_title_offset|default":
-				item 0: 0
-				item 1: 5.5
-			variable "$section_content_offset|default":
-				item 0: 0
-				item 1: 0
-			variable "$persona_popup_title_bindings|default": empty
-	element "popup_dialog__dcast_character_select@popup_dialog.popup_dialog":
-		field "size": ["100%", "100%"]
-		field "layer": 990
-		field "button_mappings":
-			button mapping:
-				field "from_button_id": "button.menu_cancel"
-				field "to_button_id": "$close_button_to_button_id"
-				field "mapping_type": "global"
-			button mapping:
-				field "from_button_id": "button.menu_ok"
-				field "to_button_id": "$close_button_to_button_id"
-				field "mapping_type": "focused"
-			button mapping:
-				field "from_button_id": "button.menu_left"
-				field "to_button_id": "$close_button_to_button_id"
-				field "mapping_type": "global"
-		field "controls":
-			control:
-				element "background_image":
-					field "type": "image"
-					field "size": ["100%", "100% + 64px"]
-					field "texture": "textures/ui/White"
-					field "color": "$dressing_room_dark_bg_color"
-					field "alpha": 0.8
-			control:
-				element "popup_background@persona_dcast_character_screen.popup_dcast_character_select_bg":
-					field "anchor_from": "top_middle"
-					field "anchor_to": "top_middle"
-					field "offset": [0, 21]
-					field "size": ["107%y", "80%"]
+					field "controls": "$bottom_button_controls"
 					field "$variables":
-						variable "$persona_popup_title_text": "Hello world"
-						variable "$persona_popup_title_size":
-							item 0: "100% - 20px"
-							item 1: "100% - 21px"
-						variable "$show_close_button": true
-						variable "$dialog_content": "persona_dcast_character_screen.dcast_character_select_content"
-						variable "$persona_popup_title_font_type": "MinecraftTen"
-		field "$variables":
-			variable "$section_content_size":
-				item 0: "100%"
-				item 1: "100% - 16px"
-			variable "$close_button_to_button_id": "button.close_dialog"
-Changed namespace "persona_deprecated":
-	Changed element "persona_screen_content":
+						variable "$bottom_button_controls|default":
+							item 0:
+								item "select_button@common_buttons.light_text_button":
+									item "size":
+										item 0: "63%"
+										item 1: "100%"
+									item "$pressed_button_name": "button.cast_select"
+									item "$button_text": "gui.select"
+							item 1:
+								item "empty_space":
+									item "type": "panel"
+									item "size":
+										item 0: 2
+										item 1: 0
+							item 2:
+								item "back_button@common_buttons.light_text_button":
+									item "size":
+										item 0: "37%"
+										item 1: "100%"
+									item "$pressed_button_name": "button.cast_back"
+									item "$button_text": "gui.back"
+			Added control:
+				element "popup_bottom_bar":
+					field "type": "panel"
+					field "size": ["95%", 32]
+					field "offset": [0, -6]
+					field "layer": 50
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "controls": "$bottom_button_controls"
+					field "$variables":
+						variable "$bottom_button_controls|default":
+							item 0:
+								item "select_button@common_buttons.light_text_button":
+									item "size":
+										item 0: "100%"
+										item 1: "100%"
+									item "$pressed_button_name": "button.cast_select"
+									item "$button_text": "gui.select"
+									item "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+									item "$focus_override_left": "FOCUS_OVERRIDE_STOP"
+									item "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+									item "bindings":
+										item 0:
+											item "binding_name": "#cast_enabled_select"
+											item "binding_name_override": "#enabled"
+	Changed element "popup_dialog__cast_character_preview@persona_cast_character_screen.popup_dialog__cast_character_select":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Changed variable "$bottom_button_controls":
+				Changed item 0:
+					Changed item "close_button@common_buttons.light_text_button":
+						Changed item "$pressed_button_name" from "button.cast_back" to "button.close_entry_prompt_dialog".
+			Added variable "$close_button_to_button_id": "button.close_entry_prompt_dialog".
+Changed namespace "portfolio":
+	Changed element "no_pick_photos_alert_label":
+		Unchanged field "type": "label".
+		Changed field "text" from "You do not have any photos in your inventory. Try using the camera to take a picture." to "portfolioScreen.noInventory".
+Changed namespace "profile":
+	Total element: 124 (+1, -0)
+	Changed element "popup_dialog__difference_information@profile.profile_common_dialog":
+		Changed field "$variables":
+			Changed variable "$close_button_to_button_id" from "button.close_differences_dialog" to "button.close_entry_prompt_dialog".
+	Added element "popup_dialog__preview_difference_information@profile.popup_dialog__difference_information": field "$variables": variable "$confirm_button_name": "button.close_entry_prompt_dialog".
+	Changed element "profile_screen_content":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "popup_dialog_factory":
 					Unchanged field "type": "factory".
 					Changed field "control_ids":
-						Total control id: 4 (+1, -1)
-						Removed control id "dcast_character_select_popup": "@persona_dcast_character_screen.popup_dialog__dcast_character_select".
-						Added control id "cast_character_select_popup": "@persona_cast_character_screen.popup_dialog__cast_character_select".
-Changed namespace "progress":
-	Total element: 69 (+3, -0)
-	Added element "abort_button@common_buttons.light_text_button":
-		field "size": [66, 26]
-		field "offset": [-50, 0]
-		field "bindings":
-			binding:
-				field "binding_name": "#retry_and_abort_visible"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_exit"
-			variable "$button_text": "gui.cancel"
-	Changed element "button_panel":
+						Total control id: 10 (+1, -0)
+						Added control id "difference_preview": "@profile.popup_dialog__preview_difference_information".
+Changed namespace "skin_picker":
+	Changed element "skin_picker_screen@common.base_screen":
+		Changed field "$variables":
+			Total variable: 7 (+1, -0)
+			Added variable "$screen_bg_content": "persona.persona_screen_background_content".
+	Changed element "skin_picker_screen_content@common.common_panel":
 		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 1 (+1, -1)
-			Removed control element "cancel_button@progress.cancel_button": empty.
-			Added control element "cancel_button@progress.cancel_button": field "offset": [0, 55].
-	Changed element "cancel_button@common_buttons.light_text_button":
-		Changed field "offset":
-			Unchanged item 0: 0.
-			Changed item 1 from 55 to 0.
-	Changed element "modal_button_panel@progress.button_panel":
-		Changed field "controls":
-			Total control: 1 (+1, -1)
-			Removed control element "cancel_button@progress.cancel_button": field "offset": [0, 0].
-			Added control element "cancel_button@progress.cancel_button": empty.
-	Added element "modal_button_panel_with_retry@progress.modal_button_panel":
-		field "controls":
-			control element "abort_button@progress.abort_button": empty
-			control element "cancel_button@progress.cancel_button": empty
-			control element "retry_button@progress.retry_button": empty
-	Changed element "modal_screen_content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 1 (+1, -2)
-			Removed control:
-				element "modal_progress_panel_with_cancel@progress.modal_progress_panel_with_cancel":
-					field "bindings":
-						binding:
-							field "binding_name": "#cancel_visible"
-							field "binding_name_override": "#visible"
-			Removed control:
-				element "modal_progress_panel_no_cancel@progress.modal_progress_panel_no_cancel":
-					field "bindings":
-						binding:
-							field "binding_name": "#cancel_not_visible"
-							field "binding_name_override": "#visible"
-			Added control element "modal_progress_panel@progress.modal_progress_panel_no_cancel": empty.
-	Added element "retry_button@common_buttons.light_text_button":
-		field "size": [66, 26]
-		field "offset": [50, 0]
-		field "bindings":
-			binding:
-				field "binding_name": "#retry_and_abort_visible"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$pressed_button_name": "button.menu_retry"
-			variable "$button_text": "gui.retry"
-	Changed element "world_convert_modal_progress_screen_content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 3 (+1, -1)
-			Removed control element "world_modal_progress_panel@progress.world_modal_progress_panel": empty.
-			Added control element "world_modal_progress_panel@progress.world_modal_progress_panel": field "$variables": variable "$modal_button_panel_type": "progress.modal_button_panel".
-	Changed element "world_modal_progress_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "inside_content":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 4 (+1, -1)
-						Removed control:
-							element "modal_button_panel@progress.modal_button_panel":
-								field "anchor_from": "bottom_middle"
-								field "anchor_to": "bottom_middle"
-								field "size": ["100%", "100%c"]
-								field "bindings":
-									binding:
-										field "binding_name": "#cancel_visible"
-										field "binding_name_override": "#visible"
-						Added control:
-							element "modal_button_panel@$modal_button_panel_type":
-								field "anchor_from": "bottom_middle"
-								field "anchor_to": "bottom_middle"
-								field "size": ["100%", "100%c"]
-	Changed element "world_save_modal_progress_screen_content":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 4 (+1, -1)
-			Removed control element "world_modal_progress_panel@progress.world_modal_progress_panel": empty.
-			Added control element "world_modal_progress_panel@progress.world_modal_progress_panel": field "$variables": variable "$modal_button_panel_type": "progress.modal_button_panel_with_retry".
-Changed namespace "structure_editor":
-	Total element: 63 (+1, -0)
-	Changed element "load_mode_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Total control: 22 (+2, -0)
-			Added control element "waterlog_blocks@structure_editor.waterlogging_panel": empty.
-			Added control:
-				element "waterlog_blocks_offset":
-					field "type": "panel"
-					field "size": ["100%", 4]
-	Added element "waterlogging_panel":
-		field "type": "stack_panel"
-		field "orientation": "vertical"
-		field "size": ["100%", "100%c"]
-		field "controls":
-			control:
-				element "label@structure_editor.common_text_label":
-					field "size": ["100%", 10]
-					field "text": "structure_block.waterlog_block"
-			control:
-				element "toggle_wrapper":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "controls":
-						control:
-							element "toggle@structure_editor.toggle_option_panel":
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "offset": [10, 0]
-								field "$variables":
-									variable "$enabled": true
-									variable "$option_binding_name": "#waterlog_blocks_binding_name"
-									variable "$option_enabled_binding_name": "#waterlog_blocks_on"
-									variable "$toggle_name": "#waterlog_blocks_toggle"
-									variable "$first_label_text": "structure_block.off"
-									variable "$second_label_text": "options.on"
-									variable "$first_label_visible_binding_name": "#waterlog_blocks_toggle_off"
-									variable "$second_label_visible_binding_name": "#waterlog_blocks_toggle_on"
+		Added field "layer": 1.
+Changed namespace "store_item_list":
+	Changed element "store_offer_title":
+		Unchanged field "type": "label".
+		Added field "enable_profanity_filter": false.

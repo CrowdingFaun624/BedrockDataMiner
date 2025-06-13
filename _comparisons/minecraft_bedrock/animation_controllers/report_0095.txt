@@ -1,18 +1,23 @@
-Difference of "animation_controllers" between "1.21.50.20" (beta of "1.21.50") and "1.21.50.24" (beta of "1.21.50").
+Difference of "animation_controllers" between "1.21.50.25" (beta of "1.21.50") and "1.21.50.26" (beta of "1.21.50").
 
-Changed file "armor_stand.animation_controllers.json":
+Changed file "creaking.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Total animation controller: 3 (+1, -0)
-			Added animation controller "controller.animation.armor_stand.holding_heavy_core":
-				field "initial_state": "default"
-				field "states": state "default": field "animations": animation dict animation "holding_heavy_core": "query.is_item_name_any('slot.weapon.mainhand', 'minecraft:heavy_core')"
-Changed file "player.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.player.root":
+			Changed animation controller "controller.animation.creaking.walk":
 				Changed field "states":
-					Changed state "third_person":
+					Changed state "default":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "walking": "variable.walking".
+							Added transition list transition "walking": "variable.walking && !variable.attacking".
+						Changed field "blend_transition" from 0.2 to 0.05.
+					Changed state "walking":
 						Changed field "animations":
-							Total animation dict: 30 (+1, -0)
-							Added animation dict animation "holding_heavy_core": "query.is_item_name_any('slot.weapon.mainhand', 'minecraft:heavy_core')".
+							Total animation dict: 1 (+1, -1)
+							Removed animation dict animation "walk": "1.5 - math.pow(1.5, 1.0 - 8.0 * query.modified_move_speed)".
+							Added animation dict animation "walk": "1.5 - math.pow(1.5, 1.0 - 015.0 * query.modified_move_speed)".
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "default": "!variable.walking".
+							Added transition list transition "default": "!variable.walking || variable.attacking".
+						Changed field "blend_transition" from 0.5 to 0.05.

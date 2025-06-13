@@ -1,52 +1,40 @@
-Difference of "entities_client" between "1.16.221" and "1.16.230.50" (beta of "1.17.0").
+Difference of "entities_client" between "1.16.230.50" (beta of "1.17.0") and "1.16.230.52" (beta of "1.17.0").
 
-Total entity: 151 (+2, -0)
-Added entity "glow_squid.entity.json":
+Total entity: 152 (+1, -0)
+Added entity "axolotl.entity.json":
 	resource pack "experimental":
-		field "format_version": "1.10.0"
+		field "format_version": "1.8.0"
 		field "minecraft:client_entity":
 			field "description":
+				field "animation_controllers":
+					animation controller group animation controller "general": "controller.animation.axolotl.general"
+					animation controller group animation controller "move": "controller.animation.axolotl.move"
 				field "animations":
-					animation "move": "animation.squid.move"
-					animation "squid_rotate": "animation.squid.rotate"
-				field "geometry": geometry "default": "geometry.squid"
-				field "identifier": "minecraft:glow_squid"
-				field "materials": materials "default": "glow_squid"
-				field "render_controllers": render controller "controller.render.glow_squid"
-				field "scripts":
-					field "animate":
-						script "move"
-						script "squid_rotate"
-				field "spawn_egg":
-					field "base_color": "#0x095656"
-					field "overlay_color": "#0x85f1bc"
-				field "textures": texture "default": "textures/entity/glow_squid"
-Added entity "goat.entity.json":
-	resource pack "experimental":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
-					animation "attack": "animation.goat.attack"
-					animation "look_at_target": "animation.goat.look_at_target"
-					animation "ram_attack": "animation.goat.ram_attack"
-					animation "walk": "animation.goat.walk"
-				field "geometry": geometry "default": "geometry.goat"
-				field "identifier": "minecraft:goat"
-				field "materials": materials "default": "goat"
-				field "render_controllers": render controller "controller.render.goat"
+					animation "idle_float": "animation.axolotl.idle_underwater"
+					animation "idle_floor": "animation.axolotl.idle_floor"
+					animation "idle_floor_water": "animation.axolotl.idle_floor_underwater"
+					animation "look_at_target": "animation.common.look_at_target"
+					animation "play_dead": "animation.axolotl.play_dead"
+					animation "swim": "animation.axolotl.swim"
+					animation "swim_angle": "animation.axolotl.swim_angle"
+					animation "walk_floor": "animation.axolotl.walk_floor"
+					animation "walk_floor_water": "animation.axolotl.walk_floor_underwater"
+				field "geometry": geometry "default": "geometry.axolotl"
+				field "identifier": "minecraft:axolotl"
+				field "materials":
+					materials "default": "axolotl"
+					materials "limbs": "axolotl_limbs"
+				field "render_controllers": render controller "controller.render.axolotl"
 				field "scripts":
 					field "pre_animation":
-						script "variable.tcos_right_side = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
-						script "variable.tcos_left_side = -variable.tcos_right_side;"
-						script "variable.attack_head_rot =  Math.sin(variable.attack_time * 180.0) * -37.3;"
-						script "variable.ram_head_rot = Math.sin(variable.should_bow_head * 90.0) * 37.3;"
-					field "animate":
-						script "walk"
-						script "look_at_target"
-						script script item "attack": "variable.has_target && variable.attack_time >= 0.0"
-						script "ram_attack"
+						script "variable.moving = query.ground_speed > 0 || query.vertical_speed > 0;"
+						script "variable.pitch = query.body_x_rotation;"
 				field "spawn_egg":
-					field "base_color": "#c0ac90"
-					field "overlay_color": "#857261"
-				field "textures": texture "default": "textures/entity/goat/goat"
+					field "base_color": "#0xfbc1e3"
+					field "overlay_color": "#0xa62d74"
+				field "textures":
+					texture "blue": "textures/entity/axolotl/axolotl_blue"
+					texture "cyan": "textures/entity/axolotl/axolotl_cyan"
+					texture "gold": "textures/entity/axolotl/axolotl_gold"
+					texture "lucy": "textures/entity/axolotl/axolotl_lucy"
+					texture "wild": "textures/entity/axolotl/axolotl_wild"

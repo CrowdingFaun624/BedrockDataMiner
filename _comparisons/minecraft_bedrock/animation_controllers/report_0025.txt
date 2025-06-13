@@ -1,14 +1,37 @@
-Difference of "animation_controllers" between "1.14.0.4" (beta of "1.14.0") and "1.14.0.6" (beta of "1.14.0").
-Unable to create data files for 1 file between: "1.14.0.5"
+Difference of "animation_controllers" between "1.15.0.51" (beta of "1.16.0") and "1.15.0.53" (beta of "1.16.0").
 
-Changed file "player.animation_controllers.json":
+Total file: 50 (+1, -0)
+Added file "drowned.animation_controllers.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "animation_controllers":
+			animation controller "controller.animation.drowned.attack.rotations":
+				field "initial_state": "default"
+				field "states":
+					state "default":
+						field "animations": animation dict "zombie_attack_bare_hand"
+						field "transitions":
+							transition list transition "one_hand_attack": "query.is_item_equipped('off_hand')"
+							transition list transition "spear_attack": "variable.is_brandishing_spear && !query.is_item_equipped('off_hand')"
+					state "one_hand_attack":
+						field "animations": animation dict "attack_rotations"
+						field "transitions":
+							transition list transition "default": "!query.is_item_equipped('off_hand')"
+							transition list transition "spear_attack": "variable.is_brandishing_spear && !query.is_item_equipped('off_hand')"
+					state "spear_attack":
+						field "animations":
+							animation dict "zombie_attack_bare_hand"
+							animation dict "attack_rotations"
+						field "transitions":
+							transition list transition "default": "!query.is_item_equipped('off_hand') && !variable.is_brandishing_spear"
+							transition list transition "one_hand_attack": "query.is_item_equipped('off_hand')"
+Changed file "zombie.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.player.root":
+			Changed animation controller "controller.animation.zombie.swimming":
 				Changed field "states":
-					Changed state "first_person":
+					Changed state "is_swimming":
 						Changed field "animations":
-							Total animation dict: 7 (+1, -0)
-							Changed animation dict:
-								Moved animation from "first_person_base_pose" to "first_person_empty_hand".
-							Added animation dict "first_person_base_pose".
+							Total animation dict: 1 (+1, -1)
+							Removed animation dict "zombie_swimming".
+							Added animation dict "swimming".

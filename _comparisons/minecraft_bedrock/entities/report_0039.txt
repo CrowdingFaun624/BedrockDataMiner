@@ -1,294 +1,446 @@
-Difference of "entities" between "1.2.20.1" (beta of "1.4.0") and "1.2.20.2" (beta of "1.4.0").
+Difference of "entities" between "1.5.0.1" (beta of "1.5.0") and "1.5.0.4" (beta of "1.5.0").
 
-Changed entity "bat.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:bat".
-				Changed component "minecraft:behavior.float_wander":
-					Moved field from "xz_distance" to "xz_dist".
-					Moved field from "y_distance" to "y_dist".
+Total entity: 89 (+1, -0)
 Changed entity "dolphin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:dolphin_adult":
-					Total component: 2 (+0, -1)
-					Removed component "minecraft:bribeable":
-						field "bribeItems":
-							item "fish"
-							item "salmon"
 				Changed component group "minecraft:dolphin_on_land":
 					Changed component "minecraft:navigation.generic":
-						Changed field "can_float" from false to true.
-				Changed component group "minecraft:dolphin_swimming_navigation":
+						Changed field "can_swim" from false to true.
+				Changed component group "minecraft:dolphin_on_land_in_rain":
 					Changed component "minecraft:navigation.generic":
-						Added field "can_sink": false.
+						Changed field "can_swim" from false to true.
 			Changed field "components":
-				Total component: 22 (+0, -5)
-				Removed component "minecraft:flocking":
-					field "in_water": false
-					field "low_flock_limit": 4
-					field "high_flock_limit": 8
-					field "loner_chance": 0.1
-					field "goal_weight": 2.0
-					field "terrain_avoid_distance": 0.0
-					field "breach_influence": 0.0
-					field "influence_radius": 6.0
-					field "separation_weight": 0.65
-					field "separation_threshold": 2.0
-					field "cohesion_weight": 2.75
-					field "cohesion_threshold": 3.5
-					field "min_height": 4
-					field "max_height": 4
-					field "block_distance": 1.0
-					field "block_weight": 0.75
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 1.0 to 0.9.
 				Unchanged component "minecraft:identifier": field "id": "minecraft:dolphin".
-				Removed component "minecraft:movement.dolphin": empty.
-				Removed component "minecraft:behavior.breathe_air": field "priority": 1.
-				Removed component "minecraft:behavior.follow_flock":
-					field "priority": 3
-					field "speed_multiplier": 0.12
-				Changed component "minecraft:behavior.random_swim":
-					Changed field "interval" from 30 to 0.
-				Removed component "minecraft:behavior.swim_with_mob":
-					field "priority": 4
-					field "search_range": 20
-					field "speed_multiplier": 0.5
-					field "stop_distance": 5.0
-					field "entity_types":
-						entity type:
+Changed entity "drowned.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 25 (+1, -0)
+				Unchanged component "minecraft:identifier": field "id": "minecraft:drowned".
+				Changed component "minecraft:behavior.move_towards_restriction":
+					Changed field "priority" from 4 to 5.
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -0)
+						Added entity type:
 							field "filters":
-								filter property "test": "is_family"
-								filter property "subject": "other"
-								filter property "value": "player"
-Changed entity "elder_guardian.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 21 (+2, -1)
-				Unchanged component "minecraft:identifier": field "id": "minecraft:elder_guardian".
-				Added component "minecraft:navigation.generic":
-					field "is_amphibious": true
-					field "can_float": false
-					field "can_swim": true
-					field "can_walk": false
-					field "can_breach": true
-				Removed component "minecraft:navigation.swim": empty.
-				Added component "minecraft:underwater_movement": field "value": 0.3.
-Changed entity "fish.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 17 (+0, -3)
-				Removed component "minecraft:bucketable": empty.
-				Removed component "minecraft:flocking":
-					field "in_water": true
-					field "low_flock_limit": 4
-					field "high_flock_limit": 8
-					field "loner_chance": 0.1
-					field "goal_weight": 2.0
-					field "breach_influence": 7.0
-					field "influence_radius": 3.0
-					field "separation_weight": 0.65
-					field "separation_threshold": 0.15
-					field "cohesion_weight": 2.75
-					field "cohesion_threshold": 1.5
-					field "min_height": 1.5
-					field "max_height": 6.0
-					field "block_distance": 2.0
-					field "block_weight": 0.85
-				Unchanged component "minecraft:identifier": field "id": "minecraft:cod".
-				Changed component "minecraft:navigation.generic":
-					Added field "can_sink": false.
-				Changed component "minecraft:physics":
-					Added field "has_gravity": false.
-				Changed component "minecraft:type_family":
-					Changed field "family":
-						Total family: 2 (+1, -0)
-						Added family "fish".
-				Changed component "minecraft:underwater_movement":
-					Changed field "value" from 0.15 to 0.1.
-				Removed component "minecraft:behavior.follow_flock":
-					field "priority": 2
-					field "speed_multiplier": 0.12
-				Changed component "minecraft:behavior.random_swim":
-					Changed field "priority" from 4 to 3.
-					Moved field from "xz_distance" to "xz_dist".
-					Moved field from "y_distance" to "y_dist".
-				Changed component "minecraft:behavior.swim_idle":
-					Changed field "priority" from 3 to 5.
-				Changed component "minecraft:behavior.swim_wander":
-					Changed field "priority" from 5 to 4.
-					Added field "interval": 10.
-					Added field "look_ahead": 2.0.
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 35
+					Added field "reselect_targets": true.
+					Added field "must_see_forget_duration": 17.0.
+				Added component "minecraft:behavior.stomp_turtle_egg":
+					field "priority": 4
+					field "speed_multiplier": 1
+					field "search_range": 24
+					field "search_height": 3
+					field "goal_radius": 1.14
+					field "interval": 20
+			Changed field "events":
+				Total event: 7 (+1, -0)
+				Added event "minecraft:as_adult":
+					field "add":
+						field "component_groups":
+							component group "minecraft:adult_drowned"
+							component group "minecraft:melee_mode"
+				Changed event "minecraft:as_baby":
+					Removed field "remove":
+						field "component_groups":
+							component group "minecraft:mode_switcher"
+							component group "minecraft:ranged_mode"
 Changed entity "guardian.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 22 (+2, -1)
 				Unchanged component "minecraft:identifier": field "id": "minecraft:guardian".
-				Added component "minecraft:navigation.generic":
+				Changed component "minecraft:behavior.random_stroll":
+					Added field "interval": 80.
+Changed entity "husk.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 25 (+1, -0)
+				Unchanged component "minecraft:identifier": field "id": "minecraft:husk".
+				Changed component "minecraft:behavior.move_towards_restriction":
+					Changed field "priority" from 4 to 5.
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 35
+					Added field "reselect_targets": true.
+				Added component "minecraft:behavior.stomp_turtle_egg":
+					field "priority": 4
+					field "speed_multiplier": 1
+					field "search_range": 24
+					field "search_height": 3
+					field "goal_radius": 1.14
+					field "interval": 20
+Changed entity "ocelot.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:ocelot_wild":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "entity_types":
+							Total entity type: 2 (+1, -0)
+							Added entity type:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "baby_turtle"
+										filter:
+											filter property "test": "in_water"
+											filter property "subject": "other"
+											filter property "operator": "!="
+											filter property "value": true
+								field "max_dist": 8
+						Added field "reselect_targets": true.
+Changed entity "skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeleton".
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 16
+					Added field "reselect_targets": true.
+Changed entity "stray.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:stray".
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 16
+					Added field "reselect_targets": true.
+Changed entity "thrown_trident.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:thrown_trident".
+				Changed component "minecraft:projectile":
+					Changed field "uncertaintyBase" from 0 to 1.
+					Added field "multipletargets": false.
+Added entity "turtle.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "format_version": "1.2.0"
+			field "component_groups":
+				component group "minecraft:adult":
+					component "minecraft:breedable":
+						field "requireTame": false
+						field "causes_pregnancy": true
+						field "breedsWith":
+							field "mateType": "minecraft:turtle"
+							field "babyType": "minecraft:turtle"
+							field "breed_event":
+								field "event": "minecraft:become_pregnant"
+								field "target": "self"
+						field "breedItems": item "seagrass"
+					component "minecraft:collision_box":
+						field "width": 1.2
+						field "height": 0.4
+					component "minecraft:loot": field "table": "loot_tables/entities/sea_turtle.json"
+					component "minecraft:type_family": field "family": family "turtle"
+					component "minecraft:underwater_movement": field "value": 0.12
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.move_to_land":
+						field "priority": 6
+						field "search_range": 16
+						field "search_height": 5
+						field "goal_radius": 0.5
+					component "minecraft:behavior.random_stroll":
+						field "priority": 9
+						field "interval": 100
+				component group "minecraft:baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feedItems": item "seagrass"
+						field "drop_items": item "turtle_shell_piece"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:collision_box":
+						field "width": 0.6
+						field "height": 0.2
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:type_family":
+						field "family":
+							family "baby_turtle"
+							family "turtle"
+					component "minecraft:underwater_movement": field "value": 0.06
+					component "minecraft:behavior.move_to_water":
+						field "priority": 1
+						field "search_range": 15
+						field "search_height": 5
+						field "goal_radius": 0.1
+				component group "minecraft:pregnant":
+					component "minecraft:behavior.go_home":
+						field "priority": 1
+						field "speed_multiplier": 1.0
+						field "interval": 700
+						field "goal_radius": 4.0
+						field "on_home":
+							field "event": "minecraft:go_lay_egg"
+							field "target": "self"
+				component group "minecraft:wants_to_lay_egg":
+					component "minecraft:behavior.lay_egg":
+						field "priority": 1
+						field "speed_multiplier": 1.0
+						field "search_range": 16
+						field "search_height": 4
+						field "goal_radius": 1.0
+						field "on_lay":
+							field "event": "minecraft:laid_egg"
+							field "target": "self"
+			field "components":
+				component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+					field "breathesWater": true
+					field "breathesAir": true
+					field "generatesBubbles": false
+				component "minecraft:follow_range": field "value": 1024
+				component "minecraft:health": field "value": 30
+				component "minecraft:home": empty
+				component "minecraft:identifier": field "id": "minecraft:turtle"
+				component "minecraft:jump.static": empty
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.amphibious": field "max_turn": 5.0
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
 					field "is_amphibious": true
 					field "can_float": false
 					field "can_swim": true
-					field "can_walk": false
-					field "can_breach": true
-				Removed component "minecraft:navigation.swim": empty.
-				Added component "minecraft:underwater_movement": field "value": 0.12.
-Changed entity "iron_golem.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:iron_golem".
-				Changed component "minecraft:behavior.random_stroll":
-					Moved field from "xz_distance" to "xz_dist".
-Changed entity "parrot.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:parrot_wild":
-					Changed component "minecraft:behavior.random_fly":
-						Moved field from "xz_distance" to "xz_dist".
-						Moved field from "y_distance" to "y_dist".
-Changed entity "pufferfish.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:pufferfish_deflated":
-					Total component: 2 (+1, -0)
-					Added component "minecraft:underwater_movement": field "value": 0.13.
-				Changed component group "minecraft:pufferfish_puffed":
-					Total component: 2 (+1, -0)
-					Changed component "minecraft:movement":
-						Changed field "value" from 0.05 to 0.13.
-					Added component "minecraft:underwater_movement": field "value": 0.13.
-			Changed field "components":
-				Total component: 13 (+1, -2)
-				Removed component "minecraft:bucketable": empty.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:pufferfish".
-				Changed component "minecraft:movement.sway":
-					Removed field "value": 0.1.
-					Removed field "max_turn": 6.0.
-					Changed field "sway_amplitude" from 0.02 to 0.0.
-				Added component "minecraft:navigation.generic":
-					field "is_amphibious": false
-					field "can_float": false
-					field "can_swim": true
-					field "can_walk": false
-					field "can_breach": false
+					field "can_walk": true
 					field "can_sink": false
-				Removed component "minecraft:navigation.swim": field "can_sink": false.
-				Changed component "minecraft:physics":
-					Added field "has_gravity": false.
-				Changed component "minecraft:type_family":
-					Changed field "family":
-						Total family: 2 (+1, -0)
-						Added family "pufferfish".
-				Changed component "minecraft:behavior.random_swim":
-					Changed field "speed_multiplier" from 0.13 to 1.0.
-					Moved field from "xz_distance" to "xz_dist".
-					Moved field from "y_distance" to "y_dist".
-				Changed component "minecraft:behavior.swim_wander":
-					Changed field "speed_multiplier" from 0.014 to 1.0.
-					Added field "interval": 0.
-					Added field "look_ahead": 2.0.
-Changed entity "rabbit.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:rabbit".
-				Changed component "minecraft:behavior.random_stroll":
-					Moved field from "xz_distance" to "xz_dist".
-					Moved field from "y_distance" to "y_dist".
-Changed entity "salmon.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 15 (+0, -3)
-				Removed component "minecraft:bucketable": empty.
-				Removed component "minecraft:flocking":
-					field "in_water": true
-					field "low_flock_limit": 4
-					field "high_flock_limit": 8
-					field "loner_chance": 0.1
-					field "goal_weight": 2.0
-					field "breach_influence": 7.0
-					field "influence_radius": 3.0
-					field "separation_weight": 0.65
-					field "separation_threshold": 0.15
-					field "cohesion_weight": 2.2
-					field "cohesion_threshold": 1.5
-					field "min_height": 4
-					field "max_height": 4
-					field "block_distance": 1.0
-					field "block_weight": 0.75
-				Unchanged component "minecraft:identifier": field "id": "minecraft:salmon".
-				Changed component "minecraft:navigation.generic":
-					Added field "can_sink": false.
-				Changed component "minecraft:physics":
-					Added field "has_gravity": false.
-				Changed component "minecraft:type_family":
-					Changed field "family":
-						Total family: 2 (+1, -0)
-						Added family "salmon".
-				Changed component "minecraft:behavior.random_swim":
-					Changed field "priority" from 4 to 3.
-					Moved field from "xz_distance" to "xz_dist".
-					Moved field from "y_distance" to "y_dist".
-				Removed component "minecraft:behavior.river_follow":
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "priority": 8
+					field "target_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.move_to_water":
+					field "priority": 4
+					field "search_range": 16
+					field "search_height": 5
+					field "goal_radius": 0.1
+				component "minecraft:behavior.panic":
+					field "priority": 0
+					field "prefer_water": true
+					field "speed_multiplier": 1.2
+				component "minecraft:behavior.random_swim":
+					field "priority": 7
+					field "interval": 0
+					field "xz_dist": 30
+					field "y_dist": 15
+				component "minecraft:behavior.tempt":
 					field "priority": 3
-					field "look_ahead": 2.0
-					field "follow_speed": 0.14
-				Changed component "minecraft:behavior.swim_idle":
-					Changed field "priority" from 4 to 5.
-				Changed component "minecraft:behavior.swim_wander":
-					Changed field "priority" from 5 to 4.
-					Added field "interval": 60.
-Changed entity "tropicalfish.json":
+					field "speed_multiplier": 1.1
+					field "items": item "seagrass"
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group "minecraft:adult"
+					field "remove": field "component_groups": component group "minecraft:baby"
+				event "minecraft:become_pregnant": field "add": field "component_groups": component group "minecraft:pregnant"
+				event "minecraft:entity_born": field "add": field "component_groups": component group "minecraft:baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "weight": 9
+							field "add": field "component_groups": component group "minecraft:adult"
+						randomize item:
+							field "weight": 1
+							field "add": field "component_groups": component group "minecraft:baby"
+				event "minecraft:go_lay_egg":
+					field "add": field "component_groups": component group "minecraft:wants_to_lay_egg"
+					field "remove": field "component_groups": component group "minecraft:pregnant"
+				event "minecraft:laid_egg": field "remove": field "component_groups": component group "minecraft:wants_to_lay_egg"
+Changed entity "wither.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 17 (+0, -3)
-				Removed component "minecraft:bucketable": empty.
-				Removed component "minecraft:flocking":
-					field "in_water": true
-					field "match_variants": true
-					field "low_flock_limit": 5
-					field "high_flock_limit": 10
-					field "loner_chance": 0.0
-					field "goal_weight": 2.0
-					field "breach_influence": 7.0
-					field "influence_radius": 3.0
-					field "separation_weight": 0.65
-					field "separation_threshold": 0.15
-					field "cohesion_weight": 2.2
-					field "cohesion_threshold": 0.9
-					field "min_height": 1.5
-					field "max_height": 6.0
-					field "block_distance": 2.0
-					field "block_weight": 0.85
-				Unchanged component "minecraft:identifier": field "id": "minecraft:tropicalfish".
-				Changed component "minecraft:navigation.generic":
-					Added field "can_sink": false.
-				Changed component "minecraft:physics":
-					Added field "has_gravity": false.
-				Changed component "minecraft:type_family":
-					Changed field "family":
-						Total family: 2 (+1, -0)
-						Added family "tropicalfish".
-				Changed component "minecraft:underwater_movement":
-					Changed field "value" from 0.15 to 0.12.
-				Removed component "minecraft:behavior.follow_flock":
-					field "priority": 2
-					field "speed_multiplier": 0.05
-				Changed component "minecraft:behavior.random_swim":
-					Changed field "priority" from 4 to 3.
-					Moved field from "xz_distance" to "xz_dist".
-					Moved field from "y_distance" to "y_dist".
-				Changed component "minecraft:behavior.swim_idle":
-					Changed field "priority" from 3 to 5.
-				Changed component "minecraft:behavior.swim_wander":
-					Changed field "priority" from 5 to 4.
-					Added field "interval": 10.
-					Added field "look_ahead": 2.0.
+				Total component: 25 (+1, -0)
+				Added component "minecraft:damage_sensor":
+					trigger:
+						field "on_damage":
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "undead"
+						field "deals_damage": false
+				Unchanged component "minecraft:identifier": field "id": "minecraft:wither".
+Changed entity "wither_skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:wither_skeleton".
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 16
+					Added field "reselect_targets": true.
+Changed entity "wolf.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:wolf_wild":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "entity_types":
+							Total entity type: 2 (+1, -0)
+							Added entity type:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "baby_turtle"
+										filter:
+											filter property "test": "in_water"
+											filter property "subject": "other"
+											filter property "operator": "!="
+											filter property "value": true
+								field "max_dist": 16
+						Added field "reselect_targets": true.
+Changed entity "zombie.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:convert_to_drowned":
+					Changed component "minecraft:transformation":
+						Changed field "into" from "minecraft:drowned" to "minecraft:drowned<minecraft:as_adult>".
+			Changed field "components":
+				Total component: 24 (+1, -0)
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie".
+				Changed component "minecraft:behavior.move_towards_restriction":
+					Changed field "priority" from 4 to 5.
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 35
+					Added field "reselect_targets": true.
+					Added field "must_see_forget_duration": 17.0.
+				Added component "minecraft:behavior.stomp_turtle_egg":
+					field "priority": 4
+					field "speed_multiplier": 1
+					field "search_range": 24
+					field "search_height": 3
+					field "goal_radius": 1.14
+					field "interval": 20
+Changed entity "zombie_pigman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 26 (+1, -0)
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_pigman".
+				Changed component "minecraft:behavior.move_towards_restriction":
+					Changed field "priority" from 4 to 5.
+				Added component "minecraft:behavior.stomp_turtle_egg":
+					field "priority": 4
+					field "speed_multiplier": 1
+					field "search_range": 24
+					field "search_height": 3
+					field "goal_radius": 1.14
+					field "interval": 20
+Changed entity "zombie_villager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_villager".
+				Changed component "minecraft:behavior.nearest_attackable_target":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -0)
+						Added entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 35
+					Added field "reselect_targets": true.

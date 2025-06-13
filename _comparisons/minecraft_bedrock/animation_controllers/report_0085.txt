@@ -1,28 +1,28 @@
-Difference of "animation_controllers" between "1.20.40.21" (beta of "1.20.40") and "1.20.40.22" (beta of "1.20.40").
+Difference of "animation_controllers" between "1.20.60.21" (beta of "1.20.60") and "1.20.60.22" (beta of "1.20.60").
 
-Changed file "camel.animation_controllers.json":
-	Changed resource pack "core":
+Changed file "breeze.animation_controllers.json":
+	Changed resource pack "experimental":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.camel.general":
+			Changed animation controller "controller.animation.breeze.ground_particles":
 				Changed field "states":
-					Changed state "dashing":
+					Changed state "default":
 						Changed field "transitions":
 							Total transition list: 2 (+2, -2)
-							Removed transition list transition "idling": "(query.is_on_ground || query.is_in_water || query.is_riding) && !variable.moving".
-							Removed transition list transition "moving": "(query.is_on_ground || query.is_in_water || query.is_riding) && variable.moving".
-							Added transition list transition "idling": "(query.is_on_ground || query.is_in_water || query.is_in_lava || query.is_riding) && !variable.moving".
-							Added transition list transition "moving": "(query.is_on_ground || query.is_in_water || query.is_in_lava || query.is_riding) && variable.moving".
+							Removed transition list transition "idling": "!query.is_moving && query.is_on_ground && query.vertical_speed > -2".
+							Removed transition list transition "moving": "query.is_moving && query.is_on_ground && query.vertical_speed > -2".
+							Added transition list transition "idling": "!query.is_moving && query.is_on_ground && query.vertical_speed > -2 && !query.is_riding".
+							Added transition list transition "moving": "query.is_moving && query.is_on_ground && query.vertical_speed > -2 && !query.is_riding".
 					Changed state "idling":
 						Changed field "transitions":
-							Total transition list: 3 (+1, -1)
-							Removed transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_riding".
-							Added transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_in_lava && !query.is_riding".
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "default": "!query.is_on_ground".
+							Removed transition list transition "moving": "query.is_moving && query.is_on_ground".
+							Added transition list transition "default": "!query.is_on_ground || query.is_riding".
+							Added transition list transition "moving": "query.is_moving && query.is_on_ground && !query.is_riding".
 					Changed state "moving":
-						Changed field "animations":
-							Total animation dict: 1 (+1, -1)
-							Removed animation dict animation "moving": "math.min(1.0, math.lerp(0.2, 1.5, query.modified_move_speed))".
-							Added animation dict animation "moving": "math.min(1.0, math.lerp(0.4, 1.25, query.modified_move_speed))".
 						Changed field "transitions":
-							Total transition list: 3 (+1, -1)
-							Removed transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_riding".
-							Added transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_in_lava && !query.is_riding".
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "default": "!query.is_on_ground".
+							Removed transition list transition "idling": "!query.is_moving && query.is_on_ground".
+							Added transition list transition "default": "!query.is_on_ground || query.is_riding".
+							Added transition list transition "idling": "!query.is_moving && query.is_on_ground && !query.is_riding".

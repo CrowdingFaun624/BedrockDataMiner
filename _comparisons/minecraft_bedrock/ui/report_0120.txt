@@ -1,98 +1,75 @@
-Difference of "ui" between "1.11.0.7" (beta of "1.11.0") and "1.11.0.8" (beta of "1.11.0").
+Difference of "ui" between "1.12.0.3" (beta of "1.12.0") and "1.12.0.4" (beta of "1.12.0").
 
-Changed namespace "common":
-	Changed element "static_tooltip_popup_with_image_and_text@common.tooltip_background":
-		Changed field "controls":
-			Changed control:
-				Changed element "image_and_text_stack_panel":
-					Unchanged field "type": "stack_panel".
-					Changed field "controls":
-						Total control: 3 (+1, -1)
-						Removed control:
-							element "tooltip_text":
-								field "type": "label"
-								field "size": ["fill", "default"]
-								field "text": "$tooltip_text_binding_name"
-								field "color": "$tooltip_text_color"
-								field "bindings":
-									binding:
-										field "binding_name": "$tooltip_text_binding_name"
-										field "binding_collection_name": "$tooltip_button_collection_name"
-										field "binding_type": "$tooltip_button_binding_type"
-										field "binding_condition": "visibility_changed"
-								field "$variables":
-									variable "$tooltip_text_binding_name|default": "#tooltip_text"
-									variable "$tooltip_text_color|default": "$f_color_format"
-						Added control:
-							element "tooltip_text_panel":
-								field "type": "panel"
-								field "size": ["fill", 20]
-								field "controls":
-									control:
-										element "tooltip_text":
-											field "type": "label"
-											field "size": ["100%", "default"]
-											field "max_size": ["100%", "100%"]
-											field "text": "$tooltip_text_binding_name"
-											field "color": "$tooltip_text_color"
-											field "bindings":
-												binding:
-													field "binding_name": "$tooltip_text_binding_name"
-													field "binding_collection_name": "$tooltip_button_collection_name"
-													field "binding_type": "$tooltip_button_binding_type"
-													field "binding_condition": "visibility_changed"
-											field "$variables":
-												variable "$tooltip_text_binding_name|default": "#tooltip_text"
-												variable "$tooltip_text_color|default": "$f_color_format"
-Changed namespace "mashup":
-	Changed element "interaction_button_panel":
+Changed namespace "enchanting_pocket":
+	Changed element "enchanting_book_panel":
 		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "content_action_button@common_buttons.light_content_button":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "binding_name" from "#action_button_visible" to "$action_button_visible_binding".
-					Changed field "$variables":
-						Total variable: 5 (+1, -0)
-						Added variable "$action_button_visible_binding|default": "#action_button_visible".
-	Changed element "purchase_buttons_panel":
+				Changed element "enchanting_book":
+					Unchanged field "type": "custom".
+					Added field "layer": -1.
+Changed namespace "game_tip":
+	Changed element "game_tip_item_panel":
 		Unchanged field "type": "stack_panel".
-		Changed field "bindings":
-			Changed binding:
-				Changed field "binding_name" from "#purchase_panel_visible" to "$purchase_button_visible".
-		Changed field "$variables":
-			Total variable: 4 (+1, -0)
-			Added variable "$purchase_button_visible|default": "#purchase_panel_visible".
-	Changed element "ratings_content":
-		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "content_and_button":
+				Changed element "info_bulb":
+					Unchanged field "type": "image".
+					Changed field "size":
+						Changed item 0 from 12 to 15.
+						Changed item 1 from 14 to 19.
+			Changed control:
+				Changed element "label_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "ratings_interact_panel":
+							Changed element "padding_vertical":
 								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "ratings_interact@mashup.interaction_button_panel":
-											Changed field "$variables":
-												Total variable: 7 (+2, -0)
-												Added variable "$action_button_visible_binding": "#ratings_button_visible".
-												Added variable "$purchase_button_visible": "#rating_section_purchase_button_visible".
-Changed namespace "settings_common":
-	Changed element "option_text_edit_control@common.text_edit_box":
-		Changed field "$variables":
-			Total variable: 9 (+1, -0)
-			Added variable "$tts_override_control_value|default": " ".
-		Added field "tts_override_control_value": "$tts_override_control_value".
-Changed namespace "world_section":
-	Changed element "game_section":
+								Changed field "size":
+									Unchanged item 0: 0.
+									Changed item 1 from 2 to 3.
+	Changed element "inventory_game_tip_panel":
+		Unchanged field "type": "panel".
+		Changed field "variables":
+			Total variable: 7 (+0, -1)
+			Changed variable:
+				Changed field "requires" from "((not $up_enabled and $is_recipe) and $pocket_screen)" to "((not $up_enabled and $is_recipe or $is_close)) and $pocket_screen)".
+			Removed variable:
+				field "requires": "(($is_close) and $pocket_screen)"
+				field "$variables":
+					variable "$chevron_offset":
+						item 0: 0
+						item 1: -20
+	Changed element "inventory_tip_horizontal_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "option_text_edit_1@settings_common.option_text_edit":
-					Changed field "$variables":
-						Total variable: 6 (+1, -0)
-						Added variable "$tts_override_control_value": " ".
+				Changed element "inventory_tip@game_tip.game_tip_item_background":
+					Changed field "variables":
+						Total variable: 4 (+1, -0)
+						Added variable:
+							field "requires": "($is_close and $pocket_screen)"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 120
+									item 1: "default"
+								variable "$tip_min_size":
+									item 0: 120
+									item 1: "default"
+Changed namespace "general_section":
+	Changed element "vr_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "things_to_hide_while_playing_in_living_room_mode":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 16 (+0, -1)
+						Removed control:
+							element "dev_show_latency_graph_toggle@settings_common.option_toggle":
+								field "ignored": "($is_mobile_vr and $is_publish)"
+								field "$variables":
+									variable "$option_label": "options.vrRollTurning"
+									variable "$option_binding_name": "#vr_roll_turn"
+									variable "$option_enabled_binding_name": "#vr_roll_turn_enabled"
+									variable "$toggle_name": "vr_roll_turn"

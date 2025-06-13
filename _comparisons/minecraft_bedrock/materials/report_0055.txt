@@ -1,70 +1,34 @@
-Difference of "materials" between "1.4.4" and "1.5.0.0" (beta of "1.5.0").
+Difference of "materials" between "1.5.0.0" (beta of "1.5.0") and "1.5.0.1" (beta of "1.5.0").
 
-Changed material "terrain.material":
+Changed material "entity.material":
 	Changed resource pack "core":
 		Changed field "materials":
-			Total material: 14 (+0, -2)
-			Changed material "terrain_blend:terrain_base":
-				Changed field "+variants":
-					Total variant: 2 (+1, -1)
-					Removed variant:
-						material "underwater":
-							field "+states":
-								statement "EnableStencilTest"
-								statement "InvertCulling"
-					Added variant material "underwater": empty.
-			Removed material "terrain_water:terrain_blend":
-				field "+defines": definition "NEAR_WATER"
-				field "+states": statement "Blending"
-				field "depthBias": 0.0
-				field "slopeScaledDepthBias": 0.1
-				field "depthBiasOGL": 0.0
-				field "slopeScaledDepthBiasOGL": 0.5
-				field "+variants":
-					variant:
-						material "underwater":
-							field "+states":
-								statement "EnableStencilTest"
-								statement "InvertCulling"
-					variant:
-						material "fog.underwater":
-							field "+states":
-								statement "EnableStencilTest"
-								statement "InvertCulling"
-			Removed material "terrain_water_below_stencil":
-				field "vertexShader": "shaders/renderchunk.vertex"
-				field "vrGeometryShader": "shaders/renderchunk.geometry"
-				field "fragmentShader": "shaders/renderchunk.fragment"
-				field "+states":
-					statement "DisableColorWrite"
-					statement "DisableDepthWrite"
-					statement "EnableStencilTest"
-					statement "InvertCulling"
-					statement "StencilWrite"
-				field "+defines": definition "BYPASS_PIXEL_SHADER"
+			Total material: 148 (+2, -0)
+			Added material "conduit:entity_alphatest": empty.
+			Added material "conduit_wind:entity_alphatest":
+				field "+defines": definition "USE_UV_ANIM"
 				field "+samplerStates":
 					sampler state:
 						field "samplerIndex": 0
-						field "textureFilter": "TexelAA"
-					sampler state:
-						field "samplerIndex": 1
-						field "textureFilter": "Bilinear"
-				field "msaaSupport": "Both"
+						field "textureWrap": "Repeat"
+Changed material "ui.material":
+	Changed resource pack "core":
+		Changed field "materials":
+			Total material: 30 (+2, -1)
+			Added material "ui_conduit:ui_mob_head": empty.
+			Removed material "ui_dragon_head:ui_item":
+				field "vertexShader": "shaders/entity.vertex"
+				field "vrGeometryShader": "shaders/entity.geometry"
+				field "fragmentShader": "shaders/entity.fragment"
+				field "+states": statement "Blending"
+				field "+defines": definition "UI_ENTITY"
 				field "vertexFields":
 					vertex field field "field": "Position"
-					vertex field field "field": "UV1"
-					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
 					vertex field field "field": "UV0"
-				field "frontFace":
-					field "stencilFunc": "Always"
-					field "stencilFailOp": "Keep"
-					field "stencilDepthFailOp": "Keep"
-					field "stencilPassOp": "Replace"
-				field "backFace":
-					field "stencilFunc": "Always"
-					field "stencilFailOp": "Keep"
-					field "stencilDepthFailOp": "Keep"
-					field "stencilPassOp": "Replace"
-				field "stencilRef": 2
-				field "stencilReadMask": 255
-				field "stencilWriteMask": 2
+				field "msaaSupport": "Both"
+				field "+samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureFilter": "Point"
+			Added material "ui_dragon_head:ui_mob_head": empty.

@@ -1,88 +1,11 @@
-Difference of "attachables" between "1.16.210.57" (beta of "1.16.210") and "1.16.210.58" (beta of "1.16.210").
+Difference of "attachables" between "1.16.221" and "1.16.230.50" (beta of "1.17.0").
 
-Total attachable: 55 (+3, -0)
-Changed attachable "bow.json":
-	Changed field "format_version" from "1.10" to "1.10.0".
+Changed attachable "shield.entity.json":
 	Changed field "minecraft:attachable":
 		Changed field "description":
-			Unchanged field "identifier": "minecraft:bow".
-			Added field "animations":
-				animation "wield": "animation.bow.wield"
-				animation "wield_first_person_pull": "animation.bow.wield_first_person_pull"
-			Changed field "scripts":
-				Removed situation "initialize": script "variable.anim_frame = 0;".
-				Removed situation "pre_animation":
-					script "variable.anim_frame = (query.item_remaining_use_duration / query.item_max_use_duration);"
-					script "variable.anim_frame = math.min(((variable.anim_frame * variable.anim_frame) + variable.anim_frame * 2.0), 2.0);"
-				Added situation "animate":
-					script "wield"
-					script field "wield_first_person_pull": "query.main_hand_item_use_duration > 0.0f && c.is_first_person"
-Added attachable "crossbow.entity.json":
-	field "format_version": "1.10.0"
-	field "minecraft:attachable":
-		field "description":
-			field "identifier": "minecraft:crossbow"
-			field "animations": animation "wield": "animation.crossbow.wield"
-			field "geometry":
-				geometry "crossbow_arrow": "geometry.crossbow_arrow"
-				geometry "crossbow_pulling_0": "geometry.crossbow_pulling_0"
-				geometry "crossbow_pulling_1": "geometry.crossbow_pulling_1"
-				geometry "crossbow_pulling_2": "geometry.crossbow_pulling_2"
-				geometry "crossbow_rocket": "geometry.crossbow_rocket"
-				geometry "default": "geometry.crossbow_standby"
-			field "materials":
-				material "default": "entity_alphatest"
-				material "enchanted": "entity_alphatest_glint"
-			field "render_controllers": render controller "controller.render.crossbow"
-			field "scripts": situation "animate": script "wield"
-			field "textures":
-				texture "crossbow_arrow": "textures/items/crossbow_arrow"
-				texture "crossbow_pulling_0": "textures/items/crossbow_pulling_0"
-				texture "crossbow_pulling_1": "textures/items/crossbow_pulling_1"
-				texture "crossbow_pulling_2": "textures/items/crossbow_pulling_2"
-				texture "crossbow_rocket": "textures/items/crossbow_firework"
-				texture "default": "textures/items/crossbow_standby"
-				texture "enchanted": "textures/misc/enchanted_item_glint"
-Added attachable "shield.entity.json":
-	field "format_version": "1.10.0"
-	field "minecraft:attachable":
-		field "description":
-			field "identifier": "minecraft:shield"
-			field "animations":
-				animation "wield": "controller.animation.shield.wield"
-				animation "wield_first_person_block": "animation.shield.wield_first_person_blocking"
-				animation "wield_main_hand_first_person": "animation.shield.wield_main_hand_first_person"
-				animation "wield_off_hand_first_person": "animation.shield.wield_off_hand_first_person"
-				animation "wield_third_person": "animation.shield.wield_third_person"
-			field "geometry": geometry "default": "geometry.shield"
-			field "materials":
-				material "default": "entity_alphatest"
-				material "enchanted": "entity_alphatest_glint"
-			field "render_controllers": render controller "controller.render.item_default"
-			field "scripts": situation "animate": script "wield"
-			field "textures":
-				texture "default": "textures/entity/shield"
-				texture "enchanted": "textures/misc/enchanted_item_glint"
-Added attachable "trident.entity.json":
-	field "format_version": "1.10"
-	field "minecraft:attachable":
-		field "description":
-			field "identifier": "minecraft:trident"
-			field "animations":
-				animation "wield": "controller.animation.trident.wield"
-				animation "wield_first_person": "animation.trident.wield_first_person"
-				animation "wield_first_person_raise": "animation.trident.wield_first_person_raise"
-				animation "wield_first_person_riptide": "animation.trident.wield_first_person_riptide"
-				animation "wield_third_person": "animation.trident.wield_third_person"
-				animation "wield_third_person_raise": "animation.trident.wield_third_person_raise"
-			field "geometry": geometry "default": "geometry.trident"
-			field "materials":
-				material "default": "entity_alphatest"
-				material "enchanted": "entity_alphatest_glint"
-			field "render_controllers": render controller "controller.render.item_default"
-			field "scripts":
-				situation "pre_animation": script "variable.charge_amount = math.clamp((query.main_hand_item_max_duration - (query.main_hand_item_use_duration - query.frame_alpha + 1.0)) / 10.0, 0.0, 1.0f);"
-				situation "animate": script "wield"
-			field "textures":
-				texture "default": "textures/entity/trident"
-				texture "enchanted": "textures/misc/enchanted_item_glint"
+			Unchanged field "identifier": "minecraft:shield".
+			Changed field "animations":
+				Total animation: 6 (+2, -1)
+				Removed animation "wield_first_person_block": "animation.shield.wield_first_person_blocking".
+				Added animation "wield_main_hand_first_person_block": "animation.shield.wield_main_hand_first_person_blocking".
+				Added animation "wield_off_hand_first_person_block": "animation.shield.wield_off_hand_first_person_blocking".

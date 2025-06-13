@@ -1,4 +1,113 @@
-Difference of "particles" between "1.16.230.56" (beta of "1.17.0") and "1.17.0.50" (beta of "1.17.0").
+Difference of "particles" between "1.17.0.50" (beta of "1.17.0") and "1.17.0.52" (beta of "1.17.0").
 
-Changed particle "snowflake.json":
+Total particle: 132 (+1, -0)
+Changed particle "crop_growth.json":
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Total field: 8 (+1, -0)
+				Changed field "minecraft:emitter_initialization":
+					Changed field "creation_expression" from "variable.size = 0.1;variable.lifetime = 3;" to "variable.size = Math.random(0.08, 0.14);".
+				Changed field "minecraft:emitter_rate_instant":
+					Changed field "num_particles" from 15 to "Math.random(12, 18)".
+				Changed field "minecraft:emitter_shape_box":
+					Changed field "half_dimensions":
+						Changed vector item 0 from 0.5 to 0.4.
+						Changed vector item 1 from 0.5 to 0.4.
+						Changed vector item 2 from 0.5 to 0.4.
+					Changed field "direction" from "outwards" to ["Math.random(-0.6, 0.6)", 0.6, "Math.random(-0.6, 0.6)"].
+				Changed field "minecraft:particle_initial_speed" from 0.4 to 0.04.
+				Changed field "minecraft:particle_lifetime_expression":
+					Changed field "max_lifetime" from "variable.particle_random_1*variable.lifetime" to "2.0 + (Math.random(0.0, 4.0))".
+				Added field "minecraft:particle_motion_dynamic": empty.
+Added particle "crop_growth_area.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:crop_growth_area_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_initialization": field "creation_expression": "variable.size = Math.random(0.08, 0.14);"
+				field "minecraft:emitter_lifetime_once": field "active_time": 1
+				field "minecraft:emitter_rate_instant": field "num_particles": "Math.random(30, 40)"
+				field "minecraft:emitter_shape_box":
+					field "half_dimensions": [2.5, 0.5, 2.5]
+					field "direction": ["Math.random(-0.6, 0.6)", 0.6, "Math.random(-0.6, 0.6)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["variable.size", "variable.size"]
+					field "facing_camera_mode": "rotate_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "uv": [16, 40]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_initial_speed": 0.04
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "2.0 + (Math.random(0.0, 4.0))"
+				field "minecraft:particle_motion_dynamic": empty
+Changed particle "dripstone_lava_drip.json":
+	Moved resource pack from "experimental" to "core".
+Changed particle "dripstone_water_drip.json":
+	Moved resource pack from "experimental" to "core".
+Changed particle "electric_spark.json":
+	Moved resource pack from "experimental" to "core".
+Changed particle "glow.json":
+	Moved resource pack from "experimental" to "core".
+Changed particle "ink.json":
+	Total resource pack: 1 (+0, -1)
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Total field: 9 (+0, -1)
+				Removed field "minecraft:particle_appearance_lighting": empty.
+				Changed field "minecraft:particle_appearance_tinting":
+					Changed field "color":
+						Total color: 1 (+1, -1)
+						Removed color ["Math.random(0, 0.05)", "Math.random(0, 0.05)", "Math.random(0, 0.05)", 1.0].
+						Added color ["variable.color.r + Math.random(0, 0.05)", "variable.color.g + Math.random(0, 0.05)", "variable.color.b + Math.random(0, 0.05)", 1.0].
+	Removed resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:ink_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_expression":
+					field "activation_expression": "(variable.emitter_age > 0.45 ? 1.0 : 0.0)"
+					field "expiration_expression": "(variable.emitter_age > 10.0 ? 1.0 : 0.0)"
+				field "minecraft:emitter_rate_instant": field "num_particles": "variable.particlecount"
+				field "minecraft:emitter_shape_point": field "direction": ["variable.direction_vector.x + Math.random(0, 1) * variable.aabb_dimension.x * 2 - variable.aabb_dimension.x", "variable.direction_vector.y + 0.5 + Math.random(0, 1) * variable.aabb_dimension.y", "variable.direction_vector.z + Math.random(0, 1) * variable.aabb_dimension.x * 2 - variable.aabb_dimension.x"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["variable.particlesize", "variable.particlesize"]
+					field "facing_camera_mode": "rotate_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_tinting": field "color": color ["variable.color.r + Math.random(0, 0.05)", "variable.color.g + Math.random(0, 0.05)", "variable.color.b + Math.random(0, 0.05)", 1.0]
+				field "minecraft:particle_initial_speed": "(1.0 + Math.random(0, 1) + Math.random(0, 1))"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "(variable.particlesize * 4) / (Math.random(0.2, 1))"
+				field "minecraft:particle_motion_collision":
+					field "collision_drag": 4.0
+					field "coefficient_of_restitution": 0.0
+					field "collision_radius": 0.1
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0.0, "variable.is_outside_water * (-3)", 0.0]
+					field "linear_drag_coefficient": 1.5
+Changed particle "spore_blossom_ambient_block_actor.json":
+	Moved resource pack from "experimental" to "core".
+Changed particle "spore_blossom_shower.json":
+	Moved resource pack from "experimental" to "core".
+Changed particle "wax.json":
 	Moved resource pack from "experimental" to "core".

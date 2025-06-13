@@ -1,59 +1,272 @@
-Difference of "ui" between "1.20.73" and "1.20.80.20" (beta of "1.20.80").
+Difference of "ui" between "1.21.0.25" (beta of "1.21.0") and "1.21.0.26" (beta of "1.21.0").
 
-Changed namespace "chem_common_pocket":
-	Changed element "one_touch_button@common.container_slot_button_prototype":
-		Changed field "button_mappings":
-			Changed button mapping:
-				Changed field "to_button_id" from "button.shape_drawing" to "button.split_stack".
-Changed namespace "crafter_pocket":
-	Changed element "output_slot_hover_info":
-		Unchanged field "type": "button".
+Changed namespace "play":
+	Total element: 283 (+0, -9)
+	Removed element "anim_realms_stories_icon":
+		field "anim_type": "flip_book"
+		field "initial_uv": [0, 0]
+		field "frame_count": 13
+		field "fps": 4
+		field "looping": false
+		field "easing": "linear"
+		field "wait_until_rendered_to_play": true
+	Changed element "create_on_realms_button_panel":
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "output_slot@common.item_renderer":
-					Changed field "bindings":
-						Total binding: 7 (+6, -0)
-						Added binding:
-							field "binding_name": "#crafter_output_item_color"
-							field "binding_name_override": "#item_custom_color"
-						Added binding:
-							field "binding_name": "#crafter_output_item_shield_base_color_hovered"
-							field "binding_name_override": "#shield_base_color"
-						Added binding:
-							field "binding_name": "#crafter_output_item_banner_patterns"
-							field "binding_name_override": "#banner_patterns"
-						Added binding:
-							field "binding_name": "#crafter_output_item_banner_colors"
-							field "binding_name_override": "#banner_colors"
-						Added binding:
-							field "binding_name": "#crafter_output_item_banner_type"
-							field "binding_name_override": "#banner_type"
-						Added binding:
-							field "binding_name": "#crafter_output_item_decorated_pot_sherds"
-							field "binding_name_override": "#decorated_pot_sherds"
-Changed namespace "redstone":
-	Changed element "output_slot_hover_info":
-		Unchanged field "type": "button".
+				Moved element from "create_on_realms_button@settings_common.action_button_dark_text" to "create_on_realms_button@settings_common.action_button".
+	Changed element "feed_icon":
+		Unchanged field "type": "image".
+		Removed field "visible": "(not $is_realms_stories_enabled)".
+	Changed element "legacy_world_item":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 2 (+0, -1)
+			Removed control:
+				element "header_button_panel_with_migrate@play.header_button_panel":
+					field "ignored": "(not $legacy_worlds_supports_migration)"
+					field "layer": 1
+					field "size": ["100%", "100% + 1px"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "$variables":
+						variable "$primary_header_button": "play.legacy_world_item_button"
+						variable "$secondary_header_button": "play.legacy_world_migrate_button"
+			Changed control:
+				Changed element "header_button_panel_no_delete@play.header_single_button_panel":
+					Changed field "ignored" from "($legacy_worlds_share_storage or $legacy_worlds_supports_migration)" to "$legacy_worlds_share_storage".
+	Removed element "legacy_world_migrate_button@common_buttons.dark_glyph_button":
+		field "size": ["100%y - 1px", "100%"]
+		field "layer": 2
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "legacy_worlds"
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_legacy_world_item_migrate"
+			variable "$button_content": "play.world_download_icon"
+			variable "$button_tts_header": "accessibility.play.importWorld"
+	Changed element "local_world_item_grid@play.world_item_grid_base":
+		Changed field "grid_item_template" from "$world_item_grid_template" to "play.local_world_item".
+		Removed field "$variables": variable "$world_item_grid_template|default": "play.local_world_item".
+	Changed element "network_world_player_count":
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "output_slot@common.item_renderer":
+				Changed element "count@play.world_list_text":
 					Changed field "bindings":
-						Total binding: 7 (+6, -0)
-						Added binding:
-							field "binding_name": "#crafter_output_item_color"
-							field "binding_name_override": "#item_custom_color"
-						Added binding:
-							field "binding_name": "#crafter_output_item_shield_base_color_hovered"
-							field "binding_name_override": "#shield_base_color"
-						Added binding:
-							field "binding_name": "#crafter_output_item_banner_patterns"
-							field "binding_name_override": "#banner_patterns"
-						Added binding:
-							field "binding_name": "#crafter_output_item_selected_banner_colors"
-							field "binding_name_override": "#banner_colors"
-						Added binding:
-							field "binding_name": "#crafter_output_item_selected_banner_type"
-							field "binding_name_override": "#banner_type"
-						Added binding:
-							field "binding_name": "#crafter_output_item_selected_decorated_pot_sherds"
-							field "binding_name_override": "#decorated_pot_sherds"
+						Total binding: 1 (+0, -1)
+						Removed binding:
+							field "binding_type": "collection"
+							field "binding_name": "#network_world_player_count_visible"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "$collection_name"
+	Removed element "new_ui_servers_switch_button_options_panel":
+		field "type": "stack_panel"
+		field "ignored": "$education_edition"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "bindings":
+			binding:
+				field "binding_name": "#show_new_play_screen_servers_opt_in"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "unlock_template_options_button@settings_common.action_button":
+					field "size": ["100% - 1px", 30]
+					field "$variables":
+						variable "$button_text": "options.newUiPlayScreen.initiate"
+						variable "$pressed_button_name": "button.switch_to_new_ui_servers"
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	Removed element "persistent_realms_feed_button_control@common_buttons.new_ui_button_panel":
+		field "layer": 4
+		field "$variables":
+			variable "$new_ui_button_texture": "$default_button_texture"
+			variable "$glyph_color": "$dark_glyph_default_color"
+			variable "$border_color": "$dark_border_default_color"
+			variable "$button_press_offset":
+				item 0: 0
+				item 1: 0
+			variable "$border_layer": 2
+			variable "$border_alpha": 0
+			variable "$button_image_alpha": 0
+			variable "$content_alpha": 0
+			variable "$button_content": "play.realms_feed_button_content"
+	Moved element from "realms_feed_button@common_buttons.dark_glyph_button_with_custom_control" to "realms_feed_button@common_buttons.dark_glyph_button".
+	Changed element "realms_feed_button@common_buttons.dark_glyph_button":
+		Changed field "bindings":
+			Total binding: 5 (+1, -0)
+			Added binding:
+				field "binding_name": "#menu_realms_feed_enabled"
+				field "binding_name_override": "#enabled"
+				field "binding_collection_name": "$realms_worlds_collection_name"
+				field "binding_type": "collection"
+		Changed field "$variables":
+			Total variable: 3 (+1, -1)
+			Removed variable "$custom_control": "play.persistent_realms_feed_button_control".
+			Added variable "$button_content": "play.feed_icon".
+	Removed element "realms_feed_button_content":
+		field "type": "image"
+		field "controls":
+			control:
+				element "default_icon@play.realms_stories_icon":
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_name": "($is_realms_stories_enabled and not #realms_unread_story_count_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "$realms_worlds_collection_name"
+			control:
+				element "unread_icon_active@play.realms_stories_icon_animated":
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_name": "($is_realms_stories_enabled and #realms_unread_story_count_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "$realms_worlds_collection_name"
+			control element "old_feed_icon@play.feed_icon": empty
+	Removed element "realms_slots_edit_icon":
+		field "type": "image"
+		field "texture": "textures/ui/realmsSlotsEditIcon"
+		field "size": [22, 22]
+	Removed element "realms_stories_icon":
+		field "type": "image"
+		field "texture": "textures/ui/realmsStoriesIcon"
+		field "size": [22, 22]
+	Removed element "realms_stories_icon_animated":
+		field "type": "image"
+		field "texture": "textures/ui/realmsStoriesIconAnimated"
+		field "size": [22, 22]
+		field "uv_size": [22, 22]
+		field "uv": "@play.anim_realms_stories_icon"
+		field "disable_anim_fast_forward": true
+	Changed element "realms_world_edit_button@common_buttons.dark_glyph_button":
+		Removed field "variables":
+			variable:
+				field "requires": "$is_realms_stories_enabled"
+				field "$variables": variable "$button_content": "play.realms_slots_edit_icon"
+			variable:
+				field "requires": "(not $is_realms_stories_enabled)"
+				field "$variables": variable "$button_content": "play.edit_icon"
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Added variable "$button_content": "play.edit_icon".
+	Changed element "realms_world_item":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "feed_panel_with_unread_count":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Changed item 0 from "100%y - 1px" to "100%y".
+						Changed item 1 from "100% + 1px" to "100%".
+					Changed field "controls":
+						Changed control:
+							Changed element "feed_panel":
+								Unchanged field "type": "panel".
+								Changed field "size":
+									Changed item 0 from "100%y" to "100%c - 1px".
+									Changed item 1 from "100%" to "100% + 1px".
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 6 (+1, -0)
+						Added control element "server_content@$server_scroll_panel_content": empty.
+	Changed element "servers_content_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 4 (+0, -1)
+			Removed control element "new_ui_servers_switch_button_options_panel@play.new_ui_servers_switch_button_options_panel": empty.
+	Removed element "world_download_icon":
+		field "type": "image"
+		field "texture": "textures/ui/world_download"
+		field "size": [15, 16]
+	Changed element "world_list_label_with_color_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "colored_square_sizer":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "colored_square":
+								Changed field "ignored" from "(not $legacy_worlds_share_storage) and (not $legacy_worlds_supports_migration)" to "(not $legacy_worlds_share_storage)".
+								Unchanged field "type": "image".
+			Changed control:
+				Changed element "padding":
+					Changed field "ignored" from "(not $legacy_worlds_share_storage) and (not $legacy_worlds_supports_migration)" to "(not $legacy_worlds_share_storage)".
+					Unchanged field "type": "panel".
+	Changed element "worlds_scroll_content@play.common_content":
+		Changed field "controls":
+			Changed control:
+				Changed element "worlds_stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "scrolling_panel_legacy_storage_sizer":
+								Unchanged field "type": "panel".
+								Changed field "ignored" from "(not $legacy_worlds_share_storage) and (not $legacy_worlds_supports_migration)" to "(not $legacy_worlds_share_storage)".
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "realms_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "realms_previews_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "new_offers_icon@common_store.new_offer_icon":
+											Removed field "bindings":
+												binding:
+													field "binding_name": "#free_preview_realm_new_button_visible"
+													field "binding_name_override": "#visible"
+			Changed control:
+				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
+					Changed field "variables":
+						Total variable: 1 (+0, -1)
+						Removed variable:
+							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
+							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
+					Changed field "$variables":
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "legacy_world_item_grid@play.legacy_world_item_grid":
+					Changed field "variables":
+						Total variable: 1 (+0, -1)
+						Removed variable:
+							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
+							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
+					Removed field "variables":
+						variable:
+							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
+							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
+					Changed field "$variables":
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid":
+					Removed field "variables":
+						variable:
+							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
+							field "$variables": variable "$tts_section_header": "playscreen.upgradeRetailWorlds"
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+Changed namespace "realms_slots":
+	Changed element "realms_stories_icon_glyph":
+		Unchanged field "type": "image".
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "realms_stories_icon@play.realms_stories_icon": field "$variables": variable "$glyph_color": "$light_glyph_hover_color".
+			Added control element "realms_stories_icon@play.realms_stories_icon": field "$variables": variable "$glyph_color": "$light_glyph_hover_color".

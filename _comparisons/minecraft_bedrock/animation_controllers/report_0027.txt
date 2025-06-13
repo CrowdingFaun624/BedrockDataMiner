@@ -1,37 +1,39 @@
-Difference of "animation_controllers" between "1.15.0.51" (beta of "1.16.0") and "1.15.0.53" (beta of "1.16.0").
+Difference of "animation_controllers" between "1.16.0.55" (beta of "1.16.0") and "1.16.0.57" (beta of "1.16.0").
 
-Total file: 50 (+1, -0)
-Added file "drowned.animation_controllers.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "animation_controllers":
-			animation controller "controller.animation.drowned.attack.rotations":
-				field "initial_state": "default"
-				field "states":
-					state "default":
-						field "animations": animation dict "zombie_attack_bare_hand"
-						field "transitions":
-							transition list transition "one_hand_attack": "query.is_item_equipped('off_hand')"
-							transition list transition "spear_attack": "variable.is_brandishing_spear && !query.is_item_equipped('off_hand')"
-					state "one_hand_attack":
-						field "animations": animation dict "attack_rotations"
-						field "transitions":
-							transition list transition "default": "!query.is_item_equipped('off_hand')"
-							transition list transition "spear_attack": "variable.is_brandishing_spear && !query.is_item_equipped('off_hand')"
-					state "spear_attack":
-						field "animations":
-							animation dict "zombie_attack_bare_hand"
-							animation dict "attack_rotations"
-						field "transitions":
-							transition list transition "default": "!query.is_item_equipped('off_hand') && !variable.is_brandishing_spear"
-							transition list transition "one_hand_attack": "query.is_item_equipped('off_hand')"
-Changed file "zombie.animation_controllers.json":
+Changed file "piglin.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.zombie.swimming":
+			Total animation controller: 4 (+1, -0)
+			Added animation controller "controller.animation.piglin.admire":
+				field "initial_state": "default"
+				field "states":
+					state "admiring":
+						field "animations": animation dict "admire"
+						field "transitions": transition list transition "default": "!query.is_admiring"
+					state "default": field "transitions": transition list transition "admiring": "query.is_admiring"
+			Changed animation controller "controller.animation.piglin.attack":
 				Changed field "states":
-					Changed state "is_swimming":
-						Changed field "animations":
-							Total animation dict: 1 (+1, -1)
-							Removed animation dict "zombie_swimming".
-							Added animation dict "swimming".
+					Changed state "default":
+						Changed field "transitions":
+							Total transition list: 3 (+3, -3)
+							Removed transition list transition "ranged_hold": "query.variant == 0 && variable.attack_state == 1".
+							Removed transition list transition "ranged_charge": "query.variant == 0 && variable.attack_state == 2".
+							Removed transition list transition "melee_attack": "variable.has_target && query.variant == 1 && variable.attack_time >= 0.0".
+							Added transition list transition "ranged_hold": "query.variant == 0 && variable.attack_state == 1 && !query.is_admiring".
+							Added transition list transition "ranged_charge": "query.variant == 0 && variable.attack_state == 2 && !query.is_admiring".
+							Added transition list transition "melee_attack": "variable.has_target && query.variant == 1 && variable.attack_time >= 0.0 && !query.is_admiring".
+					Changed state "melee_attack":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "default": "!variable.has_target || variable.attack_time < 0.0".
+							Added transition list transition "default": "!variable.has_target || variable.attack_time < 0.0 ||  query.is_admiring".
+					Changed state "ranged_charge":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "default": "variable.attack_state == 0".
+							Added transition list transition "default": "variable.attack_state == 0  ||  query.is_admiring".
+					Changed state "ranged_hold":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "default": "variable.attack_state == 0".
+							Added transition list transition "default": "variable.attack_state == 0  ||  query.is_admiring".

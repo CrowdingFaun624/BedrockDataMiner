@@ -1,54 +1,29 @@
-Difference of "animation_controllers" between "1.16.0.60" (beta of "1.16.0") and "1.16.0.61" (beta of "1.16.0").
+Difference of "animation_controllers" between "1.16.10" and "1.16.20.50" (beta of "1.16.20").
 
-Total file: 53 (+1, -0)
-Added file "elytra.animation_controllers.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "animation_controllers":
-			animation controller "controller.animation.elytra.default":
+Changed file "piglin.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Total animation controller: 1 (+0, -3)
+			Removed animation controller "controller.animation.piglin.admire":
 				field "initial_state": "default"
 				field "states":
+					state "admiring":
+						field "animations": animation dict "admire"
+						field "transitions": transition list transition "default": "!query.is_admiring"
+					state "default": field "transitions": transition list transition "admiring": "query.is_admiring"
+			Removed animation controller "controller.animation.piglin.celebrate":
+				field "initial_state": "default"
+				field "states":
+					state "celebrating":
+						field "animations": animation dict "celebrate_hunt"
+						field "transitions": transition list transition "default": "query.is_celebrating == 0"
+					state "celebrating_special":
+						field "animations": animation dict "celebrate_hunt_special"
+						field "transitions": transition list transition "default": "query.is_celebrating_special == 0"
 					state "default":
-						field "animations": animation dict "default"
 						field "transitions":
-							transition list transition "gliding": "query.is_gliding"
-							transition list transition "sneaking": "query.is_sneaking"
-							transition list transition "sleeping": "query.is_sleeping"
-							transition list transition "swimming": "query.is_swimming"
-						field "blend_transition": 0.1
-						field "blend_via_shortest_path": true
-					state "gliding":
-						field "animations": animation dict "gliding"
-						field "transitions":
-							transition list transition "sleeping": "query.is_sleeping"
-							transition list transition "swimming": "query.is_swimming"
-							transition list transition "default": "!query.is_gliding"
-						field "blend_transition": 0.1
-						field "blend_via_shortest_path": true
-					state "sleeping":
-						field "animations": animation dict "sleeping"
-						field "transitions":
-							transition list transition "gliding": "query.is_gliding"
-							transition list transition "sneaking": "query.is_sneaking"
-							transition list transition "swimming": "query.is_swimming"
-							transition list transition "default": "!query.is_sleeping"
-						field "blend_transition": 0.1
-						field "blend_via_shortest_path": true
-					state "sneaking":
-						field "animations": animation dict "sneaking"
-						field "transitions":
-							transition list transition "gliding": "query.is_gliding"
-							transition list transition "sleeping": "query.is_sleeping"
-							transition list transition "swimming": "query.is_swimming"
-							transition list transition "default": "!query.is_sneaking"
-						field "blend_transition": 0.1
-						field "blend_via_shortest_path": true
-					state "swimming":
-						field "animations": animation dict "swimming"
-						field "transitions":
-							transition list transition "gliding": "query.is_gliding"
-							transition list transition "sneaking": "query.is_sneaking"
-							transition list transition "sleeping": "query.is_sleeping"
-							transition list transition "default": "!query.is_swimming"
-						field "blend_transition": 0.1
-						field "blend_via_shortest_path": true
+							transition list transition "celebrating": "query.is_celebrating == 1"
+							transition list transition "celebrating_special": "query.is_celebrating_special == 1"
+			Removed animation controller "controller.animation.piglin.move":
+				field "initial_state": "default"
+				field "states": state "default": field "animations": animation dict "move"

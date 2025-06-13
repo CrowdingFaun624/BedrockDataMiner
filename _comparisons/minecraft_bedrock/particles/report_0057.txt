@@ -1,17 +1,38 @@
-Difference of "particles" between "1.20.30.24" (beta of "1.20.30") and "1.20.30.25" (beta of "1.20.30").
+Difference of "particles" between "1.20.40" and "1.20.50.20" (beta of "1.20.50").
+Unable to create data files for 1 file between: "1.20.41"
 
-Changed particle "cherry_leaves_particle.json":
-	Changed resource pack "core":
-		Changed field "particle_effect":
-			Changed field "components":
-				Total field: 12 (+2, -2)
-				Changed field "minecraft:emitter_initialization":
-					Changed field "creation_expression" from "v.fall_acc = -0.3;v.wind_acc = 2;v.spawn_chance = 0.5;v.rot_speed = math.random(-30,30);v.curve_len = 15;" to "v.fall_acc = -0.3;v.wind_acc = 2;v.curve_len = 15;".
-				Added field "minecraft:emitter_lifetime_expression":
-					field "activation_expression": 1
-					field "expiration_expression": 0
-				Removed field "minecraft:emitter_lifetime_once": field "active_time": 1.
-				Removed field "minecraft:emitter_rate_instant": field "num_particles": "math.random(0, 1) < v.spawn_chance ? 1 : 0".
-				Added field "minecraft:emitter_rate_manual": field "max_particles": 2000.
-				Changed field "minecraft:particle_initial_spin":
-					Changed field "rotation_rate" from "v.rot_speed" to "math.random(-30,30)".
+Total particle: 142 (+1, -0)
+Added particle "dust_plume.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:dust_plume"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 7
+				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-0.45, 0.45)", 0.95, "Math.random(-0.45, 0.45)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.165, 0.165]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color ["0.73 - variable.particle_random_1 * 0.2", "0.69 - variable.particle_random_1 * 0.2", "0.76 - variable.particle_random_1 * 0.2", 1.0]
+				field "minecraft:particle_initial_speed": "Math.random(1.5, 3.0)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "7.0 / 20.0 / Math.random(0.5, 1.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, "-2.0 * Math.pow(0.88, variable.particle_age)", 0]
+					field "linear_drag_coefficient": "1.96 * Math.pow(0.92, variable.particle_age)"

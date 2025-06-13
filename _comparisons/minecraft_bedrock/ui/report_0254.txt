@@ -1,70 +1,182 @@
-Difference of "ui" between "1.18.20.29" (beta of "1.18.30") and "1.18.30.20" (beta of "1.18.30").
+Difference of "ui" between "1.18.32" and "1.19.0.20" (beta of "1.19.0").
+Unable to create data files for 1 file between: "1.18.33"
 
-Changed namespace "chem_common_pocket":
-	Changed element "container_gamepad_helpers@common.gamepad_helpers":
+Changed namespace "common_buttons":
+	Changed element "underline_button@common.button":
+		Removed field "pressed_control": "hover".
+Changed namespace "common_store":
+	Changed element "hero_carousel_panel":
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "right_buttons":
+				Changed element "top_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Moved element from "gamepad_helper_b@common.gamepad_helper_b" to "gamepad_helper_b@common.gamepad_helper_b_14".
-						Changed control:
-							Moved element from "gamepad_helper_y@common.gamepad_helper_y" to "gamepad_helper_y@common.gamepad_helper_y_14".
-	Moved element from "gamepad_helper_down@common.gamepad_helper_a" to "gamepad_helper_down@common.gamepad_helper_a_14".
-	Moved element from "gamepad_helper_left@common.gamepad_helper_x" to "gamepad_helper_left@common.gamepad_helper_x_14".
-Changed namespace "common_store":
-	Changed element "search_header_stack":
-		Unchanged field "type": "stack_panel".
+							Changed element "right_button_panel":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Changed element "right_button@common_buttons.light_content_button":
+											Removed field "button_mappings":
+												button mapping:
+													field "from_button_id": "button.menu_select"
+													field "to_button_id": "button.navigate_carousel_right"
+													field "mapping_type": "pressed"
+													field "button_up_right_of_first_refusal": true
+Changed namespace "enchanting_pocket":
+	Changed element "enchant_button_panel":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Unchanged item 0: "100%".
+			Changed item 1 from "33% - 5px" to "33% - 1px".
+	Changed element "enchant_selection_panel":
+		Unchanged field "type": "panel".
+		Changed field "size":
+			Unchanged item 0: "100%-34px".
+			Changed item 1 from 72 to 60.
 		Changed field "controls":
 			Changed control:
-				Changed element "gamepad_helper_y_alignment_hack":
-					Unchanged field "type": "panel".
+				Changed element "grid":
+					Unchanged field "type": "grid".
+					Changed field "grid_dimensions":
+						Unchanged item 0: 1.
+						Changed item 1 from 3 to 5.
 					Changed field "controls":
+						Total control: 5 (+2, -0)
 						Changed control:
-							Changed element "gamepad_helper_y@common.gamepad_helper_y_14":
-								Changed field "offset":
-									Changed item 0 from -11 to -10.
-									Changed item 1 from -5 to -4.
-	Changed element "wallet_button_panel":
+							Moved element from "button2@enchanting_pocket.enchant_button_panel" to "button3@enchanting_pocket.enchant_button_panel".
+							Changed element "button3@enchanting_pocket.enchant_button_panel":
+								Changed field "grid_position":
+									Unchanged item 0: 0.
+									Changed item 1 from 1 to 4.
+								Changed field "$variables":
+									Changed variable "$texture_selectable" from "textures/ui/dust_selectable_2" to "textures/ui/dust_selectable_3".
+									Changed variable "$texture_unselectable" from "textures/ui/dust_unselectable_2" to "textures/ui/dust_unselectable_3".
+						Changed control:
+							Moved element from "button3@enchanting_pocket.enchant_button_panel" to "button2@enchanting_pocket.enchant_button_panel".
+							Changed element "button2@enchanting_pocket.enchant_button_panel":
+								Changed field "$variables":
+									Changed variable "$texture_selectable" from "textures/ui/dust_selectable_3" to "textures/ui/dust_selectable_2".
+									Changed variable "$texture_unselectable" from "textures/ui/dust_unselectable_3" to "textures/ui/dust_unselectable_2".
+						Added control:
+							element "padd1":
+								field "type": "panel"
+								field "size": [0, 4]
+								field "grid_position": [0, 1]
+						Added control:
+							element "padd2":
+								field "type": "panel"
+								field "size": [0, 4]
+								field "grid_position": [0, 3]
+Changed namespace "general_section":
+	Total element: 115 (+1, -0)
+	Changed element "accessibility_section":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Changed control:
-				Changed element "gamepad_helper_x_alignment_hack":
-					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "gamepad_helper_x@common.gamepad_helper_x_14":
-								Changed field "offset":
-									Changed item 0 from -11 to -10.
-									Changed item 1 from -5 to -4.
+			Total control: 13 (+4, -0)
+			Added control:
+				element "darkness_slider@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#darkness_slider_label"
+						variable "$slider_name": "darkness"
+						variable "$slider_value_binding_name": "#darkness"
+						variable "$slider_tts_text_value": "#darkness_text_value"
+						variable "$option_enabled_binding_name": "#darkness_enabled"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
+			Added control:
+				element "darkness_slider_label_spacer_pre":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			Added control element "darkness_slider_label_wrapper@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "general_section.darkness_slider_label".
+			Added control:
+				element "darkness_slider_label_spacer_post":
+					field "type": "panel"
+					field "size": ["100%", 10]
+	Added element "darkness_slider_label":
+		field "type": "label"
+		field "text": "options.darknessEffectModifier.message"
+		field "size": ["100%", "default"]
+		field "color": "$light_button_locked_text_color"
+	Changed element "dev_debug_hud_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Changed variable "$radio_buttons":
+				Changed item 10:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_camera" to "#debug_hud_radio_material_memory".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.camera" to "options.dev_enableDebugHudOverlay.materialmemory".
+				Changed item 11:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_audio" to "#debug_hud_radio_camera".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.audio" to "options.dev_enableDebugHudOverlay.camera".
+				Changed item 12:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_client_network" to "#debug_hud_radio_audio".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.client_network" to "options.dev_enableDebugHudOverlay.audio".
+				Changed item 13:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_server_network" to "#debug_hud_radio_client_network".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.server_network" to "options.dev_enableDebugHudOverlay.client_network".
+				Changed item 14:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_client_mob_prediction" to "#debug_hud_radio_server_network".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.client_mob_prediction" to "options.dev_enableDebugHudOverlay.server_network".
+				Changed item 15:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_spatial_packet_optimizations" to "#debug_hud_radio_client_mob_prediction".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.spatial_packet_optimizations" to "options.dev_enableDebugHudOverlay.client_mob_prediction".
+				Changed item 16:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_lock_contention" to "#debug_hud_radio_spatial_packet_optimizations".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.lock_contention" to "options.dev_enableDebugHudOverlay.spatial_packet_optimizations".
+				Changed item 17:
+					Changed item "@settings_common.radio_with_label":
+						Changed item "$toggle_state_binding_name" from "#debug_hud_radio_oreui" to "#debug_hud_radio_lock_contention".
+						Changed item "$radio_label_text" from "options.dev_enableDebugHudOverlay.OreUI" to "options.dev_enableDebugHudOverlay.lock_contention".
+				Added item 18:
+					item "@settings_common.radio_with_label":
+						item "$toggle_state_binding_name": "#debug_hud_radio_oreui"
+						item "$radio_label_text": "options.dev_enableDebugHudOverlay.OreUI"
 Changed namespace "hud":
-	Changed element "hud_actionbar_text":
-		Unchanged field "type": "image".
+	Changed element "centered_gui_elements_at_bottom_middle":
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "actionbar_message":
-					Unchanged field "type": "label".
-					Changed field "layer" from 1 to 31.
-	Changed element "hud_title_text":
-		Unchanged field "type": "stack_panel".
+				Changed element "horse_heart_rend_1@horse_heart_renderer":
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "#is_not_creative_mode" to "#show_survival_ui".
+	Changed element "exp_progress_bar_and_hotbar":
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "title_frame":
+				Changed element "resizing_xp_bar_with_hotbar":
 					Unchanged field "type": "panel".
-					Changed field "controls":
-						Changed control:
-							Changed element "title":
-								Unchanged field "type": "label".
-								Changed field "layer" from 1 to 31.
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "#is_not_creative_mode" to "#show_survival_ui".
+	Changed element "heart_renderer":
+		Unchanged field "type": "custom".
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#is_not_creative_mode" to "#show_survival_ui".
+	Changed element "hunger_renderer":
+		Unchanged field "type": "custom".
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#is_not_creative_mode" to "#show_survival_ui".
+	Changed element "item_name_text_root":
+		Unchanged field "type": "panel".
+		Changed field "controls":
 			Changed control:
-				Changed element "subtitle_frame":
-					Unchanged field "type": "panel".
+				Changed element "item_text_aligner":
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
-							Changed element "subtitle":
-								Unchanged field "type": "label".
-								Changed field "layer" from 1 to 31.
+							Changed element "survival_buffer@common.empty_panel":
+								Changed field "bindings":
+									Changed binding:
+										Changed field "binding_name" from "#is_not_creative_mode" to "#show_survival_ui".
 Changed namespace "pdp":
 	Changed element "description_inner_panel":
 		Unchanged field "type": "panel".
@@ -73,263 +185,19 @@ Changed namespace "pdp":
 				Changed element "description_stack_panel":
 					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 11 (+1, -2)
-						Changed control:
-							Changed element "description_text_panel_full":
-								Unchanged field "type": "stack_panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "button_panel@pdp.description_toggle_show_button_panel":
-											Changed field "$variables":
-												Changed variable "$border_offset":
-													Changed item 1 from 7 to 3.
-												Changed variable "$show_button_offset":
-													Changed item 1 from 6.5 to 2.5.
 						Changed control:
 							Changed element "description_text_panel_collapsed":
 								Unchanged field "type": "stack_panel".
 								Changed field "controls":
 									Changed control:
-										Changed element "button_panel@pdp.description_toggle_show_button_panel":
-											Changed field "$variables":
-												Changed variable "$border_offset":
-													Changed item 1 from 7 to 3.
-												Changed variable "$show_button_offset":
-													Changed item 1 from 6.5 to 2.5.
-						Changed control:
-							Changed element "pad_1":
-								Unchanged field "type": "panel".
-								Removed field "bindings":
-									binding:
-										field "binding_name": "#has_tags"
-										field "binding_name_override": "#visible"
-						Removed control:
-							element "collapsed_panel":
-								field "type": "panel"
-								field "size": ["100%", "100%c"]
-								field "controls":
-									control:
-										element "collapsed_priority_panel":
-											field "type": "stack_panel"
-											field "orientation": "horizontal"
-											field "size": ["100% - 5px", "100%cm - 7px"]
-											field "use_priority": true
-											field "controls":
-												control:
-													element "genre_panel":
-														field "type": "stack_panel"
-														field "orientation": "horizontal"
-														field "size": ["100%c", "100%cm + 2px"]
-														field "priority": 1
-														field "controls":
-															control:
-																element "label_text@common.minecraftTenLabel":
-																	field "type": "label"
-																	field "size": ["default", "default"]
-																	field "text": "store.offerDescription.genre"
-																	field "color": "$body_text_color"
-															control:
-																element "pad":
-																	field "type": "panel"
-																	field "size": [2, "100%sm"]
-															control:
-																element "text_panel":
-																	field "type": "panel"
-																	field "size": ["100%c", "100%cm"]
-																	field "controls":
-																		control:
-																			element "text_stack_panel":
-																				field "type": "stack_panel"
-																				field "orientation": "horizontal"
-																				field "size": ["100%c", "100%cm"]
-																				field "offset": [0, 2]
-																				field "use_priority": true
-																				field "controls":
-																					control:
-																						element "genre_button@common_buttons.underline_button":
-																							field "size": ["100%cm", "100%cm"]
-																							field "priority": 0
-																							field "$variables":
-																								variable "$single_line_label_text": "#genre_label"
-																								variable "$pressed_button_name": "button.genre"
-																								variable "$label_text_bindings":
-																									item 0:
-																										item "binding_type": "$store_factory_binding_type"
-																										item "binding_collection_name": "$store_factory_collection_name"
-																										item "binding_name": "#genre_label"
-																					control:
-																						element "pad_0":
-																							field "type": "panel"
-																							field "size": [4, "100%sm"]
-																							field "priority": 1
-																					control:
-																						element "slash_divider":
-																							field "type": "label"
-																							field "size": ["default", "default"]
-																							field "text": "/"
-																							field "font_type": "smooth"
-																							field "priority": 1
-																							field "color": "$body_text_color"
-																					control:
-																						element "subgenre_button@common_buttons.underline_button":
-																							field "size": ["100%cm", "100%cm"]
-																							field "priority": 1
-																							field "$variables":
-																								variable "$single_line_label_text": "#subgenre_label"
-																								variable "$pressed_button_name": "button.subgenre"
-																								variable "$label_text_bindings":
-																									item 0:
-																										item "binding_type": "$store_factory_binding_type"
-																										item "binding_collection_name": "$store_factory_collection_name"
-																										item "binding_name": "#subgenre_label"
-												control:
-													element "pad_0":
-														field "type": "panel"
-														field "size": [4, "100%sm"]
-														field "priority": 2
-												control:
-													element "players_panel":
-														field "type": "stack_panel"
-														field "orientation": "horizontal"
-														field "size": ["100%c", "100%cm + 2px"]
-														field "priority": 2
-														field "controls":
-															control:
-																element "label_text@common.minecraftTenLabel":
-																	field "type": "label"
-																	field "size": ["default", "default"]
-																	field "text": "store.offerDescription.players"
-																	field "color": "$body_text_color"
-															control:
-																element "pad":
-																	field "type": "panel"
-																	field "size": [2, "100%sm"]
-															control:
-																element "text_panel":
-																	field "type": "panel"
-																	field "size": ["100%c", "100%cm"]
-																	field "controls":
-																		control:
-																			element "text_stack_panel":
-																				field "type": "stack_panel"
-																				field "orientation": "vertical"
-																				field "size": ["100%c", "100%c"]
-																				field "offset": [0, 2]
-																				field "controls":
-																					control:
-																						element "player_count_button_panel":
-																							field "type": "stack_panel"
-																							field "size": ["100%c", 10]
-																							field "orientation": "horizontal"
-																							field "controls":
-																								control element "player_count_button_factory@pdp.player_count_factory": empty
-																								control:
-																									element "pad":
-																										field "type": "panel"
-																										field "size": [2, "100%"]
-																										field "priority": 1
-																								control:
-																									element "player_count_range_panel":
-																										field "type": "panel"
-																										field "size": ["100%c", "100%"]
-																										field "priority": 1
-																										field "controls":
-																											control:
-																												element "player_count_range_text":
-																													field "type": "label"
-																													field "size": ["default", "100%"]
-																													field "offset": [0, 1]
-																													field "font_type": "smooth"
-																													field "font_scale_factor": 0.8
-																													field "text": "#player_count_range_label"
-																													field "color": "$body_text_color"
-																													field "bindings": binding field "binding_name": "#player_count_range_label"
-																					control:
-																						element "note_text":
-																							field "type": "label"
-																							field "size": ["default", "default"]
-																							field "text": "store.offerDescription.playerCountNote"
-																							field "font_scale_factor": 0.8
-																							field "font_type": "smooth"
-																							field "color": "$body_text_color"
-																							field "bindings":
-																								binding:
-																									field "binding_name": "#is_description_expanded"
-																									field "binding_name_override": "#visible"
-												control:
-													element "languages_panel":
-														field "visible": false
-														field "type": "stack_panel"
-														field "orientation": "horizontal"
-														field "size": ["fill", "100%cm"]
-														field "priority": 3
-														field "controls":
-															control:
-																element "label_text_panel":
-																	field "type": "panel"
-																	field "size": ["100%c", "100%c"]
-																	field "controls":
-																		control:
-																			element "label_text@common.minecraftTenLabel":
-																				field "type": "label"
-																				field "size": ["default", "default"]
-																				field "text": "store.offerDescription.languages"
-																				field "color": "$body_text_color"
-															control:
-																element "pad":
-																	field "type": "panel"
-																	field "size": [2, "100%sm"]
-															control:
-																element "languages_factory@pdp.language_row_factory":
-																	field "$variables":
-																		variable "$language_factory_collection_name": "language_collapsed_collection"
-																		variable "$language_factory_size":
-																			item 0: "fill"
-																			item 1: "100%cm"
-																		variable "$language_factory_bindings":
-																			item 0:
-																				item "binding_name": "#language_collapsed_collection_length"
-																				item "binding_name_override": "#collection_length"
-																		variable "$label_text_bindings":
-																			item 0:
-																				item "binding_type": "collection_details"
-																				item "binding_collection_name": "language_collapsed_collection"
-																				item "binding_collection_prefix": "collapsed"
-																			item 1:
-																				item "binding_type": "collection"
-																				item "binding_collection_name": "language_collapsed_collection"
-																				item "binding_name": "#language_label"
-																		variable "$comma_text_bindings":
-																			item 0:
-																				item "binding_type": "collection_details"
-																				item "binding_collection_name": "language_collapsed_collection"
-																				item "binding_collection_prefix": "collapsed"
-																			item 1:
-																				item "binding_type": "collection"
-																				item "binding_collection_name": "language_collapsed_collection"
-																				item "binding_name": "#comma_visible"
-																				item "binding_name_override": "#visible"
-												control:
-													element "pad_2":
-														field "type": "panel"
-														field "size": ["fill", "100%sm"]
-														field "priority": 3
-												control:
-													element "show_more_button_panel@pdp.description_toggle_show_button_panel":
-														field "size": ["100%cm", "100%cm"]
-														field "priority": 0
-														field "$variables":
-															variable "$button_text": "store.offerDescription.showMore"
-															variable "$border_offset":
-																item 0: 1
-																item 1: 0
-															variable "$show_button_offset":
-																item 0: 1
-																item 1: 0
-								field "bindings":
-									binding:
-										field "binding_name": "#description_collapsed_visible"
-										field "binding_name_override": "#visible"
+										Changed element "description_text_collapsed@pdp.description_label":
+											Added field "notify_on_ellipses": control "collapsed_show_more_panel".
+									Changed control:
+										Moved element from "button_panel@pdp.description_toggle_show_button_panel" to "collapsed_show_more_panel@pdp.description_toggle_show_button_panel".
+										Changed element "collapsed_show_more_panel@pdp.description_toggle_show_button_panel":
+											Changed field "bindings":
+												Changed binding:
+													Changed field "binding_name" from "(not #has_tags)" to "#collapsed_show_more_visible".
 						Changed control:
 							Changed element "players_panel":
 								Unchanged field "type": "stack_panel".
@@ -337,370 +205,119 @@ Changed namespace "pdp":
 									Changed control:
 										Changed element "text_panel":
 											Unchanged field "type": "panel".
-											Changed field "size":
-												Changed item 0 from "100%" to "fill".
-												Unchanged item 1: "100%cm".
 											Changed field "controls":
 												Changed control:
 													Changed element "text_stack_panel":
 														Unchanged field "type": "stack_panel".
 														Changed field "controls":
 															Changed control:
-																Changed element "player_count_button_panel":
-																	Unchanged field "type": "stack_panel".
-																	Changed field "controls":
-																		Changed control:
-																			Changed element "player_count_range_panel":
-																				Unchanged field "type": "panel".
-																				Changed field "controls":
-																					Changed control:
-																						Changed element "player_count_range_text":
-																							Unchanged field "type": "label".
-																							Changed field "offset":
-																								Changed item 0 from 0 to -1.
-																								Changed item 1 from 1 to 0.
-															Changed control:
 																Changed element "note_text":
 																	Unchanged field "type": "label".
-																	Changed field "size":
-																		Changed item 0 from "default" to "100%".
-																		Unchanged item 1: "default".
+																	Added field "max_size": ["100% - 50px", "default"].
+Changed namespace "persona":
+	Changed element "emote_wheel_screen_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "instruction_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
 						Changed control:
-							Changed element "languages_panel":
-								Unchanged field "type": "stack_panel".
+							Changed element "instruction_background":
+								Unchanged field "type": "image".
 								Changed field "controls":
 									Changed control:
-										Changed element "show_less_button_panel@pdp.description_toggle_show_button_panel":
-											Changed field "$variables":
-												Changed variable "$border_offset":
-													Changed item 1 from 0.25 to -7.5.
-												Changed variable "$show_button_offset":
-													Changed item 1 from 0.25 to -7.5.
-						Removed control:
-							element "pad_3":
-								field "type": "panel"
-								field "size": ["100%", 8]
-						Added control:
-							element "collapsed_priority_panel":
-								field "type": "stack_panel"
-								field "orientation": "horizontal"
-								field "size": ["100% - 5px", "100%cm"]
-								field "use_priority": true
-								field "controls":
-									control:
-										element "genre_panel":
-											field "type": "stack_panel"
-											field "orientation": "horizontal"
-											field "size": ["100%c", "100%cm + 2px"]
-											field "priority": 1
-											field "controls":
-												control:
-													element "label_text@common.minecraftTenLabel":
-														field "type": "label"
-														field "size": ["default", "default"]
-														field "text": "store.offerDescription.genre"
-														field "color": "$body_text_color"
-												control:
-													element "pad":
-														field "type": "panel"
-														field "size": [2, "100%sm"]
-												control:
-													element "text_panel":
-														field "type": "panel"
-														field "size": ["100%c", "100%cm"]
-														field "controls":
-															control:
-																element "text_stack_panel":
-																	field "type": "stack_panel"
-																	field "orientation": "horizontal"
-																	field "size": ["100%c", "100%cm"]
-																	field "offset": [0, 2]
-																	field "use_priority": true
-																	field "controls":
-																		control:
-																			element "genre_button@common_buttons.underline_button":
-																				field "size": ["100%cm", "100%cm"]
-																				field "priority": 0
-																				field "$variables":
-																					variable "$single_line_label_text": "#genre_label"
-																					variable "$pressed_button_name": "button.genre"
-																					variable "$label_text_bindings":
-																						item 0:
-																							item "binding_type": "$store_factory_binding_type"
-																							item "binding_collection_name": "$store_factory_collection_name"
-																							item "binding_name": "#genre_label"
-																		control:
-																			element "pad_0":
-																				field "type": "panel"
-																				field "size": [4, "100%sm"]
-																				field "priority": 1
-																		control:
-																			element "slash_divider":
-																				field "type": "label"
-																				field "size": ["default", "default"]
-																				field "text": "/"
-																				field "font_type": "smooth"
-																				field "priority": 1
-																				field "color": "$body_text_color"
-																		control:
-																			element "subgenre_button@common_buttons.underline_button":
-																				field "size": ["100%cm", "100%cm"]
-																				field "priority": 1
-																				field "$variables":
-																					variable "$single_line_label_text": "#subgenre_label"
-																					variable "$pressed_button_name": "button.subgenre"
-																					variable "$label_text_bindings":
-																						item 0:
-																							item "binding_type": "$store_factory_binding_type"
-																							item "binding_collection_name": "$store_factory_collection_name"
-																							item "binding_name": "#subgenre_label"
-									control:
-										element "pad_0":
-											field "type": "panel"
-											field "size": [4, "100%sm"]
-											field "priority": 2
-									control:
-										element "players_panel":
-											field "type": "stack_panel"
-											field "orientation": "horizontal"
-											field "size": ["100%c", "100%cm + 2px"]
-											field "priority": 3
-											field "controls":
-												control:
-													element "label_text@common.minecraftTenLabel":
-														field "type": "label"
-														field "size": ["default", "default"]
-														field "text": "store.offerDescription.players"
-														field "color": "$body_text_color"
-												control:
-													element "pad":
-														field "type": "panel"
-														field "size": [2, "100%sm"]
-												control:
-													element "text_panel":
-														field "type": "panel"
-														field "size": ["100%c", "100%cm"]
-														field "controls":
-															control:
-																element "text_stack_panel":
-																	field "type": "stack_panel"
-																	field "size": ["100%c", 10]
-																	field "orientation": "horizontal"
-																	field "offset": [0, 2]
-																	field "controls":
-																		control element "player_count_button_factory@pdp.player_count_factory": empty
-																		control:
-																			element "pad":
-																				field "type": "panel"
-																				field "size": [2, "100%"]
-																		control:
-																			element "player_count_range_panel":
-																				field "type": "panel"
-																				field "size": ["100%c", "100%"]
-																				field "priority": 1
+										Changed element "gamepad_instruction_stack":
+											Unchanged field "type": "stack_panel".
+											Changed field "controls":
+												Changed control:
+													Changed element "gamepad_helpers@common.empty_panel":
+														Changed field "controls":
+															Changed control:
+																Changed element "gamepad_helper_stack":
+																	Unchanged field "type": "stack_panel".
+																	Changed field "controls":
+																		Total control: 2 (+1, -1)
+																		Removed control element "gamepad_dpad_left@common.gamepad_helper_dpad_left": empty.
+																		Added control:
+																			element "gamepad_exit_panel@common.empty_panel":
+																				field "size": [100, "100%sm"]
 																				field "controls":
 																					control:
-																						element "player_count_range_text":
+																						element "gamepad_exit":
 																							field "type": "label"
-																							field "size": ["default", "100%"]
-																							field "offset": [-1, 0]
-																							field "font_type": "smooth"
-																							field "font_scale_factor": 0.8
-																							field "text": "#player_count_range_label"
-																							field "color": "$body_text_color"
-																							field "bindings": binding field "binding_name": "#player_count_range_label"
-											field "bindings":
-												binding:
-													field "binding_name": "#players_panel_visible"
-													field "binding_name_override": "#visible"
-									control:
-										element "languages_panel":
-											field "visible": false
-											field "type": "stack_panel"
-											field "orientation": "horizontal"
-											field "size": ["fill", "100%cm"]
-											field "priority": 3
-											field "controls":
-												control:
-													element "label_text_panel":
-														field "type": "panel"
-														field "size": ["100%c", "100%c"]
-														field "controls":
-															control:
-																element "label_text@common.minecraftTenLabel":
-																	field "type": "label"
-																	field "size": ["default", "default"]
-																	field "text": "store.offerDescription.languages"
-																	field "color": "$body_text_color"
-												control:
-													element "pad":
-														field "type": "panel"
-														field "size": [2, "100%sm"]
-												control:
-													element "languages_factory@pdp.language_row_factory":
-														field "$variables":
-															variable "$language_factory_collection_name": "language_collapsed_collection"
-															variable "$language_factory_size":
-																item 0: "fill"
-																item 1: "100%cm"
-															variable "$language_factory_bindings":
-																item 0:
-																	item "binding_name": "#language_collapsed_collection_length"
-																	item "binding_name_override": "#collection_length"
-															variable "$label_text_bindings":
-																item 0:
-																	item "binding_type": "collection_details"
-																	item "binding_collection_name": "language_collapsed_collection"
-																	item "binding_collection_prefix": "collapsed"
-																item 1:
-																	item "binding_type": "collection"
-																	item "binding_collection_name": "language_collapsed_collection"
-																	item "binding_name": "#language_label"
-															variable "$comma_text_bindings":
-																item 0:
-																	item "binding_type": "collection_details"
-																	item "binding_collection_name": "language_collapsed_collection"
-																	item "binding_collection_prefix": "collapsed"
-																item 1:
-																	item "binding_type": "collection"
-																	item "binding_collection_name": "language_collapsed_collection"
-																	item "binding_name": "#comma_visible"
-																	item "binding_name_override": "#visible"
-									control:
-										element "pad_2":
-											field "type": "panel"
-											field "size": ["fill", "100%sm"]
-											field "priority": 3
-									control:
-										element "show_more_button_panel@pdp.description_toggle_show_button_panel":
-											field "size": ["100%cm", "100%cm"]
-											field "priority": 0
-											field "$variables":
-												variable "$button_text": "store.offerDescription.showMore"
-												variable "$border_offset":
-													item 0: 3.5
-													item 1: -0.85
-												variable "$show_button_offset":
-													item 0: 3.5
-													item 1: -0.85
-								field "bindings":
-									binding:
-										field "binding_name": "#description_collapsed_visible"
-										field "binding_name_override": "#visible"
-	Changed element "player_count_button_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "player_count_button@common_buttons.underline_button":
-					Added field "offset": [-3, 0].
-			Changed control:
-				Changed element "comma":
-					Unchanged field "type": "label".
-					Added field "offset": [-3, 0].
-	Changed element "player_count_factory":
-		Unchanged field "type": "stack_panel".
-		Removed field "use_priority": true.
-		Removed field "priority": 0.
-	Changed element "smooth_save_share_button_panel":
-		Unchanged field "type": "stack_panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "share_button@common_buttons.light_content_button":
-					Unchanged field "type": "button".
-					Changed field "$variables":
-						Total variable: 9 (+1, -0)
-						Added variable "$button_tts_header": "accessibility.store.offerDescription.share".
-			Changed control:
-				Changed element "save_button@common_buttons.light_content_button":
-					Unchanged field "type": "button".
-					Changed field "$variables":
-						Changed variable "$button_tts_header" from "store.wishlist.button" to "accessibility.store.wishlist.button".
+																							field "color": "$f_color_format"
+																							field "text": "#emote_screen_exit"
+																							field "text_alignment": "center"
+																							field "bindings":
+																								binding:
+																									field "binding_name": "#emote_screen_exit"
+																									field "binding_condition": "always"
+																								binding:
+																									field "binding_name": "#is_using_gamepad"
+																									field "binding_name_override": "#visible"
 Changed namespace "play":
-	Changed element "add_server_toggle_button@common_toggles.light_text_toggle":
-		Changed field "visible" from "(not $is_console)" to "(not $ignore_add_servers)".
-	Changed element "close_navigation_tab":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "x_image@common.light_close_button":
-					Changed field "bindings":
-						Changed binding:
-							Changed field "binding_name" from "(not #gamepad_helper_visible)" to "(not #exit_button_visible)".
-	Changed element "common_content":
-		Unchanged field "type": "input_panel".
-		Removed field "focus_nagivation_mode_down": "contained".
-		Removed field "focus_nagivation_mode_up": "contained".
-		Removed field "focus_nagivation_mode_right": "contained".
-		Removed field "focus_nagivation_mode_left": "contained".
-		Added field "focus_navigation_mode_down": "contained".
-		Added field "focus_navigation_mode_up": "contained".
-		Added field "focus_navigation_mode_right": "contained".
-		Added field "focus_navigation_mode_left": "contained".
-	Changed element "header_button_panel":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "buttons":
-					Unchanged field "type": "stack_panel".
-					Changed field "size":
-						Changed item 0 from "100%" to "100% - 1px".
-						Unchanged item 1: "100%".
-					Changed field "controls":
-						Changed control:
-							Changed element "primary_panel":
-								Unchanged field "type": "panel".
-								Changed field "controls":
-									Changed control:
-										Changed element "primary@$primary_header_button":
-											Changed field "size":
-												Changed item 0 from "100% + 1px" to "100% - 1px".
-												Unchanged item 1: "100%".
-	Changed element "no_local_worlds_launch_help@common_buttons.light_text_button":
+	Changed element "sync_legacy_worlds_button@common_buttons.light_text_button":
 		Changed field "$variables":
 			Total variable: 3 (+1, -0)
-			Changed variable "$button_text" from "localWorld.no_local_worlds_button_label" to "#no_local_worlds_launch_help_button_label".
+			Changed variable "$button_text" from "playscreen.syncLegacyWorlds" to "#sync_legacy_button_text".
 			Added variable "$button_text_binding_type": "global".
-	Changed element "no_local_worlds_switch_setting":
-		Unchanged field "type": "panel".
-		Changed field "controls":
-			Changed control:
-				Changed element "bg@play.label_background":
-					Changed field "controls":
-						Changed control:
-							Changed element "no_local_worlds_get_help@play.label_content_template":
-								Changed field "$variables":
-									Total variable: 5 (+1, -0)
-									Changed variable "$label_content_label" from "localWorld.no_local_worlds_present_external" to "#no_local_worlds_help_label".
-									Changed variable "$information_panel_label_text" from "localWorld.no_local_worlds_present_external" to "#no_local_worlds_help_label".
-									Added variable "$label_content_label_binding_type": "global".
-	Changed element "screenshots_section_panel":
+	Changed element "world_list_label_with_color_panel":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Moved element from "nagivation_panel" to "navigation_panel".
-	Changed element "world_item_grid_base":
-		Unchanged field "type": "grid".
-		Removed field "ttsSectionContainer": true.
-Changed namespace "start":
-	Total element: 69 (+1, -0)
-	Changed element "edu_feedback_button@common_buttons.light_content_button":
+				Changed element "list_label":
+					Unchanged field "type": "label".
+					Added field "bindings":
+						binding:
+							field "binding_type": "$label_binding_type"
+							field "binding_name": "$label_text"
+							field "binding_name_override": "$label_text"
+					Added field "$variables":
+						variable "$label_text|default": "b"
+						variable "$label_binding_type|default": "none"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
+					Changed field "$variables":
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "legacy_world_item_grid@play.legacy_world_item_grid":
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
+					Changed field "$variables":
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid":
+					Changed field "$variables":
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+Changed namespace "store_layout":
+	Changed element "main_panel":
+		Unchanged field "type": "input_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "main_panel_content":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "offers@common.scrolling_panel":
+								Changed field "$variables":
+									Total variable: 6 (+0, -1)
+									Removed variable "$top_padding_not_visible": true.
+	Changed element "scrolling_content_stack":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "padding_0":
+					Unchanged field "type": "panel".
+					Removed field "ignored": "$top_padding_not_visible".
+		Removed field "$variables": variable "$top_padding_not_visible|default": false.
+Changed namespace "xbl_report_user":
+	Changed element "report_dropdown_content@settings_common.option_radio_dropdown_group":
 		Changed field "size":
-			Changed item 0 from 24 to 25.
-			Changed item 1 from 24 to 25.
-		Changed field "$variables":
-			Total variable: 3 (+1, -0)
-			Changed variable "$button_content" from "start.feedback_icon" to "start.feedback_icon_edu".
-			Added variable "$button_pressed_offset":
-				item 0: 0
-				item 1: 0
-	Added element "feedback_icon_edu":
-		field "type": "image"
-		field "texture": "$feedback_texture"
-		field "offset": [-0.5, -0.5]
-		field "size": [16, 16]
-		field "layer": 3
-		field "variables":
-			variable:
-				field "requires": "($hover_state or $pressed_state)"
-				field "$variables": variable "$feedback_texture": "textures/ui/feedback_hover"
-		field "$variables": variable "$feedback_texture": "textures/ui/feedback"
+			Changed item 0 from "100%" to "100% - 5px".
+			Unchanged item 1: "100%c".

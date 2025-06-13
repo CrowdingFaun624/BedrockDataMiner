@@ -1,10 +1,1299 @@
-Difference of "entities" between "a0.16.0" and "a0.16.1".
+Difference of "entities" between "a0.16.2" and "a0.17.0.1" (beta of "1.0.0").
 
+Total entity: 70 (+11, -0)
+Added entity "areaeffectcloud.json":
+	behavior pack "core":
+		field "definitions": definition "entity.areaeffectcloud": empty
+		field "version": 0.1
+Changed entity "arrow.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Removed field "format_version": 0.1.
+			Added field "version": 1.
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:arrow.skeleton".
+				Changed component "minecraft:projectile":
+					Changed field "uncertaintyBase" from 8 to 16.
+					Added field "hitSound": "bow.hit".
+Changed entity "bat.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 8 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:bat".
+Changed entity "cavespider.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 16 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:cavespider".
+Changed entity "chicken.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 16 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:chicken".
+Changed entity "cow.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:cow_adult":
+					Total component: 4 (+1, -0)
+					Added component "minecraft:interact":
+						interaction:
+							field "on_interact":
+								field "filters":
+									filter property "other_with_item": "bucket:0"
+									filter property "other_with_families": "player"
+							field "use_item": "true"
+							field "transform_to_item": "bucket:1"
+							field "play_sounds": "milk"
+							field "interact_text": "action.interact.milk"
+			Changed field "components":
+				Total component: 18 (+1, -1)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:cow".
+				Removed component "minecraft:interact":
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "bucket:0"
+								filter property "other_with_families": "player"
+						field "use_item": "true"
+						field "transform_to_item": "bucket:1"
+						field "play_sounds": "milk"
+						field "interact_text": "action.interact.milk"
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
 Changed entity "creeper.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
+				Total component: 22 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
 				Unchanged component "minecraft:identifier": field "id": "minecraft:creeper".
-				Changed component "minecraft:target_nearby_sensor":
-					Changed field "on_inside_range":
-						Removed field "filters": filter property "target_with_families": family "player".
+Changed entity "donkey.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 16 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:donkey".
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+Added entity "dragonfireball.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "version": 1
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.31
+					field "height": 0.31
+				component "minecraft:identifier": field "id": "minecraft:fireball.dragon"
+				component "minecraft:projectile":
+					field "onHit":
+						field "spawn_aoe_cloud":
+							field "radius": 6.0
+							field "radius_on_use": 0
+							field "potion": 23
+							field "particle": "dragonbreath"
+							field "duration": 120
+							field "color": [220, 0, 239]
+							field "affect_owner": false
+						field "remove_on_hit": empty
+					field "power": 1.3
+					field "gravity": 0.0
+					field "anchor": 2
+					field "offset": [0, 0.5, 0]
+					field "semirandomdiffdamage": true
+					field "uncertaintyBase": 10.0
+					field "reflectOnHurt": true
+Added entity "endercrystal.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "format_version": 0.1
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.98
+					field "height": 0.98
+				component "minecraft:identifier": field "id": "minecraft:endercrystal"
+Added entity "enderdragon.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "format_version": 0.1
+			field "component_groups":
+				component group "dragon_death": component "minecraft:behavior.dragondeath": field "priority": 0
+				component group "dragon_flying":
+					component "minecraft:shooter":
+						field "type": "dragonfireball"
+						field "def": "minecraft:fireball.dragon"
+					component "minecraft:behavior.dragonchargeplayer": field "priority": 1
+					component "minecraft:behavior.dragonholdingpattern": field "priority": 3
+					component "minecraft:behavior.dragonstrafeplayer": field "priority": 2
+					component "minecraft:behavior.dragontakeoff": field "priority": 0
+				component group "dragon_sitting":
+					component "minecraft:behavior.dragonflaming": field "priority": 1
+					component "minecraft:behavior.dragonlanding": field "priority": 0
+					component "minecraft:behavior.dragonscanning": field "priority": 2
+			field "components":
+				component "minecraft:attack": field "damage": 3
+				component "minecraft:collision_box":
+					field "width": 13
+					field "height": 4
+				component "minecraft:fall_damage": field "value": 0.0
+				component "minecraft:flying_speed": field "value": 0.6
+				component "minecraft:health":
+					field "value": 200
+					field "max": 200
+				component "minecraft:identifier": field "id": "minecraft:dragon"
+				component "minecraft:knockback_resistance":
+					field "value": 100
+					field "max": 100
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:on_death":
+					field "event": "minecraft:start_death"
+					field "target": "self"
+				component "minecraft:on_start_landing":
+					field "event": "minecraft:start_land"
+					field "target": "self"
+				component "minecraft:on_start_takeoff":
+					field "event": "minecraft:start_fly"
+					field "target": "self"
+				component "minecraft:type_family": field "family": family "dragon"
+			field "events":
+				event "minecraft:entity_spawned":
+					field "add": field "component_groups": component group "dragon_flying"
+					field "remove": empty
+				event "minecraft:start_death":
+					field "add": field "component_groups": component group "dragon_death"
+					field "remove":
+						field "component_groups":
+							component group "dragon_flying"
+							component group "dragon_sitting"
+				event "minecraft:start_fly":
+					field "add": field "component_groups": component group "dragon_flying"
+					field "remove": field "component_groups": component group "dragon_sitting"
+				event "minecraft:start_land":
+					field "add": field "component_groups": component group "dragon_sitting"
+					field "remove": field "component_groups": component group "dragon_flying"
+Changed entity "enderman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:enderman_angry":
+					Changed component "minecraft:angry":
+						Removed field "broadcastAnger": true.
+						Removed field "broadcastRange": 20.
+				Changed component group "minecraft:enderman_calm":
+					Total component: 2 (+0, -1)
+					Removed component "minecraft:lookat":
+						field "searchRadius": 16.0
+						field "setTarget": true
+						field "filters":
+							filter property "other_with_families": "player"
+							filter property "other_without_armor":
+								armor "lit_pumpkin"
+								armor "pumpkin"
+			Changed field "components":
+				Total component: 19 (+4, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Added component "minecraft:follow_range":
+					field "value": 32
+					field "max": 32
+				Unchanged component "minecraft:identifier": field "id": "minecraft:enderman".
+				Added component "minecraft:lookat":
+					field "searchRadius": 16.0
+					field "setTarget": true
+					field "look_cooldown": 5.0
+					field "filters":
+						filter property "other_with_families": "player"
+						filter property "other_without_armor": armor "pumpkin"
+				Changed component "minecraft:teleport":
+					Added field "target_teleport_chance": 0.05.
+				Added component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 5
+					field "attack_interval": 10
+					field "entity_types":
+						entity type:
+							field "filters": filter property "other_with_families": family "endermite"
+							field "max_dist": 16
+							field "must_see": true
+Added entity "endermite.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "version": 0.1
+			field "components":
+				component "minecraft:attack": field "damage": 2
+				component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				component "minecraft:collision_box":
+					field "width": 0.4
+					field "height": 0.3
+				component "minecraft:health":
+					field "value": 8
+					field "max": 8
+				component "minecraft:identifier": field "id": "minecraft:endermite"
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:type_family":
+					field "family":
+						family "arthropod"
+						family "endermite"
+						family "monster"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "look_distance": 6
+					field "probability": 0.02
+				component "minecraft:behavior.melee_attack":
+					field "priority": 3
+					field "speed_multiplier": 1
+					field "track_target": true
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 5
+					field "within_radius": 8
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "other_with_families":
+									family "enderman"
+									family "player"
+							field "max_dist": 8
+							field "must_see": false
+				component "minecraft:behavior.random_look_around": field "priority": 7
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 1
+Added entity "eyeofender.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "format_version": 0.1
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.25
+					field "height": 0.25
+				component "minecraft:identifier": field "id": "minecraft:eyeofender"
+Changed entity "ghast.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 13 (+2, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Added component "minecraft:fire_immune": true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:ghast".
+Changed entity "guardian.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 17 (+1, -2)
+				Added component "minecraft:breathable": field "breathesWater": true.
+				Removed component "breathable": field "breathesWater": true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:guardian".
+				Removed component "minecraft:monster": empty.
+Changed entity "guardian_elder.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 16 (+1, -2)
+				Added component "minecraft:breathable": field "breathesWater": true.
+				Removed component "breathable": field "breathesWater": true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:guardian.elder".
+				Removed component "minecraft:monster": empty.
+Changed entity "horse.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:horse_baby":
+					Changed component "minecraft:scale_by_age":
+						Changed field "start_scale" from 0.75 to 0.5.
+				Changed component group "minecraft:horse_tamed":
+					Total component: 6 (+1, -0)
+					Added component "minecraft:behavior.tempt":
+						field "priority": 5
+						field "speed_multiplier": 1.2
+						field "items":
+							item "apple"
+							item "appleEnchanted"
+							item "bread"
+							item "carrot"
+							item "golden_apple"
+							item "golden_carrot"
+							item "sugar"
+							item "tile.hay_block"
+							item "wheat"
+			Changed field "components":
+				Total component: 16 (+1, -1)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:horse".
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+				Removed component "minecraft:behavior.tempt":
+					field "priority": 5
+					field "speed_multiplier": 1.2
+					field "items":
+						item "apple"
+						item "appleEnchanted"
+						item "bread"
+						item "carrot"
+						item "carrotOnAStick"
+						item "golden_apple"
+						item "golden_carrot"
+						item "sugar"
+						item "tile.hay_block"
+						item "wheat"
+Changed entity "irongolem.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 21 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:irongolem".
+Added entity "learntocodemascot.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "version": 1
+			field "component_groups": empty
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.6
+					field "height": 0.98
+				component "minecraft:damage_sensor":
+					trigger:
+						field "cause": "all"
+						field "deals_damage": false
+				component "minecraft:identifier": field "id": "minecraft:learn_to_code_mascot"
+				component "minecraft:inventory":
+					field "inventory_size": 27
+					field "container_type": "container"
+					field "private": true
+				component "minecraft:movement":
+					field "value": 0.25
+					field "max": 0.5
+				component "minecraft:nameable":
+					field "alwaysShow": true
+					field "allowNameTagRenaming": false
+				component "minecraft:scale": field "value": 1.0
+				component "minecraft:turtle_command": empty
+				component "minecraft:behavior.execute_command": field "priority": 1
+				component "minecraft:behavior.look_at_entity":
+					field "priority": 2
+					field "look_distance": 6.0
+					field "probability": 1.0
+					field "angle_of_view_vertical": 135
+					field "angle_of_view_horizontal": 170
+					field "filters":
+						filter property "other_with_families": "player"
+						filter property "other_is_owner": true
+Added entity "lingeringpotion.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "format_version": 0.1
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.25
+					field "height": 0.25
+				component "minecraft:identifier": field "id": "minecraft:lingeringpotion"
+				component "minecraft:projectile":
+					field "onHit":
+						field "douse_fire": empty
+						field "spawn_aoe_cloud":
+							field "radius": 3.0
+							field "radius_on_use": -0.5
+							field "duration": 22
+						field "remove_on_hit": empty
+					field "power": 0.5
+					field "gravity": 0.05
+					field "angleoffset": -20.0
+Changed entity "magmacube.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 12 (+0, -1)
+				Removed component "minecraft:hurt_when_wet": field "value": true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:magmacube".
+Changed entity "minecartchest.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 0.5 to 0.98.
+					Changed field "height" from 0.9 to 0.7.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:minecartchest".
+Changed entity "minecarthopper.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 0.5 to 0.98.
+					Changed field "height" from 0.9 to 0.7.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:minecarthopper".
+Changed entity "minecarttnt.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:collision_box":
+					Changed field "width" from 0.5 to 0.98.
+					Changed field "height" from 0.9 to 0.7.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:minecarttnt".
+Changed entity "mule.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 16 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:mule".
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+Changed entity "mushroom_cow.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 18 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:mushroomcow".
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+Changed entity "npc.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:npc".
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+Changed entity "ocelot.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:ocelot_adult":
+					Changed component "minecraft:breedable":
+						Added field "allowSitting": true.
+			Changed field "components":
+				Total component: 17 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:ocelot".
+Changed entity "pig.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:pig_adult":
+					Changed component "minecraft:breedable":
+						Changed field "breedItems" from "carrot" to:
+							item "beetroot"
+							item "carrot"
+							item "potato"
+				Changed component group "minecraft:pig_baby":
+					Changed component "minecraft:ageable":
+						Changed field "feedItems" from "carrot" to:
+							item "carrot"
+							item "beetroot"
+							item "potato"
+			Changed field "components":
+				Total component: 15 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:pig".
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+Changed entity "player.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 12 (+1, -0)
+				Added component "minecraft:collision_box":
+					field "width": 0.6
+					field "height": 1.8
+				Unchanged component "minecraft:identifier": field "id": "minecraft:player".
+Added entity "polarbear.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "version": 0.5
+			field "component_groups":
+				component group "minecraft:adult": component "minecraft:loot": field "table": "loot_tables/entities/polar_bear.json"
+				component group "minecraft:adult_hostile":
+					component "minecraft:angry":
+						field "duration": 500
+						field "broadcastAnger": false
+						field "broadcastRange": 20
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+					component "minecraft:attack": field "damage": 6.0
+					component "minecraft:behavior.stomp_attack":
+						field "priority": 1
+						field "track_target": true
+				component group "minecraft:adult_wild":
+					component "minecraft:on_friendly_anger":
+						field "event": "minecraft:on_anger"
+						field "target": "self"
+					component "minecraft:on_target_acquired":
+						field "event": "minecraft:on_anger"
+						field "target": "self"
+				component group "minecraft:baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 4
+						field "speed_multiplier": 1.25
+				component group "minecraft:baby_scared":
+					component "minecraft:angry":
+						field "duration": 1
+						field "broadcastAnger": true
+						field "broadcastRange": 41
+						field "calm_event":
+							field "event": "minecraft:baby_on_calm"
+							field "target": "self"
+				component group "minecraft:baby_wild":
+					component "minecraft:on_target_acquired":
+						field "event": "minecraft:on_scared"
+						field "target": "self"
+					component "minecraft:behavior.nearest_attackable_target":
+						field "priority": 4
+						field "entity_types":
+							entity type:
+								field "filters": filter property "other_with_families": "player"
+								field "max_dist": 16
+								field "must_see": false
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 2.0
+			field "components":
+				component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				component "minecraft:collision_box":
+					field "width": 1.3
+					field "height": 1.4
+				component "minecraft:follow_range": field "value": 48
+				component "minecraft:health": field "value": 30
+				component "minecraft:identifier": field "id": "minecraft:polarbear"
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:nameable": empty
+				component "minecraft:type_family": field "family": family "polarbear"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.look_at_player":
+					field "priority": 6
+					field "target_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.random_look_around": field "priority": 7
+				component "minecraft:behavior.random_stroll": field "priority": 5
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "add":
+						field "component_groups":
+							component group "minecraft:adult"
+							component group "minecraft:adult_wild"
+					field "remove":
+						field "component_groups":
+							component group "minecraft:baby"
+							component group "minecraft:baby_scared"
+							component group "minecraft:baby_wild"
+				event "minecraft:baby_on_calm":
+					field "add": field "component_groups": component group "minecraft:baby_wild"
+					field "remove": field "component_groups": component group "minecraft:baby_scared"
+				event "minecraft:entity_born":
+					field "add":
+						field "component_groups":
+							component group "minecraft:baby"
+							component group "minecraft:baby_wild"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "weight": 9
+							field "add":
+								field "component_groups":
+									component group "minecraft:adult"
+									component group "minecraft:adult_wild"
+						randomize item:
+							field "weight": 1
+							field "add":
+								field "component_groups":
+									component group "minecraft:baby"
+									component group "minecraft:baby_wild"
+				event "minecraft:on_anger":
+					field "add": field "component_groups": component group "minecraft:adult_hostile"
+					field "remove": field "component_groups": component group "minecraft:adult_wild"
+				event "minecraft:on_calm":
+					field "add": field "component_groups": component group "minecraft:adult_wild"
+					field "remove": field "component_groups": component group "minecraft:adult_hostile"
+				event "minecraft:on_scared":
+					field "add": field "component_groups": component group "minecraft:baby_scared"
+					field "remove": field "component_groups": component group "minecraft:baby_wild"
+Changed entity "rabbit.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 16 (+2, -1)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:rabbit".
+				Added component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_modifier": 2.2
+				Removed component "minecraft:behavior.rabbit_panic":
+					field "priority": 1
+					field "speed_modifier": 2.2
+Changed entity "sheep.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:sheep_dyeable":
+					Changed component "minecraft:is_dyeable":
+						Added field "interact_text": "action.interact.dye".
+			Changed field "components":
+				Total component: 18 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:sheep".
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+Added entity "shulker.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "version": 1
+			field "component_groups":
+				component group "minecraft:shulker_black": component "minecraft:variant": field "value": 1
+				component group "minecraft:shulker_blue": component "minecraft:variant": field "value": 2
+				component group "minecraft:shulker_brown": component "minecraft:variant": field "value": 3
+				component group "minecraft:shulker_close": component "minecraft:absorption": field "value": 20
+				component group "minecraft:shulker_cyan": component "minecraft:variant": field "value": 4
+				component group "minecraft:shulker_gray": component "minecraft:variant": field "value": 5
+				component group "minecraft:shulker_green": component "minecraft:variant": field "value": 6
+				component group "minecraft:shulker_light_blue": component "minecraft:variant": field "value": 7
+				component group "minecraft:shulker_lime": component "minecraft:variant": field "value": 8
+				component group "minecraft:shulker_magenta": component "minecraft:variant": field "value": 9
+				component group "minecraft:shulker_open": component "minecraft:absorption": field "value": 0
+				component group "minecraft:shulker_orange": component "minecraft:variant": field "value": 10
+				component group "minecraft:shulker_pink": component "minecraft:variant": field "value": 11
+				component group "minecraft:shulker_purple": component "minecraft:variant": field "value": 0
+				component group "minecraft:shulker_red": component "minecraft:variant": field "value": 12
+				component group "minecraft:shulker_silver": component "minecraft:variant": field "value": 13
+				component group "minecraft:shulker_white": component "minecraft:variant": field "value": 14
+				component group "minecraft:shulker_yellow": component "minecraft:variant": field "value": 15
+			field "components":
+				component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				component "minecraft:fire_immune": true
+				component "minecraft:health":
+					field "value": 10
+					field "max": 10
+				component "minecraft:identifier": field "id": "minecraft:shulker"
+				component "minecraft:interact":
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:0"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_black"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:8"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_gray"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:7"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_silver"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:15"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_white"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:12"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_light_blue"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:14"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_orange"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:1"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_red"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:4"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_blue"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:5"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_purple"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:13"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_magenta"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:9"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_pink"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:3"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_brown"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:11"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_yellow"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:10"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_lime"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:2"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_green"
+						field "use_item": "true"
+					interaction:
+						field "on_interact":
+							field "filters":
+								filter property "other_with_item": "dye:6"
+								filter property "other_with_families": "player"
+								filter property "player_with_instabuild": true
+							field "event": "minecraft:turn_cyan"
+						field "use_item": "true"
+				component "minecraft:movement":
+					field "value": 0.0
+					field "max": 0.0
+				component "minecraft:nameable": empty
+				component "minecraft:peek":
+					field "on_open": field "event": "minecraft:on_open"
+					field "on_close": field "event": "minecraft:on_close"
+					field "on_target_open": field "event": "minecraft:on_open"
+				component "minecraft:shooter":
+					field "type": "ShulkerBullet"
+					field "def": "minecraft:shulker_bullet"
+				component "minecraft:type_family":
+					field "family":
+						family "monster"
+						family "shulker"
+				component "minecraft:behavior.hurt_by_target": field "priority": 2
+				component "minecraft:behavior.look_at_player":
+					field "priority": 1
+					field "look_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 3
+					field "entity_types":
+						field "filters": filter property "other_with_families": family "player"
+						field "max_dist": 16
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.ranged_attack":
+					field "attack_interval_min": 1
+					field "attack_interval_max": 3
+					field "attack_radius": 15
+			field "events":
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group "minecraft:shulker_purple"
+				event "minecraft:on_close": field "add": field "component_groups": component group "minecraft:shulker_close"
+				event "minecraft:on_open": field "add": field "component_groups": component group "minecraft:shulker_open"
+				event "minecraft:turn_black": field "add": field "component_groups": component group "minecraft:shulker_black"
+				event "minecraft:turn_blue": field "add": field "component_groups": component group "minecraft:shulker_blue"
+				event "minecraft:turn_brown": field "add": field "component_groups": component group "minecraft:shulker_brown"
+				event "minecraft:turn_cyan": field "add": field "component_groups": component group "minecraft:shulker_cyan"
+				event "minecraft:turn_gray": field "add": field "component_groups": component group "minecraft:shulker_gray"
+				event "minecraft:turn_green": field "add": field "component_groups": component group "minecraft:shulker_green"
+				event "minecraft:turn_light_blue": field "add": field "component_groups": component group "minecraft:shulker_light_blue"
+				event "minecraft:turn_lime": field "add": field "component_groups": component group "minecraft:shulker_lime"
+				event "minecraft:turn_magenta": field "add": field "component_groups": component group "minecraft:shulker_magenta"
+				event "minecraft:turn_orange": field "add": field "component_groups": component group "minecraft:shulker_orange"
+				event "minecraft:turn_pink": field "add": field "component_groups": component group "minecraft:shulker_pink"
+				event "minecraft:turn_purple": field "add": field "component_groups": component group "minecraft:shulker_purple"
+				event "minecraft:turn_red": field "add": field "component_groups": component group "minecraft:shulker_red"
+				event "minecraft:turn_silver": field "add": field "component_groups": component group "minecraft:shulker_silver"
+				event "minecraft:turn_white": field "add": field "component_groups": component group "minecraft:shulker_white"
+				event "minecraft:turn_yellow": field "add": field "component_groups": component group "minecraft:shulker_yellow"
+Added entity "shulker_bullet.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "version": 1
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.625
+					field "height": 0.625
+				component "minecraft:identifier": field "id": "minecraft:shulker_bullet"
+				component "minecraft:projectile":
+					field "onHit":
+						field "impact_damage":
+							field "damage": 1
+							field "knockback": true
+							field "semirandomdiffdamage": true
+							field "shouldbounce": true
+						field "mob_effect":
+							field "effect": "levitation"
+							field "durationeasy": 200
+							field "durationnormal": 200
+							field "durationhard": 200
+							field "amplifier": 8
+						field "remove_on_hit": empty
+						field "particle_on_hit":
+							field "particle_type": "largeexplode"
+							field "on_other_hit": true
+					field "power": 1.6
+					field "gravity": 0.05
+					field "uncertaintyBase": 16
+					field "uncertaintyMultiplier": 4
+					field "anchor": 1
+					field "offset": [0, -0.1, 0]
+					field "homing": true
+Changed entity "silverfish.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 13 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:silverfish".
+				Changed component "minecraft:type_family":
+					Changed field "family":
+						Total family: 2 (+1, -0)
+						Added family "monster".
+Changed entity "skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Added field "component_groups":
+				component group "minecraft:lightning_immune":
+					component "minecraft:damage_sensor":
+						trigger:
+							field "on_damage": field "filters": filter property "other_with_families": "lightning"
+							field "deals_damage": false
+			Changed field "components":
+				Total component: 20 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeleton".
+			Changed field "events":
+				Total event: 2 (+1, -0)
+				Added event "minecraft:spring_trap": field "add": field "component_groups": component group "minecraft:lightning_immune".
+Changed entity "skeleton_horse.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 4 (+1, -1)
+				Moved component group from "trap_spawned" to "minecraft:lightning_immune".
+				Added component group "minecraft:skeleton_trap":
+					component "minecraft:behavior.skeleton_horse_trap":
+						field "within_radius": 10.0
+						field "duration": 900.0
+						field "priority": 2
+				Removed component group "skeleton_trap": component "minecraft:is_trap": empty.
+			Changed field "components":
+				Total component: 15 (+1, -2)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeletonhorse".
+				Removed component "minecraft:is_tamed": empty.
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+				Changed component "minecraft:behavior.mount_pathing":
+					Changed field "target_dist" from 0.0 to 4.0.
+				Removed component "minecraft:behavior.player_ride_tamed": empty.
+			Changed field "events":
+				Total event: 5 (+1, -1)
+				Moved event from "set_trap" to "minecraft:set_trap".
+				Changed event "minecraft:set_trap":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -1)
+							Added component group "minecraft:lightning_immune".
+							Changed component group from "skeleton_trap" to "minecraft:skeleton_trap".
+							Removed component group "trap_spawned".
+				Added event "minecraft:spring_trap": field "add": field "component_groups": component group "minecraft:lightning_immune".
+				Removed event "spring_trap": field "add": field "component_groups": component group "trap_spawned".
+Changed entity "slime.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 10 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:slime".
+Changed entity "snowball.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:snowball".
+				Changed component "minecraft:projectile":
+					Changed field "onHit":
+						Changed field "impact_damage":
+							Changed field "damage" from 3 to 0.
+					Added field "damage": 3.
+Changed entity "snowgolem.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 17 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:snowgolem".
+Changed entity "spider.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 16 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:spider".
+Changed entity "stray.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 20 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeleton.stray".
+				Changed component "minecraft:loot":
+					Changed field "table" from "loot_tables/entities/skeleton.json" to "loot_tables/entities/stray.json".
+				Changed component "minecraft:type_family":
+					Changed field "family":
+						Total family: 3 (+1, -0)
+						Added family "undead".
+Changed entity "thrownenderpearl.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:thrownenderpearl".
+				Changed component "minecraft:projectile":
+					Changed field "onHit":
+						Added field "spawn_chance":
+							field "firstSpawnPercentChance": 5.0
+							field "firstSpawnCount": 1
+							field "spawnDefinition": "minecraft:endermite"
+					Changed field "power" from 0.5 to 1.5.
+					Changed field "gravity" from 0.05 to 0.025.
+					Changed field "angleoffset" from -20.0 to 0.0.
+					Added field "inertia": 1.
+					Added field "liquid_inertia": 1.
+Changed entity "thrownpotion.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:thrownpotion".
+				Changed component "minecraft:projectile":
+					Changed field "onHit":
+						Added field "impact_damage":
+							field "damage": 0
+							field "shouldbounce": false
+Changed entity "villager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 19 (+3, -2)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Changed component "minecraft:damage_sensor":
+					Changed trigger:
+						Changed field "on_damage":
+							Changed field "filters":
+								Changed filter property "other_with_families" from "zombie" to:
+									family "husk"
+									family "zombie"
+				Unchanged component "minecraft:identifier": field "id": "minecraft:villager".
+				Added component "minecraft:behavior.avoid_mob_type":
+					field "priority": 1
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "other_with_families":
+									family "zombie"
+									family "zombie_pigman"
+									family "zombie_villager"
+							field "max_dist": 8
+							field "walk_speed_multiplier": 0.6
+							field "sprint_speed_multiplier": 0.6
+				Removed component "minecraft:behavior:avoid_mob_type":
+					field "priority": 1
+					field "avoid_types":
+						entity "minecraft:pig_zombie"
+						entity "minecraft:zombie"
+						entity "minecraft:zombie_villager"
+					field "max_dist": 8
+					field "walk_speed_multiplier": 0.6
+					field "sprint_speed_multiplier": 0.6
+				Added component "minecraft:behavior.panic": field "priority": 1.
+				Removed component "minecraft:behavior:panic": field "priority": 1.
+			Changed field "events":
+				Total event: 7 (+1, -0)
+				Added event "minecraft:become_cleric":
+					field "add":
+						field "component_groups":
+							component group "behavior_non_peasant"
+							component group "cleric"
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Added field "filters": filter property "other_without_components": "minecraft:variant".
+						Changed sequence item 1:
+							Added field "filters": filter property "other_without_components": "minecraft:variant".
+				Changed event "minecraft:entity_transformed":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "filters":
+								Changed filter property "other_with_components" from "is_baby" to "minecraft:is_baby".
+						Changed sequence item 1:
+							Changed field "filters":
+								Changed filter property "other_without_components" from "is_baby" to "minecraft:is_baby".
+Changed entity "witch.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 14 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:witch".
+Changed entity "wither.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 18 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeleton.wither".
+				Changed component "minecraft:type_family":
+					Changed field "family":
+						Total family: 3 (+1, -0)
+						Added family "undead".
+Changed entity "wither_boss.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 17 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:wither.boss".
+Changed entity "wither_skull.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:wither.skull".
+				Changed component "minecraft:projectile":
+					Changed field "onHit":
+						Removed field "potion_effect":
+							field "effect": 36
+							field "durationeasy": 0
+							field "durationnormal": 200
+							field "durationhard": 800
+						Added field "mob_effect":
+							field "effect": "wither"
+							field "durationeasy": 0
+							field "durationnormal": 200
+							field "durationhard": 800
+							field "amplifier": 1
+Changed entity "wither_skull_dangerous.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:wither.skull.dangerous".
+				Changed component "minecraft:projectile":
+					Changed field "onHit":
+						Removed field "potion_effect":
+							field "effect": 36
+							field "durationeasy": 0
+							field "durationnormal": 200
+							field "durationhard": 800
+						Added field "mob_effect":
+							field "effect": "wither"
+							field "durationeasy": 0
+							field "durationnormal": 200
+							field "durationhard": 800
+							field "amplifier": 1
+Changed entity "wolf.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:wolf_tame":
+					Changed component "minecraft:is_dyeable":
+						Changed field "interact_text" from "action.interact.wolfcollar" to "action.interact.dye".
+			Changed field "components":
+				Total component: 17 (+1, -1)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:wolf".
+				Removed component "minecraft:on_calm":
+					field "event": "minecraft:on_calm"
+					field "target": "self"
+Changed entity "zombie.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:zombie_adult":
+					Total component: 3 (+0, -1)
+					Removed component "minecraft:loot": field "table": "loot_tables/entities/zombie.json".
+			Changed field "components":
+				Total component: 18 (+2, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie".
+				Added component "minecraft:loot": field "table": "loot_tables/entities/zombie.json".
+Changed entity "zombie_horse.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 19 (+2, -1)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombiehorse".
+				Removed component "minecraft:player_ride_tamed": empty.
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+				Added component "minecraft:behavior.player_ride_tamed": empty.
+Changed entity "zombie_husk.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 19 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:husk".
+Changed entity "zombie_pigman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 22 (+1, -1)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:pig_zombie".
+				Removed component "minecraft:monster": empty.
+				Changed component "minecraft:behavior.look_at_player":
+					Removed field "target_distance": 6.0.
+					Added field "look_distance": 6.0.
+Changed entity "zombie_villager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 18 (+1, -0)
+				Added component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_villager".
+			Changed field "events":
+				Total event: 4 (+1, -0)
+				Added event "minecraft:become_cleric": field "add": field "component_groups": component group "cleric".
+				Changed event "minecraft:entity_transformed":
+					Added field "filters": filter property "other_without_components": "minecraft:variant".
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "filters":
+								Changed filter property "other_with_components" from "is_baby" to "minecraft:is_baby".
+						Changed sequence item 1:
+							Changed field "filters":
+								Changed filter property "other_without_components" from "is_baby" to "minecraft:is_baby".

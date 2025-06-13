@@ -1,156 +1,45 @@
-Difference of "entities" between "1.21.50.26" (beta of "1.21.50") and "1.21.50.28" (beta of "1.21.50").
+Difference of "entities" between "1.21.60.25" (beta of "1.21.60") and "1.21.60.27" (beta of "1.21.60").
 
-Changed entity "bee.json":
+Changed entity "enderman.json":
 	Changed behavior pack "core":
-		Changed field "format_version" from "1.20.60" to "1.21.50".
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 21 (+2, -0)
-				Added component group "add_poison_effect":
-					component "minecraft:spell_effects":
-						field "add_effects":
-							effect:
-								field "effect": "poison"
-								field "duration": 25
-								field "display_on_screen_animation": true
-						field "remove_effects": "poison"
-					component "minecraft:behavior.timer_flag_1":
-						field "priority": 0
-						field "cooldown_range": 0.0
-						field "duration_range": [0.05, 0.05]
-						field "on_end":
-							field "event": "minecraft:on_poison_effect_added"
-							field "target": "self"
-				Added component group "add_wither_effect":
-					component "minecraft:spell_effects":
-						field "add_effects":
-							effect:
-								field "effect": "wither"
-								field "duration": 40
-								field "display_on_screen_animation": true
-						field "remove_effects": "wither"
-					component "minecraft:behavior.timer_flag_1":
-						field "priority": 0
-						field "cooldown_range": 0.0
-						field "duration_range": [0.05, 0.05]
-						field "on_end":
-							field "event": "minecraft:on_wither_effect_added"
-							field "target": "self"
-				Changed component group "angry_bee":
-					Changed component "minecraft:angry":
-						Added field "broadcast_anger_when_dying": false.
-				Changed component group "look_for_food":
-					Changed component "minecraft:behavior.move_to_block":
-						Changed field "target_blocks":
-							Total block: 25 (+0, -1)
-							Removed block "minecraft:closed_eyeblossom".
-			Changed field "components":
-				Total component: 29 (+1, -0)
-				Changed component "minecraft:damage_sensor":
-					Changed field "triggers":
-						Changed trigger:
-							Unchanged field "cause": "fall".
-							Changed field "deals_damage" from false to "no".
-						Changed trigger:
-							Changed field "deals_damage" from false to "no".
-				Changed component "minecraft:home":
-					Added field "restriction_type": "random_movement".
-				Changed component "minecraft:hurt_on_condition":
-					Changed field "damage_conditions":
-						Changed damage condition:
-							Changed field "filters":
-								Unchanged filter property "test": "in_lava".
-								Unchanged filter property "subject": "self".
-								Removed filter property "operator": "==".
-								Removed filter property "value": true.
-				Added component "minecraft:interact":
-					field "interactions":
-						interaction:
-							field "on_interact":
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "test": "is_family"
-											filter property "subject": "other"
-											filter property "value": "player"
-										filter:
-											filter property "test": "has_equipment"
-											filter property "domain": "hand"
-											filter property "subject": "other"
-											filter property "value": "minecraft:open_eyeblossom"
-								field "event": "fed_open_eyeblossom"
-							field "use_item": true
-							field "particle_on_start": field "particle_type": "food"
-							field "interact_text": "action.interact.feed"
-						interaction:
-							field "on_interact":
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "test": "is_family"
-											filter property "subject": "other"
-											filter property "value": "player"
-										filter:
-											filter property "test": "has_equipment"
-											filter property "domain": "hand"
-											filter property "subject": "other"
-											filter property "value": "minecraft:wither_rose"
-								field "event": "fed_wither_rose"
-							field "use_item": true
-							field "particle_on_start": field "particle_type": "food"
-							field "interact_text": "action.interact.feed"
-				Changed component "minecraft:behavior.tempt":
-					Changed field "items":
-						Total item: 25 (+1, -0)
-						Added item "minecraft:open_eyeblossom".
+				Total component group: 4 (+2, -0)
+				Added component group "minecraft:not_riding":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "filters":
+								filter property "test": "is_riding"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "minecraft:started_riding"
+					component "minecraft:teleport":
+						field "random_teleports": true
+						field "max_random_teleport_time": 30
+						field "random_teleport_cube": [32, 32, 32]
+						field "target_distance": 16
+						field "target_teleport_chance": 0.05
+						field "light_teleport_chance": 0.05
+				Added component group "minecraft:riding":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "filters":
+								filter property "test": "is_riding"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": false
+							field "event": "minecraft:stopped_riding"
 			Changed field "events":
-				Total event: 24 (+4, -0)
-				Added event "fed_open_eyeblossom": field "add": field "component_groups": component group "add_poison_effect".
-				Added event "fed_wither_rose": field "add": field "component_groups": component group "add_wither_effect".
-				Added event "on_poison_effect_added": field "remove": field "component_groups": component group "add_poison_effect".
-				Added event "on_wither_effect_added": field "remove": field "component_groups": component group "add_wither_effect".
-Changed entity "creaking.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 12 (+0, -1)
-				Removed component "minecraft:conditional_bandwidth_optimization": empty.
-Changed entity "ravager.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:break_blocks":
-					Changed field "breakable_blocks":
-						Total block: 47 (+2, -0)
-						Added block "cherry_leaves".
-						Added block "pale_oak_leaves".
-				Changed component "minecraft:hurt_on_condition":
-					Changed field "damage_conditions":
-						Changed damage condition:
-							Changed field "filters":
-								Unchanged filter property "test": "in_lava".
-								Unchanged filter property "subject": "self".
-								Removed filter property "operator": "==".
-								Removed filter property "value": true.
-Changed entity "silverfish.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:silverfish_angry":
-					Changed component "minecraft:angry":
-						Added field "broadcast_anger_when_dying": false.
-Changed entity "wolf.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:wolf_angry":
-					Changed component "minecraft:angry":
-						Added field "broadcast_anger_when_dying": false.
-Changed entity "zombie_pigman.json":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.16.0" to "1.21.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:pig_zombie_angry":
-					Changed component "minecraft:angry":
-						Added field "broadcast_anger_when_dying": false.
+				Total event: 5 (+2, -0)
+				Changed event "minecraft:entity_spawned":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:not_riding".
+				Added event "minecraft:started_riding":
+					field "add": field "component_groups": component group "minecraft:riding"
+					field "remove": field "component_groups": component group "minecraft:not_riding"
+				Added event "minecraft:stopped_riding":
+					field "add": field "component_groups": component group "minecraft:not_riding"
+					field "remove": field "component_groups": component group "minecraft:riding"

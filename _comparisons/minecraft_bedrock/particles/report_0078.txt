@@ -1,85 +1,38 @@
-Difference of "particles" between "1.21.60.24" (beta of "1.21.60") and "1.21.60.25" (beta of "1.21.60").
+Difference of "particles" between "1.21.62" and "1.21.70.20" (beta of "1.21.70").
 
-Total particle: 178 (+2, -0)
-Added particle "azalea_leaves_particle.json":
+Total particle: 179 (+1, -0)
+Added particle "firefly_particle.json":
 	resource pack "experimental":
-		field "format_version": "1.21.60"
+		field "format_version": "1.10.0"
 		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:azalea_leaves_particle"
+				field "identifier": "minecraft:firefly_particle"
 				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/biome_tinted_leaves_atlas"
+					field "material": "particles_blend"
+					field "texture": "textures/particle/pixel"
 			field "components":
-				field "minecraft:emitter_initialization": field "creation_expression": "v.fall_acc = -0.3; v.wind_acc = 10; v.curve_len = 15;"
-				field "minecraft:emitter_lifetime_expression":
-					field "activation_expression": 1
-					field "expiration_expression": 0
+				field "minecraft:emitter_initialization":
+					field "creation_expression": "v.acceleration_x = math.random( -5, 5 ); v.acceleration_y = math.random( -5, 5 ); v.acceleration_z = math.random( -5, 5 );"
+					field "per_update_expression": "v.should_change = math.random( 0, 1 ) <= 0.05; v.should_change ? ( v.acceleration_x = math.random( -5, 5 ) ); v.should_change ? ( v.acceleration_y = math.random( -5, 5 ) ); v.should_change ? ( v.acceleration_z = math.random( -5, 5 ) );"
+				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_box":
-					field "offset": [0.5, -0.075, 0.5]
-					field "half_dimensions": [0.5, 0.0, 0.5]
-					field "direction": "outwards"
+				field "minecraft:emitter_shape_point": empty
 				field "minecraft:particle_appearance_billboard":
-					field "size": ["v.particle_random_1 > 0.5 ? 0.1 : 0.15", "v.particle_random_1 > 0.5 ? 0.1 : 0.15"]
+					field "size": [0.0375, 0.0375]
 					field "facing_camera_mode": "lookat_xyz"
-					field "uv":
-						field "texture_width": 28
-						field "texture_height": 21
-						field "uv": ["math.floor(v.particle_random_1 * 4) * 7", "math.floor(v.particle_random_2 * 3) * 7"]
-						field "uv_size": [7, 7]
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_appearance_tinting": field "color": color [0.439, 0.573, 0.176, 1.0]
-				field "minecraft:particle_initial_speed": [0.0, -0.021, 0.0]
-				field "minecraft:particle_initial_spin":
-					field "rotation": "math.random(0, 360)"
-					field "rotation_rate": "math.random(-30, 30)"
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": 15
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "interpolant": "v.particle_age / v.particle_lifetime"
+						field "gradient":
+							value "0.0": "#00FFFFEB"
+							value "0.3": "#FFFFFFEB"
+							value "0.5": "#FFFFFFEB"
+							value "1.0": "#00FFFFEB"
+				field "minecraft:particle_initial_speed": 0.5
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random( 10, 15 )"
 				field "minecraft:particle_motion_collision":
-					field "collision_drag": 10
-					field "collision_radius": 0.075
-					field "expire_on_contact": true
+					field "collision_radius": 0.0375
+					field "coefficient_of_restitution": 2
 				field "minecraft:particle_motion_dynamic":
-					field "linear_acceleration": ["math.cos((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)", "v.fall_acc", "math.sin((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)"]
-					field "rotation_acceleration": "v.particle_random_4 > 0.5 ? -5 : 5"
-Added particle "biome_tinted_leaves_particle.json":
-	resource pack "experimental":
-		field "format_version": "1.21.60"
-		field "particle_effect":
-			field "description":
-				field "identifier": "minecraft:biome_tinted_leaves_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/biome_tinted_leaves_atlas"
-			field "components":
-				field "minecraft:emitter_initialization": field "creation_expression": "v.fall_acc = -0.3; v.wind_acc = 10; v.curve_len = 15;"
-				field "minecraft:emitter_lifetime_expression":
-					field "activation_expression": 1
-					field "expiration_expression": 0
-				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_box":
-					field "offset": [0.5, -0.075, 0.5]
-					field "half_dimensions": [0.5, 0.0, 0.5]
-					field "direction": "outwards"
-				field "minecraft:particle_appearance_billboard":
-					field "size": ["v.particle_random_1 > 0.5 ? 0.1 : 0.15", "v.particle_random_1 > 0.5 ? 0.1 : 0.15"]
-					field "facing_camera_mode": "lookat_xyz"
-					field "uv":
-						field "texture_width": 28
-						field "texture_height": 21
-						field "uv": ["math.floor(v.particle_random_1 * 4) * 7", "math.floor(v.particle_random_2 * 3) * 7"]
-						field "uv_size": [7, 7]
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_appearance_tinting": field "color": color ["variable.color.r", "variable.color.g", "variable.color.b", 1.0]
-				field "minecraft:particle_initial_speed": [0.0, -0.021, 0.0]
-				field "minecraft:particle_initial_spin":
-					field "rotation": "math.random(0, 360)"
-					field "rotation_rate": "math.random(-30, 30)"
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": 15
-				field "minecraft:particle_motion_collision":
-					field "collision_drag": 10
-					field "collision_radius": 0.075
-					field "expire_on_contact": true
-				field "minecraft:particle_motion_dynamic":
-					field "linear_acceleration": ["math.cos((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)", "v.fall_acc", "math.sin((v.particle_age / 15) * (1000 + v.particle_random_3 * 3000)) * v.wind_acc * (v.particle_age / 15)"]
-					field "rotation_acceleration": "v.particle_random_4 > 0.5 ? -5 : 5"
+					field "linear_acceleration": ["v.acceleration_x", "v.acceleration_y", "v.acceleration_z"]
+					field "linear_drag_coefficient": 3

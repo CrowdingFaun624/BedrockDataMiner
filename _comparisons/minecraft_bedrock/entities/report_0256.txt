@@ -1,92 +1,156 @@
-Difference of "entities" between "1.21.90.20" (beta of "1.21.90") and "1.21.90.21" (beta of "1.21.90").
+Difference of "entities" between "1.21.90.27" (beta of "1.21.90") and "1.21.90.28" (beta of "1.21.90").
 
-Changed entity "blaze.json":
+Changed entity "glow_squid.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "ranged_mode":
-					Changed component "minecraft:behavior.ranged_attack":
-						Changed field "attack_radius" from 16.0 to 48.0.
-Changed entity "ghast.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 28 (+1, -0)
-				Changed component "minecraft:collision_box":
-					Changed field "width" from 4.02 to 0.8933333333.
-					Changed field "height" from 4.0 to 0.8888888889.
-				Added component "minecraft:scale": field "value": 4.5.
+				Moved component group from "minecraft:squid_ault" to "minecraft:squid_adult".
 Changed entity "happy_ghast.json":
 	Changed behavior pack "core":
-		Removed field "use_beta_features": true.
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
 				Changed component group "minecraft:adult":
-					Total component: 7 (+1, -0)
-					Changed component "minecraft:collision_box":
-						Changed field "width" from 4.0 to 1.0.
-						Changed field "height" from 4.0 to 1.0.
-					Added component "minecraft:scale": field "value": 3.999.
-				Changed component group "minecraft:baby":
-					Total component: 16 (+1, -0)
-					Added component "minecraft:scale": field "value": 1.999.
-					Changed component "minecraft:behavior.follow_mob":
-						Changed field "filters":
-							Changed filter property "all_of":
-								Changed filter:
-									Changed filter property "any_of":
-										Total filter: 27 (+1, -0)
-										Added filter:
-											filter property "test": "is_family"
+					Changed component "minecraft:entity_sensor":
+						Changed field "subsensors":
+							Total subsensor: 2 (+0, -2)
+							Changed subsensor:
+								Unchanged field "event": "minecraft:become_mobile".
+								Changed field "y_offset" from 5.0 to 4.5.
+								Changed field "range":
+									Changed range item 0 from 3.0 to 3.5.
+									Changed range item 1 from 1.0 to 2.0.
+								Changed field "event_filters":
+									Changed filter property "all_of":
+										Total filter: 2 (+1, -1)
+										Removed filter:
+											filter property "test": "is_riding_self"
 											filter property "subject": "other"
+											filter property "value": false
+										Added filter:
+											filter property "test": "is_vehicle_family"
+											filter property "subject": "other"
+											filter property "operator": "not"
 											filter property "value": "happy_ghast"
-				Changed component group "minecraft:harnessed":
-					Changed component "minecraft:rideable":
-						Changed field "seats":
-							Changed seat:
-								Changed field "position":
-									Unchanged vector item 0: 0.0.
-									Changed vector item 1 from 3.8 to 0.95.
-									Changed vector item 2 from 1.8 to 0.45.
-							Changed seat:
-								Changed field "position":
-									Changed vector item 0 from -1.8 to -0.45.
-									Changed vector item 1 from 3.8 to 0.95.
-									Unchanged vector item 2: 0.0.
-							Changed seat:
-								Changed field "position":
-									Unchanged vector item 0: 0.0.
-									Changed vector item 1 from 3.8 to 0.95.
-									Changed vector item 2 from -1.8 to -0.45.
-							Changed seat:
-								Changed field "position":
-									Changed vector item 0 from 1.8 to 0.45.
-									Changed vector item 1 from 3.8 to 0.95.
-									Unchanged vector item 2: 0.0.
-Changed entity "pig.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:pig_unsaddled":
-					Changed component "minecraft:interact":
-						Changed field "interactions":
-							Changed interaction:
-								Removed field "equip_item_slot": "slot.armor.body".
-Changed entity "zoglin.json":
+							Removed subsensor:
+								field "event": "minecraft:become_mobile"
+								field "cooldown": 0.0
+								field "y_offset": 4.0
+								field "range": [2.0, 1.0]
+								field "minimum_count": 0
+								field "maximum_count": 0
+								field "event_filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_riding_self"
+											filter property "subject": "other"
+											filter property "value": false
+										filter:
+											filter property "test": "actor_health"
+											filter property "operator": ">"
+											filter property "value": 0
+							Changed subsensor:
+								Unchanged field "event": "minecraft:become_immobile".
+								Changed field "y_offset" from 5.0 to 4.5.
+								Changed field "range":
+									Unchanged range item 0: 3.0.
+									Changed range item 1 from 1.0 to 1.5.
+								Changed field "event_filters":
+									Changed filter property "all_of":
+										Total filter: 2 (+1, -1)
+										Removed filter:
+											filter property "test": "is_riding_self"
+											filter property "subject": "other"
+											filter property "value": false
+										Added filter:
+											filter property "test": "is_vehicle_family"
+											filter property "subject": "other"
+											filter property "operator": "not"
+											filter property "value": "happy_ghast"
+							Removed subsensor:
+								field "event": "minecraft:become_immobile"
+								field "cooldown": 0.0
+								field "y_offset": 4.0
+								field "range": [2.0, 1.0]
+								field "minimum_count": 1
+								field "event_filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_riding_self"
+											filter property "subject": "other"
+											filter property "value": false
+										filter:
+											filter property "test": "actor_health"
+											filter property "operator": ">"
+											filter property "value": 0
+				Moved component group from "minecraft:harnessed" to "minecraft:adult_harnessed".
+				Moved component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+				Moved component group from "minecraft:has_passengers" to "minecraft:adult_with_passengers".
+				Changed component group "minecraft:adult_with_passengers":
+					Total component: 1 (+0, -1)
+					Removed component "minecraft:pushable":
+						field "is_pushable": false
+						field "is_pushable_by_piston": true
+				Moved component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+				Changed component group "minecraft:adult_without_passengers":
+					Total component: 1 (+0, -1)
+					Removed component "minecraft:pushable":
+						field "is_pushable": true
+						field "is_pushable_by_piston": true
+				Changed component group "minecraft:baby":
+					Changed component "minecraft:flying_speed":
+						Changed field "value" from 0.15 to 0.0833333.
+			Changed field "events":
+				Changed event "minecraft:ageable_grow_up":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+							Changed component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+				Changed event "minecraft:on_harnessed":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:harnessed" to "minecraft:adult_harnessed".
+					Changed field "remove":
+						Changed field "component_groups":
+							Changed component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+				Changed event "minecraft:on_passenger_dismount":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Changed component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+							Changed field "remove":
+								Changed field "component_groups":
+									Changed component group from "minecraft:has_passengers" to "minecraft:adult_with_passengers".
+				Changed event "minecraft:on_passenger_mount":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Changed component group from "minecraft:has_passengers" to "minecraft:adult_with_passengers".
+							Changed field "remove":
+								Changed field "component_groups":
+									Changed component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+				Changed event "minecraft:on_unharnessed":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+					Changed field "remove":
+						Changed field "component_groups":
+							Changed component group from "minecraft:harnessed" to "minecraft:adult_harnessed".
+				Changed event "minecraft:spawn_adult":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+							Changed component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+Changed entity "mule.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:behavior.melee_box_attack":
-					Changed field "speed_multiplier" from 1.4 to 1.15.
-Changed entity "zombie_pigman.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:pig_zombie_adult":
-					Total component: 3 (+1, -0)
-					Added component "minecraft:equipment": field "table": "loot_tables/entities/zombie_pigman_gear.json".
-			Changed field "components":
-				Total component: 30 (+0, -1)
-				Removed component "minecraft:equipment": field "table": "loot_tables/entities/zombie_pigman_gear.json".
-				Changed component "minecraft:behavior.melee_box_attack":
-					Changed field "speed_multiplier" from 1.5 to 1.05.
+				Changed component "minecraft:leashable":
+					Added field "presets":
+						preset:
+							field "filter":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "happy_ghast"
+							field "spring_type": "quad_dampened"

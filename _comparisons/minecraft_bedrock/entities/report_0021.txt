@@ -1,9 +1,95 @@
-Difference of "entities" between "1.1.0" and "1.1.1.0" (beta of "1.1.1").
+Difference of "entities" between "1.2.0.9" (beta of "1.2.0") and "1.2.0.11" (beta of "1.2.0").
 
-Changed entity "shulker.json":
+Changed entity "creeper.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 4 (+1, -1)
+				Added component group "minecraft:forced_exploding":
+					component "minecraft:target_nearby_sensor": empty
+					component "minecraft:timer":
+						field "time": [0, 0]
+						field "looping": false
+						field "time_down_event":
+							field "event": "minecraft:start_exploding"
+							field "target": "self"
+				Removed component group "minecraft:hunting": empty.
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:creeper".
+				Changed component "minecraft:interact":
+					Changed field "on_interact":
+						Changed field "event" from "minecraft:start_exploding" to "minecraft:start_exploding_forced".
+			Changed field "events":
+				Total event: 4 (+1, -0)
+				Changed event "minecraft:start_exploding":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Removed field "remove": field "component_groups": component group "minecraft:hunting".
+						Changed sequence item 1:
+							Removed field "remove": field "component_groups": component group "minecraft:hunting".
+				Added event "minecraft:start_exploding_forced": field "add": field "component_groups": component group "minecraft:forced_exploding".
+				Changed event "minecraft:stop_exploding":
+					Removed field "add": field "component_groups": component group "minecraft:hunting".
+Changed entity "enderman.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 18 (+1, -0)
-				Added component "minecraft:fire_immune": true.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:shulker".
+				Unchanged component "minecraft:identifier": field "id": "minecraft:enderman".
+				Changed component "minecraft:teleport":
+					Changed field "lightTeleportChance" from 0.01 to 0.05.
+Changed entity "parrot.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:healable":
+					Added field "filters":
+						filter property "test": "is_riding"
+						filter property "operator": "!="
+						filter property "value": true
+				Unchanged component "minecraft:identifier": field "id": "minecraft:parrot".
+Changed entity "tnt_minecart.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:inactive":
+					Changed component "minecraft:interact":
+						Changed interaction:
+							Changed field "on_interact":
+								Changed field "filters":
+									Changed filter property "all_of":
+										Total filter: 2 (+1, -0)
+										Added filter:
+											filter property "test": "is_game_rule"
+											filter property "domain": "tntexplodes"
+											filter property "operator": "=="
+											filter property "value": true
+						Changed interaction:
+							Changed field "on_interact":
+								Changed field "filters":
+									Removed filter property "test": "has_component".
+									Removed filter property "subject": "other".
+									Removed filter property "value": "fire_aspect".
+									Added filter property "any_of":
+										filter:
+											filter property "test": "has_component"
+											filter property "subject": "other"
+											filter property "value": "fire_aspect"
+									Added filter property "all_of":
+										filter:
+											filter property "test": "is_game_rule"
+											filter property "domain": "tntexplodes"
+											filter property "operator": "=="
+											filter property "value": true
+					Changed component "minecraft:rail_sensor":
+						Changed field "on_activate":
+							Added field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_game_rule"
+										filter property "domain": "tntexplodes"
+										filter property "operator": "=="
+										filter property "value": true
+				Changed component group "minecraft:primed_tnt":
+					Changed component "minecraft:explode":
+						Unchanged field "power": 3.
+						Added field "on_activate": empty.

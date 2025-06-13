@@ -1,132 +1,15 @@
-Difference of "render_controllers" between "1.18.32" and "1.19.0.20" (beta of "1.19.0").
-Unable to create data files for 1 file between: "1.18.33"
+Difference of "render_controllers" between "1.19.11" and "1.19.20.20" (beta of "1.19.20").
 
-Changed file "allay.render_controllers.json":
-	Moved resource pack from "experimental" to "core".
-Changed file "frog.render_controllers.json":
-	Moved resource pack from "experimental" to "core".
-	Changed resource pack "core":
+Changed file "player.render_controllers.json":
+	Changed resource pack "experimental":
 		Changed field "render_controllers":
-			Changed render controller "controller.render.frog":
-				Added field "part_visibility": part visibility dict part visibility "croaking_body": "!query.is_eating_mob".
-Changed file "tadpole.render_controllers.json":
-	Moved resource pack from "experimental" to "core".
-Changed file "warden.render_controllers.json":
-	Moved resource pack from "experimental" to "core".
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Total render controller: 6 (+1, -1)
-			Changed render controller "controller.render.warden_bioluminescent_layer":
-				Removed field "overlay_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "0.3"
-				Removed field "is_hurt_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "0.3"
-				Removed field "on_fire_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "0.3"
-				Added field "color":
-					channel "r": 1.0
-					channel "g": 1.0
-					channel "b": 1.0
-					channel "a": "0.7"
-			Removed render controller "controller.render.warden_ears":
-				field "geometry": "Geometry.default"
-				field "materials": material dict material "*": "Material.bioluminescent_layer"
-				field "textures": texture "Texture.ears"
-				field "ignore_lighting": true
-				field "overlay_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.ears_alpha"
-				field "is_hurt_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.ears_alpha"
-				field "on_fire_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.ears_alpha"
-			Changed render controller "controller.render.warden_heart":
-				Removed field "overlay_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.heart_alpha"
-				Removed field "is_hurt_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.heart_alpha"
-				Removed field "on_fire_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.heart_alpha"
-				Added field "color":
-					channel "r": 1.0
-					channel "g": 1.0
-					channel "b": 1.0
-					channel "a": "query.hurt_time > 0 ? 0.2 : variable.heart_alpha"
-			Changed render controller "controller.render.warden_spots_1":
-				Removed field "overlay_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.spots_1_alpha"
-				Removed field "is_hurt_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.spots_1_alpha"
-				Removed field "on_fire_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.spots_1_alpha"
-				Added field "color":
-					channel "r": 1.0
-					channel "g": 1.0
-					channel "b": 1.0
-					channel "a": "variable.spots_1_alpha"
-			Changed render controller "controller.render.warden_spots_2":
-				Removed field "overlay_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.spots_2_alpha"
-				Removed field "is_hurt_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.spots_2_alpha"
-				Removed field "on_fire_color":
-					channel "r": "this"
-					channel "g": "this"
-					channel "b": "this"
-					channel "a": "variable.spots_2_alpha"
-				Added field "color":
-					channel "r": 1.0
-					channel "g": 1.0
-					channel "b": 1.0
-					channel "a": "variable.spots_2_alpha"
-			Added render controller "controller.render.warden_tendrils":
-				field "geometry": "Geometry.default"
-				field "materials": material dict material "*": "Material.bioluminescent_layer"
-				field "textures": texture "Texture.tendrils"
-				field "ignore_lighting": true
-				field "color":
-					channel "r": 1.0
-					channel "g": 1.0
-					channel "b": 1.0
-					channel "a": "variable.tendrils_alpha"
+			Changed render controller "controller.render.player.first_person":
+				Changed field "part_visibility":
+					Changed part visibility dict:
+						Changed part visibility "rightArm" from "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'filled_map'".
+					Changed part visibility dict:
+						Changed part visibility "rightSleeve" from "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'map'" to "query.get_equipped_item_name(0, 1) == '' || query.get_equipped_item_name(0, 1) == 'filled_map'".
+					Changed part visibility dict:
+						Changed part visibility "leftArm" from "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'filled_map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'filled_map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
+					Changed part visibility dict:
+						Changed part visibility "leftSleeve" from "(query.get_equipped_item_name(0, 1) == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "(query.get_equipped_item_name(0, 1) == 'filled_map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'filled_map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".

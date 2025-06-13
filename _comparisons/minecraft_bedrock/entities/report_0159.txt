@@ -1,58 +1,87 @@
-Difference of "entities" between "1.19.0.28" (beta of "1.19.0") and "1.19.0.30" (beta of "1.19.0").
+Difference of "entities" between "1.19.10.22" (beta of "1.19.10") and "1.19.10.23" (beta of "1.19.10").
 
-Changed entity "bee.json":
+Changed entity "fish.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:health":
+					Changed field "value" from 6 to 3.
+					Changed field "max" from 6 to 3.
+Changed entity "pufferfish.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:health":
+					Changed field "value" from 6 to 3.
+					Changed field "max" from 6 to 3.
+Changed entity "salmon.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "bee_adult":
-					Changed component "minecraft:breedable":
-						Changed field "breed_items":
-							Total item: 10 (+1, -0)
-							Added item "minecraft:mangrove_propagule".
-				Changed component group "bee_baby":
-					Changed component "minecraft:ageable":
-						Changed field "feed_items":
-							Total item: 10 (+1, -0)
-							Added item "minecraft:mangrove_propagule".
-				Changed component group "look_for_food":
-					Changed component "minecraft:behavior.move_to_block":
-						Changed field "target_blocks":
-							Total block: 10 (+1, -0)
-							Added block "minecraft:mangrove_propagule".
-						Added field "target_block_filters":
-							filter property "test": "is_waterlogged"
-							filter property "subject": "block"
-							filter property "operator": "=="
-							filter property "value": false
+				Changed component group "scale_large":
+					Total component: 2 (+0, -1)
+					Removed component "minecraft:health":
+						field "value": 6
+						field "max": 6
+				Changed component group "scale_normal":
+					Total component: 2 (+0, -1)
+					Removed component "minecraft:health":
+						field "value": 6
+						field "max": 6
+				Changed component group "scale_small":
+					Total component: 2 (+0, -1)
+					Removed component "minecraft:health":
+						field "value": 6
+						field "max": 6
 			Changed field "components":
-				Changed component "minecraft:behavior.tempt":
-					Changed field "items":
-						Total item: 10 (+1, -0)
-						Added item "minecraft:mangrove_propagule".
-Changed entity "frog.json":
+				Total component: 21 (+1, -0)
+				Added component "minecraft:health":
+					field "value": 3
+					field "max": 3
+Changed entity "shulker_bullet.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 29 (+1, -0)
-				Added component "minecraft:experience_reward":
-					field "on_bred": "Math.Random(1,7)"
-					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
-Changed entity "tadpole.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "grow_up":
-					Changed component "minecraft:transformation":
-						Added field "transformation_sound": "convert_to_frog".
-Changed entity "warden.json":
+				Changed component "minecraft:projectile":
+					Changed field "on_hit":
+						Changed field "mob_effect":
+							Unchanged field "effect": "levitation".
+							Changed field "amplifier" from 1 to 0.
+Changed entity "trader_llama.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:mob_effect":
-					Added field "cooldown_time": 6.
-Changed entity "xp_orb.json":
+				Changed component "minecraft:damage_sensor":
+					Changed field "triggers":
+						Unchanged field "cause": "all".
+						Changed field "on_damage":
+							Changed field "filters":
+								Removed filter property "test": "in_caravan".
+								Removed filter property "value": false.
+								Added filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": "trader_llama"
+									filter:
+										filter property "test": "in_caravan"
+										filter property "value": false
+				Changed component "minecraft:type_family":
+					Changed field "family":
+						Total family: 3 (+1, -0)
+						Added family "trader_llama".
+				Changed component "minecraft:behavior.hurt_by_target":
+					Added field "entity_types":
+						field "filters":
+							filter property "test": "is_family"
+							filter property "subject": "other"
+							filter property "operator": "!="
+							filter property "value": "trader_llama"
+Changed entity "tropicalfish.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 7 (+1, -0)
-				Added component "minecraft:type_family": field "family": family "inanimate".
+				Changed component "minecraft:health":
+					Changed field "value" from 6 to 3.
+					Changed field "max" from 6 to 3.

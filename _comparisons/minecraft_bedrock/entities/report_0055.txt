@@ -1,129 +1,84 @@
-Difference of "entities" between "1.8.0.10" (beta of "1.8.0") and "1.8.0.11" (beta of "1.8.0").
+Difference of "entities" between "1.9.0.0" (beta of "1.9.0") and "1.9.0.2" (beta of "1.9.0").
 
-Changed entity "balloon.json":
-	Changed behavior pack "education":
-		Added field "format_version": "1.8.0-beta.1".
-		Changed field "minecraft:entity":
-			Removed field "format_version": "1.6.0".
-			Changed field "description":
-				Added description "identifier": "minecraft:balloon".
-				Removed description "minecraft:identifier": field "id": "minecraft:balloon".
-Changed entity "drowned.json":
+Changed entity "arrow.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.stomp_turtle_egg":
-					Added field "search_count": 4.
-Changed entity "husk.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.stomp_turtle_egg":
-					Added field "search_count": 4.
-Changed entity "ice_bomb.json":
-	Changed behavior pack "education":
-		Added field "format_version": "1.8.0-beta.1".
-		Changed field "minecraft:entity":
-			Removed field "format_version": "1.6.0".
-			Changed field "description":
-				Added description "identifier": "minecraft:ice_bomb".
-				Removed description "minecraft:identifier": field "id": "minecraft:ice_bomb".
+			Changed field "component_groups":
+				Total component group: 3 (+1, -0)
+				Added component group "minecraft:pillager_arrow":
+					component "minecraft:projectile":
+						field "onHit":
+							field "impact_damage":
+								field "damage": [3, 6]
+								field "knockback": true
+								field "semirandomdiffdamage": false
+								field "destroyonhit": true
+							field "stick_in_ground": field "shake_time": 0.35
+							field "arrow_effect": empty
+						field "hitSound": "bow.hit"
+						field "power": 1.6
+						field "gravity": 0.05
+						field "uncertaintyBase": 16
+						field "uncertaintyMultiplier": 4
+						field "anchor": 1
+						field "shouldbounce": true
+						field "offset": [0, -0.1, 0]
+			Changed field "events":
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Total sequence item: 3 (+1, -0)
+						Added sequence item 2:
+							field "add": field "component_groups": component group "minecraft:pillager_arrow"
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "pillager"
 Changed entity "panda.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 12 (+1, -0)
-				Added component group "minecraft:baby_scared":
-					component "minecraft:angry":
-						field "duration": 1
-						field "broadcastAnger": true
-						field "broadcastRange": 41
-						field "broadcast_filters":
-							filter property "test": "is_family"
-							filter property "operator": "=="
-							filter property "value": "panda_aggressive"
-						field "calm_event":
-							field "event": "minecraft:baby_on_calm"
-							field "target": "self"
-				Changed component group "minecraft:panda_adult":
-					Total component: 7 (+4, -0)
-					Added component "minecraft:attack": field "damage": 2.0.
-					Added component "minecraft:on_target_acquired":
-						field "event": "minecraft:become_angry"
-						field "target": "self"
-					Added component "minecraft:on_target_escape":
-						field "event": "minecraft:on_calm"
-						field "target": "self"
-					Added component "minecraft:behavior.melee_attack":
-						field "priority": 2
-						field "target_dist": 1.2
-						field "track_target": true
-						field "attack_once": true
-						field "reach_multiplier": 1.0
+				Total component group: 11 (+0, -1)
 				Changed component group "minecraft:panda_aggressive":
-					Total component: 5 (+2, -3)
-					Added component "minecraft:on_friendly_anger":
-						field "event": "minecraft:on_anger"
-						field "target": "self"
-					Removed component "minecraft:on_target_acquired":
-						field "event": "minecraft:become_angry"
-						field "target": "self"
-					Removed component "minecraft:on_target_escape":
-						field "event": "minecraft:on_calm"
-						field "target": "self"
-					Added component "minecraft:type_family":
-						field "family":
-							family "panda"
-							family "panda_aggressive"
-					Removed component "minecraft:behavior.hurt_by_target": field "priority": 1.
-				Changed component group "minecraft:panda_angry":
-					Changed component "minecraft:angry":
-						Changed field "broadcastAnger" from false to true.
-						Added field "broadcastRange": 41.
-						Added field "broadcast_filters":
-							filter property "test": "is_family"
-							filter property "operator": "=="
-							filter property "value": "panda_aggressive"
-				Changed component group "minecraft:panda_baby":
-					Total component: 7 (+1, -0)
-					Added component "minecraft:on_target_acquired":
-						field "event": "minecraft:on_scared"
-						field "target": "self"
+					Total component: 6 (+1, -0)
+					Added component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+						field "ignore_mob_damage": true
+				Changed component group "minecraft:panda_lazy":
+					Total component: 6 (+1, -0)
+					Added component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 2.5
+				Removed component group "minecraft:panda_panic":
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
 			Changed field "components":
-				Total component: 28 (+1, -1)
-				Added component "minecraft:behavior.hurt_by_target": field "priority": 1.
-				Removed component "minecraft:behavior.panic":
+				Total component: 29 (+1, -0)
+				Added component "minecraft:behavior.panic":
 					field "priority": 1
 					field "speed_multiplier": 1.25
+				Changed component "minecraft:behavior.snacking":
+					Changed field "priority" from 1 to 2.
 			Changed field "events":
-				Total event: 13 (+2, -0)
-				Changed event "minecraft:ageable_grow_up":
-					Changed field "sequence":
-						Total sequence item: 4 (+1, -0)
-						Added sequence item 3:
-							field "add": field "component_groups": component group "minecraft:panda_aggressive"
-							field "filters":
-								filter property "test": "is_variant"
-								filter property "subject": "self"
-								filter property "operator": "=="
-								filter property "value": 6
-				Added event "minecraft:baby_on_calm": field "remove": field "component_groups": component group "minecraft:baby_scared".
-				Added event "minecraft:on_scared": field "add": field "component_groups": component group "minecraft:baby_scared".
-Changed entity "zombie.json":
+				Changed event "minecraft:panda_aggressive":
+					Removed field "remove": field "component_groups": component group "minecraft:panda_panic".
+Changed entity "pillager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.stomp_turtle_egg":
-					Added field "search_count": 4.
-Changed entity "zombie_pigman.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.stomp_turtle_egg":
-					Added field "search_count": 4.
-Changed entity "zombie_villager.json":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.stomp_turtle_egg":
-					Added field "search_count": 4.
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:pillager".
+				Added description "is_experimental": true.
+				Added description "is_spawnable": true.
+				Added description "is_summonable": true.
+				Removed description "minecraft:is_experimental": field "value": true.
+				Removed description "minecraft:is_summonable": field "value": true.
+				Removed description "minecraft:spawn_egg": field "value": true.
+			Changed field "component_groups":
+				Changed component group "minecraft:ranged_attack":
+					Changed component "minecraft:behavior.ranged_attack":
+						Removed field "charge_charged_trigger": 1.25.
+						Removed field "charge_shoot_trigger": 1.5.
+						Changed field "attack_interval_min" from 0 to 1.
+						Changed field "attack_interval_max" from 0 to 1.
+						Added field "priority": 4.

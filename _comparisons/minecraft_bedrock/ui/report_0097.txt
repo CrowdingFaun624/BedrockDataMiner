@@ -1,73 +1,169 @@
-Difference of "ui" between "1.6.0.8" (beta of "1.6.0") and "1.6.0.30" (beta of "1.6.0").
+Difference of "ui" between "1.7.0.2" (beta of "1.7.0") and "1.7.0.3" (beta of "1.7.0").
 
-Changed namespace "common_store":
-	Changed element "search_object":
+Total namespace: 147 (+1, -0)
+Changed namespace "hud":
+	Changed element "chat_panel":
 		Unchanged field "type": "panel".
-		Changed field "controls":
-			Total control: 3 (+2, -2)
-			Removed control element "filter_menu@filter_menu.filter_menu_screen_content": empty.
-			Removed control element "sort_menu@sort_menu.sort_menu_screen_content": empty.
-			Added control:
-				element "filter_menu_panel":
-					field "type": "panel"
-					field "visible": false
-					field "controls": control element "filter_menu@filter_menu.filter_menu_screen_content": empty
-					field "bindings":
-						binding:
-							field "binding_name": "#filter_screen_visible"
-							field "binding_name_override": "#visible"
-			Added control:
-				element "sort_menu_panel":
-					field "type": "panel"
-					field "visible": false
-					field "controls": control element "sort_menu@sort_menu.sort_menu_screen_content": empty
-					field "bindings":
-						binding:
-							field "binding_name": "#sort_screen_visible"
-							field "binding_name_override": "#visible"
-Changed namespace "filter_menu":
-	Changed element "filter_menu_screen_content@common.modal_area_panel_base":
-		Changed field "bindings":
-			Total binding: 1 (+1, -2)
-			Removed binding:
-				field "binding_name": "#filter_screen_enabled"
-				field "binding_name_override": "#visible"
-			Removed binding:
-				field "binding_name": "#filter_screen_enabled"
-				field "binding_name_override": "#modal"
-			Added binding:
-				field "binding_name": "#filter_screen_visible"
-				field "binding_name_override": "#modal"
-	Changed element "filter_section_content":
-		Unchanged field "type": "stack_panel".
-		Removed field "visible": false.
-Changed namespace "general_section":
-	Changed element "video_section":
+		Removed field "clips_children": true.
+Changed namespace "mashup":
+	Changed element "share_label":
 		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "option_toggle_screen_animations@settings_common.option_toggle":
-					Added field "ignored": "($is_holographic)".
-Changed namespace "play":
-	Changed element "friends_scroll_panel@play.common_scroll_pane":
+				Changed element "share_image_offset_panel":
+					Unchanged field "type": "panel".
+					Changed field "variables":
+						Changed variable:
+							Changed field "requires" from "($microsoft_os and $supports_share)" to "(($microsoft_os or (not $apple_os and not $google_os)) and $supports_share)".
+Changed namespace "realms_whitelist":
+	Changed element "link_panel@realms_common.hollow_banner":
 		Changed field "controls":
 			Changed control:
-				Changed element "stack_panel":
+				Changed element "copy_share_panel":
 					Unchanged field "type": "stack_panel".
+					Changed field "variables":
+						Changed variable:
+							Changed field "requires" from "($microsoft_os and $supports_share)" to "(($microsoft_os or (not $apple_os and not $google_os)) and $supports_share)".
 					Changed field "controls":
 						Changed control:
-							Changed element "no_friends_grid_message@play.label_content_template":
-								Added field "ignored": "$education_edition".
-Changed namespace "sort_menu":
-	Changed element "sort_menu_screen_content@common.modal_area_panel_base":
+							Changed element "spacing":
+								Unchanged field "type": "panel".
+								Changed field "ignored" from "($gear_vr or $xbox_one or (not $google_os and not $apple_os and not $microsoft_os))" to "(not $supports_share)".
+Changed namespace "start":
+	Total element: 39 (+1, -0)
+	Added element "edu_feedback_button@common_buttons.light_content_button":
+		field "size": [24, 24]
+		field "$variables":
+			variable "$button_content": "start.feedback_icon"
+			variable "$pressed_button_name": "button.edu_feedback"
+	Changed element "feedback_button":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Total control: 3 (+3, -2)
+			Removed control element "release_feedback_button@start.release_feedback_button": field "ignored": "$pre_release".
+			Removed control element "pre_release_feedback_button@start.pre_release_feedback_button": field "ignored": "(not $pre_release)".
+			Added control element "edu_feedback_button@start.edu_feedback_button": field "ignored": "(not $education_edition)".
+			Added control element "release_feedback_button@start.release_feedback_button": field "ignored": "($pre_release or $education_edition)".
+			Added control element "pre_release_feedback_button@start.pre_release_feedback_button": field "ignored": "(not $pre_release or $education_edition)".
+Changed namespace "store_search":
+	Changed element "search_offer_content":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "item_list_panel":
+					Unchanged field "type": "panel".
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "#search_active" to "(not #trending_rows_visible)".
+	Changed element "trending_rows_grid":
+		Unchanged field "type": "grid".
 		Changed field "bindings":
-			Total binding: 1 (+1, -2)
-			Removed binding:
-				field "binding_name": "#sort_screen_enabled"
-				field "binding_name_override": "#visible"
-			Removed binding:
-				field "binding_name": "#sort_screen_enabled"
-				field "binding_name_override": "#modal"
-			Added binding:
-				field "binding_name": "#sort_screen_visible"
-				field "binding_name_override": "#modal"
+			Changed binding:
+				Changed field "binding_name" from "(not #search_active)" to "#trending_rows_visible".
+Added namespace "sync_iaps_to_xbl":
+	element "description_label_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "layer": 1
+		field "controls":
+			control:
+				element "line1":
+					field "type": "label"
+					field "size": ["100%", "default"]
+					field "text": "xbl.syncIAP.description"
+					field "font_type": "smooth"
+					field "color": "$body_text_color"
+					field "font_scale_factor": "$font_scale"
+		field "$variables": variable "$font_scale": 0.8
+	element "dialog_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 4px", "100% - 4px"]
+		field "controls":
+			control element "image_panel@sync_iaps_to_xbl.image_panel": empty
+			control element "padding_0@sync_iaps_to_xbl.padding": empty
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "size": ["100%", "fill"]
+					field "$variables":
+						variable "$show_background": false
+						variable "$scroll_box_visible_touch": true
+						variable "$scrolling_content": "sync_iaps_to_xbl.description_label_panel"
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100%"
+						variable "$scrolling_pane_size":
+							item 0: "100%"
+							item 1: "100%"
+						variable "$scrolling_pane_offset":
+							item 0: 0
+							item 1: 0
+						variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+			control element "padding_1@sync_iaps_to_xbl.padding": empty
+			control:
+				element "button_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 30]
+					field "controls":
+						control:
+							element "sync_iaps_to_xbl_button@common_buttons.light_text_button":
+								field "size": ["50% - 1px", 30]
+								field "$variables":
+									variable "$pressed_button_name": "button.sync_now"
+									variable "$button_text": "xbl.syncIAP.syncNow"
+									variable "$button_text_max_size":
+										item 0: "100%"
+										item 1: 20
+						control:
+							element "padding":
+								field "type": "panel"
+								field "size": [2, "100%"]
+						control:
+							element "skip_claim_button@common_buttons.light_text_button":
+								field "size": ["50% - 1px", 30]
+								field "$variables":
+									variable "$pressed_button_name": "button.sync_later"
+									variable "$button_text": "xbl.syncIAP.syncLaterEllipsis"
+									variable "$button_text_max_size":
+										item 0: "100%"
+										item 1: 20
+	element "image_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c + 2px"]
+		field "controls":
+			control:
+				element "image":
+					field "type": "image"
+					field "texture": "textures/ui/xboxconversionkeyart"
+					field "size": ["100% - 2px", "42.86%x"]
+					field "controls":
+						control:
+							element "border@common.square_image_border_white":
+								field "size": ["100% + 2px", "100% + 2px"]
+								field "layer": 2
+								field "color": [0, 0, 0]
+	element "padding":
+		field "type": "panel"
+		field "size": ["100%", 2]
+	element "screen_dialog@common_dialogs.main_panel_no_buttons":
+		field "size": [240, "100% - 4px"]
+		field "$variables":
+			variable "$text_name": "xbl.syncIAP.title"
+			variable "$child_control": "sync_iaps_to_xbl.dialog_content"
+			variable "$show_close_button": false
+	element "sync_iaps_to_xbl_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.sync_later"
+				field "mapping_type": "global"
+		field "$variables": variable "$screen_content": "sync_iaps_to_xbl.sync_iaps_to_xbl_screen_content"
+	element "sync_iaps_to_xbl_screen_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "root_panel":
+					field "type": "panel"
+					field "controls": control element "dialog@sync_iaps_to_xbl.screen_dialog": field "layer": 1

@@ -1,30 +1,35 @@
-Difference of "particles" between "1.17.10.20" (beta of "1.17.10") and "1.17.10.22" (beta of "1.17.10").
-Unable to create data files for 1 file between: "1.17.10.21"
+Difference of "particles" between "1.17.30.21" (beta of "1.17.30") and "1.17.30.22" (beta of "1.17.30").
 
-Total particle: 133 (+1, -0)
-Added particle "candle_flame.json":
-	resource pack "core":
+Total particle: 134 (+1, -0)
+Added particle "sculk_soul.json":
+	resource pack "experimental":
 		field "format_version": "1.10.0"
 		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:candle_flame_particle"
+				field "identifier": "minecraft:sculk_soul_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
+					field "texture": "textures/particle/sculk_soul"
 			field "components":
-				field "minecraft:emitter_lifetime_expression":
-					field "activation_expression": 1
-					field "expiration_expression": 0
-				field "minecraft:emitter_rate_manual": field "max_particles": 100
-				field "minecraft:emitter_shape_sphere":
-					field "radius": 0.012
-					field "direction": [0, 0, 0]
+				field "minecraft:emitter_lifetime_once": field "active_time": 0.15
+				field "minecraft:emitter_rate_instant": field "num_particles": 2
+				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x", "variable.direction.y", "variable.direction.z"]
 				field "minecraft:particle_appearance_billboard":
-					field "size": ["0.5 * ((0.1 + variable.particle_random_1*0.1) - (0.01 * variable.particle_age))", "0.5 * ((0.1 + variable.particle_random_1*0.1) - (0.01 * variable.particle_age))"]
+					field "size": ["(0.1 + variable.particle_random_1*0.1) + (0.2 * variable.particle_age)", "(0.1 + variable.particle_random_1*0.1) + (0.2 * variable.particle_age)"]
 					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_width": 128
-						field "texture_height": 128
-						field "uv": [0, 24]
-						field "uv_size": [8, 8]
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(9.0, 11.5)"
+						field "texture_width": 16
+						field "texture_height": 176
+						field "flipbook":
+							field "base_UV": [0, 0]
+							field "size_UV": [16, 16]
+							field "step_UV": [0, 16]
+							field "frames_per_second": 11
+							field "max_frame": 11
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color [1.0, 1.0, 1.0, 1.0]
+				field "minecraft:particle_initial_speed": 0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "((8 / (Math.random(0.0, 0.8) + 0.2)) + 4) / 20.0"
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, 0.4, 0]

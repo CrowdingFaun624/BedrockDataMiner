@@ -1,17 +1,126 @@
-Difference of "loot_tables" between "1.14.60" and "1.15.0.51" (beta of "1.16.0").
+Difference of "loot_tables" between "1.15.0.56" (beta of "1.16.0") and "1.16.0.51" (beta of "1.16.0").
 
-Changed loot table "entities/drowned.json":
-	Changed behavior pack "core":
-		Changed field "pools":
-			Changed pool:
-				Changed field "entries":
-					Total entry: 1 (+0, -1)
-					Removed entry:
+Total loot table: 137 (+5, -0)
+Added loot table "entities/hoglin.json":
+	behavior pack "core":
+		field "pools":
+			pool:
+				field "rolls": 1
+				field "entries":
+					entry:
 						field "type": "item"
-						field "name": "minecraft:trident"
-						field "weight": 5
+						field "name": "minecraft:porkchop"
+						field "weight": 1
 						field "functions":
-							function "set_damage":
-								field "damage":
-									field "min": 0.2
-									field "max": 0.9
+							function "furnace_smelt":
+								field "conditions":
+									condition "entity_properties":
+										field "entity": "this"
+										field "properties": property "on_fire": true
+							function "looting_enchant":
+								field "count":
+									field "min": 0
+									field "max": 1
+							function "set_count":
+								field "count":
+									field "min": 1
+									field "max": 3
+Added loot table "entities/piglin.json":
+	behavior pack "core":
+		field "pools":
+			pool:
+				field "rolls": 1
+				field "entries":
+					entry:
+						field "type": "item"
+						field "name": "minecraft:arrow"
+						field "weight": 1
+						field "functions":
+							function "looting_enchant":
+								field "count":
+									field "min": 0
+									field "max": 1
+							function "set_count":
+								field "count":
+									field "min": 0
+									field "max": 2
+Added loot table "entities/piglin_barter.json":
+	behavior pack "core":
+		field "pools":
+			pool:
+				field "rolls": 1
+				field "entries":
+					entry:
+						field "type": "item"
+						field "name": "minecraft:obsidian"
+						field "weight": 1
+						field "functions":
+							function "set_count":
+								field "count":
+									field "min": 1
+									field "max": 1
+					entry:
+						field "type": "item"
+						field "name": "minecraft:flint_and_steel"
+						field "weight": 1
+						field "functions":
+							function "set_count":
+								field "count":
+									field "min": 1
+									field "max": 1
+Added loot table "entities/piglin_gear_melee.json":
+	behavior pack "core":
+		field "pools":
+			pool:
+				field "rolls": 1
+				field "entries":
+					entry:
+						field "type": "item"
+						field "name": "minecraft:golden_sword"
+						field "weight": 1
+						field "functions":
+							function "enchant_random_gear": field "chance": 0.1
+							function "looting_enchant":
+								field "count":
+									field "min": 0
+									field "max": 1
+			pool:
+				field "conditions":
+					condition "random_difficulty_chance":
+						field "default_chance": 1.0
+						field "peaceful": 0
+						field "easy": 0
+					condition "random_regional_difficulty_chance": field "max_chance": 0.15
+				field "tiers": field "initial_range": 1
+				field "entries":
+					entry:
+						field "type": "loot_table"
+						field "name": "loot_tables/entities/armor_set_gold.json"
+Added loot table "entities/piglin_gear_ranged.json":
+	behavior pack "core":
+		field "pools":
+			pool:
+				field "rolls": 1
+				field "entries":
+					entry:
+						field "type": "item"
+						field "name": "minecraft:crossbow"
+						field "weight": 1
+						field "functions":
+							function "enchant_random_gear": field "chance": 0.1
+							function "looting_enchant":
+								field "count":
+									field "min": 0
+									field "max": 1
+			pool:
+				field "conditions":
+					condition "random_difficulty_chance":
+						field "default_chance": 1.0
+						field "peaceful": 0
+						field "easy": 0
+					condition "random_regional_difficulty_chance": field "max_chance": 0.15
+				field "tiers": field "initial_range": 1
+				field "entries":
+					entry:
+						field "type": "loot_table"
+						field "name": "loot_tables/entities/armor_set_gold.json"

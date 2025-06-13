@@ -1,29 +1,27 @@
-Difference of "render_controllers" between "1.15.0.56" (beta of "1.16.0") and "1.16.0.51" (beta of "1.16.0").
+Difference of "render_controllers" between "1.16.0.55" (beta of "1.16.0") and "1.16.0.57" (beta of "1.16.0").
 
-Total file: 87 (+2, -0)
-Added file "hoglin.render_controllers.json":
+Total file: 92 (+2, -0)
+Added file "strider.render_controllers.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "render_controllers":
-			render controller "controller.render.hoglin":
+			render controller "controller.render.strider":
+				field "arrays":
+					field "textures":
+						array "Array.base":
+							array item "Texture.default"
+							array item "Texture.saddled"
+						array "Array.suffocated":
+							array item "Texture.suffocated"
+							array item "Texture.suffocated_saddled"
 				field "geometry": "Geometry.default"
 				field "materials": material dict material "*": "Material.default"
-				field "textures": texture "Texture.default"
-Added file "piglin.render_controllers.json":
+				field "textures": texture "query.is_shaking ? Array.suffocated[query.is_saddled] : Array.base[query.is_saddled]"
+Added file "zoglin.render_controllers.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "render_controllers":
-			render controller "controller.render.piglin":
+			render controller "controller.render.zoglin":
 				field "geometry": "Geometry.default"
 				field "materials": material dict material "*": "Material.default"
 				field "textures": texture "Texture.default"
-Changed file "zombie_pigman.render_controllers.json":
-	Changed resource pack "core":
-		Changed field "render_controllers":
-			Changed render controller "controller.render.zombie_pigman":
-				Removed field "arrays":
-					field "geometries":
-						array "Array.geos":
-							array item "Geometry.baby"
-							array item "Geometry.default"
-				Changed field "geometry" from "Array.geos[query.is_baby]" to "Geometry.default".
