@@ -10,11 +10,13 @@ from Dataminer.FileDataminer import FileDataminer, FileSet
 from Structure.StructureBase import StructureBase
 from Structure.StructureInfo import StructureInfo
 from Version.Version import Version
+from Version.VersionFileType import VersionFileType
 
 
 class CoverageDataminer(AbstractDataminerCollection):
 
     __slots__ = (
+        "file",
         "file_list_dataminer",
         "remove_files",
         "remove_prefixes",
@@ -43,11 +45,13 @@ class CoverageDataminer(AbstractDataminerCollection):
 
     def link_subcomponents(
         self,
+        file:VersionFileType,
         file_list_dataminer:AbstractDataminerCollection,
         structure: StructureBase,
         structure_info:StructureInfo,
     ) -> None:
         super().link_subcomponents(structure)
+        self.file = file
         self.file_list_dataminer = file_list_dataminer
         self.structure_info = structure_info
 
@@ -59,6 +63,7 @@ class CoverageDataminer(AbstractDataminerCollection):
             dataminer_collection for dataminer_collection in self.domain.dataminer_collections.values()
             if dataminer_collection is not self
             if isinstance(dataminer_collection, DataminerCollection)
+            if self.file in (dataminer_settings := dataminer_collection.get_dataminer_settings(version)).version_file_types
             if (dataminer := dataminer_collection.get_dataminer_class(version)) is not None
             if issubclass(dataminer, FileDataminer)
         )

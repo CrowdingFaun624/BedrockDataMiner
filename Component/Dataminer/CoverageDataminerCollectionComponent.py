@@ -10,6 +10,7 @@ from Component.Dataminer.AbstractDataminerCollectionComponent import (
 from Component.Field.ComponentField import ComponentField
 from Component.Field.Field import Field, InlinePermissions
 from Component.Structure.StructureBaseComponent import STRUCTURE_BASE_PATTERN
+from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
 from Dataminer.CoverageDataminer import CoverageDataminer
 from Structure.StructureInfo import StructureInfo
 from Utilities.Trace import Trace
@@ -27,6 +28,7 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
         TypedDictKeyTypeVerifier("disabled", False, bool),
+        TypedDictKeyTypeVerifier("file", True, str),
         TypedDictKeyTypeVerifier("file_list_dataminer", True, str),
         TypedDictKeyTypeVerifier("file_name", True, str),
         TypedDictKeyTypeVerifier("remove_files", False, ListTypeVerifier(str, list)),
@@ -40,6 +42,7 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[
     __slots__ = (
         "comparing_disabled",
         "disabled",
+        "file_field",
         "file_list_dataminer_field",
         "file_name",
         "remove_files",
@@ -60,9 +63,10 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[
         self.remove_suffixes = data.get("remove_suffixes", [])
         self.structure_info = data.get("structure_info", {})
 
+        self.file_field = ComponentField(data["file"], VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=InlinePermissions.reference, assume_component_group="version_file_types")
         self.file_list_dataminer_field = ComponentField(data["file_list_dataminer"], ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("file_list_dataminer",), allow_inline=InlinePermissions.reference, assume_component_group="dataminer_collections")
         self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=InlinePermissions.reference)
-        return (self.file_list_dataminer_field, self.structure_field)
+        return (self.file_field, self.file_list_dataminer_field, self.structure_field)
 
     def create_final(self, trace:Trace) -> CoverageDataminer:
         return CoverageDataminer(
@@ -81,6 +85,7 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_subcomponents(
+                file=self.file_field.subcomponent.final,
                 file_list_dataminer=self.file_list_dataminer_field.subcomponent.final,
                 structure=self.structure_field.subcomponent.final,
                 structure_info=StructureInfo(self.structure_info, self.domain, repr(self))
