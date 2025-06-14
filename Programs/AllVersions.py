@@ -39,4 +39,5 @@ def main(domain:Domain.Domain) -> None:
             print(f"Skipped \"{version.name}\" due to being unarchived.")
         else:
             datamine_version(version, domain)
+        version.close_accessors()
     print("Datamined all versions.")

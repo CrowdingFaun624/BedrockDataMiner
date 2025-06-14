@@ -57,6 +57,7 @@ def compare_all_of(
                 # must occur AFTER comparing.
             else:
                 undataminable_versions_between.append(version)
+            version.close_accessors()
     except Exception as e:
         if version is None:
             print(f"{dataminer_collection.name} failed.")

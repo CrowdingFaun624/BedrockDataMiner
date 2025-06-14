@@ -47,6 +47,10 @@ class StoredAccessor(DirectoryAccessor):
     def open(self, file_name:str) -> BinaryIO:
         return io.BytesIO(self.read(file_name))
 
+    def close(self) -> None:
+        self._file_list = None
+        self._file_set = None
+
     def all_done(self) -> None:
         super().all_done()
         self.index.forget()

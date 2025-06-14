@@ -43,6 +43,13 @@ class Accessor():
         '''Any actions that can take place before grabbing files can happen.'''
         ...
 
+    def close(self) -> None:
+        '''
+        Always called by the system before deleting this Accessor.
+        '''
+        for linked_accessor in self.linked_accessors.values():
+            linked_accessor.close()
+
     def all_done(self) -> None:
         '''
         Removes all files that were created as part of the installation of this version.

@@ -27,5 +27,6 @@ def check_all_structure_types(domain:Domain.Domain) -> None:
     versions = domain.versions
     for version in versions.values():
         check_types(version, selected_dataminers, domain)
+        version.close_accessors()
     for dataminer_collection in selected_dataminers:
         dataminer_collection.clear_all_caches()

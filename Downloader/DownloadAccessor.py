@@ -26,6 +26,7 @@ class DownloadAccessor(FileAccessor):
 
     __slots__ = (
         "_installed",
+        "file_handle",
         "location",
         "url",
     )
@@ -35,6 +36,7 @@ class DownloadAccessor(FileAccessor):
         location = version_directory.joinpath(propagated_arguments["location"])
         self.location = location
         self._installed:bool|None = None
+        self.file_handle:BinaryIO|None = None
 
         self.url = instance_arguments["url"]
 
@@ -60,7 +62,15 @@ class DownloadAccessor(FileAccessor):
 
     def open(self) -> BinaryIO:
         self.install()
-        return open(self.location, "rb")
+        if self.file_handle is None:
+            self.file_handle = open(self.location, "rb")
+        return self.file_handle
+
+    def close(self) -> None:
+        super().close()
+        if self.file_handle is not None:
+            self.file_handle.close()
+            self.file_handle = None
 
     def install(self) -> None:
         if not self.installed:
@@ -72,5 +82,7 @@ class DownloadAccessor(FileAccessor):
     def all_done(self) -> None:
         super().all_done()
         self._installed = False
+        if self.file_handle is not None:
+            self.file_handle.close()
         if self.location.exists():
             self.location.unlink()

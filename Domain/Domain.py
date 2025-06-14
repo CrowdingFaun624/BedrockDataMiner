@@ -161,6 +161,7 @@ class Domain():
         "callables",
         "script_referenceable",
         "comparison_file_counts",
+        "is_imported",
     )
 
     def __init__(self, name:str) -> None:
@@ -189,6 +190,7 @@ class Domain():
         self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
         self.comparison_file_counts:dict[str, int] = {}
 
+        self.is_imported:bool = False
         self.is_library:bool
         self.aliases:Sequence[str]
         self.dependencies_str:Sequence[str]
@@ -255,12 +257,15 @@ class Domain():
             self.type_stuff.link(dependency.type_stuff)
 
     def import_components(self) -> None:
+        if self.is_imported:
+            return
         all_domains = self.get_cascading_dependencies(set())
         for domain in all_domains:
             domain.import_scripts()
         all_component_groups = parse_all_component_groups(all_domains)
         for domain in all_domains:
             domain.set_values(all_component_groups[domain.name])
+        self.is_imported = True
 
     def import_scripts(self) -> None:
         # update TypeStuffs
@@ -298,6 +303,10 @@ class Domain():
         comparison_subdirectory = self.comparisons_directory.joinpath(name)
         comparison_subdirectory.mkdir(exist_ok=True)
         return comparison_subdirectory.joinpath(f"report_{str(number).zfill(4)}.txt")
+
+    def close(self) -> None:
+        for version in self.versions.values():
+            version.close_accessors()
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.name}>"

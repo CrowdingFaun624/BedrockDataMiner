@@ -70,6 +70,11 @@ class Version():
     def get_accessor[a: Accessor](self, file_type:str, required_type:type[a]) -> a|None:
         return self.version_files_dict[file_type].get_accessor(required_type, True)
 
+    def close_accessors(self) -> None:
+        for version_file in self.version_files:
+            for accessor in version_file.accessors:
+                accessor.close()
+
     def get_children_recursive(self) -> list["Version"]:
         children = self.children[:]
         for child in self.children:
