@@ -80,7 +80,12 @@ def main(domain:Domain.Domain) -> None:
     selected_dataminers = input_multi(
         {dataminer_name: dataminer_collection for dataminer_name, dataminer_collection in domain.dataminer_collections.items() if not dataminer_collection.comparing_disabled},
         "dataminer", allow_select_all=True, show_options_first_time=True, close_enough=True,
-        alternative_selectors={"^": lambda: [dataminer_collection.name for dataminer_collection in domain.dataminer_collections.values() if any(dataminer_collection.supports_version(version) for version in latest_versions)]})
+        alternative_selectors={"^": lambda: [
+            dataminer_collection.name
+            for dataminer_collection in domain.dataminer_collections.values()
+            if not dataminer_collection.comparing_disabled and any(dataminer_collection.supports_version(version) for version in latest_versions)
+        ]}
+    )
     sorted_versions = list(versions.values())
 
     exceptions:dict[AbstractDataminerCollection,tuple[Exception,Version|None,Version|None]] = {}

@@ -79,6 +79,9 @@ def main() -> None:
         with lock2:
             if user_input[1] is not None:
                 PROGRAM_FUNCTIONS[user_input[1]](domain)
+    for domain in Domains.domains.values():
+        if domain.is_imported:
+            domain.close()
     FileManager.clear_temp()
 
 if __name__ == "__main__":

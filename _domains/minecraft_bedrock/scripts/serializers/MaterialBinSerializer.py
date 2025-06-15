@@ -73,7 +73,7 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
     def write_cache(self, source_hash:str, output:OutputTypedDict) -> File[OutputTypedDict]:
         output_file = new_file(json.dumps(output, separators=(",", ":"), cls=self.domain.json_encoder).encode(), f"material_bin_data_of_{source_hash}", self.domain)
         output_str = json.dumps(output_file, separators=(",", ":"), cls=self.domain.json_encoder)
-        material_bin_cache.append_new_line((self.version, source_hash, output_str))
+        material_bin_cache.write_new_line((self.version, source_hash, output_str))
         if self.memory_constrained:
             material_bin_cache.forget()
         return output_file

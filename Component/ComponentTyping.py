@@ -19,6 +19,7 @@ class AccessorTypeTypedDict(TypedDict):
 class CoverageDataminerCollectionTypedDict(TypedDict):
     comparing_disabled: NotRequired[bool]
     disabled: NotRequired[bool]
+    file: Required[str]
     file_list_dataminer: Required[str]
     file_name: Required[str]
     remove_files: NotRequired[list[str]]

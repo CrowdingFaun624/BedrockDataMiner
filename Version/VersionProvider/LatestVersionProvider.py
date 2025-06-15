@@ -16,5 +16,9 @@ class LatestVersionProvider(VersionProvider):
             return None
 
     def get_versions(self, versions: list[Version], *, supports_dataminer_collection:AbstractDataminerCollection) -> list[Version]:
-        latest_versions = [self.get_most_recent_version(versions, index, supports_dataminer_collection) for index, version in enumerate(versions) if version.latest]
+        latest_versions = [
+            self.get_most_recent_version(versions, index, supports_dataminer_collection)
+            for index, version in enumerate(versions)
+            if version.latest or any(tag.is_unreleased_tag for tag in version.tags)
+        ]
         return sorted(set(version for version in latest_versions if version is not None))

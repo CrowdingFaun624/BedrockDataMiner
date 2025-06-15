@@ -19,13 +19,13 @@ class Serializer[a]():
     TypeVerifier for verifying the arguments of this Serializer
     '''
 
-    empty_okay = False
+    empty_okay:bool = False
     '''
     If False, an EmptyFileError will be raised if attempting to create a File
     object with this Serializer with an empty bytes object.
     '''
 
-    can_contain_subfiles = False
+    can_contain_subfiles:bool = False
     '''
     If True, will call get_referenced_files during garbage collection.
     '''
