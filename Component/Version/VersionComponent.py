@@ -37,6 +37,7 @@ VERSION_PATTERN:Pattern["VersionComponent"] = Pattern("is_version")
 
 class VersionComponent(Component[Version]):
 
+    restrict_to_file_names = True
     class_name = "Version"
     my_capabilities = Capabilities(is_version=True)
     type_verifier = TypedDictTypeVerifier(
