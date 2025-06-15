@@ -120,12 +120,6 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
         '''
         ...
 
-    def get_referenced_files(self, data:B, trace:Trace, environment:PrinterEnvironment) -> set[int]:
-        '''
-        Returns files contained by this Structure or a child Structure.
-        '''
-        ...
-
     def compare(self, datas:tuple[tuple[int, B], ...], trace:Trace, environment:ComparisonEnvironment) -> tuple[D|EllipsisType, bool, bool]:
         '''
         Combines `datas` into a single object containing Diffs.

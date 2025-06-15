@@ -45,6 +45,7 @@ class FileStructureComponent(PassthroughStructureComponent[FileStructure]):
         self.content_types_field = TypeListField(data["content_types"], ("content_types",)).verify_with(self.structure_field).add_to_set(self.my_type)
         self.serializer_field = OptionalComponentField(data["serializer"], SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
 
+        self.variable_bools["children_has_garbage_collection"] = True
         fields.extend((self.file_types_field, self.structure_field, self.content_types_field, self.serializer_field))
         return fields
 

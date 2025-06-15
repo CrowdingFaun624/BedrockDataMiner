@@ -322,21 +322,6 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
             return output
         return () # error occurred
 
-    def get_referenced_files(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> set[int]:
-        with trace.enter(self, self.name, data):
-            output:set[int] = set()
-            if not self.children_has_garbage_collection: return set()
-            for key, value in data.items():
-                with trace.enter_key(key, value):
-                    key_structure = self.get_key_structure(key.data, value.data, trace, environment)
-                    value_structure = self.get_value_structure(key.data, value.data, trace, environment)
-                    if key_structure is not None:
-                        output.update(key_structure.get_referenced_files(key, trace, environment))
-                    if value_structure is not None:
-                        output.update(value_structure.get_referenced_files(value, trace, environment))
-            return output
-        return set()
-
     def print_branch(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.name, data):
             if self.delegate is None:

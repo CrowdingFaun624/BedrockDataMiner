@@ -71,7 +71,7 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
         assert not any(char in self.version for char in "\\/:*?\"<>|")
 
     def write_cache(self, source_hash:str, output:OutputTypedDict) -> File[OutputTypedDict]:
-        output_file = new_file(json.dumps(output, separators=(",", ":"), cls=self.domain.json_encoder).encode(), f"material_bin_data_of_{source_hash}")
+        output_file = new_file(json.dumps(output, separators=(",", ":"), cls=self.domain.json_encoder).encode(), f"material_bin_data_of_{source_hash}", self.domain)
         output_str = json.dumps(output_file, separators=(",", ":"), cls=self.domain.json_encoder)
         material_bin_cache.append_new_line((self.version, source_hash, output_str))
         if self.memory_constrained:
@@ -119,7 +119,7 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
         main_data_path = output_directory.joinpath("data.json")
         with open(main_data_path, "rb") as f:
             main_data_bytes = f.read()
-            main_data_file = new_file(main_data_bytes, file_name)
+            main_data_file = new_file(main_data_bytes, file_name, self.domain)
         main_data = json.loads(main_data_bytes.decode())
         main_data_path.unlink()
         pass_names:list[str] = main_data["passes"]
@@ -131,7 +131,7 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
             pass_directory = output_directory.joinpath(pass_name)
             pass_info_path = pass_directory.joinpath(pass_name + ".json")
             with open(pass_info_path, "rb") as f:
-                pass_info_file = new_file(f.read(), f"pass_info_in_{pass_name}_of_{data_hash}")
+                pass_info_file = new_file(f.read(), f"pass_info_in_{pass_name}_of_{data_hash}", self.domain)
             pass_info_path.unlink()
             glsl_files = self.get_glsl_files(pass_directory, data_hash)
             pass_directory.rmdir()
@@ -142,7 +142,7 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
         glsl_files:dict[str,File[str]] = {}
         for glsl_file_path in pass_directory.iterdir():
             with open(glsl_file_path, "rb") as f:
-                glsl_file = new_file(f.read(), f"glsl_file_{glsl_file_path.name}_in_{pass_directory.name}_of_{data_hash}")
+                glsl_file = new_file(f.read(), f"glsl_file_{glsl_file_path.name}_in_{pass_directory.name}_of_{data_hash}", self.domain)
             glsl_file_path.unlink()
             glsl_files[glsl_file_path.name] = glsl_file
         return glsl_files

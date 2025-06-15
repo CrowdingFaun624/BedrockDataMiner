@@ -73,9 +73,6 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
                 return (data_path.copy(...).embed(data.data),)
         return ()
 
-    def get_referenced_files(self, data: SCon[D], trace: Trace, environment: PrinterEnvironment) -> set[int]:
-        return set()
-
     def compare(self, datas: tuple[tuple[int, SCon[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Diff[SDon[D]] | EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
             bundles:dict[tuple[int,...], SDon[D]] = {}

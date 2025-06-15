@@ -22,7 +22,6 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         "cache_compare",
         "cache_containerize",
         "cache_diffize",
-        "cache_get_referenced_files",
         "cache_get_similarity",
         "cache_get_tag_paths",
         "cache_normalize",
@@ -58,7 +57,6 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         self.cache_diffize:dict[int, tuple[Mapping[tuple[int, ...], Don[D]] | EllipsisType, int]] = {}
         self.cache_type_check:dict[int, tuple[None, int]] = {}
         self.cache_get_tag_paths:dict[int, tuple[list[DataPath], int]] = {}
-        self.cache_get_referenced_files:dict[int, tuple[set[int], int]] = {}
         self.cache_compare:dict[int, tuple[tuple[Don[D]|Diff[Don[D]] | EllipsisType, bool, bool], int]] = {}
         self.cache_get_similarity:dict[int, tuple[tuple[float, bool], int]] = {}
         self.cache_print_branch:dict[int, tuple[Any, int]] = {}
@@ -72,7 +70,6 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             self.cache_diffize,
             self.cache_type_check,
             self.cache_get_tag_paths,
-            self.cache_get_referenced_files,
             self.cache_compare,
             self.cache_get_similarity,
             self.cache_print_branch,
@@ -174,12 +171,6 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             self_super = super()
             return self.cache_function(self.cache_get_tag_paths, hash_function, lambda: self_super.get_tag_paths(data, tag, data_path, trace, environment), store_function, store_function, environment.structure_environment)
         return ()
-
-    def get_referenced_files(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> set[int]:
-        with trace.enter(self, self.name, data):
-            self_super = super()
-            return self.cache_function(self.cache_get_referenced_files, lambda: hash((data, environment)), lambda: self_super.get_referenced_files(data, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
-        return set()
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]] | EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):

@@ -17,15 +17,19 @@ class FileCoder(Coder[FileJsonTypedDict, "File"]):
 
     @classmethod
     def decode(cls, data: FileJsonTypedDict, domain:"Domain.Domain") -> "File":
-        return File(data["name"], data_hash=hash_str_to_int(data["hash"]))
+        integer_hash = hash_str_to_int(data["hash"])
+        domain.active_file_hashes.add(integer_hash)
+        return File(data["name"], data_hash=integer_hash)
 
     @classmethod
     def encode(cls, data: "File", domain:"Domain.Domain") -> FileJsonTypedDict:
         # files contained by data are archived when the File object is created.
         return {"$special_type": "file", "hash": hash_int_to_str(data.hash), "name": data.display_name}
 
-def new_file(data:bytes, file_name:str) -> "File":
-    return File(file_name, hash_str_to_int(archive_data(data, file_name)))
+def new_file(data:bytes, file_name:str, domain:"Domain.Domain") -> "File":
+    integer_hash = hash_str_to_int(archive_data(data, file_name))
+    domain.active_file_hashes.add(integer_hash)
+    return File(file_name, integer_hash)
 
 def hash_int_to_str(hash_int:int) -> str:
     '''Assumes hash length of 40'''

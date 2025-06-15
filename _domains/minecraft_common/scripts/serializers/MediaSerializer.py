@@ -110,9 +110,9 @@ class MediaSerializer(Serializer):
         metadata.pop("FilePermissions", None)
         output:OutputTypedDict = {
             "sha1_hash": data_hash,
-            "metadata": new_file(json.dumps(metadata).encode(), f"metadata_of_{data_hash}.json"),
+            "metadata": new_file(json.dumps(metadata).encode(), f"metadata_of_{data_hash}.json", self.domain),
         }
-        output[file_type] = new_file(data, f"media_{data_hash}.{file_type}")
+        output[file_type] = new_file(data, f"media_{data_hash}.{file_type}", self.domain)
 
         media_serializer_cache.write_new_line((data_hash, output))
         if self.memory_constrained:

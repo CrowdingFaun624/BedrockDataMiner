@@ -72,7 +72,7 @@ class Dataminer():
         return accessor
 
     def export_file(self, file_bytes:bytes, file_name:str) -> File:
-        return new_file(file_bytes, file_name)
+        return new_file(file_bytes, file_name, self.domain)
 
 class NullDataminer(Dataminer):
     '''Returned when a dataminer collection has no dataminer for a data type.'''

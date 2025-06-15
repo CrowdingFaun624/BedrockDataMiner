@@ -163,6 +163,7 @@ class Domain():
         "script_referenceable",
         "comparison_file_counts",
         "is_imported",
+        "active_file_hashes",
     )
 
     def __init__(self, name:str) -> None:
@@ -229,6 +230,7 @@ class Domain():
         self.type_stuff = TypeStuff(self)
         self.type_stuff.extend(primary_type_stuff)
         self.script_referenceable:ScriptReferenceable = ScriptReferenceable(self)
+        self.active_file_hashes:set[int] = set()
 
     def get_cascading_dependencies(self, memo:set["Domain"]) -> Sequence["Domain"]:
         if self not in memo:

@@ -112,16 +112,6 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Do
             return output
         return ()
 
-    def get_referenced_files(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> set[int]:
-        with trace.enter(self, self.name, data):
-            output:set[int] = set()
-            if not self.children_has_garbage_collection: return set()
-            structure = self.get_structure(data.data, trace, environment)
-            if structure is not None:
-                output.update(structure.get_referenced_files(data, trace, environment))
-            return output
-        return set()
-
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]]|EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
             structures = {branch: (data, self.get_substructure_chain_end(data, trace, environment[branch])) for branch, data in datas}

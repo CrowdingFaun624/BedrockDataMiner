@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from types import EllipsisType
 from typing import Any, Container, Iterable, Sequence
 
 import Domain.Domain as Domain
@@ -15,6 +16,7 @@ from Structure.StructureEnvironment import (
 )
 from Structure.StructureInfo import StructureInfo
 from Structure.StructureTag import StructureTag
+from Utilities.Exceptions import InvalidStateError
 from Utilities.File import hash_str_to_int
 from Utilities.Trace import Trace
 from Version.Version import Version
@@ -151,17 +153,29 @@ class AbstractDataminerCollection():
 
     def get_referenced_files(self, version:Version, structure_tags:dict[str,StructureTag], referenced_files:set[int]) -> None:
         structure_environment = StructureEnvironment(EnvironmentType.garbage_collection, self.domain)
-        data_file = self.get_data_file(version, non_exist_ok=True)
-        if data_file is None: return
-        structure = self.structure
         file_tags = [structure_tag for structure_tag in structure_tags.values() if structure_tag.is_file]
-        if structure.children_has_garbage_collection or structure.has_tags(file_tags):
-            structure_info = self.get_structure_info(version)
-            environment = PrinterEnvironment(structure_environment, structure_info, None, version, 0)
-            containerized_data = structure.get_containerized_from_raw(data_file, version, environment)
-            trace = Trace()
-            structure.get_referenced_files(containerized_data, trace, environment) # this is necessary just in case files appear only after normalization
+        structure = self.structure
+        if not structure.children_has_garbage_collection and not structure.has_tags(file_tags):
+            return
+        data_file = self.get_data_file(version, non_exist_ok=True)
+        if data_file is None or not self.supports_version(version): # sometimes data_file may exist but the Version is still unsupported.
+            return
+
+        normalized_data:Any|EllipsisType = ...
+        structure_info = self.get_structure_info(version)
+        environment = PrinterEnvironment(structure_environment, structure_info, None, version, 0)
+        trace = Trace()
+
+        if structure.children_has_garbage_collection:
+            normalized_data = structure.normalize_from_raw(data_file, trace, environment)
             structure.print_exception_list(trace, (version,))
+
+        if structure.has_tags(file_tags):
+            if normalized_data is ...:
+                normalized_data = structure.normalize_from_raw(data_file, trace, environment)
+            containerized_data = structure.containerize(normalized_data, trace, environment)
+            structure.print_exception_list(trace, (version,))
+            if containerized_data is ...: raise InvalidStateError()
             for file_tag, paths in self.get_tag_paths_from_containerized(containerized_data, version, file_tags, environment).items(): # this is necessary just in case files are referenced only by a hash that isn't used.
                 for data_path in paths:
                     match data_path.embedded_data:
@@ -171,3 +185,4 @@ class AbstractDataminerCollection():
                             referenced_files.add(data_path.embedded_data)
                         case _:
                             raise Exceptions.InvalidFileHashType(version, file_tag, data_path)
+            structure.print_exception_list(trace, (version,))
