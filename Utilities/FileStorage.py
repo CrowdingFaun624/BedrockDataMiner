@@ -1,8 +1,12 @@
+import datetime
 import gzip
+import shutil
 import zipfile
 from itertools import islice
 from pathlib import Path
-from typing import Callable, overload
+from typing import Callable, Iterable, overload
+
+from send2trash import send2trash
 
 import Domain.Domain as Domain
 from Downloader.DirectoryAccessor import DirectoryAccessor
@@ -12,6 +16,7 @@ from Utilities.FileManager import (
     FILE_STORAGE_OBJECTS_DIRECTORY,
     OUTPUT_DIRECTORY,
     get_hash_hexdigest,
+    get_temp_file_path,
 )
 from Utilities.UserInput import input_single
 
@@ -100,13 +105,40 @@ def read_archived(hex_string:str) -> bytes:
         else:
             return f.read()
 
-def delete_item(hex_string:str) -> None:
-    '''
-    Deletes the item from the index and objects.
-    Must save the index for changes to be saved.
-    '''
-    index.get().pop(hex_string, None)
-    get_file_path(hex_string).unlink(missing_ok=True)
+def recycle_items(hex_strings:Iterable[str]) -> None:
+    temp_directory = get_temp_file_path()
+    temp_directory.mkdir()
+    objects_directory = temp_directory.joinpath("objects")
+    objects_directory.mkdir()
+    trash_index:list[str] = []
+    for hex_string in hex_strings:
+        index_item = index.get().pop(hex_string, None)
+        if index_item is not None:
+            trash_index.append(index.serialize_line((hex_string, index_item)))
+        source_path = get_file_path(hex_string)
+        if source_path.exists():
+            destination_path = objects_directory.joinpath(source_path.name)
+            shutil.move(source_path, destination_path)
+            print(f"Recycled {hex_string}")
+        else:
+            print(f"{source_path} was not present.")
+    with open(temp_directory.joinpath("index.txt"), "wt") as f:
+        f.write("".join(trash_index))
+    output_recycle_directory = OUTPUT_DIRECTORY.joinpath(f"recycled-{datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}")
+    shutil.move(temp_directory, output_recycle_directory)
+    send2trash(output_recycle_directory)
+    index.write()
+
+def recycle_items_main(domain:"Domain.Domain") -> None:
+    files_str = input("Choose multiple space-delimited hexadecimal names: ")
+    user_files = files_str.split(" ")
+    files:list[str] = []
+    for user_file in user_files:
+        if len(user_file) != 40 or not all(char.isalnum() for char in user_file):
+            print(f"Invalid file \"{user_file}\"")
+            continue
+        files.append(user_file)
+    recycle_items(files)
 
 def remove_index_values_without_associated_file() -> None:
     '''
@@ -190,6 +222,7 @@ def main(domain:"Domain.Domain") -> None:
     PROGRAMS:dict[str,Callable[[Domain.Domain],None]] = {
         "create_archive": create_archive,
         "get_file": get_file,
+        "recycle_items": recycle_items_main,
         "stats": stats,
         "version_summary": version_summary,
     }

@@ -86,9 +86,7 @@ def remove(unused_hashes:set[int]) -> None:
     while True:
         if input("Are you sure you want to continue? (y/ctrl+C): ") == "y":
             break
-    for unused_hash in (hash_int_to_str(unused_hash) for unused_hash in unused_hashes):
-        FileStorage.delete_item(unused_hash)
-    FileStorage.index.write()
+    FileStorage.recycle_items(hash_int_to_str(unused_hash) for unused_hash in unused_hashes)
     FileStorage.remove_index_values_without_associated_file()
 
 def print_stats(unused_hashes:set[int]) -> None:
