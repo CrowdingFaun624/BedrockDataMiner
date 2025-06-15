@@ -75,6 +75,14 @@ class Version():
             for accessor in version_file.accessors:
                 accessor.close()
 
+    def set_constrained_accessor_memory(self, enabled:bool) -> None:
+        for version_file in self.version_files:
+            for accessor in version_file.accessors:
+                if enabled:
+                    accessor.constrain_memory()
+                else:
+                    accessor.constrained_memory = False
+
     def get_children_recursive(self) -> list["Version"]:
         children = self.children[:]
         for child in self.children:

@@ -28,7 +28,7 @@ class CacheStructureComponent(BranchlessStructureComponent[CacheStructure]):
 
     def initialize_fields(self, data: CacheStructureTypedDict) -> Sequence[Field]:
         fields = list(super().initialize_fields(data))
-        self.removal_threshold = data.get("removal_threshold", 10)
+        self.removal_threshold = data.get("removal_threshold", 2)
 
         self.delegate_field = OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
 

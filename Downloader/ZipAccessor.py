@@ -54,8 +54,14 @@ class ZipAccessor(DirectoryAccessor):
         return self.zip_file.open(file_name) # type: ignore ; why is IO[bytes] not assignable to BinaryIO?????
 
     def close(self) -> None:
+        super().close()
         if self._zip_file is not None:
             self._zip_file.close()
             self._zip_file = None
+        self._file_list = None
+        self._file_set = None
+
+    def constrain_memory(self) -> None:
+        super().constrain_memory()
         self._file_list = None
         self._file_set = None

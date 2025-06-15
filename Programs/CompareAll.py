@@ -5,6 +5,7 @@ import Domain.Domain as Domain
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Structure.StructureEnvironment import EnvironmentType, StructureEnvironment
 from Utilities.Exceptions import StructuresCompareFailureError
+from Utilities.MemoryUsage import memory_usage
 from Utilities.UserInput import input_integer, input_multi, input_single
 from Version.Version import Version
 
@@ -53,11 +54,12 @@ def compare_all_of(
                     initial_print(version, dataminer_collection, domain)
                 undataminable_versions_between = []
                 previous_successful_version = version
-                dataminer_collection.clear_old_caches({dataminer_collection.get_structure_info(version)})
-                # must occur AFTER comparing.
+                dataminer_collection.clear_old_caches({dataminer_collection.get_structure_info(version)}) # must occur AFTER comparing.
+                memory_usage.adjust()
             else:
                 undataminable_versions_between.append(version)
             version.close_accessors()
+            memory_usage.adjust()
     except Exception as e:
         if version is None:
             print(f"{dataminer_collection.name} failed.")
@@ -69,6 +71,7 @@ def compare_all_of(
         print(f"Compared all of {dataminer_collection.name}.")
     finally:
         dataminer_collection.clear_all_caches()
+        memory_usage.adjust()
     return output
 
 def main(domain:Domain.Domain) -> None:
@@ -88,6 +91,7 @@ def main(domain:Domain.Domain) -> None:
             exceptions[dataminer_collection] = exception_tuple
     finish_time = time.time()
 
+    memory_usage.reset()
     for dataminer_collection, (exception, version1, version2) in exceptions.items():
         print(f"\"{dataminer_collection.name}\" excepted between Versions \"{version1}\" and \"{version2}\"")
         traceback.print_exception(exception)
@@ -114,6 +118,7 @@ def compare_some(domain:Domain.Domain) -> None:
     exception_tuple = compare_all_of(domain, selected_dataminer, sorted_versions, previous_successful_version=previous_successful_version, destroy_previous=False)
     finish_time = time.time()
 
+    memory_usage.reset()
     if exception_tuple is not None:
         exception, version1, version2 = exception_tuple
         print(f"\"{selected_dataminer.name}\" excepted between Versions \"{version1}\" and \"{version2}\"")

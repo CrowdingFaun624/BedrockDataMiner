@@ -7,6 +7,7 @@ from Structure.StructureEnvironment import (
     PrinterEnvironment,
     StructureEnvironment,
 )
+from Utilities.MemoryUsage import memory_usage
 from Utilities.UserInput import input_multi
 from Version.Version import Version
 
@@ -21,6 +22,7 @@ def check_types(version:Version, dataminers:list[AbstractDataminerCollection], d
             print(f"Failed on {dataminer_collection} on {version}")
             traceback.print_exception(e)
         dataminer_collection.clear_old_caches({environment.structure_info})
+        memory_usage.adjust()
 
 def check_all_structure_types(domain:Domain.Domain) -> None:
     selected_dataminers = input_multi(domain.dataminer_collections, "dataminer", allow_select_all=True, show_options_first_time=True, close_enough=True)
@@ -30,3 +32,4 @@ def check_all_structure_types(domain:Domain.Domain) -> None:
         version.close_accessors()
     for dataminer_collection in selected_dataminers:
         dataminer_collection.clear_all_caches()
+    memory_usage.reset()

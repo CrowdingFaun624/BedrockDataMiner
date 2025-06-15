@@ -3,6 +3,7 @@ from typing import Any, Optional, TypedDict
 
 from _domains.minecraft_bedrock.scripts.serializers.EvilFSBExtractor import (
     extract_fsb_file,
+    fsb_cache,
 )
 from Serializer.Serializer import Serializer
 from Utilities.Exceptions import DataminerException, EmptyFileError, message
@@ -88,9 +89,13 @@ class SoundSerializer(Serializer[dict[str,dict[str,SoundFilesTypedDict]],]):
     __slots__ = ()
     can_contain_subfiles = True
 
+    def memory_constrain(self) -> None:
+        super().memory_constrain()
+        fsb_cache.forget()
+
     def deserialize(self, data: bytes) -> dict[str,SoundFilesTypedDict]:
         if data[:3] == b"FSB": # it's an FSB file
-            wav_files = extract_fsb_file(data)
+            wav_files = extract_fsb_file(data, memory_constrained=self.memory_constrained)
             return {wav_file_name: get_metadata(wave_file_data) for wav_file_name, wave_file_data in wav_files}
         else:
             return {"main": get_metadata(data)}

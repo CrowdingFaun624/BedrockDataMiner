@@ -10,6 +10,7 @@ class Serializer[a]():
     __slots__ = (
         "domain",
         "full_name",
+        "memory_constrained",
         "name",
     )
 
@@ -33,6 +34,7 @@ class Serializer[a]():
         self.name = name
         self.full_name = full_name
         self.domain = domain
+        self.memory_constrained:bool = False
         self.initialize(**kwargs)
 
     def initialize(self, **kwargs:Any) -> None:
@@ -43,6 +45,12 @@ class Serializer[a]():
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.name}>"
+
+    def memory_constrain(self) -> None:
+        '''
+        Called when memory is too high.
+        '''
+        self.memory_constrained = True
 
     def deserialize(self, data:bytes) -> a:
         '''

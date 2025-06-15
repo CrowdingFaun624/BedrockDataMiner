@@ -4,6 +4,7 @@ import Dataminer.Dataminers as Dataminers
 import Domain.Domain as Domain
 from Structure.StructureEnvironment import EnvironmentType, StructureEnvironment
 from Utilities.Exceptions import DataminersFailureError
+from Utilities.MemoryUsage import memory_usage
 from Version.Version import Version
 
 
@@ -31,6 +32,7 @@ def datamine_version(version:Version, domain:Domain.Domain, print_messages:bool=
         for version_file in version.version_files:
             for accessor in version_file.accessors:
                 accessor.all_done() # remove all of the installed client files from the version directory so I don't have to clog my storage
+    memory_usage.adjust()
 
 def main(domain:Domain.Domain) -> None:
     dataminers_dict = domain.dataminer_collections
@@ -40,4 +42,5 @@ def main(domain:Domain.Domain) -> None:
         else:
             datamine_version(version, domain)
         version.close_accessors()
+    memory_usage.reset()
     print("Datamined all versions.")

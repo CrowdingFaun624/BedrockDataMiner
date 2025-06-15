@@ -5,6 +5,7 @@ from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
 from Structure.Normalizer import Normalizer
+from Structure.SimilarityCache import SimilarityCache
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureInfo import StructureInfo
 from Structure.StructureTag import StructureTag
@@ -45,7 +46,12 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
         self.children_tags = children_tags
 
     def clear_similarity_cache(self, keep:Container[StructureInfo]) -> None:
-        pass # implemented if the Structure type has a SimilarityCache.
+        for similarity_cache in self.get_similarity_caches():
+            similarity_cache.clear(keep)
+
+    def get_similarity_caches(self) -> Sequence["SimilarityCache"]:
+        # implemented if the Structure type has a SimilarityCache.
+        return ()
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.full_name}>"

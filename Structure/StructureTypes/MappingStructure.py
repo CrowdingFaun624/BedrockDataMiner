@@ -1,5 +1,5 @@
 from types import EllipsisType
-from typing import Callable, Container, Generator, Hashable, Iterable, Mapping, Sequence
+from typing import Callable, Generator, Hashable, Iterable, Mapping, Sequence
 
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
@@ -7,7 +7,6 @@ from Structure.IterableContainer import ICon, IDon, idon_from_list
 from Structure.IterableStructure import IterableStructure
 from Structure.SimilarityCache import SimilarityCache
 from Structure.StructureEnvironment import ComparisonEnvironment
-from Structure.StructureInfo import StructureInfo
 from Utilities.Trace import Trace
 
 
@@ -69,8 +68,8 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
 
         self.similarity_cache:SimilarityCache[Con[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
-        self.similarity_cache.clear(keep)
+    def get_similarity_caches(self) -> Sequence[SimilarityCache]:
+        return (self.similarity_cache,)
 
     def allow_key_move(self, key1:Con[K], key2:Con[K], value1:Con[V], value2:Con[V], branch1:int, branch2:int, trace:Trace, environment:ComparisonEnvironment) -> bool:
         return True

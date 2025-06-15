@@ -1,11 +1,10 @@
 from math import exp
-from typing import Callable, Container
+from typing import Callable, Sequence
 
 from Structure.PrimitiveStructure import PrimitiveStructure
 from Structure.SimilarityCache import SimilarityCache
 from Structure.SimpleContainer import SCon
 from Structure.StructureEnvironment import ComparisonEnvironment
-from Structure.StructureInfo import StructureInfo
 from Utilities.Trace import Trace
 
 
@@ -27,8 +26,8 @@ class NumberStructure[D, BO, CO](PrimitiveStructure[D, BO, CO]):
 
         self.similarity_cache:SimilarityCache[SCon[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
-        self.similarity_cache.clear(keep)
+    def get_similarity_caches(self) -> Sequence[SimilarityCache]:
+        return (self.similarity_cache,)
 
     def get_similarity(self, data1: SCon[D], data2: SCon[D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):

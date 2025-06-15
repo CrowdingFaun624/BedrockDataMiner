@@ -1,6 +1,6 @@
 from itertools import count, takewhile
 from types import EllipsisType
-from typing import TYPE_CHECKING, Container, Hashable, Sequence
+from typing import TYPE_CHECKING, Hashable, Sequence
 
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
@@ -9,7 +9,6 @@ from Structure.IterableStructure import IterableStructure
 from Structure.SimilarityCache import SimilarityCache
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
-from Structure.StructureInfo import StructureInfo
 from Utilities.Exceptions import SequenceTooLongError
 from Utilities.Trace import Trace
 
@@ -66,8 +65,8 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
 
         self.similarity_cache:SimilarityCache[Con[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
-        self.similarity_cache.clear(keep)
+    def get_similarity_caches(self) -> Sequence[SimilarityCache]:
+        return (self.similarity_cache,)
 
     def get_key_structure(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None:
         return self.key_structure

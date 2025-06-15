@@ -72,9 +72,15 @@ class MediaSerializer(Serializer):
     def initialize(self) -> None:
         self.cached_data:dict[str,OutputTypedDict]|None = None
 
+    def memory_constrain(self) -> None:
+        super().memory_constrain()
+        media_serializer_cache.forget()
+
     def deserialize(self, data: bytes) -> OutputTypedDict:
         data_hash = get_hash_hexdigest(data)
         cached_item = media_serializer_cache.get().get(data_hash)
+        if self.memory_constrained:
+            media_serializer_cache.forget()
         if cached_item is not None:
             return cached_item
 
@@ -109,4 +115,6 @@ class MediaSerializer(Serializer):
         output[file_type] = new_file(data, f"media_{data_hash}.{file_type}")
 
         media_serializer_cache.write_new_line((data_hash, output))
+        if self.memory_constrained:
+            media_serializer_cache.forget()
         return output

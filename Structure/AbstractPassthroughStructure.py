@@ -1,6 +1,6 @@
 from itertools import pairwise
 from types import EllipsisType
-from typing import Any, Callable, Container, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
@@ -9,7 +9,6 @@ from Structure.Normalizer import Normalizer
 from Structure.SimilarityCache import SimilarityCache
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
-from Structure.StructureInfo import StructureInfo
 from Structure.StructureTag import StructureTag
 from Utilities.Exceptions import InvalidStateError
 from Utilities.Trace import Trace
@@ -42,8 +41,8 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Do
 
         self.similarity_cache:SimilarityCache[Con[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
-        self.similarity_cache.clear(keep)
+    def get_similarity_caches(self) -> Sequence[SimilarityCache]:
+        return (self.similarity_cache,)
 
     def get_structure(self, data:D, trace:Trace, environment:PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
         '''

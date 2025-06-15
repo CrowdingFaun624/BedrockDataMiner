@@ -23,39 +23,50 @@ class StoredAccessor(DirectoryAccessor):
 
     __slots__ = (
         "_file_list",
-        "_file_set",
         "index",
     )
 
     def prepare_for_install(self, instance_arguments:dict[str,Any], class_arguments:dict[str,Any], propagated_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
         self._file_list:list[str]|None = None
-        self._file_set:set[str]|None = None
         self.index = StoredIndex(self.version)
 
     @property
     def file_list(self) -> Sequence[str]:
         if self._file_list is None:
-            self._file_list = sorted(self.index.get().keys())
-        return self._file_list
+            output = self._file_list = sorted(self.index.get().keys())
+        if self.constrained_memory:
+            self._file_list = None
+        return output
 
     def file_exists(self, file_name:str) -> bool:
-        return file_name in self.index.get()
+        output = file_name in self.index.get()
+        if self.constrained_memory:
+            self.index.forget()
+        return output
 
     def read(self, file_name:str) -> bytes:
-        return read_archived(self.index.get()[file_name][0])
+        output = read_archived(self.index.get()[file_name][0])
+        if self.constrained_memory:
+            self.index.forget()
+        return output
 
     def open(self, file_name:str) -> BinaryIO:
         return io.BytesIO(self.read(file_name))
 
     def close(self) -> None:
+        super().close()
         self._file_list = None
-        self._file_set = None
+
+    def constrain_memory(self) -> None:
+        super().constrain_memory()
+        self.index.forget()
+        self._file_list = None
 
     def all_done(self) -> None:
         super().all_done()
         self.index.forget()
         self._file_list = None
-        self._file_set = None
 
-    def get_referenced_files(self, get_referenced_files:set[int]) -> None:
-        get_referenced_files.update(hash_str_to_int(item[0]) for item in self.index.get().values())
+    def get_referenced_files(self, referenced_files:set[int]) -> None:
+        super().get_referenced_files(referenced_files)
+        referenced_files.update(hash_str_to_int(item[0]) for item in self.index.get().values())

@@ -14,6 +14,7 @@ class Accessor():
     class_parameters:TypeVerifier = TypedDictTypeVerifier()
 
     __slots__ = (
+        "constrained_memory",
         "domain",
         "full_name",
         "linked_accessors",
@@ -34,6 +35,7 @@ class Accessor():
         self.version = version
         self.domain = domain
         self.linked_accessors = linked_accessors
+        self.constrained_memory:bool = False
         self.prepare_for_install(instance_arguments, class_arguments, propagated_arguments, linked_accessors)
 
     def __repr__(self) -> str:
@@ -58,5 +60,14 @@ class Accessor():
         for linked_accessor in self.linked_accessors.values():
             linked_accessor.all_done()
 
-    def get_referenced_files(self, get_referenced_files:set[int]) -> None:
-        ...
+    def constrain_memory(self) -> None:
+        '''
+        Called when memory is too high.
+        '''
+        self.constrained_memory = True
+        for linked_accessor in self.linked_accessors.values():
+            linked_accessor.constrain_memory()
+
+    def get_referenced_files(self, referenced_files:set[int]) -> None:
+        for linked_accessor in self.linked_accessors.values():
+            linked_accessor.get_referenced_files(referenced_files)

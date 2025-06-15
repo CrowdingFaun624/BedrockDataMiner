@@ -6,6 +6,7 @@ import Utilities.FileStorage as FileStorage
 from Domain.Domains import domains
 from Utilities.File import hash_int_to_str, hash_str_to_int
 from Utilities.FileManager import FILE_STORAGE_OBJECTS_DIRECTORY, OUTPUT_DIRECTORY
+from Utilities.MemoryUsage import memory_usage
 from Utilities.UserInput import input_single
 
 
@@ -20,18 +21,35 @@ def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
         dataminer_collections = domain.dataminer_collections
         structure_tags = domain.structure_tags
         versions = domain.versions
-        for version in versions.values():
+
+        for version in reversed(versions.values()):
             print(f"\t{version.name}")
-            version.get_referenced_files(referenced_files)
-            for dataminer_collection in dataminer_collections.values():
-                dataminer_collection.get_referenced_files(version, structure_tags, referenced_files)
-                dataminer_collection.clear_old_caches({dataminer_collection.get_structure_info(version)})
+            dataminer_collection = None
+            try:
+                version.get_referenced_files(referenced_files)
+                for dataminer_collection in dataminer_collections.values():
+                    # print(f"\t\t{dataminer_collection}")
+                    dataminer_collection.get_referenced_files(version, structure_tags, referenced_files)
+                    dataminer_collection.clear_old_caches({dataminer_collection.get_structure_info(version)})
+                memory_usage.adjust()
+            except Exception:
+                if dataminer_collection is None:
+                    print(f"Failed to get files for Version {version.name}.")
+                else:
+                    print(f"Failed to get files for Version {version.name} on {dataminer_collection}.")
+                raise
+            version.close_accessors()
+        referenced_files.update(domain.active_file_hashes)
+
         for dataminer_collection in dataminer_collections.values():
             dataminer_collection.clear_all_caches()
+        memory_usage.adjust()
+
     existing_files:set[int] = set()
     for folder in FILE_STORAGE_OBJECTS_DIRECTORY.iterdir():
         for file in folder.iterdir():
             existing_files.add(hash_str_to_int(file.name))
+    memory_usage.reset()
     unused_files = existing_files - referenced_files
     return unused_files
 

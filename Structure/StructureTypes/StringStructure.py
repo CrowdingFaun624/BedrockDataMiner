@@ -1,11 +1,10 @@
 from itertools import count, takewhile
-from typing import Callable, Container, Sequence
+from typing import Callable, Sequence
 
 from Structure.PrimitiveStructure import PrimitiveStructure
 from Structure.SimilarityCache import SimilarityCache
 from Structure.SimpleContainer import SCon
 from Structure.StructureEnvironment import ComparisonEnvironment
-from Structure.StructureInfo import StructureInfo
 from Utilities.Exceptions import SequenceTooLongError
 from Utilities.Trace import Trace
 
@@ -31,8 +30,8 @@ class StringStructure[D, BO, CO](PrimitiveStructure[D, BO, CO]):
 
         self.similarity_cache:SimilarityCache[SCon[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
-        self.similarity_cache.clear(keep)
+    def get_similarity_caches(self) -> Sequence[SimilarityCache]:
+        return (self.similarity_cache,)
 
     def get_levenshtein_distance(self, data1:str, data2:str, similarity_weight1:Sequence[int], similarity_weight2:Sequence[int]) -> int:
         prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1, data2))) # number of items at start that are the same

@@ -74,7 +74,13 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
         output_file = new_file(json.dumps(output, separators=(",", ":"), cls=self.domain.json_encoder).encode(), f"material_bin_data_of_{source_hash}")
         output_str = json.dumps(output_file, separators=(",", ":"), cls=self.domain.json_encoder)
         material_bin_cache.append_new_line((self.version, source_hash, output_str))
+        if self.memory_constrained:
+            material_bin_cache.forget()
         return output_file
+
+    def memory_constrain(self) -> None:
+        super().memory_constrain()
+        material_bin_cache.forget()
 
     def run_material_bin_tool(self, data:bytes) -> Path:
         '''
@@ -145,6 +151,8 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
         data_hash = get_hash_hexdigest(data)
 
         cached_output = material_bin_cache.get()[self.version].get(data_hash)
+        if self.memory_constrained:
+            material_bin_cache.forget()
         if cached_output is not None:
             return json.loads(cached_output, cls=self.domain.json_decoder)
 

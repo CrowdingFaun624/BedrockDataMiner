@@ -30,7 +30,9 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         "cache_print_comparison",
         "cache_type_check",
         "cache_versions_for_delegates",
+        "default_removal_threshold",
         "delegate",
+        "disabled",
         "index",
         "removal_threshold",
     )
@@ -45,8 +47,10 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
     ) -> None:
         self.cache_versions_for_delegates = cache_versions_for_delegates
         self.delegate = delegate
+        self.default_removal_threshold = removal_threshold
         self.removal_threshold = removal_threshold
 
+        self.disabled:bool = False
         self.index:int = 0
         # when adding a new cache, make sure to add it to `all_caches`!
         self.cache_normalize:dict[int, tuple[D, int]] = {}
@@ -94,7 +98,7 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         retrieve_function:Callable[[B], A],
         environment:StructureEnvironment,
     ) -> A:
-        if not environment.should_cache:
+        if not environment.should_cache or self.disabled:
             return cached_function()
         data_hash = hash_function()
         if (cached_output := cache.pop(data_hash, (..., self.index))[0]) is ...:

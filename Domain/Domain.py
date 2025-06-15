@@ -38,6 +38,7 @@ from Structure.Delegate.Delegate import Delegate
 from Structure.Delegate.LongStringDelegate import LongStringDelegate
 from Structure.Delegate.PrimitiveDelegate import PrimitiveDelegate
 from Utilities.DataFile import DataFile
+from Utilities.MemoryUsage import memory_usage
 from Utilities.Scripts import Scripts
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
@@ -266,6 +267,7 @@ class Domain():
         for domain in all_domains:
             domain.set_values(all_component_groups[domain.name])
         self.is_imported = True
+        memory_usage.add_domain(self)
 
     def import_scripts(self) -> None:
         # update TypeStuffs

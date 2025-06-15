@@ -41,10 +41,12 @@ class FsbCache(JsonCache[dict[str,dict[str,str]]]):
 
 fsb_cache = FsbCache(get_domain_from_module(__name__))
 
-def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
+def extract_fsb_file(input_file:bytes, memory_constrained:bool=False) -> Iterator[tuple[str,bytes]]:
     domain = get_domain_from_module(__name__)
     fsb_file_hash = get_hash_hexdigest(input_file)
     cache_data = fsb_cache.get().get(fsb_file_hash)
+    if memory_constrained:
+        fsb_cache.forget()
     if cache_data is not None:
         yield from ((cached_file_path, read_archived(cached_file_hash)) for cached_file_path, cached_file_hash in cache_data.items())
         return
@@ -71,6 +73,8 @@ def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
             result_file_hashes[result_file_path.name] = archive_data(contents, result_file_path.name)
             yield result_file_path.name, contents
     fsb_cache.new_item(fsb_file_hash, result_file_hashes)
+    if memory_constrained:
+        fsb_cache.forget()
 
     # clean up
     temp_file.unlink()
