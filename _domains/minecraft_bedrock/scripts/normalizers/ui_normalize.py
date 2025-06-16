@@ -1,13 +1,12 @@
 from typing import Any, cast
 
+from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
 from Serializer.Serializer import Serializer
 from Utilities.File import FakeFile, File
 
 domain = get_domain_from_module(__name__)
 json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
-
-__all__ = ("ui_normalize",)
 
 CONTROLS_KEYS = ("controls", "+controls")
 '''Keys of items that contain nested elements.'''
@@ -108,6 +107,7 @@ def parse_elements(namespaces:dict[str,dict[str,dict[str,Any]]], element_types:d
         for element_name, element_data in elements.items():
             parse_element(element_data, element_types, element_name, namespace)
 
+@component_function(no_arguments=True)
 def ui_normalize(data:dict[str,dict[str,File[dict[str,dict[str,Any]]]]]) -> FakeFile[dict[str,dict[str,dict[str,Any]]]]:
     files:dict[str,File[dict[str,dict[str,Any]]]] = {}
     for resource_pack, resource_pack_files in data.items():

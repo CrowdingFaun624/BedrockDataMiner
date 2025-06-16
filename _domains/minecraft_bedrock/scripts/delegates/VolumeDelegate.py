@@ -4,6 +4,7 @@ from types import EllipsisType
 from typing import Any, MutableMapping, TypedDict, cast
 
 import Domain.Domain as Domain
+from Component.ComponentFunctions import component_function
 from Structure.Container import Con, Don
 from Structure.Delegate.LineDelegate import LineDelegate, LineType
 from Structure.Difference import Diff
@@ -18,18 +19,12 @@ from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifi
 
 LAYER_CHARACTERS_DEFAULT = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+={[}];:'<,>./?αβγδεζηθικλμνξπρσςτυφχψωΓΔΘΛΞΠΣΦΨΩБбгДдËëЖжЗзИиЙйЛлФфЦцЧчШшЩщЪъЫыЬьЭэЮюЯя"
 
-__all__ = ("VolumeDelegate",)
-
-# class ContainerTypedDict(TypedDict):
-#     states: ICon.ICon[SCon.SCon[tuple[int,int,int]], SCon.SCon[int], dict[tuple[int,int,int],int]]
-#     data: ICon.ICon[SCon.SCon[tuple[int,int,int]], ICon.ICon[Any, Any, MutableMapping[Any, Any]], dict[tuple[int,int,int],MutableMapping[Any, Any]]]
-#     size: ICon.ICon[SCon.SCon[int], SCon.SCon[int], tuple[int,int,int]]
-
 class DataTypedDict(TypedDict):
     states: dict[tuple[int,int,int],int]
     data: dict[tuple[int,int,int],MutableMapping[Any,Any]]
     size: tuple[int,int,int]
 
+@component_function()
 class VolumeDelegate(LineDelegate[
     ICon[Any, Any, DataTypedDict],
     IDon[Diff[Any], Diff[Any], DataTypedDict, Any, Any],

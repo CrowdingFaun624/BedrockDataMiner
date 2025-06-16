@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Any, NotRequired, TypedDict, cast
 
+from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
 from Serializer.Serializer import Serializer
 from Utilities.File import FakeFile, File
-
-__all__ = ("models_model_normalize",)
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 description_typed_dict = TypedDict("description_typed_dict", {
     "identifier": str,
@@ -44,6 +44,9 @@ output_typed_dict = TypedDict("output_typed_dict", {"minecraft:geometry": geomet
 
 domain = get_domain_from_module(__name__)
 
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, str),
+))
 def models_model_normalize(data:dict[str,dict[str,File[model_file_type1|model_file_type2]]], serializer:str) -> FakeFile[dict[str,dict[str,output_typed_dict]]]:
     output:dict[str,dict[str,output_typed_dict]] = defaultdict(lambda: {})
     file_hashes:list[int] = []

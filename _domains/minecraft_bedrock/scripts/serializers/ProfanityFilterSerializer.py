@@ -1,9 +1,10 @@
 from base64 import b64decode
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
 
-__all__ = ("ProfanityFilterSerializer",)
 
+@component_function()
 class ProfanityFilterSerializer(Serializer[list[str]]):
 
     __slots__ = ()

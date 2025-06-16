@@ -4,6 +4,7 @@ from typing import Any, Sequence
 import Dataminer.FileDataminer as FileDataminer
 import Utilities.Exceptions as Exceptions
 from _domains.minecraft_java.scripts.dataminers.PacksDataminer import PackTypedDict
+from Component.ComponentFunctions import component_function
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Downloader.DirectoryAccessor import DirectoryAccessor
 from Utilities.File import File
@@ -14,8 +15,8 @@ from Utilities.TypeVerifier import (
     UnionTypeVerifier,
 )
 
-__all__ = ("GrabMultiplePackFilesDataminer",)
 
+@component_function()
 class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
 
     __slots__ = (

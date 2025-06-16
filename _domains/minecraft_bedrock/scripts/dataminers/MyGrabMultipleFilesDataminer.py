@@ -1,6 +1,7 @@
 from typing import Any
 
 import Dataminer.FileDataminer as FileDataminer
+from Component.ComponentFunctions import component_function
 from Dataminer.BuiltIns.GrabMultipleFilesDataminer import GrabMultipleFilesDataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Downloader.DirectoryAccessor import DirectoryAccessor
@@ -11,8 +12,8 @@ from Utilities.TypeVerifier import (
     TypedDictTypeVerifier,
 )
 
-__all__ = ("MyGrabMultipleFilesDataminer",)
 
+@component_function()
 class MyGrabMultipleFilesDataminer(GrabMultipleFilesDataminer):
 
     __slots__ = (

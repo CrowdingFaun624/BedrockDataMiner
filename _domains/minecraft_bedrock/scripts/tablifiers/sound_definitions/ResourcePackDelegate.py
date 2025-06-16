@@ -4,6 +4,7 @@ from typing import Any
 from _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.make_all_tags import (
     TAG_ORDER,
 )
+from Component.ComponentFunctions import component_function
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
 from Structure.IterableContainer import ICon, IDon
@@ -13,9 +14,8 @@ from Structure.StructureEnvironment import ComparisonEnvironment
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictTypeVerifier
 
-__all__ = ("ResourcePackDelegate",)
 
-
+@component_function()
 class ResourcePackDelegate(Delegate[
     ICon[SCon[str], ICon[Any, Any, dict[Any, Any]], dict[str,dict[Any, Any]]],
     Diff[IDon[Diff[SDon[str]], Diff[IDon[Diff[Any], Diff[Any], dict[Any, Any], Any, Any]], dict[str,dict[Any, Any]], SCon[str], ICon[Any, Any, dict[Any,Any]]]],

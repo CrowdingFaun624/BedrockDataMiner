@@ -1,6 +1,7 @@
 from types import EllipsisType
 from typing import Any, cast
 
+from Component.ComponentFunctions import component_function
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
 from Structure.IterableContainer import ICon, IDon
@@ -10,8 +11,8 @@ from Structure.StructureTypes.DictStructure import DictStructure
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictTypeVerifier
 
-__all__ = ("SoundEventsDelegate",)
 
+@component_function()
 class SoundEventsDelegate(Delegate[
     ICon[SCon[str], ICon[SCon[str], Any, dict[str,Any]], dict[str,dict[str,Any]]],
     IDon[Diff[SDon[str]], Diff[IDon[Diff[SDon[str]], Diff[Any], dict[str,Any], SCon[str], Any]], dict[str,dict[str,Any]], SCon[str], ICon[SCon[str], Any, dict[str,Any]]],

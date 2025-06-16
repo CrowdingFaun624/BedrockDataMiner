@@ -5,11 +5,11 @@ from _domains.minecraft_bedrock.scripts.serializers.EvilFSBExtractor import (
     extract_fsb_file,
     fsb_cache,
 )
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
 from Utilities.Exceptions import DataminerException, EmptyFileError, message
 from Utilities.FileManager import get_hash_hexdigest
 
-__all__ = ("SoundSerializer",)
 
 class SoundFilesMetadataError(DataminerException):
     "audio_metadata failed to extract the sound file."
@@ -84,6 +84,7 @@ def serialize(data:Any) -> Any:
         except Exception:
             return f"Unencodable object \"{data.__class__.__name__}\""
 
+@component_function()
 class SoundSerializer(Serializer[dict[str,dict[str,SoundFilesTypedDict]],]):
 
     __slots__ = ()

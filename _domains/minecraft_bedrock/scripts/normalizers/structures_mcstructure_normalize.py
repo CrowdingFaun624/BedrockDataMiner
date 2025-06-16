@@ -1,7 +1,8 @@
 from itertools import count, product
 from typing import Any, NotRequired, TypedDict, cast
 
-__all__ = ("structures_mcstructure_normalize",)
+from Component.ComponentFunctions import component_function
+
 
 class BlockPaletteItemTypedDict(TypedDict):
     name: str
@@ -62,6 +63,7 @@ def get_layer_states(
             states[x, y, z] = state
     return states, additional_data
 
+@component_function(no_arguments=True)
 def structures_mcstructure_normalize(data:FileTypedDict) -> None:
     size_x, size_y, size_z = data["size"]
     palette = data["structure"]["palette"]["default"]

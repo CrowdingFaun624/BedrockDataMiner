@@ -2,6 +2,7 @@ from itertools import product
 from typing import Any, Sequence
 
 from _domains.minecraft_java.scripts.dataminers.PacksDataminer import PackTypedDict
+from Component.ComponentFunctions import component_function
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.FileDataminer import FileDataminer, FileSet
 from Downloader.DirectoryAccessor import DirectoryAccessor
@@ -14,8 +15,8 @@ from Utilities.TypeVerifier import (
     UnionTypeVerifier,
 )
 
-__all__ = ("GrabPackFileDataminer",)
 
+@component_function()
 class GrabPackFileDataminer(FileDataminer):
 
     __slots__ = (

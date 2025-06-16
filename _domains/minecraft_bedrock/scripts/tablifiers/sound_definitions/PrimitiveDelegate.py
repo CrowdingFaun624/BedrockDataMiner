@@ -1,6 +1,7 @@
 from types import EllipsisType
 from typing import Any, Iterable
 
+from Component.ComponentFunctions import component_function
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
 from Structure.PrimitiveStructure import PrimitiveStructure
@@ -9,7 +10,6 @@ from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnviron
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-__all__ = ("PrimitiveDelegate",)
 
 def get_version(branch:int, get_parent:bool, environment:ComparisonEnvironment) -> str:
     version = environment.versions[branch]
@@ -46,6 +46,7 @@ def should_be_simple(data:Diff, length:int, bundle:tuple[int,...]) -> bool:
     bundle1 = all_bundles[0]
     return all(bundle is bundle1 for bundle in all_bundles)
 
+@component_function()
 class PrimitiveDelegate(Delegate[
     SCon[Any],
     Diff[SDon[Any]],

@@ -2,10 +2,11 @@ import json
 from base64 import b64decode
 from typing import Any
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
 
-__all__ = ("TiersBinSerializer",)
 
+@component_function()
 class TiersBinSerializer(Serializer[Any]):
 
     __slots__ = ()

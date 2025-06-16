@@ -1,12 +1,12 @@
 from string import whitespace as py_whitespace
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
-
-__all__ = ("LanguageSerializer",)
 
 LEFT_WHITESPACE = "\ufeff" + py_whitespace
 RIGHT_WHITESPACE = "#" + LEFT_WHITESPACE
 
+@component_function()
 class LanguageSerializer(Serializer[dict[str,str]]):
 
     __slots__ = ()

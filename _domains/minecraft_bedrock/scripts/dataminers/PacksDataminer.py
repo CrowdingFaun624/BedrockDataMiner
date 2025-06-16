@@ -2,6 +2,7 @@ from typing import Iterable, Literal, Sequence, TypedDict
 
 import _domains.minecraft_bedrock.scripts.normalizers.collapse_resource_packs as collapse_resource_packs
 import Dataminer.FileDataminer as FileDataminer
+from Component.ComponentFunctions import component_function
 from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Utilities.Exceptions import DataminerNothingFoundError
@@ -13,7 +14,6 @@ from Utilities.TypeVerifier import (
     UnionTypeVerifier,
 )
 
-__all__ = ("PacksDataminer",)
 
 class PackTypedDict(TypedDict):
     name: str
@@ -21,6 +21,7 @@ class PackTypedDict(TypedDict):
 
 pack_order = collapse_resource_packs.resource_pack_order
 
+@component_function()
 class PacksDataminer(Dataminer):
 
     __slots__ = (

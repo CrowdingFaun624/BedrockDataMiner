@@ -1,12 +1,13 @@
 from typing import Any
 
+from Component.ComponentFunctions import component_function
 from Dataminer.BuiltIns.GrabSingleFileDataminer import GrabSingleFileDataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Utilities.File import File
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-__all__ = ("MyGrabSingleFileDataminer",)
 
+@component_function()
 class MyGrabSingleFileDataminer(GrabSingleFileDataminer):
 
     __slots__ = (

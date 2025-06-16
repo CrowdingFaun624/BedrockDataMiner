@@ -1,6 +1,7 @@
 from types import EllipsisType
 from typing import Any, NotRequired, Required, TypedDict, cast
 
+from Component.ComponentFunctions import component_function
 from Structure.Container import Don
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
@@ -12,7 +13,6 @@ from Utilities.Exceptions import StructureUnrecognizedKeyError
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictTypeVerifier
 
-__all__ = ("SoundEventDelegate",)
 
 class SoundEventTypedDict(TypedDict):
     name: Required[str]
@@ -30,7 +30,7 @@ class SoundEventDiffTypedDict(TypedDict):
     min_distance: NotRequired[Diff[SDon[float]]]
     sounds: Required[Diff[IDon[Diff[SDon[str]], Diff[Don[Any]], dict[str,Any], SCon[str], Any]]]
 
-
+@component_function()
 class SoundEventDelegate(Delegate[
     ICon[SCon[str], Any, SoundEventTypedDict],
     IDon[Diff[SDon[str]], Any, SoundEventTypedDict, SCon[str], Any], # uses this instead of a ICon because SoundEventsDelegate passes in a customized value. The name key messes everything up.

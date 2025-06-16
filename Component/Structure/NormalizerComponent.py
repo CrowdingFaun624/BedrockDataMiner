@@ -2,6 +2,7 @@ from typing import Sequence
 
 from Component.Capabilities import Capabilities
 from Component.Component import Component
+from Component.ComponentFunctions import function_type_verifiers
 from Component.ComponentTyping import NormalizerTypedDict
 from Component.Field.ComponentField import OptionalComponentField
 from Component.Field.Field import Field
@@ -57,3 +58,8 @@ class NormalizerComponent(Component[Normalizer]):
             self.final.link_subcomponents(
                 filter=self.filter_field.map(lambda subcomponent: subcomponent.final),
             )
+
+    def check(self, trace: Trace) -> None:
+        super().check(trace)
+        if (type_verifier := function_type_verifiers.get(self.function_field.function, None)) is not None:
+            type_verifier.verify(self.arguments, trace)

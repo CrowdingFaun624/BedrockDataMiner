@@ -1,9 +1,10 @@
 import json
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
 
-__all__ = ("TextureListSerializer",)
 
+@component_function()
 class TextureListSerializer(Serializer):
     '''
     I have made a situation in which two different formats must

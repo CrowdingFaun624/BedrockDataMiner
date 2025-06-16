@@ -1,6 +1,7 @@
 from types import EllipsisType
 from typing import Any
 
+from Component.ComponentFunctions import component_function
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
 from Structure.IterableContainer import ICon, IDon
@@ -10,9 +11,8 @@ from Structure.StructureEnvironment import ComparisonEnvironment
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictTypeVerifier
 
-__all__ = ("DefinedInDelegate",)
 
-
+@component_function()
 class DefinedInDelegate(Delegate[
     ICon[SCon[int], SCon[str], list[str]],
     IDon[Diff[SDon[int]], Diff[SDon[str]], list[str], SCon[int], SCon[str]],

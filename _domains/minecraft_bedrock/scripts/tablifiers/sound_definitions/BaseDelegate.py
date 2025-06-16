@@ -1,6 +1,7 @@
 from types import EllipsisType
 from typing import Any
 
+from Component.ComponentFunctions import component_function
 from Structure.Delegate.Delegate import Delegate
 from Structure.StructureBase import StructureBase
 from Structure.StructureEnvironment import ComparisonEnvironment
@@ -20,8 +21,7 @@ FOOTER = '''
 </noinclude>
 '''
 
-__all__ = ("BaseDelegate",)
-
+@component_function()
 class BaseDelegate(Delegate[Any, Any, StructureBase[dict[str,dict[Any,Any]], Any, str], Any, Any, str, Any]):
 
     __slots__ = ()

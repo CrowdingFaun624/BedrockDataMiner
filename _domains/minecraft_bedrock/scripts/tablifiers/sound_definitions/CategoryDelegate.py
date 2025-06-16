@@ -4,14 +4,14 @@ from typing import Any
 from _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.PrimitiveDelegate import (
     PrimitiveDelegate,
 )
+from Component.ComponentFunctions import component_function
 from Structure.SimpleContainer import SCon
 from Structure.StructureEnvironment import PrinterEnvironment
 from Utilities.Trace import Trace
 
-__all__ = ("CategoryDelegate",)
-
 normal_categories = {"weather", "block", "bucket", "bottle", "ui", "player", "hostile", "music", "record", "neutral", "ambient"} # https://wiki.bedrock.dev/concepts/sounds#top-level-keys
 
+@component_function()
 class CategoryDelegate(PrimitiveDelegate):
 
     __slots__ = ()

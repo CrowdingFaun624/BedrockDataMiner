@@ -1,8 +1,7 @@
 from jsbeautifier import beautify
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
-
-__all__ = ("JavascriptSerializer",)
 
 DEFAULT_OPTIONS = {
   "indent_size": "1",
@@ -29,6 +28,7 @@ def fix_indent(line:str) -> str:
         line = line.replace("    ", "\t", 1)
     return line
 
+@component_function()
 class JavascriptSerializer(Serializer):
 
     __slots__ = ()

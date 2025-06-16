@@ -1,8 +1,8 @@
 from typing import Any
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
 
-__all__ = ("ManifestSerializer",)
 
 class LineReader():
 
@@ -26,6 +26,7 @@ class LineReader():
     def __bool__(self) -> bool:
         return self.offset < len(self.lines)
 
+@component_function()
 class ManifestSerializer(Serializer):
 
     __slots__ = ()

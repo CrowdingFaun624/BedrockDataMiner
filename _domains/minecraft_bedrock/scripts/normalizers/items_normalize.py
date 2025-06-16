@@ -1,13 +1,12 @@
 from typing import Any, Iterator, TypedDict, cast
 
+from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
 from Serializer.Serializer import Serializer
 from Utilities.File import AbstractFile, FakeFile, File
 
 domain = get_domain_from_module(__name__)
 json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
-
-__all__ = ("items_normalize",)
 
 class ItemsFileFormat(TypedDict):
     items: dict[str,dict[str,Any]]
@@ -35,6 +34,7 @@ def iterator_new(data:NewType) -> Iterator[tuple[str,str,Any,int]]:
         for resource_pack_name, file in resource_packs.items():
             yield item_name, resource_pack_name, file.read(json_serializer.get()), hash(file)
 
+@component_function(no_arguments=True)
 def items_normalize(data:OldType|NewType) -> FakeFile[dict[str,dict[str,Any]]]:
     iterator:Iterator[tuple[str,str,Any,int]] = iterator_old(cast(OldType, data)) if is_old_format(data) else iterator_new(cast(NewType, data))
     # item name, resource pack, item data; return is file hashes

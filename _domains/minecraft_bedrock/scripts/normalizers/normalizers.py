@@ -1,61 +1,25 @@
 from collections import defaultdict
 from typing import Any, NotRequired, Required, Sequence, TypedDict, cast
 
+from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
 from Serializer.Serializer import Serializer
 from Structure.SimpleContainer import SCon
 from Utilities.File import FakeFile, File
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
 domain = get_domain_from_module(__name__)
 json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
 lines_serializer = domain.script_referenceable.get_future("minecraft_bedrock!serializers/lines_serializer", Serializer)
 
-__all__ = (
-    "animation_controllers_fix_old",
-    "animations_fix_old",
-    "attachables_normalize_old",
-    "biomes_normalize_old",
-    "blocks_client_normalize",
-    "categories_normalize",
-    "commands_normalize_format_string",
-    "delete_variants_if_empty",
-    "entities_client_fix_old",
-    "item_textures_normalize",
-    "items_client_offset_normalize",
-    "language_names_normalize",
-    "materials_normalize_material",
-    "models_file_similarity_weight",
-    "music_definitions_normalize",
-    "normalize_sound_definitions",
-    "open_file",
-    "packs_normalize",
-    "particles_normalize_component_particle_appearance_tinting_color",
-    "particles_normalize_old",
-    "pieces_normalize",
-    "recipes_fix_old",
-    "remove_minecraft_prefix",
-    "remove_file_suffix",
-    "render_controllers_fix_old",
-    "renderer_options_dragon_normalize",
-    "renderer_options_normalize_mappings",
-    "renderer_platform_configurations_normalize_shadow_config",
-    "skins_normalize",
-    "sound_definitions_make_strings_to_dict",
-    "sound_events_similarity_weight",
-    "sounds_json_make_strings_to_dict",
-    "spawn_rules_normalize_herd",
-    "subdirs_normalize",
-    "terrain_textures_normalize",
-    "texture_list_normalize",
-    "textures_split_lines",
-    "tiers_bin_normalize_gpu",
-    "ui_separate_variables",
-    "uniforms_normalize",
-)
-
 animation_controllers_fix_old_input_typed_dict = dict[str,Any]
 animation_controllers_fix_old_output_typed_dict = TypedDict("animation_controllers_fix_old_output_typed_dict", {"animation_controllers": Any})
 
+@component_function(no_arguments=True)
 def animation_controllers_fix_old(data:animation_controllers_fix_old_input_typed_dict|animation_controllers_fix_old_output_typed_dict) -> animation_controllers_fix_old_output_typed_dict|None:
     if "animation_controllers" in data:
         return None
@@ -65,6 +29,7 @@ def animation_controllers_fix_old(data:animation_controllers_fix_old_input_typed
 animations_fix_old_input_typed_dict = dict[str,Any]
 animations_fix_old_output_typed_dict = TypedDict("animations_fix_old_output_typed_dict", {"animations": Any})
 
+@component_function(no_arguments=True)
 def animations_fix_old(data:animations_fix_old_input_typed_dict|animations_fix_old_output_typed_dict) -> animations_fix_old_output_typed_dict|None:
     if "animations" in data:
         return None
@@ -98,6 +63,7 @@ attachables_normalize_old_output_attachable_typed_dict = TypedDict("attachables_
 
 attachables_normalize_old_output_typed_dict = TypedDict("attachables_normalize_old_output_typed_dict", {"minecraft:attachable": attachables_normalize_old_output_attachable_typed_dict})
 
+@component_function(no_arguments=True)
 def attachables_normalize_old(data:attachables_normalize_old_input_typed_dict|attachables_normalize_old_output_typed_dict) -> attachables_normalize_old_output_typed_dict|None:
     if "minecraft:attachable" in data:
         return None
@@ -126,6 +92,7 @@ biomes_normalize_old_output_typed_dict = TypedDict("biomes_normalize_old_output_
     "minecraft:biome": biomes_normalize_old_output_biome_typed_dict,
 })
 
+@component_function(no_arguments=True)
 def biomes_normalize_old(data:biomes_normalize_old_input_typed_dict|biomes_normalize_old_output_typed_dict) -> biomes_normalize_old_output_typed_dict|None:
     if "minecraft:biome" in data:
         return None
@@ -142,6 +109,7 @@ def biomes_normalize_old(data:biomes_normalize_old_input_typed_dict|biomes_norma
     del output["minecraft:biome"]["components"]["format_version"]
     return output
 
+@component_function(no_arguments=True)
 def blocks_client_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
@@ -155,6 +123,7 @@ def blocks_client_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict
     combined_hash = hash(tuple(file_hashes))
     return FakeFile("combined_blocks_file", output, None, combined_hash)
 
+@component_function(no_arguments=True)
 def categories_normalize(data:dict[str,dict[str,str]]) -> dict[str,dict[str,dict[str,str]]]:
     output:dict[str,dict[str,dict[str,str]]] = {}
     for element_name, element in data.items():
@@ -167,12 +136,14 @@ class FormatStringTypedDict(TypedDict):
     should_show: NotRequired[dict[Any,Any]]
     params_to_use: NotRequired[list[Any]]
 
+@component_function(no_arguments=True)
 def commands_normalize_format_string(data:str|FormatStringTypedDict) -> FormatStringTypedDict|None:
     if isinstance(data, dict):
         return None
     else:
         return {"format": data}
 
+@component_function(no_arguments=True)
 def delete_variants_if_empty(data:dict[str,Any]) -> None:
     if "variants" in data and len(data["variants"]["key"]) == 0 and len(data["variants"]["map"]) == 0:
         del data["variants"]
@@ -187,6 +158,7 @@ entities_client_fix_old_output_type = TypedDict("entities_client_fix_old_output_
     "minecraft:client_entity": entities_client_fix_old_output_client_entity_typed_dict,
 })
 
+@component_function(no_arguments=True)
 def entities_client_fix_old(data:entities_client_fix_old_input_type|entities_client_fix_old_output_type) -> entities_client_fix_old_output_type|None:
     if "minecraft:client_entity" in data:
         return None
@@ -200,6 +172,7 @@ def entities_client_fix_old(data:entities_client_fix_old_input_type|entities_cli
 
 item_textures_data_typed_dict = TypedDict("item_textures_data_typed_dict", {"texture_data": dict[str,Any]})
 
+@component_function(no_arguments=True)
 def item_textures_normalize(data:dict[str,File[item_textures_data_typed_dict]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
@@ -220,6 +193,7 @@ class ItemClientOffsetItemTypedDict(TypedDict):
 class ItemClientOffsetFileTypedDict(TypedDict):
     render_offsets: Required[dict[str,ItemClientOffsetItemTypedDict]]
 
+@component_function(no_arguments=True)
 def items_client_offset_normalize(data:dict[str,File[ItemClientOffsetFileTypedDict]]) -> FakeFile[dict[str,dict[str,ItemClientOffsetItemTypedDict]]]:
     output:dict[str,dict[str,ItemClientOffsetItemTypedDict]] = {}
     file_hashes:list[int] = []
@@ -229,6 +203,7 @@ def items_client_offset_normalize(data:dict[str,File[ItemClientOffsetFileTypedDi
         output[resource_pack_name] = file_data["render_offsets"]
     return FakeFile("combined_items_client_offset_file", output, None, hash(tuple(file_hashes)))
 
+@component_function(no_arguments=True)
 def language_names_normalize(data:list[list[str]]) -> dict[str,str]:
     return dict(data)
 
@@ -236,6 +211,7 @@ materials_normalize_material_input_typed_dict = TypedDict("materials_normalize_m
 
 materials_normalize_material_output_typed_dict = TypedDict("materials_normalize_material_output_typed_dict", {"materials": dict[str,Any]})
 
+@component_function(no_arguments=True)
 def materials_normalize_material(data:materials_normalize_material_input_typed_dict|dict[str,Any]) -> materials_normalize_material_output_typed_dict|None:
     if "materials" in data:
         data["version"] = cast(str, data["materials"]["version"])
@@ -243,6 +219,7 @@ def materials_normalize_material(data:materials_normalize_material_input_typed_d
     else:
         return {"materials": data}
 
+@component_function(no_arguments=True)
 def models_file_similarity_weight(data:str) -> Sequence[int]:
     # example string: "entity/mobs_v1.0.json geometry.humanoid.customSlim:geometry.humanoid"
     output:list[int] = [0] * len(data)
@@ -273,6 +250,7 @@ def models_file_similarity_weight(data:str) -> Sequence[int]:
         string_index += len(item) + 1
     return output
 
+@component_function(no_arguments=True)
 def music_definitions_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
@@ -285,6 +263,7 @@ def music_definitions_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[
             output[environment_name][pack_name] = environment_data
     return FakeFile("combined_music_definitions_file", output, None, hash(tuple(file_hashes)))
 
+@component_function(no_arguments=True)
 def normalize_sound_definitions(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     # resource packs are always the top level.
     # inside resource pack, it's sometimes wrapped in {"sound_definitions": dict_of_sound_events}
@@ -301,15 +280,20 @@ def normalize_sound_definitions(data:dict[str,File[dict[str,Any]]]) -> FakeFile[
             output[event_name][pack_name] = event_data
     return FakeFile("combined_sound_definitions_file", output, None, hash(tuple(file_hashes)))
 
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, str),
+))
 def open_file[A](data:A|File[A], serializer:str) -> A|None:
     if isinstance(data, File):
         return data.read(domain.script_referenceable.get(serializer))
 
 packs_normalize_pack_typed_dict = TypedDict("packs_normalize_pack_typed_dict", {"path": str, "name": str})
 
+@component_function(no_arguments=True)
 def packs_normalize(data:list[packs_normalize_pack_typed_dict]) -> list[str]:
     return [pack["name"] for pack in data]
 
+@component_function(no_arguments=True)
 def particles_normalize_component_particle_appearance_tinting_color(data:dict|str|list) -> list|dict|None:
     if isinstance(data, (str, list)):
         return [data]
@@ -330,21 +314,23 @@ particles_normalize_old_output_type = TypedDict("particles_normalize_old_output_
 
 particles_normalize_old_input_type = dict[str,Any]
 
+@component_function(no_arguments=True)
 def particles_normalize_old(data:particles_normalize_old_input_type|particles_normalize_old_output_type) -> particles_normalize_old_output_type|None:
     if "particles" not in data:
         return
-    particle_identifier = list(data["particles"].keys())[0]
+    particle_identifier = list(data["particles"].keys())[0] # type: ignore
     output:particles_normalize_old_output_type = {
         "format_version": cast(str, data["format_version"]),
-        "particle_effect": data["particles"][particle_identifier],
+        "particle_effect": data["particles"][particle_identifier], # type: ignore
     }
     output["particle_effect"]["description"] = {
-        "basic_render_parameters": data["particles"][particle_identifier]["basic_render_parameters"],
+        "basic_render_parameters": data["particles"][particle_identifier]["basic_render_parameters"], # type: ignore
         "identifier": particle_identifier,
     }
     del output["particle_effect"]["basic_render_parameters"] # type: ignore
     return output
 
+@component_function(no_arguments=True)
 def pieces_normalize(data:list[str]) -> list[str]:
     data = list(set(data)) # deduplicate
     data = list(filter(lambda item: "." not in item, data))
@@ -356,6 +342,7 @@ recipes_fix_old_recipe_types = {
     "furnace_recipe": "minecraft:recipe_furnace",
 }
 
+@component_function(no_arguments=True)
 def recipes_fix_old(data:dict[str,Any]) -> dict[str,dict[str,Any]]|None:
     if "type" not in data:
         return None
@@ -365,9 +352,11 @@ def recipes_fix_old(data:dict[str,Any]) -> dict[str,dict[str,Any]]|None:
     del data["type"]
     return output
 
+@component_function(no_arguments=True)
 def remove_minecraft_prefix(data:SCon[str]) -> str:
     return data.data.removeprefix("minecraft:")
 
+@component_function(no_arguments=True)
 def remove_file_suffix(data:SCon[str]) -> str:
     split_data = data.data.split(".")
     # some file names are like "donkey.v1.2.6.entity.json"; I want to include the v1.2.6.
@@ -378,19 +367,23 @@ def remove_file_suffix(data:SCon[str]) -> str:
     else:
         return split_data[0]
 
+@component_function(no_arguments=True)
 def render_controllers_fix_old(data:Any) -> Any|None:
     if "render_controllers" in data:
         return None
     output = {"render_controllers": data}
     return output
 
+@component_function(no_arguments=True)
 def renderer_options_dragon_normalize(data:list[list[str]]) -> dict[str,str]:
     return dict(data) # iterable of iterables with two items each
 
+@component_function(no_arguments=True)
 def renderer_options_normalize_mappings(data:dict[str,list[Any]]|list[Any]) -> dict[str,list[Any]]|None:
     if isinstance(data, list):
         return {"mappings": data}
 
+@component_function(no_arguments=True)
 def renderer_platform_configurations_normalize_shadow_config(data:Any) -> Any|None:
     if "file" in data:
         return {"shadow_config": data}
@@ -401,6 +394,9 @@ class SkinsNormalizeInputTypedDict(TypedDict):
 class SkinsNormalizeOutputTypedDict(TypedDict):
     skins: list[dict[str,Any]]
 
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("other_keys", True, ListTypeVerifier(str, list)),
+))
 def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_keys:list[str]) -> FakeFile[SkinsNormalizeOutputTypedDict]:
     output:SkinsNormalizeOutputTypedDict = {
         "skins": [],
@@ -418,6 +414,7 @@ def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_key
             output[other_key][pack_name] = skins_data[other_key]
     return FakeFile("combined_skins_file", output, None, hash(tuple(file_hashes)))
 
+@component_function(no_arguments=True)
 def sound_definitions_make_strings_to_dict(data:Any) -> Any:
     if isinstance(data, str):
         return {"name": data}
@@ -467,6 +464,7 @@ SPECIAL_WEIGHTS = [
     },
 ]
 
+@component_function(no_arguments=True)
 def sound_events_similarity_weight(data:str) -> list[int]:
     items = data.split(".")
     string_index = 0
@@ -477,14 +475,17 @@ def sound_events_similarity_weight(data:str) -> list[int]:
         string_index += len(item) + 1
     return weights
 
+@component_function(no_arguments=True)
 def sounds_json_make_strings_to_dict(data:Any) -> Any:
     if isinstance(data, str):
         return {"sound": data}
 
+@component_function(no_arguments=True)
 def spawn_rules_normalize_herd(data:dict[str,Any]|list[dict[str,Any]]) -> list[dict[str,Any]]|None:
     if isinstance(data, dict):
         return [data]
 
+@component_function(no_arguments=True)
 def subdirs_normalize(data:dict[str,File[list[str]]]) -> list[str]:
     output:list[str] = []
     for file_name, file in data.items():
@@ -494,6 +495,7 @@ def subdirs_normalize(data:dict[str,File[list[str]]]) -> list[str]:
             output.append(file_name_stripped + line)
     return output
 
+@component_function(no_arguments=True)
 def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     other_keys = {"texture_name": {}, "padding": {}, "num_mip_levels": {}}
     texture_data:dict[str,dict[str,Any]] = {}
@@ -512,6 +514,9 @@ def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[d
     output["texture_data"] = texture_data
     return FakeFile("combined_terrain_textures_file", output, None, hash(tuple(file_hashes)))
 
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, str),
+))
 def texture_list_normalize(data:dict[str,File[list[str]]], serializer:str) -> FakeFile[dict[str,list[str]]]:
     _serializer = domain.serializers[serializer]
     output:defaultdict[str,list[str]] = defaultdict(lambda: [])
@@ -523,14 +528,17 @@ def texture_list_normalize(data:dict[str,File[list[str]]], serializer:str) -> Fa
             output[texture].append(resource_pack)
     return FakeFile("combined_texture_list_file", dict(output), None, hash(tuple(file_hashes)))
 
+@component_function(no_arguments=True)
 def textures_split_lines(data:list[str]|str) -> list[str]|None:
     if isinstance(data, str):
         return data.splitlines()
 
+@component_function(no_arguments=True)
 def tiers_bin_normalize_gpu(data:int|dict) -> dict|None:
     if isinstance(data, int):
         return {"tier": data}
 
+@component_function(no_arguments=True)
 def ui_separate_variables(data:dict[str,Any]) -> None:
     variables:dict[str,Any] = {}
     for parameter_name, parameter_value in data.items():
@@ -542,6 +550,7 @@ def ui_separate_variables(data:dict[str,Any]) -> None:
     if len(variables) > 0:
         data["$variables"] = variables
 
+@component_function(no_arguments=True)
 def uniforms_normalize(data:dict[str,str]) -> dict[str,str]|None:
     if "Name" in data:
         return

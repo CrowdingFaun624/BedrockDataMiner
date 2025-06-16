@@ -1,11 +1,9 @@
 import importlib
 from pathlib import Path
-from types import ModuleType
 from typing import Any, Callable, Iterable
 
 import Domain.Domain as Domain
 from Utilities.Exceptions import ScriptNameCollideError
-from Utilities.TypeVerifier import ListTypeVerifier
 from Utilities.UserInput import input_single
 
 
@@ -60,8 +58,6 @@ class Script[a]():
 class Scripts():
     '''Collection of scripts.'''
 
-    all_type_verifier = ListTypeVerifier(str, (list, tuple))
-
     __slots__ = (
         "domain",
         "scripts",
@@ -70,23 +66,13 @@ class Scripts():
     def __init__(self, domain:"Domain.Domain") -> None:
         self.domain = domain
         has_imported_scripts.has_imported_scripts = True
-
-        modules:dict[str,ModuleType] = {}
-        for file, relative_name in iter_dir(domain.scripts_directory):
-            if file.suffix != ".py": continue
-            module_name = f"_domains.{domain.name}.scripts.{relative_name.replace("/", ".").removesuffix(".py")}"
-            modules[relative_name] = importlib.import_module(module_name)
-
         self.scripts:dict[tuple[str,str],Script] = {}
-        for relative_name, module in modules.items():
-            item_names:list[str]
-            if hasattr(module, "__all__"):
-                self.all_type_verifier.verify_throw(module.__all__, (relative_name,))
-                item_names = module.__all__
-            else:
-                item_names = dir(module)
-            for item_name in item_names:
-                self.scripts[relative_name, item_name] = Script(relative_name, item_name, getattr(module, item_name), domain)
+
+    def import_modules(self) -> None:
+        for file, relative_name in iter_dir(self.domain.scripts_directory):
+            if file.suffix != ".py": continue
+            module_name = f"_domains.{self.domain.name}.scripts.{relative_name.replace("/", ".").removesuffix(".py")}"
+            importlib.import_module(module_name)
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} of {self.domain.name} {self.scripts}>"

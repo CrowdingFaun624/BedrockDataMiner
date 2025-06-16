@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Callable, NotRequired, Sequence, TypedDic
 import Component.ScriptImporter as ScriptImporter
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
-from Component.ComponentFunctions import functions
+from Component.BuiltInFunctions import built_in_functions
 from Component.Importer import parse_all_component_groups
 from Component.ScriptImporter import ScriptSet
 from Component.ScriptReferenceable import ScriptReferenceable
@@ -274,9 +274,10 @@ class Domain():
     def import_scripts(self) -> None:
         # update TypeStuffs
         self.scripts = Scripts(self)
+        self.scripts.import_modules()
         self.json_decoder = CustomJson.get_special_decoder(self)
         self.json_encoder = CustomJson.get_special_encoder(self)
-        self.callables = ScriptImporter.import_scripted_objects("normalizers/", self, functions, callable, "callable")
+        self.callables = ScriptImporter.import_scripted_objects("normalizers/", self, built_in_functions, callable, "callable")
         self.accessor_classes = ScriptImporter.import_scripted_types("accessors/", self, BUILT_IN_ACCESSOR_CLASSES, Accessor)
         self.dataminer_classes = ScriptImporter.import_scripted_types("dataminers/", self, BUILT_IN_DATAMINER_CLASSES, Dataminer)
         self.delegate_classes = ScriptImporter.import_scripted_types("delegates", self, BUILT_IN_DELEGATE_CLASSES, Delegate)

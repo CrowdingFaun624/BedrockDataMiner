@@ -2,12 +2,14 @@ from pathlib import Path
 from typing import Any, BinaryIO, cast
 
 import Domain.Domain as Domain
+from Component.ComponentFunctions import component_function
 from Downloader.Accessor import Accessor
 from Downloader.FileAccessor import FileAccessor
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 from Version.Version import Version
 
 
+@component_function()
 class ArchivalAccessor(FileAccessor):
 
     __slots__ = (

@@ -1,6 +1,7 @@
 from types import EllipsisType
 from typing import Any, NotRequired, Required, TypedDict
 
+from Component.ComponentFunctions import component_function
 from Structure.Container import Con, Don
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
@@ -11,7 +12,6 @@ from Structure.StructureTypes.KeymapStructure import KeymapStructure
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictTypeVerifier
 
-__all__ = ("SoundPropertiesDelegate",)
 
 class SoundPropertiesTypedDict(TypedDict):
     name: Required[str]
@@ -36,6 +36,7 @@ PROPERTY_ORDER = {key: index for index, key in enumerate((
     "exclude_from_pocket_platforms",
 ))}
 
+@component_function()
 class SoundPropertiesDelegate(Delegate[
     ICon[SCon[str], Con[Any], SoundPropertiesTypedDict],
     IDon[Diff[SDon[str]], Diff[Don[Any]], SoundPropertiesTypedDict, SCon[str], Con[Any]],

@@ -2,6 +2,7 @@
 
 from typing import Any, Mapping, NotRequired, TypedDict
 
+from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
 from Serializer.Serializer import Serializer
 from Utilities.File import FakeFile, File
@@ -9,7 +10,6 @@ from Utilities.File import FakeFile, File
 domain = get_domain_from_module(__name__)
 json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
 
-__all__ = ("sounds_json_normalize",)
 
 # input
 
@@ -126,6 +126,7 @@ def trace_exists(object:Mapping[str,Any], trace:tuple[str,...]) -> bool:
         else: return False
     return True
 
+@component_function(no_arguments=True)
 def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]]) -> FakeFile[MySoundsJsonTypedDict]:
     output:MySoundsJsonTypedDict = {
         "individual_event_sounds": {

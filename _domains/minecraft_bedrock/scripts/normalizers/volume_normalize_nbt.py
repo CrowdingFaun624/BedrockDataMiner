@@ -8,9 +8,9 @@ from typing import (
     cast,
 )
 
+from Component.ComponentFunctions import component_function
 from Utilities.Exceptions import StructureException, message
-
-__all__ = ("volume_normalize_nbt",)
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 LAYER_CHARACTERS_DEFAULT_MAX = len("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+={[}];:'<,>./?αβγδεζηθικλμνξπρσςτυφχψωΓΔΘΛΞΠΣΦΨΩБбгДдËëЖжЗзИиЙйЛлФфЦцЧчШшЩщЪъЫыЬьЭэЮюЯя")
 
@@ -58,6 +58,11 @@ class OutputTypedDict(TypedDict):
     data: dict[tuple[int,int,int],MutableMapping[str,Any]]
     size: tuple[int,int,int]
 
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("position_key", True, str),
+    TypedDictKeyTypeVerifier("state_key", True, str),
+    TypedDictKeyTypeVerifier("layer_characters_len", False, int),
+))
 def volume_normalize_nbt(data:MutableSequence[MutableMapping[str,Any]], position_key:str, state_key:str, layer_characters_len:int=LAYER_CHARACTERS_DEFAULT_MAX) -> OutputTypedDict:
     max_x, max_y, max_z = 0, 0, 0
     states:dict[tuple[int,int,int],int] = {}

@@ -1,5 +1,6 @@
 import Dataminer.FileDataminer as FileDataminer
 from _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer import PackTypedDict
+from Component.ComponentFunctions import component_function
 from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Utilities.Exceptions import DataminerNothingFoundError
@@ -9,8 +10,8 @@ from Utilities.TypeVerifier import (
     TypedDictTypeVerifier,
 )
 
-__all__ = ("PiecesDataminer",)
 
+@component_function()
 class PiecesDataminer(Dataminer):
 
     __slots__ = (

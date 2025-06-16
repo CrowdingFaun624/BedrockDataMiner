@@ -8,6 +8,7 @@ from _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.PrimitiveDe
 from _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.SoundPropertiesDelegate import (
     SoundPropertiesTypedDict,
 )
+from Component.ComponentFunctions import component_function
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
 from Structure.IterableContainer import ICon, IDon
@@ -17,9 +18,8 @@ from Structure.StructureEnvironment import ComparisonEnvironment
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictTypeVerifier
 
-__all__ = ("SoundsDelegate",)
 
-
+@component_function()
 class SoundsDelegate(Delegate[
     ICon[SCon[int], ICon[SCon[str], Any, SoundPropertiesTypedDict], list[SoundPropertiesTypedDict]],
     IDon[

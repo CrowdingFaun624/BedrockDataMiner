@@ -4,6 +4,7 @@ from typing import Any, Literal, Sequence
 import _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer as PacksDataminer
 import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
+from Component.ComponentFunctions import component_function
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.FileDataminer import FileDataminer, FileSet
 from Utilities.File import File
@@ -15,8 +16,8 @@ from Utilities.TypeVerifier import (
     UnionTypeVerifier,
 )
 
-__all__ = ("GrabPackFileDataminer",)
 
+@component_function()
 class GrabPackFileDataminer(FileDataminer):
 
     __slots__ = (

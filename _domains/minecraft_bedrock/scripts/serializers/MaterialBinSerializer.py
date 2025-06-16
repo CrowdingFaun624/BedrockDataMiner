@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, TypedDict
 
 import Domain.Domain as Domain
+from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
 from Serializer.Serializer import Serializer
 from Utilities.Cache import LinesCache
@@ -12,7 +13,6 @@ from Utilities.File import File, new_file
 from Utilities.FileManager import get_hash_hexdigest, get_temp_file_path
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-__all__ = ("MaterialBinSerializer",)
 
 class PassTypedDict(TypedDict):
     pass_info: File[Any]
@@ -54,6 +54,7 @@ class MaterialBinCache(LinesCache[dict[str,dict[str,str]], tuple[str,str,str]]):
 
 material_bin_cache = MaterialBinCache(get_domain_from_module(__name__))
 
+@component_function()
 class MaterialBinSerializer(Serializer[OutputTypedDict,]):
 
     __slots__ = (

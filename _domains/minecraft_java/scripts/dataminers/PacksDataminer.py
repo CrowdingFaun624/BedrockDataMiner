@@ -1,17 +1,18 @@
 from typing import TypedDict
 
+from Component.ComponentFunctions import component_function
 from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.FileDataminer import location_value_function
 from Utilities.Exceptions import DataminerNothingFoundError
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-__all__ = ("PacksDataminer",)
 
 class PackTypedDict(TypedDict):
     name: str
     path: str
 
+@component_function()
 class PacksDataminer(Dataminer):
 
     __slots__ = (

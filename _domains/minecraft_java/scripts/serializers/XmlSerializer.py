@@ -2,12 +2,12 @@ from typing import TYPE_CHECKING, Any, NotRequired, TypedDict
 
 import defusedxml.ElementTree as defusedxml
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
-__all__ = ("XmlSerializer",)
 
 class ElementTypedDict(TypedDict):
     tag: str
@@ -16,6 +16,7 @@ class ElementTypedDict(TypedDict):
     children: NotRequired[list["ElementTypedDict"]]
     tail: NotRequired[str]
 
+@component_function()
 class XmlSerializer(Serializer):
 
     __slots__ = ()

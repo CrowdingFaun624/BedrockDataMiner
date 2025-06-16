@@ -3,6 +3,7 @@ import subprocess
 from typing import Any, Literal, NotRequired, Required, TypedDict
 
 import Domain.Domain as Domain
+from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
 from Serializer.Serializer import Serializer
 from Utilities.Cache import LinesCache
@@ -28,7 +29,6 @@ class OutputTypedDict(TypedDict):
     TTF: NotRequired[File[Any]]
     WEBM: NotRequired[File[Any]]
 
-__all__ = ("MediaSerializer",)
 
 class MediaSerializerCache(LinesCache[dict[str,OutputTypedDict], tuple[str, OutputTypedDict]]):
 
@@ -59,6 +59,7 @@ class MediaSerializerCache(LinesCache[dict[str,OutputTypedDict], tuple[str, Outp
 
 media_serializer_cache = MediaSerializerCache(get_domain_from_module(__name__))
 
+@component_function()
 class MediaSerializer(Serializer):
 
     __slots__ = (

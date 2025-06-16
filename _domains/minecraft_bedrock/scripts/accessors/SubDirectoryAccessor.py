@@ -1,12 +1,13 @@
 from typing import Any, BinaryIO, Sequence, TypedDict
 
+from Component.ComponentFunctions import component_function
 from Downloader.DirectoryAccessor import DirectoryAccessor
 
-__all__ = ("SubDirectoryAccessor",)
 
 class LinkedAccessorsTypedDict(TypedDict):
     superdirectory: DirectoryAccessor
 
+@component_function()
 class SubDirectoryAccessor(DirectoryAccessor):
 
     linked_accessor_types = {"superdirectory": DirectoryAccessor}

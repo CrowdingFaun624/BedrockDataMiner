@@ -7,6 +7,7 @@ from _domains.minecraft_common.scripts.Nbt.NbtTypes import (
     End,
     parse_compound_item_from_bytes,
 )
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
 from Utilities.TypeVerifier import (
     EnumTypeVerifier,
@@ -14,8 +15,8 @@ from Utilities.TypeVerifier import (
     TypedDictTypeVerifier,
 )
 
-__all__ = ("NbtSerializer",)
 
+@component_function()
 class NbtSerializer(Serializer[TAG]):
 
     __slots__ = (

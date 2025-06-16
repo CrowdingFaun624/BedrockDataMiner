@@ -1,14 +1,15 @@
 from typing import NotRequired, TypedDict
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
 
-__all__ = ("GlyphSizesSerializer",)
 
 class RangeTypedDict(TypedDict):
     character: NotRequired[str]
     left: int
     right: int
 
+@component_function()
 class GlyphSizesSerializer(Serializer[dict[str,RangeTypedDict]]):
 
     __slots__ = ()

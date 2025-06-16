@@ -1,8 +1,7 @@
 from cssbeautifier.css.beautifier import beautify
 
+from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer
-
-__all__ = ("CssSerializer",)
 
 DEFAULT_OPTIONS = {
   "indent_size": "1",
@@ -29,6 +28,7 @@ def fix_indent(line:str) -> str:
         line = line.replace("    ", "\t", 1)
     return line
 
+@component_function()
 class CssSerializer(Serializer):
 
     __slots__ = ()
