@@ -11,7 +11,7 @@ from Structure.Structure import Structure
 from Structure.StructureTypes.CacheStructure import CacheStructure
 from Structure.StructureTypes.FileStructure import FileStructure
 
-DEBUG:bool = True
+DEBUG:bool = False
 MINIMUM_ADJUSTMENT_TIME:float = 20.0
 CACHE_ADJUSTMENT_START:float = 0.7 # memory proportion at which caches are limited.
 CACHE_ADJUSTMENT_END:float = 0.90 # memory proportion at which all caches are disabled.
