@@ -12,6 +12,7 @@ from Component.Structure.StructureComponent import STRUCTURE_COMPONENT_PATTERN
 from Structure.Structure import Structure
 from Structure.StructureTypes.UnionStructure import UnionStructure
 from Utilities.Trace import Trace
+from Utilities.TypeUtilities import TypeDict
 from Utilities.TypeVerifier import (
     DictTypeVerifier,
     TypedDictKeyTypeVerifier,
@@ -51,5 +52,5 @@ class UnionStructureComponent(PassthroughStructureComponent[UnionStructure]):
             for (subcomponent_field, type_field) in self.subcomponents_field:
                 substructures.update((valid_type, subcomponent_field.map(lambda subcomponent: subcomponent.final)) for valid_type in type_field.types)
             self.final.link_union_structure(
-                substructures=substructures,
+                substructures=TypeDict(substructures),
             )

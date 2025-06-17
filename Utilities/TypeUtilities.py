@@ -50,12 +50,14 @@ class TypeSet[T]():
 class TypeDict[T, A]():
 
     __slots__ = (
+        "original_types",
         "not_types",
         "types",
     )
 
     def __init__(self, types:Mapping[type[T], A]|None=None) -> None:
         self.types:dict[type[T],A] = dict(types) if types is not None else {}
+        self.original_types:dict[type[T],A] = self.types.copy()
         self.not_types:set[type] = set()
 
     def __repr__(self) -> str:
@@ -117,3 +119,12 @@ class TypeDict[T, A]():
     def update(self, other:"TypeDict[T, A]") -> None:
         self.types.update(other.types)
         self.not_types.update(other.not_types)
+
+    def keys(self) -> Iterable[type[T]]:
+        return self.original_types.keys()
+
+    def values(self) -> Iterable[A]:
+        return self.original_types.values()
+
+    def items(self) -> Iterable[tuple[type[T], A]]:
+        return self.original_types.items()

@@ -7,6 +7,7 @@ from Structure.Structure import Structure
 from Structure.StructureEnvironment import PrinterEnvironment
 from Utilities.Exceptions import StructureTypeError
 from Utilities.Trace import Trace
+from Utilities.TypeUtilities import TypeDict
 
 
 class UnionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
@@ -17,14 +18,13 @@ class UnionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     def link_union_structure(
         self,
-        substructures:dict[type,Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None],
+        substructures:TypeDict[D,Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None],
     ) -> None:
         self.substructures = substructures
 
     def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
         if (output := self.substructures.get(type(data), ...)) is ...:
-            this_types:set[type] = set(self.substructures.keys())
-            trace.exception(StructureTypeError(tuple(this_types), type(data), "Data"))
+            trace.exception(StructureTypeError(tuple(self.substructures.keys()), type(data), "Data"))
             return None
         return output
 
