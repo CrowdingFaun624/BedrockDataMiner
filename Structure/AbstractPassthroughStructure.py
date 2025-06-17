@@ -2,6 +2,8 @@ from itertools import pairwise
 from types import EllipsisType
 from typing import Any, Callable, Mapping, Sequence
 
+from ordered_set import OrderedSet
+
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
@@ -10,6 +12,7 @@ from Structure.SimilarityCache import SimilarityCache
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
+from Structure.Uses import StructureUse, UsageTracker, Use
 from Utilities.Exceptions import InvalidStateError
 from Utilities.Trace import Trace
 
@@ -111,6 +114,22 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Do
                 output.extend(structure.get_tag_paths(data, tag, data_path, trace, environment))
             return output
         return ()
+
+    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+        if not usage_tracker.still_used(self): return OrderedSet(())
+        with trace.enter(self, self.name, data):
+            self_use = StructureUse(self, usage_tracker)
+            output:OrderedSet[Use] = OrderedSet((self_use,))
+            structure = self.get_structure(data.data, trace, environment)
+            if structure is not None:
+                output.update(structure.get_uses(data, usage_tracker, trace, environment))
+            return output
+        return OrderedSet(())
+
+    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+        if self in memo: return OrderedSet(())
+        memo.add(self)
+        return OrderedSet((StructureUse(self, None),))
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]]|EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):

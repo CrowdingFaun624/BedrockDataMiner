@@ -1,6 +1,8 @@
 from types import EllipsisType
 from typing import Sequence
 
+from ordered_set import OrderedSet
+
 from Serializer.Serializer import Serializer
 from Structure.AbstractPassthroughStructure import AbstractPassthroughStructure
 from Structure.Container import Con, Don
@@ -9,6 +11,7 @@ from Structure.Normalizer import Normalizer
 from Structure.SimpleContainer import SCon
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import PrinterEnvironment
+from Structure.Uses import Region, StructureUse, TypeUse, UsageTracker, Use
 from Utilities.Exceptions import StructureTypeError
 from Utilities.File import AbstractFile
 from Utilities.Trace import Trace
@@ -94,3 +97,28 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure[AbstractFile[D], D, 
     def type_check_extra(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> None:
         if not isinstance(data.data, self.content_types):
             trace.exception(StructureTypeError(self.content_types, type(data.data), "Data"))
+
+    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+        if not usage_tracker.still_used(self): return OrderedSet(())
+        with trace.enter(self, self.name, data):
+            output:OrderedSet[Use] = OrderedSet(())
+            # cannot recover usage of file_types
+            for this_type in self.content_types:
+                if isinstance(data.data, this_type):
+                    output.add(TypeUse(this_type, Region.this_types, StructureUse(self, None), usage_tracker))
+                    break
+            else: raise StructureTypeError(self.content_types, type(data.data), "Data")
+            output.update(super().get_uses(data, usage_tracker, trace, environment))
+            return output
+        return OrderedSet(())
+
+    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+        if self in memo: return OrderedSet(())
+        output:OrderedSet[Use] = OrderedSet(())
+        output.update(super().get_all_uses(memo))
+        if self.structure is not None:
+            output.update(self.structure.get_all_uses(memo))
+        self_use = StructureUse(self, None)
+        for content_type in self.content_types:
+            output.add(TypeUse(content_type, Region.this_types, self_use, None))
+        return output

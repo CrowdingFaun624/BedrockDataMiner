@@ -1,12 +1,16 @@
 from typing import Hashable, Sequence
 
+from ordered_set import OrderedSet
+
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
+from Structure.IterableContainer import ICon
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
 from Structure.StructureTypes.MappingStructure import MappingStructure
-from Utilities.Exceptions import StructureUnrecognizedKeyError
+from Structure.Uses import KeyUse, NonEmptyUse, Region, TypeUse, UsageTracker, Use
+from Utilities.Exceptions import StructureTypeError, StructureUnrecognizedKeyError
 from Utilities.Trace import Trace
 
 
@@ -65,6 +69,41 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
         if self.key_structure is not None:
             output.append(self.key_structure)
         output.extend(structure for structure in self.value_structures.values() if structure is not None)
+        return output
+
+    def get_value_type_use(self, key: Con[K], value: Con[V], usage_tracker:UsageTracker, trace:Trace, environment:PrinterEnvironment) -> TypeUse:
+        string_key = self.key_function(key.data)
+        for value_type in self.value_types[string_key]:
+            if isinstance(value.data, value_type):
+                return TypeUse(value_type, Region.value_types, KeyUse(string_key, self, None), usage_tracker)
+        else: raise StructureTypeError(self.value_types[string_key], type(value.data), "Value")
+
+    def get_uses(self, data: ICon[Con[K], Con[V], D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+        if not usage_tracker.still_used(self): return OrderedSet(())
+        with trace.enter(self, self.name, data):
+            output:OrderedSet[Use] = OrderedSet(())
+            output.update(super().get_uses(data, usage_tracker, trace, environment))
+            non_empty_use = NonEmptyUse(self, None)
+            for key, value in data.items():
+                with trace.enter_key(key, value):
+                    output.add(KeyUse(self.key_function(key.data), self, usage_tracker, non_empty_use))
+            return output
+        return OrderedSet(())
+
+    def get_all_uses(self, memo: set[Structure]) -> OrderedSet[Use]:
+        if self in memo: return OrderedSet(())
+        output:OrderedSet[Use] = OrderedSet(())
+        output.update(super().get_all_uses(memo))
+        if self.key_structure is not None:
+            output.update(self.key_structure.get_all_uses(memo))
+        non_empty_use = NonEmptyUse(self, None)
+        for (string_key, value_structure), (string_key, value_types) in zip(self.value_structures.items(), self.value_types.items(), strict=True):
+            key_use = KeyUse(string_key, self, None, non_empty_use)
+            output.add(key_use)
+            if value_structure is not None:
+                output.update(value_structure.get_all_uses(memo))
+            for value_type in value_types:
+                output.add(TypeUse(value_type, Region.value_types, key_use, None))
         return output
 
     def get_value_types(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> tuple[type, ...]:

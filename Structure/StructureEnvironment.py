@@ -18,6 +18,7 @@ class EnvironmentType(enum.Enum):
     datamining = "datamining"
     garbage_collection = "garbage_collection"
     similarity_testing = "similarity_testing"
+    uses = "uses"
 
 class StructureEnvironment():
 
@@ -29,7 +30,7 @@ class StructureEnvironment():
 
     def __init__(self, environment:EnvironmentType, domain:"Domain.Domain") -> None:
         self.environment = environment
-        self.should_cache = environment in (EnvironmentType.comparing, EnvironmentType.garbage_collection, EnvironmentType.checking_all_types)
+        self.should_cache = environment in (EnvironmentType.comparing, EnvironmentType.garbage_collection, EnvironmentType.checking_all_types, EnvironmentType.uses)
         self.domain = domain
 
     def __repr__(self) -> str:

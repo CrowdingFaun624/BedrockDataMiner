@@ -2,6 +2,8 @@ from itertools import count, takewhile
 from types import EllipsisType
 from typing import TYPE_CHECKING, Hashable, Sequence
 
+from ordered_set import OrderedSet
+
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
 from Structure.IterableContainer import ICon, IDon, idon_from_list
@@ -9,6 +11,7 @@ from Structure.IterableStructure import IterableStructure
 from Structure.SimilarityCache import SimilarityCache
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Structure.Uses import NonEmptyUse, Region, TypeUse, Use
 from Utilities.Exceptions import SequenceTooLongError
 from Utilities.Trace import Trace
 
@@ -83,6 +86,19 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
             output.append(self.key_structure)
         if self.value_structure is not None:
             output.append(self.value_structure)
+        return output
+
+    def get_all_uses(self, memo: set[Structure]) -> OrderedSet[Use]:
+        if self in memo: return OrderedSet(())
+        output:OrderedSet[Use] = OrderedSet(())
+        output.update(super().get_all_uses(memo))
+        if self.key_structure is not None:
+            output.update(self.key_structure.get_all_uses(memo))
+        if self.value_structure is not None:
+            output.update(self.value_structure.get_all_uses(memo))
+        non_empty_use = NonEmptyUse(self, None)
+        for value_type in self.value_types:
+            output.add(TypeUse(value_type, Region.value_types, non_empty_use, None))
         return output
 
     def compare(

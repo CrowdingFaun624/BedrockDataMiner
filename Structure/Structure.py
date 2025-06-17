@@ -1,6 +1,8 @@
 from types import EllipsisType
 from typing import Container, Mapping, Sequence
 
+from ordered_set import OrderedSet
+
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
@@ -9,6 +11,7 @@ from Structure.SimilarityCache import SimilarityCache
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureInfo import StructureInfo
 from Structure.StructureTag import StructureTag
+from Structure.Uses import UsageTracker, Use
 from Utilities.Exceptions import NormalizerEllipsisError
 from Utilities.Trace import Trace
 
@@ -117,6 +120,18 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
     def get_tag_paths(self, data:B, tag:StructureTag, data_path: DataPath, trace:Trace, environment:PrinterEnvironment) -> Sequence[DataPath]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data..
+        '''
+        ...
+
+    def get_uses(self, data:B, usage_tracker:UsageTracker, trace:Trace, environment:PrinterEnvironment) -> OrderedSet[Use]:
+        '''
+        Returns a set of Uses, all of which are used.
+        '''
+        ...
+
+    def get_all_uses(self, memo:set["Structure"]) -> OrderedSet[Use]:
+        '''
+        Returns all possible Uses.
         '''
         ...
 

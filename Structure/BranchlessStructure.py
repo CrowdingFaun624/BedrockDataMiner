@@ -1,11 +1,14 @@
 from types import EllipsisType
 from typing import Mapping, Sequence
 
+from ordered_set import OrderedSet
+
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
 from Structure.PassthroughStructure import PassthroughStructure
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Structure.Uses import Region, StructureUse, TypeUse, UsageTracker, Use
 from Utilities.Exceptions import StructureTypeError
 from Utilities.Trace import Trace
 
@@ -43,6 +46,30 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
             else:
                 return self.structure.diffize(data, bundle, trace, environment)
         return ...
+
+    def get_uses(self, data: Con[D], usage_tracker: UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+        if not usage_tracker.still_used(self): return OrderedSet(())
+        with trace.enter(self, self.name, data):
+            output:OrderedSet[Use] = OrderedSet(())
+            output.update(super().get_uses(data, usage_tracker, trace, environment))
+            for this_type in self.this_types:
+                if isinstance(data.data, this_type):
+                    output.add(TypeUse(this_type, Region.this_types, StructureUse(self, None), usage_tracker))
+                    break
+            else: raise StructureTypeError(self.this_types, type(data.data), "Data")
+            return output
+        return OrderedSet(())
+
+    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+        if self in memo: return OrderedSet(())
+        output:OrderedSet[Use] = OrderedSet(())
+        output.update(super().get_all_uses(memo))
+        self_use = StructureUse(self, None)
+        for this_type in self.this_types:
+            output.add(TypeUse(this_type, Region.this_types, self_use, None))
+        if self.structure is not None:
+            output.update(self.structure.get_all_uses(memo))
+        return output
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]]|EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):

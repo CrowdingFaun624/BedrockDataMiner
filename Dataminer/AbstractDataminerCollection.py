@@ -3,6 +3,8 @@ from pathlib import Path
 from types import EllipsisType
 from typing import Any, Container, Iterable, Sequence
 
+from ordered_set import OrderedSet
+
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 from Dataminer.DataminerEnvironment import DataminerEnvironment
@@ -16,6 +18,7 @@ from Structure.StructureEnvironment import (
 )
 from Structure.StructureInfo import StructureInfo
 from Structure.StructureTag import StructureTag
+from Structure.Uses import UsageTracker, Use
 from Utilities.Exceptions import InvalidStateError
 from Utilities.File import hash_str_to_int
 from Utilities.Trace import Trace
@@ -150,6 +153,22 @@ class AbstractDataminerCollection():
 
     def get_data_file_path(self, version:Version) -> Path:
         return version.data_directory.joinpath(self.file_name)
+
+    def get_uses(self, version:Version, usage_tracker:UsageTracker) -> OrderedSet[Use]:
+        data_file = self.get_data_file(version, non_exist_ok=True)
+        if data_file is None:
+            return OrderedSet(())
+        structure_info = self.get_structure_info(version)
+        structure_environment = StructureEnvironment(EnvironmentType.uses, self.domain)
+        environment = PrinterEnvironment(structure_environment, structure_info, None, version, 0)
+        containerized_data = self.structure.get_containerized_from_raw(data_file, version, environment)
+        trace = Trace()
+        output = self.structure.get_uses(containerized_data, usage_tracker, trace, environment)
+        self.structure.ensure_not_ellipsis(None, trace, (version,))
+        return output
+
+    def get_all_uses(self) -> OrderedSet[Use]:
+        return self.structure.get_all_uses(set())
 
     def get_referenced_files(self, version:Version, structure_tags:dict[str,StructureTag], referenced_files:set[int]) -> None:
         structure_environment = StructureEnvironment(EnvironmentType.garbage_collection, self.domain)

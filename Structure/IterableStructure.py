@@ -1,6 +1,8 @@
 from types import EllipsisType
 from typing import Any, Callable, Hashable, Mapping, Self, Sequence
 
+from ordered_set import OrderedSet
+
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Delegate.Delegate import Delegate
@@ -11,6 +13,7 @@ from Structure.SimpleContainer import SCon
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
+from Structure.Uses import NonEmptyUse, Region, StructureUse, TypeUse, UsageTracker, Use
 from Utilities.Exceptions import (
     AttributeNoneError,
     StructureNoManipulationFunctionError,
@@ -296,7 +299,8 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                         key_structure.type_check(key, trace, environment)
                     if value_structure is not None:
                         value_structure.type_check(value, trace, environment)
-                    required_keys.discard(self.key_function(key.data))
+                    if len(required_keys) > 0:
+                        required_keys.discard(self.key_function(key.data))
             if len(required_keys) != 0:
                 trace.exceptions(StructureRequiredKeyMissingError(self, key) for key in sorted(required_keys))
 
@@ -321,6 +325,58 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                         output.extend(value_structure.get_tag_paths(value, tag, data_path, trace, environment))
             return output
         return () # error occurred
+
+    def get_value_type_use(self, key:Con[K], value:Con[V], usage_tracker:UsageTracker, trace:Trace, environment:PrinterEnvironment) -> TypeUse:
+        value_types = self.get_value_types(key.data, value.data, trace, environment)
+        for value_type in value_types:
+            if isinstance(value.data, value_type):
+                return TypeUse(value_type, Region.value_types, NonEmptyUse(self, None), usage_tracker)
+        else: raise StructureTypeError(value_types, type(key.data), "Value")
+
+    def get_uses(self, data: ICon[Con[K], Con[V], D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+        if not usage_tracker.still_used(self): return OrderedSet(())
+        with trace.enter(self, self.name, data):
+            output:OrderedSet[Use] = OrderedSet(())
+            self_use:StructureUse[IterableStructure] = StructureUse(self, usage_tracker)
+            non_empty_use = NonEmptyUse(self, usage_tracker, self_use)
+            output.add(self_use)
+            current_length:int = 0
+            for this_type in self.this_types:
+                if isinstance(data.data, this_type):
+                    output.add(TypeUse(this_type, Region.this_types, non_empty_use, usage_tracker))
+                    break
+            else: raise StructureTypeError(self.this_types, type(data.data), "Data")
+            for key, value in data.items():
+                current_length += 1
+                with trace.enter_key(key, value):
+                    for key_type in self.key_types:
+                        if isinstance(key.data, key_type):
+                            output.add(TypeUse(key_type, Region.key_types, non_empty_use, usage_tracker))
+                            break
+                    else: raise StructureTypeError(self.key_types, type(key.data), "Key")
+                    output.add(self.get_value_type_use(key, value, usage_tracker, trace, environment))
+                    key_structure = self.get_key_structure(key.data, value.data, trace, environment)
+                    if key_structure is not None:
+                        output.update(key_structure.get_uses(key, usage_tracker, trace, environment))
+                    value_structure = self.get_value_structure(key.data, value.data, trace, environment)
+                    if value_structure is not None:
+                        output.update(value_structure.get_uses(value, usage_tracker, trace, environment))
+            if current_length > 0:
+                output.add(non_empty_use)
+            return output
+        return OrderedSet(())
+
+    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+        if self in memo: return OrderedSet(())
+        self_use:StructureUse[IterableStructure] = StructureUse(self, None)
+        non_empty_use = NonEmptyUse(self, None, self_use)
+        output:OrderedSet[Use] = OrderedSet((self_use, non_empty_use))
+        for this_type in self.this_types:
+            output.add(TypeUse(this_type, Region.this_types, non_empty_use, None))
+        for key_type in self.key_types:
+            output.add(TypeUse(key_type, Region.key_types, non_empty_use, None))
+        memo.add(self)
+        return output
 
     def print_branch(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.name, data):

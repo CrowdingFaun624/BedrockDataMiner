@@ -1,6 +1,8 @@
 from types import EllipsisType
 from typing import Any, Callable, Mapping, Self, Sequence, cast
 
+from ordered_set import OrderedSet
+
 from Structure.BranchlessStructure import BranchlessStructure
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
@@ -13,6 +15,7 @@ from Structure.StructureEnvironment import (
     StructureEnvironment,
 )
 from Structure.StructureTag import StructureTag
+from Structure.Uses import UsageTracker, Use
 from Utilities.Trace import Trace
 
 
@@ -24,6 +27,7 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         "cache_diffize",
         "cache_get_similarity",
         "cache_get_tag_paths",
+        "cache_get_uses",
         "cache_normalize",
         "cache_print_branch",
         "cache_print_comparison",
@@ -57,6 +61,7 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         self.cache_diffize:dict[int, tuple[Mapping[tuple[int, ...], Don[D]] | EllipsisType, int]] = {}
         self.cache_type_check:dict[int, tuple[None, int]] = {}
         self.cache_get_tag_paths:dict[int, tuple[list[DataPath], int]] = {}
+        self.cache_get_uses:dict[int, tuple[OrderedSet[Use], int]] = {}
         self.cache_compare:dict[int, tuple[tuple[Don[D]|Diff[Don[D]] | EllipsisType, bool, bool], int]] = {}
         self.cache_get_similarity:dict[int, tuple[tuple[float, bool], int]] = {}
         self.cache_print_branch:dict[int, tuple[Any, int]] = {}
@@ -70,6 +75,7 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             self.cache_diffize,
             self.cache_type_check,
             self.cache_get_tag_paths,
+            self.cache_get_uses,
             self.cache_compare,
             self.cache_get_similarity,
             self.cache_print_branch,
@@ -171,6 +177,13 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             self_super = super()
             return self.cache_function(self.cache_get_tag_paths, hash_function, lambda: self_super.get_tag_paths(data, tag, data_path, trace, environment), store_function, store_function, environment.structure_environment)
         return ()
+
+    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+        with trace.enter(self, self.name, data):
+            self_super = super()
+            # usage_tracker is not hashed because it won't make a difference to the end result.
+            return self.cache_function(self.cache_get_uses, lambda: hash((data, environment)), lambda: self_super.get_uses(data, usage_tracker, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
+        return OrderedSet(())
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]] | EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
