@@ -46,9 +46,9 @@ class KeymapKeyField(FieldContainer[Field]):
         self.similarity_weight = data.get("similarity_weight", 1)
         self.value_weight = data.get("weight", None)
 
-        self.subcomponent_field = OptionalComponentField(data.get("structure", None), STRUCTURE_COMPONENT_PATTERN, ("structure",), allow_inline=allow_inline)
-        self.tags_field = TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(tag_set)
-        self.types_field = TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), ("types",)).verify_with(self.subcomponent_field)
+        self.subcomponent_field = OptionalComponentField(data.get("structure", None), STRUCTURE_COMPONENT_PATTERN, (*path, "structure"), allow_inline=allow_inline)
+        self.tags_field = TagListField(data.get("tags", ()), (*path, "tags")).add_to_tag_set(tag_set)
+        self.types_field = TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), (*path, "types")).verify_with(self.subcomponent_field)
 
         self.tags_for_all_field:TagListField|None = None
 
