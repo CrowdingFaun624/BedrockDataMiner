@@ -61,7 +61,6 @@
         },
         "keys": {
             "format_version": {"types": "str"},
-            "defined_in": {"types": "list", "structure": "defined_in"},
             "minecraft:item": {"types": "dict", "similarity_weight": 20, "structure": {
                 "type": "Keymap",
                 "delegate_arguments": {
@@ -74,19 +73,6 @@
                 }
             }}
         }
-    },
-    "defined_in": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "delegate_arguments": {
-            "field": "behavior pack",
-            "show_item_key": false,
-            "measure_length": true
-        },
-        "value_types": "str",
-        "value_structure": null
     },
     "minecraft:item.old": {
         "type": "Keymap",
@@ -156,11 +142,11 @@
             "type": "Union",
             "substructures": {
                 "str": {"type": "String"},
-                "dict": "block_list.item"
+                "dict": "block"
             }
         }
     },
-    "block_list.item": {
+    "block": {
         "type": "Keymap",
         "keys": {
             "tags": {"types": "str", "structure": {"type": "String"}}
@@ -170,15 +156,7 @@
         "type": "Union",
         "substructures": {
             "list": "block_list",
-            "str": null,
-            "dict": "block_list.item"
-        }
-    },
-    "block": {
-        "type": "Union",
-        "substructures": {
-            "str": null,
-            "dict": "block_list.item"
+            "str": null
         }
     },
     "empty": {
@@ -307,7 +285,7 @@
             "field": "component"
         },
         "keys": {
-            "minecraft:allow_off_hand": {"types": ["dict", "bool"], "structure": "component.allow_off_hand"},
+            "minecraft:allow_off_hand": {"types": "bool"},
             "minecraft:animates_in_toolbar": {"types": "bool", "tags": ["outdated"]},
             "minecraft:armor": {"types": "dict", "structure": "component.armor", "tags": ["outdated"]},
             "minecraft:bed": {"types": "dict", "structure": "empty", "tags": ["outdated"]},
@@ -317,12 +295,12 @@
             "minecraft:bucket": {"types": "dict", "structure": "empty", "tags": ["outdated"]},
             "minecraft:bundle_interaction": {"types": "dict", "structure": "component.bundle_interaction"},
             "minecraft:camera": {"types": "dict", "structure": "component.camera", "tags": ["not_in_documentation"]},
-            "minecraft:can_destroy_in_creative": {"types": ["dict", "bool"], "structure": "component.can_destroy_in_creative"},
+            "minecraft:can_destroy_in_creative": {"types": "bool"},
             "minecraft:carrot_on_a_stick": {"types": "dict", "structure": "empty", "tags": ["outdated"]},
             "minecraft:coal": {"types": "dict", "structure": "empty", "tags": ["outdated"]},
             "minecraft:cooldown": {"types": "dict", "structure": "component.cooldown"},
             "minecraft:creative_category": {"types": "dict", "structure": "component.creative_category", "tags": ["outdated"]},
-            "minecraft:damage": {"types": ["dict", "int"], "structure": "component.damage"},
+            "minecraft:damage": {"types": "int"},
             "minecraft:damageable": {"types": "dict", "structure": "component.damageable", "tags": ["outdated"]},
             "minecraft:digger": {"types": "dict", "structure": "component.digger"},
             "minecraft:display_name": {"types": "dict", "structure": "component.display_name"},
@@ -341,16 +319,14 @@
             "minecraft:food": {"types": "dict", "structure": "component.food"},
             "minecraft:frame_count": {"types": "int", "tags": ["outdated"]},
             "minecraft:fuel": {"types": "dict", "structure": "component.fuel"},
-            "minecraft:glint": {"types": "dict", "structure": "component.glint"},
             "minecraft:hand_equipped": {"types": "bool"},
             "minecraft:hanging_entity": {"types": "dict", "structure": "component.hanging_entity", "tags": ["outdated"]},
             "minecraft:hover_text_color": {"types": "str"},
             "minecraft:icon": {"types": ["dict", "str"], "structure": "component.icon"},
             "minecraft:ignores_permission": {"types": "bool", "tags": ["outdated"]},
-            "minecraft:interact_button": {"types": ["bool", "str"]},
             "minecraft:knockback_resistance": {"types": "dict", "structure": "component.knockback_resistance", "tags": ["outdated"]},
             "minecraft:lead": {"types": "dict", "structure": "empty", "tags": ["outdated"]},
-            "minecraft:liquid_clipped": {"types": ["dict", "bool"], "structure": "component.liquid_clipped"},
+            "minecraft:liquid_clipped": {"types": "bool"},
             "minecraft:map": {"types": "dict", "structure": "component.map", "tags": ["outdated"]},
             "minecraft:max_damage": {"types": "int", "tags": ["not_in_documentation"]},
             "minecraft:max_stack_size": {"types": "int"},
@@ -372,7 +348,7 @@
             "minecraft:seed": {"types": "dict", "structure": "component.seed", "tags": ["not_in_documentation"]},
             "minecraft:shears": {"types": "dict", "structure": "empty", "tags": ["outdated"]},
             "minecraft:shooter": {"types": "dict", "structure": "component.shooter"},
-            "minecraft:should_despawn": {"types": ["dict", "bool"], "structure": "component.should_despawn"},
+            "minecraft:should_despawn": {"types": "bool"},
             "minecraft:sign": {"types": "dict", "structure": "component.sign"},
             "minecraft:skull": {"types": "dict", "structure": "empty", "tags": ["outdated"]},
             "minecraft:stacked_by_data": {"types": "bool"},
@@ -390,18 +366,6 @@
             "minecraft:use_modifiers": {"types": "dict", "structure": "component.use_modifiers"},
             "minecraft:use_on": {"types": "dict", "structure": "component.use_on", "tags": ["outdated"]},
             "minecraft:wearable": {"types": "dict", "structure": "component.wearable"}
-        }
-    },
-    "component.allow_off_hand": {
-        "type": "Union",
-        "substructures": {
-            "bool": null,
-            "dict": {
-                "type": "Keymap",
-                "keys": {
-                    "value": {"types": "bool"}
-                }
-            }
         }
     },
     "component.armor": {
@@ -428,24 +392,12 @@
     "component.camera": {
         "type": "Keymap",
         "keys": {
-            "black_bars_duration": {"types": "decimal"},
-            "black_bars_screen_ratio": {"types": "decimal"},
-            "picture_duration": {"types": "decimal"},
-            "shutter_duration": {"types": "decimal"},
-            "shutter_screen_ratio": {"types": "decimal", "tags": ["outdated"]},
-            "slide_away_duration": {"types": "decimal"}
-        }
-    },
-    "component.can_destroy_in_creative": {
-        "type": "Union",
-        "substructures": {
-            "bool": null,
-            "dict": {
-                "type": "Keymap",
-                "keys": {
-                    "value": {"types": "bool"}
-                }
-            }
+            "black_bars_duration": {"types": "float"},
+            "black_bars_screen_ratio": {"types": "float"},
+            "picture_duration": {"types": "float"},
+            "shutter_duration": {"types": "float"},
+            "shutter_screen_ratio": {"types": "float", "tags": ["outdated"]},
+            "slide_away_duration": {"types": "float"}
         }
     },
     "component.cooldown": {
@@ -459,18 +411,6 @@
         "type": "Keymap",
         "keys": {
             "parent": {"types": "str"}
-        }
-    },
-    "component.damage": {
-        "type": "Union",
-        "substructures": {
-            "int": null,
-            "dict": {
-                "type": "Keymap",
-                "keys": {
-                    "value": {"types": "int"}
-                }
-            }
         }
     },
     "component.damageable": {
@@ -548,7 +488,6 @@
         "type": "Keymap",
         "keys": {
             "damage_chance": {"types": "dict", "structure": "component.durability:damage_chance"},
-            "max_durability": {"types": "int", "delegate_arguments": {"always_print": true}},
             "max_damage": {"types": "int", "delegate_arguments": {"always_print": true}, "tags": ["outdated"]},
             "repair_items": {"types": "list", "structure": "block_list"}
         }
@@ -655,12 +594,6 @@
             "duration": {"types": "decimal"}
         }
     },
-    "component.glint": {
-        "type": "Keymap",
-        "keys": {
-            "value": {"types": "bool"}
-        }
-    },
     "component.hanging_entity": {
         "type": "Keymap",
         "keys": {
@@ -694,18 +627,6 @@
             "protection": {"types": "decimal"}
         }
     },
-    "component.liquid_clipped": {
-        "type": "Union",
-        "substructures": {
-            "bool": null,
-            "dict": {
-                "type": "Keymap",
-                "keys": {
-                    "value": {"types": "bool"}
-                }
-            }
-        }
-    },
     "component.map": {
         "type": "Keymap",
         "keys": {
@@ -716,7 +637,7 @@
         "type": "Keymap",
         "keys": {
             "entity": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "block": {"types": ["dict", "str"], "structure": "block"}
+            "block": {"types": "dict", "structure": "block"}
         }
     },
     "component.on_use": {
@@ -757,19 +678,13 @@
         "key_weight": 0,
         "key_types": "int",
         "this_types": "list",
-        "value_types": ["str", "dict"],
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "item",
             "show_item_key": false,
             "measure_length": true
         },
-        "value_structure": {
-            "type": "Union",
-            "substructures": {
-                "str": {"type": "String"},
-                "dict": "component.repairable:repair_items.item"
-            }
-        }
+        "value_structure": "component.repairable:repair_items.item"
     },
     "component.repairable:repair_items.item": {
         "type": "Keymap",
@@ -782,7 +697,7 @@
         "type": "Keymap",
         "keys": {
             "crop_result": {"types": "str"},
-            "plant_at": {"types": ["list", "str", "dict"], "structure": "block_list_or_block"},
+            "plant_at": {"types": ["list", "str"], "structure": "block_list_or_block"},
             "plant_at_any_solid_surface": {"types": "bool"},
             "plant_at_face": {"types": "str"}
         }
@@ -817,18 +732,6 @@
             }
         }
     },
-    "component.should_despawn": {
-        "type": "Union",
-        "substructures": {
-            "bool": null,
-            "dict": {
-                "type": "Keymap",
-                "keys": {
-                    "value": {"types": "bool"}
-                }
-            }
-        }
-    },
     "component.sign": {
         "type": "Keymap",
         "keys": {
@@ -848,8 +751,7 @@
     "component.storage_weight_limit": {
         "type": "Keymap",
         "keys": {
-            "max_weight_limit": {"types": "int"},
-            "weight_in_storage_item": {"types": "int"}
+            "max_weight_limit": {"types": "int"}
         }
     },
     "component.storage_weight_modifier": {
@@ -905,7 +807,6 @@
     "component.wearable": {
         "type": "Keymap",
         "keys": {
-            "protection": {"types": "int"},
             "slot": {"types": "str", "delegate_arguments": {"always_print": true}}
         }
     }

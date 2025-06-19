@@ -7,10 +7,6 @@
         "this_types": "dict",
         "structure": "atmospheric_files"
     },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["int", "float"]
-    },
     "atmospheric_files": {
         "type": "Dict",
         "value_types": "dict",
@@ -58,12 +54,12 @@
         "keys": {
             "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
             "horizon_blend_stops": {"types": "dict", "structure": "horizon_blend_stops"},
-            "rayleigh_strength": {"types": ["dict", "float"], "structure": "keyframe_dict"},
-            "sun_mie_strength": {"types": ["dict", "float"], "structure": "keyframe_dict"},
-            "moon_mie_strength": {"types": ["dict", "float"], "structure": "keyframe_dict"},
-            "sun_glare_shape": {"types": ["dict", "float"], "structure": "keyframe_dict"},
-            "sky_zenith_color": {"types": ["dict", "list"], "structure": "keyframe_vector_dict"},
-            "sky_horizon_color": {"types": ["dict", "list"], "structure": "keyframe_vector_dict"}
+            "rayleigh_strength": {"types": "dict", "structure": "keyframe_dict"},
+            "sun_mie_strength": {"types": "dict", "structure": "keyframe_dict"},
+            "moon_mie_strength": {"types": "dict", "structure": "keyframe_dict"},
+            "sun_glare_shape": {"types": "dict", "structure": "keyframe_dict"},
+            "sky_zenith_color": {"types": "dict", "structure": "keyframe_vector_dict"},
+            "sky_horizon_color": {"types": "dict", "structure": "keyframe_vector_dict"}
         }
     },
     "description": {
@@ -75,53 +71,48 @@
     "horizon_blend_stops": {
         "type": "Keymap",
         "keys": {
-            "min": {"types": ["dict", "float"], "structure": "keyframe_dict"},
-            "start": {"types": ["dict", "float"], "structure": "keyframe_dict"},
-            "mie_start": {"types": ["dict", "float"], "structure": "keyframe_dict"},
-            "max": {"types": ["dict", "float"], "structure": "keyframe_dict"}
+            "min": {"types": ["dict", "float"], "structure": "keyframe_dict_or_float"},
+            "start": {"types": ["dict", "float"], "structure": "keyframe_dict_or_float"},
+            "mie_start": {"types": ["dict", "float"], "structure": "keyframe_dict_or_float"},
+            "max": {"types": ["dict", "float"], "structure": "keyframe_dict_or_float"}
         }
     },
-    "keyframe_dict": {
+    "keyframe_dict_or_float":{
         "type": "Union",
         "substructures": {
             "float": null,
-            "dict": {
-                "type": "Dict",
-                "key_types": "float",
-                "value_types": "float",
-                "key_structure": {
-                    "type": "Primitive",
-                    "pre_normalized_types": "str",
-                    "this_types": "float",
-                    "normalizers": {
-                        "function_name": "parse_float"
-                    }
-                },
-                "value_structure": null
-            }
+            "dict": "keyframe_dict"
         }
+    },
+    "keyframe_dict": {
+        "type": "Dict",
+        "key_types": "float",
+        "value_types": "float",
+        "key_structure": {
+            "type": "Primitive",
+            "pre_normalized_types": "str",
+            "this_types": "float",
+            "normalizers": {
+                "function_name": "parse_float"
+            }
+        },
+        "value_structure": null
     },
     "keyframe_vector_dict": {
-        "type": "Union",
-        "substructures": {
-            "list": "vector_decimal",
-            "dict": {
-                "type": "Dict",
-                "key_types": "float",
-                "value_types": "list",
-                "key_structure": {
-                    "type": "Primitive",
-                    "pre_normalized_types": ["str", "float"],
-                    "this_types": "float",
-                    "normalizers": {
-                        "function_name": "parse_float"
-                    }
-                },
-                "value_structure": "vector_decimal"
+        "type": "Dict",
+        "key_types": "float",
+        "value_types": "list",
+        "key_structure": {
+            "type": "Primitive",
+            "pre_normalized_types": ["str", "float"],
+            "this_types": "float",
+            "normalizers": {
+                "function_name": "parse_float"
             }
-        }
+        },
+        "value_structure": "vector_int"
     },
-    "vector_decimal": {
+    "vector_int": {
         "type": "Dict",
         "allow_key_moves": false,
         "key_weight": 0,
@@ -132,7 +123,7 @@
             "print_all": true,
             "print_flat": true
         },
-        "value_types": "decimal",
+        "value_types": "int",
         "value_structure": null
     }
 }

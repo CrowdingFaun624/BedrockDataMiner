@@ -7,10 +7,6 @@
         "this_types": "dict",
         "structure": "biomes"
     },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
     "biomes": {
         "type": "Dict",
         "delegate_arguments": {
@@ -47,7 +43,6 @@
             "sort": "sort_by_component_order"
         },
         "keys": {
-            "defined_in": {"types": "list", "structure": "defined_in"}, // used by biomes_behavior_packs
             "format_version": {"types": "str"},
             "minecraft:biome": {"types": "dict", "similarity_weight": 20, "structure": {
                 "type": "Keymap",
@@ -60,20 +55,6 @@
                 }
             }}
         }
-    },
-    "defined_in": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "behavior pack",
-            "show_item_key": false,
-            "print_all": true,
-            "measure_length": true
-        },
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "value_types": "str",
-        "value_structure": null
     },
     "description": {
         "type": "Keymap",
@@ -124,7 +105,7 @@
         "type": "Keymap",
         "keys": {}
     },
-    "range_decimal": {
+    "range_float": {
         "type": "Dict",
         "allow_key_moves": false,
         "key_weight": 0,
@@ -136,10 +117,10 @@
             "print_flat": true,
             "measure_length": false
         },
-        "value_types": ["decimal", "str"],
+        "value_types": "float",
         "value_structure": null
     },
-    "range_decimal_molang": {
+    "range_molang": {
         "type": "Dict",
         "allow_key_moves": false,
         "key_weight": 0,
@@ -151,7 +132,22 @@
             "print_flat": true,
             "measure_length": false
         },
-        "value_types": ["decimal", "str"],
+        "value_types": "str",
+        "value_structure": null
+    },
+    "range_int": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "range item",
+            "print_all": true,
+            "print_flat": true,
+            "measure_length": false
+        },
+        "value_types": "int",
         "value_structure": null
     },
     "components": {
@@ -166,12 +162,8 @@
         "keys": {
             "minecraft:capped_surface": {"types": "dict", "structure": "component.capped_surface"},
             "minecraft:climate": {"types": "dict", "structure": "component.climate"},
-            "minecraft:consolidated_features": {"types": "dict", "structure": "empty_dict"},
             "minecraft:creature_spawn_probability": {"types": "dict", "structure": "component.creature_spawn_probability"},
-            "minecraft:forced_features": {"types": "dict", "structure": "empty_dict"},
             "minecraft:frozen_ocean_surface": {"types": "dict", "structure": "component.surface_parameters"},
-            "minecraft:ignore_automatic_features": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:legacy_world_generation_rules": {"types": "dict", "structure": "empty_dict"},
             "minecraft:mesa_surface": {"types": "dict", "structure": "component.mesa_surface"},
             "minecraft:mountain_parameters": {"types": "dict", "structure": "component.mountain_parameters"},
             "minecraft:multinoise_generation_rules": {"types": "dict", "structure": "component.multinoise_generation_rules"},
@@ -267,52 +259,52 @@
     "component.capped_surface": {
         "type": "Keymap",
         "keys": {
-            "beach_material": {"types": ["dict", "str"], "structure": "block"},
+            "beach_material": {"types": "str"},
             "ceiling_materials": {"types": "list", "structure": "block_list"},
             "floor_materials": {"types": "list", "structure": "block_list"},
-            "foundation_material": {"types": ["dict", "str"], "structure": "block"},
-            "sea_material": {"types": ["dict", "str"], "structure": "block"}
+            "foundation_material": {"types": "str"},
+            "sea_material": {"types": "str"}
         }
     },
     "component.climate": {
         "type": "Keymap",
         "keys": {
-            "ash": {"types": "decimal"},
-            "blue_spores": {"types": "decimal"},
-            "downfall": {"types": "decimal"},
-            "red_spores": {"types": "decimal"},
-            "snow_accumulation": {"types": "list", "structure": "range_decimal"},
-            "temperature": {"types": "decimal"},
-            "white_ash": {"types": "decimal"}
+            "ash": {"types": "float"},
+            "blue_spores": {"types": "float"},
+            "downfall": {"types": "float"},
+            "red_spores": {"types": "float"},
+            "snow_accumulation": {"types": "list", "structure": "range_int"},
+            "temperature": {"types": "float"},
+            "white_ash": {"types": "float"}
         }
     },
     "component.creature_spawn_probability": {
         "type": "Keymap",
         "keys": {
-            "probability": {"types": "decimal"}
+            "probability": {"types": "float"}
         }
     },
     "component.mesa_surface": {
         "type": "Keymap",
         "keys": {
             "bryce_pillars": {"types": "bool"},
-            "clay_material": {"types": ["dict", "str"], "structure": "block"},
+            "clay_material": {"types": "str"},
             "floor_depth": {"types": "int", "tags": ["outdated"]},
-            "floor_material": {"types": ["dict", "str"], "structure": "block", "tags": ["outdated"]},
-            "foundation_material": {"types": ["dict", "str"], "structure": "block"},
-            "hard_clay_material": {"types": ["dict", "str"], "structure": "block"},
+            "floor_material": {"types": "str", "tags": ["outdated"]},
+            "foundation_material": {"types": "str"},
+            "hard_clay_material": {"types": "str"},
             "has_forest": {"types": "bool"},
-            "mid_material": {"types": ["dict", "str"], "structure": "block"},
+            "mid_material": {"types": "str"},
             "sea_floor_depth": {"types": "int"},
-            "sea_floor_material": {"types": ["dict", "str"], "structure": "block"},
-            "sea_material": {"types": ["dict", "str"], "structure": "block"},
+            "sea_floor_material": {"types": "str"},
+            "sea_material": {"types": "str"},
             "top_material": {"types": ["dict", "str"], "structure": "block"}
         }
     },
     "component.mountain_parameters": {
         "type": "Keymap",
         "keys": {
-            "peaks_factor": {"types": "decimal"},
+            "peaks_factor": {"types": "int"},
             "steep_material_adjustment": {"types": "dict", "structure": "component.mountain_parameters:steep_material_adjustment"},
             "top_slide": {"types": "dict", "structure": "component.mountain_parameters:top_slide"}
         }
@@ -321,10 +313,8 @@
         "type": "Keymap",
         "keys": {
             "east_slopes": {"types": "bool"},
-            "material": {"types": ["dict", "str"], "structure": "block"},
-            "north_slopes": {"types": "bool"},
-            "south_slopes": {"types": "bool"},
-            "west_slopes": {"types": "bool"}
+            "material": {"types": "str"},
+            "north_slopes": {"types": "bool"}
         }
     },
     "component.mountain_parameters:top_slide": {
@@ -336,21 +326,21 @@
     "component.multinoise_generation_rules": {
         "type": "Keymap",
         "keys": {
-            "target_altitude": {"types": "decimal"},
-            "target_humidity": {"types": "decimal"},
-            "target_temperature": {"types": "decimal"},
-            "target_weirdness": {"types": "decimal"},
-            "weight": {"types": "decimal"}
+            "target_altitude": {"types": "float"},
+            "target_humidity": {"types": "float"},
+            "target_temperature": {"types": "float"},
+            "target_weirdness": {"types": "float"},
+            "weight": {"types": "float"}
         }
     },
     "component.nether_generation_rules": {
         "type": "Keymap",
         "keys": {
-            "target_altitude": {"types": "decimal"},
-            "target_humidity": {"types": "decimal"},
-            "target_temperature": {"types": "decimal"},
-            "target_weirdness": {"types": "decimal"},
-            "weight": {"types": "decimal"}
+            "target_altitude": {"types": "float"},
+            "target_humidity": {"types": "float"},
+            "target_temperature": {"types": "float"},
+            "target_weirdness": {"types": "float"},
+            "weight": {"types": "float"}
         }
     },
     "component.overworld_generation_rules": {
@@ -358,9 +348,7 @@
         "keys": {
             "generate_for_climates": {"types": ["list", "str"], "structure": "component.overworld_generation_rules:biome_references_group"},
             "hills_transformation": {"types": ["list", "str"], "structure": "component.overworld_generation_rules:biome_references_group"},
-            "mutate_transformation": {"types": ["list", "str"], "structure": "component.overworld_generation_rules:biome_references_group"},
-            "river_transformation": {"types": ["list", "str"], "structure": "component.overworld_generation_rules:biome_references_group"},
-            "shore_transformation": {"types": ["list", "str"], "structure": "component.overworld_generation_rules:biome_references_group"}
+            "mutate_transformation": {"types": ["list", "str"], "structure": "component.overworld_generation_rules:biome_references_group"}
         }
     },
     "component.overworld_generation_rules:biome_references_group": {
@@ -408,7 +396,7 @@
     "component.overworld_height": {
         "type": "Keymap",
         "keys": {
-            "noise_params": {"types": "list", "structure": "range_decimal"},
+            "noise_params": {"types": "list", "structure": "range_float"},
             "noise_type": {"types": "str"}
         }
     },
@@ -435,9 +423,9 @@
         "type": "Keymap",
         "keys": {
             "materials": {"types": "dict", "structure": "component.surface_material_adjustments:adjustments.item.materials"},
-            "noise_range": {"types": "list", "structure": "range_decimal"},
-            "height_range": {"types": "list", "structure": "range_decimal_molang"},
-            "noise_frequency_scale": {"types": "decimal"}
+            "noise_range": {"types": "list", "structure": "range_float"},
+            "height_range": {"types": "list", "structure": "range_molang"},
+            "noise_frequency_scale": {"types": "float"}
         }
     },
     "component.surface_material_adjustments:adjustments.item.materials": {
@@ -446,7 +434,6 @@
             "foundation_material": {"types": ["dict", "str"], "structure": "block"},
             "mid_material": {"types": ["dict", "str"], "structure": "block"},
             "sea_floor_material": {"types": ["dict", "str"], "structure": "block"},
-            "sea_material": {"types": ["dict", "str"], "structure": "block"},
             "top_material": {"types": ["dict", "str"], "structure": "block"}
         }
     },
@@ -455,12 +442,12 @@
         "keys": {
             "floor_depth": {"types": "int", "tags": ["outdated"]},
             "floor_material": {"types": "str", "tags": ["outdated"]},
-            "foundation_material": {"types": ["dict", "str"], "structure": "block"},
+            "foundation_material": {"types": "str"},
             "mid_material": {"types": ["dict", "str"], "structure": "block"},
             "sea_floor_depth": {"types": "int"},
-            "sea_floor_material": {"types": ["dict", "str"], "structure": "block"},
-            "sea_material": {"types": ["dict", "str"], "structure": "block"},
-            "top_material": {"types": ["dict", "str"], "structure": "block"}
+            "sea_floor_material": {"types": "str"},
+            "sea_material": {"types": "str"},
+            "top_material": {"types": "str"}
         }
     },
     "component.tags": {

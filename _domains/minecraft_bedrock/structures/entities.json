@@ -64,7 +64,6 @@
             "sort": "sort_by_component_order"
         },
         "keys": {
-            "defined_in": {"types": "list", "structure": "defined_in"},
             "format_version": {"types": "str"},
             "definitions": {"types": "dict", "structure": "definitions", "tags": ["outdated"]},
             "use_beta_features": {"types": "bool"},
@@ -80,7 +79,7 @@
                     "sort": "sort_by_component_order"
                 },
                 "keys": {
-                    "format_version": {"types": ["decimal", "str"], "tags": ["outdated"]},
+                    "format_version": {"types": ["float", "str"], "tags": ["outdated"]},
                     "version": {"types": "decimal", "tags": ["outdated"]},
                     "description": {"types": "dict", "structure": "description"},
                     "component_groups": {"types": "dict", "structure": "component_groups"},
@@ -90,21 +89,6 @@
             }},
             "version": {"types": "decimal", "tags": ["outdated"]}
         }
-    },
-    "defined_in": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "behavior pack",
-            "measure_length": true,
-            "show_item_key": false,
-            "sort": "sort_by_value",
-            "print_all": true
-        },
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "value_types": "str",
-        "value_structure": null
     },
     "definitions": {
         "type": "Dict",
@@ -1014,8 +998,8 @@
         "value_weight": 5,
         "min_value_similarity_threshold": 0.9,
         "keys": {
-            "all_of": {"types": ["dict", "list"], "structure": "filter_or_filter_list"},
-            "any_of": {"types": ["dict", "list"], "structure": "filter_or_filter_list"},
+            "all_of": {"types": "list", "structure": "filter_list"},
+            "any_of": {"types": "list", "structure": "filter_list"},
             "domain": {"types": "str"},
             "none_of": {"types": ["dict", "list"], "structure": "filter_or_filter_list"},
             "operator": {"types": "str", "delegate_arguments": {"always_print": true}},
@@ -1033,8 +1017,6 @@
         "key_weight": 1,
         "value_weight": 5,
         "keys": {
-            "has_biome_tag": {"types": "str"},
-            "has_structure_trail_ruins": {"types": "str"},
             "is_game_rule_false": {"types": "str", "tags": ["outdated"]},
             "is_not_in_caravan": {"types": "str", "tags": ["outdated"]},
             "is_world_difficulty": {"types": "str", "tags": ["outdated"]},
@@ -1053,8 +1035,8 @@
             "sender_with_item": {"types": "str", "tags": ["outdated"]},
             "sender_without_components": {"types": "str", "tags": ["outdated"]},
             "sender_without_families": {"types": "str", "tags": ["outdated"]},
-            "target_with_families": {"types": ["list", "str"], "structure": "family_or_family_list", "tags": ["outdated"]},
-            "target_without_components": {"types": ["list", "str"], "structure": "component_list_or_component", "tags": ["outdated"]},
+            "target_with_families": {"types": "list", "structure": "family_list", "tags": ["outdated"]},
+            "target_without_components": {"types": "list", "structure": "component_list", "tags": ["outdated"]},
             "with_components": {"types": ["list", "str"], "structure": "component_list_or_component", "tags": ["outdated"]},
             "with_damage_fatal": {"types": "bool", "tags": ["outdated"]},
             "with_environment_any": {"types": ["list", "str"], "structure": "environment_list_or_environment", "tags": ["outdated"]},
@@ -1259,8 +1241,8 @@
         "key_weight": 1,
         "value_weight": 5,
         "keys": {
-            "drop_items": {"types": ["list", "str"], "structure": "item_list_or_item"},
-            "duration": {"types": "decimal"},
+            "drop_items": {"types": "list", "structure": "item_list"},
+            "duration": {"types": "int"},
             "event": {"types": "dict", "structure": "component.ageable:event", "tags": ["outdated"]},
             "feed_items": {"types": ["list", "str"], "structure": "component.ageable:feed_items_group"},
             "feedItems": {"types": ["list", "str"], "structure": "component.ageable:feed_items_group", "tags": ["outdated"]},
@@ -1274,7 +1256,6 @@
     "component.ageable:event": {
         "type": "Keymap",
         "keys": {
-            "event": {"types": "str"},
             "target": {"types": "str"},
             "type": {"types": "str"}
         }
@@ -1391,7 +1372,7 @@
             "broadcast_range": {"types": "int"},
             "broadcast_targets": {"types": "list", "structure": "entity_list"},
             "broadcastAnger": {"types": "bool", "tags": ["deprecated"]},
-            "broadcastRange": {"types": "decimal", "tags": ["deprecated"]},
+            "broadcastRange": {"types": "int", "tags": ["deprecated"]},
             "calm_event": {"types": "dict", "structure": "event_target"},
             "duration": {"types": "int"},
             "duration_delta": {"types": "int"},
@@ -1402,7 +1383,7 @@
     "component.annotation.break_door": {
         "type": "Keymap",
         "keys": {
-            "break_time": {"types": "decimal"},
+            "break_time": {"types": "int"},
             "min_difficulty": {"types": "str"}
         }
     },
@@ -1420,7 +1401,7 @@
         "type": "Keymap",
         "keys": {
             "damage": {"types": ["decimal", "dict", "list"], "structure": "component.attack:damage", "delegate_arguments": {"always_print": true}},
-            "effect_duration": {"types": "decimal"},
+            "effect_duration": {"types": "int"},
             "effect_name": {"types": "str"}
         }
     },
