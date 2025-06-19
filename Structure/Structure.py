@@ -31,12 +31,14 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
         "children_has_normalizer",
         "children_tags",
         "full_name",
+        "is_inline",
         "name",
     )
 
-    def __init__(self, name:str, full_name:str) -> None:
+    def __init__(self, name:str, full_name:str, is_inline:bool) -> None:
         self.name = name
         self.full_name = full_name
+        self.is_inline = is_inline
 
     def link_structure(
         self,
@@ -123,13 +125,13 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
         '''
         ...
 
-    def get_uses(self, data:B, usage_tracker:UsageTracker, trace:Trace, environment:PrinterEnvironment) -> OrderedSet[Use]:
+    def get_uses(self, data:B, usage_tracker:UsageTracker, parent_use:Use|None, trace:Trace, environment:PrinterEnvironment) -> OrderedSet[Use]:
         '''
         Returns a set of Uses, all of which are used.
         '''
         ...
 
-    def get_all_uses(self, memo:set["Structure"]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo:set["Structure"], parent_use:Use|None) -> OrderedSet[Use]:
         '''
         Returns all possible Uses.
         '''

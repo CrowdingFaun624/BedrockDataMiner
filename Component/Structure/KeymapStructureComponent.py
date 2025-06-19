@@ -84,6 +84,7 @@ class KeymapStructureComponent(MappingStructureComponent[KeymapStructure]):
                 key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
                 key_weight=self.key_weight,
                 similarity_weights={key.key: key.similarity_weight for key in self.keys},
+                value_structure_origins={key.key: key.source_component.final for key in self.keys},
                 value_structures={key.key: key.subcomponent_field.map(lambda subcomponent: subcomponent.final) for key in self.keys},
                 value_tags={key.key: value_tags for key in self.keys if len(value_tags := set(key.tags_field.map(lambda subcomponent: subcomponent.final))) != 0},
                 value_types={key.key: key.types_field.types for key in self.keys},

@@ -76,10 +76,10 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
                 return (data_path.copy(...).embed(data.data),)
         return ()
 
-    def get_uses(self, data: SCon[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def get_uses(self, data: SCon[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
         with trace.enter(self, self.name, data):
-            self_use = StructureUse(self, usage_tracker)
+            self_use = StructureUse(self, usage_tracker, parent_use)
             output:OrderedSet[Use] = OrderedSet((self_use,))
             for this_type in self.this_types:
                 if isinstance(data.data, this_type):
@@ -89,9 +89,9 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
             return output
         return OrderedSet(())
 
-    def get_all_uses(self, memo: set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo: set[Structure], parent_use:Use|None) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
-        self_use = StructureUse(self, None)
+        self_use = StructureUse(self, None, parent_use)
         output:OrderedSet[Use] = OrderedSet((self_use,))
         for this_type in self.this_types:
             output.add(TypeUse(this_type, Region.this_types, self_use, None))

@@ -115,21 +115,21 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Do
             return output
         return ()
 
-    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
         with trace.enter(self, self.name, data):
-            self_use = StructureUse(self, usage_tracker)
+            self_use = StructureUse(self, usage_tracker, parent_use)
             output:OrderedSet[Use] = OrderedSet((self_use,))
             structure = self.get_structure(data.data, trace, environment)
             if structure is not None:
-                output.update(structure.get_uses(data, usage_tracker, trace, environment))
+                output.update(structure.get_uses(data, usage_tracker, self_use if structure.is_inline else None, trace, environment))
             return output
         return OrderedSet(())
 
-    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo:set[Structure], parent_use:Use|None) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
         memo.add(self)
-        return OrderedSet((StructureUse(self, None),))
+        return OrderedSet((StructureUse(self, None, parent_use),))
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]]|EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):

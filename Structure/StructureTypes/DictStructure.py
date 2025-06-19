@@ -7,7 +7,7 @@ from Structure.Difference import Diff
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTypes.MappingStructure import MappingStructure
-from Structure.Uses import NonEmptyUse, Region, TypeUse, Use
+from Structure.Uses import NonEmptyUse, Region, StructureUse, TypeUse, Use
 from Utilities.Trace import Trace
 
 
@@ -72,15 +72,15 @@ class DictStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStructu
             output.append(self.value_structure)
         return output
 
-    def get_all_uses(self, memo: set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo: set[Structure], parent_use:Use|None) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
         output:OrderedSet[Use] = OrderedSet(())
-        output.update(super().get_all_uses(memo))
+        output.update(super().get_all_uses(memo, parent_use))
+        non_empty_use = NonEmptyUse(self, None, StructureUse(self, None, parent_use))
         if self.key_structure is not None:
-            output.update(self.key_structure.get_all_uses(memo))
+            output.update(self.key_structure.get_all_uses(memo, non_empty_use if self.key_structure.is_inline else None))
         if self.value_structure is not None:
-            output.update(self.value_structure.get_all_uses(memo))
-        non_empty_use = NonEmptyUse(self, None)
+            output.update(self.value_structure.get_all_uses(memo, non_empty_use if self.value_structure.is_inline else None))
         for value_type in self.value_types:
             output.add(TypeUse(value_type, Region.value_types, non_empty_use, None))
         return output

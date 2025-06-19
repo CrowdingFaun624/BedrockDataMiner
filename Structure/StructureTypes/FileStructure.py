@@ -98,27 +98,27 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure[AbstractFile[D], D, 
         if not isinstance(data.data, self.content_types):
             trace.exception(StructureTypeError(self.content_types, type(data.data), "Data"))
 
-    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
         with trace.enter(self, self.name, data):
             output:OrderedSet[Use] = OrderedSet(())
             # cannot recover usage of file_types
             for this_type in self.content_types:
                 if isinstance(data.data, this_type):
-                    output.add(TypeUse(this_type, Region.this_types, StructureUse(self, None), usage_tracker))
+                    output.add(TypeUse(this_type, Region.this_types, StructureUse(self, None, parent_use), usage_tracker))
                     break
             else: raise StructureTypeError(self.content_types, type(data.data), "Data")
-            output.update(super().get_uses(data, usage_tracker, trace, environment))
+            output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
             return output
         return OrderedSet(())
 
-    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo:set[Structure], parent_use:Use|None) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
         output:OrderedSet[Use] = OrderedSet(())
-        output.update(super().get_all_uses(memo))
+        output.update(super().get_all_uses(memo, parent_use))
+        self_use = StructureUse(self, None, parent_use)
         if self.structure is not None:
-            output.update(self.structure.get_all_uses(memo))
-        self_use = StructureUse(self, None)
+            output.update(self.structure.get_all_uses(memo, self_use if self.structure.is_inline else None))
         for content_type in self.content_types:
             output.add(TypeUse(content_type, Region.this_types, self_use, None))
         return output

@@ -9,7 +9,15 @@ from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
 from Structure.StructureTypes.MappingStructure import MappingStructure
-from Structure.Uses import KeyUse, NonEmptyUse, Region, TypeUse, UsageTracker, Use
+from Structure.Uses import (
+    KeyUse,
+    NonEmptyUse,
+    Region,
+    StructureUse,
+    TypeUse,
+    UsageTracker,
+    Use,
+)
 from Utilities.Exceptions import StructureTypeError, StructureUnrecognizedKeyError
 from Utilities.Trace import Trace
 
@@ -26,6 +34,7 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
         "key_structure",
         "key_weight",
         "similarity_weights",
+        "value_structure_origins",
         "value_structures",
         "value_tags",
         "value_types",
@@ -39,6 +48,7 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
         key_structure:Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None,
         key_weight:int,
         similarity_weights:dict[str,int],
+        value_structure_origins:dict[str,"KeymapStructure"],
         value_structures:dict[str,Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None],
         value_tags:dict[str,set[StructureTag]],
         value_types:dict[str,tuple[type,...]],
@@ -50,6 +60,7 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
         self.key_structure = key_structure
         self.key_weight = key_weight
         self.similarity_weights = similarity_weights
+        self.value_structure_origins = value_structure_origins
         self.value_structures = value_structures
         self.value_tags = value_tags
         self.value_types = value_types
@@ -71,37 +82,47 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
         output.extend(structure for structure in self.value_structures.values() if structure is not None)
         return output
 
-    def get_value_type_use(self, key: Con[K], value: Con[V], usage_tracker:UsageTracker, trace:Trace, environment:PrinterEnvironment) -> TypeUse:
+    def get_value_type_use(self, key: Con[K], value: Con[V], usage_tracker:UsageTracker, parent_use:Use|None, trace:Trace, environment:PrinterEnvironment) -> TypeUse:
         string_key = self.key_function(key.data)
         for value_type in self.value_types[string_key]:
             if isinstance(value.data, value_type):
-                return TypeUse(value_type, Region.value_types, KeyUse(string_key, self, None), usage_tracker)
+                return TypeUse(value_type, Region.value_types, KeyUse(string_key, self.value_structure_origins[string_key], None, NonEmptyUse(self, None, StructureUse(self, None, parent_use))), usage_tracker)
         else: raise StructureTypeError(self.value_types[string_key], type(value.data), "Value")
 
-    def get_uses(self, data: ICon[Con[K], Con[V], D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def always_empty(self) -> bool:
+        return len(self.value_structures) == 0
+
+    def get_key_value_parent_use(self, key: Con[K], value: Con[V], non_empty_use: NonEmptyUse) -> Use:
+        string_key = self.key_function(key.data)
+        return KeyUse(string_key, self.value_structure_origins[string_key], None, non_empty_use)
+
+    def get_uses(self, data: ICon[Con[K], Con[V], D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
         with trace.enter(self, self.name, data):
             output:OrderedSet[Use] = OrderedSet(())
-            output.update(super().get_uses(data, usage_tracker, trace, environment))
-            non_empty_use = NonEmptyUse(self, None)
+            output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
+            non_empty_use = NonEmptyUse(self, None, StructureUse(self, None, parent_use))
             for key, value in data.items():
                 with trace.enter_key(key, value):
-                    output.add(KeyUse(self.key_function(key.data), self, usage_tracker, non_empty_use))
+                    string_key = self.key_function(key.data)
+                    origin_structure = self.value_structure_origins[string_key]
+                    output.add(KeyUse(string_key, origin_structure, usage_tracker, non_empty_use))
             return output
         return OrderedSet(())
 
-    def get_all_uses(self, memo: set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo: set[Structure], parent_use:Use|None) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
         output:OrderedSet[Use] = OrderedSet(())
-        output.update(super().get_all_uses(memo))
+        output.update(super().get_all_uses(memo, parent_use))
+        non_empty_use = NonEmptyUse(self, None, StructureUse(self, None, parent_use))
         if self.key_structure is not None:
-            output.update(self.key_structure.get_all_uses(memo))
-        non_empty_use = NonEmptyUse(self, None)
+            output.update(self.key_structure.get_all_uses(memo, non_empty_use if self.key_structure.is_inline else None))
         for (string_key, value_structure), (string_key, value_types) in zip(self.value_structures.items(), self.value_types.items(), strict=True):
-            key_use = KeyUse(string_key, self, None, non_empty_use)
+            origin_structure = self.value_structure_origins[string_key]
+            key_use = KeyUse(string_key, origin_structure, None, non_empty_use)
             output.add(key_use)
             if value_structure is not None:
-                output.update(value_structure.get_all_uses(memo))
+                output.update(value_structure.get_all_uses(memo, non_empty_use if value_structure.is_inline else None))
             for value_type in value_types:
                 output.add(TypeUse(value_type, Region.value_types, key_use, None))
         return output

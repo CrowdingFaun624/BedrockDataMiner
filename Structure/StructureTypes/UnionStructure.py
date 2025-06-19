@@ -34,26 +34,26 @@ class UnionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
     def iter_structures(self) -> Sequence[Structure]:
         return [structure for structure in self.substructures.values() if structure is not None]
 
-    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
         with trace.enter(self, self.name, data):
             output:OrderedSet[Use] = OrderedSet(())
-            output.update(super().get_uses(data, usage_tracker, trace, environment))
+            output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
             for this_type in self.substructures.keys():
                 if isinstance(data.data, this_type):
-                    output.add(UnionStructureUse(this_type, self, usage_tracker, StructureUse(self, None)))
+                    output.add(UnionStructureUse(this_type, self, usage_tracker, StructureUse(self, None, parent_use)))
                     break
             else: StructureTypeError(tuple(self.substructures.keys()), type(data.data), "Data")
             return output
         return OrderedSet(())
 
-    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo:set[Structure], parent_use:Use|None) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
         output:OrderedSet[Use] = OrderedSet(())
-        output.update(super().get_all_uses(memo))
-        self_use = StructureUse(self, None)
+        output.update(super().get_all_uses(memo, parent_use))
+        self_use = StructureUse(self, None, parent_use)
         for type, substructure in self.substructures.items():
             output.add(UnionStructureUse(type, self, None, self_use))
             if substructure is not None:
-                output.update(substructure.get_all_uses(memo))
+                output.update(substructure.get_all_uses(memo, self_use if substructure.is_inline else None))
         return output

@@ -326,19 +326,25 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
             return output
         return () # error occurred
 
-    def get_value_type_use(self, key:Con[K], value:Con[V], usage_tracker:UsageTracker, trace:Trace, environment:PrinterEnvironment) -> TypeUse:
+    def get_value_type_use(self, key:Con[K], value:Con[V], usage_tracker:UsageTracker, parent_use:Use|None, trace:Trace, environment:PrinterEnvironment) -> TypeUse:
         value_types = self.get_value_types(key.data, value.data, trace, environment)
         for value_type in value_types:
             if isinstance(value.data, value_type):
-                return TypeUse(value_type, Region.value_types, NonEmptyUse(self, None), usage_tracker)
+                return TypeUse(value_type, Region.value_types, NonEmptyUse(self, None, StructureUse(self, None, parent_use)), usage_tracker)
         else: raise StructureTypeError(value_types, type(key.data), "Value")
 
-    def get_uses(self, data: ICon[Con[K], Con[V], D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def always_empty(self) -> bool: # gives empty KeymapStructure the ability to refuse a NonEmptyUse being unused.
+        return False
+
+    def get_key_value_parent_use(self, key:Con[K], value:Con[V], non_empty_use:NonEmptyUse) -> Use:
+        return non_empty_use
+
+    def get_uses(self, data: ICon[Con[K], Con[V], D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
         with trace.enter(self, self.name, data):
             output:OrderedSet[Use] = OrderedSet(())
-            self_use:StructureUse[IterableStructure] = StructureUse(self, usage_tracker)
-            non_empty_use = NonEmptyUse(self, usage_tracker, self_use)
+            self_use:StructureUse[IterableStructure] = StructureUse(self, usage_tracker, parent_use)
+            non_empty_use = NonEmptyUse(self, usage_tracker, self_use, self.always_empty())
             output.add(self_use)
             current_length:int = 0
             for this_type in self.this_types:
@@ -354,22 +360,22 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                             output.add(TypeUse(key_type, Region.key_types, non_empty_use, usage_tracker))
                             break
                     else: raise StructureTypeError(self.key_types, type(key.data), "Key")
-                    output.add(self.get_value_type_use(key, value, usage_tracker, trace, environment))
+                    output.add(self.get_value_type_use(key, value, usage_tracker, parent_use, trace, environment))
                     key_structure = self.get_key_structure(key.data, value.data, trace, environment)
                     if key_structure is not None:
-                        output.update(key_structure.get_uses(key, usage_tracker, trace, environment))
+                        output.update(key_structure.get_uses(key, usage_tracker, self.get_key_value_parent_use(key, value, non_empty_use) if key_structure.is_inline else None, trace, environment))
                     value_structure = self.get_value_structure(key.data, value.data, trace, environment)
                     if value_structure is not None:
-                        output.update(value_structure.get_uses(value, usage_tracker, trace, environment))
+                        output.update(value_structure.get_uses(value, usage_tracker, self.get_key_value_parent_use(key, value, non_empty_use) if value_structure.is_inline else None, trace, environment))
             if current_length > 0:
                 output.add(non_empty_use)
             return output
         return OrderedSet(())
 
-    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo:set[Structure], parent_use:Use|None, ) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
-        self_use:StructureUse[IterableStructure] = StructureUse(self, None)
-        non_empty_use = NonEmptyUse(self, None, self_use)
+        self_use:StructureUse[IterableStructure] = StructureUse(self, None, parent_use)
+        non_empty_use = NonEmptyUse(self, None, self_use, self.always_empty())
         output:OrderedSet[Use] = OrderedSet((self_use, non_empty_use))
         for this_type in self.this_types:
             output.add(TypeUse(this_type, Region.this_types, non_empty_use, None))

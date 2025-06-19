@@ -45,6 +45,7 @@ class TypeStuff():
         "setitem_table",
         "sortable_types",
         "string_types",
+        "type_names",
     )
 
     def __init__(
@@ -68,6 +69,7 @@ class TypeStuff():
         self.domain = domain
         self.linked_type_stuffs = [] if linked_type_stuffs is None else linked_type_stuffs
         self.default_types:dict[str,type] = {} if default_types is None else default_types
+        self.type_names:dict[type, str] = {} if default_types is None else {value: key for key, value in default_types.items()}
         self.requires_subcomponent_types = TypeSet() if requires_subcomponent_types is None else requires_subcomponent_types
         self.sortable_types = TypeSet() if sortable_types is None else sortable_types
         self.mutually_sortable:defaultdict[str,TypeSet] = defaultdict(lambda: TypeSet()) if mutually_sortable is None else mutually_sortable
@@ -92,6 +94,7 @@ class TypeStuff():
             domain=self.domain,
             linked_type_stuffs=self.linked_type_stuffs.copy(),
             default_types=self.default_types.copy(),
+            # type_names needs no copying, since it will be copied from default_types.
             requires_subcomponent_types=self.requires_subcomponent_types.copy(),
             sortable_types=self.sortable_types.copy(),
             mutually_sortable=self.mutually_sortable.copy(),
@@ -108,6 +111,7 @@ class TypeStuff():
 
     def extend(self, other:"TypeStuff") -> None:
         self.default_types.update(other.default_types)
+        self.type_names.update(other.type_names)
         self.requires_subcomponent_types.update(other.requires_subcomponent_types)
         self.sortable_types.update(other.sortable_types)
         for category, sortable_types in other.mutually_sortable.items():

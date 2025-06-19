@@ -178,11 +178,11 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             return self.cache_function(self.cache_get_tag_paths, hash_function, lambda: self_super.get_tag_paths(data, tag, data_path, trace, environment), store_function, store_function, environment.structure_environment)
         return ()
 
-    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         with trace.enter(self, self.name, data):
             self_super = super()
             # usage_tracker is not hashed because it won't make a difference to the end result.
-            return self.cache_function(self.cache_get_uses, lambda: hash((data, environment)), lambda: self_super.get_uses(data, usage_tracker, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
+            return self.cache_function(self.cache_get_uses, lambda: hash((data, environment)), lambda: self_super.get_uses(data, usage_tracker, parent_use, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return OrderedSet(())
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]] | EllipsisType, bool, bool]:

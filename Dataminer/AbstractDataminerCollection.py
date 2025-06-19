@@ -163,12 +163,12 @@ class AbstractDataminerCollection():
         environment = PrinterEnvironment(structure_environment, structure_info, None, version, 0)
         containerized_data = self.structure.get_containerized_from_raw(data_file, version, environment)
         trace = Trace()
-        output = self.structure.get_uses(containerized_data, usage_tracker, trace, environment)
+        output = self.structure.get_uses(containerized_data, usage_tracker, None, trace, environment)
         self.structure.ensure_not_ellipsis(None, trace, (version,))
         return output
 
     def get_all_uses(self) -> OrderedSet[Use]:
-        return self.structure.get_all_uses(set())
+        return self.structure.get_all_uses(set(), None)
 
     def get_referenced_files(self, version:Version, structure_tags:dict[str,StructureTag], referenced_files:set[int]) -> None:
         structure_environment = StructureEnvironment(EnvironmentType.garbage_collection, self.domain)

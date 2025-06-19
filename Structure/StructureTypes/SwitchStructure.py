@@ -57,13 +57,13 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
         if not isinstance(data.data, types):
             trace.exception(StructureTypeError(types, type(data.data), "Data"))
 
-    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
         with trace.enter(self, self.name, ...):
             output:OrderedSet[Use] = OrderedSet(())
-            output.update(super().get_uses(data, usage_tracker, trace, environment))
+            output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
             switch_key = self.switch_function(data.data)
-            switch_structure_use = SwitchStructureUse(switch_key, self, usage_tracker, StructureUse(self, None))
+            switch_structure_use = SwitchStructureUse(switch_key, self, usage_tracker, StructureUse(self, None, parent_use))
             output.add(switch_structure_use)
             for this_type in self.types[switch_key]:
                 if isinstance(data.data, this_type):
@@ -73,14 +73,14 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
             return output
         return OrderedSet(())
 
-    def get_all_uses(self, memo: set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo: set[Structure], parent_use:Use|None) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
         output:OrderedSet[Use] = OrderedSet(())
-        output.update(super().get_all_uses(memo))
-        self_use = StructureUse(self, None)
+        output.update(super().get_all_uses(memo, parent_use))
+        self_use = StructureUse(self, None, parent_use)
         for (switch_key, structure), (switch_key, types) in zip(self.switches.items(), self.types.items(), strict=True):
             if structure is not None:
-                output.update(structure.get_all_uses(memo))
+                output.update(structure.get_all_uses(memo, self_use if structure.is_inline else None))
             switch_structure_use = SwitchStructureUse(switch_key, self, None, self_use)
             output.add(switch_structure_use)
             for type in types:

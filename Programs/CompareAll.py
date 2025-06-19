@@ -37,6 +37,7 @@ def compare_all_of(
         destroy_previous:bool=True,
     ) -> tuple[Exception, Version|None, Version|None]|None:
     version = None
+    print(f"Comparing all of {dataminer_collection.name}.")
     try:
         undataminable_versions_between:list[Version] = []
         domain.comparisons_directory.mkdir(exist_ok=True)
@@ -68,7 +69,6 @@ def compare_all_of(
         output = (e, previous_successful_version, version)
     else:
         output = None
-        print(f"Compared all of {dataminer_collection.name}.")
     finally:
         dataminer_collection.clear_all_caches()
         memory_usage.adjust()

@@ -47,28 +47,28 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
                 return self.structure.diffize(data, bundle, trace, environment)
         return ...
 
-    def get_uses(self, data: Con[D], usage_tracker: UsageTracker, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
+    def get_uses(self, data: Con[D], usage_tracker: UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
         with trace.enter(self, self.name, data):
             output:OrderedSet[Use] = OrderedSet(())
-            output.update(super().get_uses(data, usage_tracker, trace, environment))
+            output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
             for this_type in self.this_types:
                 if isinstance(data.data, this_type):
-                    output.add(TypeUse(this_type, Region.this_types, StructureUse(self, None), usage_tracker))
+                    output.add(TypeUse(this_type, Region.this_types, StructureUse(self, None, parent_use), usage_tracker))
                     break
             else: raise StructureTypeError(self.this_types, type(data.data), "Data")
             return output
         return OrderedSet(())
 
-    def get_all_uses(self, memo:set[Structure]) -> OrderedSet[Use]:
+    def get_all_uses(self, memo:set[Structure], parent_use:Use|None) -> OrderedSet[Use]:
         if self in memo: return OrderedSet(())
         output:OrderedSet[Use] = OrderedSet(())
-        output.update(super().get_all_uses(memo))
-        self_use = StructureUse(self, None)
+        output.update(super().get_all_uses(memo, parent_use))
+        self_use = StructureUse(self, None, parent_use)
         for this_type in self.this_types:
             output.add(TypeUse(this_type, Region.this_types, self_use, None))
         if self.structure is not None:
-            output.update(self.structure.get_all_uses(memo))
+            output.update(self.structure.get_all_uses(memo, self_use if self.structure.is_inline else None))
         return output
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]]|EllipsisType, bool, bool]:

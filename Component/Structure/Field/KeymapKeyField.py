@@ -1,6 +1,5 @@
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
-from Component.Component import Component
 from Component.ComponentTyping import KeymapStructureKeyTypedDict
 from Component.Field.ComponentField import OptionalComponentField
 from Component.Field.Field import Field, InlinePermissions
@@ -10,6 +9,8 @@ from Component.Structure.Field.TypeListField import TypeListField
 from Component.Structure.StructureComponent import STRUCTURE_COMPONENT_PATTERN
 from Component.Structure.StructureTagComponent import StructureTagComponent
 
+if TYPE_CHECKING:
+    from Component.Structure.KeymapStructureComponent import KeymapStructureComponent
 
 class KeymapKeyField(FieldContainer[Field]):
 
@@ -28,7 +29,7 @@ class KeymapKeyField(FieldContainer[Field]):
         "value_weight",
     )
 
-    def __init__(self, data:KeymapStructureKeyTypedDict, key:str, tag_set:set["StructureTagComponent"], path:tuple[str,...], source_component:"Component", *, allow_inline:InlinePermissions=InlinePermissions.mixed) -> None:
+    def __init__(self, data:KeymapStructureKeyTypedDict, key:str, tag_set:set["StructureTagComponent"], path:tuple[str,...], source_component:"KeymapStructureComponent", *, allow_inline:InlinePermissions=InlinePermissions.mixed) -> None:
         '''
         :data: A dictionary containing the keys data.
         :key: The key that this Field corresponds to.

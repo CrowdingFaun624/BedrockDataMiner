@@ -1618,21 +1618,6 @@ class StructuresCompareFailureError(StructureException):
     def __str__(self) -> str:
         return f"Failed to compare on DataminerCollections [{", ".join(self.structure_names)}] (len {len(self.structure_names)}){message(self.message)}"
 
-class StructuresUsageFailureError(StructureException):
-    "Multiple Structures failed to find usage."
-
-    def __init__(self, structure_names:list[str], message:Optional[str]=None) -> None:
-        '''
-        :structure_names: The names of the Structures that failed to get usage.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(structure_names, message)
-        self.structure_names = structure_names
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Failed to get usage on DataminerCollections [{", ".join(self.structure_names)}] (len {len(self.structure_names)}){message(self.message)}"
-
 class StructureCannotPrintFlatError(StructureException):
     "Some data cannot be printed on a single line."
 
