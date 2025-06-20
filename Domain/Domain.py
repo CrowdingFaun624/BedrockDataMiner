@@ -16,6 +16,7 @@ from Dataminer.BuiltIns.GrabMultipleFilesDataminer import GrabMultipleFilesDatam
 from Dataminer.BuiltIns.GrabReFilesDataminer import GrabReFilesDataminer
 from Dataminer.BuiltIns.GrabSingleFileDataminer import GrabSingleFileDataminer
 from Dataminer.BuiltIns.SingleFileDataminer import SingleFileDataminer
+from Dataminer.BuiltIns.TagFunctionDataminer import TagFunctionDataminer
 from Dataminer.BuiltIns.TagSearcherDataminer import TagSearcherDataminer
 from Dataminer.Dataminer import Dataminer
 from Domain.LibFiles import LibFiles
@@ -76,6 +77,7 @@ BUILT_IN_DATAMINER_CLASSES:dict[str,type[Dataminer]] = {dataminer_class.__name__
     GrabReFilesDataminer,
     GrabSingleFileDataminer,
     SingleFileDataminer,
+    TagFunctionDataminer,
     TagSearcherDataminer,
 ]}
 

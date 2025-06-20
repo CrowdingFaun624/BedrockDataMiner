@@ -3,6 +3,7 @@ from typing import Any, Hashable, Literal, Self, TypedDict
 
 from Component.Types import register_decorator
 from Utilities.CustomJson import Coder
+from Utilities.Exceptions import DataPathEmbeddedDataError
 
 DataPathJsonTypedDict = TypedDict("DataPathJsonTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_data": Any|None})
 
@@ -21,7 +22,7 @@ class DataPathCoder(Coder[DataPathJsonTypedDict, "DataPath"]):
         return {"$special_type": "data_path", "path_items": data.path_items, "root": data.root, "embedded_data": data.embedded_data}
 
 @register_decorator(None, ..., json_coder=DataPathCoder)
-class DataPath():
+class DataPath[K:Hashable, V]():
 
     __slots__ = (
         "embedded_data",
@@ -30,17 +31,17 @@ class DataPath():
         "root",
     )
 
-    def __init__(self, path_items:list[Hashable], root:str, embedded_data:Any|EllipsisType=...) -> None:
+    def __init__(self, path_items:list[K], root:str, embedded_data:Any|EllipsisType=...) -> None:
         '''
         :path_items: Items in the DataPath. Cannot contain None.
         :root: The dataminer/structure in which this DataPath originates.
         :embedded_data: Data given to this DataPath when it reaches the correct tag.'''
         self.path_items = path_items
         self.root = root
-        self.embedded_data:Any|EllipsisType = embedded_data
+        self.embedded_data:V|EllipsisType = embedded_data
         self.hash = None
 
-    def last_key(self) -> Hashable:
+    def last_key(self) -> K:
         '''Returns the key of the most recently appended item.'''
         return self[-1]
 
@@ -49,7 +50,7 @@ class DataPath():
         self.embedded_data = ...
         return self
 
-    def copy(self, new_item:Hashable|EllipsisType=...) -> "DataPath":
+    def copy(self, new_item:K|EllipsisType=...) -> "DataPath":
         '''
         Returns a new DataPath with a copied `path_items` attribute.
         :new_item: An optional item to append to the copied DataPath.
@@ -59,7 +60,7 @@ class DataPath():
             output.append(new_item)
         return output
 
-    def append(self, new_item:Hashable) -> Self:
+    def append(self, new_item:K) -> Self:
         '''
         Adds a new item to this DataPath. Returns itself.
         :new_item: The item to add to the end of the DataPath.
@@ -68,7 +69,7 @@ class DataPath():
         self.hash = None
         return self
 
-    def embed(self, item:Any) -> Self:
+    def embed(self, item:V) -> Self:
         '''
         Embeds data into this DataPath. Returns itself.
         Used to carry data from deep inside Structures out.
@@ -76,6 +77,11 @@ class DataPath():
         '''
         self.embedded_data = item
         return self
+
+    def get_embedded_data(self) -> V:
+        if self.embedded_data is ...:
+            raise DataPathEmbeddedDataError(self)
+        return self.embedded_data
 
     def __enter__(self) -> Self:
         return self
@@ -91,10 +97,10 @@ class DataPath():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} len {len(self.path_items)}; {"empty" if len(self.path_items) == 0 else self.last_key()}>"
 
-    def __getitem__(self, index:int) -> Hashable:
+    def __getitem__(self, index:int) -> K:
         return self.path_items[index]
 
-    def __iter__(self) -> list[Hashable]:
+    def __iter__(self) -> list[K]:
         return self.path_items
 
     def __len__(self) -> int:

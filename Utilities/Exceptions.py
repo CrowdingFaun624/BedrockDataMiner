@@ -1536,6 +1536,21 @@ class ConditionStructureFilterError(StructureException):
     def __str__(self) -> str:
         return f"{self.structure} encountered {self.structure_info}, which passes no filter{message(self.message)}"
 
+class DataPathEmbeddedDataError(StructureException):
+    "A DataPath has no embedded data but should."
+
+    def __init__(self, data_path:"DataPath", message:Optional[str]=None) -> None:
+        '''
+        :data_path: The DataPath without embedded data.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(data_path, message)
+        self.data_path = data_path
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.data_path} has no embedded data{message(self.message)}"
+
 class SwitchStructureError(StructureException):
     "A SwitchStructure's switch function returned a value that is not in its switches."
 

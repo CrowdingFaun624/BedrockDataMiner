@@ -182,7 +182,7 @@ class TagSearcherDataminer(Dataminer):
             if tag not in all_tags:
                 raise Exceptions.UnrecognizedStructureTagError(self.tags, tag, list(all_tags.keys()))
             for dataminer_collection in self.domain.dataminer_collections.values():
-                if dataminer_collection.has_tag(all_tags[tag]):
+                if dataminer_collection.has_tag(all_tags[tag]) and dataminer_collection.supports_version(self.version):
                     if dataminer_collection not in dependencies:
                         raise Exceptions.TagSearcherDependencyError(self, all_tags[tag], dataminer_collection)
                     tag_dataminer_collections[dataminer_collection].append(all_tags[tag])

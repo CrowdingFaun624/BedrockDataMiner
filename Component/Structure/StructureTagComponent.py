@@ -14,6 +14,7 @@ TAG_PATTERN:Pattern["StructureTagComponent"] = Pattern("is_structure_tag")
 class StructureTagComponent(Component[StructureTag]):
 
     class_name = "StructureTag"
+    script_referenceable = True
     my_capabilities = Capabilities(is_structure_tag=True)
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("is_file", False, bool),
