@@ -1,0 +1,620 @@
+Difference of "shaders" between "1.11.3" and "1.11.4".
+
+Changed file "ShaderConstantsGNM.h":
+	Total line: 104 (+11, -10)
+	          '''
+	  1   1   #ifndef __SHADER_CONSTANTS_GNM_H
+	  2   2   #define __SHADER_CONSTANTS_GNM_H
+	  3   3   
+	  4     - #define FANCY
+	  5     - #define ALPHA_TEST
+	  6     - #define FOG
+	  7     - #define ENABLE_FOG
+	  8     - #define END_PORTAL
+	  9     - #define ALWAYS_LIT
+	 10     - //#define EFFECTS_OFFSET	- Enable this later (to see animating fire) when can turn these on/off based on material.
+	 11     - 
+	 12   4   Texture2D TEXTURE_0 : register(t0);
+	 13   5   Texture2D TEXTURE_1 : register(t1);
+	 14   6   Texture2D TEXTURE_2 : register(t2);
+	 15   7   Texture2D TEXTURE_3 : register(t3);
+	 16   8   Texture2D TEXTURE_4 : register(t4);
+	          ...
+	 27  19   SamplerState TextureSampler6 : register(s6);
+	 28  20   SamplerState TextureSampler7 : register(s7);
+	 29  21   
+	 30  22   ConstantBuffer RenderChunkConstants : register(c0) {
+	 31  23   	float4 CHUNK_ORIGIN_AND_SCALE;
+	     24 + 	float RENDER_CHUNK_FOG_ALPHA;
+	 32  25   }
+	 33  26   
+	 34  27   ConstantBuffer ActorConstants : register(c1) {
+	 35  28   	float4 OVERLAY_COLOR;
+	 36  29   	float4 TILE_LIGHT_COLOR;
+	          ...
+	 67  60   	float1 HUD_OPACITY;
+	 68  61   	column_major float4x4 UV_TRANSFORM;
+	 69  62   }
+	 70  63   
+	 71  64   ConstantBuffer WeatherConstants : register(c5) {
+	     65 + 	float4	POSITION_OFFSET;
+	     66 + 	float4	VELOCITY;
+	     67 + 	float4	ALPHA;
+	     68 + 	float4	VIEW_POSITION;
+	     69 + 	float4	SIZE_SCALE;
+	     70 + 	float4	FORWARD;
+	     71 + 	float4	UV_INFO;
+	     72 + 	float4  PARTICLE_BOX;
+	 72     - 	float4	POSITION_OFFSET;
+	 73     - 	float4	VELOCITY;
+	 74     - 	float4	ALPHA;
+	 75     - 	float4	VIEW_POSITION;
+	 76     - 	float4	SIZE_SCALE;
+	     73 + }
+	     74 + 
+	     75 + ConstantBuffer FlipbookTextureConstants : register(c6) {
+	     76 + 	float1 V_OFFSET;
+	     77 + 	float1 V_BLEND_OFFSET;
+	 77     - 	float4	FORWARD;
+	 78     - 	float4	UV_INFO;
+	 79     - 	float4  PARTICLE_BOX;
+	 80  78   }
+	 81  79   
+	     80 + ConstantBuffer EffectsConstants : register(c7) {
+	 82     - ConstantBuffer FlipbookTextureConstants : register(c6) {
+	 83     - 	float1 V_OFFSET;
+	     81 + 	float2 EFFECT_UV_OFFSET;
+	 84     - 	float1 V_BLEND_OFFSET;
+	 85  82   }
+	 86  83   
+	     84 + ConstantBuffer BannerConstants : register(c8) {
+	 87     - ConstantBuffer EffectsConstants : register(c7) {
+	     85 + 	float4 BANNER_COLORS[7];
+	     86 + 	float4 BANNER_UV_OFFSETS[7];
+	 88     - 	float2 EFFECT_UV_OFFSET;
+	 89  87   }
+	 90  88   
+	     89 + ConstantBuffer InterFrameConstants : register(c9) {
+	 91     - ConstantBuffer BannerConstants : register(c8) {
+	     90 + 	// in secs. This is reset every 1 hour. so the range is [0, 3600]
+	     91 + 	// make sure your shader handles the case when it transitions from 3600 to 0
+	     92 + 	float TOTAL_REAL_WORLD_TIME;
+	     93 + 	column_major float4x4 CUBE_MAP_ROTATION;
+	 92     - 	float4 BANNER_COLORS[7];
+	 93     - 	float4 BANNER_UV_OFFSETS[7];
+	 94  94   }
+	 95  95   
+	     96 + ConstantBuffer AnimationConstants : register(c10) {
+	 96     - ConstantBuffer InterFrameConstants : register(c9) {
+	 97     - 	// in secs. This is reset every 1 hour. so the range is [0, 3600]
+	     97 + #if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+	     98 + 	float4x4 BONES[8];
+	 98     - 	// make sure your shader handles the case when it transitions from 3600 to 0
+	 99     - 	float TOTAL_REAL_WORLD_TIME;
+	     99 + #else
+	    100 + 	float4x4 BONE;
+	100     - 	column_major float4x4 CUBE_MAP_ROTATION;
+	    101 + #endif
+	101 102   }
+	102 103   
+	103 104   #endif
+	          '''
+Added file "SimplePixelGNM.h":
+	'''
+	#ifndef __SHADER_PIXEL_GNM_H
+	#define __SHADER_PIXEL_GNM_H
+	
+	#include "ShaderConstantsGNM.h"
+	
+	struct PS_Input
+	{
+	    float4 position : S_POSITION;
+	    float4 color : COLOR;
+	}; 
+	   
+	float4 main( in PS_Input PSInput ) : S_TARGET_OUTPUT
+	{
+	    return PSInput.color;
+	}
+	
+	#endif // __SHADER_PIXEL_GNM_H
+	'''
+Added file "SimpleVertexGNM.h":
+	'''
+	#ifndef __SHADER_VERTEX_GNM_H
+	#define __SHADER_VERTEX_GNM_H
+	
+	#include "ShaderConstantsGNM.h"
+	
+	struct VS_Input
+	{
+		float3 position : POSITION;
+		float4 color : COLOR;
+	};
+	
+	struct PS_Input
+	{
+		float4 position : S_POSITION;
+		float4 color : COLOR;
+	};
+	
+	
+	PS_Input main( in VS_Input VSInput )
+	{
+		PS_Input PSInput = (PS_Input)0;
+	
+		PSInput.color = VSInput.color;
+		PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	
+		return PSInput;
+	}
+	
+	#endif // __SHADER_VERTEX_GNM_H
+	'''
+Added file "barrier_vv.pssl":
+	'''
+	#include "SimpleVertexGNM.h"
+	'''
+Changed file "color_texture_p.pssl":
+	Total line: 82 (+8, -2)
+	        '''
+	        ...
+	62 62   #ifdef USE_OVERLAY
+	63 63   		//use either the diffuse or the OVERLAY_COLOR
+	64 64   	diffuse.rgb = lerp( diffuse, OVERLAY_COLOR, OVERLAY_COLOR.a ).rgb;
+	65 65   #endif
+	66 66   
+	   67 + #ifdef ENABLE_VERTEX_TINT_MASK
+	   68 + 
+	   69 + #ifdef ENABLE_CURRENT_ALPHA_MULTIPLY
+	   70 + 	diffuse = diffuse * float4(1.0, 1.0, 1.0, HUD_OPACITY);
+	   71 + #endif
+	   72 + 
+	   73 + #elif !defined(MULTI_COLOR_TINT)
+	   74 + 	diffuse = diffuse * PSInput.color;
+	67    - #ifdef ENABLE_FOG
+	68    - 	diffuse.rgb = lerp(diffuse.rgb, PSInput.fogColor.rgb, PSInput.fogColor.a);
+	69 75   #endif
+	70 76   
+	71    - #ifdef ENABLE_VERTEX_TINT_MASK
+	72    - 	return diffuse;
+	   77 + #ifdef ENABLE_FOG
+	   78 + 	diffuse.rgb = lerp(diffuse.rgb, PSInput.fogColor.rgb, PSInput.fogColor.a);
+	73    - #else
+	74    - 	return diffuse * PSInput.color;
+	75 79   #endif
+	   80 + 
+	   81 + 	return diffuse;
+	76 82   }
+	        '''
+Added file "entity_multitexture_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Changed file "entity_vv.pssl":
+	Total line: 140 (+38, -28)
+	          '''
+	  1   1   #include "ShaderConstantsGNM.h"
+	  2   2   
+	  3   3   struct VS_Input {
+	  4   4   	float3 position : POSITION;
+	      5 + #ifdef USE_SKINNING
+	      6 + 	uint boneId : BONEID_0;
+	      7 + #endif
+	      8 + 	float4 normal : NORMAL;
+	      9 + 	float2 texCoords : TEXCOORD_0;
+	     10 + #ifdef COLOR_BASED
+	     11 + 	float4 color : COLOR;
+	     12 + #endif
+	     13 + };
+	     14 + 
+	     15 + struct PS_Input {
+	     16 + 	float4 position : S_POSITION;
+	     17 + 	float4 light : LIGHT;
+	     18 + 	float4 fogColor : FOG_COLOR;
+	     19 + #ifdef USE_OVERLAY
+	     20 + 	float4 overlayColor : OVERLAY_COLOR;
+	  5     - #ifdef COLOR_BASED
+	  6     - 	float4 color : COLOR;
+	  7  21   #endif
+	  8     - 	float4 normal : NORMAL;
+	  9     - 	float2 texCoords : TEXCOORD_0;
+	 10     - };
+	 11     - 
+	     22 + #ifdef TINTED_ALPHA_TEST
+	     23 + 	float4 alphaTestMultiplier : ALPHA_MULTIPLIER;
+	 12     - struct PS_Input {
+	 13     - 	float4 position : S_POSITION;
+	     24 + #endif
+	     25 + #ifdef COLOR_BASED
+	     26 + 	float4 vertColor;
+	 14     - 
+	 15     - 	float4 light : LIGHT;
+	     27 + #endif
+	     28 + 	float2 uv : TEXCOORD_0;
+	 16     - 	float4 fogColor : FOG_COLOR;
+	 17     - 
+	 18  29   #ifdef GLINT
+	     30 + 	float2 layer1UV : TEXCOORD_1;
+	 19     - 	// there is some alignment issue on the Windows Phone 1320 that causes the position
+	 20     - 	// to get corrupted if this is two floats and last in the struct memory wise
+	     31 + 	float2 layer2UV : TEXCOORD_2;
+	 21     - 	float4 layerUV : GLINT_UVS;
+	 22     - #endif
+	 23     - 
+	     32 + 	float4 tileLightColor : TILE_LIGHT_COLOR;
+	     33 + 	float4 glintColor : GLINT_COLOR;
+	 24     - #ifdef USE_OVERLAY
+	 25     - 	float4 overlayColor : OVERLAY_COLOR;
+	 26  34   #endif
+	     35 + };
+	     36 + 
+	     37 + static const float AMBIENT = 0.45;
+	 27  38   
+	 28     - #ifdef TINTED_ALPHA_TEST
+	     39 + static const float XFAC = -0.1;
+	     40 + static const float ZFAC = 0.1;
+	 29     - 	float4 alphaTestMultiplier : ALPHA_MULTIPLIER;
+	 30     - #endif
+	 31  41   
+	 32     - 	float2 uv : TEXCOORD_0;
+	 33     - };
+	 34  42   
+	     43 + float4 TransformRGBA8_SNORM(const float4 RGBA8_SNORM) {
+	     44 + #ifdef R8G8B8A8_SNORM_UNSUPPORTED
+	     45 + 	return RGBA8_SNORM * float(2.0).xxxx - float(1.0).xxxx;
+	     46 + #else
+	     47 + 	return RGBA8_SNORM;
+	     48 + #endif
+	     49 + }
+	 35     - static const float AMBIENT = 0.45;
+	 36     - 
+	 37     - static const float XFAC = -0.1;
+	 38     - static const float ZFAC = 0.1;
+	 39  50   
+	 40  51   
+	 41     - float4 TransformRGBA8_SNORM(const float4 RGBA8_SNORM) {
+	 42     - #ifdef R8G8B8A8_SNORM_UNSUPPORTED
+	 43     - 	return RGBA8_SNORM * float(2.0).xxxx - float(1.0).xxxx;
+	 44     - #else
+	     52 + float lightIntensity(const float4x4 worldMat, const float4 position, const float4 normal) {
+	     53 + #ifdef FANCY
+	 45     - 	return RGBA8_SNORM;
+	 46     - #endif
+	     54 + 	float3 N = normalize(mul(worldMat, normal)).xyz;
+	     55 + 	N.y *= TILE_LIGHT_COLOR.a;
+	 47     - }
+	 48     - 
+	 49  56   
+	     57 + 	//take care of double sided polygons on materials without culling
+	     58 + #ifdef FLIP_BACKFACES
+	     59 + 	float3 viewDir = normalize((mul(worldMat, position)).xyz);
+	     60 + 	if (dot(N, viewDir) > 0.0) {
+	 50     - float lightIntensity(const float4 position, const float4 normal) {
+	 51     - #ifdef FANCY
+	 52     - 
+	     61 + 		N *= -1.0;
+	     62 + 	}
+	     63 + #endif
+	 53     - 	float3 N = normalize(mul(WORLD, normal)).xyz;
+	 54     - 
+	 55     - 	N.y *= TILE_LIGHT_COLOR.a;
+	 56  64   
+	     65 + 	float yLight = (1.0 + N.y) * 0.5;
+	 57     - 	//take care of double sided polygons on materials without culling
+	 58     - #ifdef FLIP_BACKFACES
+	     66 + 	return yLight * (1.0 - AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+	     67 + #else
+	     68 + 	return 1.0;
+	 59     - 	float3 viewDir = normalize((mul(WORLD, position)).xyz);
+	 60     - 	if (dot(N, viewDir) > 0.0) {
+	 61     - 		N *= -1.0;
+	 62     - 	}
+	 63  69   #endif
+	     70 + }
+	 64  71   
+	 65     - 	float yLight = (1.0 + N.y) * 0.5;
+	 66     - 	return yLight * (1.0 - AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+	     72 + #ifdef GLINT
+	     73 + float2 calculateLayerUV(float2 origUV, float offset, float rotation) {
+	     74 + 	float2 uv = origUV;
+	     75 + 	uv -= 0.5;
+	 67     - #else
+	 68     - 	return 1.0;
+	 69     - #endif
+	 70     - }
+	 71     - 
+	     76 + 	float rsin = 0.f;
+	 72     - #ifdef GLINT
+	 73     - float2 calculateLayerUV(float2 origUV, float offset, float rotation) {
+	     77 + 	float rcos = 0.f;
+	 74     - 	float2 uv = origUV;
+	     78 + 	sincos(rotation, rsin, rcos);
+	     79 + 	uv = mul(uv, float2x2(rcos, -rsin, rsin, rcos));
+	     80 + 	uv.x += offset;
+	     81 + 	uv += 0.5;
+	 75     - 	uv -= 0.5;
+	 76     - 	float rsin = 0.f;
+	 77     - 	float rcos = 0.f;
+	     82 + 
+	     83 + 	return uv * GLINT_UV_SCALE;
+	     84 + }
+	     85 + #endif
+	 78     - 	sincos(rotation, rsin, rcos);
+	 79     - 	uv = mul(uv, float2x2(rcos, -rsin, rsin, rcos));
+	 80     - 	uv.x += offset;
+	 81     - 	uv += 0.5;
+	 82  86   
+	     87 + PS_Input main(in VS_Input VSInput) 
+	     88 + {
+	     89 + 	PS_Input PSInput = (PS_Input)0;
+	     90 + 	float4 normal = TransformRGBA8_SNORM(VSInput.normal);
+	     91 + #ifdef USE_SKINNING
+	     92 + #if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+	     93 + 	PSInput.position = mul(WORLDVIEWPROJ, mul(BONES[VSInput.boneId], float4(VSInput.position, 1)));
+	 83     - 	return uv * GLINT_UV_SCALE;
+	 84     - }
+	 85     - #endif
+	 86     - 
+	 87     - PS_Input main(in VS_Input VSInput) 
+	 88     - {
+	     94 + 	float L = lightIntensity(BONES[VSInput.boneId], float4(VSInput.position, 1), normal);
+	     95 + #else
+	     96 + 	PSInput.position = mul(WORLDVIEWPROJ, BONE, float4(VSInput.position, 1));
+	     97 + 	float L = lightIntensity(BONE, float4(VSInput.position, 1), normal);
+	 89     - 	PS_Input PSInput = (PS_Input)0;
+	 90     - 
+	 91     - 	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	 92     - 	float4 normal = TransformRGBA8_SNORM(VSInput.normal);
+	     98 + #endif
+	     99 + #else
+	    100 + 	float L = lightIntensity(WORLDVIEWPROJ, float4(VSInput.position, 1), normal);
+	 93     - 
+	 94     - 	float L = lightIntensity(float4(VSInput.position, 1), normal);
+	    101 + 	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	    102 + #endif
+	 95 103   
+	 96 104   #ifdef USE_OVERLAY
+	 97 105   	L += OVERLAY_COLOR.a * 0.35;
+	 98 106   	PSInput.overlayColor = OVERLAY_COLOR;
+	 99 107   #endif
+	          ...
+	103 111   #endif
+	104 112   
+	105 113   	PSInput.light = float4(L.xxx * TILE_LIGHT_COLOR.rgb, 1.0);
+	106 114   
+	107 115   #ifdef COLOR_BASED
+	    116 + 	PSInput.vertColor = VSInput.color;
+	108     - 	PSInput.light *= VSInput.color;
+	109 117   #endif
+	110 118   
+	    119 + #ifndef NO_TEXTURE
+	111     - #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	112 120   	PSInput.uv = VSInput.texCoords;
+	113 121   #endif
+	114 122   
+	115 123   #ifdef USE_UV_ANIM
+	116 124   	PSInput.uv.xy = UV_ANIM.xy + (PSInput.uv.xy * UV_ANIM.zw);
+	117 125   #endif
+	118 126   
+	119 127   #ifdef GLINT
+	    128 + 	PSInput.glintColor = GLINT_COLOR;
+	    129 + 	PSInput.layer1UV = calculateLayerUV(VSInput.texCoords, UV_OFFSET.x, UV_ROTATION.x);
+	    130 + 	PSInput.layer2UV = calculateLayerUV(VSInput.texCoords, UV_OFFSET.y, UV_ROTATION.y);
+	120     - 	PSInput.layerUV.xy = calculateLayerUV(VSInput.texCoords, UV_OFFSET.x, UV_ROTATION.x);
+	121     - 	PSInput.layerUV.zw = calculateLayerUV(VSInput.texCoords, UV_OFFSET.y, UV_ROTATION.y);
+	    131 + 	PSInput.tileLightColor = TILE_LIGHT_COLOR;
+	122 132   #endif
+	123 133   
+	124 134   	//fog
+	125 135   	PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	126 136   	PSInput.fogColor.a = clamp(((PSInput.position.z / RENDER_DISTANCE) - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	          ...
+	          '''
+Added file "hb_batched_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_batched_vv.pssl":
+	'''
+	#include "SimpleVertexGNM.h"
+	'''
+Added file "hb_blur_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_hairline_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_path_hairline_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_path_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_renoir_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_renoir_vv.pssl":
+	'''
+	#include "SimpleVertexGNM.h"
+	'''
+Added file "hb_standard_circle_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_standard_ellipse_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_standard_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_standard_stroke_circle_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_standard_stroke_ellipse_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_standard_texture_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_standard_texture_with_color_matrix_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_standard_vv.pssl":
+	'''
+	#include "SimpleVertexGNM.h"
+	'''
+Added file "hb_stencil_circle_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_stencil_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_stencil_path_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_stencil_texture_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_text_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_text_sdf_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_text_stroke_sdf_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "hb_text_vv.pssl":
+	'''
+	#include "SimpleVertexGNM.h"
+	'''
+Added file "hb_vv.pssl":
+	'''
+	#include "SimpleVertexGNM.h"
+	'''
+Added file "hb_yuv_2_rgb_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "particle_random_test_vv.pssl":
+	'''
+	#include "SimpleVertexGNM.h"
+	'''
+Added file "passthru_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "placeholder_p.pssl":
+	'''
+	#include "SimplePixelGNM.h"
+	'''
+Added file "placeholder_vv.pssl":
+	'''
+	#include "SimpleVertexGNM.h"
+	'''
+Changed file "renderchunk_p.pssl":
+	Total line: 75 (+4, -5)
+	        '''
+	 1  1   #include "ShaderConstantsGNM.h"
+	 2  2   
+	 3  3   struct PS_Input
+	 4  4   {
+	 5  5   	float4 position : S_POSITION;
+	    6 + 	float4 color : COLOR;
+	 6    - 
+	 7  7   #ifndef BYPASS_PIXEL_SHADER
+	 8    - 	float4 color : COLOR;
+	 9  8   	float2 uv0 : TEXCOORD_0;
+	10  9   	float2 uv1 : TEXCOORD_1;
+	11 10   #endif
+	12    - 
+	13 11   #ifdef FOG
+	14 12   	float4 fogColor : FOG_COLOR;
+	15 13   #endif
+	16 14   };
+	17 15   
+	18 16   float4 main( in PS_Input PSInput ) : S_TARGET_OUTPUT
+	19 17   {
+	20 18   #ifdef BYPASS_PIXEL_SHADER
+	   19 + 	return float4(0.0f, 0.0f, 0.0f, 0.0f);
+	21    -     return float4(0.0f, 0.0f, 0.0f, 0.0f);
+	22 20   #else
+	23 21   
+	   22 + #ifdef USE_TEXEL_AA
+	24    - #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	25 23   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv0);
+	26 24   #else
+	27 25   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv0);	//TODO support TEXEL_AA
+	28 26   #endif
+	29 27   
+	30 28   #ifdef SEASONS_FAR
+	31 29   	diffuse.a = 1.0f;
+	32    - 	PSInput.color.b = 1.0f;
+	33 30   #endif
+	34 31   
+	   32 + #ifdef USE_ALPHA_TEST
+	35    - #ifdef ALPHA_TEST
+	36 33   //If we know that all the verts in a triangle will have the same alpha, we should cull there first.
+	37 34   	#ifdef ALPHA_TO_COVERAGE
+	38 35   		float alphaThreshold = .05f;
+	39 36   	#else
+	40 37   		float alphaThreshold = .5f;
+	41 38   	#endif
+	42 39   	if(diffuse.a < alphaThreshold)
+	43 40   		discard;
+	44 41   #endif
+	   42 + 
+	   43 + 	float4 inColor = PSInput.color;
+	45 44   
+	46 45   #if defined(BLEND)
+	47 46   	diffuse.a *= inColor.a;
+	48 47   #endif
+	49 48   
+	        ...
+	51 50   	diffuse = diffuse * TEXTURE_1.Sample(TextureSampler1, PSInput.uv1);
+	52 51   #endif
+	53 52   
+	54 53   #ifndef SEASONS
+	55 54   
+	   55 + 	#if !defined(USE_ALPHA_TEST) && !defined(BLEND)
+	   56 + 		diffuse.a = inColor.a;
+	56    - 	#if !defined(ALPHA_TEST) && !defined(BLEND)
+	57    - 		diffuse.a = PSInput.color.a;
+	58 57   	#endif	
+	59 58   
+	   59 + 	diffuse.rgb *= inColor.rgb;
+	60    - 	diffuse.rgb *= PSInput.color.rgb;
+	61 60   
+	62 61   #else
+	   62 + 	float2 uv = inColor.xy;
+	   63 + 	diffuse.rgb *= lerp(1.0f, TEXTURE_2.Sample(TextureSampler2, uv).rgb*2.0f, inColor.b);
+	   64 + 	diffuse.rgb *= inColor.aaa;
+	63    - 	float2 uv = PSInput.color.xy;
+	64    - 	diffuse.rgb *= lerp(1.0f, TEXTURE_2.Sample(TextureSampler2, uv).rgb*2.0f, PSInput.color.b);
+	65    - 	diffuse.rgb *= PSInput.color.aaa;
+	66 65   	diffuse.a = 1.0f;
+	67 66   #endif
+	68 67   
+	69 68   #ifdef FOG
+	70 69   	diffuse.rgb = lerp( diffuse.rgb, PSInput.fogColor.rgb, PSInput.fogColor.a );
+	        ...
+	        '''

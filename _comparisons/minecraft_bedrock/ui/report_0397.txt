@@ -1,0 +1,440 @@
+Difference of "ui" between "1.21.100.20" (beta of "1.21.100") and "1.21.100.21" (beta of "1.21.100").
+
+Total namespace: 226 (+0, -1)
+Changed namespace "command_block":
+	Changed element "right_scroll_panel_content":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 20 (+2, -0)
+			Added control element "nearest_label@command_block.command_block_helper_stack": field "$variables": variable "$text_override": "advMode.nearest".
+			Added control:
+				element "nearest_label_offset":
+					field "type": "panel"
+					field "size": ["100%", 2]
+Changed namespace "general_section":
+	Changed element "video_section":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 42 (+0, -1)
+			Removed control:
+				element "dynamic_textures_toggle@settings_common.option_toggle":
+					field "ignored": "(not $is_dynamic_textures_platform_supported)"
+					field "layer": 1
+					field "controls": control element "option_generic_core@settings_common.option_generic_core": empty
+					field "$variables":
+						variable "$option_label": "options.dynamicTexturesToggle"
+						variable "$option_binding_name": "#dynamic_textures"
+						variable "$option_enabled_binding_name": "#dynamic_textures_enabled"
+						variable "$option_tooltip_binding_type": "global"
+						variable "$option_tooltip_area": "general_and_controls_sections"
+						variable "$option_tooltip_text_binding_name": "#dynamic_textures_option_tooltip_text"
+						variable "$toggle_name": "dynamic_textures"
+Removed namespace "post_rating":
+	element "dropdown_background":
+		field "layer": 1
+		field "type": "image"
+		field "texture": "textures/ui/Banners"
+	element "main_panel":
+		field "type": "panel"
+		field "layer": 1
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "controls":
+			control:
+				element "content":
+					field "type": "stack_panel"
+					field "size": ["100% - 2px", "100%c"]
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "controls":
+						control:
+							element "header":
+								field "type": "label"
+								field "size": ["100%", "default"]
+								field "text": "review.item.post.rating.dropdown.label"
+								field "text_alignment": "left"
+								field "color": "$body_text_color"
+						control element "rating@rating_dropdown": empty
+						control:
+							element "footer":
+								field "type": "panel"
+								field "size": ["100%", "100%c"]
+								field "controls":
+									control:
+										element "text":
+											field "type": "label"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "offset": [0, 5]
+											field "size": ["100%", "default"]
+											field "text_alignment": "left"
+											field "color": "$body_text_color"
+											field "text": "#footer_text"
+											field "bindings": binding field "binding_name": "#footer_text"
+			control:
+				element "submit_button@common_buttons.light_text_button":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "top_middle"
+					field "size": ["100% + 2px", 30]
+					field "offset": [0, 5]
+					field "layer": 2
+					field "button_mappings":
+						button mapping:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "button.submit_rating"
+							field "mapping_type": "pressed"
+						button mapping:
+							field "from_button_id": "button.menu_ok"
+							field "to_button_id": "button.submit_rating"
+							field "mapping_type": "focused"
+					field "$variables": variable "$button_text": "review.item.post.rating.submit.button"
+	element "post_rating_screen@common_store.store_base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "force_render_below": true
+		field "$variables": variable "$screen_content": "post_rating.post_rating_screen_content"
+	element "post_rating_screen_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "dialog@common_dialogs.main_panel_one_button":
+					field "size": "$tall_modal_screen_size"
+					field "layer": 2
+					field "$variables":
+						variable "$use_custom_title_control": true
+						variable "$custom_title_label": "post_rating.title_label"
+						variable "$dialog_background": "dialog_background_hollow_2"
+						variable "$title_size":
+							item 0: "100% - 14px"
+							item 1: 10
+						variable "$text_name": "store.ratings.rate"
+						variable "$title_text_binding_type": "none"
+						variable "$child_control": "post_rating.main_panel"
+			control:
+				element "background@common.screen_background":
+					field "alpha": 0.85
+					field "layer": 1
+	element "rating_dropdown@post_rating.rating_dropdown_control":
+		field "$variables":
+			variable "$option_dropdown_type": "common.dropdown_no_scrollpanel"
+			variable "$option_enabled_binding_name|default": ""
+			variable "$enabled|default": true
+			variable "$button_type_panel": "post_rating.rating_dropdown_button_panel"
+			variable "$dropdown_background_control": "post_rating.dropdown_background"
+			variable "$dropdown_toggle": "settings_common.options_dropdown_dark_toggle_control"
+			variable "$show_option_label": false
+			variable "$dropdown_content": "post_rating.rating_dropdown_content"
+			variable "$dropdown_area": "dialog"
+			variable "$dropdown_name": "rating_dropdown"
+	element "rating_dropdown_button_panel":
+		field "type": "stack_panel"
+		field "size": ["100% - 12px", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "rating_panel":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "rating_stars@pdp.scaling_rating":
+								field "size": ["75%", "20%x"]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+								field "$variables": variable "$rating_bind_name": "#player_rating"
+			control:
+				element "arrow_panel":
+					field "type": "panel"
+					field "layer": 1
+					field "size": ["100%c", "100%"]
+					field "controls": control element "arrow@settings_common.arrow_image": empty
+	element "rating_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "size": ["100%", "100%c + 4px"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "$variables":
+			variable "$show_option_label": false
+			variable "$radio_buttons":
+				item 0:
+					item "5_star@post_rating.rating_radio":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#current_rating_5"
+						item "$star_count": 5
+				item 1:
+					item "4_star@post_rating.rating_radio":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#current_rating_4"
+						item "$star_count": 4
+				item 2:
+					item "3_star@post_rating.rating_radio":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#current_rating_3"
+						item "$star_count": 3
+				item 3:
+					item "2_star@post_rating.rating_radio":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#current_rating_2"
+						item "$star_count": 2
+				item 4:
+					item "1_star@post_rating.rating_radio":
+						item "min_size":
+							item 0: "100%"
+							item 1: 22
+						item "$toggle_state_binding_name": "#current_rating_1"
+						item "$star_count": 1
+	element "rating_dropdown_control":
+		field "type": "panel"
+		field "size": ["100%", 30]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "controls":
+			control:
+				element "dropdown@$option_dropdown_type":
+					field "$variables":
+						variable "$dropdown_background": "$dropdown_background_control"
+						variable "$dropdown_content|default": "unset_dropdown_content"
+						variable "$dropdown_name|default": "unset $dropdown_name"
+						variable "$options_dropdown_toggle_label_binding|default": "unset $options_dropdown_toggle_label_text"
+						variable "$locked_alpha": 0.5
+		field "$variables":
+			variable "$dropdown_background_control|default": "common.dropdown_background"
+			variable "$dropdown_toggle_override|default": ""
+			variable "$option_dropdown_type|default": "common.dropdown"
+	element "rating_radio":
+		field "type": "panel"
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "size": ["100%", "17px"]
+		field "controls":
+			control element "radio_with_label_core@settings_common.radio_with_label_core": field "offset": [5, 0]
+			control:
+				element "star_panel":
+					field "type": "panel"
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "size": ["50%", "80%"]
+					field "offset": [20, -1]
+					field "controls": control element "star_grid@star_grid": empty
+		field "$variables":
+			variable "$enabled|default": true
+			variable "$no_label": true
+	element "star":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "bg":
+					field "type": "image"
+					field "texture": "textures/ui/ratings_nostar"
+					field "ignored": "($star_index < $star_count-1)"
+					field "bilinear": true
+			control:
+				element "fg":
+					field "type": "image"
+					field "layer": 4
+					field "texture": "textures/ui/ratings_fullstar"
+					field "ignored": "($star_index > $star_count-1)"
+					field "bilinear": true
+	element "star_grid":
+		field "type": "grid"
+		field "grid_dimensions": [5, 1]
+		field "controls":
+			control:
+				element "star_1@star":
+					field "grid_position": [0, 0]
+					field "$variables": variable "$star_index": 0
+			control:
+				element "star_2@star":
+					field "grid_position": [1, 0]
+					field "$variables": variable "$star_index": 1
+			control:
+				element "star_3@star":
+					field "grid_position": [2, 0]
+					field "$variables": variable "$star_index": 2
+			control:
+				element "star_4@star":
+					field "grid_position": [3, 0]
+					field "$variables": variable "$star_index": 3
+			control:
+				element "star_5@star":
+					field "grid_position": [4, 0]
+					field "$variables": variable "$star_index": 4
+	element "title_label@common_dialogs.standard_title_label":
+		field "text_alignment": "left"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+Changed namespace "realms_settings":
+	Total element: 91 (+7, -1)
+	Added element "automatic_scroll_content":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "scrolling_panel@realms_settings.common_scrolling_panel":
+					field "layer": 1
+					field "$variables": variable "$scrolling_content": "realms_settings.automatic_scroll_panel"
+	Added element "automatic_scroll_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%-4px", "100%c"]
+		field "offset": [2, 0]
+		field "controls": control element "automatic_stack_panel@realms_settings.automatic_stack_panel": empty
+	Changed element "automatic_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 5 (+5, -1)
+			Removed control:
+				element "option_label_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c-6px"]
+					field "controls":
+						control:
+							element "option_label":
+								field "type": "label"
+								field "color": "$main_header_text_color"
+								field "size": ["100%", "default"]
+								field "offset": [6, 6]
+								field "text": "realmsSettingsScreen.automaticLabel"
+			Added control element "padding1@common.empty_panel": field "size": ["100%", 6].
+			Added control element "save_tab_info_label@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "realms_settings.automatic_tab_info_panel".
+			Added control element "padding2@common.empty_panel": field "size": ["100%", 8].
+			Added control:
+				element "stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "factory":
+						field "name": "automatic_saves_factory"
+						field "control_name": "realms_settings.saves_info_accordian"
+					field "collection_name": "automatic_saves_collection"
+					field "bindings":
+						binding:
+							field "binding_name": "#automatic_saves_length"
+							field "binding_name_override": "#collection_length"
+					field "$variables": variable "$collection_binding_name": "automatic_saves_collection"
+			Added control element "padding3@common.empty_panel": field "size": ["100%", 6].
+	Changed element "automatic_tab_content_panel@realms_settings.common_tab_content_panel":
+		Changed field "$variables":
+			Changed variable "$scroll_tab_content" from "realms_settings.automatic_stack_panel" to "realms_settings.automatic_scroll_content".
+	Added element "automatic_tab_info_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "info_label":
+					field "type": "label"
+					field "color": "$main_header_text_color"
+					field "size": ["100%", "default"]
+					field "text": "realmsSettingsScreen.automaticLabel"
+	Moved element from "default_play_screen_panel@realms_settings.common_tab_screen_panel" to "backup_list_tab_panel@realms_settings.common_tab_screen_panel".
+	Added element "common_scrolling_panel@common.scrolling_panel":
+		field "layer": 1
+		field "size": ["100% - 8px", "100% - 4px"]
+		field "offset": [6, 2]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "$variables":
+			variable "$scrolling_pane_size":
+				item 0: "100% - 1px"
+				item 1: "100%"
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100% - 4px"
+			variable "$show_background": false
+	Changed element "manual_navigation_tab@realms_settings.top_tab":
+		Changed field "$variables":
+			Total variable: 6 (+1, -0)
+			Added variable "$toggle_default_state": true.
+	Removed element "manual_saves_panel":
+		field "type": "panel"
+		field "size": ["100% - 20px", "100%"]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "controls": control element "manual_saves_content@realms_settings.manual_stack_panel": empty
+	Added element "manual_scroll_content":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "scrolling_panel@realms_settings.common_scrolling_panel":
+					field "layer": 1
+					field "$variables": variable "$scrolling_content": "realms_settings.manual_scroll_panel"
+	Added element "manual_scroll_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%-4px", "100%c"]
+		field "offset": [2, 0]
+		field "controls": control element "manual_stack_panel@realms_settings.manual_stack_panel": empty
+	Changed element "manual_stack_panel":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Total control: 5 (+3, -1)
+			Removed control:
+				element "option_label_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "option_label":
+								field "type": "label"
+								field "color": "$main_header_text_color"
+								field "size": ["100%", "default"]
+								field "offset": [6, 6]
+								field "text": "realmsSettingsScreen.manualLabel"
+			Changed control:
+				Moved element from "padding@common.empty_panel" to "padding2@common.empty_panel".
+			Added control element "padding1@common.empty_panel": field "size": ["100%", 6].
+			Added control element "save_tab_info_label@common.tts_label_focus_wrapper": field "$variables": variable "$tts_label_panel": "realms_settings.manual_tab_info_panel".
+			Added control element "padding3@common.empty_panel": field "size": ["100%", 6].
+	Changed element "manual_tab_content_panel@realms_settings.common_tab_content_panel":
+		Changed field "$variables":
+			Changed variable "$scroll_tab_content" from "realms_settings.manual_saves_panel" to "realms_settings.manual_scroll_content".
+	Added element "manual_tab_info_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "info_label":
+					field "type": "label"
+					field "color": "$main_header_text_color"
+					field "size": ["100%", "default"]
+					field "text": "realmsSettingsScreen.manualLabel"
+	Changed element "saves_info_accordian":
+		Unchanged field "type": "stack_panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "main_content_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "main_item_toggle@common_toggles.dark_ui_toggle":
+								Changed field "$variables":
+									Total variable: 4 (+0, -1)
+									Removed variable "$focus_override_right": "FOCUS_OVERRIDE_STOP".
+	Changed element "saves_section":
+		Unchanged field "type": "panel".
+		Changed field "controls":
+			Changed control:
+				Changed element "loaded_view":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "tabs_container":
+								Unchanged field "type": "panel".
+								Changed field "controls":
+									Changed control:
+										Moved element from "tab_panel@realms_settings.default_play_screen_panel" to "tab_panel@realms_settings.backup_list_tab_panel".

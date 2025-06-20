@@ -1,63 +1,201 @@
-Difference of "shaders" between "1.9.0.5" (beta of "1.9.0") and "1.10.0.3" (beta of "1.10.0").
-Unable to create data files for 1 file between: "1.9.0"
+Difference of "shaders" between "1.4.3" and "1.5.0.0" (beta of "1.5.0").
+Unable to create data files for 1 file between: "1.4.4"
 
-Added file "blur_p.pssl":
-	'''
-	#include "ShaderConstantsGNM.h"
-	
-	struct PS_Input
-	{
-	    float4 position : S_POSITION;
-	    float2 uv : TEXCOORD_0;
-	};
-	
-	float4 main( in PS_Input PSInput ) : S_TARGET_OUTPUT
-	{
-	    return TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
-	}
-	'''
-Added file "depth_downsample_p.pssl":
-	'''
-	#include "ShaderConstantsGNM.h"
-	
-	struct PS_Input
-	{
-	    float4 position : S_POSITION;
-	    float2 uv : TEXCOORD_0;
-	};
-	
-	float4 main( in PS_Input PSInput ) : S_TARGET_OUTPUT
-	{
-	    return TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
-	}
-	'''
-Added file "depth_of_field_p.pssl":
-	'''
-	#include "ShaderConstantsGNM.h"
-	
-	struct PS_Input
-	{
-	    float4 position : S_POSITION;
-	    float2 uv : TEXCOORD_0;
-	};
-	
-	float4 main( in PS_Input PSInput ) : S_TARGET_OUTPUT
-	{
-	    return TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
-	}
-	'''
-Added file "resolve_depth_p.pssl":
-	'''
-	#include "ShaderConstantsGNM.h"
-	
-	struct PS_Input
-	{
-	    float4 position : S_POSITION;
-	    float2 uv : TEXCOORD_0;
-	};
-	
-	float4 main( in PS_Input PSInput ) : S_TARGET_OUTPUT
-	{
-	    return TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
-	}
-	'''
+Changed file "renderchunk_p.pssl":
+	Total line: 76 (+4, -11)
+	        '''
+	        ...
+	 8  8   	float4 color : COLOR;
+	 9  9   	float2 uv0 : TEXCOORD_0;
+	10 10   	float2 uv1 : TEXCOORD_1;
+	11 11   #endif
+	12 12   
+	13    - #ifdef NEAR_WATER
+	14    - 	float cameraDist : TEXCOORD_2;
+	15    - #endif
+	16    - 
+	17 13   #ifdef FOG
+	18 14   	float4 fogColor : FOG_COLOR;
+	19 15   #endif
+	20 16   };
+	21 17   
+	        ...
+	39 35   #ifdef ALPHA_TEST
+	40 36   //If we know that all the verts in a triangle will have the same alpha, we should cull there first.
+	41 37   	#ifdef ALPHA_TO_COVERAGE
+	42 38   		float alphaThreshold = .05f;
+	43 39   	#else
+	   40 + 		float alphaThreshold = .5f;
+	   41 + 	#endif
+	   42 + 	if(diffuse.a < alphaThreshold)
+	44    - 		float alphaThreshold = .5f;
+	   43 + 		discard;
+	   44 + #endif
+	45    - 	#endif
+	   45 + 
+	   46 + #if defined(BLEND)
+	   47 + 	diffuse.a *= inColor.a;
+	46    - 	if(diffuse.a < alphaThreshold)
+	47    - 		discard;
+	48 48   #endif
+	49 49   
+	50 50   #if !defined(ALWAYS_LIT)
+	51 51   	diffuse = diffuse * TEXTURE_1.Sample(TextureSampler1, PSInput.uv1);
+	52 52   #endif
+	53    - 
+	54    - #ifndef SEASONS
+	55 53   
+	56    - 	#if !defined(ALPHA_TEST) && !defined(BLEND)
+	57    - 		diffuse.a = PSInput.color.a;
+	58    - 	#elif defined(BLEND)
+	   54 + #ifndef SEASONS
+	59    - 		diffuse.a *= PSInput.color.a;
+	60 55   
+	61    - 		#ifdef NEAR_WATER
+	62    - 			float alphaFadeOut = saturate(PSInput.cameraDist.x);
+	   56 + 	#if !defined(ALPHA_TEST) && !defined(BLEND)
+	   57 + 		diffuse.a = PSInput.color.a;
+	63    - 			diffuse.a = lerp(diffuse.a, 1.0f, alphaFadeOut);
+	64    - 		#endif
+	65 58   	#endif	
+	66 59   
+	67 60   	diffuse.rgb *= PSInput.color.rgb;
+	68 61   
+	69 62   #else
+	        ...
+	        '''
+Changed file "renderchunk_vv.pssl":
+	Total line: 95 (+7, -20)
+	          '''
+	          ...
+	 15  15   	float4 color : COLOR;
+	 16  16   	float2 uv0 : TEXCOORD_0;
+	 17  17   	float2 uv1 : TEXCOORD_1;
+	 18  18   #endif
+	 19  19   
+	 20     - #ifdef NEAR_WATER
+	 21     - 	float cameraDist : TEXCOORD_2;
+	 22     - #endif
+	 23     - 
+	 24  20   #ifdef FOG
+	 25  21   	float4 fogColor : FOG_COLOR;
+	 26  22   #endif
+	 27  23   };
+	 28  24   
+	 29  25   
+	 30  26   static const float rA = 1.0;
+	 31  27   static const float rB = 1.0;
+	 32  28   static const float3 UNIT_Y = float3(0, 1, 0);
+	 33  29   static const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+	 34     - 
+	 35  30   
+	 36     - PS_Input main(in VS_Input VSInput) 
+	 37     - {
+	 38     - 	PS_Input PSInput = (PS_Input)0;
+	 39  31   
+	 40     - #ifndef BYPASS_PIXEL_SHADER
+	 41     - 	PSInput.uv0 = VSInput.uv0;
+	     32 + PS_Input main(in VS_Input VSInput) 
+	 42     - 	PSInput.uv1 = VSInput.uv1;
+	     33 + {
+	     34 + 	PS_Input PSInput = (PS_Input)0;
+	 43     - 	PSInput.color = VSInput.color;
+	 44     - #endif
+	 45  35   
+	 46     - #ifdef AS_ENTITY_RENDERER
+	 47     - 		PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	 48     - 		float3 worldPos = PSInput.position.xyz;
+	     36 + #ifndef BYPASS_PIXEL_SHADER
+	     37 + 	PSInput.uv0 = VSInput.uv0;
+	     38 + 	PSInput.uv1 = VSInput.uv1;
+	     39 + 	PSInput.color = VSInput.color;
+	 49     - #else
+	 50     - 		float3 worldPos = (VSInput.position.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
+	 51     - 		PSInput.position = mul(WORLDVIEW, float4( worldPos, 1 ));
+	 52     - 		PSInput.position = mul(PROJ, PSInput.position);
+	 53  40   #endif
+	 54     - 
+	 55     - ///// find distance from the camera
+	 56  41   
+	 57     - #if defined(FOG) || defined(NEAR_WATER)
+	     42 + #ifdef AS_ENTITY_RENDERER
+	 58     - 	#ifdef FANCY
+	     43 + 		PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	     44 + 		float3 worldPos = PSInput.position.xyz;
+	 59     - 		float3 relPos = -worldPos;
+	     45 + #else
+	     46 + 		float3 worldPos = (VSInput.position.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
+	     47 + 		PSInput.position = mul(WORLDVIEW, float4( worldPos, 1 ));
+	     48 + 		PSInput.position = mul(PROJ, PSInput.position);
+	     49 + #endif
+	 60     - 		float cameraDepth = length(relPos);
+	 61     - 		#ifdef NEAR_WATER
+	 62     - 			PSInput.cameraDist = cameraDepth / FAR_CHUNKS_DISTANCE;
+	 63     - 		#endif
+	     50 + 
+	     51 + ///// find distance from the camera
+	     52 + 
+	     53 + #if defined(FOG) || defined(BLEND)
+	     54 + 	#ifdef FANCY
+	     55 + 		float3 relPos = -worldPos;
+	     56 + 		float cameraDepth = length(relPos);
+	 64     - 	#else
+	 65     - 		float cameraDepth = PSInput.position.z;
+	 66     - 		#ifdef NEAR_WATER
+	 67     - 			float3 relPos = -worldPos;
+	 68     - 			float cameraDist = length(relPos);
+	     57 + 	#else
+	 69     - 			PSInput.cameraDist = cameraDist / FAR_CHUNKS_DISTANCE;
+	     58 + 		float cameraDepth = PSInput.position.z;
+	 70     - 		#endif
+	 71  59   	#endif
+	 72  60   #endif
+	 73  61   
+	 74  62   	///// apply fog
+	 75  63   
+	          ...
+	 82  70   	PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	 83  71   	PSInput.fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	 84  72   
+	 85  73   #endif
+	 86  74   
+	     75 + ///// blended layer (mostly water) magic
+	     76 + #ifdef BLEND
+	     77 + 	//Mega hack: only things that become opaque are allowed to have vertex-driven transparency in the Blended layer...
+	     78 + 	//to fix this we'd need to find more space for a flag in the vertex format. color.a is the only unused part
+	     79 + 	bool shouldBecomeOpaqueInTheDistance = VSInput.color.a < 0.95;
+	     80 + 	if(shouldBecomeOpaqueInTheDistance) {
+	     81 + 		#ifdef FANCY  /////enhance water
+	     82 + 			float cameraDist = cameraDepth / FAR_CHUNKS_DISTANCE;
+	     83 + 		#else
+	     84 + 			float3 relPos = -worldPos.xyz;
+	     85 + 			float camDist = length(relPos);
+	     86 + 			float cameraDist = camDist / FAR_CHUNKS_DISTANCE;
+	 87     - 	///// water magic
+	 88     - #ifdef NEAR_WATER
+	 89     - #ifdef FANCY  /////enhance water
+	 90     - 	float F = dot(normalize(relPos), UNIT_Y);
+	 91     - 	F = 1.0 - max(F, 0.1);
+	 92     - 	F = 1.0 - lerp(F*F*F*F, 1.0, min(1.0, cameraDepth / FAR_CHUNKS_DISTANCE));
+	 93     - 
+	 94     - 	PSInput.color.rg -= float2(float(F * DIST_DESATURATION).xx);
+	 95     - 
+	 96     - 	float4 depthColor = float4(PSInput.color.rgb * 0.5, 1.0);
+	 97     - 	float4 traspColor = float4(PSInput.color.rgb * 0.45, 0.8);
+	 98     - 	float4 surfColor = float4(PSInput.color.rgb, 1.0);
+	 99     - 
+	     87 + 		#endif //FANCY
+	     88 + 		
+	     89 + 		float alphaFadeOut = clamp(cameraDist, 0.0, 1.0);
+	     90 + 		PSInput.color.a = lerp(VSInput.color.a, 1.0, alphaFadeOut);
+	100     - 	float4 nearColor = lerp(traspColor, depthColor, PSInput.color.a);
+	101     - 	PSInput.color = lerp(surfColor, nearColor, F);
+	102     - #else
+	103     - 	PSInput.color.a = PSInput.position.z / FAR_CHUNKS_DISTANCE + 0.5;
+	     91 + 	}
+	104     - #endif //FANCY
+	105  92   #endif
+	106  93   	
+	107  94   	return PSInput;
+	108  95   }
+	          '''
