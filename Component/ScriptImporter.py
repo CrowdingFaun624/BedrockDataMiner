@@ -59,7 +59,6 @@ class ScriptSet[a]():
         '''
         :key: The name of the object.
         :source: The Component referencing this Script.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this Script.
         '''
         if full_key is None:
             full_key = key
@@ -155,7 +154,7 @@ def import_scripted_objects[a](folder:str, domain:"Domain.Domain", built_in_obje
     '''
     :folder: The subfolder of scripts that contains the desired type.
     :built_in_objects: Basic built-in objects.
-    :required_type: Type that Python scripts must export.
+    :is_valid_function: A function which verifies if an object is correct.
     '''
     scripts = domain.scripts.scripts
     all_scripts:dict[tuple[str,str],Script[a]] = {}
