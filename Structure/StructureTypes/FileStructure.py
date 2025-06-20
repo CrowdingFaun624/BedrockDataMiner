@@ -53,6 +53,7 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure[AbstractFile[D], D, 
             data, pre_data_identity_changed = self.normalizer_pass(self.normalizers, data, environment)
             if not isinstance(data, self.file_types):
                 trace.exception(StructureTypeError(self.file_types, type(data), "Data", "(after normalizer pass)"))
+                return ...
 
             structure = self.get_structure(data.read(self.serializer), trace, environment)
             if structure is not None and structure.children_has_normalizer:
@@ -64,6 +65,7 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure[AbstractFile[D], D, 
             data, post_data_identity_changed = self.normalizer_pass(self.post_normalizers, data, environment)
             if not isinstance(data, self.file_types):
                 trace.exception(StructureTypeError(self.file_types, type(data), "Data", "(after post-normalizer pass)"))
+                return ...
 
             return data if pre_data_identity_changed or post_data_identity_changed else ...
         return ...
