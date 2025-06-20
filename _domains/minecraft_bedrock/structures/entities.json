@@ -691,6 +691,7 @@
             "minecraft:behavior.pickup_items": {"types": "dict", "structure": "behavior.pickup_items"},
             "minecraft:behavior.pig_zombie_anger_target": {"types": "dict", "structure": "behavior.pig_zombie_anger_target", "tags": ["outdated"]},
             "minecraft:behavior.pig_zombie_hurt_by_other": {"types": "dict", "structure": "behavior.pig_zombie_hurt_by_other", "tags": ["outdated"]},
+            "minecraft:behavior.place_block": {"types": "dict", "structure": "behavior.place_block"},
             "minecraft:behavior.play": {"types": "dict", "structure": "behavior.play"},
             "minecraft:behavior.play_dead": {"types": "dict", "structure": "behavior.play_dead"},
             "minecraft:behavior.player_ride_tamed": {"types": "dict", "structure": "behavior.player_ride_tamed"},
@@ -752,6 +753,7 @@
             "minecraft:behavior.swim_with_mob": {"types": "dict", "structure": "behavior.swim_with_entity", "tags": ["outdated"]},
             "minecraft:behavior.swim_with_entity": {"types": "dict", "structure": "behavior.swim_with_entity"},
             "minecraft:behavior.swoop_attack": {"types": "dict", "structure": "behavior.swoop_attack"},
+            "minecraft:behavior.take_block": {"types": "dict", "structure": "behavior.take_block"},
             "minecraft:behavior.take_flower": {"types": "dict", "structure": "behavior.take_flower"},
             "minecraft:behavior.target_when_pushed": {"types": "dict", "structure": "behavior.target_when_pushed"},
             "minecraft:behavior.teleport_to_owner": {"types": "dict", "structure": "behavior.teleport_to_owner"},
@@ -2006,6 +2008,7 @@
     "component.equip_item": {
         "type": "Keymap",
         "keys": {
+            "can_wear_armor": {"types": "bool"},
             "excluded_items": {"types": "list", "structure": "component.equip_item:excluded_items"}
         }
     },
@@ -5507,6 +5510,15 @@
             "priority": {"types": "int"}
         }
     },
+    "behavior.place_block": {
+        "type": "Keymap",
+        "keys": {
+            "priority": {"types": "int"},
+            "xz_range": {"types": "int"},
+            "y_range": {"types": "range", "structure": "range_group_int"},
+            "chance": {"types": "decimal"}
+        }
+    },
     "behavior.play": {
         "type": "Keymap",
         "keys": {
@@ -6340,6 +6352,16 @@
             "delay_range": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int"},
             "speed_multiplier": {"types": "decimal"}
+        }
+    },
+    "behavior.take_block": {
+        "type": "Keymap",
+        "keys": {
+            "priority": {"types": "int"},
+            "xz_range": {"types": "int"},
+            "y_range": {"types": "range", "structure": "range_group_decimal"},
+            "chance": {"types": "decimal"},
+            "blocks": {"types": "list", "structure": "block_list"}
         }
     },
     "behavior.take_flower": {

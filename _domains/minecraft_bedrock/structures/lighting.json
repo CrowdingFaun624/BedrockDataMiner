@@ -79,8 +79,8 @@
     "directional_light": {
         "type": "Keymap",
         "keys": {
-            "illuminance": {"types": "dict", "structure": "structures/atmospherics/keyframe_dict"},
-            "color": {"types": "dict", "structure": "structures/atmospherics/keyframe_vector_dict"}
+            "illuminance": {"types": ["dict", "float"], "structure": "keyframe_dict_or_float"},
+            "color": {"types": ["dict", "list"], "structure": "keyframe_vector_dict_or_vector"}
         }
     },
     "emissive": {
@@ -106,6 +106,20 @@
         "type": "Keymap",
         "keys": {
             "intensity": {"types": "float"}
+        }
+    },
+    "keyframe_dict_or_float": {
+        "type": "Union",
+        "substructures": {
+            "float": null,
+            "dict": "structures/atmospherics/keyframe_dict"
+        }
+    },
+    "keyframe_vector_dict_or_vector": {
+        "type": "Union",
+        "substructures": {
+            "list": "structures/atmospherics/vector_int",
+            "dict": "structures/atmospherics/keyframe_vector_dict"
         }
     }
 }

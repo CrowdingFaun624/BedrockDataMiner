@@ -1,4 +1,5 @@
 import json
+from types import EllipsisType
 from typing import TYPE_CHECKING, Any, Callable, Sized
 
 from Structure.Container import Con, Don
@@ -89,11 +90,11 @@ def wrap_in_value(data:dict[str,Any], key:str, delete:bool=False) -> dict[str,di
         del value[key]
     return {value: data}
 
-def turn_to_dict(data:list[dict[str,Any]], key_key:str, value_key:str) -> dict[str,Any]:
+def turn_to_dict(data:list[dict[str,Any]], key_key:str, value_key:str, default:Any|EllipsisType=...) -> dict[str,Any]:
     output:dict[str,Any] = {}
     for item in data:
-        assert len(item) == 2
-        output[item[key_key]] = item[value_key]
+        assert len(item) in ((2,) if default is ... else (1, 2))
+        output[item[key_key]] = item.get(value_key, default) if default is not ... else item[value_key]
     return output
 
 def wrap_tuple(data:list[Any], keys:list[str]) -> dict[str,Any]:
