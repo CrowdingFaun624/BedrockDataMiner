@@ -54,7 +54,11 @@ class AbstractDataminerCollection():
         if data is None or data is ...:
             raise Exceptions.DataminerNullReturnError(self)
         version.data_directory.mkdir(exist_ok=True)
-        with open(self.get_data_file_path(version), "wt") as f:
+        data_file_path = self.get_data_file_path(version)
+        for parent in data_file_path.parents:
+            if parent.exists(): break
+            parent.mkdir()
+        with open(data_file_path, "wt") as f:
             json.dump(data, f, separators=(",", ":"), cls=self.domain.json_encoder)
 
         printer_environment = environment.get_printer_environment(version, self.get_structure_info(version))
