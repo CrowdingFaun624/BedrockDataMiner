@@ -37,7 +37,7 @@ class VersionFileTypeComponent(Component[VersionFileType]):
         self.must_exist = data["must_exist"]
         self.available_when_unreleased = data["available_when_unreleased"]
 
-        self.allowed_accessor_types_field = ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ("allowed_accessor_types",), allow_inline=InlinePermissions.reference, assume_component_group="accessor_types")
+        self.allowed_accessor_types_field = ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ("allowed_accessor_types",), allow_inline=InlinePermissions.reference)
         return (self.allowed_accessor_types_field,)
 
     def create_final(self, trace:Trace) -> VersionFileType:

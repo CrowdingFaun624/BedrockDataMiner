@@ -34,7 +34,7 @@ def guess_intent(user_input:str, items:list[str], threshold:int) -> str|None:
             min_distance = distance
     return min_option
 
-def deduplicate_aliases[a](aliases:Mapping[str,Iterable[str]], items:dict[str,a]) -> dict[str,a]:
+def deduplicate_aliases[a](aliases:Mapping[str,Iterable[str]], items:Mapping[str,a]) -> Mapping[str,a]:
     aliases2 = {target: list(shortcuts) for target, shortcuts in aliases.items()}
     already_aliases:set[str] = set()
     duplicate_aliases:set[str] = set()
@@ -58,7 +58,7 @@ def default_prompt_multi(label:str, options:list[str]|None) -> str:
         return f"Choose a/some {label} (space-delimited) ({", ".join(options)}): "
 
 def input_single[a](
-    items:dict[str,a],
+    items:Mapping[str,a],
     label:str,
     *,
     show_options:bool=False,
@@ -107,10 +107,11 @@ def input_single[a](
             if user_guess is not None:
                 user_input = user_guess
                 print(f"Assuming user means \"{user_guess}\"")
+    assert user_input is not ... # Not sure why this is necessary all of a sudden.
     return items[user_input]
 
 def input_multi[a](
-    items:dict[str,a],
+    items:Mapping[str,a],
     label:str,
     *,
     allow_select_all:bool=True,
@@ -120,7 +121,7 @@ def input_multi[a](
     close_enough_threshold:int=3,
     prompt_function:Callable[[str, list[str]|None],str]=default_prompt_multi,
     aliases:Mapping[str,Iterable[str]]|None=None,
-    alternative_selectors:dict[str,Callable[[],list[str]]]|None=None,
+    alternative_selectors:Mapping[str,Callable[[],list[str]]]|None=None,
     behavior_on_eof:Callable[[],NoReturn]|None=None,
 ) -> list[a]:
     '''

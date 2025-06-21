@@ -36,6 +36,10 @@ class VersionTagOrderComponent(Component[VersionTagOrder]):
         TypedDictKeyTypeVerifier("type", False, str),
     )
 
+    @property
+    def assume_used(self) -> bool:
+        return True
+
     __slots__ = (
         "allowed_children_field",
         "order_field",
@@ -46,19 +50,19 @@ class VersionTagOrderComponent(Component[VersionTagOrder]):
 
     def initialize_fields(self, data: VersionTagOrderTypedDict) -> Sequence[Field]:
         self.order_field = FieldListField([
-            ComponentListField(tags, VERSION_TAG_PATTERN, ("order", str(index)), allow_inline=InlinePermissions.reference, assume_component_group="version_tags")
+            ComponentListField(tags, VERSION_TAG_PATTERN, ("order", str(index)), allow_inline=InlinePermissions.reference)
             for index, tags in enumerate(data["order"])
         ], ("order",))
         self.allowed_children_field = [
             (
-                ComponentField(key, VERSION_TAG_PATTERN, ("allowed_children", key), allow_inline=InlinePermissions.reference, assume_component_group="version_tags"),
-                ComponentListField(children, VERSION_TAG_PATTERN, ("allowed_children", key), allow_inline=InlinePermissions.reference, assume_component_group="version_tags"),
+                ComponentField(key, VERSION_TAG_PATTERN, ("allowed_children", key), allow_inline=InlinePermissions.reference),
+                ComponentListField(children, VERSION_TAG_PATTERN, ("allowed_children", key), allow_inline=InlinePermissions.reference),
             )
             for key, children in data["allowed_children"].items()
         ]
-        self.top_level_tag_field = OptionalComponentField(data["top_level_tag"], VERSION_TAG_PATTERN, ("top_level_tag",), assume_component_group="version_tags")
-        self.tags_before_top_level_tag = ComponentListField(data["tags_before_top_level_tag"], VERSION_TAG_PATTERN, ("tags_before_top_level_tag",), allow_inline=InlinePermissions.reference, assume_component_group="version_tags")
-        self.tags_after_top_level_tag = ComponentListField(data["tags_after_top_level_tag"], VERSION_TAG_PATTERN, ("tags_after_top_level_tag",), allow_inline=InlinePermissions.reference, assume_component_group="version_tags")
+        self.top_level_tag_field = OptionalComponentField(data["top_level_tag"], VERSION_TAG_PATTERN, ("top_level_tag",))
+        self.tags_before_top_level_tag = ComponentListField(data["tags_before_top_level_tag"], VERSION_TAG_PATTERN, ("tags_before_top_level_tag",), allow_inline=InlinePermissions.reference)
+        self.tags_after_top_level_tag = ComponentListField(data["tags_after_top_level_tag"], VERSION_TAG_PATTERN, ("tags_after_top_level_tag",), allow_inline=InlinePermissions.reference)
         fields:list[Field] = [self.order_field, self.top_level_tag_field, self.tags_before_top_level_tag, self.tags_after_top_level_tag]
         fields.extend(chain.from_iterable(self.allowed_children_field))
         return fields

@@ -21,6 +21,10 @@ class StructureBaseComponent(BranchlessStructureComponent[StructureBase]):
         "delegate_field",
     )
 
+    @property
+    def assume_used(self) -> bool:
+        return True
+
     class_name = "StructureBase"
     structure_type = StructureBase
     my_capabilities = Capabilities(is_base=True, is_structure=True)

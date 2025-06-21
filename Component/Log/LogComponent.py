@@ -18,12 +18,17 @@ class LogComponent(Component[Log]):
 
     class_name = "Log"
     my_capabilities = Capabilities()
+    script_referenceable = True
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("file_name", True, str),
         TypedDictKeyTypeVerifier("log_type", True, EnumTypeVerifier({log_type.value for log_type in LogType})),
         TypedDictKeyTypeVerifier("reset_on_reload", True, bool),
         TypedDictKeyTypeVerifier("type", False, str),
     )
+
+    @property
+    def assume_used(self) -> bool:
+        return True
 
     __slots__ = (
         "file",

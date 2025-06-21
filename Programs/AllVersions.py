@@ -36,7 +36,7 @@ def datamine_version(version:Version, domain:Domain.Domain, print_messages:bool=
 
 def main(domain:Domain.Domain) -> None:
     dataminers_dict = domain.dataminer_collections
-    for version in reversed(domain.versions.values()):
+    for version in reversed(domain.versions.values()): # type: ignore
         if not any(dataminer_collection.supports_version(version) for dataminer_collection in dataminers_dict.values()):
             print(f"Skipped \"{version.name}\" due to being unarchived.")
         else:

@@ -37,6 +37,10 @@ class VersionTagComponent(Component[VersionTag]):
         TypedDictKeyTypeVerifier("latest_slot", False, str),
     )
 
+    @property
+    def assume_used(self) -> bool:
+        return len(self.auto_assigner_field) > 0 or self.is_unreleased_tag
+
     __slots__ = (
         "auto_assigner_field",
         "development_name",
@@ -57,7 +61,7 @@ class VersionTagComponent(Component[VersionTag]):
         self.is_unreleased_tag = data.get("is_unreleased_tag", False)
 
         self.auto_assigner_field = ComponentListField(data.get("auto_assign", ()), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ("auto_assign",), allow_inline=InlinePermissions.mixed)
-        self.latest_slot_field = OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=InlinePermissions.reference, assume_component_group="latest_slots")
+        self.latest_slot_field = OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=InlinePermissions.reference)
         return (self.auto_assigner_field, self.latest_slot_field)
 
     def create_final(self, trace:Trace) -> VersionTag:
@@ -78,6 +82,7 @@ class VersionTagComponent(Component[VersionTag]):
             latest_slot_component = self.latest_slot_field.subcomponent
             self.final.link_finals(
                 latest_slot=latest_slot_component.final if latest_slot_component is not None else None,
+                auto_assign=list(self.auto_assigner_field.map(lambda component: component.final)),
             )
 
     def check(self, trace:Trace) -> None:

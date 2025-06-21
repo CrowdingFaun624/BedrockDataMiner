@@ -299,5 +299,5 @@ type ComponentTypedDicts = \
     VersionTagTypedDict|\
     VersionTypedDict
 
-type ComponentGroupFileType = dict[str,ComponentTypedDicts]
+type GroupFileType = dict[str,ComponentTypedDicts]
 type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component",str|None,tuple[str,...]],"Component|EllipsisType"]

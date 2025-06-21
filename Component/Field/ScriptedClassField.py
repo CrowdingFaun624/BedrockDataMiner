@@ -1,4 +1,4 @@
-from typing import Callable, Sequence
+from typing import TYPE_CHECKING, Callable, Sequence
 
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
@@ -7,6 +7,8 @@ from Component.Field.FieldContainer import FieldContainer
 from Component.ScriptImporter import ScriptSetSet, ScriptSetSetSet
 from Utilities.Trace import Trace
 
+if TYPE_CHECKING:
+    from Component.Group import Group
 
 class ScriptedClassField[A](Field):
 
@@ -31,8 +33,8 @@ class ScriptedClassField[A](Field):
     def set_field(
         self,
         source_component:"Component",
-        components:dict[str,"Component"],
-        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        local_group:"Group",
+        global_groups:dict[str,dict[str,"Group"]],
         functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,

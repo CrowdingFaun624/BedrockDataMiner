@@ -1,5 +1,5 @@
 from itertools import starmap
-from typing import Callable, Iterator, Sequence
+from typing import TYPE_CHECKING, Callable, Iterator, Sequence
 
 import Utilities.Exceptions as Exceptions
 from Component.Component import Component
@@ -9,13 +9,14 @@ from Component.Pattern import Pattern
 from Component.ScriptImporter import ScriptSetSetSet
 from Utilities.Trace import Trace
 
+if TYPE_CHECKING:
+    from Component.Group import Group
 
 class ComponentDictField[a:Component](Field):
     '''A link to multiple other Components.'''
 
     __slots__ = (
         "allow_inline",
-        "assume_component_group",
         "assume_type",
         "has_inline_components",
         "has_reference_components",
@@ -32,7 +33,6 @@ class ComponentDictField[a:Component](Field):
         *,
         allow_inline:InlinePermissions=InlinePermissions.mixed,
         assume_type:str|None=None,
-        assume_component_group:str|None=None,
     ) -> None:
         '''
         :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.
@@ -40,7 +40,6 @@ class ComponentDictField[a:Component](Field):
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
-        :assume_component_group: Assumed Component group if it is not specified.
         '''
         super().__init__(path)
         self.subcomponents_data = subcomponents_data
@@ -50,14 +49,13 @@ class ComponentDictField[a:Component](Field):
         self.has_reference_components = False
         self.has_inline_components = False
         self.assume_type = assume_type
-        self.assume_component_group = assume_component_group
 
     def set_field(
         self,
         source_component:"Component",
-        components:dict[str,"Component"],
-        global_components:dict[str,dict[str,dict[str,"Component"]]],
-        functions:ScriptSetSetSet,
+        local_group:"Group",
+        global_groups:dict[str,dict[str,"Group"]],
+        functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence[a],Sequence[a]]:
@@ -66,7 +64,7 @@ class ComponentDictField[a:Component](Field):
             inline_components:list[a] = []
             for key, subcomponent_data in self.subcomponents_data.items():
                 with trace.enter_key(key, subcomponent_data):
-                    subcomponent, is_inline = choose_component(subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
+                    subcomponent, is_inline = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.trace_path, create_component_function, self.assume_type)
                     self.has_reference_components = self.has_reference_components or not is_inline
                     self.has_inline_components = self.has_inline_components or is_inline
                     if subcomponent is ...:

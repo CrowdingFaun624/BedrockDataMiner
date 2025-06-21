@@ -1,3 +1,5 @@
+from typing import Self
+
 from Version.VersionTag.VersionTag import VersionTag
 
 
@@ -24,13 +26,14 @@ class VersionTagOrder():
         top_level_tag:VersionTag|None,
         tags_before_top_level_tag:list[VersionTag],
         tags_after_top_level_tag:list[VersionTag],
-    ) -> None:
+    ) -> Self:
         self.initialized = True
         self.order = order
         self.allowed_children = allowed_children
         self.top_level_tag = top_level_tag
         self.tags_before_top_level_tag = tags_before_top_level_tag
         self.tags_after_top_level_tag = tags_after_top_level_tag
+        return self
 
     def __repr__(self) -> str:
         if not self.initialized:

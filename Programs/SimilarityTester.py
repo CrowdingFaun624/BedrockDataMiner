@@ -50,7 +50,7 @@ def ensure_not_ellipsis[A](data:A|EllipsisType, trace:Trace, structure:Structure
     return data
 
 def main(domain:"Domain.Domain") -> None:
-    version = domain.versions[next(reversed(domain.versions))]
+    version = domain.versions[next(reversed(domain.versions))] # type: ignore
     structure_name = input("Structure full name: ")
     structure = domain.script_referenceable.get(structure_name, Structure)
     data1 = parse_data(input("Normalized data 1: "), domain)

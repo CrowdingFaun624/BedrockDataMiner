@@ -1,4 +1,4 @@
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any, Sequence
 
 import Domain.Domain as Domain
 from Component.Component import Component
@@ -10,6 +10,8 @@ from Structure.Structure import Structure
 from Utilities.Exceptions import InapplicableDelegateError
 from Utilities.Trace import Trace
 
+if TYPE_CHECKING:
+    from Component.Group import Group
 
 class OptionalDelegateField(Field):
 
@@ -63,9 +65,9 @@ class OptionalDelegateField(Field):
     def set_field(
         self,
         source_component:"Component",
-        components:dict[str,"Component"],
-        global_components:dict[str,dict[str,dict[str,"Component"]]],
-        functions:ScriptSetSetSet,
+        local_group:"Group",
+        global_groups:dict[str,dict[str,"Group"]],
+        functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["Component"],Sequence["Component"]]:

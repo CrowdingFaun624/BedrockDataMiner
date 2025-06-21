@@ -1,4 +1,4 @@
-from typing import Self, Sequence
+from typing import TYPE_CHECKING, Self, Sequence
 
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
@@ -9,6 +9,8 @@ from Component.Structure.StructureTagComponent import TAG_PATTERN, StructureTagC
 from Structure.StructureTag import StructureTag
 from Utilities.Trace import Trace
 
+if TYPE_CHECKING:
+    from Component.Group import Group
 
 class TagListField(ComponentListField["StructureTagComponent"]):
 
@@ -23,7 +25,7 @@ class TagListField(ComponentListField["StructureTagComponent"]):
         :subcomponents_strs: The names of the TagComponents this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=InlinePermissions.reference, assume_component_group="structure_tags")
+        super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=InlinePermissions.reference)
         self.tag_sets:list[set["StructureTagComponent"]] = []
         self.import_from_field:TagListField|None = None
         self._finals:set[StructureTag]|None = None
@@ -31,16 +33,16 @@ class TagListField(ComponentListField["StructureTagComponent"]):
     def set_field(
         self,
         source_component:"Component",
-        components:dict[str,"Component"],
-        global_components:dict[str,dict[str,dict[str,"Component"]]],
-        functions:ScriptSetSetSet,
+        local_group:"Group",
+        global_groups:dict[str,dict[str,"Group"]],
+        functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["StructureTagComponent"],Sequence["StructureTagComponent"]]:
         with trace.enter_keys(self.trace_path, self.subcomponents_data):
-            subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function, trace)
+            subcomponents, inline_components = super().set_field(source_component, local_group, global_groups, functions, create_component_function, trace)
             if self.import_from_field is not None:
-                self.import_from_field.set_field(source_component, components, global_components, functions, create_component_function, trace)
+                self.import_from_field.set_field(source_component, local_group, global_groups, functions, create_component_function, trace)
                 self.extend(self.import_from_field.subcomponents)
             for tag_set in self.tag_sets:
                 tag_set.update(self.subcomponents)

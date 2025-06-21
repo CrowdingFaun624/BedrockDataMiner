@@ -518,7 +518,7 @@ def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[d
     TypedDictKeyTypeVerifier("serializer", True, str),
 ))
 def texture_list_normalize(data:dict[str,File[list[str]]], serializer:str) -> FakeFile[dict[str,list[str]]]:
-    _serializer = domain.serializers[serializer]
+    _serializer = domain.script_referenceable.get(serializer, Serializer)
     output:defaultdict[str,list[str]] = defaultdict(lambda: [])
     file_hashes:list[int] = []
     for resource_pack, textures_file in data.items():

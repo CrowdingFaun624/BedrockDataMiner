@@ -63,9 +63,9 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
         self.arguments = data.get("arguments", {})
         self.structure_info = data.get("structure_info", {})
 
-        self.new_field = OptionalComponentField(data["new"], VERSION_PATTERN, ("new",), assume_component_group="versions")
-        self.old_field = OptionalComponentField(data["old"], VERSION_PATTERN, ("old",), assume_component_group="versions")
-        self.files_field = ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=InlinePermissions.reference, assume_component_group="version_file_types")
+        self.new_field = OptionalComponentField(data["new"], VERSION_PATTERN, ("new",))
+        self.old_field = OptionalComponentField(data["old"], VERSION_PATTERN, ("old",))
+        self.files_field = ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=InlinePermissions.reference)
         self.dataminer_field = OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=NullDataminer)
         self.dependencies_field = FieldListField([
             ComponentField(

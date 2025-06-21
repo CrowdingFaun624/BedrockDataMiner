@@ -63,8 +63,8 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[
         self.remove_suffixes = data.get("remove_suffixes", [])
         self.structure_info = data.get("structure_info", {})
 
-        self.file_field = ComponentField(data["file"], VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=InlinePermissions.reference, assume_component_group="version_file_types")
-        self.file_list_dataminer_field = ComponentField(data["file_list_dataminer"], ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("file_list_dataminer",), allow_inline=InlinePermissions.reference, assume_component_group="dataminer_collections")
+        self.file_field = ComponentField(data["file"], VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=InlinePermissions.reference)
+        self.file_list_dataminer_field = ComponentField(data["file_list_dataminer"], ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("file_list_dataminer",), allow_inline=InlinePermissions.reference)
         self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=InlinePermissions.reference)
         return (self.file_field, self.file_list_dataminer_field, self.structure_field)
 

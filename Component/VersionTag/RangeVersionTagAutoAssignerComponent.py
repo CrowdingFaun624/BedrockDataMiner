@@ -1,16 +1,18 @@
 from typing import Sequence
 
 from Component.ComponentTyping import RangeVersionTagAutoAssignerTypedDict
-from Component.Field.Field import Field
-from Component.Version.Field.VersionRangeField import VersionRangeField
-from Component.Version.VersionComponent import VersionComponent
+from Component.Field.ComponentField import OptionalComponentField
+from Component.Field.Field import Field, InlinePermissions
+from Component.Version.VersionComponent import VERSION_PATTERN
 from Component.VersionTag.VersionTagAutoAssignerComponent import (
     VersionTagAutoAssignerComponent,
 )
+from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
+from Version.VersionTag.RangeVersionTagAutoAssigner import RangeVersionTagAutoAssigner
 
 
-class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent):
+class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent[RangeVersionTagAutoAssigner]):
 
     class_name = "RangeVersionTagAutoAssigner"
     type_verifier = TypedDictTypeVerifier(
@@ -20,12 +22,24 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent):
     )
 
     __slots__ = (
-        "version_range_field",
+        "newest_field",
+        "oldest_field",
     )
 
     def initialize_fields(self, data: RangeVersionTagAutoAssignerTypedDict) -> Sequence[Field]:
-        self.version_range_field = VersionRangeField(data["oldest"], data["newest"], ("oldest/newest",), ("oldest",), ("newest",))
-        return (self.version_range_field,)
+        self.oldest_field = OptionalComponentField(data["oldest"], VERSION_PATTERN, ("oldest",), allow_inline=InlinePermissions.reference)
+        self.newest_field = OptionalComponentField(data["newest"], VERSION_PATTERN, ("newest",), allow_inline=InlinePermissions.reference)
+        return (self.oldest_field, self.newest_field)
 
-    def contains_version(self, version: "VersionComponent") -> bool:
-        return version in self.version_range_field
+    def create_final(self, trace: Trace) -> RangeVersionTagAutoAssigner:
+        return RangeVersionTagAutoAssigner(
+            full_name=self.full_name,
+        )
+
+    def link_finals(self, trace: Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().link_finals(trace)
+            self.final.link(
+                oldest_version=self.oldest_field.map(lambda component: component.final),
+                newest_version=self.newest_field.map(lambda component: component.final),
+            )

@@ -21,6 +21,10 @@ class StructureTagComponent(Component[StructureTag]):
         TypedDictKeyTypeVerifier("type", False, str),
     )
 
+    @property
+    def assume_used(self) -> bool:
+        return True
+
     __slots__ = (
         "is_file",
     )

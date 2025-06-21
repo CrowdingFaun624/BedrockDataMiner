@@ -60,10 +60,9 @@ def parse_tag(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath]]], set
     letters:list[str] = []
     while True:
         letter = data.read()
-        if not re.match(TAG_CHARACTERS, letter):
+        if letter == "'":
             break
         letters.append(letter)
-    data.back()
     tag_name = "".join(letters)
     return lambda all_mentioned_tags: all_mentioned_tags[tag_name], tag_name
 
@@ -96,7 +95,8 @@ def parse_whitespace(data:DataReader) -> None:
 def parse_expression(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath|Any]]], set[DataPath|Any]], set[str]]:
     parse_whitespace(data)
     character = data.read(1, 1)
-    if re.match(TAG_CHARACTERS, character):
+    if character == "'":
+        data.forward(1)
         tag_function, tag_name = parse_tag(data)
         return tag_function, set([tag_name])
     elif character == "(":

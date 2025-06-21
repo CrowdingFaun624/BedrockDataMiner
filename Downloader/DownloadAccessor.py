@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any, BinaryIO, TypedDict
 
 from Downloader.Accessor import Accessor
 from Downloader.FileAccessor import FileAccessor
+from Utilities.Log import Log
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 if TYPE_CHECKING:
@@ -24,10 +25,15 @@ class DownloadAccessor(FileAccessor):
         TypedDictKeyTypeVerifier("url", True, str),
     )
 
+    class_parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("log", False, (str, type(None))),
+    )
+
     __slots__ = (
         "_installed",
         "file_handle",
         "location",
+        "log",
         "url",
     )
 
@@ -37,6 +43,7 @@ class DownloadAccessor(FileAccessor):
         self.location = location
         self._installed:bool|None = None
         self.file_handle:BinaryIO|None = None
+        self.log = self.domain.script_referenceable.get(class_arguments["log"], Log) if "log" in class_arguments else None
 
         self.url = instance_arguments["url"]
 
@@ -46,9 +53,9 @@ class DownloadAccessor(FileAccessor):
             self._installed = self.location.exists()
         return self._installed
 
-    def log(self, response:"requests.Response") -> "requests.Response":
-        if (log := self.domain.logs.get("download_log")) is not None and log.supports_type(log, dict):
-            log.write({
+    def log_response(self, response:"requests.Response") -> "requests.Response":
+        if self.log is not None and self.log.supports_type(self.log, dict):
+            self.log.write({
                 "version": self.version.name,
                 "time": datetime.now().isoformat(),
                 "status_code": response.status_code,
@@ -76,7 +83,7 @@ class DownloadAccessor(FileAccessor):
         if not self.installed:
             import requests
             with open(self.location, "wb") as f, requests.get(self.url) as response:
-                f.write(self.log(response).content)
+                f.write(self.log_response(response).content)
             self._installed = True
 
     def all_done(self) -> None:

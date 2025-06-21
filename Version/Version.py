@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Mapping, Sequence
 
 import Domain.Domain as Domain
 from Utilities.Exceptions import NoOrderVersionTagsFoundError
@@ -12,22 +12,24 @@ if TYPE_CHECKING:
 class Version():
 
     __slots__ = (
+        "_incomplete_tags",
+        "_incomplete_tags_dict",
+        "_tags",
+        "_tags_dict",
+        "children",
+        "data_directory",
+        "domain",
         "full_name",
-        "name",
-        "time",
         "index",
         "latest",
-        "released",
-        "version_directory",
-        "data_directory",
-        "version_directory",
-        "children",
+        "name",
+        "order_tag",
         "parent",
-        "tags",
-        "tags_dict",
+        "released",
+        "time",
+        "version_directory",
         "version_files",
         "version_files_dict",
-        "order_tag",
     )
 
     def __init__(self, name:str, full_name:str, domain:"Domain.Domain", time:datetime|None, index:int) -> None:
@@ -35,6 +37,7 @@ class Version():
         self.full_name = full_name
         self.time = time
         self.index = index
+        self.domain = domain
 
         self.latest = False
         self.released = True
@@ -50,22 +53,44 @@ class Version():
         version_files:list[VersionFile],
     ) -> None:
         self.parent = parent
-        self.tags = tags
+        self._incomplete_tags = tags
+        self._tags:Sequence[VersionTag]|None = None
         self.version_files = version_files
         self.version_files_dict = {version_file.name: version_file for version_file in self.version_files}
         if self.parent is not None:
             self.parent.children.append(self)
 
-        self.tags_dict:dict[str,VersionTag] = {}
+        self._incomplete_tags_dict:dict[str,VersionTag] = {}
+        self._tags_dict:Mapping[str,VersionTag]|None = None
         order_tag:VersionTag|None = None
-        for tag in self.tags:
-            self.tags_dict[tag.name] = tag
+        for tag in self._incomplete_tags:
+            self._incomplete_tags_dict[tag.name] = tag
             if order_tag is None and tag.is_order_tag:
                 order_tag = tag
             self.released = self.released and not tag.is_unreleased_tag
         if order_tag is None:
             raise NoOrderVersionTagsFoundError(self, self.tags)
         self.order_tag = order_tag
+
+    def _get_tags(self) -> tuple[Sequence[VersionTag], Mapping[str,VersionTag]]:
+        tags = self._incomplete_tags.copy()
+        for version_tag in self.domain.version_tags.values():
+            if version_tag.is_auto_assigned_to(self):
+                tags.append(version_tag)
+        tags_dict = {tag.name: tag for tag in tags}
+        return tags, tags_dict
+
+    @property
+    def tags(self) -> Sequence[VersionTag]:
+        if self._tags is None or self._tags_dict is None:
+            self._tags, self._tags_dict = self._get_tags()
+        return self._tags
+
+    @property
+    def tags_dict(self) -> Mapping[str,VersionTag]:
+        if self._tags is None or self._tags_dict is None:
+            self._tags, self._tags_dict = self._get_tags()
+        return self._tags_dict
 
     def get_accessor[a: Accessor](self, file_type:str, required_type:type[a]) -> a|None:
         return self.version_files_dict[file_type].get_accessor(required_type, True)

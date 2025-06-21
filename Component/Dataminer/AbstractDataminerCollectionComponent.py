@@ -11,6 +11,10 @@ class AbstractDataminerCollectionComponent[a: AbstractDataminerCollection](Compo
     my_capabilities = Capabilities(is_dataminer_collection=True)
     restrict_to_file_names = True
 
+    @property
+    def assume_used(self) -> bool:
+        return True
+
     disabled:bool = False
 
     __slots__ = ()

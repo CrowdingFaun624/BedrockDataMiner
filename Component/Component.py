@@ -13,12 +13,13 @@ if TYPE_CHECKING:
     from Component.Capabilities import Capabilities
     from Component.ComponentTyping import CreateComponentFunction
     from Component.Field.Field import Field
+    from Component.Group import Group
     from Component.ScriptImporter import ScriptSetSetSet
     from Utilities.TypeVerifier import TypedDictTypeVerifier
 
 INVALID_NAME_CHARS = set("@\\/ \t\r\n\f\v{}[]()\"!")
 INVALID_NAME_CHARS_DISPLAY = list("@\\/{}[]()\"!")
-INVALID_NAMES:set[str] = {"*", "type", "inherit", "^"}
+INVALID_NAMES:set[str] = {"*", "type", "inherit", "default_type", "group_aliases", "^"}
 
 INVALID_NAME_CHARS_FILE = set("<>:\"\\/|?*")
 INVALID_NAMES_FILE:set[str] = {"CON", "PRN", "AUX", "NUL"} | {f"COM{i}" for i in range(0, 10)} | {f"LPT{i}" for i in range(0, 10)}
@@ -35,10 +36,10 @@ class Component[a]():
     '''
 
     __slots__ = (
-        "component_group",
         "domain",
         "fields",
         "final",
+        "group",
         "index",
         "inline_components",
         "inline_parent",
@@ -49,10 +50,10 @@ class Component[a]():
         "variable_sets",
     )
 
-    def __init__(self, data:Any, name:str, domain:"Domain.Domain", component_group:str, index:int|None, trace:Trace) -> None:
+    def __init__(self, data:Any, name:str, domain:"Domain.Domain", group:"Group", index:int|None, trace:Trace) -> None:
         self.name = name
         self.domain = domain
-        self.component_group = component_group
+        self.group = group
         self.index = index
 
         self.links_to_other_components:list[Component] = []
@@ -83,11 +84,18 @@ class Component[a]():
         for field in self.fields:
             field.set_domain(self.domain)
 
+    @property
+    def assume_used(self) -> bool:
+        '''
+        If True, unused warnings will not be raised for this Component or its children.
+        '''
+        return False
+
     def initialize_fields(self, data:Any) -> Sequence["Field"]:
         return ()
 
     def get_index(self) -> int:
-        "Returns the index of this Component in the Component group. Raises an error if it doesn't have an index."
+        "Returns the index of this Component in the Group. Raises an error if it doesn't have an index."
         if self.index is None:
             raise AttributeNoneError("index", self)
         return self.index
@@ -128,8 +136,8 @@ class Component[a]():
 
     def set_component(
         self,
-        components:dict[str,"Component"],
-        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        local_group:"Group",
+        global_groups:dict[str,dict[str,"Group"]],
         functions:"ScriptSetSetSet",
         create_component_function:"CreateComponentFunction",
         trace:Trace,
@@ -138,11 +146,11 @@ class Component[a]():
         with trace.enter(self, self.name, ...):
             self.inline_components = []
             for field in self.fields:
-                linked_components, new_inline_components = field.set_field(self, components, global_components, functions, create_component_function, trace)
+                linked_components, new_inline_components = field.set_field(self, local_group, global_groups, functions, create_component_function, trace)
                 self.link_components(linked_components)
                 self.inline_components.extend(new_inline_components)
             for inline_component in self.inline_components:
-                inline_component.set_component(components, global_components, functions, create_component_function, trace)
+                inline_component.set_component(local_group, global_groups, functions, create_component_function, trace)
 
     def create_final_component(self, trace:Trace) -> a|EllipsisType:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''
@@ -216,11 +224,11 @@ class Component[a]():
         return False
 
     def __hash__(self) -> int:
-        return hash((self.name, self.component_group, self.domain))
+        return hash((self.name, self.group, self.domain))
 
     @property
     def full_name(self) -> str:
-        return f"{self.domain.name}!{self.component_group}/{self.name}"
+        return f"{self.domain.name}!{self.group.name}/{self.name}"
 
     def __repr__(self) -> str:
-        return f"<{self.class_name} {self.domain.name}!{self.component_group}/{self.name}>"
+        return f"<{self.class_name} {self.domain.name}!{self.group.name}/{self.name}>"

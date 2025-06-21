@@ -1,6 +1,12 @@
+from typing import TYPE_CHECKING, Callable
+
+if TYPE_CHECKING:
+    from Version.Version import Version
+
 class VersionTag():
 
     __slots__ = (
+        "auto_assign",
         "development_name",
         "full_name",
         "is_development_tag",
@@ -24,8 +30,12 @@ class VersionTag():
 
         self.latest_slot:str|None = None
 
-    def link_finals(self, latest_slot:str|None) -> None:
+    def link_finals(self, latest_slot:str|None, auto_assign:list[Callable[["Version"], bool]]) -> None:
         self.latest_slot = latest_slot
+        self.auto_assign = auto_assign
+
+    def is_auto_assigned_to(self, version:"Version") -> bool:
+        return any(auto_assigner(version) for auto_assigner in self.auto_assign)
 
     def __eq__(self, value: object) -> bool:
         if isinstance(value, VersionTag):

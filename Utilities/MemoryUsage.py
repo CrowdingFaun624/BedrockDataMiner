@@ -47,8 +47,8 @@ class MemoryUsage():
     def add_domain(self, domain:"Domain.Domain") -> None:
         self.domains.append(domain)
         structure_set:set[Structure] = set()
-        for structure_base in domain.structures.values():
-            structure_base.get_descendants(structure_set)
+        for dataminer_collection in domain.dataminer_collections.values():
+            dataminer_collection.structure.get_descendants(structure_set)
         all_structures = sorted(structure_set, key=lambda structure: structure.full_name)
         self.cache_structures.extend(structure for structure in all_structures if isinstance(structure, CacheStructure))
         self.similarity_caches.extend(chain.from_iterable(structure.get_similarity_caches() for structure in all_structures))

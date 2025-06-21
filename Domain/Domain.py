@@ -1,16 +1,22 @@
 import json
+from collections import Counter
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, NotRequired, Sequence, TypedDict
+from typing import Callable, Mapping, NotRequired, Sequence, TypedDict
 
 import Component.ScriptImporter as ScriptImporter
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 from Component.BuiltInFunctions import built_in_functions
-from Component.Importer import parse_all_component_groups
+from Component.Component import Component
+from Component.Group import Group
+from Component.Importer import parse_all_groups
+from Component.Importer import print_exceptions as importer_print_exceptions
+from Component.ImporterFinalize import finalize_all as importer_finalize_all
 from Component.ScriptImporter import ScriptSet
 from Component.ScriptReferenceable import ScriptReferenceable
 from Component.Types import TypeStuff, primary_type_stuff
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Dataminer.BuiltIns.AllFilesDataminer import AllFilesDataminer
 from Dataminer.BuiltIns.GrabMultipleFilesDataminer import GrabMultipleFilesDataminer
 from Dataminer.BuiltIns.GrabReFilesDataminer import GrabReFilesDataminer
@@ -21,6 +27,7 @@ from Dataminer.BuiltIns.TagSearcherDataminer import TagSearcherDataminer
 from Dataminer.Dataminer import Dataminer
 from Domain.LibFiles import LibFiles
 from Downloader.Accessor import Accessor
+from Downloader.AccessorType import AccessorType
 from Downloader.DownloadAccessor import DownloadAccessor
 from Downloader.DummyAccessor import DummyAccessor
 from Downloader.SingleDirectoryFileAccessor import SingleDirectoryFileAccessor
@@ -38,29 +45,26 @@ from Structure.Delegate.DefaultDelegate import DefaultDelegate
 from Structure.Delegate.Delegate import Delegate
 from Structure.Delegate.LongStringDelegate import LongStringDelegate
 from Structure.Delegate.PrimitiveDelegate import PrimitiveDelegate
+from Structure.StructureBase import StructureBase
+from Structure.StructureTag import StructureTag
+from Tablifier.Tablifier import Tablifier
 from Utilities.DataFile import DataFile
+from Utilities.Exceptions import ComponentCountError
+from Utilities.Log import Log
 from Utilities.MemoryUsage import memory_usage
 from Utilities.Scripts import Scripts
+from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
 )
+from Version.Version import Version
+from Version.VersionFileType import VersionFileType
 from Version.VersionProvider.LatestVersionProvider import LatestVersionProvider
 from Version.VersionProvider.VersionProvider import VersionProvider
-
-if TYPE_CHECKING:
-    from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
-    from Downloader.AccessorType import AccessorType
-    from Serializer.Serializer import Serializer
-    from Structure.StructureBase import StructureBase
-    from Structure.StructureTag import StructureTag
-    from Tablifier.Tablifier import Tablifier
-    from Utilities.Log import Log
-    from Version.Version import Version
-    from Version.VersionFileType import VersionFileType
-    from Version.VersionTag.VersionTag import VersionTag
-    from Version.VersionTag.VersionTagOrder import VersionTagOrder
+from Version.VersionTag.VersionTag import VersionTag
+from Version.VersionTag.VersionTagOrder import VersionTagOrder
 
 BUILT_IN_ACCESSOR_CLASSES:dict[str,type[Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
     DownloadAccessor,
@@ -108,20 +112,31 @@ class DomainManifestTypedDict(TypedDict):
     dependencies: NotRequired[list[str]]
     is_library: NotRequired[bool]
 
+def get_object_dictionary[T](
+    groups:list[Group],
+    object_type:type[T],
+    primary_name_func:Callable[["Component[T]", Group],str]=lambda component, group: component.name,
+    secondary_name_func:Callable[["Component[T]", Group],str]=lambda component, group: f"{group.name}/{component.name}",
+) -> Mapping[str,T]:
+    final_names:dict[tuple[str,str],T] = {}
+    primary_names:Counter[str] = Counter()
+    for group in groups:
+        for component in group.components.values():
+            if isinstance(component.final, object_type):
+                primary_name, secondary_name = primary_name_func(component, group), secondary_name_func(component, group)
+                final_names[primary_name, secondary_name] = component.final
+                primary_names[primary_name] += 1
+    return {(secondary_name if primary_names[primary_name] > 1 else primary_name): object for (primary_name, secondary_name), object in final_names.items()}
+
 class Domain():
 
     __slots__ = (
-        "accessor_types",
         "component_log_file",
         "dataminer_collections",
-        "latest_slots",
         "logs",
         "serializers",
-        "structures",
         "structure_tags",
         "tablifiers",
-        "version_file_types",
-        "version_tags_order",
         "version_tags",
         "versions",
         "name",
@@ -129,21 +144,8 @@ class Domain():
         "data_directory",
         "lib_directory",
         "log_directory",
-        "logs_file",
         "scripts_directory",
-        "structures_directory",
-        "accessor_types_file",
-        "dataminer_collections_file",
         "domain_file",
-        "serializers_file",
-        "structure_tags_file",
-        "tablifiers_file",
-        "version_file_types_file",
-        "version_tags_directory",
-        "latest_slots_file",
-        "version_tags_file",
-        "version_tags_order_file",
-        "versions_file",
         "versions_directory",
         "comparisons_directory",
         "data_files",
@@ -175,21 +177,8 @@ class Domain():
         self.data_directory             = self.assets_directory.joinpath("data")
         self.lib_directory              = self.assets_directory.joinpath("lib")
         self.log_directory              = self.assets_directory.joinpath("log")
-        self.logs_file                  = self.assets_directory.joinpath("logs.json")
         self.scripts_directory          = self.assets_directory.joinpath("scripts")
-        self.structures_directory       = self.assets_directory.joinpath("structures")
-        self.accessor_types_file        = self.assets_directory.joinpath("accessor_types.json")
-        self.dataminer_collections_file = self.assets_directory.joinpath("dataminer_collections.json")
         self.domain_file                = self.assets_directory.joinpath("domain.json")
-        self.serializers_file           = self.assets_directory.joinpath("serializers.json")
-        self.structure_tags_file        = self.assets_directory.joinpath("structure_tags.json")
-        self.tablifiers_file            = self.assets_directory.joinpath("tablifiers.json")
-        self.version_file_types_file    = self.assets_directory.joinpath("version_file_types.json")
-        self.version_tags_directory     = self.assets_directory.joinpath("version_tag")
-        self.latest_slots_file          = self.version_tags_directory.joinpath("latest_slots.json")
-        self.version_tags_file          = self.version_tags_directory.joinpath("version_tags.json")
-        self.version_tags_order_file    = self.version_tags_directory.joinpath("version_tags_order.json")
-        self.versions_file              = self.assets_directory.joinpath("versions.json")
         self.versions_directory         = FileManager.VERSIONS_DIRECTORY.joinpath(name)
         self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
         self.comparison_file_counts:dict[str, int] = {}
@@ -201,18 +190,13 @@ class Domain():
         self.dependencies:list[Domain]
         self.read_manifest()
 
-        self.accessor_types:dict[str,"AccessorType"]
-        self.dataminer_collections:dict[str,"AbstractDataminerCollection"]
-        self.latest_slots:list[str]
-        self.logs:dict[str,"Log"]
-        self.serializers:dict[str,"Serializer"]
-        self.structures:dict[str,"StructureBase"]
-        self.structure_tags:dict[str,"StructureTag"]
-        self.tablifiers:dict[str,"Tablifier"]
-        self.version_file_types:dict[str,"VersionFileType"]
-        self.version_tags_order:"VersionTagOrder"
-        self.version_tags:dict[str,"VersionTag"]
-        self.versions:dict[str,"Version"]
+        self.dataminer_collections:Mapping[str,"AbstractDataminerCollection"]
+        self.logs:Mapping[str,"Log"]
+        self.serializers:Mapping[str,"Serializer"]
+        self.structure_tags:Mapping[str,"StructureTag"]
+        self.tablifiers:Mapping[str,"Tablifier"]
+        self.version_tags:Mapping[str,"VersionTag"]
+        self.versions:Mapping[str,"Version"]
 
         self.data_files = self._get_data_files()
         '''
@@ -267,9 +251,13 @@ class Domain():
         all_domains = self.get_cascading_dependencies(set())
         for domain in all_domains:
             domain.import_scripts()
-        all_component_groups = parse_all_component_groups(all_domains)
+        all_groups = parse_all_groups(all_domains)
+        trace = Trace()
         for domain in all_domains:
-            domain.set_values(all_component_groups[domain.name])
+            with trace.enter(domain, domain.name, ...):
+                domain.set_values(all_groups[domain])
+        importer_print_exceptions(self, trace)
+        importer_finalize_all(all_groups, self, importer_print_exceptions)
         self.is_imported = True
         memory_usage.add_domain(self)
 
@@ -286,19 +274,14 @@ class Domain():
         self.serializer_classes = ScriptImporter.import_scripted_types("serializers/", self, BUILT_IN_SERIALIZER_CLASSES, Serializer)
         self.version_provider_classes = ScriptImporter.import_scripted_types("version_providers", self, BUILT_IN_VERSION_PROVIDER_CLASSES, VersionProvider)
 
-    def set_values(self, component_groups:dict[str,Any]) -> None:
-        self.accessor_types = component_groups["accessor_types"]
-        self.dataminer_collections = component_groups["dataminer_collections"]
-        self.latest_slots = component_groups["latest_slots"]
-        self.logs = component_groups["logs"]
-        self.serializers = component_groups["serializers"]
-        self.structures = {component_group_name: component_group for component_group_name, component_group in component_groups.items() if component_group_name.startswith("structures/")}
-        self.structure_tags = component_groups["structure_tags"]
-        self.tablifiers = component_groups["tablifiers"]
-        self.version_file_types = component_groups["version_file_types"]
-        self.version_tags_order = component_groups["version_tags_order"]
-        self.version_tags = component_groups["version_tags"]
-        self.versions = component_groups["versions"]
+    def set_values(self, groups:list[Group]) -> None:
+        self.dataminer_collections = get_object_dictionary(groups, AbstractDataminerCollection)
+        self.logs = get_object_dictionary(groups, Log)
+        self.serializers = get_object_dictionary(groups, Serializer)
+        self.structure_tags = get_object_dictionary(groups, StructureTag)
+        self.tablifiers = get_object_dictionary(groups, Tablifier)
+        self.version_tags = get_object_dictionary(groups, VersionTag)
+        self.versions = get_object_dictionary(groups, Version)
 
     def _get_data_files(self) -> dict[str,DataFile]:
         if self.data_directory.exists():
@@ -319,4 +302,5 @@ class Domain():
         return f"<{self.__class__.__name__} {self.name}>"
 
     def __hash__(self) -> int:
+        return hash(self.name)
         return hash(self.name)

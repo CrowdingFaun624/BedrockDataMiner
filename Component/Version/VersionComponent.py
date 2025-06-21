@@ -9,11 +9,11 @@ from Component.Field.ComponentField import OptionalComponentField
 from Component.Field.ComponentListField import ComponentListField
 from Component.Field.Field import Field, InlinePermissions
 from Component.Pattern import Pattern
-from Component.Version.Field.VersionTagListField import VersionTagListField
 from Component.Version.VersionFileComponent import (
     VERSION_FILE_PATTERN,
     VersionFileComponent,
 )
+from Component.VersionTag.VersionTagComponent import VERSION_TAG_PATTERN
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
     DictTypeVerifier,
@@ -48,6 +48,10 @@ class VersionComponent(Component[Version]):
         TypedDictKeyTypeVerifier("type", False, str),
     )
 
+    @property
+    def assume_used(self) -> bool:
+        return True
+
     @classmethod
     def normalize_files(cls, files:dict[str,dict[str,Any]]) -> list[VersionFileTypedDict]:
         "Converts the files key in versions.json into a format more suitable for inline Components."
@@ -69,8 +73,8 @@ class VersionComponent(Component[Version]):
     def initialize_fields(self, data:VersionTypedDict) -> Sequence[Field]:
         self.time = datetime.fromisoformat(data["time"]) if data["time"] is not None else None
 
-        self.parent_field = OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",), allow_inline=InlinePermissions.reference, assume_component_group="versions")
-        self.tags_field = VersionTagListField(data["tags"], ("tags",), self)
+        self.parent_field = OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",), allow_inline=InlinePermissions.reference)
+        self.tags_field = ComponentListField(data["tags"], VERSION_TAG_PATTERN, ("tags",), allow_inline=InlinePermissions.reference)
         self.files_field = ComponentListField(self.normalize_files(data["files"]), VERSION_FILE_PATTERN, ("files",), allow_inline=InlinePermissions.inline, assume_type=VersionFileComponent.class_name)
         return (self.parent_field, self.tags_field, self.files_field)
 

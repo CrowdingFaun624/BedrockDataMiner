@@ -48,7 +48,7 @@ class ScriptReferenceable():
     def get[A](self, path:str, required_type:type[A]|None=None, /) -> A: ...
     def get[A](self, path:str, required_type:type[A]|None=None, /) -> A:
         '''
-        :path: The full path of the Component used to create the object, including the Component group name.
+        :path: The full path of the Component used to create the object, including the Group name.
         :required_type: The type of the object returned.
 
         Raises a ComponentException if the path is invalid or the returned object is not an instance of `required_type`.
@@ -72,7 +72,7 @@ class ScriptReferenceable():
             object_name = path[slash_index+1:]
             if (group := domain_objects.get(group_name)) is None:
                 options = self.get_options(required_type)
-                raise Exceptions.UnrecognizedComponentGroupError(group_name, path, options)
+                raise Exceptions.UnrecognizedGroupError(group_name, path, options)
         # ! and /
         else:
             domain_name = path[:bang_index]
@@ -84,7 +84,7 @@ class ScriptReferenceable():
             object_name = object_path[slash_index-bang_index:]
             if (group := domain_objects.get(group_name)) is None:
                 options = self.get_options(required_type)
-                raise Exceptions.UnrecognizedComponentGroupError(group_name, path, options)
+                raise Exceptions.UnrecognizedGroupError(group_name, path, options)
 
         if (object := group.get(object_name)) is None:
             options = self.get_options(required_type)
@@ -102,7 +102,7 @@ class ScriptReferenceable():
         Can get an object created by a Component during the Script initialization stage. The resulting object can only be gotten
         after Components are fully loaded.
 
-        :path: The full path of the Component used to create the object, including the Component group name.
+        :path: The full path of the Component used to create the object, including the Group name.
         :required_type: The type of the object returned.
 
         Raises a ComponentException if the path is invalid or the returned object is not an instance of `required_type`.

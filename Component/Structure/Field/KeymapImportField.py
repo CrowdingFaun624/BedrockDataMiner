@@ -1,4 +1,4 @@
-from typing import Self, Sequence
+from typing import TYPE_CHECKING, Self, Sequence
 
 import Component.Structure.KeymapStructureComponent as KeymapStructureComponent  # import loop
 from Component.Component import Component
@@ -10,6 +10,8 @@ from Component.ScriptImporter import ScriptSetSetSet
 from Component.Structure.Field.KeymapKeyField import KeymapKeyField
 from Utilities.Trace import Trace
 
+if TYPE_CHECKING:
+    from Component.Group import Group
 
 class KeymapImportField(ComponentListField["KeymapStructureComponent.KeymapStructureComponent"]):
 
@@ -28,14 +30,14 @@ class KeymapImportField(ComponentListField["KeymapStructureComponent.KeymapStruc
     def set_field(
         self,
         source_component:"Component",
-        components:dict[str,"Component"],
-        global_components:dict[str,dict[str,dict[str,"Component"]]],
-        functions:ScriptSetSetSet,
+        local_group:"Group",
+        global_groups:dict[str,dict[str,"Group"]],
+        functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["KeymapStructureComponent.KeymapStructureComponent"],Sequence["KeymapStructureComponent.KeymapStructureComponent"]]:
         with trace.enter_keys(self.trace_path, self.subcomponents_data):
-            subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function, trace)
+            subcomponents, inline_components = super().set_field(source_component, local_group, global_groups, functions, create_component_function, trace)
             self.import_into_keys.extend(
                 key
                 for component in subcomponents

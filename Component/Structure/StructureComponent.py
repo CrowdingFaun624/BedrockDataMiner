@@ -1,3 +1,4 @@
+import Component.Group as Group
 import Domain.Domain as Domain
 from Component.Capabilities import Capabilities
 from Component.Component import Component
@@ -25,9 +26,9 @@ class StructureComponent[a: Structure](Component[a]):
         "my_type",
     )
 
-    def __init__(self, data: StructureTypedDict, name: str, domain: "Domain.Domain", component_group: str, index: int | None, trace:Trace) -> None:
+    def __init__(self, data: StructureTypedDict, name: str, domain: "Domain.Domain", group: "Group.Group", index: int | None, trace:Trace) -> None:
         self.my_type:set[type] = set()
-        super().__init__(data, name, domain, component_group, index, trace)
+        super().__init__(data, name, domain, group, index, trace)
 
     def create_final(self, trace:Trace) -> a:
         return self.structure_type(

@@ -8,10 +8,8 @@ if TYPE_CHECKING:
     from Component.Component import Component
     from Component.ComponentTyping import ComponentTypedDicts
     from Component.Field.Field import Field
-    from Component.ImporterEnvironment import ImporterEnvironment
+    from Component.Group import Group
     from Component.Pattern import Pattern
-    from Component.Structure.StructureBaseComponent import StructureBaseComponent
-    from Component.Version.Field.VersionRangeField import VersionRangeField
     from Component.Version.VersionComponent import VersionComponent
     from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
     from Dataminer.BuiltIns.TagSearcherDataminer import DataReader
@@ -218,22 +216,22 @@ class CacheFileNotFoundError(CacheException):
 class ComponentException(Exception):
     "Abstract Exception class for errors relating to Components."
 
-class BaseComponentCountError(ComponentException):
+class ComponentCountError(ComponentException):
     "There is an invalid number of BaseComponents."
 
-    def __init__(self, structure_name:str, base_components:list["StructureBaseComponent"], message:Optional[str]=None) -> None:
+    def __init__(self, components:Sequence[Any], object_type:type, message:Optional[str]=None) -> None:
         '''
-        :structure_name: The name of the Structure with an invalid count of BaseComponents.
-        :base_components: The list of BaseComponents.
+        :components: The list of Components of duplicate type.
+        :object_type: The type of final in `components`.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(structure_name, base_components, message)
-        self.structure_name = structure_name
-        self.base_components = base_components
+        super().__init__(components, object_type, message)
+        self.components = components
+        self.object_type = object_type
         self.message = message
 
     def __str__(self) -> str:
-        return f"Structure file \"{self.structure_name}\" has more than one BaseComponent: {", ".join(component.name for component in self.base_components)}{message(self.message)}"
+        return f"There is not exactly one Components of type {self.object_type.__name__}{": " if len(self.components) > 0 else ""}{", ".join(component.name for component in self.components)}{message(self.message)}"
 
 class ComponentDuplicateTypeError(ComponentException):
     "A Component has a duplicate type."
@@ -249,6 +247,23 @@ class ComponentDuplicateTypeError(ComponentException):
 
     def __str__(self) -> str:
         return f"Type \"{self.type_str}\" is duplicate{message(self.message)}"
+
+class ComponentFileError(ComponentException):
+    "Failed to read a Component file."
+
+    def __init__(self, file:Path, contents:bytes, message:Optional[str]=None) -> None:
+        '''
+        :file: The name of the invalid file.
+        :contents: The byte contents of the invalid file.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(file, contents, message)
+        self.file = file
+        self.contents = contents
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Cannot read file{self.file}{message(self.message, no_message=": ", yes_message=" %s: ")}{self.contents}"
 
 class ComponentInvalidNameCharacterError(ComponentException):
     "A Component has a name with an illegal character."
@@ -361,19 +376,19 @@ class ComponentMismatchedTypesError(ComponentException):
 class ComponentParseError(ComponentException):
     "Multiple Components failed to parse."
 
-    def __init__(self, failed_component_groups:list[str], exception_count:int, message:Optional[str]=None) -> None:
+    def __init__(self, failed_groups:list[str], exception_count:int, message:Optional[str]=None) -> None:
         '''
-        :failed_component_groups: The Component groups that failed to parse.
+        :failed_groups: The Groups that failed to parse.
         :exception_count: The number of total Exceptions.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(failed_component_groups, exception_count, message)
-        self.failed_component_groups = failed_component_groups
+        super().__init__(failed_groups, exception_count, message)
+        self.failed_groups = failed_groups
         self.exception_count = exception_count
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.exception_count} exceptions in {len(self.failed_component_groups)} Component groups: [{", ".join(self.failed_component_groups)}]{message(self.message)}"
+        return f"{self.exception_count} exceptions in {len(self.failed_groups)} Groups: [{", ".join(self.failed_groups)}]{message(self.message)}"
 
 class ComponentScriptUnreferenceableError(ComponentException):
     "The Component corresponding to the object accessed by a ScriptReferenceable does not allow script referencing of its final."
@@ -429,19 +444,19 @@ class ComponentTypeInvalidTypeError(ComponentException):
 class ComponentTypeMissingError(ComponentException):
     "A Component is missing the type key and there is no type assumption."
 
-    def __init__(self, component_name:str, component_group:str, message:Optional[str]=None) -> None:
+    def __init__(self, component_name:str, group:"Group", message:Optional[str]=None) -> None:
         '''
         :component_name: The name of the Component with the missing type key.
-        :component_group: The Component group the Component is found in.
+        :group: The Group the Component is found in.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component_name, component_group, message)
+        super().__init__(component_name, group, message)
         self.component_name = component_name
-        self.component_group = component_group
+        self.group = group
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component \"{self.component_name}\" in {self.component_group} is missing its type key{message(self.message)}"
+        return f"Component \"{self.component_name}\" in {self.group} is missing its type key{message(self.message)}"
 
 class ComponentTypeRequiresComponentError(ComponentException):
     "A Component has a type that requires a Component but has no Component."
@@ -475,57 +490,22 @@ class ComponentUnrecognizedTypeError(ComponentException):
     def __str__(self) -> str:
         return f"Type \"{self.type_str}\" is unrecognized{message(self.message)}"
 
-class ImporterEnvironmentNameCollisionError(ComponentException):
-    "Two Component groups have the same name."
+class GroupAliasDomainError(ComponentException):
+    "Attempted to create a Group alias with a target in another Domain."
 
-    def __init__(self, name:str, importer_environment1:"ImporterEnvironment", importer_environment2:"ImporterEnvironment", message:Optional[str]=None) -> None:
+    def __init__(self, alias:str, target:str, message:Optional[str]=None) -> None:
         '''
-        :name: The name of the duplicate Component group.
-        :importer_environment1: The ImporterEnvironment that produced the first Component group with this name.
-        :importer_environment2: The ImporterEnvironment that produced the second Component group with this name.
+        :alias: The alias name.
+        :target: The invalid target name.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(name, importer_environment1, importer_environment2, message)
-        self.name = name
-        self.importer_environment1 = importer_environment1
-        self.importer_environment2 = importer_environment2
+        super().__init__(alias, target, message)
+        self.alias = alias
+        self.target = target
         self.message = message
 
     def __str__(self) -> str:
-        return f"ImporterEnvironments {self.importer_environment1} and {self.importer_environment2} both attempted to create a Component group with the name \"{self.name}\"{message(self.message)}"
-
-class ImporterEnvironmentFileNotFoundError(ComponentException):
-    "An ImporterEnvironment refers to a file that does not exist and has no default content"
-
-    def __init__(self, path:Path, importer_environment:"ImporterEnvironment", message:Optional[str]=None) -> None:
-        '''
-        :path: The Path the ImporterEnvironment refers to that does not exist.
-        :importer_environment: The ImporterEnvironment that refers to the Path.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(path, importer_environment, message)
-        self.path = path
-        self.importer_environment = importer_environment
-        self.message = message
-
-class ImporterEnvironmentPathCollisionError(ComponentException):
-    "Two Component groups come from the same file."
-
-    def __init__(self, path:Path, importer_environment1:"ImporterEnvironment", importer_environment2:"ImporterEnvironment", message:Optional[str]=None) -> None:
-        '''
-        :path: The path of the duplicate Component group.
-        :importer_environment1: The ImporterEnvironment that produced the first Component group with this path.
-        :importer_environment2: The ImporterEnvironment that produced the second Component group with this path.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(path, importer_environment1, importer_environment2, message)
-        self.path = path
-        self.importer_environment1 = importer_environment1
-        self.importer_environment2 = importer_environment2
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"ImporterEnvironments {self.importer_environment1} and {self.importer_environment2} both attempted to create a Component group from the same file \"{self.path.as_posix()}\"{message(self.message)}"
+        return f"Cannot create Group alias \"{self.alias}\": \"{self.target}\" to another Domain{message(self.message)}"
 
 class InlineComponentError(ComponentException):
     "An inline Component exists where it is not allowed."
@@ -738,24 +718,24 @@ class UnrecognizedComponentDomainError(ComponentException):
     def __str__(self) -> str:
         return f"Domain \"{self.domain}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
-class UnrecognizedComponentGroupError(ComponentException):
-    "A Component group is unrecognized"
+class UnrecognizedGroupError(ComponentException):
+    "A Group is unrecognized"
 
-    def __init__(self, component_group:str, key:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, group_name:str, key:str, options:list[str], message:Optional[str]=None) -> None:
         '''
-        :component_group: The name of the unrecognized Component group.
+        :group_name: The name of the unrecognized Group.
         :key: The key used to reference the Component.
         :options: Values that `key` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component_group, key, options, message)
-        self.component_group = component_group
+        super().__init__(group_name, key, options, message)
+        self.group_name = group_name
         self.key = key
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component group \"{self.component_group}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Group \"{self.group_name}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedComponentTypeError(ComponentException):
     "A Component type is unrecognized."
@@ -1937,7 +1917,7 @@ class InvalidVersionTimeError(VersionException):
 class NoOrderVersionTagsFoundError(VersionException):
     "No ordering VersionTags were found."
 
-    def __init__(self, version:"Version", version_tags:list["VersionTag"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", version_tags:Sequence["VersionTag"], message:Optional[str]=None) -> None:
         '''
         :version: The Version with no ordering tags.
         :version_tags: The list of VersionTags containing no ordering tags.
@@ -2058,7 +2038,7 @@ class VersionChildOrderError(VersionException):
 class VersionOrderingTagsError(VersionException):
     "The Version has none or too many ordering VersionTags."
 
-    def __init__(self, version:"Version", count:int, tags:list["VersionTag"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", count:int, tags:Sequence["VersionTag"], message:Optional[str]=None) -> None:
         '''
         :version: The Version that has an invalid number of ordering VersionTags.
         :count: The number of ordering VersionTags this Version has.
@@ -2119,7 +2099,7 @@ class VersionRangeOrderError(VersionException):
 
     def __init__(
         self,
-        version_range:"VersionRange|VersionRangeField",
+        version_range:"VersionRange",
         start_version:"Version|VersionComponent",
         stop_version:"Version|VersionComponent",
         message:Optional[str]=None

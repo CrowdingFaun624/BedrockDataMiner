@@ -23,6 +23,10 @@ class SerializerComponent(Component[Serializer]):
         TypedDictKeyTypeVerifier("type", False, str),
     )
 
+    @property
+    def assume_used(self) -> bool:
+        return True
+
     __slots__ = (
         "arguments",
         "serializer_class_field",

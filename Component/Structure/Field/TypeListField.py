@@ -1,4 +1,4 @@
-from typing import Sequence, cast
+from typing import TYPE_CHECKING, Sequence, cast
 
 import Utilities.Exceptions as Exceptions
 from Component.Component import Component
@@ -12,6 +12,8 @@ from Component.Structure.TypeAliasComponent import (
 )
 from Utilities.Trace import Trace
 
+if TYPE_CHECKING:
+    from Component.Group import Group
 
 class TypeListField(AbstractTypeField):
     '''A link to multiple TypeAliasComponents and/or types.'''
@@ -34,9 +36,9 @@ class TypeListField(AbstractTypeField):
     def set_field(
         self,
         source_component:"Component",
-        components:dict[str,"Component"],
-        global_components:dict[str,dict[str,dict[str,"Component"]]],
-        functions:ScriptSetSetSet,
+        local_group:"Group",
+        global_groups:dict[str,dict[str,"Group"]],
+        functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["TypeAliasComponent"],Sequence["TypeAliasComponent"]]:
@@ -54,7 +56,7 @@ class TypeListField(AbstractTypeField):
                         subcomponent_type = self.domain.type_stuff.default_types[subcomponent_data]
                         self.primitive_types.append(subcomponent_type)
                     else:
-                        subcomponent, is_inline = choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, global_components, trace, self.trace_path, create_component_function, None, None, self.domain.type_stuff.default_types)
+                        subcomponent, is_inline = choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, local_group, global_groups, trace, self.trace_path, create_component_function, None, self.domain.type_stuff.default_types)
                         if subcomponent is ...:
                             continue
                         if is_inline:

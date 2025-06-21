@@ -43,7 +43,7 @@ class FileStructureComponent(PassthroughStructureComponent[FileStructure]):
         self.file_types_field = TypeListField(data.get("file_types", "abstract_file"), ("file_types",)).must_be(self.domain.type_stuff.file_types).make_default(self.pre_normalized_types_field)
         self.structure_field = OptionalComponentField(data["structure"], STRUCTURE_COMPONENT_PATTERN, ("structure",))
         self.content_types_field = TypeListField(data["content_types"], ("content_types",)).verify_with(self.structure_field).add_to_set(self.my_type)
-        self.serializer_field = OptionalComponentField(data["serializer"], SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
+        self.serializer_field = OptionalComponentField(data["serializer"], SERIALIZER_PATTERN, ("serializer",))
 
         self.variable_bools["children_has_garbage_collection"] = True
         fields.extend((self.file_types_field, self.structure_field, self.content_types_field, self.serializer_field))
