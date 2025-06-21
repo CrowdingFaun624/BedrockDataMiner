@@ -20,12 +20,13 @@ class TagListField(ComponentListField["StructureTagComponent"]):
         "tag_sets",
     )
 
-    def __init__(self, subcomponents_strs:Sequence[str]|str, path:tuple[str,...]) -> None:
+    def __init__(self, subcomponents_strs:Sequence[str]|str, path:tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
         :subcomponents_strs: The names of the TagComponents this Field refers to.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
-        super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=InlinePermissions.reference)
+        super().__init__(subcomponents_strs, TAG_PATTERN, path, cumulative_path, allow_inline=InlinePermissions.reference)
         self.tag_sets:list[set["StructureTagComponent"]] = []
         self.import_from_field:TagListField|None = None
         self._finals:set[StructureTag]|None = None

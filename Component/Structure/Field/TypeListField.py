@@ -24,10 +24,11 @@ class TypeListField(AbstractTypeField):
         "type_aliases",
     )
 
-    def __init__(self, subcomponents_strs:Sequence[str]|str, path:tuple[str,...]) -> None:
+    def __init__(self, subcomponents_strs:Sequence[str]|str, path:tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
         :subcomponents_strs: List of string representing a default type or Component.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
         super().__init__((subcomponents_strs,) if isinstance(subcomponents_strs, str) else subcomponents_strs, path)
         self.primitive_types:list[type]

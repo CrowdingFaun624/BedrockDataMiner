@@ -1,4 +1,4 @@
-from typing import Callable, Iterator, MutableSequence
+from typing import Callable, Iterator
 
 from Component.Field.Field import Field
 from Component.Field.FieldContainer import FieldContainer
@@ -10,9 +10,6 @@ class FieldListField[a: Field](FieldContainer[a]):
     '''
 
     __slots__ = ()
-
-    def __init__(self, fields:MutableSequence[a], path:tuple[str,...]) -> None:
-        super().__init__(fields, path)
 
     def extend(self, new_fields:Iterator[a]) -> None:
         '''

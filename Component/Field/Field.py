@@ -148,15 +148,18 @@ class Field():
     '''Abstract class of Fields. Fields are a modular way to manage the data of Components.'''
 
     __slots__ = (
+        "cumulative_path",
         "domain",
         "trace_path",
     )
 
-    def __init__(self, path:tuple[str,...]) -> None:
+    def __init__(self, path:tuple[str,...], cumulative_path:tuple[str,...]|None) -> None:
         '''
-        :path: The JSON keys that created this Field.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
         self.trace_path = path
+        self.cumulative_path = path if cumulative_path is None else cumulative_path
 
     def set_domain(self, domain:"Domain.Domain") -> None:
         self.domain = domain

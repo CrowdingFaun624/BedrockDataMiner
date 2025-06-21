@@ -19,12 +19,13 @@ class KeymapImportField(ComponentListField["KeymapStructureComponent.KeymapStruc
         "import_into_keys",
     )
 
-    def __init__(self, subcomponents_data:Sequence[str]|str, path:tuple[str,...]) -> None:
+    def __init__(self, subcomponents_data:Sequence[str]|str, path:tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
         :subcomponents_data: The names of the Components this Field refers to.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
-        super().__init__(subcomponents_data, KeymapStructureComponent.IMPORTABLE_KEYS_PATTERN, path, allow_inline=InlinePermissions.reference)
+        super().__init__(subcomponents_data, KeymapStructureComponent.IMPORTABLE_KEYS_PATTERN, path, cumulative_path, allow_inline=InlinePermissions.reference)
         self.import_into_keys:FieldListField[KeymapKeyField]
 
     def set_field(

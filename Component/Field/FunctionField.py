@@ -17,12 +17,13 @@ class FunctionField(Field):
         "function_name",
     )
 
-    def __init__(self, function_name:str, path:tuple[str,...]) -> None:
+    def __init__(self, function_name:str, path:tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
         :function_name: The name of the function this refers to.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
-        super().__init__(path)
+        super().__init__(path, cumulative_path)
         self.function_name = function_name
         self.function:Callable
 
@@ -47,18 +48,19 @@ class OptionalFunctionField(FieldContainer):
         "function_field",
     )
 
-    def __init__(self, function_name:str|None, path:tuple[str,...]) -> None:
+    def __init__(self, function_name:str|None, path:tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
         :function_name: The name of the function this refers to.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
         self.function_field:FunctionField|None
         if function_name is None:
             self.function_field = None
-            super().__init__([], path)
+            super().__init__([], path, cumulative_path)
         else:
-            self.function_field = FunctionField(function_name, path)
-            super().__init__([self.function_field], path)
+            self.function_field = FunctionField(function_name, path, cumulative_path)
+            super().__init__([self.function_field], path, cumulative_path)
 
     @property
     def function(self) -> Callable|None:

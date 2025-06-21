@@ -66,7 +66,7 @@ class KeymapStructureComponent(MappingStructureComponent[KeymapStructure]):
 
         self.tags_for_all_field = TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags) # must be before keys.
         self.keys = FieldListField([
-            KeymapKeyField(key_data, key, self.children_tags, ("keys", key), self).add_tag_fields(self.tags_for_all_field)
+            KeymapKeyField(key_data, key, self.children_tags, self, (key,), ("keys", key)).add_tag_fields(self.tags_for_all_field)
             for key, key_data in data.get("keys", {}).items()
         ], ("keys",))
         self.key_structure_field = OptionalComponentField(data.get("key_structure", None), STRUCTURE_COMPONENT_PATTERN, ("key_structure",))

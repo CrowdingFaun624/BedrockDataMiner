@@ -29,6 +29,7 @@ class ComponentListField[a:Component](Field):
         subcomponents_data:Sequence[str|ComponentTypedDicts]|str|ComponentTypedDicts,
         pattern:Pattern[a],
         path:tuple[str,...],
+        cumulative_path:tuple[str,...]|None=None,
         *,
         allow_inline:InlinePermissions=InlinePermissions.mixed,
         assume_type:str|None=None,
@@ -36,11 +37,12 @@ class ComponentListField[a:Component](Field):
         '''
         :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.
         :pattern: The Pattern used to search for Components.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
-        super().__init__(path)
+        super().__init__(path, cumulative_path)
         # I wouldn't have to use a cast here if it would get the hint and actually say that it's Sequence[str|ComponentTyping.ComponentTypedDicts] instead of tuple[ComponentTypedDicts|str]|Sequence[ComponentTypedDicts|str]
         self.subcomponents_data:Sequence[str|ComponentTypedDicts] = cast(Any, (subcomponents_data,)) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
         self.subcomponents:list[a]

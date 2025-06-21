@@ -30,6 +30,7 @@ class ComponentField[a: Component](Field):
         subcomponent_data:str|ComponentTypedDicts,
         pattern:Pattern[a],
         path:tuple[str,...],
+        cumulative_path:tuple[str,...]|None=None,
         *,
         allow_inline:InlinePermissions=InlinePermissions.mixed,
         assume_type:str|None=None,
@@ -37,11 +38,12 @@ class ComponentField[a: Component](Field):
         '''
         :subcomponent_data: The name of the reference Component or data of the inline Component.
         :pattern: The Pattern used to search for Components.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
-        super().__init__(path)
+        super().__init__(path, cumulative_path)
         self.subcomponent_data = subcomponent_data
         self.subcomponent:a # can only be accessed after the set_field stage
         self.pattern = pattern
@@ -88,6 +90,7 @@ class OptionalComponentField[a: Component](FieldContainer):
             subcomponent_data:str|ComponentTypedDicts|None,
             pattern:Pattern[a],
             path:tuple[str,...],
+            cumulative_path:tuple[str,...]|None=None,
             *,
             allow_inline:InlinePermissions=InlinePermissions.mixed,
             assume_type:str|None=None,
@@ -95,17 +98,18 @@ class OptionalComponentField[a: Component](FieldContainer):
         '''
         :subcomponent_data: The name of the reference Component, data of the inline Component, or None.
         :pattern: The Pattern used to search for Components.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
         self.component_field:ComponentField|None
         if subcomponent_data is None:
             self.component_field = None
-            super().__init__([], path)
+            super().__init__([], path, cumulative_path)
         else:
-            self.component_field = ComponentField(subcomponent_data, pattern, path, allow_inline=allow_inline, assume_type=assume_type)
-            super().__init__([self.component_field], path)
+            self.component_field = ComponentField(subcomponent_data, pattern, path, cumulative_path, allow_inline=allow_inline, assume_type=assume_type)
+            super().__init__([self.component_field], path, cumulative_path)
 
     def map[b](self, function:Callable[[a],b]=lambda component: component.final) -> b|None:
         return None if self.component_field is None else function(self.component_field.subcomponent)

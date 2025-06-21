@@ -18,13 +18,14 @@ class ScriptedClassField[A](Field):
         "scripted_objects_function",
     )
 
-    def __init__(self, class_name:str, scripted_objects:Callable[[ScriptSetSetSet],ScriptSetSet[A]], path: tuple[str,...]) -> None:
+    def __init__(self, class_name:str, scripted_objects:Callable[[ScriptSetSetSet],ScriptSetSet[A]], path: tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
         :class_name: The name of the scripted object.
         :scripted_objects: A function that returns the desired attribute of the Domain's ScriptSetSetSet.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
-        super().__init__(path)
+        super().__init__(path, cumulative_path)
         self.class_name:str = class_name
         self.object_class:A
         self.scripted_objects_function = scripted_objects
@@ -51,20 +52,21 @@ class OptionalScriptedClassField[A, B](FieldContainer):
         "scripted_class_field",
     )
 
-    def __init__(self, class_name:str|None, scripted_objects:Callable[[ScriptSetSetSet],ScriptSetSet[A]], path: tuple[str,...], *, default:B=None) -> None:
+    def __init__(self, class_name:str|None, scripted_objects:Callable[[ScriptSetSetSet],ScriptSetSet[A]], path: tuple[str,...], cumulative_path:tuple[str,...]|None=None, *, default:B=None) -> None:
         '''
         :class_name: The name of the scripted object or None.
         :scripted_objects: A function that returns the desired attribute of the Domain's ScriptSetSetSet.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
         self.scripted_class_field:ScriptedClassField|None
         self.default = default
         if class_name is None:
             self.scripted_class_field = None
-            super().__init__([], path)
+            super().__init__([], path, cumulative_path)
         else:
-            self.scripted_class_field = ScriptedClassField(class_name, scripted_objects, path)
-            super().__init__([self.scripted_class_field], path)
+            self.scripted_class_field = ScriptedClassField(class_name, scripted_objects, path, cumulative_path)
+            super().__init__([self.scripted_class_field], path, cumulative_path)
 
     @property
     def object_class(self) -> A|B:

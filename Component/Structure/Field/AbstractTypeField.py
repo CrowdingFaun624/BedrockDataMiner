@@ -25,8 +25,13 @@ class AbstractTypeField(Field):
 
     _types: tuple[type,...]
 
-    def __init__(self, subcomponent_data:Any, path: tuple[str,...]) -> None:
-        super().__init__(path)
+    def __init__(self, subcomponent_data:Any, path: tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
+        '''
+        :subcomponent_data: The name of the type or types.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
+        '''
+        super().__init__(path, cumulative_path)
         self.subcomponent_data = subcomponent_data
         self.final_types:tuple[type,...]|None = None # used as cached value in `types` property.
         self.verify_with_component:VerifyComponentType|None=None

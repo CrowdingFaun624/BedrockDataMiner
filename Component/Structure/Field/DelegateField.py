@@ -23,8 +23,15 @@ class OptionalDelegateField(Field):
         "domain",
     )
 
-    def __init__(self, delegate_name:str|None, arguments:dict[str,Any], domain:"Domain.Domain", path: tuple[str,...]) -> None:
-        super().__init__(path)
+    def __init__(self, delegate_name:str|None, arguments:dict[str,Any], domain:"Domain.Domain", path: tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
+        '''
+        :delegate_name: The name of the Delegate class.
+        :arguments: Arguments to initialize the Delegate with.
+        :domain: The Domain of the Component that created this Delegate.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
+        '''
+        super().__init__(path, cumulative_path)
         self.delegate_name = delegate_name
         self.arguments = arguments
         self.domain = domain

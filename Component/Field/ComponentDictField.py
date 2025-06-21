@@ -30,6 +30,7 @@ class ComponentDictField[a:Component](Field):
         subcomponents_data:dict[str,str|ComponentTypedDicts]|dict[str,str]|dict[str,ComponentTypedDicts],
         pattern:Pattern[a],
         path:tuple[str,...],
+        cumulative_path:tuple[str,...]|None=None,
         *,
         allow_inline:InlinePermissions=InlinePermissions.mixed,
         assume_type:str|None=None,
@@ -37,11 +38,12 @@ class ComponentDictField[a:Component](Field):
         '''
         :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.
         :pattern: The Pattern used to search for Components.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
-        super().__init__(path)
+        super().__init__(path, cumulative_path)
         self.subcomponents_data = subcomponents_data
         self.subcomponents:dict[str,a]
         self.pattern = pattern

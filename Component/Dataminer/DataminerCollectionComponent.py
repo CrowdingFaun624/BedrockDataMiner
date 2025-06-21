@@ -54,6 +54,7 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent[Datamine
             ComponentField(
                 dataminer_settings_data,
                 DATAMINER_SETTINGS_PATTERN,
+                (str(index),),
                 ("dataminers", str(index)),
                 allow_inline=InlinePermissions.inline,
                 assume_type=DataminerSettingsComponent.class_name,

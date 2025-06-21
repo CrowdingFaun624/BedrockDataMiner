@@ -29,16 +29,28 @@ class KeymapKeyField(FieldContainer[Field]):
         "value_weight",
     )
 
-    def __init__(self, data:KeymapStructureKeyTypedDict, key:str, tag_set:set["StructureTagComponent"], path:tuple[str,...], source_component:"KeymapStructureComponent", *, allow_inline:InlinePermissions=InlinePermissions.mixed) -> None:
+    def __init__(
+        self,
+        data:KeymapStructureKeyTypedDict,
+        key:str,
+        tag_set:set["StructureTagComponent"],
+        source_component:"KeymapStructureComponent",
+        path:tuple[str,...],
+        cumulative_path:tuple[str,...]|None=None,
+        *,
+        allow_inline:InlinePermissions=InlinePermissions.mixed,
+    ) -> None:
         '''
         :data: A dictionary containing the keys data.
         :key: The key that this Field corresponds to.
         :tag_set: The set of tags to update when `set_field` is called.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         :source_component: The original Component that owns this Field.
         :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         '''
-        super().__init__([], path)
+        super().__init__([], path, cumulative_path)
+        if cumulative_path is None: cumulative_path = path
         self.key = key
         self.source_component = source_component # used to make sure keys cannot be imported in chains.
         self.allow_inline = allow_inline
@@ -47,9 +59,9 @@ class KeymapKeyField(FieldContainer[Field]):
         self.similarity_weight = data.get("similarity_weight", 1)
         self.value_weight = data.get("weight", None)
 
-        self.subcomponent_field = OptionalComponentField(data.get("structure", None), STRUCTURE_COMPONENT_PATTERN, (*path, "structure"), allow_inline=allow_inline)
-        self.tags_field = TagListField(data.get("tags", ()), (*path, "tags")).add_to_tag_set(tag_set)
-        self.types_field = TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), (*path, "types")).verify_with(self.subcomponent_field)
+        self.subcomponent_field = OptionalComponentField(data.get("structure", None), STRUCTURE_COMPONENT_PATTERN, ("structure",), (*cumulative_path, "structure"), allow_inline=allow_inline)
+        self.tags_field = TagListField(data.get("tags", ()), ("tags",), (*cumulative_path, "tags")).add_to_tag_set(tag_set)
+        self.types_field = TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), ("types",), (*cumulative_path, "types")).verify_with(self.subcomponent_field)
 
         self.tags_for_all_field:TagListField|None = None
 

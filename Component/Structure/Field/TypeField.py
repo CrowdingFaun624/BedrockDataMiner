@@ -24,12 +24,13 @@ class TypeField(AbstractTypeField):
         "subcomponent_data",
     )
 
-    def __init__(self, subcomponent_data:str, path:tuple[str,...]) -> None:
+    def __init__(self, subcomponent_data:str, path:tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
         :subcomponent_data: String representing a default type or Component.
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
         '''
-        super().__init__(subcomponent_data, path)
+        super().__init__(subcomponent_data, path, cumulative_path)
         self.subcomponent:type|TypeAliasComponent
 
     def set_field(

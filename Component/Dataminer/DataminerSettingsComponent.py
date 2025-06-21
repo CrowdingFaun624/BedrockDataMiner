@@ -71,6 +71,7 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
             ComponentField(
                 dependency_name,
                 ABSTRACT_DATAMINER_COLLECTION_PATTERN,
+                (str(index),),
                 ("dependencies", str(index)),
                 allow_inline=InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", ()))

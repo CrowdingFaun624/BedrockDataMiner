@@ -19,8 +19,13 @@ class FieldContainer[a: Field](Field):
         "fields",
     )
 
-    def __init__(self, fields:MutableSequence[a], path: tuple[str,...]) -> None:
-        super().__init__(path)
+    def __init__(self, fields:MutableSequence[a], path: tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
+        '''
+        :fields: The sequence of Fields to store in this Field.
+        :path: The keys from the next parent Field.
+        :cumulative_path: The keys from the next parent Component.
+        '''
+        super().__init__(path, cumulative_path)
         self.fields = fields
 
     def set_domain(self, domain: "Domain.Domain") -> None:
