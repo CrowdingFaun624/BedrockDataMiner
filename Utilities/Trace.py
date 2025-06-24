@@ -150,7 +150,7 @@ class Trace():
                     exception_string = str(exception)
                 case _:
                     exception_string = "".join(traceback.format_exception(error_trace.exception)).rstrip()
-            yield f"{error_trace.exception.__class__.__name__} at {stringify_trace(error_trace.trace)}{f" from data {repr(error_trace.trace[-1][2])}" if error_trace.trace[-1][2] is not ... else ""}:{"\n" if exception_string.count("\n") > 0 else " "}{exception_string}"
+            yield f"{error_trace.exception.__class__.__name__} at {stringify_trace(error_trace.trace)}{f" from data {repr(error_trace.trace[-1][2])}" if len(error_trace.trace) > 0 and error_trace.trace[-1][2] is not ... else ""}:{"\n" if exception_string.count("\n") > 0 else " "}{exception_string}"
 
 class ErrorTrace():
 
@@ -167,3 +167,6 @@ class ErrorTrace():
         '''
         self.trace = trace
         self.exception = exception
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} {stringify_trace(self.trace)}>"
