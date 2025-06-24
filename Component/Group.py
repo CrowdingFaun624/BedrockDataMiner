@@ -7,6 +7,7 @@ import Domain.Domain as Domain
 from Component.Component import Component
 from Component.ComponentTypes import component_types
 from Component.ComponentTyping import GroupFileType
+from Component.InheritedComponent import InheritedComponent
 from Utilities.Exceptions import (
     ComponentFileError,
     ComponentTypeMissingError,
@@ -63,6 +64,10 @@ class Group():
         components:dict[str,Component] = {}
         for index, (component_name, component_data) in enumerate(contents.items()):
             with trace.enter(component_name, component_name, component_data): # substitute actual Component for its name, since it's not created yet.
+                if "inherit" in component_data:
+                    components[component_name] = InheritedComponent(component_data, component_name, self.domain, self, index, trace)
+                    # InheritedComponents do not have their arguments verified nor their Fields initialized.
+                    continue
                 component_type_str = component_data.get("type", self.default_type)
                 if component_type_str is None:
                     trace.exception(ComponentTypeMissingError(component_name, self))
@@ -71,10 +76,9 @@ class Group():
                 if component_type is None:
                     trace.exception(UnrecognizedComponentTypeError(component_type_str, f"{self.domain.name}!{self.name}/{component_name}>", list(component_types_dict.keys())))
                     continue
-                if component_type.verify_arguments(component_data, trace):
-                    continue
                 component = component_type(component_data, component_name, self.domain, self, index, trace)
-                components[component_name] = component
+                if component.abstract or not component.init(trace):
+                    components[component_name] = component
         return components
 
     def _get_components(self, trace:Trace) -> dict[str,Component]:
@@ -110,8 +114,12 @@ class Group():
                     trace.exception(UnrecognizedGroupError(target, target, list(all_groups.keys()), f"from alias {alias}"))
                     continue
 
+    @property
+    def full_name(self) -> str:
+        return f"{self.domain.name}!{self.name}"
+
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.domain.name}!{self.name}>"
 
     def __hash__(self) -> int:
-        return hash(self.name)
+        return hash((self.domain, self.name))

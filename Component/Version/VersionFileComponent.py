@@ -32,6 +32,7 @@ class VersionFileComponent(Component[VersionFile]):
         TypedDictKeyTypeVerifier("type", False, str),
         TypedDictKeyTypeVerifier("version_file_type", True, str),
     )
+    allow_reference_inheritance = False
 
     __slots__ = (
         "accessors_field",

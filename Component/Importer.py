@@ -9,6 +9,7 @@ import Utilities.Exceptions as Exceptions
 from Component.Component import Component
 from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
 from Component.Group import Group, component_types_dict
+from Component.InheritedComponent import InheritedComponent
 from Component.ScriptImporter import ScriptSetSetSet
 from Utilities.Trace import Trace, TraceType
 
@@ -16,16 +17,21 @@ from Utilities.Trace import Trace, TraceType
 def print_exceptions(domain:"Domain.Domain", trace:Trace) -> None:
     texts:list[str] = list(trace.stringify())
     failed_groups:set[str] = {name() for (object, name, data, trace_type) in trace.objects if trace_type is TraceType.object and isinstance(object, Group)}
-    with open(domain.component_log_file, "wb") as f:
-        f.write("\n".join(texts).encode())
     if len(texts) > 0:
+        with open(domain.component_log_file, "wb") as f:
+            f.write("\n".join(texts).encode())
         for text in texts:
             print(text)
         raise Exceptions.ComponentParseError(sorted(failed_groups), len(texts))
 
 def get_inline_component_function(domain:"Domain.Domain", trace:Trace) -> CreateComponentFunction:
+    # This function does not resolve inherited Components; it is resolved in Field.refer_to_component
     def create_inline_component(component_data:ComponentTypedDicts, parent_component:Component, default_type:str|None, path:tuple[str,...]) -> Component|EllipsisType:
         component_name = parent_component.get_inline_component_name(path)
+        if "inherit" in component_data:
+            component = InheritedComponent(component_data, component_name, domain, parent_component.group, None, trace)
+            component.inline_parent = parent_component
+            return component
         component_type_str = component_data.get("type", default_type)
         if component_type_str is None:
             trace.exception(Exceptions.ComponentTypeMissingError(component_name, parent_component.group))
@@ -34,10 +40,10 @@ def get_inline_component_function(domain:"Domain.Domain", trace:Trace) -> Create
         if component_type is None:
             trace.exception(Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{domain.name}!{parent_component.group.name}/{component_name}>", list(component_types_dict.keys())))
             return ...
-        if component_type.verify_arguments(component_data, trace):
-            return ...
         component = component_type(component_data, component_name, domain, parent_component.group, None, trace)
         component.inline_parent = parent_component
+        if not component.abstract and component.init(trace): # verifies types and initializes Fields.
+            return ...
         return component
     return create_inline_component
 
@@ -94,6 +100,19 @@ def create_groups(domains:Sequence["Domain.Domain"], trace:Trace) -> dict["Domai
 def get_imports(domains:Sequence["Domain.Domain"]) -> dict["Domain.Domain",Sequence["Domain.Domain"]]:
     return {domain: domain.dependencies for domain in domains}
 
+def inheritance(all_components:dict["Domain.Domain",list[Group]], primary_domain:"Domain.Domain", trace:Trace) -> None:
+    global_groups:dict[str,dict[str,Group]] = {domain.name: {group.name: group for group in groups} for domain, groups in all_components.items()}
+    for domain, groups in all_components.items():
+        with trace.enter(domain, domain.name, ...):
+            for group in groups:
+                with trace.enter(group, group.name, ...):
+                    for component_name, component in group.components.items():
+                        new_component = component.inheritance(set(), global_groups, {}, trace)
+                        if new_component is ...: # an error occurred.
+                            continue
+                        group.components[component_name] = new_component
+    print_exceptions(primary_domain, trace)
+
 def set_components(all_components:dict["Domain.Domain",list[Group]], domain_imports:dict["Domain.Domain",Sequence["Domain.Domain"]], primary_domain:"Domain.Domain", functions:dict["Domain.Domain",ScriptSetSetSet], trace:Trace) -> None:
     for domain, groups in all_components.items():
         with trace.enter(domain, domain.name, ...):
@@ -113,11 +132,17 @@ def create_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Doma
         with trace.enter(domain, domain.name, ...):
             for group in groups:
                 with trace.enter(group, group.name, ...):
+                    remove_components:list[str] = []
                     for component in group.components.values():
+                        if component.abstract: # remove abstract Components, since they are no longer used.
+                            remove_components.append(component.name)
+                            continue
                         component_output = component.create_final_component(trace)
                         if component_output is ...:
                             continue
                         component.final = component_output
+                    for remove_component in remove_components:
+                        del group.components[remove_component]
     print_exceptions(domain, trace)
 
 def link_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
@@ -197,6 +222,7 @@ def parse_all_groups(domains:Sequence["Domain.Domain"]) -> dict["Domain.Domain",
     groups = create_groups(domains, trace)
     domain_imports = get_imports(domains)
     functions = get_all_functions(domain_imports)
+    inheritance(groups, domains[-1], trace)
     set_components(groups, domain_imports, domains[-1], functions, trace)
     propagate_variables(groups, domains[-1], trace)
     create_finals(groups, domains[-1], trace)

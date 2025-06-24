@@ -1,10 +1,7 @@
-from typing import TYPE_CHECKING, Any, Sequence, cast
+from typing import Any, Sequence
 
 import Domain.Domain as Domain
-from Component.Accessor.AccessorTypeComponent import (
-    ACCESSOR_TYPE_PATTERN,
-    AccessorTypeComponent,
-)
+from Component.Accessor.AccessorTypeComponent import ACCESSOR_TYPE_PATTERN
 from Component.Capabilities import Capabilities
 from Component.Component import Component
 from Component.ComponentTyping import AccessorTypedDict
@@ -17,10 +14,6 @@ from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 from Version.Version import Version
 from Version.VersionFile import VersionFile
-
-if TYPE_CHECKING:
-    from Component.Version.VersionComponent import VersionComponent
-    from Component.Version.VersionFileComponent import VersionFileComponent
 
 ACCESSOR_PATTERN:Pattern["AccessorComponent"] = Pattern("is_accessor")
 
@@ -82,6 +75,7 @@ class AccessorComponent(Component[AccessorCreator]):
         TypedDictKeyTypeVerifier("arguments", True, dict),
         TypedDictKeyTypeVerifier("type", False, str),
     )
+    allow_reference_inheritance = False
 
     __slots__ = (
         "arguments",

@@ -46,6 +46,7 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
         TypedDictKeyTypeVerifier("structure_info", False, dict),
         TypedDictKeyTypeVerifier("type", False, str),
     )
+    allow_reference_inheritance = False
 
     __slots__ = (
         "arguments",

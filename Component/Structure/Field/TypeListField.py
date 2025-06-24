@@ -62,6 +62,7 @@ class TypeListField(AbstractTypeField):
                             continue
                         if is_inline:
                             trace.exception(Exceptions.InlineComponentError(source_component, self, cast(TypeAliasTypedDict, subcomponent_data)))
+                            continue
                         components_used.append(subcomponent)
                         self.type_aliases.append(subcomponent)
             return components_used, ()

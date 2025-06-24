@@ -303,4 +303,3 @@ class Domain():
 
     def __hash__(self) -> int:
         return hash(self.name)
-        return hash(self.name)

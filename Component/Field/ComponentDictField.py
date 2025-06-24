@@ -5,7 +5,7 @@ import Utilities.Exceptions as Exceptions
 from Component.Component import Component
 from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
 from Component.Field.Field import Field, InlinePermissions, choose_component
-from Component.Pattern import Pattern
+from Component.Pattern import AbstractPattern
 from Component.ScriptImporter import ScriptSetSetSet
 from Utilities.Trace import Trace
 
@@ -28,7 +28,7 @@ class ComponentDictField[a:Component](Field):
     def __init__(
         self,
         subcomponents_data:dict[str,str|ComponentTypedDicts]|dict[str,str]|dict[str,ComponentTypedDicts],
-        pattern:Pattern[a],
+        pattern:AbstractPattern[a],
         path:tuple[str,...],
         cumulative_path:tuple[str,...]|None=None,
         *,

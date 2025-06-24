@@ -260,6 +260,9 @@ class SwitchStructureTypedDict(PassthroughStructureTypedDict):
 class UnionStructureTypedDict(PassthroughStructureTypedDict):
     substructures: Required[dict[str, "str|ComponentTypedDicts|None"]]
 
+class InheritedComponentTypedDict(TypedDict):
+    inherit: Required[str]
+
 type AutoAssignerTypedDicts = RangeVersionTagAutoAssignerTypedDict
 type ComponentTypedDicts = \
     AccessorTypedDict|\
@@ -297,7 +300,8 @@ type ComponentTypedDicts = \
     VersionFileTypeTypedDict|\
     VersionTagOrderTypedDict|\
     VersionTagTypedDict|\
-    VersionTypedDict
+    VersionTypedDict|\
+    InheritedComponentTypedDict
 
 type GroupFileType = dict[str,ComponentTypedDicts]
 type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component",str|None,tuple[str,...]],"Component|EllipsisType"]

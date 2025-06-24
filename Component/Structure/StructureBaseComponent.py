@@ -55,4 +55,5 @@ class StructureBaseComponent(BranchlessStructureComponent[StructureBase]):
 
     def finalize(self, trace: Trace) -> None:
         with trace.enter(self, self.name, ...):
+            super().finalize(trace)
             self.final.finalize()

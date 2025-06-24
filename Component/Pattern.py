@@ -1,11 +1,19 @@
-from typing import TypeIs
+from typing import TYPE_CHECKING, Literal, TypeIs
 
 from Component.Capabilities import ALLOWED_CAPABILITIES
-from Component.Component import Component
 from Utilities.Exceptions import UnrecognizedCapabilityError
 
+if TYPE_CHECKING:
+    from Component.Component import Component
 
-class Pattern[a: "Component"]():
+class AbstractPattern[a:"Component"]():
+
+    def contains(self, component:"Component") -> TypeIs[a]: ...
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}>"
+
+class Pattern[a: "Component"](AbstractPattern[a]):
 
     __slots__ = (
         "capability",
@@ -33,3 +41,10 @@ class Pattern[a: "Component"]():
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.capability}>"
+
+class AllPattern(AbstractPattern["Component"]):
+
+    def contains(self, component: "Component") -> Literal[True]:
+        return True
+
+ALL_PATTERN = AllPattern()

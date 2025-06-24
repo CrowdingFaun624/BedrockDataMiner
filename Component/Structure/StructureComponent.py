@@ -1,8 +1,9 @@
-import Component.Group as Group
-import Domain.Domain as Domain
+from typing import Sequence
+
 from Component.Capabilities import Capabilities
 from Component.Component import Component
 from Component.ComponentTyping import StructureTypedDict
+from Component.Field.Field import Field
 from Component.Pattern import Pattern
 from Component.Structure.StructureTagComponent import StructureTagComponent
 from Structure.Structure import Structure
@@ -26,9 +27,9 @@ class StructureComponent[a: Structure](Component[a]):
         "my_type",
     )
 
-    def __init__(self, data: StructureTypedDict, name: str, domain: "Domain.Domain", group: "Group.Group", index: int | None, trace:Trace) -> None:
+    def initialize_fields(self, data: StructureTypedDict) -> Sequence[Field]:
         self.my_type:set[type] = set()
-        super().__init__(data, name, domain, group, index, trace)
+        return super().initialize_fields(data)
 
     def create_final(self, trace:Trace) -> a:
         return self.structure_type(

@@ -1,15 +1,26 @@
 from datetime import date, datetime
 from functools import cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Container, Literal, Optional, Sequence
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Container,
+    Iterable,
+    Literal,
+    Optional,
+    Sequence,
+)
 
 if TYPE_CHECKING:
     from Component.Capabilities import Capabilities
     from Component.Component import Component
     from Component.ComponentTyping import ComponentTypedDicts
+    from Component.Expression.Expression import Expression, Reader
+    from Component.Expression.Variable import Variable
     from Component.Field.Field import Field
     from Component.Group import Group
-    from Component.Pattern import Pattern
+    from Component.Pattern import AbstractPattern
     from Component.Version.VersionComponent import VersionComponent
     from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
     from Dataminer.BuiltIns.TagSearcherDataminer import DataReader
@@ -216,6 +227,23 @@ class CacheFileNotFoundError(CacheException):
 class ComponentException(Exception):
     "Abstract Exception class for errors relating to Components."
 
+class AbstractComponentError(ComponentException):
+    "A Component referred to an abstract Component without defining all of its Variables."
+
+    def __init__(self, referenced_component:"Component", remaining_variables:Iterable[str], message:Optional[str]=None) -> None:
+        '''
+        :referenced_component: The still-abstract Component.
+        :remaining_variables: All undefined Variables of `referenced_component` that were not defined.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(referenced_component, remaining_variables, message)
+        self.referenced_component = referenced_component
+        self.remaining_variables = remaining_variables
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.referenced_component} was referred to without defining all of its Variables ({", ".join(sorted(self.remaining_variables))}){message(self.message)}"
+
 class ComponentCountError(ComponentException):
     "There is an invalid number of BaseComponents."
 
@@ -373,6 +401,21 @@ class ComponentMismatchedTypesError(ComponentException):
     def __str__(self) -> str:
         return f"{self.component1} accepts types [{", ".join(f"\"{type.__name__}\"" for type in self.component1_types)}], but its subcomponent, {self.component2}, accepts types [{", ".join(f"\"{type.__name__}\"" for type in self.component2_types)}]{message(self.message)}"
 
+class ComponentNameNumberError(ComponentException):
+    "A Component's name begins with a number"
+
+    def __init__(self, component:"Component", message:Optional[str]=None) -> None:
+        '''
+        :component: The Component with an invalid name.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, message)
+        self.component = component
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"The name of {self.component} cannot start with a digit{message(self.message)}"
+
 class ComponentParseError(ComponentException):
     "Multiple Components failed to parse."
 
@@ -423,6 +466,21 @@ class ComponentTypeContainmentError(ComponentException):
 
     def __str__(self) -> str:
         return f"Type \"{self.containee_type}\" cannot be contained by type \"{self.container_type}\"{message(self.message)}"
+
+class ComponentTypeInheritError(ComponentException):
+    "A Component has both the \"type\" and \"inherit\" keys!"
+
+    def __init__(self, component:"Component", message:Optional[str]=None) -> None:
+        '''
+        :component: The Component with both the "type" and "inherit" keys.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, message)
+        self.component = component
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.component} of data {self.component.data} cannot have both the type and inherit keys!"
 
 class ComponentTypeInvalidTypeError(ComponentException):
     "A Component has a value in a TypeField that is not allowed."
@@ -490,6 +548,24 @@ class ComponentUnrecognizedTypeError(ComponentException):
     def __str__(self) -> str:
         return f"Type \"{self.type_str}\" is unrecognized{message(self.message)}"
 
+class ExpressionParseError(ComponentException):
+    "An Expression cannot be parsed due to syntax errors."
+
+    def __init__(self, reader:"Reader", expression_type:type["Expression"], message:Optional[str]=None) -> None:
+        '''
+        :reader: The Expression or string Expression with syntax errors.
+        :expression_type: The type of Expression attempting to parse.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(reader, expression_type, message)
+        self.reader = reader
+        self.index = reader.index
+        self.expression_type = expression_type
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.expression_type.__name__} cannot parse \"{repr(self.reader.source)}\" at {self.index} {message(self.message)}"
+
 class GroupAliasDomainError(ComponentException):
     "Attempted to create a Group alias with a target in another Domain."
 
@@ -507,10 +583,25 @@ class GroupAliasDomainError(ComponentException):
     def __str__(self) -> str:
         return f"Cannot create Group alias \"{self.alias}\": \"{self.target}\" to another Domain{message(self.message)}"
 
+class InheritanceLoopError(ComponentException):
+    "Component inheritance points in a loop!"
+
+    def __init__(self, involved_components:set["Component"], message:Optional[str]=None) -> None:
+        '''
+        :involved_components: The set of Components involved in the inheritance loop.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(involved_components, message)
+        self.involved_components = involved_components
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"There is a Component inheritance loop involving {{{", ".join(component.full_name for component in self.involved_components)}}}{message(self.message)}"
+
 class InlineComponentError(ComponentException):
     "An inline Component exists where it is not allowed."
 
-    def __init__(self, component:"Component", field:"Field", subcomponent_data:Optional["ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component", field:"Field|None", subcomponent_data:Optional["ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:
         '''
         :component: The Component with the disallowed inline subcomponent.
         :field: The Field with the disallowed inline subcomponent.
@@ -524,12 +615,12 @@ class InlineComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component}, {self.field} attempted to create a disallowed inline Component{message(self.message, yes_message=" %s")}{message(self.subcomponent_data, yes_message=": %s")}"
+        return f"{self.component}{f", {self.field}" if self.field is not None else ""} attempted to create a disallowed inline Component{message(self.message, yes_message=" %s")}{message(self.subcomponent_data, yes_message=": %s")}"
 
 class InvalidComponentError(ComponentException):
     "The referenced Component has the wrong properties."
 
-    def __init__(self, component:"Component", key:str|None, required_properties:"Pattern", actual_capabilities:"Capabilities", options:list[str]|None, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component", key:str|None, required_properties:"AbstractPattern", actual_capabilities:"Capabilities", options:list[str]|None, message:Optional[str]=None) -> None:
         '''
         :component: The Component that is being referenced.
         :key: The key used to reference the Component.
@@ -645,6 +736,38 @@ class MalformedComponentReferenceError(ComponentException):
     def __str__(self) -> str:
         return f"Component reference \"{self.key}\" is malformed{message(self.message)}{nearest_message(self.key, self.options)}"
 
+class NoApplicableExpressionError(ComponentException):
+    "No Expression type may be used to parse an Expression."
+
+    def __init__(self, reader:"Reader", message:Optional[str]=None) -> None:
+        '''
+        :reader: The Expression that cannot be parsed.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(reader, message)
+        self.reader = reader
+        self.index = reader.index
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"\"{self.reader.source}\" at {self.index} cannot be parsed{message(self.message)}"
+
+class ReaderSourceEndError(ComponentException):
+    "Cannot parse an Expression because the end of the source was reached."
+
+    def __init__(self, reader:"Reader", message:Optional[str]=None) -> None:
+        '''
+        :reader: The Reader that reached the end of the source.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(reader, message)
+        self.reader = reader
+        self.index = reader.index
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"\"{self.reader.source}\" at {self.index} reached the end of the source{message(self.message)}"
+
 class ReferenceComponentError(ComponentException):
     "A reference Component exists where it is not allowed."
 
@@ -663,6 +786,23 @@ class ReferenceComponentError(ComponentException):
 
     def __str__(self) -> str:
         return f"{self.component}, {self.field} attempted to reference a disallowed reference Component{message(self.subcomponent_name, "", " \"%s\"")}{message(self.message)}"
+
+class ReferenceInheritanceDataError(ComponentException):
+    "Attempted to write new data onto a Component using reference inheritance."
+
+    def __init__(self, source:"Component", destination:"Component", message:Optional[str]=None) -> None:
+        '''
+        :source: The InheritedComponent whose data exists.
+        :destination: The Component whose copy is being written to.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(source, destination, message)
+        self.source = source
+        self.destination = destination
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Cannot write data from {self.source} onto {self.destination} in reference inheritance{message(self.message)}"
 
 class UnrecognizedCapabilityError(ComponentException):
     "A capability is unrecognized."
@@ -755,6 +895,53 @@ class UnrecognizedComponentTypeError(ComponentException):
 
     def __str__(self) -> str:
         return f"Component type \"{self.component_type}\", as referenced by {self.source}, is unrecognized{message(self.message)}{nearest_message(self.component_type, self.options)}"
+
+class VariableDereferenceError(ComponentException):
+    "An Expression references an undefined Variable."
+
+    def __init__(self, variable:"Variable", message:Optional[str]=None) -> None:
+        '''
+        :expression: The Variable being dereferenced.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(variable, message)
+        self.variable = variable
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Attempted to dereference an undefined variable {self.variable}{message(self.message)}"
+
+class VariableNameError(ComponentException):
+    "A Variable has an invalid name."
+
+    def __init__(self, variable_name:str, message:Optional[str]=None) -> None:
+        '''
+        :variable_name: The invalid name.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(variable_name, message)
+        self.variable_name = variable_name
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Variable name {self.variable_name} is invalid{message(self.message)}"
+
+class VariableUnusedError(ComponentException):
+    "A declared Variable has no usages in Expresions."
+
+    def __init__(self, variable_name:str, value:Any, message:Optional[str]=None) -> None:
+        '''
+        :variable_name: The name of the unused Variable declaration.
+        :value: The value of the Variable declaration.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(variable_name, value, message)
+        self.variable_name = variable_name
+        self.value = value
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Variable {self.variable_name}: {repr(self.value)} has no uses in Expressions"
 
 class CustomJsonException(Exception):
     "Abstract Exception class for errors relating to custom JSON encoders and decoders."

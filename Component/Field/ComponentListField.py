@@ -4,7 +4,7 @@ import Utilities.Exceptions as Exceptions
 from Component.Component import Component
 from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
 from Component.Field.Field import Field, InlinePermissions, choose_component
-from Component.Pattern import Pattern
+from Component.Pattern import AbstractPattern
 from Component.ScriptImporter import ScriptSetSetSet
 from Utilities.Trace import Trace
 
@@ -27,7 +27,7 @@ class ComponentListField[a:Component](Field):
     def __init__(
         self,
         subcomponents_data:Sequence[str|ComponentTypedDicts]|str|ComponentTypedDicts,
-        pattern:Pattern[a],
+        pattern:AbstractPattern[a],
         path:tuple[str,...],
         cumulative_path:tuple[str,...]|None=None,
         *,
@@ -111,5 +111,4 @@ class ComponentListField[a:Component](Field):
         return f"<{self.__class__.__name__} len {len(self)} id {id(self)}>"
 
     def __len__(self) -> int:
-        if self.subcomponents is None: return 0
-        return len(self.subcomponents)
+        return len(self.subcomponents_data)
