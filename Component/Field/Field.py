@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Callable, Iterable, Mapping, Sequence, cast
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
-from Component.InheritedComponent import InheritedComponent
 from Component.Pattern import AbstractPattern
 from Component.ScriptImporter import ScriptSetSetSet
 from Utilities.Trace import Trace
@@ -15,16 +14,22 @@ if TYPE_CHECKING:
     from Component.Group import Group
 
 def get_options(
+    component_data:str,
     source_component:"Component",
     pattern:AbstractPattern,
     local_group:"Group",
     global_groups:Mapping[str,Mapping[str,"Group"]],
     other_options:Iterable[str]|None,
+    allow_inherited:bool,
 ) -> list[str]:
     reversed_group_aliases:dict[str,dict[str, list[str]]] = {domain_name: {group_name: [group_name] for group_name in groups.keys()} for domain_name, groups in global_groups.items()}
     for alias, target in local_group.group_aliases.items():
         reversed_group_aliases[local_group.domain.name][target].append(alias)
     options:list[str] = []
+    if component_data.startswith("@") or component_data.startswith("!"):
+        options.append(f"#{component_data}") # user may forget to put a "#" in front of their Expression.
+    elif "{" in component_data:
+        options.append(f"#!{component_data}") # component references require a "!" or "@" now
     if other_options is not None:
         options.extend(other_options)
     options.extend(component_name for component_name, component in local_group.components.items() if pattern.contains(component))
@@ -32,7 +37,7 @@ def get_options(
         f"{group_name_alias}/{component_name}"
         for group_name, group in global_groups[source_component.domain.name].items()
         for component_name, component in group.components.items()
-        if pattern.contains(component)
+        if (allow_inherited or not component.abstract) and pattern.contains(component)
         for group_name_alias in reversed_group_aliases[source_component.domain.name][group_name]
     )
     options.extend(
@@ -40,7 +45,7 @@ def get_options(
         for domain_name, domain_components in global_groups.items()
         for group_name, group in domain_components.items()
         for component_name, component in group.components.items()
-        if pattern.contains(component)
+        if (allow_inherited or not component.abstract) and pattern.contains(component)
         for group_name_alias in reversed_group_aliases[domain_name][group_name]
     )
     return options
@@ -88,6 +93,8 @@ def refer_to_component[a:"Component"](
         trace:Trace,
         allow_inherited:bool,
         pattern_fail_error:Callable[[], Exceptions.InvalidComponentError],
+        functions:ScriptSetSetSet,
+        create_component_function:CreateComponentFunction,
     ) -> a|EllipsisType:
     '''
     Function for referring to a Component. Raises an error if the pattern does not match the Component.
@@ -100,14 +107,14 @@ def refer_to_component[a:"Component"](
     '''
     if allow_inherited:
         return cast(a, component)
-    new_component = component.inheritance(set(), global_groups, parent_component.variables if parent_component is not None else {}, trace)
+    new_component = component.inheritance(set(), global_groups, parent_component.variables if parent_component is not None else {}, functions, create_component_function, trace)
     if new_component is ...:
         return ... # error
     if not pattern.contains(new_component):
         trace.exception(pattern_fail_error())
         return ...
     if new_component.abstract: # meaning it has undefined Variables
-        trace.exception(Exceptions.AbstractComponentError(new_component, new_component.variables.keys()))
+        trace.exception(Exceptions.AbstractComponentError(new_component, [variable.name for variable in new_component.variables.values() if variable.undefined]))
         return ...
     return new_component
 
@@ -119,7 +126,8 @@ def choose_component[a: "Component"](
         global_groups:Mapping[str,Mapping[str,"Group"]],
         trace:Trace,
         keys:tuple[str,...],
-        create_component_function:CreateComponentFunction|None,
+        functions:ScriptSetSetSet,
+        create_component_function:CreateComponentFunction,
         assume_type:str|None,
         other_options:Iterable[str]|None=None,
         allow_inherited:bool=False
@@ -142,13 +150,12 @@ def choose_component[a: "Component"](
     '''
     # inline Component
     if isinstance(component_data, dict):
-        if create_component_function is None: # only happens in InheritedComponent.
-            trace.exception(Exceptions.InlineComponentError(source_component, None, component_data))
-            return ..., True
         component = create_component_function(component_data, source_component, assume_type, keys)
         if component is ...:
             return ..., True
-        return refer_to_component(component, source_component, global_groups, pattern, trace, allow_inherited, lambda: Exceptions.InvalidComponentError(component, None, pattern, component.my_capabilities, None)), True
+        output = refer_to_component(component, source_component, global_groups, pattern, trace, allow_inherited,
+            lambda: Exceptions.InvalidComponentError(component, None, pattern, component.my_capabilities, None), functions, create_component_function)
+        return output, output is ... or not output.is_reference_inheritance
 
     # neither ! nor /
     bang_index = component_data.find("!")
@@ -157,11 +164,11 @@ def choose_component[a: "Component"](
     if bang_index == -1 and slash_index == -1:
         group = local_group
         if (component := group.components.get(component_data)) is None:
-            options = get_options(source_component, pattern, local_group, global_groups, other_options)
+            options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
             trace.exception(Exceptions.UnrecognizedComponentError(component_data, component_data, options))
             return ..., False
         return refer_to_component(component, None, global_groups, pattern, trace, allow_inherited, lambda: Exceptions.InvalidComponentError(
-            component, component_data, pattern, component.my_capabilities, get_options(source_component, pattern, local_group, global_groups, other_options))), False
+            component, component_data, pattern, component.my_capabilities, get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)), functions, create_component_function), False
 
     # only /
     elif bang_index == -1:
@@ -170,7 +177,7 @@ def choose_component[a: "Component"](
         group_name = local_group.group_aliases.get(alias_group_name, alias_group_name)
         component_name = component_data[slash_index+1:]
         if (group := domain_components.get(group_name)) is None:
-            options = get_options(source_component, pattern, local_group, global_groups, other_options)
+            options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
             trace.exception(Exceptions.UnrecognizedGroupError(alias_group_name, component_data, options))
             return ..., False
 
@@ -179,7 +186,7 @@ def choose_component[a: "Component"](
         domain_name = component_data[:bang_index]
         component_path = component_data[bang_index+1:]
         if (domain_components := global_groups.get(domain_name)) is None:
-            options = get_options(source_component, pattern, local_group, global_groups, other_options)
+            options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
             trace.exception(Exceptions.UnrecognizedComponentDomainError(domain_name, component_data, options))
             return ..., False
         if slash_index != -1:
@@ -187,20 +194,20 @@ def choose_component[a: "Component"](
             group_name = local_group.group_aliases.get(alias_group_name, alias_group_name)
             component_name = component_path[slash_index-bang_index:]
             if (group := domain_components.get(group_name)) is None:
-                options = get_options(source_component, pattern, local_group, global_groups, other_options)
+                options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
                 trace.exception(Exceptions.UnrecognizedGroupError(alias_group_name, component_data, options))
                 return ..., False
         else:
-            options = get_options(source_component, pattern, local_group, global_groups, other_options)
+            options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
             trace.exception(Exceptions.MalformedComponentReferenceError(component_data, options, "because it has a ! and no /"))
             return ..., False
 
     if (component := group.components.get(component_name)) is None:
-        options = get_options(source_component, pattern, local_group, global_groups, other_options)
+        options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
         trace.exception(Exceptions.UnrecognizedComponentError(component_name, component_data, options))
         return ..., False
     return refer_to_component(component, None, global_groups, pattern, trace, allow_inherited, lambda: Exceptions.InvalidComponentError(
-        component, component_data, pattern, component.my_capabilities, get_options(source_component, pattern, local_group, global_groups, other_options))), False
+        component, component_data, pattern, component.my_capabilities, get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)), functions, create_component_function), False
 
 class Field():
     '''Abstract class of Fields. Fields are a modular way to manage the data of Components.'''
