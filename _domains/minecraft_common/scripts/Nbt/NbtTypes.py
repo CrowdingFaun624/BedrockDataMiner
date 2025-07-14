@@ -52,10 +52,7 @@ class TAG(Protocol):
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG": ...
 
-    def __str__(self) -> str: ...
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {str(self)}>"
+    def __repr__(self) -> str: ...
 
 class TAG_End(TAG):
 
@@ -65,7 +62,7 @@ class TAG_End(TAG):
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_End":
         return cls()
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return "<END>"
 
     def __hash__(self) -> int:
@@ -86,7 +83,7 @@ class TAG_Byte(int, TAG):
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Byte":
         return cls(data_reader.unpack_tuple("b", 1, endianness))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"{self:d}b"
 
 @register_decorator("TAG_Short", None, json_coder=NbtCoder)
@@ -98,7 +95,7 @@ class TAG_Short(int, TAG):
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Short":
         return cls(data_reader.unpack_tuple("h", 2, endianness))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"{self:d}s"
 
 @register_decorator("TAG_Int", None, json_coder=NbtCoder)
@@ -110,7 +107,7 @@ class TAG_Int(int, TAG):
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Int":
         return cls(data_reader.unpack_tuple("i", 4, endianness))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"{self:d}"
 
 @register_decorator("TAG_Long", None, json_coder=NbtCoder)
@@ -122,7 +119,7 @@ class TAG_Long(int, TAG):
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Long":
         return cls(data_reader.unpack_tuple("q", 8, endianness))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"{self:d}l"
 
 @register_decorator("TAG_Float", None, json_coder=NbtCoder)
@@ -134,7 +131,7 @@ class TAG_Float(float, TAG):
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Float":
         return cls(data_reader.unpack_tuple("f", 4, endianness))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         if self % 1 == 0:
             return f"{floor(self):d}f"
         else:
@@ -149,7 +146,7 @@ class TAG_Double(float, TAG):
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Double":
         return cls(data_reader.unpack_tuple("d", 8, endianness))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         if self.is_integer():
             return f"{floor(self):d}.0"
         else:
@@ -165,7 +162,7 @@ class TAG_Byte_Array(list[TAG_Byte], TAG):
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(TAG_Byte.from_bytes(data_reader, endianness) for i in range(size))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"[B;{", ".join(str(item) for item in self)}]"
 
 @register_decorator("TAG_String", None, json_coder=NbtCoder)
@@ -182,7 +179,7 @@ class TAG_String(str, TAG):
         except UnicodeDecodeError:
             return cls("")
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"\"{escape_string(self)}\""
 
     def __stringify__(self) -> str:
@@ -200,7 +197,7 @@ class TAG_List[b: TAG](list[b], TAG):
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(cast(b, parse_object_from_bytes(data_reader, content_type, endianness)) for i in range(size))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"[{", ".join(str(item) for item in self)}]"
 
 @register_decorator("TAG_Compound", None, json_coder=NbtCoder)
@@ -220,7 +217,7 @@ class TAG_Compound[b: TAG](dict[str,b], TAG):
             output[key_name] = cast(b, value)
         return cls(output)
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         output:list[str] = ["{"]
         for index, (key, value) in enumerate(self.items()):
             if self.should_enquote_key(key):
@@ -248,7 +245,7 @@ class TAG_Int_Array(list[TAG_Int], TAG):
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(TAG_Int.from_bytes(data_reader, endianness) for i in range(size))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"[I;{", ".join(str(item) for item in self)}]"
 
 @register_decorator("TAG_Long_Array", None, requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
@@ -261,7 +258,7 @@ class TAG_Long_Array(list[TAG_Long], TAG):
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(TAG_Long.from_bytes(data_reader, endianness) for i in range(size))
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"[L;{", ".join(str(item) for item in self)}]"
 
 def escape_string(string:str) -> str:
