@@ -1,0 +1,84 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
+        "str": "structures/data/generation/structure",
+        "vector": "structures/misc/vector"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "structure_set",
+        "$pack_type": "data pack",
+        "$structure": "#@structure_set"
+    },
+    "structure_set": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "structures": {"types": "list", "structure": "structures"},
+            "placement": {"types": "dict", "structure": "placement"}
+        }
+    },
+    "structures": {
+        "inherit": "temp/Set",
+        "$field": "structure",
+        "value_types": "dict",
+        "value_structure": "structure"
+    },
+    "structure": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "structure": {"types": ["str", "dict"], "structure": "str/structure_or_id", "delegate_arguments": {"always_print": true}},
+            "weight": {"types": "int"}
+        }
+    },
+    "placement": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:concentric_rings": {"types": "dict", "structure": "placement.concentric_rings"},
+            "minecraft:random_spread": {"types": "dict", "structure": "placement.random_spread"}
+        }
+    },
+    "placement:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "salt": {"types": "int"},
+            "frequency": {"types": "float"},
+            "frequency_reduction_method": {"types": "str"},
+            "exclusion_zone": {"types": "dict", "structure": "exclusion_zone"},
+            "locate_offset": {"types": "list", "structure": "vector/vector.int"}
+        }
+    },
+    "exclusion_zone": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "chunk_count": {"types": "int"},
+            "other_set": {"types": "str"}
+        }
+    },
+    "placement.concentric_rings": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "placement:all",
+        "keys": {
+            "distance": {"types": "int"},
+            "count": {"types": "int"},
+            "preferred_biomes": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='biome'}"},
+            "spread": {"types": "int"}
+        }
+    },
+    "placement.random_spread": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "placement:all",
+        "keys": {
+            "spread_type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "spacing": {"types": "int"},
+            "separation": {"types": "int"}
+        }
+    }
+}

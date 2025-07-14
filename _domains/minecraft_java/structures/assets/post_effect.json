@@ -1,5 +1,7 @@
 {
     "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
         "s": "serializers"
     },
     "base": {
@@ -44,9 +46,6 @@
             "structure": "root"
         }
     },
-    "string": {
-        "type": "String"
-    },
     "vector_decimal": {
         "type": "Dict",
         "allow_key_moves": false,
@@ -62,10 +61,7 @@
         "value_structure": null
     },
     "root": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "targets": {"types": "dict", "structure": "targets"},
             "passes": {"types": "list", "structure": "passes"}
@@ -78,14 +74,11 @@
             "field": "target",
             "measure_length": true
         },
-        "key_structure": "string",
+        "key_structure": "misc/string",
         "value_structure": "target"
     },
     "target": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "width": {"types": "int"},
             "height": {"types": "int"}
@@ -105,15 +98,14 @@
         "value_structure": "pass"
     },
     "pass": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "program": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "program": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "fragment_shader": {"types": "str", "structure": "misc/string"},
             "inputs": {"types": "list", "structure": "inputs"},
-            "output": {"types": "str", "structure": "string"},
-            "uniforms": {"types": "list", "structure": "uniforms"}
+            "output": {"types": "str", "structure": "misc/string"},
+            "uniforms": {"types": ["list", "dict"], "structure": "uniforms_union"},
+            "vertex_shader": {"types": "str", "structure": "misc/string"}
         }
     },
     "inputs": {
@@ -130,18 +122,33 @@
         "value_structure": "input"
     },
     "input": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "sampler_name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "sampler_name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
             "bilinear": {"types": "bool"},
             "target": {"types": "str"},
             "use_depth_buffer": {"types": "bool"},
-            "location": {"types": "str", "structure": "string"},
+            "location": {"types": "str", "structure": "misc/string"},
             "width": {"types": "int"},
             "height": {"types": "int"}
+        }
+    },
+    "uniforms_union": {
+        "type": "Union",
+        "substructures": {
+            "list": "uniforms",
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "BitsConfig": {"types": "list", "structure": "uniforms"},
+                    "BlitConfig": {"types": "list", "structure": "uniforms"},
+                    "BlurConfig": {"types": "list", "structure": "uniforms"},
+                    "ColorConfig": {"types": "list", "structure": "uniforms"},
+                    "InvertConfig": {"types": "list", "structure": "uniforms"},
+                    "RotScaleConfig": {"types": "list", "structure": "uniforms"},
+                    "SpiderConfig": {"types": "list", "structure": "uniforms"}
+                }
+            }
         }
     },
     "uniforms": {
@@ -159,33 +166,36 @@
     },
     "uniform": {
         "type": "Switch",
+        // "switch_function": {
+        //     "function_name": "normalizers/normalizers post_effect_switch"
+        // },
         "switch_function": {
-            "function_name": "normalizers/normalizers post_effect_switch"
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
         },
         "substructures": {
-            "number": {"types": "dict", "structure": "uniform.number"},
-            "matrix": {"types": "dict", "structure": "uniform.matrix"}
+            "float": {"types": "dict", "structure": "uniform.float"},
+            "vec2": {"types": "dict", "structure": "uniform.matrix"},
+            "vec3": {"types": "dict", "structure": "uniform.matrix"},
+            "vec4": {"types": "dict", "structure": "uniform.matrix"}
         }
     },
-    "uniform.number": {
-        "type": "Dict",
-        "value_types": "decimal",
-        "delegate_arguments": {
-            "field": "value",
-            "measure_length": true
-        },
-        "key_structure": "string",
-        "value_structure": null
+    "uniform.float": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "value": {"types": "decimal"}
+        }
     },
     "uniform.matrix": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
-            "values": {"types": "list", "structure": "vector_decimal"},
-            "RadiusMultiplier": {"types": "decimal"}
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "value": {"types": "list", "structure": "vector_decimal"}
         }
     }
 }

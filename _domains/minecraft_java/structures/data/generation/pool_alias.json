@@ -1,0 +1,67 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "pool_alias_list": {
+        "inherit": "temp/Set",
+        "$field": "pool alias",
+        "value_types": "dict",
+        "value_structure": "pool_alias"
+    },
+    "pool_alias": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:direct": {"types": "dict", "structure": "pool_alias.direct"},
+            "minecraft:random": {"types": "dict", "structure": "pool_alias.random"},
+            "minecraft:random_group": {"types": "dict", "structure": "pool_alias.random_group"}
+        }
+    },
+    "pool_alias:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "pool_alias.direct": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "pool_alias:all",
+        "keys": {
+            "alias": {"types": "str"},
+            "target": {"types": "str"}
+        }
+    },
+    "pool_alias.random": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "pool_alias:all",
+        "keys": {
+            "alias": {"types": "str"},
+            "targets": {"types": "list", "structure": "#!weighted_list{data_types='str', data_structure=@misc/string, field='target'}"}
+        }
+    },
+    "pool_alias.random_group": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "pool_alias:all",
+        "keys": {
+            "groups": {"types": "list", "structure": "#!weighted_list{data_types='list', data_structure=@pool_alias_list, field='group'}"}
+        }
+    },
+    "weighted_list": {
+        "inherit": "temp/Set",
+        "value_types": "dict",
+        "value_structure": "#!weighted_list:item{data_types=data_types, data_structure=data_structure}"
+    },
+    "weighted_list:item": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "weight": {"types": "int"},
+            "data": {"types": "#data_types", "structure": "#data_structure", "delegate_arguments": {"always_print": true}}
+        }
+    }
+}

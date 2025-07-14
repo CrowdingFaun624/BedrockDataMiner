@@ -277,7 +277,7 @@
                 "name": "PacksDataminer",
                 "dependencies": ["client.all_files"],
                 "files": [],
-                "arguments": {"location": "assets/"}
+                "arguments": {"namespace_location": "assets/"}
             }
         ]
     },
@@ -305,7 +305,7 @@
                 "name": "GrabMultiplePackFilesDataminer",
                 "files": ["f/client"],
                 "dependencies": ["assets.resource_packs"],
-                "structure_info": {"serializer": "s/fsh_serializer"},
+                "structure_info": {"serializer": "fsh_serializer"},
                 "arguments": {"location": "shaders/", "pack_type": "assets.resource_packs", "suffixes": [".fsh"], "ignore_suffixes": [".json", ".vsh", ".glsl"]}
             }
         ]
@@ -320,7 +320,7 @@
                 "name": "GrabMultiplePackFilesDataminer",
                 "files": ["f/client"],
                 "dependencies": ["assets.resource_packs"],
-                "structure_info": {"serializer": "s/vsh_serializer"},
+                "structure_info": {"serializer": "vsh_serializer"},
                 "arguments": {"location": "shaders/", "pack_type": "assets.resource_packs", "suffixes": [".vsh"], "ignore_suffixes": [".json", ".fsh", ".glsl"]}
             }
         ]
@@ -335,7 +335,7 @@
                 "name": "GrabMultiplePackFilesDataminer",
                 "files": ["f/client"],
                 "dependencies": ["assets.resource_packs"],
-                "structure_info": {"serializer": "s/glsl_serializer"},
+                "structure_info": {"serializer": "glsl_serializer"},
                 "arguments": {"location": "shaders/", "pack_type": "assets.resource_packs", "suffixes": [".glsl"], "ignore_suffixes": [".json", ".fsh", ".vsh"]}
             }
         ]
@@ -354,10 +354,34 @@
             }
         ]
     },
-    // "assets.textures.textures": {
-    //     "file_name": "assets/textures/textures",
-    //     "structure": "structures/assets/textures/textures"
-    // },
+    "assets.textures": {
+        "file_name": "assets/textures/textures.json",
+        "structure": "structures/assets/textures/textures/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["assets.resource_packs"],
+                "arguments": {"location": "textures/", "suffixes": [".png"], "ignore_suffixes": [".mcmeta"], "pack_type": "assets.resource_packs"}
+            }
+        ]
+    },
+    "assets.textures.metadata": {
+        "file_name": "assets/textures/metadata.json",
+        "structure": "structures/assets/textures/metadata/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["assets.resource_packs"],
+                "arguments": {"location": "textures/", "suffixes": [".mcmeta"], "ignore_suffixes": [".png"], "pack_type": "assets.resource_packs"}
+            }
+        ]
+    },
     "assets.version_json": {
         "file_name": "assets/version_json.json",
         "structure": "structures/assets/version_json/base",
@@ -371,6 +395,20 @@
             }
         ]
     },
+    "assets.waypoint_styles": {
+        "file_name": "assets/waypoint_styles.json",
+        "structure": "structures/assets/waypoint_styles/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["assets.resource_packs"],
+                "arguments": {"location": "waypoint_style/", "suffixes": [".json"], "pack_type": "assets.resource_packs"}
+            }
+        ]
+    },
     "client.all_files": {
         "file_name": "client/all_files.json",
         "structure": "structures/all_files/base",
@@ -380,6 +418,839 @@
                 "old": null,
                 "name": "AllFilesDataminer",
                 "files": ["f/client"]
+            }
+        ]
+    },
+    "client.coverage": {
+        "type": "CoverageDataminerCollection",
+        "file": "f/client",
+        "file_list_dataminer": "client.all_files",
+        "file_name": "client/coverage.json",
+        "structure": "structures/coverage/base",
+        "remove_suffixes": [".class", ".mcassetsroot"]
+    },
+    "client.pack_png": {
+        "file_name": "client/pack_png.json",
+        "structure": "structures/assets/textures/textures/base_single",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabSingleFileDataminer",
+                "files": ["f/client"],
+                "arguments": {"location": "pack.png"}
+            }
+        ]
+    },
+    "data.advancements": {
+        "file_name": "data/advancements.json",
+        "structure": "structures/data/advancements/advancements/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["data.data_packs"],
+                "arguments": {"location": "advancement/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.banner_patterns": {
+        "file_name": "data/banner_patterns.json",
+        "structure": "structures/data/banner_patterns/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["data.data_packs"],
+                "arguments": {"location": "banner_pattern/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.biomes": {
+        "file_name": "data/worldgen/biomes.json",
+        "structure": "structures/data/generation/biome/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["data.data_packs"],
+                "arguments": {"location": "worldgen/biome/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.configured_carver": {
+        "file_name": "data/worldgen/configured_carver.json",
+        "structure": "structures/data/generation/carver/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["data.data_packs"],
+                "arguments": {"location": "worldgen/configured_carver/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.configured_feature": {
+        "file_name": "data/worldgen/configured_feature.json",
+        "structure": "structures/data/generation/configured_feature/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["data.data_packs"],
+                "arguments": {"location": "worldgen/configured_feature/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.cat_variants": {
+        "file_name": "data/mob_variants/cat_variants.json",
+        "structure": "#!structures/data/mob_variants/base{imports=[!variant:asset_id, !variant:spawn_conditions]}",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "cat_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.chat_types": {
+        "file_name": "data/chat_types.json",
+        "structure": "structures/data/chat_types/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "chat_type/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.chicken_variants": {
+        "file_name": "data/mob_variants/chicken_variants.json",
+        "structure": "#!structures/data/mob_variants/base{imports=[!variant:asset_id, !variant:model, !variant:spawn_conditions]}",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "chicken_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.cow_variants": {
+        "file_name": "data/mob_variants/cow_variants.json",
+        "structure": "#!structures/data/mob_variants/base{imports=[!variant:asset_id, !variant:model, !variant:spawn_conditions]}",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "cow_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.damage_types": {
+        "file_name": "data/damage_types.json",
+        "structure": "structures/data/damage_types/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "damage_type/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.data_packs": {
+        "file_name": "data/data_packs.json",
+        "structure": "structures/packs/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "PacksDataminer",
+                "dependencies": ["client.all_files"],
+                "files": [],
+                "arguments": {"namespace_location": "data/", "subpack_location": "datapacks/"}
+            }
+        ]
+    },
+    "data.density_function": {
+        "file_name": "data/worldgen/density_function.json",
+        "structure": "structures/data/generation/density_function/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/density_function/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.dialogs": {
+        "file_name": "data/dialogs.json",
+        "structure": "structures/data/dialog/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "dialog/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.dimension_types": {
+        "file_name": "data/generation/dimension_types.json",
+        "structure": "structures/data/generation/dimension_types/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "dimension_type/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.enchantments": {
+        "file_name": "data/enchantments.json",
+        "structure": "structures/data/enchantments/enchantments/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "enchantment/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.enchantment_providers": {
+        "file_name": "data/enchantment_providers.json",
+        "structure": "structures/misc/provider/enchantment_provider/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "enchantment_provider/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.flat_level_generator_preset": {
+        "file_name": "data/worldgen/flat_level_generator_preset",
+        "structure": "structures/data/generation/flat_level_generator_preset/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/flat_level_generator_preset/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.frog_variants": {
+        "file_name": "data/mob_variants/frog_variants.json",
+        "structure": "#!structures/data/mob_variants/base{imports=[!variant:asset_id, !variant:spawn_conditions]}",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "frog_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.instruments": {
+        "file_name": "data/instruments.json",
+        "structure": "structures/data/instruments/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "instrument/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.jukebox_song": {
+        "file_name": "data/jukebox_songs.json",
+        "structure": "structures/data/jukebox_songs/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "jukebox_song/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.loot_tables": {
+        "file_name": "data/loot_tables.json",
+        "structure": "structures/data/loot_tables/loot_tables/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "loot_table/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.multi_noise_biome_source_parameter_list": {
+        "file_name": "data/worldgen/multi_noise_biome_source_parameter_list",
+        "structure": "structures/data/generation/multi_noise_biome_source_parameter_list/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/multi_noise_biome_source_parameter_list/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.noise": {
+        "file_name": "data/worldgen/noise.json",
+        "structure": "structures/data/generation/noise/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/noise/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.noise_settings": {
+        "file_name": "data/worldgen/noise_settings.json",
+        "structure": "structures/data/generation/noise_settings/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/noise_settings/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.pack_mcmeta": {
+        "file_name": "data/pack_mcmeta.json",
+        "structure": "structures/data/pack_mcmeta/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabPackFileDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "pack.mcmeta", "pack_type": "data.data_packs", "is_namespace": false}
+            }
+        ]
+    },
+    "data.painting_variants": {
+        "file_name": "data/painting_variants.json",
+        "structure": "structures/data/painting_variants/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "painting_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.pig_variants": {
+        "file_name": "data/mob_variants/pig_variants.json",
+        "structure": "#!structures/data/mob_variants/base{imports=[!variant:asset_id, !variant:model, !variant:spawn_conditions]}",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "pig_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.placed_feature": {
+        "file_name": "data/worldgen/placed_feature.json",
+        "structure": "structures/data/generation/placed_feature/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["data.data_packs"],
+                "arguments": {"location": "worldgen/placed_feature/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.processor_list": {
+        "file_name": "data/worldgen/processor_list.json",
+        "structure": "structures/data/generation/processor_list/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "files": ["f/client"],
+                "dependencies": ["data.data_packs"],
+                "arguments": {"location": "worldgen/processor_list/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.recipes": {
+        "file_name": "data/recipes.json",
+        "structure": "structures/data/recipes/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "recipe/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.structure_definition": {
+        "file_name": "data/worldgen/structure.json",
+        "structure": "structures/data/generation/structure/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/structure/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.structure_set": {
+        "file_name": "data/worldgen/structure_set.json",
+        "structure": "structures/data/generation/structure_set/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/structure_set/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.structure_template": {
+        "file_name": "data/structures.json",
+        "structure": "structures/data/structures/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "structure/", "suffixes": [".nbt"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.banner_pattern": {
+        "file_name": "data/tags/banner_pattern.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/banner_pattern/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.biome": {
+        "file_name": "data/tags/biome.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/worldgen/biome/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.block": {
+        "file_name": "data/tags/block.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/block/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.damage_type": {
+        "file_name": "data/tags/damage_type.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/damage_type/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.dialog": {
+        "file_name": "data/tags/dialog.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/dialog/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.enchantment": {
+        "file_name": "data/tags/enchantment.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/enchantment/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.entity_type": {
+        "file_name": "data/tags/entity_type.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/entity_type/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.flat_level_generator_preset": {
+        "file_name": "data/tags/flat_level_generator_preset.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/worldgen/flat_level_generator_preset/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.fluid": {
+        "file_name": "data/tags/fluid.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/fluid/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.game_event": {
+        "file_name": "data/tags/game_event.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/game_event/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.instrument": {
+        "file_name": "data/tags/instrument.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/instrument/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.item": {
+        "file_name": "data/tags/item.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/item/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.painting_variant": {
+        "file_name": "data/tags/painting_variant.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/painting_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.point_of_interest_type": {
+        "file_name": "data/tags/point_of_interest_type.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/point_of_interest_type/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.structure": {
+        "file_name": "data/tags/structure.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/worldgen/structure/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.tags.world_preset": {
+        "file_name": "data/tags/world_preset.json",
+        "structure": "structures/data/tags/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "tags/worldgen/world_preset/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.template_pool": {
+        "file_name": "data/worldgen/template_pool.json",
+        "structure": "structures/data/generation/template_pool/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/template_pool/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.test_environment": {
+        "file_name": "data/gametest/test_environment.json",
+        "structure": "structures/data/gametest/test_environment/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "test_environment/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.test_instance": {
+        "file_name": "data/gametest/test_instance.json",
+        "structure": "structures/data/gametest/test_instance/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "test_instance/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.trial_spawner": {
+        "file_name": "data/trial_spawner.json",
+        "structure": "structures/data/trial_spawner/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "trial_spawner/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.trim_meterial": {
+        "file_name": "data/trim/material.json",
+        "structure": "structures/data/trim/material/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "trim_material/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.trim_pattern": {
+        "file_name": "data/trim/pattern.json",
+        "structure": "structures/data/trim/pattern/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "trim_pattern/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.wolf_sound_variant": {
+        "file_name": "data/mob_variants/wolf_sound_variants.json",
+        "structure": "structures/data/wolf_sound_variant/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "wolf_sound_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.wolf_variants": {
+        "file_name": "data/mob_variants/wolf_variants.json",
+        "structure": "#!structures/data/mob_variants/base{imports=[!variant:assets, !variant:spawn_conditions]}",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "wolf_variant/", "suffixes": [".json"], "pack_type": "data.data_packs"}
+            }
+        ]
+    },
+    "data.world_preset": {
+        "file_name": "data/worldgen/world_preset.json",
+        "structure": "structures/data/generation/world_preset/base",
+        "dataminers": [
+            {
+                "new": null,
+                "old": null,
+                "name": "GrabMultiplePackFilesDataminer",
+                "dependencies": ["data.data_packs"],
+                "files": ["f/client"],
+                "arguments": {"location": "worldgen/world_preset/", "suffixes": [".json"], "pack_type": "data.data_packs"}
             }
         ]
     },

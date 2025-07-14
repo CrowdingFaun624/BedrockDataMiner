@@ -1,0 +1,98 @@
+{
+    "group_aliases": {
+        "bsp": "structures/misc/provider/block_state_provider",
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "decorator_list": {
+        "inherit": "temp/Set",
+        "$field": "decorator",
+        "value_types": "dict",
+        "value_structure": "decorator"
+    },
+    "decorator": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:alter_ground": {"types": "dict", "structure": "decorator.alter_ground"},
+            "minecraft:attached_to_leaves": {"types": "dict", "structure": "decorator.attached_to_leaves"},
+            "minecraft:attached_to_logs": {"types": "dict", "structure": "decorator.attached_to_logs"},
+            "minecraft:beehive": {"types": "dict", "structure": "decorator.probability"},
+            "minecraft:cocoa": {"types": "dict", "structure": "decorator.probability"},
+            "minecraft:creaking_heart": {"types": "dict", "structure": "decorator.probability"},
+            "minecraft:leave_vine": {"types": "dict", "structure": "decorator.probability"},
+            "minecraft:pale_moss": {"types": "dict", "structure": "decorator.pale_moss"},
+            "minecraft:place_on_ground": {"types": "dict", "structure": "decorator.place_on_ground"},
+            "minecraft:trunk_vine": {"types": "dict", "structure": "decorator.trunk_vine"}
+        }
+    },
+    "decorator:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "decorator.alter_ground": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "decorator:all",
+        "keys": {
+            "provider": {"types": "dict", "structure": "bsp/block_state_provider"}
+        }
+    },
+    "decorator.attached_to_leaves": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "decorator:all",
+        "keys": {
+            "probability": {"types": "float"},
+            "exclusion_radius_xz": {"types": "int"},
+            "exclusion_radius_y": {"types": "int"},
+            "required_empty_blocks": {"types": "int"},
+            "block_provider": {"types": "dict", "structure": "bsp/block_state_provider"},
+            "directions": {"types": "list", "structure": "#!misc/named_list{name='direction'}"}
+        }
+    },
+    "decorator.attached_to_logs": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "decorator:all",
+        "keys": {
+            "probability": {"types": "float"},
+            "block_provider": {"types": "dict", "structure": "bsp/block_state_provider"},
+            "directions": {"types": "list", "structure": "#!misc/named_list{name='direction'}"}
+        }
+    },
+    "decorator.pale_moss": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "decorator:all",
+        "keys": {
+            "leaves_probability": {"types": "float"},
+            "trunk_probability": {"types": "float"},
+            "ground_probability": {"types": "float"}
+        }
+    },
+    "decorator.place_on_ground": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "decorator:all",
+        "keys": {
+            "tries": {"types": "int"},
+            "radius": {"types": "int"},
+            "height": {"types": "int"},
+            "block_state_provider": {"types": "dict", "structure": "bsp/block_state_provider"}
+        }
+    },
+    "decorator.probability": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "decorator:all",
+        "keys": {
+            "probability": {"types": "float"}
+        }
+    },
+    "decorator.trunk_vine": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "decorator:all"
+    }
+}

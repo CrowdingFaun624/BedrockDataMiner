@@ -1,0 +1,107 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
+        "tc": "structures/misc/text_component",
+        "vector": "structures/misc/vector"
+    },
+    "base": {
+        "inherit": "temp/base_pack_files",
+        "$name": "pack_mcmeta",
+        "$pack_type": "data pack",
+        "$structure": "#@root"
+    },
+    "root": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "pack": {"types": "dict", "structure": "pack"},
+            "features": {"types": "dict", "structure": "features"},
+            "filter": {"types": "dict", "structure": "filter"},
+            "overlays": {"types": "dict", "structure": "overlays"},
+            "language": {"types": "dict", "structure": "languages"}
+        }
+    },
+    "pack": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "description": {"types": "tc/root_type", "structure": "tc/root"},
+            "pack_format": {"types": "int"},
+            "supported_formats": {"types": ["int", "list", "dict"], "structure": "supported_formats"}
+        }
+    },
+    "supported_formats": {
+        "type": "Union",
+        "substructures": {
+            "int": null,
+            "list": "vector/vector.int",
+            "dict": {
+                "inherit": "temp/SortedKeymap",
+                "keys": {
+                    "min_inclusive": {"types": "int"},
+                    "max_inclusive": {"types": "int"}
+                }
+            }
+        }
+    },
+    "features": {
+        "type": "Keymap",
+        "keys": {
+            "enabled": {"types": "list", "structure": "#!misc/named_list{name='feature flag'}"}
+        }
+    },
+    "filter": {
+        "type": "Keymap",
+        "keys": {
+            "block": {"types": "list", "structure": "filter.patterns"}
+        }
+    },
+    "filter.patterns": {
+        "inherit": "temp/Set",
+        "$field": "pattern",
+        "value_types": "dict",
+        "value_structure": "filter.pattern"
+    },
+    "filter.pattern": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "namespace": {"types": "str"},
+            "path": {"types": "str"}
+        }
+    },
+    "overlays": {
+        "type": "Keymap",
+        "keys": {
+            "entries": {"types": "list", "structure": "overlays.entries"}
+        }
+    },
+    "overlays.entries": {
+        "inherit": "temp/Set",
+        "$field": "entry",
+        "$show_item_key": true,
+        "key_weight": 1,
+        "value_weight": 6,
+        "value_types": "dict",
+        "value_structure": "overlays.entry"
+    },
+    "overlays.entry": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "formats": {"types": ["int", "list", "dict"], "structure": "supported_formats"},
+            "directory": {"types": "str"}
+        }
+    },
+    "languages": {
+        "inherit": "temp/Dict",
+        "$field": "language",
+        "value_types": "dict",
+        "value_structure": "language"
+    },
+    "language": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "region": {"types": "str"},
+            "bidirectional": {"types": "bool"}
+        }
+    }
+}

@@ -1,5 +1,7 @@
 {
     "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
         "s": "serializers"
     },
     "base": {
@@ -41,10 +43,7 @@
         }
     },
     "root": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "sources": {"types": "list", "structure": "sources"}
         }
@@ -72,12 +71,12 @@
         },
         "substructures": {
             "directory": {"types": "dict", "structure": "source.directory"},
+            "minecraft:directory": {"types": "dict", "structure": "source.directory"},
             "paletted_permutations": {"types": "dict", "structure": "source.paletted_permutations"},
-            "single": {"types": "dict", "structure": "source.single"}
+            "minecraft:paletted_permutations": {"types": "dict", "structure": "source.paletted_permutations"},
+            "single": {"types": "dict", "structure": "source.single"},
+            "minecraft:single": {"types": "dict", "structure": "source.single"}
         }
-    },
-    "string": {
-        "type": "String"
     },
     "texture_list": {
         "type": "Dict",
@@ -90,28 +89,22 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_structure": "string"
+        "value_structure": "misc/string"
     },
     "source.directory": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "source": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
-            "prefix": {"types": "str", "structure": "string"}
+            "source": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "prefix": {"types": "str", "structure": "misc/string"}
         }
     },
     "source.paletted_permutations": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "textures": {"types": "list", "structure": "texture_list"},
-            "palette_key": {"types": "str", "structure": "string"},
+            "palette_key": {"types": "str", "structure": "misc/string"},
             "permutations": {"types": "dict", "structure": "source.paletted_permutations:permutations"}
         }
     },
@@ -122,17 +115,14 @@
             "field": "permutation",
             "measure_length": true
         },
-        "key_structure": "string",
-        "value_structure": "string"
+        "key_structure": "misc/string",
+        "value_structure": "misc/string"
     },
     "source.single": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "resource": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}}
+            "resource": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}}
         }
     }
 }

@@ -1,0 +1,373 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "misc": "structures/misc/misc",
+        "np": "structures/misc/provider/number_provider",
+        "temp": "structures/misc/template"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "condition.advancement": {
+        "type": "Union",
+        "substructures": {
+            "bool": null,
+            "dict": {
+                "inherit": "temp/Dict",
+                "$field": "criterion",
+                "value_types": "bool",
+                "value_structure": null
+            }
+        }
+    },
+    "condition.advancements": {
+        "inherit": "temp/Dict",
+        "$field": "advancement",
+        "value_types": ["bool", "dict"],
+        "value_structure": "condition.advancement"
+    },
+    "condition.block": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "blocks": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='block'}"},
+            "nbt": {"types": "str"},
+            "state": {"types": "dict", "structure": "condition.block_state"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
+            "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"}
+        }
+    },
+    "condition.block_state": {
+        "inherit": "temp/Dict",
+        "$field": "state",
+        "value_types": ["str", "dict"],
+        "value_structure": "#!misc/range_item_or_item{types='str', structure=@misc/string}"
+    },
+    "condition.damage": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "blocked": {"types": "bool"},
+            "dealt": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "source_entity": {"types": "dict", "structure": "condition.entity"},
+            "taken": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "type": {"types": "dict", "structure": "condition.damage_type"}
+        }
+    },
+    "condition.damage_type": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "direct_entity": {"types": "dict", "structure": "condition.entity"},
+            "source_entity": {"types": "dict", "structure": "condition.entity"},
+            "is_direct": {"types": "bool"},
+            "tags": {"types": "list", "structure": "condition.tags"}
+        }
+    },
+    "condition.distance": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "absolute": {"types": ["dict", "decimal"], "structure": "misc/range_decimal_or_decimal"},
+            "horizontal": {"types": ["dict", "decimal"], "structure": "misc/range_decimal_or_decimal"},
+            "x": {"types": ["dict", "decimal"], "structure": "misc/range_decimal_or_decimal"},
+            "y": {"types": ["dict", "decimal"], "structure": "misc/range_decimal_or_decimal"},
+            "z": {"types": ["dict", "decimal"], "structure": "misc/range_decimal_or_decimal"}
+        }
+    },
+    "condition.effect":{
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "amplifier": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
+            "duration": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
+            "ambient": {"types": "bool"},
+            "visible": {"types": "bool"}
+        }
+    },
+    "condition.effects": {
+        "inherit": "temp/Dict",
+        "$field": "effect",
+        "value_types": "dict",
+        "value_structure": "condition.effect"
+    },
+    "condition.entity": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": ["list", "str"], "structure": "#!misc/named_list_or_item{name='entity'}"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
+            "distance": {"types": "dict", "structure": "condition.distance"},
+            "effects": {"types": "dict", "structure": "condition.effects"},
+            "equipment": {"types": "dict", "structure": "condition.slots"},
+            "flags": {"types": "dict", "structure": "condition.flags"},
+            "location": {"types": "dict", "structure": "condition.location"},
+            "nbt": {"types": "str"}, // TODO: NBT parser
+            "passenger": {"types": "dict", "structure": "condition.entity"},
+            "slots": {"types": "dict", "structure": "condition.slots"},
+            "stepping_on": {"types": "dict", "structure": "condition.location"},
+            "movement_affected_by": {"types": "dict", "structure": "condition.location"},
+            "team": {"types": "str"},
+            "targeted_entity": {"types": "dict", "structure": "condition.entity"},
+            "vehicle": {"types": "dict", "structure": "condition.entity"},
+            "movement": {"types": "dict", "structure": "condition.movement"},
+            "periodic_tick": {"types": "int"},
+            "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"},
+            "type_specific": {"types": "dict", "structure": "condition.type_specific"}
+        }
+    },
+    "condition.fluid": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "blocks": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='fluid'}"},
+            "nbt": {"types": "str"},
+            "state": {"types": "dict", "structure": "condition.block_state"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
+            "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"}
+        }
+    },
+    "condition.input": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "control",
+            "sort": "sort_by_component_order"
+        },
+        "keys": {
+            "forward": {"types": "bool"},
+            "backward": {"types": "bool"},
+            "left": {"types": "bool"},
+            "right": {"types": "bool"},
+            "jump": {"types": "bool"},
+            "sneak": {"types": "bool"},
+            "sprint": {"types": "bool"}
+        }
+    },
+    "condition.item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "items": {"types": ["a/list", "a/string"], "structure": "#!misc/named_list_or_item.nbt{name='item'}"},
+            "count": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
+            "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"}
+        }
+    },
+    "condition.items": {
+        "inherit": "temp/Set",
+        "$field": "item",
+        "value_types": "a/compound",
+        "value_structure": "condition.item"
+    },
+    "condition.flags": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "flag",
+            "sort": "sort_by_component_order"
+        },
+        "keys": {
+            "is_baby": {"types": "bool"},
+            "is_on_fire": {"types": "bool"},
+            "is_sneaking": {"types": "bool"},
+            "is_sprinting": {"types": "bool"},
+            "is_swimming": {"types": "bool"},
+            "is_on_ground": {"types": "bool"},
+            "is_flying": {"types": "bool"}
+        }
+    },
+    "condition.light": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "light": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"}
+        }
+    },
+    "condition.location": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "biomes": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='biome'}"},
+            "block": {"types": "dict", "structure": "condition.block"},
+            "dimension": {"types": "str"},
+            "fluid": {"types": "dict", "structure": "condition.fluid"},
+            "light": {"types": "dict", "structure": "condition.light"},
+            "position": {"types": "dict", "structure": "condition.position"},
+            "smokey": {"types": "bool"},
+            "can_see_sky": {"types": "bool"},
+            "structures": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='structure'}"}
+        }
+    },
+    "condition.movement": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "x": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "y": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "z": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "speed": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "horizontal_speed": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "vertical_speed": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "fall_distance": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"}
+        }
+    },
+    "condition.position": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "x": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "y": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "z": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"}
+        }
+    },
+    "condition.potato_refined": { // exclusive to April Fools
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str"}, // can be "standard" or "lubrication". Has no affect on available keys, so it is not switched upon.
+            "item_predicate": {"types": "a/compound", "structure": "condition.item"},
+            "min_lubrication": {"types": "int"}
+        }
+    },
+    "condition.recipes_unlocked": {
+        "inherit": "temp/Dict",
+        "$field": "recipe",
+        "value_types": "bool",
+        "value_structure": null
+    },
+    "condition.scores": {
+        "inherit": "temp/Dict",
+        "$field": "score",
+        "value_types": ["int", "dict"],
+        "value_structure": "#!np/number_provider{types='int'}"
+    },
+    "condition.slots": {
+        "inherit": "temp/Dict",
+        "$field": "slot",
+        "value_types": "a/compound",
+        "value_structure": "condition.item"
+    },
+    "condition.slots_filled": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "empty": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
+            "full": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
+            "occupied": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"}
+        }
+    },
+    "condition.stat": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str"},
+            "stat": {"types": "str"},
+            "value": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"}
+        }
+    },
+    "condition.stats": {
+        "inherit": "temp/Set",
+        "$field": "stat",
+        "value_types": "dict",
+        "value_structure": "condition.stat"
+    },
+    "condition.tag": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "id": {"types": "str"},
+            "expected": {"types": "bool"}
+        }
+    },
+    "condition.tags": {
+        "inherit": "temp/Set",
+        "$field": "tag",
+        "value_types": "dict",
+        "value_structure": "condition.tag"
+    },
+    "condition.type_specific": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:axolotl": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:cat": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:fishing_hook": {"types": "dict", "structure": "condition.type_specific.fishing_hook"},
+            "minecraft:fox": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:frog": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:horse": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:lightning": {"types": "dict", "structure": "condition.type_specific.lightning"},
+            "minecraft:llama": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:mooshroom": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:painting": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:parrot": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:player": {"types": "dict", "structure": "condition.type_specific.player"},
+            "minecraft:rabbit": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:raider": {"types": "dict", "structure": "condition.type_specific.raider"},
+            "minecraft:salmon": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:sheep": {"types": "dict", "structure": "condition.type_specific.sheep"},
+            "minecraft:slime": {"types": "dict", "structure": "condition.type_specific.slime"},
+            "minecraft:tropical_fish": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:villager": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "minecraft:wolf": {"types": "dict", "structure": "condition.type_specific.wolf"}
+        }
+    },
+    "condition.type_specific:all": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "condition.type_specific.fishing_hook": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:all",
+        "keys": {
+            "in_open_water": {"types": "bool"}
+        }
+    },
+    "condition.type_specific.lightning": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:all",
+        "keys": {
+            "blocks_set_on_fire": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
+            "entity_struck": {"types": "dict", "structure": "condition.entity"}
+        }
+    },
+    "condition.type_specific.player": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:all",
+        "keys": {
+            "looking_at": {"types": "dict", "structure": "condition.entity"},
+            "advancements": {"types": "dict", "structure": "condition.advancements"},
+            "gamemode": {"types": "list", "structure": "#!misc/named_list{name='gamemode'}"},
+            "level": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
+            "recipes": {"types": "dict", "structure": "condition.recipes_unlocked"},
+            "stats": {"types": "list", "structure": "condition.stats"},
+            "input": {"types": "dict", "structure": "condition.input"}
+        }
+    },
+    "condition.type_specific.raider": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:all",
+        "keys": {
+            "is_captain": {"types": "bool"},
+            "has_raid": {"types": "bool"}
+        }
+    },
+    "condition.type_specific.sheep": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:all",
+        "keys": {
+            "sheared": {"types": "bool"},
+            "color": {"types": "str"}
+        }
+    },
+    "condition.type_specific.slime": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:all",
+        "keys": {
+            "size": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"}
+        }
+    },
+    "condition.type_specific.variant": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:all",
+        "keys": {
+            "variant": {"types": "str"}
+        }
+    },
+    "condition.type_specific.wolf": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "variant": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='variant'}"}
+        }
+    }
+}

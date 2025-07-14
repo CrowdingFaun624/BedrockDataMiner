@@ -1,0 +1,118 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
+        "vector": "structures/misc/vector"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "structures",
+        "$pack_type": "data pack",
+        "$types": "a/compound",
+        "$serializer": "minecraft_common!serializers/nbt_big",
+        "$structure": "root"
+    },
+    "root": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "DataVersion": {"types": "a/int"},
+            "author": {"types": "a/string"},
+            "size": {"types": "a/list", "structure": "vector/vector.tag_int"},
+            "palette": {"types": "a/list", "structure": "palette"},
+            "palettes": {"types": "a/list", "structure": "palettes"},
+            "blocks": {"types": "dict", "structure": "blocks"},
+            "entities": {"types": "a/list", "structure": "entities"}
+        }
+    },
+    "palettes": {
+        "inherit": "temp/Set.nbt",
+        "$field": "palette",
+        "value_types": "a/list",
+        "value_structure": "palette"
+    },
+    "palette": {
+        "inherit": "temp/List.nbt", // indexes are VERY important
+        "$field": "block",
+        "value_types": "a/compound",
+        "value_structure": "block_state"
+    },
+    "block_state": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "Name": {"types": "a/string"},
+            "Properties": {"types": "a/compound", "structure": "block_state.properties"}
+        }
+    },
+    "block_state.properties": {
+        "inherit": "temp/Dict.nbt",
+        "$field": "property",
+        "value_types": "a/string",
+        "value_structure": null
+    },
+    "blocks": {
+        "type": "Keymap",
+        "normalizers": {
+            "function_name": "minecraft_common!normalizers/volume_normalize_nbt",
+            "arguments": {
+                "position_key": "pos",
+                "state_key": "state"
+            }
+        },
+        "delegate": "minecraft_common!VolumeDelegate",
+        "delegate_arguments": {
+            "field": "block"
+        },
+        "pre_normalized_types": "a/list",
+        "keys": {
+            "states": {"types": "dict", "structure": "volume_states"},
+            "data": {"types": "dict", "structure": "volume_additional_data"},
+            "size": {"types": "tuple", "structure": {
+                "type": "Dict",
+                "allow_key_moves": false,
+                "key_weight": 0,
+                "key_types": "int",
+                "delegate": null,
+                "this_types": "tuple",
+                "value_types": "int",
+                "value_structure": null
+            }}
+        }
+    },
+    "volume_states": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_types": "tuple",
+        "value_types": "int",
+        "delegate": null,
+        "value_structure": null
+    },
+    "volume_additional_data": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_types": "tuple",
+        "value_types": "a/compound",
+        "delegate": null,
+        "value_structure": "block"
+    },
+    "block": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "nbt": {"types": "a/compound", "structure": "structures/misc/block_entity/block_entity"}
+        }
+    },
+    "entities": {
+        "inherit": "temp/Set.nbt",
+        "$field": "entity",
+        "value_types": "a/compound",
+        "value_structure": "entity"
+    },
+    "entity": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "pos": {"types": "a/list", "structure": "vector/vector.tag_double"},
+            "blockPos": {"types": "a/list", "structure": "vector/vector.tag_int"},
+            "nbt": {"types": "a/compound", "structure": "structures/misc/entity/entity"}
+        }
+    }
+}

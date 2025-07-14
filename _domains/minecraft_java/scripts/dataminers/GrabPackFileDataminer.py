@@ -23,24 +23,27 @@ class GrabPackFileDataminer(FileDataminer):
         "find_none_okay",
         "insert_file_name",
         "location",
+        "pack_or_namespace",
         "pack_type",
     )
 
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("location", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
         TypedDictKeyTypeVerifier("pack_type", True, str),
+        TypedDictKeyTypeVerifier("is_namespace", False, bool),
         TypedDictKeyTypeVerifier("find_none_okay", False, bool),
         TypedDictKeyTypeVerifier("insert_file_name", False, str),
     )
 
-    def initialize(self, location:str|Sequence[str], pack_type:str, find_none_okay:bool=False, insert_file_name:str|None=None) -> None:
+    def initialize(self, location:str|Sequence[str], pack_type:str, is_namespace:bool=True, find_none_okay:bool=False, insert_file_name:str|None=None) -> None:
         self.location = (location,) if isinstance(location, str) else location
         self.pack_type = pack_type
+        self.pack_or_namespace = ["packs", "namespaces"][is_namespace]
         self.find_none_okay = find_none_okay
         self.insert_file_name = insert_file_name
 
     def get_coverage(self, file_set:FileSet, environment: DataminerEnvironment) -> set[str]:
-        packs = (pack["path"] for pack in self.get_packs(environment))
+        packs = list(self.get_packs(environment).keys())
         output:set[str] = set()
         for pack, location in product(packs, self.location):
             file_name = pack + location
@@ -50,18 +53,19 @@ class GrabPackFileDataminer(FileDataminer):
             raise DataminerNothingFoundError(self)
         return output
 
-    def get_packs(self, environment:DataminerEnvironment) -> list[PackTypedDict]:
-        return environment.dependency_data.get(self.pack_type, self)
+    def get_packs(self, environment:DataminerEnvironment) -> dict[str,PackTypedDict]:
+        return environment.dependency_data.get(self.pack_type, self)[self.pack_or_namespace]
 
-    def get_files(self, packs:list[PackTypedDict], accessor:DirectoryAccessor, environment:DataminerEnvironment) -> dict[tuple[str,str],bytes]:
+    def get_files(self, packs:dict[str,PackTypedDict], accessor:DirectoryAccessor, environment:DataminerEnvironment) -> dict[tuple[str,str],bytes]:
         '''
         Returns a dictionary of the pack the the files are in and the file's name to the file's contents.
         '''
+        pack_path_name = [(pack_path, pack["name"]) for pack_path, pack in packs.items()]
         files:dict[tuple[str,str], bytes] = {}
-        for pack, location in product(packs, self.location):
-            path = pack["path"] + location
+        for (pack_path, pack_name), location in product(pack_path_name, self.location):
+            path = pack_path + location
             if accessor.file_exists(path):
-                files[pack["name"], path] = accessor.read(path)
+                files[pack_name, path] = accessor.read(path)
         if len(files) == 0 and not self.find_none_okay:
             raise DataminerNothingFoundError(self)
         return files

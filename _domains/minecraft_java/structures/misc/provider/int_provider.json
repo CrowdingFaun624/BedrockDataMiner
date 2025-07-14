@@ -1,0 +1,95 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "int_provider": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "normalizers/normalizers provider_switch",
+            "arguments": {
+                "key": "type",
+                "default": "minecraft:constant_int"
+            }
+        },
+        "substructures": {
+            "minecraft:constant_int": {"types": "int"}, // not a real type
+            "minecraft:constant": {"types": "dict", "structure": "int_provider.constant"},
+            "minecraft:uniform": {"types": "dict", "structure": "int_provider.uniform"},
+            "minecraft:biased_to_bottom": {"types": "dict", "structure": "int_provider.biased_to_bottom"},
+            "minecraft:clamped": {"types": "dict", "structure": "int_provider.clamped"},
+            "minecraft:clamped_normal": {"types": "dict", "structure": "int_provider.clamped_normal"},
+            "minecraft:weighted_list": {"types": "dict", "structure": "int_provider.weighted_list"}
+        }
+    },
+    "int_provider:all": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "int_provider:clamped": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "min_inclusive": {"types": "int"},
+            "max_inclusive": {"types": "int"}
+        }
+    },
+    "int_provider.constant": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["int_provider:all"],
+        "keys": {
+            "value": {"types": "int"}
+        }
+    },
+    "int_provider.uniform": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["int_provider:all", "int_provider:clamped"]
+    },
+    "int_provider.biased_to_bottom": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["int_provider:all", "int_provider:clamped"]
+    },
+    "int_provider.clamped": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["int_provider:all", "int_provider:clamped"],
+        "keys": {
+            "source": {"types": ["int", "dict"], "structure": "int_provider"}
+        }
+    },
+    "int_provider.clamped_normal": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["int_provider:all", "int_provider:clamped"],
+        "keys": {
+            "mean": {"types": "misc/decimal"},
+            "deviation": {"types": "misc/decimal"}
+        }
+    },
+    "int_provider.weighted_list": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["int_provider:all"],
+        "keys": {
+            "distribution": {"types": "list", "structure": "int_provider.weighted_list:distribution"}
+        }
+    },
+    "int_provider.weighted_list:distribution": {
+        "inherit": "temp/Set",
+        "$field": "entry",
+        "value_types": "dict",
+        "value_structure": "int_provider.weighted_list:distribution.entry"
+    },
+    "int_provider.weighted_list:distribution.entry": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "data": {"types": ["int", "dict"], "structure": "int_provider"},
+            "weight": {"types": "int"}
+        }
+    },
+    "int_provider:forced_uniform": {
+        "type": "Union",
+        "substructures": {
+            "int": null,
+            "dict": "int_provider.uniform"
+        }
+    }
+}

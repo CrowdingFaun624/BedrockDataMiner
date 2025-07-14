@@ -1,5 +1,7 @@
 {
     "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
         "s": "serializers"
     },
     "base": {
@@ -24,10 +26,7 @@
         }
     },
     "root": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "id": {"types": "str", "delegate_arguments": {"always_print": true}},
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
@@ -47,10 +46,7 @@
         }
     },
     "asset_index": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "id": {"types": "str", "delegate_arguments": {"always_print": true}},
             "sha1": {"types": "str", "delegate_arguments": {"always_print": true}},
@@ -75,10 +71,7 @@
         }
     },
     "downloads.file": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "url": {"types": "str", "delegate_arguments": {"always_print": true}},
             "sha1": {"types": "str"},
@@ -86,29 +79,20 @@
         }
     },
     "java_version": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "component": {"types": "str"},
             "majorVersion": {"types": "int"}
         }
     },
     "logging": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "client": {"types": "dict", "structure": "logging.client"}
         }
     },
     "logging.client": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "type": {"types": "str"},
             "argument": {"types": "str"},
@@ -116,10 +100,7 @@
         }
     },
     "logging.client.file": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "id": {"types": "str", "delegate_arguments": {"always_print": true}},
             "url": {"types": "str", "delegate_arguments": {"always_print": true}},
@@ -128,10 +109,7 @@
         }
     },
     "arguments": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "game": {"types": "list", "structure": "arguments.environment"},
             "jvm": {"types": "list", "structure": "arguments.environment"}
@@ -147,16 +125,13 @@
         "value_structure": {
             "type": "Union",
             "substructures": {
-                "str": {"type": "String"},
+                "str": "misc/string",
                 "dict": "argument"
             }
         }
     },
     "argument": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "value": {"types": ["str", "list"], "structure": "argument.value"},
             "rules": {"types": "list", "structure": "rules"}
@@ -165,7 +140,7 @@
     "argument.value": {
         "type": "Union",
         "substructures": {
-            "str": {"type": "String"},
+            "str": "misc/string",
             "list": {
                 "type": "Sequence",
                 "value_types": "str",
@@ -173,7 +148,7 @@
                     "print_flat": true,
                     "print_all": true
                 },
-                "value_structure": {"type": "String"}
+                "value_structure": "misc/string"
             }
         }
     },
@@ -191,10 +166,7 @@
         "value_structure": "rule"
     },
     "rule": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "action": {"types": "str"},
             "features": {"types": "dict", "structure": "rule.features"},
@@ -218,13 +190,10 @@
         }
     },
     "rule.os": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "name": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "version": {"types": "str", "structure": {"type": "String"}},
+            "version": {"types": "str", "structure": "misc/string"},
             "arch": {"types": "str"}
         }
     },
@@ -242,13 +211,10 @@
         "value_structure": "library"
     },
     "library": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
-            "url": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string"},
+            "url": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string"},
             "downloads": {"types": "dict", "structure": "library.downloads"},
             "natives": {"types": "dict", "structure": "library.natives"},
             "extract": {"types": "dict", "structure": "library.extract"},
@@ -256,10 +222,7 @@
         }
     },
     "library.downloads": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "artifact": {"types": "dict", "structure": "artifact"},
             "classifiers": {"types": "dict", "structure": "library.downloads.classifiers"}
@@ -275,33 +238,24 @@
         "value_structure": "artifact"
     },
     "artifact": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "url": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
-            "path": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
+            "url": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string"},
+            "path": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string"},
             "sha1": {"types": "str", "similarity_weight": 0},
             "size": {"types": "int", "similarity_weight": 0}
         }
     },
     "library.natives": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "windows": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
-            "osx": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
-            "linux": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}}
+            "windows": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string"},
+            "osx": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string"},
+            "linux": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string"}
         }
     },
     "library.extract": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "exclude": {"types": "list", "structure": "library.extract.exclude"}
         }
@@ -317,6 +271,6 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_structure": {"type": "String"}
+        "value_structure": "misc/string"
     }
 }

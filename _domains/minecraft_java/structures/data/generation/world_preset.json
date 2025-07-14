@@ -1,0 +1,133 @@
+{
+    "group_aliases": {
+        "flgp": "structures/data/generation/flat_level_generator_preset",
+        "misc": "structures/misc/misc",
+        "ns": "structures/data/generation/noise_settings",
+        "temp": "structures/misc/template"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "world_preset",
+        "$pack_type": "data pack",
+        "$structure": "#@world_preset"
+    },
+    "world_preset": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "dimensions": {"types": "dict", "structure": "dimensions"}
+        }
+    },
+    "dimensions": {
+        "inherit": "temp/Dict",
+        "$field": "dimension",
+        "value_types": "dict",
+        "value_structure": "dimension"
+    },
+    "dimension": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "generator": {"types": "dict", "structure": "generator"}
+        }
+    },
+    "generator": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:debug": {"types": "dict", "structure": "generator.debug"},
+            "minecraft:flat": {"types": "dict", "structure": "generator.flat"},
+            "minecraft:noise": {"types": "dict", "structure": "generator.noise"}
+        }
+    },
+    "generator:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "generator.debug": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "generator:all"
+    },
+    "generator.flat": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "generator:all",
+        "keys": {
+            "settings": {"types": "dict", "structure": "flgp/settings"}
+        }
+    },
+    "generator.noise": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "generator:all",
+        "keys": {
+            "settings": {"types": ["str", "dict"], "structure": "ns/noise_settings_or_id"},
+            "biome_source": {"types": "dict", "structure": "biome_source"}
+        }
+    },
+    "biome_source": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:checkerboard": {"types": "dict", "structure": "biome_source.checkerboard"},
+            "minecraft:fixed": {"types": "dict", "structure": "biome_source.fixed"},
+            "minecraft:multi_noise": {"types": "dict", "structure": "biome_source.multi_noise"},
+            "minecraft:the_end": {"types": "dict", "structure": "biome_source.the_end"}
+        }
+    },
+    "biome_source:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "biome_source.checkerboard": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "biome_source:all",
+        "keys": {
+            "biomes": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='biome'}"},
+            "scale": {"types": "int"}
+        }
+    },
+    "biome_source.fixed": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "biome_source:all",
+        "keys": {
+            "biome": {"types": "str"}
+        }
+    },
+    "biome_source.multi_noise": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "biome_source:all",
+        "keys": {
+            "preset": {"types": "str"},
+            "biomes": {"types": "list", "structure": "biome_source.multi_noise:biomes"}
+        }
+    },
+    "biome_source.multi_noise:biomes": {
+        "inherit": "temp/Set",
+        "$field": "biome",
+        "value_types": "dict",
+        "value_structure": "biome_source.multi_noise:biome"
+    },
+    "biome_source.multi_noise:biome": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "biome": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "parameters": {"types": "dict", "structure": "ns/noise_parameter"}
+        }
+    },
+    "biome_source.the_end": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "biome_source:all"
+    }
+}

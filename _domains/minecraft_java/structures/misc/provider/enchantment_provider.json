@@ -1,0 +1,58 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
+        "int_provider": "structures/misc/provider/int_provider"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$pack_type": "data pack",
+        "$name": "enchantment_providers",
+        "$structure": "root"
+    },
+    "root": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:single": {"types": "dict", "structure": "provider.single"},
+            "minecraft:enchantments_by_cost": {"types": "dict", "structure": "provider.enchantments_by_cost"},
+            "minecraft:by_cost_with_difficulty": {"types": "dict", "structure": "provider.by_cost_with_difficulty"}
+        }
+    },
+    "provider:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "provider.single": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "provider:all",
+        "keys": {
+            "enchantment": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "level": {"types": ["int", "dict"], "structure": "int_provider/int_provider"}
+        }
+    },
+    "provider.enchantments_by_cost": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "provider:all",
+        "keys": {
+            "enchantments": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='enchantment'}"},
+            "cost": {"types": ["int", "dict"], "structure": "int_provider/int_provider"}
+        }
+    },
+    "provider.by_cost_with_difficulty": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "provider:all",
+        "keys": {
+            "enchantments": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='enchantment'}"},
+            "min_cost": {"types": "int"},
+            "max_cost_span": {"types": "int"}
+        }
+    }
+}

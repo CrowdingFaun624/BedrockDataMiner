@@ -1,5 +1,7 @@
 {
     "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
         "s": "serializers"
     },
     "base": {
@@ -24,10 +26,7 @@
         }
     },
     "configuration": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str"},
             "attrib": {"types": "dict", "structure": "configuration.attrib"},
@@ -36,10 +35,7 @@
         }
     },
     "configuration.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "version": {"types": "str"},
             "label": {"types": "str"},
@@ -74,10 +70,7 @@
         }
     },
     "event": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}},
             "attrib": {"types": "dict", "structure": "event.attrib", "delegate_arguments": {"always_print": true}},
@@ -86,12 +79,9 @@
         }
     },
     "event.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}}
         }
     },
     "event.children": {
@@ -108,10 +98,7 @@
         "value_structure": "setting"
     },
     "setting": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "similarity_weight": 0},
             "attrib": {"types": "dict", "structure": "setting.attrib", "delegate_arguments": {"always_print": true}, "similarity_weight": 2},
@@ -119,20 +106,14 @@
         }
     },
     "setting.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}, "similarity_weight": 3},
-            "control": {"types": "str", "structure": {"type": "String"}}
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string", "similarity_weight": 3},
+            "control": {"types": "str", "structure": "misc/string"}
         }
     },
     "control": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
             "children": {"types": "list", "structure": "control.children"}
@@ -167,10 +148,7 @@
         }
     },
     "selection": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
             "attrib": {"types": "dict", "structure": "selection.attrib", "delegate_arguments": {"always_print": true}},
@@ -178,14 +156,11 @@
         }
     },
     "selection.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 6},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 6},
             "default": {"types": "str"},
-            "label": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 2}
+            "label": {"types": "str", "structure": "misc/string", "similarity_weight": 2}
         }
     },
     "selection.children": {
@@ -202,10 +177,7 @@
         "value_structure": "option"
     },
     "option": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "similarity_weight": 0},
             "attrib": {"types": "dict", "structure": "option.attrib", "similarity_weight": 3},
@@ -213,20 +185,14 @@
         }
     },
     "option.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "label": {"types": "str", "structure": {"type": "String"}},
-            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 3}
+            "label": {"types": "str", "structure": "misc/string"},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 3}
         }
     },
     "condition": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
             "attrib": {"types": "dict", "structure": "condition.attrib", "delegate_arguments": {"always_print": true}},
@@ -234,12 +200,9 @@
         }
     },
     "condition.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 8},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 8},
             "true": {"types": "str"},
             "false": {"types": "str"}
         }
@@ -271,31 +234,22 @@
         }
     },
     "test": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
             "attrib": {"types": "dict", "structure": "test.attrib", "delegate_arguments": {"always_print": true}}
         }
     },
     "test.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 8},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 8},
             "operator": {"types": "str"},
             "value": {"types": "str"}
         }
     },
     "or": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
             "children": {"types": "list", "structure": "or.children"}
@@ -315,10 +269,7 @@
         "value_structure": "test"
     },
     "text": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
             "attrib": {"types": "dict", "structure": "text.attrib", "delegate_arguments": {"always_print": true}, "similarity_weight": 4},
@@ -326,22 +277,16 @@
         }
     },
     "text.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 12},
-            "label": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 6},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 12},
+            "label": {"types": "str", "structure": "misc/string", "similarity_weight": 6},
             "contentType": {"types": "str"},
             "minimum": {"types": "str"}
         }
     },
     "flag": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
             "attrib": {"types": "dict", "structure": "flag.attrib", "delegate_arguments": {"always_print": true}, "similarity_weight": 4},
@@ -349,13 +294,10 @@
         }
     },
     "flag.attrib": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}, "similarity_weight": 3},
-            "label": {"types": "str", "structure": {"type": "String"}}
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": "misc/string", "similarity_weight": 3},
+            "label": {"types": "str", "structure": "misc/string"}
         }
     }
 }

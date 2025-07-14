@@ -1,5 +1,7 @@
 {
     "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
         "s": "serializers"
     },
     "base": {
@@ -44,9 +46,6 @@
             "structure": "root"
         }
     },
-    "string": {
-        "type": "String"
-    },
     "vector_decimal": {
         "type": "Dict",
         "allow_key_moves": false,
@@ -76,12 +75,9 @@
         "value_structure": null
     },
     "root": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "parent": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "parent": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
             "ambientocclusion": {"types": "bool"},
             "display": {"types": "dict", "structure": "display"},
             "textures": {"types": "dict", "structure": "textures"},
@@ -92,10 +88,7 @@
         }
     },
     "display": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "thirdperson_righthand": {"types": "dict", "structure": "display.item"},
             "thirdperson_lefthand": {"types": "dict", "structure": "display.item"},
@@ -108,10 +101,7 @@
         }
     },
     "display.item": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "rotation": {"types": "list", "structure": "vector_decimal"},
             "translation": {"types": "list", "structure": "vector_decimal"},
@@ -126,8 +116,8 @@
             "field": "texture",
             "measure_length": true
         },
-        "key_structure": "string",
-        "value_structure": "string"
+        "key_structure": "misc/string",
+        "value_structure": "misc/string"
     },
     "groups": {
         "type": "Dict",
@@ -143,12 +133,9 @@
         "value_structure": "group"
     },
     "group": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
             "origin": {"types": "list", "structure": "vector_int"},
             "color": {"types": "int"},
             "children": {"types": "list", "structure": "vector_int"}
@@ -168,13 +155,10 @@
         "value_structure": "element"
     },
     "element": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
-            "__comment": {"types": "str", "structure": "string"},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "__comment": {"types": "str", "structure": "misc/string"},
             "from": {"types": "list", "structure": "vector_decimal"},
             "to": {"types": "list", "structure": "vector_decimal"},
             "rotation": {"types": "dict", "structure": "element.rotation"},
@@ -184,10 +168,7 @@
         }
     },
     "element.rotation": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "origin": {"types": "list", "structure": "vector_decimal"},
             "axis": {"types": "str"},
@@ -212,10 +193,7 @@
         }
     },
     "face": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "uv": {"types": "list", "structure": "vector_decimal"},
             "texture": {"types": "str"},

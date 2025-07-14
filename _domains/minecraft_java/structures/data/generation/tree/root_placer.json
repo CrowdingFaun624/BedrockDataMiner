@@ -1,0 +1,54 @@
+{
+    "group_aliases": {
+        "bsp": "structures/misc/provider/block_state_provider",
+        "ip": "structures/misc/provider/int_provider",
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "root_placer": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:mangrove_root_placer": {"types": "dict", "structure": "root_placer.mangrove_root_placer"}
+        }
+    },
+    "root_placer:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "root_provider": {"types": "dict", "structure": "bsp/block_state_provider"},
+            "trunk_offset_y": {"types": ["int", "dict"], "structure": "ip/int_provider"},
+            "above_root_placement": {"types": "dict", "structure": "above_root_placement"}
+        }
+    },
+    "above_root_placement": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "above_root_provider": {"types": "dict", "structure": "bsp/block_state_provider"},
+            "above_root_placement_chance": {"types": "float"}
+        }
+    },
+    "root_placer.mangrove_root_placer": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "root_placer:all",
+        "keys": {
+            "mangrove_root_placement": {"types": "dict", "structure": "root_placer.mangrove_root_placer:mangrove_root_placement"}
+        }
+    },
+    "root_placer.mangrove_root_placer:mangrove_root_placement": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "max_root_width": {"types": "int"},
+            "max_root_length": {"types": "int"},
+            "random_skew_chance": {"types": "float"},
+            "can_grow_through": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='block'}"},
+            "muddy_roots_in": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='block'}"},
+            "muddy_roots_provider": {"types": "dict", "structure": "bsp/block_state_provider"}
+        }
+    }
+}

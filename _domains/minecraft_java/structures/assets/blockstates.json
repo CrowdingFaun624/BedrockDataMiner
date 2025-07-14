@@ -1,5 +1,7 @@
 {
     "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
         "s": "serializers"
     },
     "base": {
@@ -47,11 +49,11 @@
             "field": "state",
             "measure_length": true
         },
-        "key_structure": "string",
+        "key_structure": "misc/string",
         "value_structure": {
             "type": "Union",
             "substructures": {
-                "str": "string",
+                "str": "misc/string",
                 "list": "blockstate_conditions"
             }
         }
@@ -69,14 +71,8 @@
         },
         "value_structure": "blockstate_condition"
     },
-    "string": {
-        "type": "String"
-    },
     "root": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "multipart": {"types": "list", "structure": "multipart"},
             "variants": {"types": "dict", "structure": "variants"}
@@ -96,10 +92,7 @@
         "value_structure": "rule"
     },
     "rule": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "apply": {"types": ["dict", "list"], "structure": {
                 "type": "Union",
@@ -118,7 +111,7 @@
             "field": "variant",
             "measure_length": true
         },
-        "key_structure": "string",
+        "key_structure": "misc/string",
         "value_structure": "variants_group"
     },
     "variants_list": {
@@ -155,12 +148,9 @@
         "value_structure": "variant"
     },
     "variant": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "model": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "model": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
             "x": {"types": "int"},
             "y": {"types": "int"},
             "uvlock": {"types": "bool"},

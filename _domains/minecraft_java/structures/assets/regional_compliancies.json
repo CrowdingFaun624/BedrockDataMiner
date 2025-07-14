@@ -1,35 +1,14 @@
 {
     "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
         "s": "serializers"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "regional_compliancies"
-        },
-        "structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "regions"
-        }
+        "inherit": "temp/base_pack_files",
+        "$name": "regional_compliancies",
+        "$pack_type": "resource pack",
+        "$structure": "#@regions"
     },
     "regions": {
         "type": "Dict",
@@ -54,18 +33,12 @@
         "value_structure": "warning"
     },
     "warning": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "delay": {"types": "int"},
             "period": {"types": "int"},
-            "title": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
-            "message": {"types": "str", "structure": "string"}
+            "title": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "message": {"types": "str", "structure": "misc/string"}
         }
-    },
-    "string": {
-        "type": "String"
     }
 }

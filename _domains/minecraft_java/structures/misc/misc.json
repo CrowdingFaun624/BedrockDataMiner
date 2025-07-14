@@ -1,0 +1,567 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "temp": "structures/misc/template",
+        "vector": "structures/misc/vector"
+    },
+    "any": {
+        "type": "Union",
+        "substructures": {
+            "dict": "any.dict",
+            "list": "any.list",
+            "str": null,
+            "int": null,
+            "float": null,
+            "null": null
+        }
+    },
+    "any.dict": {
+        "type": "Dict",
+        "this_types": "dict",
+        "key_types": "str",
+        "value_types": ["dict", "list", "str", "int", "float", "null"],
+        "delegate_arguments": {
+            "measure_length": true
+        },
+        "value_structure": "any"
+    },
+    "any.list": {
+        "type": "Dict",
+        "this_types": "list",
+        "key_types": "int",
+        "value_types": ["dict", "list", "str", "int", "float", "null"],
+        "delegate_arguments": {
+            "measure_length": true
+        },
+        "value_structure": "any"
+    },
+    "any_nbt": {
+        "type": "Union",
+        "substructures": {
+            "dict": "any.dict",
+            "list": "any.list",
+            "str": null,
+            "int": null,
+            "float": null,
+            "null": null,
+            "TAG_Byte": null,
+            "TAG_Short": null,
+            "TAG_Int": null,
+            "TAG_Long": null,
+            "TAG_Float": null,
+            "TAG_Double": null,
+            "TAG_Byte_Array": "#!any_nbt.TAG_List{this_types='TAG_Byte_Array'}",
+            "TAG_String": null,
+            "TAG_List": "#!any_nbt.TAG_List{this_types='TAG_List'}",
+            "TAG_Compound": "#!any_nbt.TAG_Compound",
+            "TAG_Int_Array": "#!any_nbt.TAG_List{this_types='TAG_Int_Array'}",
+            "TAG_Long_Array": "#!any_nbt.TAG_List{this_types='TAG_Long_Array'}"
+        }
+    },
+    "any_nbt.compound": {
+        "inherit": "any.dict",
+        "this_types": "a/compound",
+        "key_types": "a/string",
+        "value_types": ["dict", "list", "str", "int", "float", "null", "TAG_Byte", "TAG_Short", "TAG_Int", "TAG_Long", "TAG_Float", "TAG_Double", "TAG_Byte_Array", "TAG_String", "TAG_List", "TAG_Compound", "TAG_Int_Array", "TAG_Long_Array"],
+        "value_structure": "any_nbt"
+    },
+    "any_nbt.TAG_Compound": {
+        "inherit": "any.dict",
+        "this_types": "TAG_Compound",
+        "key_types": "TAG_String",
+        "value_types": ["dict", "list", "str", "int", "float", "null", "TAG_Byte", "TAG_Short", "TAG_Int", "TAG_Long", "TAG_Float", "TAG_Double", "TAG_Byte_Array", "TAG_String", "TAG_List", "TAG_Compound", "TAG_Int_Array", "TAG_Long_Array"],
+        "value_structure": "any_nbt"
+    },
+    "any_nbt.TAG_List": {
+        "inherit": "any.list",
+        "this_types": "#this_types",
+        "key_types": "int",
+        "value_types": ["dict", "list", "str", "int", "float", "null", "TAG_Byte", "TAG_Short", "TAG_Int", "TAG_Long", "TAG_Float", "TAG_Double", "TAG_Byte_Array", "TAG_String", "TAG_List", "TAG_Compound", "TAG_Int_Array", "TAG_Long_Array"],
+        "value_structure": "any_nbt"
+    },
+    "banner_pattern_list": {
+        "inherit": "temp/List.nbt",
+        "$field": "banner pattern",
+        "value_types": "a/compound",
+        "value_structure": "banner_pattern"
+    },
+    "banner_pattern": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "color": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "pattern": {"types": ["a/string", "a/compound"], "structure": "banner_pattern_definition_or_id", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "banner_pattern_or_list": {
+        "type": "Union",
+        "substructures": {
+            "a/list": "banner_pattern_list",
+            "a/compound": "banner_pattern"
+        }
+    },
+    "banner_pattern_definition_or_id": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null,
+            "a/compound": "structures/data/banner_patterns/banner_pattern_definition"
+        }
+    },
+    "bee_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "bee",
+        "value_types": "a/compound",
+        "value_structure": "bee"
+    },
+    "bee": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "entity_data": {"types": "a/string", "structure": "string.nbt"},
+            "min_ticks_in_hive": {"types": "a/int"},
+            "ticks_in_hive": {"types": "a/int"}
+        }
+    },
+    "color": {
+        "type": "Union",
+        "substructures": {
+            "a/int": null,
+            "a/list": "color_list"
+        }
+    },
+    "color_list":{
+        "inherit": "temp/List.nbt",
+        "$field": "channel",
+        "$print_flat": true,
+        "$print_all": true,
+        "value_types": "a/float",
+        "value_structure": null
+    },
+    "consume_effect_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "effect",
+        "value_types": "a/compound",
+        "value_structure": "consume_effect"
+    },
+    "consume_effect": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "apply_effects": {"types": "a/compound", "structure": "consume_effect.apply_effects"},
+            "remove_effects": {"types": "a/compound", "structure": "consume_effect.remove_effects"},
+            "clear_all_effects": {"types": "a/compound", "structure": "consume_effect.clear_all_effects"},
+            "teleport_randomly": {"types": "a/compound", "structure": "consume_effect.teleport_randomly"},
+            "play_sound": {"types": "a/compound", "structure": "consume_effect.play_sound"}
+        }
+    },
+    "consume_effect.apply_effects": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "effects": {"types": "a/list", "structure": "effect_data_list"},
+            "probability": {"types": "a/float"}
+        }
+    },
+    "consume_effect.remove_effects": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "effects": {"types": ["a/list", "a/string"], "structure": "#!named_list_or_item.nbt{name='effect'}"}
+        }
+    },
+    "consume_effect.clear_all_effects": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "consume_effect.teleport_randomly": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "diameter": {"types": "a/float"}
+        }
+    },
+    "consume_effect.play_sound": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "sound": {"types": ["a/string", "a/compound"], "structure": "sound_event"}
+        }
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "effect_data": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "id": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "ambient": {"types": "a/bool"},
+            "amplifier": {"types": "a/byte"},
+            "duration": {"types": "a/int"},
+            "show_particles": {"types": "a/bool"},
+            "show_icon": {"types": "a/bool"},
+            "hidden_effect": {"types": "a/compound", "structure": "effect_data"}
+        }
+    },
+    "effect_data_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "effect",
+        "value_types": "a/compound",
+        "value_structure": "effect_data"
+    },
+    "empty_dict": {
+        "type": "Keymap",
+        "keys": {}
+    },
+    "empty_compound": {
+        "type": "Keymap",
+        "this_types": "a/compound",
+        "keys": {}
+    },
+    "event_listener.block": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "event": {"types": "a/compound", "structure": "event_listener:event"},
+            "event_delay": {"types": "a/int"},
+            "selector": {"types": "a/compound", "structure": "event_listener:selector"}
+        }
+    },
+    "event_listener.entity": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "event": {"types": "a/compound", "structure": "event_listener:event"},
+            "event_delay": {"types": "a/int"},
+            "event_distance": {"types": "a/int"},
+            "range": {"types": "a/int"},
+            "source": {"types": "a/compound", "structure": "position_source"}
+        }
+    },
+    "event_listener:event": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "distance": {"types": "a/float"},
+            "game_event": {"types": "a/string", "structure": "string.nbt"},
+            "pos": {"types": "a/list", "structure": "vector/vector.tag_double"},
+            "projectile_owner": {"types": "a/int_array", "structure": "uuid_list.nbt"},
+            "source": {"types": "a/int_array", "structure": "uuid_list.nbt"}
+        }
+    },
+    "event_listener:selector": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "tick": {"types": "a/long"},
+            "event": {"types": "a/compound", "structure": "event_listener:event"}
+        }
+    },
+    "position_source": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "block": {"types": "a/compound", "structure": "position_source.block"},
+            "entity": {"types": "a/compound", "structure": "position_source.entity"}
+        }
+    },
+    "position_source:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "position_source.block": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "position_source:all",
+        "keys": {
+            "pos": {"types": "a/int_array", "structure": "vector/vector.tag_int_array"}
+        }
+    },
+    "position_source.entity": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "position_source:all",
+        "keys": {
+            "source_entity": {"types": "a/int_array", "structure": "uuid_list.nbt"},
+            "y_offset": {"types": "a/float"}
+        }
+    },
+    "filterable_lines": {
+        "inherit": "temp/List",
+        "$field": "line",
+        "$types": "str",
+        "$structure": null,
+        "value_types": ["dict", "#types"],
+        "value_structure": "#!filterable_text_or_text{types=types, structure=structure}"
+    },
+    "filterable_text_or_text": {
+        "type": "Union",
+        "$types": "str",
+        "$structure": null,
+        "substructures": {
+            "dict": "#!filterable_text{types=types, structure=structure}", // this has the weird edge case where types may include "dict"
+            "#types": "#structure"
+        }
+    },
+    "filterable_text": {
+        "inherit": "temp/SortedKeymap",
+        "$types": "str",
+        "$structure": null,
+        "keys": {
+            "raw": {"types": "#types", "structure": "#structure"},
+            "filtered": {"types": "#types", "structure": "#structure"}
+        }
+    },
+    "filterable_text.nbt": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "$types": "a/string",
+        "$structure": null,
+        "keys": {
+            "raw": {"types": "#types", "structure": "#structure"},
+            "filtered": {"types": "#types", "structure": "#structure"}
+        }
+    },
+    "firework_explosion_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "explosion",
+        "value_types": "a/compound",
+        "value_structure": "firework_explosion"
+    },
+    "firework_explosion": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "shape": {"types": "a/string"},
+            "colors": {"types": "a/list", "structure": "firework_explosion.colors"},
+            "fade_colors": {"types": "a/list", "structure": "firework_explosion.colors"},
+            "has_trail": {"types": "a/bool"},
+            "has_twinkle": {"types": "a/bool"}
+        }
+    },
+    "firework_explosion.colors": {
+        "inherit": "temp/Set.nbt",
+        "$field": "color",
+        "value_types": "a/int",
+        "value_structure": null
+    },
+    "item_data_slotless": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "id": {"types": "a/string", "structure": "string.nbt", "delegate_arguments": {"always_print": true}},
+            "count": {"types": "a/int"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+        }
+    },
+    "item_data_slotless_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "item",
+        "value_types": "a/compound",
+        "value_structure": "item_data_slotless"
+    },
+    "item_data": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "Slot": {"types": "a/byte"},
+            "id": {"types": "a/string", "structure": "string.nbt", "delegate_arguments": {"always_print": true}},
+            "count": {"types": "a/int"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+        }
+    },
+    "item_type": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "id": {"types": "a/string", "structure": "string.nbt", "delegate_arguments": {"always_print": true}},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+        }
+    },
+    "item_data_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "item",
+        "value_types": "a/compound",
+        "value_structure": "item_data"
+    },
+    "item_type_or_id": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null,
+            "a/compound": "item_type"
+        }
+    },
+    "named_list": {
+        "inherit": "temp/Set",
+        "$field": "#name",
+        "value_types": "str",
+        "value_structure": "string"
+    },
+    "named_list.nbt": {
+        "inherit": "temp/Set.nbt",
+        "$field": "#name",
+        "value_types": "a/string",
+        "value_structure": "string.nbt"
+    },
+    "named_list_or_item": {
+        "type": "Union",
+        "substructures": {
+            "str": null,
+            "list": "#!named_list{name=name}"
+        }
+    },
+    "named_list_or_item.nbt": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null,
+            "a/list": "#!named_list.nbt{name=name}"
+        }
+    },
+    "named_list_of_named_list": {
+        "inherit": "temp/Set",
+        "$field": "#name",
+        "value_types": ["str", "list"],
+        "value_structure": "#!named_list_of_named_list_or_item{name=name}"
+    },
+    "named_list_of_named_list_or_item": {
+        "type": "Union",
+        "substructures": {
+            "str": null,
+            "list": "#!named_list_of_named_list{name=name}"
+        }
+    },
+    "position_dimension": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "pos": {"types": "a/int_array", "structure": "vector/vector.tag_int_array"},
+            "dimension": {"types": "a/string"}
+        }
+    },
+    "profile": {
+        "type": "Union",
+        "substructures": {
+            "a/string": "string.nbt",
+            "a/compound": {
+                "inherit": "temp/SortedKeymap.nbt",
+                "keys": {
+                    "name": {"types": "a/string", "structure": "string.nbt", "delegate_arguments": {"always_print": true}},
+                    "id": {"types": "a/int_array", "structure": "uuid_list.nbt"},
+                    "properties": {"types": "a/list", "structure": "profile.properties"}
+                }
+            }
+        }
+    },
+    "profile.properties": {
+        "inherit": "temp/Set.nbt",
+        "$field": "property",
+        "value_types": "dict",
+        "value_structure": "profile.properties.item"
+    },
+    "profile.properties.item": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "name": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "value": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "signature": {"types": "a/string"}
+        }
+    },
+    "range_decimal": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "max": {"types": "decimal"},
+            "min": {"types": "decimal"}
+        }
+    },
+    "range_decimal_or_decimal": {
+        "type": "Union",
+        "substructures": {
+            "decimal": null,
+            "dict": "range_decimal"
+        }
+    },
+    "range_int": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "max": {"types": "int"},
+            "min": {"types": "int"}
+        }
+    },
+    "range_int_or_int": {
+        "type": "Union",
+        "substructures": {
+            "int": null,
+            "dict": "range_int"
+        }
+    },
+    "range_int.nbt": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "max": {"types": "a/int"},
+            "min": {"types": "a/int"}
+        }
+    },
+    "range_int_or_int.nbt": {
+        "type": "Union",
+        "substructures": {
+            "a/int": null,
+            "a/compound": "range_int.nbt"
+        }
+    },
+    "range_item": {
+        "inherit": "temp/SortedKeymap",
+        "$structure": null,
+        "keys": {
+            "max": {"types": "#types", "structure": "#structure"},
+            "min": {"types": "#types", "structure": "#structure"}
+        }
+    },
+    "range_item_or_item": {
+        "type": "Union",
+        "$structure": null,
+        "substructures": {
+            "#types": null,
+            "dict": "#!range_item{types=types, structure=structure}"
+        }
+    },
+    "sound_event": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null,
+            "a/compound": {
+                "inherit": "temp/SortedKeymap.nbt",
+                "keys": {
+                    "sound_id": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+                    "range": {"types": "a/float"}
+                }
+            }
+        }
+    },
+    "string": {
+        "type": "String"
+    },
+    "string.nbt": {
+        "type": "String",
+        "this_types": "a/string"
+    },
+    "uuid_tag_list": {
+        "inherit": "temp/List.nbt",
+        "$field": "number",
+        "this_types": "TAG_List",
+        "value_types": "a/int",
+        "value_structure": null
+    },
+    "uuid_list.nbt": {
+        "inherit": "temp/List.nbt",
+        "$field": "number",
+        "this_types": "a/int_array",
+        "value_types": "a/int",
+        "value_structure": null
+    },
+    "uuid_list_list.nbt": {
+        "inherit": "temp/List.nbt",
+        "$field": "UUID",
+        "value_types": "a/int_array",
+        "value_structure": "uuid_list.nbt"
+    }
+}

@@ -1,0 +1,499 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "attribute": "structures/misc/attribute",
+        "data_components": "structures/misc/data_components",
+        "conditions": "structures/data/advancements/conditions",
+        "lm": "structures/data/loot_tables/list_modifier",
+        "misc": "structures/misc/misc",
+        "np": "structures/misc/provider/number_provider",
+        "pred": "structures/misc/predicate",
+        "source": "structures/data/loot_tables/source",
+        "tc": "structures/misc/text_component",
+        "temp": "structures/misc/template"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$pack_type": "data pack",
+        "$name": "loot_tables",
+        "$types": ["list", "dict"],
+        "$structure": "item_modifier_list_or_item_modifier"
+    },
+    "item_modifier_list_or_item_modifier": {
+        "type": "Union",
+        "substructures": {
+            "list": "item_modifier_list",
+            "dict": "item_modifier"
+        }
+    },
+    "item_modifier_list": {
+        "inherit": "temp/Sequence",
+        "$field": "item modifier",
+        "value_types": "dict",
+        "value_structure": "item_modifier"
+    },
+    "item_modifier": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "function"
+            }
+        },
+        "substructures": {
+            "minecraft:apply_bonus": {"types": "dict", "structure": "item_modifier.apply_bonus"},
+            "minecraft:copy_components": {"types": "dict", "structure": "item_modifier.copy_components"},
+            "minecraft:copy_custom_data": {"types": "dict", "structure": "item_modifier.copy_custom_data"},
+            "minecraft:copy_name": {"types": "dict", "structure": "item_modifier.copy_name"},
+            "minecraft:copy_state": {"types": "dict", "structure": "item_modifier.copy_state"},
+            "minecraft:enchant_randomly": {"types": "dict", "structure": "item_modifier.enchant_randomly"},
+            "minecraft:enchant_with_levels": {"types": "dict", "structure": "item_modifier.enchant_with_levels"},
+            "minecraft:enchanted_count_increase": {"types": "dict", "structure": "item_modifier.enchanted_count_increase"},
+            "minecraft:exploration_map": {"types": "dict", "structure": "item_modifier.exploration_map"},
+            "minecraft:explosion_decay": {"types": "dict", "structure": "item_modifier.explosion_decay"},
+            "minecraft:fill_player_head": {"types": "dict", "structure": "item_modifier.fill_player_head"},
+            "minecraft:filtered": {"types": "dict", "structure": "item_modifier.filtered"},
+            "minecraft:furnace_smelt": {"types": "dict", "structure": "item_modifier.furnace_smelt"},
+            "minecraft:limit_count": {"types": "dict", "structure": "item_modifier.limit_count"},
+            "minecraft:modify_contents": {"types": "dict", "structure": "item_modifier.modify_contents"},
+            "minecraft:reference": {"types": "dict", "structure": "item_modifier.reference"},
+            "minecraft:sequence": {"types": "dict", "structure": "item_modifier.sequence"},
+            "minecraft:set_attributes": {"types": "dict", "structure": "item_modifier.set_attributes"},
+            "minecraft:set_banner_pattern": {"types": "dict", "structure": "item_modifier.set_banner_pattern"},
+            "minecraft:set_book_cover": {"types": "dict", "structure": "item_modifier.set_book_cover"},
+            "minecraft:set_components": {"types": "dict", "structure": "item_modifier.set_components"},
+            "minecraft:set_contents": {"types": "dict", "structure": "item_modifier.set_contents"},
+            "minecraft:set_count": {"types": "dict", "structure": "item_modifier.set_count"},
+            "minecraft:set_custom_data": {"types": "dict", "structure": "item_modifier.set_custom_data"},
+            "minecraft:set_custom_model_data": {"types": "dict", "structure": "item_modifier.set_custom_model_data"},
+            "minecraft:set_damage": {"types": "dict", "structure": "item_modifier.set_damage"},
+            "minecraft:set_enchantments": {"types": "dict", "structure": "item_modifier.set_enchantments"},
+            "minecraft:set_fireworks": {"types": "dict", "structure": "item_modifier.set_fireworks"},
+            "minecraft:set_firework_explosion": {"types": "dict", "structure": "item_modifer.set_firework_explosion"},
+            "minecraft:set_instrument": {"types": "dict", "structure": "item_modifier.set_instrument"},
+            "minecraft:set_item": {"types": "dict", "structure": "item_modifier.set_item"},
+            "minecraft:set_loot_table": {"types": "dict", "structure": "item_modifier.set_loot_table"},
+            "minecraft:set_lore": {"types": "dict", "structure": "#!lm/list_modifier{values=@tc/lines, values_key='lore', value_types=@a/list}"},
+            "minecraft:set_name": {"types": "dict", "structure": "item_modifier.set_name"},
+            "minecraft:set_ominous_bottle_amplifier": {"types": "dict", "structure": "item_modifier.set_ominous_bottle_amplifier"},
+            "minecraft:set_potion": {"types": "dict", "structure": "item_modifier.set_potion"},
+            "minecraft:set_stew_effect": {"types": "dict", "structure": "item_modifier.set_stew_effect"},
+            "minecraft:set_writable_book_pages": {"types": "dict", "structure": "#!lm/list_modifier{values=@misc/filterable_lines{field='page'}, values_key='pages'}"},
+            "minecraft:set_written_book_pages": {"types": "dict", "structure": "#!lm/list_modifier{values=@misc/filterable_lines{field='page', types=@tc/root_type, structure=@tc/root}, values_key='pages'}"},
+            "minecraft:toggle_tooltips": {"types": "dict", "structure": "item_modifier.toggle_tooltips"}
+        }
+    },
+    "item_modifier:all": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "function": {"types": "str"},
+            "conditions": {"types": "list", "structure": "pred/predicate_list"}
+        }
+    },
+    "item_modifier.apply_bonus": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "formula"
+            }
+        },
+        "substructures": {
+            "minecraft:binomial_with_bonus_count": {"types": "dict", "structure": "#!item_modifier.apply_bonus:keymap{parameters=@item_modifier.apply_bonus:parameters.binomial_with_bonus_count}"},
+            "minecraft:uniform_bonus_count": {"types": "dict", "structure": "#!item_modifier.apply_bonus:keymap{parameters=@item_modifier.apply_bonus:parameters.uniform_bonus_count}"},
+            "minecraft:ore_drops": {"types": "dict", "structure": "#!item_modifier.apply_bonus:keymap{parameters=@misc/empty_dict}"}
+        }
+    },
+    "item_modifier.apply_bonus:keymap": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "enchantment": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "formula": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "parameters": {"types": "dict", "structure": "#parameters"}
+        }
+    },
+    "item_modifier.apply_bonus:parameters.binomial_with_bonus_count": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "extra": {"types": "int"},
+            "probability": {"types": "float"}
+        }
+    },
+    "item_modifier.apply_bonus:parameters.uniform_bonus_count": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "bonusMultiplier": {"types": "int"}
+        }
+    },
+    "item_modifier.copy_components": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "source": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "include": {"types": "list", "structure": "#!misc/named_list{name='component'}"},
+            "exclude": {"types": "list", "structure": "#!misc/named_list{name='component'}"}
+        }
+    },
+    "item_modifier.copy_custom_data": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "source": {"types": ["str", "dict"], "structure": "source/source"},
+            "ops": {"types": "list", "structure": "item_modifier.copy_custom_data:ops"}
+        }
+    },
+    "item_modifier.copy_custom_data:ops": {
+        "inherit": "temp/List",
+        "$field": "copy operation",
+        "value_types": "dict",
+        "value_structure": "item_modifier.copy_custom_data:op"
+    },
+    "item_modifier.copy_custom_data:op": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "source": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "target": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "op": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "item_modifier.copy_name": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "source": {"types": "str"}
+        }
+    },
+    "item_modifier.copy_state": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "block": {"types": "str"},
+            "properties": {"types": "list", "structure": "#!misc/named_list{name='property'}"}
+        }
+    },
+    "item_modifier.enchant_randomly": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "options": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='enchantment'}"},
+            "only_compatible": {"types": "bool"}
+        }
+    },
+    "item_modifier.enchant_with_levels": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "options": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='enchantment'}"},
+            "levels": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"}
+        }
+    },
+    "item_modifier.enchanted_count_increase": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "count": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "limit": {"types": "int"},
+            "enchantment": {"types": "str"}
+        }
+    },
+    "item_modifier.exploration_map": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "destination": {"types": "str"},
+            "decoration": {"types": "str"},
+            "zoom": {"types": "int"},
+            "search_radius": {"types": "int"},
+            "skip_existing_chunks": {"types": "bool"}
+        }
+    },
+    "item_modifier.explosion_decay": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all"
+    },
+    "item_modifier.fill_player_head": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "entity": {"types": "str"}
+        }
+    },
+    "item_modifier.filtered": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "item_filter": {"types": "a/compound", "structure": "conditions/condition.item"},
+            "modifier": {"types": "list", "structure": "item_modifier_list"}
+        }
+    },
+    "item_modifier.furnace_smelt": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all"
+    },
+    "item_modifier.limit_count": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "limit": {"types": ["int", "dict"], "structure": {
+                "type": "Union",
+                "substructures": {
+                    "int": null,
+                    "dict": {
+                        "inherit": "temp/SortedKeymap",
+                        "keys": {
+                            "min": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+                            "max": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"}
+                        }
+                    }
+                }
+            }}
+        }
+    },
+    "item_modifier.modify_contents": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "component": {"types": "str"},
+            "modifier": {"types": ["dict", "list"], "structure": "item_modifier_list_or_item_modifier"}
+        }
+    },
+    "item_modifier.reference": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "name": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='function'}"}
+        }
+    },
+    "item_modifier.sequence": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "functions": {"types": "list", "structure": "item_modifier_list"}
+        }
+    },
+    "item_modifier.set_attributes": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "modifiers": {"types": "list", "structure": "attribute/attribute_modifier_list"},
+            "replace": {"types": "bool"}
+        }
+    },
+    "item_modifier.set_banner_pattern": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "patterns": {"types": "a/list", "structure": "misc/banner_pattern_list"},
+            "append": {"types": "bool"}
+        }
+    },
+    "item_modifier.set_book_cover": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "author": {"types": "str"},
+            "generation": {"types": "int"},
+            "title": {"types": "tc/root_type", "structure": "tc/root"}
+        }
+    },
+    "item_modifier.set_components": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "components": {"types": "a/compound", "structure": "data_components/data_component_modification"}
+        }
+    },
+    "item_modifier.set_contents": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "entries": {"types": "list", "structure": "#!misc/named_list{name='foo'}"}, // wiki does not explain these.
+            "component": {"types": "str"}
+        }
+    },
+    "item_modifier.set_count": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "count": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "add": {"types": "bool"}
+        }
+    },
+    "item_modifier.set_custom_data": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "tag": {"types": ["str", "dict"], "structure": {
+                "type": "Union",
+                "substructures": {
+                    "str": null,
+                    "dict": "misc/any.dict"
+                }
+            }}
+        }
+    },
+    "item_modifier.set_custom_model_data": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "floats": {"types": "dict", "structure": "#!lm/list_modifier{values=@item_modifier.set_custom_model_data:values.floats}"},
+            "flags": {"types": "dict", "structure": "#!lm/list_modifier{values=@item_modifier.set_custom_model_data:values.flags}"},
+            "strings": {"types": "dict", "structure": "#!lm/list_modifier{values=@item_modifier.set_custom_model_data:values.strings}"},
+            "colors": {"types": "dict", "structure": "#!lm/list_modifier{values=@item_modifier.set_custom_model_data:values.colors}"}
+        }
+    },
+    "item_modifier.set_custom_model_data:values.floats": {
+        "inherit": "temp/List",
+        "$field": "float",
+        "value_types": ["float", "dict"],
+        "value_structure": "#!np/number_provider{types='float'}"
+    },
+    "item_modifier.set_custom_model_data:values.flags": {
+        "inherit": "temp/List",
+        "$field": "flag",
+        "value_types": "bool",
+        "value_structure": null
+    },
+    "item_modifier.set_custom_model_data:values.strings": {
+        "inherit": "temp/List",
+        "$field": "string",
+        "value_types": "str",
+        "value_structure": "misc/string"
+    },
+    "item_modifier.set_custom_model_data:values.colors": {
+        "inherit": "temp/List",
+        "$field": "color",
+        "value_types": ["int", "dict", "a/list"],
+        "value_structure": "item_modifier.set_custom_model_data:values.colors.item"
+    },
+    "item_modifier.set_custom_model_data:values.colors.item": {
+        "type": "Union",
+        "substructures": {
+            "int": null,
+            "dict": "#!np/number_provider_types{types='float'}",
+            "a/list": "misc/color_list"
+        }
+    },
+    "item_modifier.set_damage": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "damage": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "add": {"types": "bool"}
+        }
+    },
+    "item_modifier.set_enchantments": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "enchantments": {"types": "dict", "structure": "item_modifier.set_enchantments:enchantments"},
+            "add": {"types": "bool"}
+        }
+    },
+    "item_modifier.set_enchantments:enchantments": {
+        "inherit": "temp/Dict",
+        "$field": "enchantment",
+        "value_types": ["float", "dict"],
+        "value_structure": "#!np/number_provider{types='float'}"
+    },
+    "item_modifier.set_fireworks": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "explosions": {"types": "dict", "structure": "#!lm/list_modifier{values=@misc/firework_explosion_list, value_types=@a/list}"},
+            "flight_duration": {"types": "int"}
+        }
+    },
+    "item_modifer.set_firework_explosion": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["item_modifier:all", "misc/firework_explosion"]
+    },
+    "item_modifier.set_instrument": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "options": {"types": "str"}
+        }
+    },
+    "item_modifier.set_item": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "item": {"types": "str"}
+        }
+    },
+    "item_modifier.set_loot_table": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "seed": {"types": "int"},
+            "type": {"types": "str"}
+        }
+    },
+    "item_modifier.set_name": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "name": {"types": "tc/root_type", "structure": "tc/root"},
+            "entity": {"types": "str"},
+            "target": {"types": "str"}
+        }
+    },
+    "item_modifier.set_ominous_bottle_amplifier": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "amplifier": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"}
+        }
+    },
+    "item_modifier.set_potion": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "id": {"types": "str"}
+        }
+    },
+    "item_modifier.set_stew_effect": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "effects": {"types": "list", "structure": "item_modifier.set_stew_effect:effects"}
+        }
+    },
+    "item_modifier.set_stew_effect:effects": {
+        "inherit": "temp/Set",
+        "$field": "effect",
+        "value_types": "dict",
+        "value_structure": "item_modifier.set_stew_effect:effect"
+    },
+    "item_modifier.set_stew_effect:effect": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "duration": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"}
+        }
+    },
+    "item_modifier.toggle_tooltips": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "toggles": {"types": "dict", "structure": "item_modifier.toggle_tooltips:toggles"}
+        }
+    },
+    "item_modifier.toggle_tooltips:toggles": {
+        "inherit": "temp/SortedKeymap",
+        "$keymap_field": "tooltip",
+        "keys": {
+            "attribute_modifiers": {"types": "bool"},
+            "can_break": {"types": "bool"},
+            "can_place_on": {"types": "bool"},
+            "dyed_colors": {"types": "bool"},
+            "enchantments": {"types": "bool"},
+            "stored_enchantments": {"types": "bool"},
+            "trim": {"types": "bool"},
+            "unbreakable": {"types": "bool"}
+        }
+    }
+}

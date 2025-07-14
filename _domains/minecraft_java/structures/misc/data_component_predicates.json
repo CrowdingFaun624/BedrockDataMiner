@@ -1,0 +1,177 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "data_component_predicates": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "delegate_arguments": {
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "keys": {
+            "minecraft:attribute_modifiers": {"types": "a/compound", "structure": "predicate.attribute_modifiers"},
+            "minecraft:bundle_contents": {"types": "a/compound", "structure": "predicate.bundle_contents"},
+            "minecraft:container": {"types": "a/compound", "structure": "predicate.container"},
+            "minecraft:custom_data": {"types": ["a/string", "a/compound"], "structure": "predicate.custom_data:union"},
+            "minecraft:damage": {"types": "a/compound", "structure": "predicate.damage"},
+            "minecraft:enchantments": {"types": "a/list", "structure": "predicate.enchantments"},
+            "minecraft:firework_explosion": {"types": "a/compound", "structure": "condition.fireworks"},
+            "minecraft:fireworks": {"types": "a/compound", "structure": "predicate.fireworks"},
+            "minecraft:jukebox_playable": {"types": "a/compound", "structure": "predicate.jukebox_playable"},
+            "minecraft:potion_contents": {"types": ["a/string", "a/list"], "structure": "#!misc/named_list_or_item.nbt{name = 'potion'}"},
+            "minecraft:stored_enchantments": {"types": "a/list", "structure": "predicate.enchantments"},
+            "minecraft:trim": {"types": "a/compound", "structure": "predicate.trim"},
+            "minecraft:writable_book_content": {"types": "a/compound", "structure": "predicate.writable_book_content"},
+            "minecraft:written_book_content": {"types": "a/compound", "structure": "predicate.written_book_content"}
+        }
+    },
+    "sequence_predicate": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "$test_structure_types": "a/compound",
+        "keys": {
+            "contains": {"types": "a/list", "structure": "#!sequence_predicate.contains{test_structure = test_structure, test_structure_types = test_structure_types}"},
+            "size": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"},
+            "count": {"types": "a/list", "structure": "#!sequence_predicate.count{test_structure = test_structure, test_structure_types = test_structure_types}"}
+        }
+    },
+    "sequence_predicate.contains": {
+        "type": "Dict",
+        "this_types": "a/list",
+        "key_types": "a/int",
+        "value_types": "#test_structure_types",
+        "delegate_arguments": {
+            "field": "test",
+            "measure_length": true,
+            "show_item_key": false
+        },
+        "value_structure": "#test_structure"
+    },
+    "sequence_predicate.count": {
+        "type": "Dict",
+        "this_types": "a/list",
+        "key_types": "a/int",
+        "value_types": "a/compound",
+        "delegate_arguments": {
+            "field": "test",
+            "measure_length": true,
+            "show_item_key": false
+        },
+        "value_structure": "#!sequence_predicate.count.item{test_structure = test_structure, test_structure_types = test_structure_types}"
+    },
+    "sequence_predicate.count.item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "test": {"types": "#test_structure_types", "structure": "#test_structure"},
+            "count": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"}
+        }
+    },
+    "predicate.attribute_modifiers": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "modifiers": {"types": "a/compound", "structure": "#!sequence_predicate{test_structure = @condition.attribute}"}
+        }
+    },
+    "predicate.bundle_contents": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "items": {"types": "a/compound", "structure": "#!sequence_predicate{test_structure = @condition.items}"}
+        }
+    },
+    "predicate.container": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "items": {"types": "a/compound", "structure": "#!sequence_predicate{test_structure = @condition.items}"}
+        }
+    },
+    "predicate.custom_data:union": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null, // TODO: SNBT
+            "a/compound": "misc/any_nbt.compound"
+        }
+    },
+    "predicate.damage": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "damage": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"},
+            "durability": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"}
+        }
+    },
+    "predicate.enchantments": {
+        "inherit": "temp/Set.nbt",
+        "$field": "enchantment condition",
+        "value_types": "a/compound",
+        "value_structure": "predicate.enchantments:item"
+    },
+    "predicate.enchantments:item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "enchantments": {"types": ["a/string", "a/list"], "structure": "#!misc/named_list_or_item.nbt{name = 'enchantment'}"},
+            "levels": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"}
+        }
+    },
+    "predicate.fireworks": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "explosions": {"types": "a/compound", "structure": "#!sequence_predicate{test_structure = @condition.fireworks}"}
+        }
+    },
+    "predicate.jukebox_playable": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "song": {"types": ["a/list", "a/string"], "structure": "#!misc/named_list_or_item.nbt{name = 'song'}"}
+        }
+    },
+    "predicate.trim": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "material": {"types": ["a/list", "a/string"], "structure": "#!misc/named_list_or_item.nbt{name = 'material'}"},
+            "pattern": {"types": ["a/list", "a/string"], "structure": "#!misc/named_list_or_item.nbt{name = 'pattern'}"}
+        }
+    },
+    "predicate.writable_book_content": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "pages": {"types": "a/compound", "structure": "#!sequence_predicate{test_structure = @misc/string, test_structure_types = 'str'}"}
+        }
+    },
+    "predicate.written_book_content": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "pages": {"types": "a/compound", "structure": "#!sequence_predicate{test_structure = @misc/string, test_structure_types = 'str'}"},
+            "author": {"types": "a/string"},
+            "title": {"types": "a/string"},
+            "generation": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"},
+            "resolved": {"types": "bool"}
+        }
+    },
+    "condition.attribute": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "attribute": {"types": ["a/string", "a/list"], "structure": "#!misc/named_list_or_item.nbt{name='attribute'}"},
+            "id": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='attribute'}"},
+            "size": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"},
+            "operation": {"types": "a/string"},
+            "slot": {"types": "a/string"}
+        }
+    },
+    "condition.items": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "items": {"types": ["a/string", "a/list"], "structure": "#!misc/named_list_or_item.nbt{name = 'item'}"},
+            "count": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
+            "predicates": {"types": "a/compound", "structure": "data_component_predicates"}
+        }
+    },
+    "condition.fireworks": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "shape": {"types": "a/string"},
+            "has_trail": {"types": "bool"},
+            "has_twinkle": {"types": "bool"}
+        }
+    }
+}

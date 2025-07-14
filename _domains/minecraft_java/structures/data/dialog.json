@@ -1,0 +1,379 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "misc": "structures/misc/misc",
+        "tc": "structures/misc/text_component",
+        "temp": "structures/misc/template"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "dialogs",
+        "$pack_type": "data pack",
+        "$types": "a/compound", // doesn't actually have this type but the types must match.
+        "$structure": "dialog"
+    },
+    "dialog_or_dialog_id": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null,
+            "a/compound": "dialog"
+        }
+    },
+    "dialog_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "dialog",
+        "value_types": ["a/string", "a/compound"],
+        "value_structure": "dialog_or_dialog_id"
+    },
+    "dialog_list_or_dialog_ids": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null,
+            "a/compound": "dialog",
+            "a/list": "dialog_list"
+        }
+    },
+    "dialog": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:notice": {"types": "a/compound", "structure": "dialog.notice"},
+            "minecraft:confirmation": {"types": "a/compound", "structure": "dialog.confirmation"},
+            "minecraft:multi_action": {"types": "a/compound", "structure": "dialog.multi_action"},
+            "minecraft:server_links": {"types": "a/compound", "structure": "dialog.server_links"},
+            "minecraft:dialog_list": {"types": "a/compound", "structure": "dialog.dialog_list"}
+        }
+    },
+    "dialog:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "title": {"types": "tc/root_type", "structure": "tc/root"},
+            "external_title": {"types": "tc/root_type", "structure": "tc/root"},
+            "body": {"types": ["a/list", "a/compound"], "structure": "body:union"},
+            "inputs": {"types": "a/list", "structure": "input_control_list"},
+            "can_close_with_escape": {"types": "a/bool"},
+            "pause": {"types": "a/bool"},
+            "after_action": {"types": "a/string"}
+        }
+    },
+    "dialog.notice": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "dialog:all",
+        "keys": {
+            "action": {"types": "a/compound", "structure": "click_action"}
+        }
+    },
+    "dialog.confirmation": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "dialog:all",
+        "keys": {
+            "yes": {"types": "a/compound", "structure": "click_action"},
+            "no": {"types": "a/compound", "structure": "click_action"}
+        }
+    },
+    "dialog.multi_action": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "dialog:all",
+        "keys": {
+            "actions": {"types": "a/list", "structure": "click_action_list"},
+            "columns": {"types": "a/int"},
+            "exit_action": {"types": "a/compound", "structure": "click_action"}
+        }
+    },
+    "dialog.server_links": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "dialog:all",
+        "keys": {
+            "exit_action": {"types": "a/compound", "structure": "click_action"},
+            "columns": {"types": "a/int"},
+            "button_width": {"types": "a/int"}
+        }
+    },
+    "dialog.dialog_list": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "dialog:all",
+        "keys": {
+            "dialogs": {"types": ["a/string", "a/compound", "a/list"], "structure": "dialog_list_or_dialog_ids"},
+            "exit_action": {"types": "a/compound", "structure": "click_action"},
+            "columns": {"types": "a/int"},
+            "button_width": {"types": "a/int"}
+        }
+    },
+    "click_action_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "click action",
+        "value_types": "a/compound",
+        "value_structure": "click_action"
+    },
+    "click_action": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "label": {"types": "tc/root_type", "structure": "tc/root"},
+            "tooltip": {"types": "tc/root_type", "structure": "tc/root"},
+            "width": {"types": "a/int"},
+            "action": {"types": "a/compound", "structure": "action"}
+        }
+    },
+    "body:union": {
+        "type": "Union",
+        "substructures": {
+            "a/list": "body_list",
+            "a/compound": "body"
+        }
+    },
+    "body_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "body",
+        "value_types": "a/compound",
+        "value_structure": "body"
+    },
+    "body": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:plain_message": {"types": "a/compound", "structure": "body.plain_message"},
+            "minecraft:item": {"types": "a/compound", "structure": "body.item"}
+        }
+    },
+    "body:all": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "body.plain_message": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "body:all",
+        "keys": {
+            "contents": {"types": "tc/root_type", "structure": "tc/root"},
+            "width": {"types": "a/int"}
+        }
+    },
+    "body.item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "body:all",
+        "keys": {
+            "item": {"types": "a/compound", "structure": "misc/item_data_slotless"},
+            "description": {"types": ["a/string", "a/compound", "a/list"], "structure": "body.item:description_union"},
+            "show_decoration": {"types": "a/bool"},
+            "show_tooltip": {"types": "a/bool"},
+            "width": {"types": "a/int"},
+            "height": {"types": "a/int"}
+        }
+    },
+    "body.item:description_union": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null,
+            "a/compound": "body.item:description",
+            "a/list": "tc/text_components"
+        }
+    },
+    "body.item:description": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "contents": {"types": "tc/root_type", "structure": "tc/root"},
+            "width": {"types": "a/int"}
+        }
+    },
+    "input_control_list": {
+        "inherit": "temp/Set.nbt",
+        "$field": "input control",
+        "value_types": "a/compound",
+        "value_structure": "input_control"
+    },
+    "input_control": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:text": {"types": "a/compound", "structure": "input_control.text"},
+            "minecraft:boolean": {"types": "a/compound", "structure": "input_control.boolean"},
+            "minecraft:single_option": {"types": "a/compound", "structure": "input_control.single_option"},
+            "minecraft:number_range": {"types": "a/compound", "structure": "input_control.number_range"}
+        }
+    },
+    "input_control:all": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "key": {"types": "a/string"},
+            "label": {"types": "tc/root_type", "structure": "tc/root"}
+        }
+    },
+    "input_control.text": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "input_control:all",
+        "keys": {
+            "width": {"types": "a/int"},
+            "label_visible": {"types": "a/bool"},
+            "initial": {"types": "a/string"},
+            "max_length": {"types": "a/int"},
+            "multiline": {"types": "a/compound", "structure": "input_control.text:multiline"}
+        }
+    },
+    "input_control.text:multiline": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "max_lines": {"types": "a/int"},
+            "height": {"types": "a/int"}
+        }
+    },
+    "input_control.boolean": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "input_control:all",
+        "keys": {
+            "initial": {"types": "a/bool"},
+            "on_true": {"types": "a/string"},
+            "on_false": {"types": "a/string"}
+        }
+    },
+    "input_control.single_option": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "input_control:all",
+        "keys": {
+            "label_visible": {"types": "a/bool"},
+            "width": {"types": "a/int"},
+            "options": {"types": "a/list", "structure": "input_control.single_option:options"}
+        }
+    },
+    "input_control.single_option:options": {
+        "inherit": "temp/Set.nbt",
+        "$field": "option",
+        "value_types": "a/compound",
+        "value_structure": "input_control.single_option:option"
+    },
+    "input_control.single_option:option": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "id": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "display": {"types": "tc/root_type", "structure": "tc/root"},
+            "initial": {"types": "a/bool"}
+        }
+    },
+    "input_control.number_range": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "input_control:all",
+        "keys": {
+            "label_format": {"types": "a/string"},
+            "width": {"types": "a/int"},
+            "start": {"types": "a/float"},
+            "end": {"types": "a/float"},
+            "step": {"types": "a/float"},
+            "initial": {"types": "a/int"}
+        }
+    },
+    "action": { // similar to text_component/click_event but with "type" instead of "action" and with extra things.
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "open_url": {"types": "a/compound", "structure": "action.open_url"},
+            "open_file": {"types": "a/compound", "structure": "action.open_file"},
+            "run_command": {"types": "a/compound", "structure": "action.run_command"},
+            "suggest_command": {"types": "a/compound", "structure": "action.suggest_command"},
+            "change_page": {"types": "a/compound", "structure": "action.change_page"},
+            "copy_to_clipboard": {"types": "a/compound", "structure": "action.copy_to_clipboard"},
+            "show_dialog": {"types": "a/compound", "structure": "action.show_dialog"},
+            "custom": {"types": "a/compound", "structure": "action.custom"},
+            "dynamic/run_command": {"types": "a/compound", "structure": "action.dynamic.run_command"},
+            "dynamic/custom": {"types": "a/compound", "structure": "action.dynamic.custom"}
+        }
+    },
+    "action:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "a/string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "action.open_url": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "url": {"types": "a/string", "structure": "misc/string.nbt"}
+        }
+    },
+    "action.open_file": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "path": {"types": "a/string", "structure": "misc/string.nbt"}
+        }
+    },
+    "action.run_command": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "command": {"types": "a/string", "structure": "misc/string.nbt"}
+        }
+    },
+    "action.suggest_command": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "command": {"types": "a/string", "structure": "misc/string.nbt"}
+        }
+    },
+    "action.change_page": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "page": {"types": "a/int"}
+        }
+    },
+    "action.copy_to_clipboard": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "value": {"types": "a/string", "structure": "misc/string.nbt"}
+        }
+    },
+    "action.show_dialog": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "dialog": {"types": ["a/string", "a/compound"], "structure": "dialog_or_dialog_id"}
+        }
+    },
+    "action.custom": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "id": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "payload": {"types": "a/string"}
+        }
+    },
+    "action.dynamic.run_command": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "template": {"types": "a/string"}
+        }
+    },
+    "action.dynamic.custom": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "imports": "action:all",
+        "keys": {
+            "additions": {"types": "a/compound", "structure": "misc/any_nbt.compound"},
+            "id": {"types": "a/string", "delegate_arguments": {"always_print": true}}
+        }
+    }
+}

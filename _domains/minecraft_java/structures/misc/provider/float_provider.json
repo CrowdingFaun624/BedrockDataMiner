@@ -1,0 +1,66 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "float_provider": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "normalizers/normalizers provider_switch",
+            "arguments": {
+                "key": "type",
+                "default": "minecraft:constant_float"
+            }
+        },
+        "substructures": {
+            "minecraft:constant_float": {"types": "float"}, // not a real type
+            "minecraft:constant": {"types": "dict", "structure": "float_provider.constant"},
+            "minecraft:uniform": {"types": "dict", "structure": "float_provider.uniform"},
+            "minecraft:clamped_normal": {"types": "dict", "structure": "float_provider.clamped_normal"},
+            "minecraft:trapezoid": {"types": "dict", "structure": "float_provider.trapezoid"}
+        }
+    },
+    "float_provider:all": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "float_provider:clamped": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "min": {"types": "float"},
+            "max": {"types": "float"}
+        }
+    },
+    "float_provider.constant": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["float_provider:all"],
+        "keys": {
+            "value": {"types": "float"}
+        }
+    },
+    "float_provider.uniform": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["float_provider:all"],
+        "keys": {
+            "min_inclusive": {"types": "float"},
+            "max_exclusive": {"types": "float"}
+        }
+    },
+    "float_provider.clamped_normal": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["float_provider:all", "float_provider:clamped"],
+        "keys": {
+            "mean": {"types": "misc/decimal"},
+            "deviation": {"types": "misc/decimal"}
+        }
+    },
+    "float_provider.trapezoid": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["float_provider:all", "float_provider:clamped"],
+        "keys": {
+            "plateau": {"types": "float"}
+        }
+    }
+}

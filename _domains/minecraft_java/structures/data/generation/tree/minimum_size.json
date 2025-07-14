@@ -1,0 +1,45 @@
+{
+    "group_aliases": {
+        "temp": "structures/misc/template"
+    },
+    "minimum_size": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:two_layers_feature_size": {"types": "dict", "structure": "minimum_size.two_layers_feature_size"},
+            "minecraft:three_layers_feature_size": {"types": "dict", "structure": "minimum_size.three_layers_feature_size"}
+        }
+    },
+    "minimum_size:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "min_clipped_height": {"types": "int"}
+        }
+    },
+    "minimum_size.two_layers_feature_size": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "minimum_size:all",
+        "keys": {
+            "limit": {"types": "int"},
+            "lower_size": {"types": "int"},
+            "upper_size": {"types": "int"}
+        }
+    },
+    "minimum_size.three_layers_feature_size": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "minimum_size:all",
+        "keys": {
+            "limit": {"types": "int"},
+            "upper_limit": {"types": "int"},
+            "lower_size": {"types": "int"},
+            "middle_size": {"types": "int"},
+            "upper_size": {"types": "int"}
+        }
+    }
+}

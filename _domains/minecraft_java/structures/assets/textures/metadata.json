@@ -1,0 +1,181 @@
+{
+    "group_aliases": {
+        "temp": "structures/misc/template",
+        "s": "serializers"
+    },
+    "base": {
+        "type": "StructureBase",
+        "this_types": "dict",
+        "delegate_arguments": {
+            "name": "metadata"
+        },
+        "structure": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "value_structure": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "value_structure": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "serializer": "minecraft_common!s/json",
+            "structure": "root"
+        }
+    },
+    "root": {
+        "type": "Keymap",
+        "keys": {
+            "animation": {"types": "dict", "structure": "animation"},
+            "gui": {"types": "dict", "structure": "gui"},
+            "texture": {"types": "dict", "structure": "texture"},
+            "villager": {"types": "dict", "structure": "villager"}
+        }
+    },
+    "animation": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "interpolate": {"types": "bool"},
+            "width": {"types": "int"},
+            "height": {"types": "int"},
+            "frametime": {"types": "int"},
+            "frames": {"types": "list", "structure": "animation:frames"}
+        }
+    },
+    "animation:frames": {
+        "type": "Dict",
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 1,
+        "value_weight": 1,
+        "value_types": ["int", "dict"],
+        "delegate_arguments": {
+            "field": "frame",
+            "measure_length": true,
+            "show_item_key": true
+        },
+        "value_structure": "animation:frame"
+    },
+    "animation:frame": {
+        "type": "Union",
+        "substructures": {
+            "int": "animation:index",
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "index": {"types": "int", "structure": "animation:index", "delegate_arguments": {"always_print": true}},
+                    "time": {"types": "int"}
+                }
+            }
+        }
+    },
+    "animation:index": {
+        "type": "Number",
+        "normal_value": 1.5
+    },
+    "gui": {
+        "type": "Keymap",
+        "keys": {
+            "scaling": {"types": "dict", "structure": "gui:scaling"}
+        }
+    },
+    "gui:scaling": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_get_key",
+            "arguments": {
+                "key": "type",
+                "default": "stretch"
+            }
+        },
+        "substructures": {
+            "nine_slice": {"types": "dict", "structure": "gui:scaling.nine_slice"},
+            "stretch": {"types": "dict", "structure": "gui:scaling.stretch"},
+            "tile": {"types": "dict", "structure": "gui:scaling.tile"}
+        }
+    },
+    "gui:scaling.nine_slice": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "width": {"types": "int"},
+            "height": {"types": "int"},
+            "stretch_inner": {"types": "bool"},
+            "border": {"types": ["int", "dict"], "structure": "gui:scaling.nine_slice:border"}
+        }
+    },
+    "gui:scaling.nine_slice:border": {
+        "type": "Union",
+        "substructures": {
+            "int": null,
+            "dict": {
+                "inherit": "temp/SortedKeymap",
+                "keys": {
+                    "left": {"types": "int"},
+                    "top": {"types": "int"},
+                    "right": {"types": "int"},
+                    "bottom": {"types": "int"}
+                }
+            }
+        }
+    },
+    "gui:scaling.stretch": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "gui:scaling.tile": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "width": {"types": "int"},
+            "height": {"types": "int"}
+        }
+    },
+    "texture": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "blur": {"types": "bool"},
+            "clamp": {"types": "bool"},
+            "mipmaps": {"types": "list", "structure": "texture:mipmaps"}
+        }
+    },
+    "texture:mipmaps": {
+        "type": "Dict",
+        "this_types": "list",
+        "key_types": "int",
+        "delegate_arguments": {
+            "field": "mipmap",
+            "measure_length": true,
+            "print_flat": true,
+            "print_all": true
+        },
+        "value_types": "int",
+        "value_structure": null
+    },
+    "villager": {
+        "type": "Keymap",
+        "keys": {
+            "hat": {"types": "str"}
+        }
+    }
+}

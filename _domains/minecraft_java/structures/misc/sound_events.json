@@ -1,0 +1,40 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "sound_event_or_id": {
+        "type": "Union",
+        "substructures": {
+            "str": null,
+            "dict": "sound_event"
+        }
+    },
+    "sound_event": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "replace": {"types": "bool"},
+            "subtitle": {"types": "str"},
+            "sounds": {"types": "list", "structure": "sounds"}
+        }
+    },
+    "sounds": {
+        "inherit": "temp/Set",
+        "$field": "sound",
+        "value_types": "dict",
+        "value_structure": "sound"
+    },
+    "sound": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "volume": {"types": "misc/decimal"},
+            "pitch": {"types": "misc/decimal"},
+            "weight": {"types": "int"},
+            "stream": {"types": "bool"},
+            "attenuation_distance": {"types": "int"},
+            "preload": {"types": "bool"},
+            "type": {"types": "str"}
+        }
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
+        "tc": "structures/misc/text_component",
+        "component": "structures/data/enchantments/effect_components"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$pack_type": "data pack",
+        "$name": "enchantments",
+        "$structure": "root"
+    },
+    "root": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "description": {"types": "tc/root_type", "structure": "tc/root"},
+            "exclusive_set": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='enchantment'}"},
+            "supported_items": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
+            "primary_items": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
+            "weight": {"types": "int"},
+            "max_level": {"types": "int"},
+            "min_cost": {"types": "dict", "structure": "cost"},
+            "max_cost": {"types": "dict", "structure": "cost"},
+            "anvil_cost": {"types": "int"},
+            "slots": {"types": "list", "structure": "#!misc/named_list{name='slot'}"},
+            "effects": {"types": "dict", "structure": "component/effect_components"}
+        }
+    },
+    "cost": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "base": {"types": "int"},
+            "per_level_above_first": {"types": "int"}
+        }
+    }
+}

@@ -1,0 +1,61 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "s": "serializers",
+        "temp": "structures/misc/template",
+        "misc": "structures/misc/misc",
+        "tc": "structures/misc/text_component"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "advancements",
+        "$pack_type": "data pack",
+        "$serializer": "#@minecraft_common!s/json",
+        "$structure": "root"
+    },
+    "root": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "parent": {"types": "str"},
+            "display": {"types": "dict", "structure": "display"},
+            "criteria": {"types": "dict", "structure": "criteria"},
+            "requirements": {"types": "list", "structure": "requirements"},
+            "rewards": {"types": "dict", "structure": "rewards"},
+            "sends_telemetry_event": {"types": "bool"}
+        }
+    },
+    "display": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "icon": {"types": "a/compound", "structure": "misc/item_data_slotless"},
+            "title": {"types": "tc/root_type", "structure": "tc/root"},
+            "description": {"types": "tc/root_type", "structure": "tc/root"},
+            "frame": {"types": "str"},
+            "background": {"types": "str"},
+            "show_toast": {"types": "bool"},
+            "announce_to_chat": {"types": "bool"},
+            "hidden": {"types": "bool"}
+        }
+    },
+    "requirements": {
+        "inherit": "temp/Set",
+        "$field": "requirement",
+        "value_types": "list",
+        "value_structure": "#!misc/named_list{name='criterion'}"
+    },
+    "rewards": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "experience": {"types": "int"},
+            "recipes": {"types": "list", "structure": "#!misc/named_list{name='recipe'}"},
+            "loot": {"types": "list", "structure": "#!misc/named_list{name='loot table'}"},
+            "function": {"types": "str"}
+        }
+    },
+    "criteria": {
+        "inherit": "temp/Dict",
+        "$field": "criterion",
+        "value_types": "dict",
+        "value_structure": "structures/data/advancements/triggers/criterion"
+    }
+}

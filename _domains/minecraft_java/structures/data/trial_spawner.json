@@ -1,0 +1,55 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "be": "structures/misc/block_entity",
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "trial_spawner",
+        "$pack_type": "data pack",
+        "$types": "a/compound",
+        "$structure": "trial_spawner_configuration"
+    },
+    "trial_spawner_or_id": {
+        "type": "Union",
+        "substructures": {
+            "a/string": null,
+            "a/compound": "trial_spawner_configuration"
+        }
+    },
+    "trial_spawner_configuration": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "spawn_range": {"types": "a/int"},
+            "total_mobs": {"types": "a/float"},
+            "simultaneous_mobs": {"types": "a/float"},
+            "total_mobs_added_per_player": {"types": "a/float"},
+            "simultaneous_mobs_added_per_player": {"types": "a/float"},
+            "ticks_between_spawn": {"types": "a/int"},
+            "spawn_potentials": {"types": "a/list", "structure": "spawn_potentials"},
+            "loot_tables_to_eject": {"types": "a/list", "structure": "loot_tables"},
+            "items_to_drop_when_ominous": {"types": "a/string"}
+        }
+    },
+    "loot_tables": {
+        "inherit": "temp/Set.nbt",
+        "$field": "loot table",
+        "value_types": "a/compound",
+        "value_structure": "#!weighted_item{types=@a/string, structure=@misc/string.nbt}"
+    },
+    "spawn_potentials": {
+        "inherit": "temp/Set.nbt",
+        "$field": "spawn potential",
+        "value_types": "a/compound",
+        "value_structure": "#!weighted_item{types=@a/compound, structure=@be/block_entity.mob_spawner:entity}"
+    },
+    "weighted_item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "weight": {"types": "a/int"},
+            "data": {"types": "#types", "structure": "#structure"}
+        }
+    }
+}

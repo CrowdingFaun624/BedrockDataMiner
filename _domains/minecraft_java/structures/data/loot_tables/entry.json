@@ -1,0 +1,103 @@
+{
+    "group_aliases": {
+        "item_modifier": "structures/data/loot_tables/item_modifier",
+        "temp": "structures/misc/template",
+        "pred": "structures/misc/predicate"
+    },
+    "entry_list": {
+        "inherit": "temp/Sequence",
+        "$field": "entry",
+        "value_types": "dict",
+        "value_structure": "entry"
+    },
+    "entry": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:alternatives": {"types": "dict", "structure": "entry.alternatives"},
+            "minecraft:dynamic": {"types": "dict", "structure": "entry.dynamic"},
+            "minecraft:empty": {"types": "dict", "structure": "entry.empty"},
+            "minecraft:group": {"types": "dict", "structure": "entry.group"},
+            "minecraft:item": {"types": "dict", "structure": "entry.item"},
+            "minecraft:loot_table": {"types": "dict", "structure": "entry.loot_table"},
+            "minecraft:sequence": {"types": "dict", "structure": "entry.sequence"},
+            "minecraft:tag": {"types": "dict", "structure": "entry.tag"}
+        }
+    },
+    "entry:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "entry:singleton": {
+        "type": "Keymap",
+        "keys": {
+            "conditions": {"types": "list", "structure": "pred/predicate_list"},
+            "functions": {"types": "list", "structure": "item_modifier/item_modifier_list"},
+            "weight": {"types": "int"},
+            "quality": {"types": "int"}
+        }
+    },
+    "entry:composite": {
+        "type": "Keymap",
+        "keys": {
+            "conditions": {"types": "list", "structure": "pred/predicate_list"},
+            "children": {"types": "list", "structure": "entry_list"}
+        }
+    },
+    "entry.alternatives": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["entry:all", "entry:composite"]
+    },
+    "entry.dynamic": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["entry:all", "entry:singleton"],
+        "keys": {
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "entry.empty": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["entry:all", "entry:singleton"]
+    },
+    "entry.group": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["entry:all", "entry:composite"]
+    },
+    "entry.item": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["entry:all", "entry:singleton"],
+        "keys": {
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "entry.loot_table": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["entry:all", "entry:singleton"],
+        "keys": {
+            "value": {"types": ["str", "dict"], "structure": "structures/data/loot_tables/loot_tables/loot_table_or_id"}
+        }
+    },
+    "entry.sequence": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["entry:all", "entry:composite"]
+    },
+    "entry.tag": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["entry:all"],
+        "keys": {
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "expand": {"types": "bool"},
+            "conditions": {"types": "list", "structure": "pred/predicate_list"},
+            "functions": {"types": "list", "structure": "item_modifier/item_modifier_list"},
+            "weight": {"types": "int"},
+            "quality": {"types": "int"}
+        }
+    }
+}

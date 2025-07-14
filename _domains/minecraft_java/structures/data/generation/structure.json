@@ -1,0 +1,169 @@
+{
+    "group_aliases": {
+        "hp": "structures/misc/provider/height_provider",
+        "misc": "structures/misc/misc",
+        "pa": "structures/data/generation/pool_alias",
+        "temp": "structures/misc/template",
+        "tp": "structures/data/generation/template_pool"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "structure",
+        "$pack_type": "data pack",
+        "$structure": "#@structure"
+    },
+    "structure_or_id": {
+        "type": "Union",
+        "substructures": {
+            "str": null,
+            "dict": "structure"
+        }
+    },
+    "structure": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:buried_treasure": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:desert_pyramid": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:end_city": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:fortress": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:igloo": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:jigsaw": {"types": "dict", "structure": "structure.jigsaw"},
+            "minecraft:jungle_temple": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:mineshaft": {"types": "dict", "structure": "structure.mineshaft"},
+            "minecraft:nether_fossil": {"types": "dict", "structure": "structure.nether_fossil"},
+            "minecraft:ocean_monument": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:ocean_ruin": {"types": "dict", "structure": "structure.ocean_ruin"},
+            "minecraft:ruined_portal": {"types": "dict", "structure": "structure.ruined_portal"},
+            "minecraft:shipwreck": {"types": "dict", "structure": "structure.shipwreck"},
+            "minecraft:stronghold": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:swamp_hut": {"types": "dict", "structure": "structure.empty"},
+            "minecraft:woodland_mansion": {"types": "dict", "structure": "structure.empty"}
+        }
+    },
+    "structure:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "biomes": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='biome'}"},
+            "step": {"types": "str"},
+            "terrain_adaptation": {"types": "str"},
+            "spawn_overrides": {"types": "dict", "structure": "spawn_overrides"}
+        }
+    },
+    "spawn_overrides": {
+        "inherit": "temp/SortedKeymap",
+        "$keymap_field": "mob category",
+        "keys": {
+            "monster": {"types": "dict", "structure": "spawn_overrides.category"},
+            "creature": {"types": "dict", "structure": "spawn_overrides.category"},
+            "ambient": {"types": "dict", "structure": "spawn_overrides.category"},
+            "water_creature": {"types": "dict", "structure": "spawn_overrides.category"},
+            "underground_water_creature": {"types": "dict", "structure": "spawn_overrides.category"},
+            "water_ambient": {"types": "dict", "structure": "spawn_overrides.category"},
+            "misc": {"types": "dict", "structure": "spawn_overrides.category"},
+            "axolotls": {"types": "dict", "structure": "spawn_overrides.category"}
+        }
+    },
+    "spawn_overrides.category": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "bounding_box": {"types": "str"},
+            "spawns": {"types": "list", "structure": "structures/data/generation/biome/spawners.category"}
+        }
+    },
+    "structure.empty": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "structure:all"
+    },
+    "structure.jigsaw": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "structure:all",
+        "keys": {
+            "start_pool": {"types": ["str", "dict"], "structure": "tp/template_pool_or_id"},
+            "size": {"types": "int"},
+            "start_height": {"types": "dict", "structure": "hp/height_provider"},
+            "project_start_to_heightmap": {"types": "str"},
+            "start_jigsaw_name": {"types": "str"},
+            "max_distance_from_center": {"types": "int"},
+            "use_expansion_hack": {"types": "bool"},
+            "pool_aliases": {"types": "list", "structure": "pa/pool_alias_list"},
+            "dimension_padding": {"types": ["int", "dict"], "structure": "structure.jigsaw:dimension_padding"},
+            "liquid_settings": {"types": "str"}
+        }
+    },
+    "structure.jigsaw:dimension_padding": {
+        "type": "Union",
+        "substructures": {
+            "int": null,
+            "dict": {
+                "inherit": "temp/SortedKeymap",
+                "keys": {
+                    "bottom": {"types": "int"},
+                    "top": {"types": "int"}
+                }
+            }
+        }
+    },
+    "structure.mineshaft": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "structure:all",
+        "keys": {
+            "mineshaft_type": {"types": "str"}
+        }
+    },
+    "structure.nether_fossil": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "structure:all",
+        "keys": {
+            "height": {"types": "dict", "structure": "hp/height_provider"}
+        }
+    },
+    "structure.ocean_ruin": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "structure:all",
+        "keys": {
+            "biome_temp": {"types": "str"},
+            "large_probability": {"types": "float"},
+            "cluster_probability": {"types": "float"}
+        }
+    },
+    "structure.ruined_portal": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "structure:all",
+        "keys": {
+            "setups": {"types": "list", "structure": "structure.ruined_portal:setups"}
+        }
+    },
+    "structure.ruined_portal:setups": {
+        "inherit": "temp/Set",
+        "$field": "setup",
+        "value_types": "dict",
+        "value_structure": "structure.ruined_portal:setup"
+    },
+    "structure.ruined_portal:setup": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "weight": {"types": "float"},
+            "placement": {"types": "str"},
+            "air_pocket_probability": {"types": "float"},
+            "mossiness": {"types": "float"},
+            "overgrown": {"types": "bool"},
+            "vines": {"types": "bool"},
+            "can_be_cold": {"types": "bool"},
+            "replace_with_blackstone": {"types": "bool"}
+        }
+    },
+    "structure.shipwreck": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "structure:all",
+        "keys": {
+            "is_beached": {"types": "bool"}
+        }
+    }
+}

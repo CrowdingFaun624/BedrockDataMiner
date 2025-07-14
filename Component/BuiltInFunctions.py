@@ -38,6 +38,9 @@ def identity[A](data:A) -> A:
 def get_key[A](data:dict[str,A], key:str) -> A:
     return data[key]
 
+def get_get_key[A](data:dict[str,A], key:str, default:A) -> A:
+    return data.get(key, default)
+
 def load_json(data:str) -> dict[str,str]:
     return json.loads(data)
 
@@ -134,6 +137,7 @@ built_in_functions:dict[str,Callable] = {
     "delete_required_keys": delete_required_keys,
     "get_file_stem": get_file_stem,
     "get_key": get_key,
+    "get_get_key": get_get_key,
     "identity": identity,
     "load_json": load_json,
     "move_key": move_key,

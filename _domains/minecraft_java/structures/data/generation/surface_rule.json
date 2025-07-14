@@ -1,0 +1,154 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "bs": "structures/misc/block_state",
+        "hp": "structures/misc/provider/height_provider",
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template"
+    },
+    "surface_rule_sequence": {
+        "inherit": "temp/Sequence",
+        "$field": "surface rule",
+        "value_types": "dict",
+        "value_structure": "surface_rule"
+    },
+    "surface_rule": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:bandlands": {"types": "dict", "structure": "surface_rule.bandlands"},
+            "minecraft:block": {"types": "dict", "structure": "surface_rule.block"},
+            "minecraft:condition": {"types": "dict", "structure": "surface_rule.condition"},
+            "minecraft:sequence": {"types": "dict", "structure": "surface_rule.sequence"}
+        }
+    },
+    "surface_rule:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "surface_rule.bandlands": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_rule:all"
+    },
+    "surface_rule.block": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_rule:all",
+        "keys": {
+            "result_state": {"types": "a/compound", "structure": "bs/block_state"}
+        }
+    },
+    "surface_rule.condition": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_rule:all",
+        "keys": {
+            "if_true": {"types": "dict", "structure": "surface_condition"},
+            "then_run": {"types": "dict", "structure": "surface_rule"}
+        }
+    },
+    "surface_rule.sequence": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_rule:all",
+        "keys": {
+            "sequence": {"types": "list", "structure": "surface_rule_sequence"}
+        }
+    },
+    "surface_condition": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:above_preliminary_surface": {"types": "dict", "structure": "surface_condition.empty"},
+            "minecraft:biome": {"types": "dict", "structure": "surface_condition.biome"},
+            "minecraft:hole": {"types": "dict", "structure": "surface_condition.empty"},
+            "minecraft:noise_threshold": {"types": "dict", "structure": "surface_condition.noise_threshold"},
+            "minecraft:not": {"types": "dict", "structure": "surface_condition.not"},
+            "minecraft:steep": {"types": "dict", "structure": "surface_condition.empty"},
+            "minecraft:stone_depth": {"types": "dict", "structure": "surface_condition.stone_depth"},
+            "minecraft:temperature": {"types": "dict", "structure": "surface_condition.empty"},
+            "minecraft:vertical_gradient": {"types": "dict", "structure": "surface_condition.vertical_gradient"},
+            "minecraft:water": {"types": "dict", "structure": "surface_condition.water"},
+            "minecraft:y_above": {"types": "dict", "structure": "surface_condition.y_above"}
+        }
+    },
+    "surface_condition:all": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "surface_condition.biome": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_condition:all",
+        "keys": {
+            "biome_is": {"types": "list", "structure": "#!misc/named_list{name='biome'}"}
+        }
+    },
+    "surface_condition.empty": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_condition:all"
+    },
+    "surface_condition.noise_threshold": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_condition:all",
+        "keys": {
+            "noise": {"types": "str"},
+            "min_threshold": {"types": "float"}, // double
+            "max_threshold": {"types": "float"} // double
+        }
+    },
+    "surface_condition.not": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_condition:all",
+        "keys": {
+            "invert": {"types": "dict", "structure": "surface_condition"}
+        }
+    },
+    "surface_condition.stone_depth": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_condition:all",
+        "keys": {
+            "surface_type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "offset": {"types": "int"},
+            "add_surface_depth": {"types": "bool"},
+            "secondary_depth_range": {"types": "int"}
+        }
+    },
+    "surface_condition.vertical_gradient": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_condition:all",
+        "keys": {
+            "random_name": {"types": "str"},
+            "true_at_and_below": {"types": "dict", "structure": "hp/vertical_anchor"},
+            "false_at_and_above": {"types": "dict", "structure": "hp/vertical_anchor"}
+        }
+    },
+    "surface_condition.water": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_condition:all",
+        "keys": {
+            "offset": {"types": "int"},
+            "surface_depth_multiplier": {"types": "int"},
+            "add_stone_depth": {"types": "bool"}
+        }
+    },
+    "surface_condition.y_above": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "surface_condition:all",
+        "keys": {
+            "anchor": {"types": "dict", "structure": "hp/vertical_anchor"},
+            "surface_depth_multiplier": {"types": "int"},
+            "add_stone_depth": {"types": "bool"}
+        }
+    }
+}

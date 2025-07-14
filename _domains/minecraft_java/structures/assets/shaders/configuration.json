@@ -1,5 +1,7 @@
 {
     "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
         "s": "serializers"
     },
     "base": {
@@ -44,9 +46,6 @@
             "structure": "root"
         }
     },
-    "string": {
-        "type": "String"
-    },
     "vector_decimal": {
         "type": "Dict",
         "allow_key_moves": false,
@@ -62,13 +61,10 @@
         "value_structure": null
     },
     "root": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "vertex": {"types": "str", "structure": "string"},
-            "fragment": {"types": "str", "structure": "string"},
+            "vertex": {"types": "str", "structure": "misc/string"},
+            "fragment": {"types": "str", "structure": "misc/string"},
             "blend": {"types": "dict", "structure": "blend"},
             "defines": {"types": "dict", "structure": "defines"},
             "samplers": {"types": "list", "structure": "samplers"},
@@ -76,10 +72,7 @@
         }
     },
     "blend": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "func": {"types": "str", "delegate_arguments": {"always_print": true}},
             "srcrgb": {"types": "str"},
@@ -87,10 +80,7 @@
         }
     },
     "defines": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
             "values": {"types": "dict", "structure": "values"},
             "flags": {"types": "list", "structure": "flags"}
@@ -103,8 +93,8 @@
             "field": "value",
             "measure_length": true
         },
-        "key_structure": "string",
-        "value_structure": "string"
+        "key_structure": "misc/string",
+        "value_structure": "misc/string"
     },
     "flags": {
         "type": "Dict",
@@ -117,7 +107,7 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_structure": "string"
+        "value_structure": "misc/string"
     },
     "samplers": {
         "type": "Dict",
@@ -133,12 +123,9 @@
         "value_structure": "sampler"
     },
     "sampler": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}}
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}}
         }
     },
     "uniforms": {
@@ -155,12 +142,9 @@
         "value_structure": "uniform"
     },
     "uniform": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
+        "inherit": "temp/SortedKeymap",
         "keys": {
-            "name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "count": {"types": "int"},
             "values": {"types": "list", "structure": "vector_decimal"}

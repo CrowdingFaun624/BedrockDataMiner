@@ -1,0 +1,47 @@
+{
+    "group_aliases": {
+        "entry": "structures/data/loot_tables/entry",
+        "item_modifier": "structures/data/loot_tables/item_modifier",
+        "temp": "structures/misc/template",
+        "np": "structures/misc/provider/number_provider",
+        "pred": "structures/misc/predicate"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_pack_files",
+        "$pack_type": "data pack",
+        "$name": "loot_tables",
+        "$structure": "root"
+    },
+    "loot_table_or_id": {
+        "type": "Union",
+        "substructures": {
+            "str": null,
+            "dict": "root"
+        }
+    },
+    "root": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "functions": {"types": "list", "structure": "item_modifier/item_modifier_list"},
+            "pools": {"types": "list", "structure": "pools"},
+            "random_sequence": {"types": "str"}
+        }
+    },
+    "pools": {
+        "inherit": "temp/Sequence",
+        "$field": "pool",
+        "value_types": "dict",
+        "value_structure": "pool"
+    },
+    "pool": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "conditions": {"types": "list", "structure": "pred/predicate_list"},
+            "functions": {"types": "list", "structure": "item_modifier/item_modifier_list"},
+            "rolls": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "bonus_rolls": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "entries": {"types": "list", "structure": "entry/entry_list"}
+        }
+    }
+}
