@@ -3,8 +3,7 @@ from typing import TYPE_CHECKING, Any, Mapping, Self, Sequence
 
 import Component.Expression.Variable as Variable  # import loop
 import Domain.Domain as Domain
-from Component.Expression.Expression import Expression, Reader
-from Component.Expression.ExpressionParser import parse_expression
+from Component.Expression.Expression import Expression
 from Utilities.Exceptions import (
     AbstractComponentError,
     AttributeNoneError,
@@ -152,6 +151,7 @@ class Component[a]():
             else: unused_below_variables = set()
 
             used_variables:set[str] = set()
+            from Component.Expression.ExpressionParser import scan_for_expressions
             self.data:dict[str,Any]|Any = scan_for_expressions(data, self, self.variables, used_variables, reference_inheritance) # overwrite previous `self.data` with a copy with created/updated Expressions.
 
             for variable_key in [key for key in data if key.startswith("$")]: # list comprehension to avoid modifying data while iterating.
@@ -200,7 +200,7 @@ class Component[a]():
         if self.abstract:
             trace.exception(AbstractComponentError(self, [variable.name for variable in self.variables.values() if variable.undefined]))
             return True
-        self.evaluated_data = self.data if len(self.expressions) == 0 else evaluate_expressions(self.data, self.variables)
+        self.evaluated_data = self.data if len(self.expressions) == 0 else Variable.evaluate_expressions(self.data, self.variables)
         if self.verify_arguments(self.evaluated_data, trace):
             return True
         self.fields:Sequence["Field"] = self.initialize_fields(self.evaluated_data)
@@ -464,61 +464,3 @@ class Component[a]():
 
     def __repr__(self) -> str:
         return f"<{self.class_name} {self.domain.name}!{self.group.name}/{self.name}{self.variables_display}>"
-
-def scan_for_expressions(data:Any, source_component:"Component", variables:dict[str,"Variable.Variable"], is_key:bool=False) -> Any:
-    '''
-    Looks through the data and returns a copy where Expression strings have been replaced with Expressions.
-    :data: The data to search for Expression strings.
-    :component: The Component that the data belongs to.
-    :variables: The Variables of the parent Component, if they exist. (Copy it.)
-    '''
-    match data:
-        case str():
-            if data.startswith("#"):
-                output = parse_expression(Reader(data[1:]), source_component, is_key, is_parent=True)
-                source_component.expressions.append(output)
-                for variable_name in output.get_variables_used():
-                    variable = variables.get(variable_name)
-                    if variable is None:
-                        variables[variable_name] = Variable.Variable(variable_name)
-                    # else:
-                    #     variables[variable_name] = variable
-                return output
-            elif data.startswith("\\#"):
-                return data.removeprefix("\\") # escape for #
-            else:
-                return data
-        case dict():
-            return {scan_for_expressions(key, source_component, variables, is_key=True): scan_for_expressions(value, source_component, variables, is_key=is_key) for key, value in data.items()}
-        case list():
-            return [scan_for_expressions(item, source_component, variables, is_key=is_key) for item in data]
-        case Expression():
-            # An Expression may be encountered if `source_component` is an inherited Component.
-            output = data.copy(source_component)
-            source_component.expressions.append(output)
-            for variable_name in output.get_variables_used():
-                variable = variables.get(variable_name)
-                if variable is None:
-                    variables[variable_name] = Variable.Variable(variable_name)
-                # else:
-                #     variables[variable_name] = variable
-            return output
-        case _:
-            return data
-
-def evaluate_expressions(data:Any, variables:dict[str,"Variable.Variable"]) -> Any:
-    '''
-    Looks through the data and evaluates Expressions where they are found.
-    :data: The data to search for Expressions.
-    '''
-    match data:
-        case str():
-            return data # put first for speed.
-        case dict():
-            return {evaluate_expressions(key, variables): evaluate_expressions(value, variables) for key, value in data.items()}
-        case list():
-            return [evaluate_expressions(item, variables) for item in data]
-        case Expression():
-            return data.evaluate(variables)
-        case _:
-            return data

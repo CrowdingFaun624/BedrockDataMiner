@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Self
+from typing import TYPE_CHECKING, Any, Callable, Iterable
 
 from Utilities.Exceptions import InvalidStateError, ReaderSourceEndError
 
@@ -19,7 +19,7 @@ class Reader():
 
     def read(self, amount:int, back:int=0) -> str:
         if self.index + amount > len(self.source):
-            raise ReaderSourceEndError(self, "because the end of the source was reached!")
+            raise ReaderSourceEndError(self)
         output = self.source[self.index:self.index+amount]
         self.index += amount - back
         return output
@@ -30,8 +30,12 @@ class Reader():
     def move(self, amount:int) -> None:
         self.index += amount
 
-    def at_last(self) -> bool:
-        return self.index >= len(self.source)
+    def at_last(self, amount:int=1) -> bool:
+        '''
+        Returns if the Reader is unable to read due to being at the end of its source.
+        :amount: The number of characters the Reader may be able to read.
+        '''
+        return self.index + amount > len(self.source)
 
     def read_while(self, while_function:Callable[[str],bool]) -> str:
         '''
@@ -57,8 +61,14 @@ class Reader():
             if not while_function(self.source[index]):
                 self.index = index
                 return
-        self.index = len(self.source) - 1
+        self.index = len(self.source)
         return
+
+    def select(self, start:int, end:int) -> str:
+        '''
+        Returns ``self.source[start:end]``.
+        '''
+        return self.source[start:end]
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.index}/{len(self.source)} \"{self.source}\">"
@@ -69,14 +79,12 @@ class Expression():
         "current_component",
         "source",
         "source_component",
-        "variables_used",
     )
 
-    def __init__(self, source_component:"Component", source:str|None=None) -> None:
+    def __init__(self, source_component:"Component", source:str) -> None:
         self.source_component = source_component
-        self.variables_used:list[str] = []
         self.current_component = source_component
-        self.source:str|None = source
+        self.source:str = source
         '''
         the string used to make this Expression only, not surrounding Expressions.
         '''
@@ -86,7 +94,7 @@ class Expression():
         The base copy function. This method should call `self.copy_attrs`.
         :new_component: The Component to set the new Expression's `current_component` attribute to.
         '''
-        output = type(self)(self.source_component)
+        output = type(self)(self.source_component, self.source)
         self.copy_attrs(output, new_component)
         return output
 
@@ -94,15 +102,13 @@ class Expression():
         '''
         A method for superclasses to call to make sure all attributes are correctly copied.
         '''
-        new_expression.variables_used = self.variables_used
         new_expression.current_component = new_component
-        new_expression.source = self.source
 
-    def get_variables_used(self) -> Iterable[str]:
+    def get_variables_used(self, variables:dict[str,"Variable"]) -> Iterable[str]:
         '''
         Returns the Variable names used by this Expression and its sub-Expressions.
         '''
-        return self.variables_used
+        return ()
 
     def evaluate(self, variables:dict[str,"Variable"]) -> Any:
         ...
@@ -114,17 +120,3 @@ class Expression():
         if self.source is None:
             raise InvalidStateError("Expression must have source defined to hash!")
         return hash((self.__class__, self.source))
-
-    @classmethod
-    def applicable(cls, reader:Reader, is_key:bool) -> bool:
-        '''
-        Returns if this Expression type can be used to parse `source`.
-        This method should be fast. If it returns True, then an exception may be raised
-        from `parse` to indicate this Expression is inapplicable. This method does not
-        need to worry about the Reader's index.
-        '''
-        return True
-
-    @classmethod
-    def parse(cls, reader:Reader, source_component:"Component", is_key:bool) -> Self:
-        ...

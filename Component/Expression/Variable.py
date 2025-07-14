@@ -1,5 +1,5 @@
 from types import EllipsisType
-from typing import Any, Hashable, Self, cast
+from typing import Any, Hashable, Iterable, Self, cast
 
 import Component.Component as Component
 import Component.Expression.Expression as Expression
@@ -38,10 +38,15 @@ class Variable[T]():
     def dereference(self, variables:dict[str,"Variable"]) -> T:
         if self.value is ...:
             raise VariableDereferenceError(self)
+        return evaluate_expressions(self.value, variables)
+
+    def get_variables_used(self, variables:dict[str,"Variable"]) -> Iterable[str]:
+        '''
+        Returns any Variables used by the value, but not this Variable itself.
+        '''
         if isinstance(self.value, Expression.Expression):
-            value:T = self.value.evaluate(variables)
-            self.value = value
-        return self.value
+            return self.value.get_variables_used(variables)
+        return ()
 
     def set_value(self, value:T) -> Self:
         self.value = value
@@ -61,8 +66,8 @@ class Variable[T]():
         else:
             return f"<{self.__class__.__name__} {self.name}: {repr(self.value)}>"
 
-    def __hash__(self) -> int:
-        return hash((self.name, self.value))
+    def get_hash(self, variables:dict[str,"Variable"]) -> int:
+        return hash((self.name, hash_data(self.dereference(variables))))
 
 def hash_data(data:Any) -> Hashable:
     match data:
@@ -70,3 +75,20 @@ def hash_data(data:Any) -> Hashable:
         case dict(): return (dict, *((hash_data(key), hash_data(value)) for key, value in data.items()))
         case list(): return (list, *(hash_data(item) for item in data))
         case _: return data
+
+def evaluate_expressions(data:Any, variables:dict[str,"Variable"]) -> Any:
+    '''
+    Looks through the data and evaluates Expressions where they are found.
+    :data: The data to search for Expressions.
+    '''
+    match data:
+        case str():
+            return data # put first for speed.
+        case dict():
+            return {evaluate_expressions(key, variables): evaluate_expressions(value, variables) for key, value in data.items()}
+        case list():
+            return [evaluate_expressions(item, variables) for item in data]
+        case Expression.Expression():
+            return data.evaluate(variables)
+        case _:
+            return data
