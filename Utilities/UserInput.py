@@ -89,6 +89,7 @@ def input_single[a](
     user_input:str|EllipsisType = ...
     options:list[str] = list(items.keys())
     items = deduplicate_aliases({} if aliases is None else aliases, items)
+    all_options:list[str] = list(items.keys())
     tries:int = 0
     while user_input not in items:
         should_show_options = tries == 0 and show_options_first_time or show_options
@@ -103,7 +104,7 @@ def input_single[a](
         if enter_can_pick_only and user_input == "" and len(items) == 1:
             return next(iter(items.values()))
         if close_enough and user_input not in items:
-            user_guess = guess_intent(user_input, options, close_enough_threshold)
+            user_guess = guess_intent(user_input, all_options, close_enough_threshold)
             if user_guess is not None:
                 user_input = user_guess
                 print(f"Assuming user means \"{user_guess}\"")
@@ -144,6 +145,7 @@ def input_multi[a](
     user_inputs:list[str] = []
     options:list[str] = list(items.keys())
     items = deduplicate_aliases({} if aliases is None else aliases, items)
+    all_options = list(items.keys())
     tries:int = 0
     successful_inputs:list[str] = []
     successful_set:set[str] = set()
@@ -181,7 +183,7 @@ def input_multi[a](
             pop_indices:list[int] = []
             guessed_items:list[tuple[str,str]] = []
             for index, item in enumerate(user_inputs):
-                user_guess = guess_intent(item, options, close_enough_threshold)
+                user_guess = guess_intent(item, all_options, close_enough_threshold)
                 if user_guess is not None:
                     pop_indices.append(index)
                     guessed_items.append((item, user_guess))
