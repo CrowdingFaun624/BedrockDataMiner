@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, BinaryIO, cast
+from typing import Any, BinaryIO, Required, TypedDict, cast
 
 import Domain.Domain as Domain
 from Component.ComponentFunctions import component_function
@@ -8,6 +8,10 @@ from Downloader.FileAccessor import FileAccessor
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 from Version.Version import Version
 
+
+class ClassArguments(TypedDict):
+    archive_location: Required[str]
+    file_name: Required[str]
 
 @component_function()
 class ArchivalAccessor(FileAccessor):
@@ -22,12 +26,13 @@ class ArchivalAccessor(FileAccessor):
 
     class_parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("archive_location", True, str),
+        TypedDictKeyTypeVerifier("file_name", True, str),
     )
 
-    def __init__(self, full_name: str, version: Version, domain: Domain.Domain, instance_arguments: dict[str, Any], class_arguments: dict[str, Any], propagated_arguments: dict[str, Any], linked_accessors: dict[str, Accessor]) -> None:
-        super().__init__(full_name, version, domain, instance_arguments, class_arguments, propagated_arguments, linked_accessors)
+    def __init__(self, full_name: str, version: Version, domain: Domain.Domain, instance_arguments: dict[str, Any], class_arguments: ClassArguments, linked_accessors: dict[str, Accessor]) -> None:
+        super().__init__(full_name, version, domain, instance_arguments, class_arguments, linked_accessors)
         self.archive_directory = Path(class_arguments["archive_location"]).joinpath(version.name)
-        self.archive_location = self.archive_directory.joinpath("client.zip")
+        self.archive_location = self.archive_directory.joinpath(class_arguments["file_name"])
         self.source_accessor:FileAccessor = cast(Any, linked_accessors["source"])
 
     def store(self) -> None:
