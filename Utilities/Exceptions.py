@@ -385,11 +385,11 @@ class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
 class ComponentMismatchedTypesError(ComponentException):
     "The types of one Component and the types of another do not match."
 
-    def __init__(self, component1:"Component", component1_types:list[type], component2:"Component", component2_types:list[type], message:Optional[str]=None) -> None:
+    def __init__(self, component1:str, component1_types:list[type], component2:str, component2_types:list[type], message:Optional[str]=None) -> None:
         '''
-        :component1: The first Component or a string representing it.
+        :component1: The name of the first Component or a string representing it.
         :component1_types: The types allowed by the first Component.
-        :component2: The second Component or a string representing it.
+        :component2: The name of the second Component or a string representing it.
         :component2_types: The types allowed by the second Component.
         :message: Additional text to place after the main message.
         '''
@@ -553,20 +553,38 @@ class ComponentUnrecognizedTypeError(ComponentException):
 class ExpressionParseError(ComponentException):
     "An Expression cannot be parsed due to syntax errors."
 
-    def __init__(self, reader:"Reader", expression_type:type["Expression"], message:Optional[str]=None) -> None:
+    def __init__(self, reader:"Reader", message:Optional[str]=None) -> None:
         '''
         :reader: The Expression or string Expression with syntax errors.
         :expression_type: The type of Expression attempting to parse.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(reader, expression_type, message)
+        super().__init__(reader, message)
         self.reader = reader
         self.index = reader.index
-        self.expression_type = expression_type
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.expression_type.__name__} cannot parse \"{repr(self.reader.source)}\" at {self.index} {message(self.message)}"
+        return f"Cannot parse \"{repr(self.reader.source)}\" at {self.index}{message(self.message)}"
+
+class ExpressionTrailingDataError(ComponentException):
+    "An Expression string has trailing characters."
+
+    def __init__(self, data:str, source_component:"Component", index:int, message:Optional[str]=None) -> None:
+        '''
+        :data: The Expression string with trailing characters.
+        :source_component: The Component that the Expression comes from.
+        :index: The index in `data` that the trailing characters start at.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(data, source_component, index, message)
+        self.data = data
+        self.source_component = source_component
+        self.index = index
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Expression \"{self.data}\" from {self.source_component} has trailing characters starting at index {self.index}{message(self.message)}"
 
 class GroupAliasDomainError(ComponentException):
     "Attempted to create a Group alias with a target in another Domain."
@@ -738,21 +756,20 @@ class MalformedComponentReferenceError(ComponentException):
     def __str__(self) -> str:
         return f"Component reference \"{self.key}\" is malformed{message(self.message)}{nearest_message(self.key, self.options)}"
 
-class NoApplicableExpressionError(ComponentException):
-    "No Expression type may be used to parse an Expression."
+class NotExpressionError(ComponentException):
+    "What must be an Expression is not an Expression"
 
-    def __init__(self, reader:"Reader", message:Optional[str]=None) -> None:
+    def __init__(self, data:str, message:Optional[str]=None) -> None:
         '''
-        :reader: The Expression that cannot be parsed.
+        :data: The Expression string that does not give an Expression.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(reader, message)
-        self.reader = reader
-        self.index = reader.index
+        super().__init__(data, message)
+        self.source = data
         self.message = message
 
     def __str__(self) -> str:
-        return f"\"{self.reader.source}\" at {self.index} cannot be parsed{message(self.message)}"
+        return f"\"{self.source} from is not an expression{message(self.message)}"
 
 class ReaderSourceEndError(ComponentException):
     "Cannot parse an Expression because the end of the source was reached."
