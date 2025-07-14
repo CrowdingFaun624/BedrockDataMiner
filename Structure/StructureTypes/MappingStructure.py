@@ -92,7 +92,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         trace: Trace,
         environment: ComparisonEnvironment,
     ) -> tuple[IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]]|EllipsisType, bool, bool]:
-        with trace.enter(self, self.name, datas):
+        with trace.enter(self, self.trace_name, datas):
             SELECTION_FUNCTION = lambda key: (key[-1][0][-1], key[-1][1])
             any_changes:bool = False
             # first set is keys in older data and not in newer data; second set is keys in newer data and not in older data.
@@ -162,7 +162,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         return ..., False, False
 
     def get_similarity(self, data1: ICon[Con[K], Con[V], D], data2: ICon[Con[K], Con[V], D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, float]:
-        with trace.enter(self, self.name, (data1, data2)):
+        with trace.enter(self, self.trace_name, (data1, data2)):
             if (output := self.similarity_cache.get(data1, data2, structure_info1 := (environment[branch1].structure_info), structure_info2 := (environment[branch2].structure_info))) is not None:
                 return output
             similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]] = []

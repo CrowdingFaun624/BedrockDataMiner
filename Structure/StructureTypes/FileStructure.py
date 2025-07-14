@@ -45,7 +45,7 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure[AbstractFile[D], D, 
         return (self.structure,) if self.structure is not None else ()
 
     def normalize(self, data: AbstractFile[D], trace: Trace, environment: PrinterEnvironment) -> AbstractFile[D]|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             if not isinstance(data, self.pre_normalized_types):
                 trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
                 return ...
@@ -88,7 +88,7 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure[AbstractFile[D], D, 
         return data, data_identity_changed
 
     def containerize(self, data: AbstractFile[D], trace: Trace, environment: PrinterEnvironment) -> Con[D] | EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             structure = self.get_structure(data.read(self.serializer), trace, environment)
             if structure is None:
                 return SCon(data.read(self.serializer), environment.domain)
@@ -102,7 +102,7 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure[AbstractFile[D], D, 
 
     def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             output:OrderedSet[Use] = OrderedSet(())
             # cannot recover usage of file_types
             for this_type in self.content_types:

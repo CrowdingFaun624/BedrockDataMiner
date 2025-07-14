@@ -30,7 +30,7 @@ class NumberStructure[D, BO, CO](PrimitiveStructure[D, BO, CO]):
         return (self.similarity_cache,)
 
     def get_similarity(self, data1: SCon[D], data2: SCon[D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
-        with trace.enter(self, self.name, (data1, data2)):
+        with trace.enter(self, self.trace_name, (data1, data2)):
             if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
                 return output
             data1_num = self.similarity_function(data1)

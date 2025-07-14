@@ -98,7 +98,7 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
 
     def get_uses(self, data: ICon[Con[K], Con[V], D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             output:OrderedSet[Use] = OrderedSet(())
             output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
             non_empty_use = NonEmptyUse(self, None, StructureUse(self, None, parent_use))

@@ -36,6 +36,7 @@ class StructureComponent[a: Structure](Component[a]):
             name=self.name,
             full_name=self.full_name,
             is_inline=self.index is None,
+            trace_name=self.trace_name,
         )
 
     def link_finals(self, trace: Trace) -> None:

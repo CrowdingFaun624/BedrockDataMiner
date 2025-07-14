@@ -236,7 +236,7 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
 
     def extend(self, other:"TypedDictTypeVerifier") -> "TypedDictTypeVerifier":
         '''
-        Modifies self by combining itself with `other`.
+        Modifies other by combining itself with `self`.
         '''
         if other.function is None and self.function is None:
             function = None
@@ -258,6 +258,7 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
         if len(overlap_keys := other.keys_dict.keys() & self.keys_dict) > 0:
             raise Exceptions.TypedDictTypeVerifierKeysOverlapError(other, self, sorted(overlap_keys))
         other.keys_dict.update(self.keys_dict)
+        other.required_keys.extend(self.required_keys)
         other.loose = other.loose or self.loose
         self_data_type = list(other.data_type) if isinstance(other.data_type, tuple) else [other.data_type]
         other_data_type = list(self.data_type) if isinstance(self.data_type, tuple) else [self.data_type]
@@ -401,7 +402,7 @@ class UnionTypeVerifier[I](TypeVerifier[I]):
                 exception_count += len(subtrace)
                 trace.include(subtrace)
             trace.exception(Exceptions.TypeVerificationUnionError(self.get_type_str(self.types), type(data), exception_count))
-        return False
+            return True
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} id {id(self)}>"

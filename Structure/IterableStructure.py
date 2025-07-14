@@ -106,7 +106,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         return None
 
     def normalize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> D|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             if not isinstance(data, self.pre_normalized_types):
                 trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
                 return ...
@@ -168,7 +168,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                 setitem_function(data, normalized_key, normalized_value)
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> ICon[Con[K], Con[V], D]|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             if not isinstance(data, self.this_types):
                 trace.exception(StructureTypeError(self.this_types, type(data), "Data"))
                 return ...
@@ -198,7 +198,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         environment: ComparisonEnvironment,
     ) -> Mapping[tuple[int, ...], IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]]] | EllipsisType:
         # this method was very annoying.
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             diffed_items:list[Mapping[tuple[int,...], tuple[Diff[Don[K]], Diff[Don[V]]]]] = []
             current_length:int = 0
             for undiffed_key, undiffed_value in data.items(): # weird names because of lambda expressions.
@@ -285,7 +285,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         return {bundle: (Diff(key_list, False), Diff(value_list, False)) for bundle, (key_list, value_list) in output.items()}
 
     def type_check(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> None:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             self.type_check_item(data.data, self.this_types, "Data", trace)
             required_keys:set[str] = self.required_keys.copy()
             for key, value in data.items():
@@ -309,7 +309,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
             trace.exception(StructureTypeError(types, type(item), label))
 
     def get_tag_paths(self, data: ICon[Con[K], Con[V], D], tag:StructureTag, data_path: DataPath, trace: Trace, environment: PrinterEnvironment) -> Sequence[DataPath]:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             if tag not in self.children_tags:
                 return ()
             output:list[DataPath] = []
@@ -341,7 +341,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
 
     def get_uses(self, data: ICon[Con[K], Con[V], D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             output:OrderedSet[Use] = OrderedSet(())
             self_use:StructureUse[IterableStructure] = StructureUse(self, usage_tracker, parent_use)
             non_empty_use = NonEmptyUse(self, usage_tracker, self_use, self.always_empty())
@@ -385,14 +385,14 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         return output
 
     def print_branch(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             if self.delegate is None:
                 raise AttributeNoneError("delegate", self)
             return self.delegate.print_branch(data, trace, environment)
         return ...
 
     def print_comparison(self, data: IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             if self.delegate is None:
                 raise AttributeNoneError("delegate", self)
             return self.delegate.print_comparison(data, bundle, trace, environment)

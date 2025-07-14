@@ -145,33 +145,33 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             return cast(CO, output)
 
     def normalize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> D | EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             hash_function = lambda: environment.domain.type_stuff.hash_data((data, environment))
             self_super = super()
             return self.cache_function(self.cache_normalize, hash_function, lambda: self_super.normalize(data, trace, environment), lambda output: (output if output is not ... else data), lambda output: output, environment.structure_environment)
         return ...
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Con[D] | EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             hash_function = lambda: environment.domain.type_stuff.hash_data((data, environment))
             self_super = super()
             return self.cache_function(self.cache_containerize, hash_function, lambda: self_super.containerize(data, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return ...
 
     def diffize(self, data: Con[D], bundle: tuple[int, ...], trace: Trace, environment: ComparisonEnvironment) -> Mapping[tuple[int, ...], Don[D]] | EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             self_super = super()
             return self.cache_function(self.cache_diffize, lambda: hash((data, bundle, environment)), lambda: self_super.diffize(data, bundle, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return ...
 
     def type_check(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> None:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             self_super = super()
             return self.cache_function(self.cache_type_check, lambda: hash((data, environment)), lambda: self_super.type_check(data, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return None
 
     def get_tag_paths(self, data: Con[D], tag: StructureTag, data_path: DataPath, trace: Trace, environment: PrinterEnvironment) -> Sequence[DataPath]:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             store_function:Callable[[Sequence[DataPath]], list[DataPath]] = lambda output: [data_path.copy() for data_path in output]
             hash_function = lambda: hash((data, tag, data_path, environment))
             self_super = super()
@@ -179,27 +179,27 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         return ()
 
     def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             self_super = super()
             # usage_tracker is not hashed because it won't make a difference to the end result.
             return self.cache_function(self.cache_get_uses, lambda: hash((data, environment)), lambda: self_super.get_uses(data, usage_tracker, parent_use, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return OrderedSet(())
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]] | EllipsisType, bool, bool]:
-        with trace.enter(self, self.name, datas):
+        with trace.enter(self, self.trace_name, datas):
             self_super = super()
             return self.cache_function(self.cache_compare, lambda: hash((datas, environment)), lambda: self_super.compare(datas, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return ..., False, False
 
     def get_similarity(self, data1: Con[D], data2: Con[D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
-        with trace.enter(self, self.name, (data1, data2)):
+        with trace.enter(self, self.trace_name, (data1, data2)):
             hash_function = lambda: hash((data1, data2, branch1, branch2, environment))
             self_super = super()
             return self.cache_function(self.cache_get_similarity, hash_function, lambda: self_super.get_similarity(data1, data2, branch1, branch2, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return 0.0, False
 
     def print_branch(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             store_function = lambda output: self.delegate_store_branch(output, trace, environment)
             retrieve_function = lambda output: self.delegate_retrieve_branch(output, trace, environment)
             hash_function = (lambda: hash((data, environment, environment.version))) if self.cache_versions_for_delegates else (lambda: hash((data, environment)))
@@ -208,7 +208,7 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         return ...
 
     def print_comparison(self, data: Don[D] | Diff[Don[D]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             store_function = lambda output: self.delegate_store_comparison(output, bundle, trace, environment)
             retrieve_function = lambda output: self.delegate_retrieve_comparison(output, bundle, trace, environment)
             hash_function = (lambda: hash((data, bundle, environment, environment.versions, tuple(tuple(item) for item in environment.versions_between)))) if self.cache_versions_for_delegates else (lambda: hash((data, environment, bundle)))

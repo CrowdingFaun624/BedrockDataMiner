@@ -40,7 +40,7 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
         return self.structure
 
     def diffize(self, data: Con[D], bundle: tuple[int, ...], trace: Trace, environment: ComparisonEnvironment) -> Mapping[tuple[int,...],Don[D]]|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             if self.structure is None:
                 return {bundle: data.as_don(bundle)}
             else:
@@ -49,7 +49,7 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     def get_uses(self, data: Con[D], usage_tracker: UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             output:OrderedSet[Use] = OrderedSet(())
             output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
             for this_type in self.this_types:
@@ -72,7 +72,7 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
         return output
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]]|EllipsisType, bool, bool]:
-        with trace.enter(self, self.name, datas):
+        with trace.enter(self, self.trace_name, datas):
 
             if self.structure is None:
                 consecutive_similarities = self.get_consecutive_similarities(datas, trace, environment)

@@ -169,4 +169,4 @@ class ErrorTrace():
         self.exception = exception
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {stringify_trace(self.trace)}>"
+        return f"<{self.__class__.__name__} {self.exception.__class__.__name__} {stringify_trace(self.trace)}>"

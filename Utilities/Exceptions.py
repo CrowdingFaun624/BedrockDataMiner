@@ -119,10 +119,12 @@ def get_nearest(_str:str, options:frozenset[str]) -> str|None:
     if min_distance is not None and min_distance < 10 and (second_min_distance is None or second_min_distance - min_distance > 0.5):
         return min_option
 
-def nearest_message(value:str, options:list[str]) -> str:
+def nearest_message(value:str, options:list[str], show_original:bool=True) -> str:
     nearest = get_nearest(value, frozenset(options))
     if nearest is None:
         return ""
+    elif show_original:
+        return f" Did you mean {nearest} instead of {value}?"
     else:
         return f" Did you mean {nearest}?"
 
@@ -638,7 +640,7 @@ class InvalidComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component} is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}{nearest_message(self.key, self.options) if self.key is not None and self.options is not None else None}"
+        return f"{self.component} is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}{nearest_message(self.key, self.options, show_original=True) if self.key is not None and self.options is not None else None}"
 
 class InvalidComponentFinalTypeError(ComponentException):
     "The referenced Component's final is the wrong type."
@@ -837,7 +839,7 @@ class UnrecognizedComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component \"{self.component_str}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Component \"{self.component_str}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options, show_original=True)}"
 
 class UnrecognizedComponentDomainError(ComponentException):
     "A Domain referenced by a Component is unrecognized."
@@ -856,7 +858,26 @@ class UnrecognizedComponentDomainError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Domain \"{self.domain}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Domain \"{self.domain}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options, show_original=True)}"
+
+class UnrecognizedGroupAliasError(ComponentException):
+    "A Group referenced from a Group alias is unrecognized."
+
+    def __init__(self, group_name:str, alias:str, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :group_name: The name of the unrecognized Group.
+        :alias: The alias given to the Group.
+        :options: Values that `key` could be.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(group_name, alias, options, message)
+        self.group_name = group_name
+        self.alias = alias
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Group \"{self.alias}\": \"{self.group_name}\" is unrecognized{message(self.message)}{nearest_message(self.group_name, self.options)}"
 
 class UnrecognizedGroupError(ComponentException):
     "A Group is unrecognized"
@@ -875,7 +896,7 @@ class UnrecognizedGroupError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Group \"{self.group_name}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Group \"{self.group_name}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options, show_original=True)}"
 
 class UnrecognizedComponentTypeError(ComponentException):
     "A Component type is unrecognized."
@@ -1553,7 +1574,7 @@ class UnrecognizedScriptObjectNameError(ScriptException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Scripted object \"{self.object_name}\" is unrecognized in recognized file \"{self.file_name}\"{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Scripted object \"{self.object_name}\" is unrecognized in recognized file \"{self.file_name}\"{message(self.message)}{nearest_message(self.key, self.options, show_original=True)}"
 
 class WrongScriptError(ScriptException):
     "Attempted to import a Script that exists, but cannot be used in this situation."
@@ -1739,7 +1760,7 @@ class SwitchStructureError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.switch_structure}'s switch function returned \"{self.return_value}\", which is not in [{", ".join(f"\"{value}\"" for value in self.options)}]{message(self.message)}{nearest_message(self.return_value, self.options)}"
+        return f"{self.switch_structure.full_name}'s switch function returned \"{self.return_value}\", which is not a valid key{message(self.message)}{nearest_message(self.return_value, self.options)}"
 
 class InvalidFileHashType(StructureException):
     "An is_file StructureTag references data that cannot be interpreted as a file hash."

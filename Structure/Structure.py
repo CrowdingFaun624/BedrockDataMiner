@@ -33,11 +33,13 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
         "full_name",
         "is_inline",
         "name",
+        "trace_name",
     )
 
-    def __init__(self, name:str, full_name:str, is_inline:bool) -> None:
+    def __init__(self, name:str, full_name:str, trace_name:str, is_inline:bool) -> None:
         self.name = name
         self.full_name = full_name
+        self.trace_name = trace_name
         self.is_inline = is_inline
 
     def link_structure(
@@ -78,7 +80,7 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
         '''
         Returns the Structure at the end of a chain of AbstractPassthroughStructures
         '''
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             return self
 
     def normalize(self, data:A, trace:Trace, environment:PrinterEnvironment) -> A|EllipsisType:

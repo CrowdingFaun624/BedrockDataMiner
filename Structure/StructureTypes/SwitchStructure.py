@@ -59,7 +59,7 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())
-        with trace.enter(self, self.name, ...):
+        with trace.enter(self, self.trace_name, ...):
             output:OrderedSet[Use] = OrderedSet(())
             output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
             switch_key = self.switch_function(data.data)

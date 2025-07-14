@@ -13,7 +13,7 @@ class PassthroughStructure[D, BO, CO](AbstractPassthroughStructure[D, D, BO, CO]
     __slots__ = ()
 
     def normalize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> D|EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             if not isinstance(data, self.pre_normalized_types):
                 trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
                 return ...
@@ -33,7 +33,7 @@ class PassthroughStructure[D, BO, CO](AbstractPassthroughStructure[D, D, BO, CO]
         return ...
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Con[D] | EllipsisType:
-        with trace.enter(self, self.name, data):
+        with trace.enter(self, self.trace_name, data):
             structure = self.get_structure(data, trace, environment)
             if structure is None:
                 return SCon(data, environment.domain)

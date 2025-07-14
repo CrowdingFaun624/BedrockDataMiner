@@ -13,7 +13,7 @@ from Utilities.Exceptions import (
     ComponentTypeMissingError,
     GroupAliasDomainError,
     UnrecognizedComponentTypeError,
-    UnrecognizedGroupError,
+    UnrecognizedGroupAliasError,
 )
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
@@ -74,7 +74,10 @@ class Group():
                     continue
                 component_type = component_types_dict.get(component_type_str)
                 if component_type is None:
-                    trace.exception(UnrecognizedComponentTypeError(component_type_str, f"{self.domain.name}!{self.name}/{component_name}>", list(component_types_dict.keys())))
+                    if "#" in component_type_str:
+                        message = "(Expressions are not allowed in the \"type\" field.)"
+                    else: message = None
+                    trace.exception(UnrecognizedComponentTypeError(component_type_str, f"{self.domain.name}!{self.name}/{component_name}>", list(component_types_dict.keys()), message))
                     continue
                 component = component_type(component_data, component_name, self.domain, self, index, trace)
                 if component.abstract or not component.init(trace):
@@ -105,14 +108,22 @@ class Group():
         return self.create_components(contents, trace)
 
     def verify_group_aliases(self, all_groups:dict[str,"Group"], trace:Trace) -> None:
-        for alias, target in self.group_aliases.items():
-            with trace.enter_key(alias, target):
-                if "!" in alias:
-                    trace.exception(GroupAliasDomainError(alias, target))
-                    continue
-                if target not in all_groups:
-                    trace.exception(UnrecognizedGroupError(target, target, list(all_groups.keys()), f"from alias {alias}"))
-                    continue
+        with trace.enter_key("group_aliases", self.group_aliases):
+            for alias, target in self.group_aliases.items():
+                with trace.enter_key(alias, target):
+                    if "!" in alias:
+                        trace.exception(GroupAliasDomainError(alias, target))
+                        continue
+                    if target not in all_groups:
+                        if alias == target:
+                            message = "(The alias and target are the same)"
+                        elif alias in all_groups:
+                            message = f"(while \"{alias}\" is a recognized group, so you have your key and value backwards)"
+                        elif "#" in target or "$" in target or "#" in alias or "$" in alias:
+                            message = "(Group aliases do not support Variables or Expressions)"
+                        else: message = None
+                        trace.exception(UnrecognizedGroupAliasError(target, alias, list(all_groups.keys()), message))
+                        continue
 
     @property
     def full_name(self) -> str:

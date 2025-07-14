@@ -136,7 +136,7 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         if self.delegate is None:
             return cast(str, self.ensure_not_ellipsis(self.print_comparison(comparison, (0, 1), trace, comparison_environment), trace, (version1, version2))), has_changes
         else:
-            with trace.enter(self, self.name, (containerized_data1, containerized_data2)):
+            with trace.enter(self, self.trace_name, (containerized_data1, containerized_data2)):
                 return self.ensure_not_ellipsis(self.delegate.print_comparison(comparison, (0, 1), trace, comparison_environment), trace, (version1, version2)), has_changes
             return "", False
 
