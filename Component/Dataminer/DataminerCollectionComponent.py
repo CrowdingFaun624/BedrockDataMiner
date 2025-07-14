@@ -40,7 +40,7 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent[Datamine
         TypedDictKeyTypeVerifier("dataminers", True, ListTypeVerifier(dict, list)),
         TypedDictKeyTypeVerifier("disabled", False, bool),
         TypedDictKeyTypeVerifier("file_name", True, str),
-        TypedDictKeyTypeVerifier("structure", True, str),
+        TypedDictKeyTypeVerifier("structure", True, (str, dict)),
         TypedDictKeyTypeVerifier("type", False, str),
     )
 

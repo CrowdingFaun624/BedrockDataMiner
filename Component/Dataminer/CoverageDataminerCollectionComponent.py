@@ -35,7 +35,7 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[
         TypedDictKeyTypeVerifier("remove_regex", False, ListTypeVerifier(str, list)),
         TypedDictKeyTypeVerifier("remove_prefixes", False, ListTypeVerifier(str, list)),
         TypedDictKeyTypeVerifier("remove_suffixes", False, ListTypeVerifier(str, list)),
-        TypedDictKeyTypeVerifier("structure", True, str),
+        TypedDictKeyTypeVerifier("structure", True, (str, dict)),
         TypedDictKeyTypeVerifier("type", False, str),
     )
 

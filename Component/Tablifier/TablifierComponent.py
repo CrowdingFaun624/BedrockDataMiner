@@ -22,7 +22,7 @@ class TablifierComponent(Component[Tablifier]):
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("dataminer_collection", True, str),
         TypedDictKeyTypeVerifier("file_name", True, str),
-        TypedDictKeyTypeVerifier("structure", True, str),
+        TypedDictKeyTypeVerifier("structure", True, (str, dict)),
         TypedDictKeyTypeVerifier("type", False, str),
         TypedDictKeyTypeVerifier("version_provider", True, str),
     )
