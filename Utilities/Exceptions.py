@@ -929,19 +929,23 @@ class VariableNameError(ComponentException):
 class VariableUnusedError(ComponentException):
     "A declared Variable has no usages in Expresions."
 
-    def __init__(self, variable_name:str, value:Any, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component", variable_name:str, value:Any, options:list[str], message:Optional[str]=None) -> None:
         '''
+        :component: The Component that the Variable is not used in.
         :variable_name: The name of the unused Variable declaration.
         :value: The value of the Variable declaration.
+        :options: Possible correct Variable names.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(variable_name, value, message)
+        super().__init__(component, variable_name, value, options, message)
+        self.component = component
         self.variable_name = variable_name
         self.value = value
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Variable {self.variable_name}: {repr(self.value)} has no uses in Expressions"
+        return f"Variable {self.variable_name}: {repr(self.value)} has no uses in Expressions in {self.component}{message(self.message)}{nearest_message(self.variable_name, self.options)}"
 
 class CustomJsonException(Exception):
     "Abstract Exception class for errors relating to custom JSON encoders and decoders."

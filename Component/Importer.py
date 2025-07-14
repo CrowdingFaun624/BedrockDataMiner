@@ -38,7 +38,10 @@ def get_inline_component_function(domain:"Domain.Domain", trace:Trace) -> Create
             return ...
         component_type = component_types_dict.get(component_type_str)
         if component_type is None:
-            trace.exception(Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{domain.name}!{parent_component.group.name}/{component_name}>", list(component_types_dict.keys())))
+            if "#" in component_type_str:
+                message = "(Expressions are not allowed in the \"type\" field.)"
+            else: message = None
+            trace.exception(Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{domain.name}!{parent_component.group.name}/{component_name}>", list(component_types_dict.keys()), message))
             return ...
         component = component_type(component_data, component_name, domain, parent_component.group, None, trace)
         component.inline_parent = parent_component
@@ -100,14 +103,15 @@ def create_groups(domains:Sequence["Domain.Domain"], trace:Trace) -> dict["Domai
 def get_imports(domains:Sequence["Domain.Domain"]) -> dict["Domain.Domain",Sequence["Domain.Domain"]]:
     return {domain: domain.dependencies for domain in domains}
 
-def inheritance(all_components:dict["Domain.Domain",list[Group]], primary_domain:"Domain.Domain", trace:Trace) -> None:
+def inheritance(all_components:dict["Domain.Domain",list[Group]], primary_domain:"Domain.Domain", functions:dict["Domain.Domain", "ScriptSetSetSet"], trace:Trace) -> None:
     global_groups:dict[str,dict[str,Group]] = {domain.name: {group.name: group for group in groups} for domain, groups in all_components.items()}
     for domain, groups in all_components.items():
         with trace.enter(domain, domain.name, ...):
+            create_inline_component = get_inline_component_function(domain, trace)
             for group in groups:
                 with trace.enter(group, group.name, ...):
                     for component_name, component in group.components.items():
-                        new_component = component.inheritance(set(), global_groups, {}, trace)
+                        new_component = component.inheritance(set(), global_groups, {}, functions[domain], create_inline_component, trace)
                         if new_component is ...: # an error occurred.
                             continue
                         group.components[component_name] = new_component
@@ -132,17 +136,11 @@ def create_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Doma
         with trace.enter(domain, domain.name, ...):
             for group in groups:
                 with trace.enter(group, group.name, ...):
-                    remove_components:list[str] = []
                     for component in group.components.values():
-                        if component.abstract: # remove abstract Components, since they are no longer used.
-                            remove_components.append(component.name)
-                            continue
-                        component_output = component.create_final_component(trace)
-                        if component_output is ...:
+                        component_output = component.create_final(trace)
+                        if component_output is ...: # happens if create_final_component has an error or component is abstract
                             continue
                         component.final = component_output
-                    for remove_component in remove_components:
-                        del group.components[remove_component]
     print_exceptions(domain, trace)
 
 def link_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
@@ -151,7 +149,7 @@ def link_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Domain
             for group in groups:
                 with trace.enter(group, group.name, ...):
                     for component in group.components.values():
-                        component.link_finals(trace)
+                        component.link_final(trace)
     print_exceptions(domain, trace)
 
 def check_components(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
@@ -167,9 +165,14 @@ def finalize_components(all_components:dict["Domain.Domain",list[Group]], domain
     for domain, groups in all_components.items():
         with trace.enter(domain, domain.name, ...):
             for group in groups:
+                remove_components:list[str] = []
                 with trace.enter(group, group.name, ...):
                     for component in group.components.values():
                         component.finalize(trace)
+                        if component.abstract:
+                            remove_components.append(component.name)
+                    for remove_component in remove_components:
+                        del group.components[remove_component]
     print_exceptions(domain, trace)
 
 def get_script_referenceable(
@@ -182,7 +185,8 @@ def get_script_referenceable(
         for group in groups:
             objects[domain.name][group.name] = {}
             for component in group.components.values():
-                objects[domain.name][group.name][component.name] = component.final if component.script_referenceable else ...
+                if not component.abstract:
+                    objects[domain.name][group.name][component.name] = component.final if component.script_referenceable else ...
     primary_domain.script_referenceable.update_objects(objects)
 
 def check_for_unused_components(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
@@ -191,7 +195,6 @@ def check_for_unused_components(all_components:dict["Domain.Domain",list[Group]]
     for domain, groups in all_components.items():
         for group in groups:
             unvisited_nodes.extend(component for component in group.components.values() if component.assume_used)
-    print_exceptions(domain, trace)
     while len(unvisited_nodes) > 0:
         unvisited_node = unvisited_nodes.pop()
         if unvisited_node in visited_nodes: continue
@@ -201,6 +204,8 @@ def check_for_unused_components(all_components:dict["Domain.Domain",list[Group]]
             if neighbor not in visited_nodes
         )
         visited_nodes.add(unvisited_node)
+        if unvisited_node.inherit_parent is not None:
+            visited_nodes.add(unvisited_node.inherit_parent)
     unused_components:Iterable[Component] = (
         component
         for groups in all_components.values()
@@ -222,7 +227,7 @@ def parse_all_groups(domains:Sequence["Domain.Domain"]) -> dict["Domain.Domain",
     groups = create_groups(domains, trace)
     domain_imports = get_imports(domains)
     functions = get_all_functions(domain_imports)
-    inheritance(groups, domains[-1], trace)
+    inheritance(groups, domains[-1], functions, trace)
     set_components(groups, domain_imports, domains[-1], functions, trace)
     propagate_variables(groups, domains[-1], trace)
     create_finals(groups, domains[-1], trace)
