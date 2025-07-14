@@ -10,7 +10,6 @@ class Accessor():
 
     linked_accessor_types:dict[str, type["Accessor"]] = {}
     instance_parameters:TypedDictTypeVerifier = TypedDictTypeVerifier()
-    propagated_parameters:TypedDictTypeVerifier = TypedDictTypeVerifier()
     class_parameters:TypeVerifier = TypedDictTypeVerifier()
 
     __slots__ = (
@@ -26,9 +25,8 @@ class Accessor():
             full_name:str,
             version:"Version",
             domain:"Domain.Domain",
-            instance_arguments:dict[str,Any],
-            class_arguments:dict[str,Any],
-            propagated_arguments:dict[str,Any],
+            instance_arguments:Any,
+            class_arguments:Any,
             linked_accessors:dict[str,"Accessor"],
         ) -> None:
         self.full_name = full_name
@@ -36,12 +34,12 @@ class Accessor():
         self.domain = domain
         self.linked_accessors = linked_accessors
         self.constrained_memory:bool = False
-        self.prepare_for_install(instance_arguments, class_arguments, propagated_arguments, linked_accessors)
+        self.prepare_for_install(instance_arguments, class_arguments, linked_accessors)
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.full_name}>"
 
-    def prepare_for_install(self, instance_arguments:dict[str,Any], class_arguments:dict[str,Any], propagated_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
+    def prepare_for_install(self, instance_arguments:dict[str,Any], class_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
         '''Any actions that can take place before grabbing files can happen.'''
         ...
 

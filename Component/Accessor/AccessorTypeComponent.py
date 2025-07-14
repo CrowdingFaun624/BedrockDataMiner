@@ -23,21 +23,18 @@ class AccessorTypeComponent(Component[AccessorType]):
     my_capabilities = Capabilities(is_accessor_type=True)
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("accessor_class", True, str),
-        TypedDictKeyTypeVerifier("class_arguments", False, dict),
+        TypedDictKeyTypeVerifier("arguments", False, dict),
         TypedDictKeyTypeVerifier("linked_accessors", False, DictTypeVerifier(dict, str, (str, dict))),
-        TypedDictKeyTypeVerifier("propagated_arguments", False, dict),
     )
 
     __slots__ = (
         "accessor_class_field",
-        "class_arguments",
+        "arguments",
         "linked_accessor_types_field",
-        "propagated_arguments",
     )
 
     def initialize_fields(self, data: AccessorTypeTypedDict) -> Sequence[Field]:
-        self.class_arguments = data.get("class_arguments", {})
-        self.propagated_arguments = data.get("propagated_arguments", {})
+        self.arguments = data.get("arguments", {})
 
         self.accessor_class_field = ScriptedClassField(data["accessor_class"], lambda script_set_set_set: script_set_set_set.accessor_classes, ("accessor_class",))
         self.linked_accessor_types_field = ComponentDictField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ("linked_accessors",), assume_type=self.class_name)
@@ -48,8 +45,7 @@ class AccessorTypeComponent(Component[AccessorType]):
         return AccessorType(
             name=self.name,
             full_name=self.full_name,
-            class_arguments=self.class_arguments,
-            propagated_arguments=self.propagated_arguments,
+            arguments=self.arguments,
         )
 
     def link_finals(self, trace:Trace) -> None:

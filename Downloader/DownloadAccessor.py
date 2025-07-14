@@ -12,20 +12,18 @@ if TYPE_CHECKING:
 class InstanceArgumentsTypedDict(TypedDict):
     url: str
 
-class PropagatedArgumentsTypedDict(TypedDict):
+class ArgumentsTypedDict(TypedDict):
     location: str
+    log: str
 
 class DownloadAccessor(FileAccessor):
-
-    propagated_parameters = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("location", True, str),
-    )
     
     instance_parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("url", True, str),
     )
 
     class_parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("location", True, str),
         TypedDictKeyTypeVerifier("log", False, (str, type(None))),
     )
 
@@ -37,9 +35,9 @@ class DownloadAccessor(FileAccessor):
         "url",
     )
 
-    def prepare_for_install(self, instance_arguments:InstanceArgumentsTypedDict, class_arguments:dict[str,Any], propagated_arguments:PropagatedArgumentsTypedDict, linked_accessors:dict[str,Accessor]) -> None:
+    def prepare_for_install(self, instance_arguments:InstanceArgumentsTypedDict, class_arguments:ArgumentsTypedDict, linked_accessors:dict[str,Accessor]) -> None:
         version_directory = self.version.version_directory
-        location = version_directory.joinpath(propagated_arguments["location"])
+        location = version_directory.joinpath(class_arguments["location"])
         self.location = location
         self._installed:bool|None = None
         self.file_handle:BinaryIO|None = None

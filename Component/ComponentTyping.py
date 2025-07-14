@@ -11,9 +11,8 @@ class AccessorTypedDict(TypedDict):
 
 class AccessorTypeTypedDict(TypedDict):
     accessor_class: Required[str]
-    class_arguments: NotRequired[dict[str,Any]]
+    arguments: NotRequired[dict[str,Any]]
     linked_accessors: NotRequired[dict[str,"ComponentTypedDicts|str"]]
-    propagated_arguments: NotRequired[dict[str,Any]]
     type: NotRequired[Literal["AccessorType"]]
 
 class CoverageDataminerCollectionTypedDict(TypedDict):
