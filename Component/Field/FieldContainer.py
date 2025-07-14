@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, MutableSequence, Sequence
+from typing import TYPE_CHECKING, Mapping, MutableSequence, Sequence
 
 import Domain.Domain as Domain
 from Component.Component import Component
@@ -37,7 +37,7 @@ class FieldContainer[a: Field](Field):
         self,
         source_component:"Component",
         local_group:"Group",
-        global_groups:dict[str,dict[str,"Group"]],
+        global_groups:Mapping[str,Mapping[str,"Group"]],
         functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
@@ -51,11 +51,6 @@ class FieldContainer[a: Field](Field):
                 inline_components.extend(new_inline_components)
             return linked_components, inline_components
         return (), ()
-
-    def resolve_create_finals(self, trace:Trace) -> None:
-        with trace.enter_keys(self.trace_path, ...):
-            for field in self.fields:
-                field.resolve_create_finals(trace)
 
     def resolve_link_finals(self, trace:Trace) -> None:
         with trace.enter_keys(self.trace_path, ...):

@@ -226,7 +226,7 @@ class Field():
         self,
         source_component:"Component",
         local_group:"Group",
-        global_groups:dict[str,dict[str,"Group"]],
+        global_groups:Mapping[str,Mapping[str,"Group"]],
         functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
@@ -243,13 +243,6 @@ class Field():
         with trace.enter_keys(self.trace_path, ...):
             return (), ()
         return (), ()
-
-    def resolve_create_finals(self, trace:Trace) -> None:
-        '''
-        Used for setting an attribute of this Field that requires a linked Component to be set.
-        Ran during the create_finals stage.
-        '''
-        ...
 
     def resolve_link_finals(self, trace:Trace) -> None:
         '''

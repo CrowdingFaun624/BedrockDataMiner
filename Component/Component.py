@@ -319,8 +319,7 @@ class Component[a]():
 
     def set_component(
         self,
-        local_group:"Group",
-        global_groups:dict[str,dict[str,"Group"]],
+        global_groups:Mapping[str,Mapping[str,"Group"]],
         functions:"ScriptSetSetSet",
         create_component_function:"CreateComponentFunction",
         trace:Trace,
@@ -330,11 +329,11 @@ class Component[a]():
         with trace.enter(self, self.trace_name, ...):
             self.inline_components = []
             for field in self.fields:
-                linked_components, new_inline_components = field.set_field(self, local_group, global_groups, functions, create_component_function, trace)
+                linked_components, new_inline_components = field.set_field(self, self.group, global_groups, functions, create_component_function, trace)
                 self.link_components(linked_components)
                 self.inline_components.extend(new_inline_components)
             for inline_component in self.inline_components:
-                inline_component.set_component(local_group, global_groups, functions, create_component_function, trace)
+                inline_component.set_component(global_groups, functions, create_component_function, trace)
             # we don't iterate over reference_inheritance_cache here because the cache is still in the process of being built.
             # set_component is handled by copy_reference.
 

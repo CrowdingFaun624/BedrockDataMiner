@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Callable, Sequence, cast
+from typing import TYPE_CHECKING, Callable, Mapping, Sequence, cast
 
 import Utilities.Exceptions as Exceptions
 from Component.Component import Component
@@ -56,13 +56,13 @@ class ComponentField[a: Component](Field):
         self,
         source_component:"Component",
         local_group:"Group",
-        global_groups:dict[str,dict[str,"Group"]],
+        global_groups:Mapping[str,Mapping[str,"Group"]],
         functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence[a],Sequence[a]]:
         with trace.enter_keys(self.trace_path, self.subcomponent_data):
-            subcomponent, is_inline = choose_component(self.subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.trace_path, create_component_function, self.assume_type)
+            subcomponent, is_inline = choose_component(self.subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.cumulative_path, functions, create_component_function, self.assume_type)
             if subcomponent is ...:
                 return (), ()
             self.subcomponent = subcomponent

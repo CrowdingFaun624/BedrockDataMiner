@@ -128,7 +128,7 @@ def set_components(all_components:dict["Domain.Domain",list[Group]], domain_impo
             for group in groups:
                 with trace.enter(group, group.name, ...):
                     for component in group.components.values():
-                        component.set_component(group, imports, script_set_set_set, create_inline_component, trace)
+                        component.set_component(imports, script_set_set_set, create_inline_component, trace)
     print_exceptions(primary_domain, trace)
 
 def create_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:

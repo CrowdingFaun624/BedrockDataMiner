@@ -1,5 +1,5 @@
 from itertools import starmap
-from typing import TYPE_CHECKING, Callable, Iterator, Sequence
+from typing import TYPE_CHECKING, Callable, Iterator, Mapping, Sequence
 
 import Utilities.Exceptions as Exceptions
 from Component.Component import Component
@@ -56,7 +56,7 @@ class ComponentDictField[a:Component](Field):
         self,
         source_component:"Component",
         local_group:"Group",
-        global_groups:dict[str,dict[str,"Group"]],
+        global_groups:Mapping[str,Mapping[str,"Group"]],
         functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
@@ -66,7 +66,7 @@ class ComponentDictField[a:Component](Field):
             inline_components:list[a] = []
             for key, subcomponent_data in self.subcomponents_data.items():
                 with trace.enter_key(key, subcomponent_data):
-                    subcomponent, is_inline = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.trace_path, create_component_function, self.assume_type)
+                    subcomponent, is_inline = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.cumulative_path, functions, create_component_function, self.assume_type)
                     self.has_reference_components = self.has_reference_components or not is_inline
                     self.has_inline_components = self.has_inline_components or is_inline
                     if subcomponent is ...:

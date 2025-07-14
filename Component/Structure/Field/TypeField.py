@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import TYPE_CHECKING, Mapping, Sequence, cast
 
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction, TypeAliasTypedDict
@@ -32,7 +32,7 @@ class TypeField(AbstractTypeField):
         self,
         source_component:"Component",
         local_group:"Group",
-        global_groups:dict[str,dict[str,"Group"]],
+        global_groups:Mapping[str,Mapping[str,"Group"]],
         functions:"ScriptSetSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
