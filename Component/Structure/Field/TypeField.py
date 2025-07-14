@@ -4,11 +4,11 @@ from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction, TypeAliasTypedDict
 from Component.Field.Field import choose_component
 from Component.ScriptImporter import ScriptSetSetSet
-from Component.Structure.Field.AbstractTypeField import AbstractTypeField
-from Component.Structure.TypeAliasComponent import (
+from Component.Structure.Field.AbstractTypeField import (
     TYPE_ALIAS_PATTERN,
-    TypeAliasComponent,
+    AbstractTypeField,
 )
+from Component.Structure.TypeAliasComponent import TypeAliasComponent
 from Utilities.Exceptions import InlineComponentError
 from Utilities.Trace import Trace
 
@@ -18,11 +18,7 @@ if TYPE_CHECKING:
 class TypeField(AbstractTypeField):
     '''A link to a TypeAliasComponent or type.'''
 
-    __slots__ = (
-        "_types",
-        "subcomponent",
-        "subcomponent_data",
-    )
+    __slots__ = ()
 
     def __init__(self, subcomponent_data:str, path:tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
@@ -31,7 +27,6 @@ class TypeField(AbstractTypeField):
         :cumulative_path: The keys from the next parent Component.
         '''
         super().__init__(subcomponent_data, path, cumulative_path)
-        self.subcomponent:type|TypeAliasComponent
 
     def set_field(
         self,
@@ -44,22 +39,16 @@ class TypeField(AbstractTypeField):
     ) -> tuple[Sequence["TypeAliasComponent"],Sequence["TypeAliasComponent"]]:
         with trace.enter_keys(self.trace_path, self.subcomponent_data):
             if self.subcomponent_data in self.domain.type_stuff.default_types:
-                self.subcomponent = self.domain.type_stuff.default_types[self.subcomponent_data]
+                self._types = (self.domain.type_stuff.default_types[self.subcomponent_data],)
                 return (), ()
             else:
-                component, is_inline = choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_PATTERN, local_group, global_groups, trace, self.trace_path,
-                                                              create_component_function, None, self.domain.type_stuff.default_types)
+                component, is_inline = choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_PATTERN, local_group, global_groups, trace, self.cumulative_path,
+                    functions, create_component_function, None, self.domain.type_stuff.default_types)
                 if component is ...:
                     return (), ()
                 if is_inline:
                     trace.exception(InlineComponentError(source_component, self, cast(TypeAliasTypedDict, self.subcomponent_data)))
                     return (), ()
-                self.subcomponent = component
+                self._types = (component,)
                 return (component,), ()
         return (), ()
-
-    def resolve_link_finals(self, trace:Trace) -> None:
-        with trace.enter_keys(self.trace_path, self.subcomponent_data):
-            self._types = (self.subcomponent,) if isinstance(self.subcomponent, type) else self.subcomponent.final
-            if self.type_set is not None:
-                self.type_set.update(self._types)

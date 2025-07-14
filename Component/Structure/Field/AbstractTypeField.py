@@ -1,29 +1,37 @@
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Self, Sequence
 
 import Utilities.Exceptions as Exceptions
 from Component.Component import Component
 from Component.Field.ComponentField import ComponentField, OptionalComponentField
 from Component.Field.Field import Field
+from Component.Pattern import Pattern
 from Component.Structure.StructureComponent import StructureComponent
 from Utilities.Trace import Trace
 from Utilities.TypeUtilities import TypeSet
 
+if TYPE_CHECKING:
+    from Component.Structure.TypeAliasComponent import TypeAliasComponent
+
 type VerifyComponentType = ComponentField[StructureComponent]|OptionalComponentField[StructureComponent]
+
+TYPE_ALIAS_PATTERN:Pattern["TypeAliasComponent"] = Pattern("is_type_alias")
 
 class AbstractTypeField(Field):
 
     __slots__ = (
+        "_types",
         "contained_by_field",
         "default_fields",
-        "final_types",
+        "is_resolved",
         "must_be_fail_message",
         "must_be_types",
         "subcomponent_data",
         "type_set",
+        "types",
         "verify_with_component",
     )
 
-    _types: tuple[type,...]
+    _types: Sequence["type|TypeAliasComponent"]
 
     def __init__(self, subcomponent_data:Any, path: tuple[str,...], cumulative_path:tuple[str,...]|None=None) -> None:
         '''
@@ -33,32 +41,17 @@ class AbstractTypeField(Field):
         '''
         super().__init__(path, cumulative_path)
         self.subcomponent_data = subcomponent_data
-        self.final_types:tuple[type,...]|None = None # used as cached value in `types` property.
+        self.types:tuple[type,...] # used as cached value in `types` property.
         self.verify_with_component:VerifyComponentType|None=None
         self.must_be_types:TypeSet|None = None
         self.must_be_fail_message:str|None = None
         self.contained_by_field:AbstractTypeField|None = None
         self.default_fields:list[AbstractTypeField] = []
+        self.is_resolved:bool = False
         self.type_set:set[type]|None = None
 
-    @property
-    def types(self) -> tuple[type,...]:
-        if self.final_types is None:
-            if len(self._types) == 0 and len(self.default_fields) != 0:
-                output:list[type] = []
-                inclusion:set[type] = set() # ordered result.
-                for default_field in self.default_fields:
-                    for subtype in default_field.types:
-                        if subtype in inclusion: continue
-                        output.append(subtype)
-                        inclusion.add(subtype)
-                self.final_types = tuple(output)
-            else:
-                self.final_types = self._types
-        return self.final_types
-
     def check(self, source_component:"Component", trace:Trace) -> None:
-        with trace.enter_keys(self.trace_path, self.subcomponent_data):
+        with trace.enter_keys(self.trace_path, ...):
             super().check(source_component, trace)
             if self.verify_with_component is not None:
                 subcomponent = self.verify_with_component.subcomponent
@@ -71,7 +64,7 @@ class AbstractTypeField(Field):
                     )
                 else:
                     if set(component_types) != subcomponent.my_type:
-                        trace.exception(Exceptions.ComponentMismatchedTypesError(source_component, sorted(component_types, key=lambda type: type.__name__), subcomponent, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
+                        trace.exception(Exceptions.ComponentMismatchedTypesError(source_component.trace_name, sorted(component_types, key=lambda type: type.__name__), subcomponent.trace_name, sorted(subcomponent.my_type, key=lambda type: type.__name__)))
             if self.must_be_types is not None:
                 trace.exceptions(
                     Exceptions.ComponentTypeInvalidTypeError(type, self.must_be_types, message=self.must_be_fail_message)
@@ -88,13 +81,37 @@ class AbstractTypeField(Field):
                 )
 
     def resolve_link_finals(self, trace:Trace) -> None:
-        '''
-        Resolves all TypeAliases into types.
-        Cannot be called before all TypeAliases are set.
-        Cannot be called before `set_field`.
-        '''
         with trace.enter_keys(self.trace_path, ...):
-            super().resolve_link_finals(trace)
+            self.resolve()
+
+    def resolve(self) -> tuple[type,...]:
+        if self.is_resolved: # since all Components call `resolve_link_finals` on all Fields and Fields call it on each other, it may be called twice.
+            return self.types
+        self.is_resolved = True
+        types:set["type|TypeAliasComponent"] = set()
+        output:list[type] = []
+        if len(self._types) == 0 and len(self.default_fields) != 0:
+            for default_field in self.default_fields:
+                for subtype in default_field.resolve():
+                    if subtype in types: continue
+                    output.append(subtype)
+                    types.add(subtype)
+        else:
+            for subcomponent in self._types:
+                if subcomponent in types: continue
+                if isinstance(subcomponent, type):
+                    output.append(subcomponent)
+                    types.add(subcomponent)
+                else: # isinstance(TypeAliasComponent)
+                    for subtype in subcomponent.final.resolve():
+                        if subtype in types: continue
+                        output.append(subtype)
+                        types.add(subtype)
+                    types.add(subcomponent)
+        self.types = tuple(output)
+        if self.type_set is not None:
+            self.type_set.update(self.types)
+        return self.types
 
     def add_to_set(self, _set:set[type]) -> Self:
         '''
