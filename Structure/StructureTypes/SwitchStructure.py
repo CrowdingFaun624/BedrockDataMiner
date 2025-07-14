@@ -3,11 +3,13 @@ from typing import Sequence
 from ordered_set import OrderedSet
 
 from Structure.Container import Con, Don
+from Structure.DataPath import DataPath
 from Structure.Difference import Diff
 from Structure.Normalizer import Normalizer
 from Structure.PassthroughStructure import PassthroughStructure
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import PrinterEnvironment
+from Structure.StructureTag import StructureTag
 from Structure.Uses import (
     Region,
     StructureUse,
@@ -24,6 +26,7 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     __slots__ = (
         "switch_function",
+        "switch_tags",
         "switches",
         "types",
     )
@@ -31,11 +34,14 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
     def link_switch_structure(
         self,
         switch_function:Normalizer,
-        switches:dict[str,tuple[Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None, tuple[type,...]]],
+        structures:dict[str,Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None],
+        tags:dict[str,set[StructureTag]],
+        types:dict[str,tuple[type,...]],
     ) -> None:
         self.switch_function = switch_function
-        self.switches = {key: structure for key, (structure, types) in switches.items()}
-        self.types = {key: types for key, (structure, types) in switches.items()}
+        self.switches = structures
+        self.types = types
+        self.switch_tags = tags
 
     def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
         switch_key:str = self.switch_function(data)
@@ -56,6 +62,13 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
             return None
         if not isinstance(data.data, types):
             trace.exception(StructureTypeError(types, type(data.data), "Data"))
+
+    def get_tag_paths_extra(self, data: Con[D], tag: StructureTag, data_path: DataPath, trace: Trace, environment: PrinterEnvironment) -> Sequence[DataPath]:
+        switch_key:str = self.switch_function(data)
+        tags = self.switch_tags.get(switch_key, set()) # may not exist
+        if tag in tags:
+            return (data_path.copy(...).embed(data.data),)
+        return ()
 
     def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:
         if not usage_tracker.still_used(self): return OrderedSet(())

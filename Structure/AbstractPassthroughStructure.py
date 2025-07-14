@@ -110,9 +110,13 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Do
             if tag in self.tags:
                 output.append(data_path.copy(...).embed(data.data))
             structure = self.get_structure(data.data, trace, environment)
+            output.extend(self.get_tag_paths_extra(data, tag, data_path, trace, environment))
             if structure is not None:
                 output.extend(structure.get_tag_paths(data, tag, data_path, trace, environment))
             return output
+        return ()
+
+    def get_tag_paths_extra(self, data:Con[D], tag:StructureTag, data_path:DataPath, trace:Trace, environment:PrinterEnvironment) -> Sequence[DataPath]:
         return ()
 
     def get_uses(self, data: Con[D], usage_tracker:UsageTracker, parent_use:Use|None, trace: Trace, environment: PrinterEnvironment) -> OrderedSet[Use]:

@@ -206,7 +206,7 @@ class FileStructureTypedDict(PassthroughStructureTypedDict):
     serializer: Required["str|ComponentTypedDicts"]
     structure: Required["str|ComponentTypedDicts|None"]
 
-class KeymapStructureKeyTypedDict(TypedDict):
+class KeyTypedDict(TypedDict):
     delegate_arguments: NotRequired[dict[str,Any]]
     required: NotRequired[bool]
     similarity_weight: NotRequired[int]
@@ -220,7 +220,7 @@ class KeymapStructureTypedDict(MappingStructureTypedDict):
     imports: NotRequired[str|list[str]]
     key_structure: NotRequired["str|ComponentTypedDicts|None"]
     key_weight: NotRequired[int]
-    keys: NotRequired[dict[str,KeymapStructureKeyTypedDict]]
+    keys: NotRequired[dict[str,KeyTypedDict]]
     value_weight: NotRequired[int]
 
 class NumberStructureTypedDict(PrimitiveStructureTypedDict):
@@ -249,13 +249,10 @@ class StructureBaseTypedDict(BranchlessStructureTypedDict):
     delegate: NotRequired[str|None]
     delegate_arguments: NotRequired[dict[str,Any]]
 
-class SwitchStructureItemTypedDict(TypedDict):
-    structure: NotRequired["str|ComponentTypedDicts|None"]
-    types: Required[str|list[str]]
 
 class SwitchStructureTypedDict(PassthroughStructureTypedDict):
     switch_function: Required[str]
-    substructures: Required[dict[str, SwitchStructureItemTypedDict]]
+    substructures: Required[dict[str, KeyTypedDict]]
 
 class UnionStructureTypedDict(PassthroughStructureTypedDict):
     substructures: Required[dict[str, "str|ComponentTypedDicts|None"]]

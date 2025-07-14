@@ -1,10 +1,12 @@
-from itertools import chain
 from typing import Sequence
 
+from Component.Capabilities import Capabilities
 from Component.ComponentTyping import SwitchStructureTypedDict
-from Component.Field.ComponentField import ComponentField, OptionalComponentField
+from Component.Field.ComponentField import ComponentField
 from Component.Field.Field import Field
-from Component.Structure.Field.TypeListField import TypeListField
+from Component.Field.FieldListField import FieldListField
+from Component.Structure.Field.KeyField import KeyField
+from Component.Structure.Field.KeysImportField import KeysImportField
 from Component.Structure.NormalizerComponent import (
     NORMALIZER_PATTERN,
     NormalizerComponent,
@@ -12,7 +14,6 @@ from Component.Structure.NormalizerComponent import (
 from Component.Structure.PassthroughStructureComponent import (
     PassthroughStructureComponent,
 )
-from Component.Structure.StructureComponent import STRUCTURE_COMPONENT_PATTERN
 from Structure.StructureTypes.SwitchStructure import SwitchStructure
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
@@ -27,35 +28,38 @@ from Utilities.TypeVerifier import (
 class SwitchStructureComponent(PassthroughStructureComponent[SwitchStructure]):
 
     __slots__ = (
+        "import_field",
         "subcomponents_field",
         "switch_function_field",
     )
 
+    my_capabilities = Capabilities(is_structure=True, has_importable_keys=True)
     class_name = "Switch"
     structure_type = SwitchStructure
     type_verifier = PassthroughStructureComponent.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("imports", False, UnionTypeVerifier(str, dict, ListTypeVerifier((str, dict), list))),
         TypedDictKeyTypeVerifier("switch_function", True, (str, dict)),
-        TypedDictKeyTypeVerifier("substructures", True, DictTypeVerifier(dict, str, TypedDictTypeVerifier(
-            TypedDictKeyTypeVerifier("structure", False, (str, dict, type(None))),
-            TypedDictKeyTypeVerifier("types", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        ))),
+        TypedDictKeyTypeVerifier("substructures", True, DictTypeVerifier(dict, str, KeyField.type_verifier)),
     ))
 
     def initialize_fields(self, data: SwitchStructureTypedDict) -> Sequence[Field]:
         fields = list(super().initialize_fields(data))
 
         self.switch_function_field = ComponentField(data["switch_function"], NORMALIZER_PATTERN, ("switch_function",), assume_type=NormalizerComponent.class_name)
-        self.subcomponents_field = {
-            key: (
-                (structure_field := OptionalComponentField(subdata.get("structure"), STRUCTURE_COMPONENT_PATTERN, ("substructures", key, "structure"))),
-                TypeListField(subdata["types"], ("substructures", key, "types")).make_default(self.pre_normalized_types_field).verify_with(structure_field).add_to_set(self.my_type),
-            )
-            for key, subdata in data["substructures"].items()
-        }
+        self.subcomponents_field = FieldListField([
+            KeyField(key_data, key, self.children_tags, self, (key,), ("substructures", key))
+                .add_tag_fields(self.tags_field)
+                .make_default(self.pre_normalized_types_field)
+                .add_to_type_set(self.my_type)
+            for key, key_data in data.get("substructures", {}).items()
+        ], ("substructures",))
+        self.import_field = KeysImportField(data.get("imports", ()), ("imports",)).import_into(self.subcomponents_field)
 
-        fields.append(self.switch_function_field)
-        fields.extend(chain.from_iterable(self.subcomponents_field.values()))
+        fields.extend((self.switch_function_field, self.subcomponents_field, self.import_field))
         return fields
+
+    def get_keys(self) -> FieldListField[KeyField]:
+        return self.subcomponents_field
 
     def link_finals(self, trace: Trace) -> None:
         super().link_finals(trace)
