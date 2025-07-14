@@ -10,7 +10,6 @@ from Structure.StructureEnvironment import PrinterEnvironment
 from Structure.Uses import StructureUse, UnionStructureUse, UsageTracker, Use
 from Utilities.Exceptions import StructureTypeError
 from Utilities.Trace import Trace
-from Utilities.TypeUtilities import TypeDict
 
 
 class UnionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
@@ -21,7 +20,7 @@ class UnionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     def link_union_structure(
         self,
-        substructures:TypeDict[D,Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None],
+        substructures:dict[type[D],Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None],
     ) -> None:
         self.substructures = substructures
 
