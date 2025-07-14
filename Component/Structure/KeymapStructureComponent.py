@@ -75,26 +75,23 @@ class KeymapStructureComponent(MappingStructureComponent[KeymapStructure]):
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            self.delegate_keys = {key.key: key.delegate_arguments for key in self.keys}
-            super().link_finals(trace)
-            self.final.link_keymap_structure(
-                allow_key_moves=self.allow_key_moves,
-                allow_same_key_optimization=True,
-                key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
-                key_weight=self.key_weight,
-                similarity_weights={key.key: key.similarity_weight for key in self.keys},
-                value_structure_origins={key.key: key.source_component.final for key in self.keys},
-                value_structures={key.key: key.subcomponent_field.map(lambda subcomponent: subcomponent.final) for key in self.keys},
-                value_tags={key.key: value_tags for key in self.keys if len(value_tags := set(key.tags_field.map(lambda subcomponent: subcomponent.final))) != 0},
-                value_types={key.key: key.types_field.types for key in self.keys},
-                value_weights={key.key: key.value_weight if key.value_weight is not None else self.value_weight for key in self.keys},
-            )
+        super().link_finals(trace)
+        self.delegate_keys = {key.key: key.delegate_arguments for key in self.keys}
+        self.final.link_keymap_structure(
+            allow_key_moves=self.allow_key_moves,
+            allow_same_key_optimization=True,
+            key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
+            key_weight=self.key_weight,
+            similarity_weights={key.key: key.similarity_weight for key in self.keys},
+            value_structure_origins={key.key: key.source_component.final for key in self.keys},
+            value_structures={key.key: key.structure_field.map(lambda subcomponent: subcomponent.final) for key in self.keys},
+            value_tags={key.key: value_tags for key in self.keys if len(value_tags := set(key.tags_field.map(lambda subcomponent: subcomponent.final))) != 0},
+            value_types={key.key: key.types_field.types for key in self.keys},
+            value_weights={key.key: key.value_weight if key.value_weight is not None else self.value_weight for key in self.keys},
+        )
 
     def check(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            if self.key_weight == 0:
-                for key_field in self.keys:
-                    if key_field.value_weight == 0:
-                        trace.exception(ZeroWeightError("key_weight", f"keys[{key_field.key}][weight]"))
+        if self.key_weight == 0:
+            for key_field in self.keys:
+                if key_field.value_weight == 0:
+                    trace.exception(ZeroWeightError("key_weight", f"keys[{key_field.key}][weight]"))

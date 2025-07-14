@@ -53,11 +53,9 @@ class AccessorTypeComponent(Component[AccessorType]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.object_class, self.accessor_class_field.object_class.linked_accessor_types, trace)
-            self.accessor_class_field.object_class.class_parameters.verify(self.class_arguments, trace)
-            self.final.link_finals(
-                accessor_class=self.accessor_class_field.object_class,
-                get_linked_accessor_types=dict(self.linked_accessor_types_field.map(lambda key, component: component.final))
-            )
+        self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.object_class, self.accessor_class_field.object_class.linked_accessor_types, trace)
+        self.accessor_class_field.object_class.class_parameters.verify(self.arguments, trace)
+        self.final.link_finals(
+            accessor_class=self.accessor_class_field.object_class,
+            get_linked_accessor_types=dict(self.linked_accessor_types_field.map(lambda key, component: component.final))
+        )

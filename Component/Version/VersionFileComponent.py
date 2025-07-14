@@ -50,21 +50,17 @@ class VersionFileComponent(Component[VersionFile]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            version = cast("VersionComponent", self.get_inline_parent()).final
-            self.final.link_finals(
-                version=version,
-                version_file_type=self.version_file_type_field.subcomponent.final,
-                accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.final)),
-            )
+        version = cast("VersionComponent", self.get_inline_parent()).final
+        self.final.link_finals(
+            version=version,
+            version_file_type=self.version_file_type_field.subcomponent.final,
+            accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.final)),
+        )
 
     def check(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            allowed_accessors = set(self.version_file_type_field.subcomponent.allowed_accessor_types_field.subcomponents)
-            trace.exceptions(
-                VersionFileInvalidAccessorError(self.final, accessor.name)
-                for accessor in self.accessors_field.subcomponents
-                if accessor.accessor_type_field.subcomponent not in allowed_accessors
-            )
+        allowed_accessors = set(self.version_file_type_field.subcomponent.allowed_accessor_types_field.subcomponents)
+        trace.exceptions(
+            VersionFileInvalidAccessorError(self.final, accessor.name)
+            for accessor in self.accessors_field.subcomponents
+            if accessor.accessor_type_field.subcomponent not in allowed_accessors
+        )

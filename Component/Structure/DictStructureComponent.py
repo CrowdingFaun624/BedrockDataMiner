@@ -64,20 +64,17 @@ class DictStructureComponent(MappingStructureComponent[DictStructure]):
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_dict_structure(
-                allow_key_moves=self.allow_key_moves,
-                allow_same_key_optimization=self.allow_same_key_optimization if self.allow_same_key_optimization is not None else self.value_weight == 0 or not self.allow_key_moves or all(issubclass(this_type, dict) for this_type in self.this_types_field.types),
-                key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
-                key_weight=self.key_weight,
-                value_structure=self.value_structure_field.map(lambda subcomponent: subcomponent.final),
-                value_types=self.value_types_field.types,
-                value_weight=self.value_weight,
-            )
+        super().link_finals(trace)
+        self.final.link_dict_structure(
+            allow_key_moves=self.allow_key_moves,
+            allow_same_key_optimization=self.allow_same_key_optimization if self.allow_same_key_optimization is not None else self.value_weight == 0 or not self.allow_key_moves or all(issubclass(this_type, dict) for this_type in self.this_types_field.types),
+            key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
+            key_weight=self.key_weight,
+            value_structure=self.value_structure_field.map(lambda subcomponent: subcomponent.final),
+            value_types=self.value_types_field.types,
+            value_weight=self.value_weight,
+        )
 
     def check(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            if self.key_weight + self.value_weight == 0:
-                raise ZeroWeightError("key_weight", "value_weight")
+        if self.key_weight + self.value_weight == 0:
+            trace.exception(ZeroWeightError("key_weight", "value_weight"))

@@ -38,10 +38,9 @@ class NumberStructureComponent(AbstractPrimitiveStructureComponent[NumberStructu
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_number_structure(
-                normal_value=self.normal_value,
-                similarity_function=self.similarity_function_field.function if self.similarity_function_field.function is not None else cast(Callable[[SCon], float], lambda a: a.data),
-                # TODO: similarity_function cannot be None if this_types is not an int or float!
-            )
+        super().link_finals(trace)
+        self.final.link_number_structure(
+            normal_value=self.normal_value,
+            similarity_function=self.similarity_function_field.function if self.similarity_function_field.function is not None else cast(Callable[[SCon], float], lambda a: a.data),
+            # TODO: similarity_function cannot be None if this_types is not an int or float!
+        )

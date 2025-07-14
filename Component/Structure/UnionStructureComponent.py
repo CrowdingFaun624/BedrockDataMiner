@@ -40,17 +40,16 @@ class UnionStructureComponent(PassthroughStructureComponent[UnionStructure]):
                 (subcomponent_field := OptionalComponentField(subcomponent_str, STRUCTURE_COMPONENT_PATTERN, ("substructures", type_str))),
                 TypeField(type_str, ("substructures", type_str)).verify_with(subcomponent_field).add_to_set(self.my_type).make_default(self.pre_normalized_types_field),
             )
-            for index, (type_str, subcomponent_str) in enumerate(data["substructures"].items())
+            for type_str, subcomponent_str in data["substructures"].items()
         ]
         fields.extend(chain.from_iterable(self.subcomponents_field))
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            substructures:dict[type,Structure|None] = {}
-            for (subcomponent_field, type_field) in self.subcomponents_field:
-                substructures.update((valid_type, subcomponent_field.map(lambda subcomponent: subcomponent.final)) for valid_type in type_field.types)
-            self.final.link_union_structure(
-                substructures=TypeDict(substructures),
-            )
+        super().link_finals(trace)
+        substructures:dict[type,Structure|None] = {}
+        for (subcomponent_field, type_field) in self.subcomponents_field:
+            substructures.update((valid_type, subcomponent_field.map(lambda subcomponent: subcomponent.final)) for valid_type in type_field.types)
+        self.final.link_union_structure(
+            substructures=substructures,
+        )

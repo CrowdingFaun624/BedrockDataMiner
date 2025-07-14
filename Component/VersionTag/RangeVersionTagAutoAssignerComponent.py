@@ -37,9 +37,7 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent[Range
         )
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link(
-                oldest_version=self.oldest_field.map(lambda component: component.final),
-                newest_version=self.newest_field.map(lambda component: component.final),
-            )
+        self.final.link(
+            oldest_version=self.oldest_field.map(lambda component: component.final),
+            newest_version=self.newest_field.map(lambda component: component.final),
+        )

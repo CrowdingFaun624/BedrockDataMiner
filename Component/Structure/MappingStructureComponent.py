@@ -30,9 +30,8 @@ class MappingStructureComponent[a: MappingStructure](IterableStructureComponent[
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_mapping_structure(
-                min_key_similarity_threshold=self.min_key_similarity_threshold,
-                min_value_similarity_threshold=self.min_value_similarity_threshold,
-            )
+        super().link_finals(trace)
+        self.final.link_mapping_structure(
+            min_key_similarity_threshold=self.min_key_similarity_threshold,
+            min_value_similarity_threshold=self.min_value_similarity_threshold,
+        )

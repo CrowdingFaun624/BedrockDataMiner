@@ -73,36 +73,32 @@ class VersionTagOrderComponent(Component[VersionTagOrder]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_finals(
-                order=list(self.order_field.map(lambda component_list_field: set(component_list_field.map(lambda version_tag_component: version_tag_component.final)))),
-                allowed_children={
-                    key_field.subcomponent.final: list(
-                        version_tag_component.final
-                        for version_tag_component in children_field.subcomponents
-                    ) for key_field, children_field in self.allowed_children_field
-                },
-                top_level_tag=self.top_level_tag_field.map(lambda subcomponent: subcomponent.final),
-                tags_before_top_level_tag=list(self.tags_before_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
-                tags_after_top_level_tag=list(self.tags_after_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
-            )
+        self.final.link_finals(
+            order=list(self.order_field.map(lambda component_list_field: set(component_list_field.map(lambda version_tag_component: version_tag_component.final)))),
+            allowed_children={
+                key_field.subcomponent.final: list(
+                    version_tag_component.final
+                    for version_tag_component in children_field.subcomponents
+                ) for key_field, children_field in self.allowed_children_field
+            },
+            top_level_tag=self.top_level_tag_field.map(lambda subcomponent: subcomponent.final),
+            tags_before_top_level_tag=list(self.tags_before_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
+            tags_after_top_level_tag=list(self.tags_after_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
+        )
 
     def check(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            used_version_tag_components:set["VersionTagComponent"] = set()
-            for order_set in self.order_field:
-                used_version_tag_components.update(order_set.subcomponents)
-            for key_field, children_field in self.allowed_children_field:
-                used_version_tag_components.add(key_field.subcomponent)
-                used_version_tag_components.update(children_field.subcomponents)
-            if self.top_level_tag_field.subcomponent is not None:
-                used_version_tag_components.add(self.top_level_tag_field.subcomponent)
-            used_version_tag_components.update(self.tags_before_top_level_tag.subcomponents)
-            used_version_tag_components.update(self.tags_after_top_level_tag.subcomponents)
-            for used_version_tag_component in used_version_tag_components:
-                with trace.enter_key(used_version_tag_component, ...):
-                    if not used_version_tag_component.is_order_tag:
-                        trace.exception(NotAnOrderTagError(used_version_tag_component.final))
-            # rest of checking is in the ImporterEnvironment
+        used_version_tag_components:set["VersionTagComponent"] = set()
+        for order_set in self.order_field:
+            used_version_tag_components.update(order_set.subcomponents)
+        for key_field, children_field in self.allowed_children_field:
+            used_version_tag_components.add(key_field.subcomponent)
+            used_version_tag_components.update(children_field.subcomponents)
+        if self.top_level_tag_field.subcomponent is not None:
+            used_version_tag_components.add(self.top_level_tag_field.subcomponent)
+        used_version_tag_components.update(self.tags_before_top_level_tag.subcomponents)
+        used_version_tag_components.update(self.tags_after_top_level_tag.subcomponents)
+        for used_version_tag_component in used_version_tag_components:
+            with trace.enter_key(used_version_tag_component, ...):
+                if not used_version_tag_component.is_order_tag:
+                    trace.exception(NotAnOrderTagError(used_version_tag_component.final))
+        # rest of checking is in the ImporterEnvironment

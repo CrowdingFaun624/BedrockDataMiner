@@ -82,11 +82,9 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_subcomponents(
-                file=self.file_field.subcomponent.final,
-                file_list_dataminer=self.file_list_dataminer_field.subcomponent.final,
-                structure=self.structure_field.subcomponent.final,
-                structure_info=StructureInfo(self.structure_info, self.domain, repr(self))
-            )
+        self.final.link_subcomponents(
+            file=self.file_field.subcomponent.final,
+            file_list_dataminer=self.file_list_dataminer_field.subcomponent.final,
+            structure=self.structure_field.subcomponent.final,
+            structure_info=StructureInfo(self.structure_info, self.domain, repr(self))
+        )

@@ -97,11 +97,10 @@ class MetaFilterComponent[A: Filter.MetaFilter](FilterComponent[A]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_subcomponents(
-                subfilters=list(self.subfilters_field.map(lambda subcomponent: subcomponent.final)),
-            )
+        super().link_finals(trace)
+        self.final.link_subcomponents(
+            subfilters=list(self.subfilters_field.map(lambda subcomponent: subcomponent.final)),
+        )
 
 class KeyPresentFilterComponent(KeyFilterComponent[Filter.KeyPresentFilter]):
 

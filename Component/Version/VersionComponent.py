@@ -88,19 +88,15 @@ class VersionComponent(Component[Version]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_finals(
-                parent=self.parent_field.map(lambda subcomponent: subcomponent.final),
-                tags=list(self.tags_field.map(lambda version_tag_component: version_tag_component.final)),
-                version_files=list(self.files_field.map(lambda version_file_component: version_file_component.final)),
-            )
+        self.final.link_finals(
+            parent=self.parent_field.map(lambda subcomponent: subcomponent.final),
+            tags=list(self.tags_field.map(lambda version_tag_component: version_tag_component.final)),
+            version_files=list(self.files_field.map(lambda version_file_component: version_file_component.final)),
+        )
 
     def check(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            parent_component = self.parent_field.subcomponent
-            if parent_component is not None and parent_component is self:
-                trace.exception(Exceptions.InvalidParentVersionError(self.final, parent_component.final))
-            if self.time is not None and compare_to_now(self.time):
-                trace.exception(Exceptions.InvalidVersionTimeError(self.final, self.time, "time is after today"))
+        parent_component = self.parent_field.subcomponent
+        if parent_component is not None and parent_component is self:
+            trace.exception(Exceptions.InvalidParentVersionError(self.final, parent_component.final))
+        if self.time is not None and compare_to_now(self.time):
+            trace.exception(Exceptions.InvalidVersionTimeError(self.final, self.time, "time is after today"))

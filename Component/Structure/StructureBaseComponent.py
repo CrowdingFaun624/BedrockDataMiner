@@ -45,15 +45,12 @@ class StructureBaseComponent(BranchlessStructureComponent[StructureBase]):
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_structure_base(
-                default_delegate=self.default_delegate_field.create_delegate(None, trace),
-                delegate=self.delegate_field.create_delegate(self.final, trace),
-                domain=self.domain,
-            )
+        super().link_finals(trace)
+        self.final.link_structure_base(
+            default_delegate=self.default_delegate_field.create_delegate(None, trace),
+            delegate=self.delegate_field.create_delegate(self.final, trace),
+            domain=self.domain,
+        )
 
     def finalize(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().finalize(trace)
-            self.final.finalize()
+        self.final.finalize()

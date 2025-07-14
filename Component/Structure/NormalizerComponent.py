@@ -53,13 +53,11 @@ class NormalizerComponent(Component[Normalizer]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_subcomponents(
-                filter=self.filter_field.map(lambda subcomponent: subcomponent.final),
-            )
+        super().link_finals(trace)
+        self.final.link_subcomponents(
+            filter=self.filter_field.map(lambda subcomponent: subcomponent.final),
+        )
 
     def check(self, trace: Trace) -> None:
-        super().check(trace)
         if (type_verifier := function_type_verifiers.get(self.function_field.function, None)) is not None:
             type_verifier.verify(self.arguments, trace)

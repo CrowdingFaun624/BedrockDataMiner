@@ -50,11 +50,10 @@ class FileStructureComponent(PassthroughStructureComponent[FileStructure]):
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_file_structure(
-                content_types=self.content_types_field.types,
-                file_types=self.file_types_field.types,
-                serializer=self.serializer_field.map(lambda subcomponent: subcomponent.final),
-                structure=self.structure_field.map(lambda subcomponent: subcomponent.final),
-            )
+        super().link_finals(trace)
+        self.final.link_file_structure(
+            content_types=self.content_types_field.types,
+            file_types=self.file_types_field.types,
+            serializer=self.serializer_field.map(lambda subcomponent: subcomponent.final),
+            structure=self.structure_field.map(lambda subcomponent: subcomponent.final),
+        )

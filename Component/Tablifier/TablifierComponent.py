@@ -54,10 +54,8 @@ class TablifierComponent(Component[Tablifier]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_finals(
-                structure=self.structure_field.subcomponent.final,
-                dataminer_collection=self.dataminer_collection_field.subcomponent.final,
-                version_provider=self.version_provider_field.object_class(self.domain),
-            )
+        self.final.link_finals(
+            structure=self.structure_field.subcomponent.final,
+            dataminer_collection=self.dataminer_collection_field.subcomponent.final,
+            version_provider=self.version_provider_field.object_class(self.domain),
+        )

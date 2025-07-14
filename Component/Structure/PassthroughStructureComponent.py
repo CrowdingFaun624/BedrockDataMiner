@@ -48,11 +48,10 @@ class PassthroughStructureComponent[a: AbstractPassthroughStructure](StructureCo
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_passthrough_structure(
-                normalizers=tuple(self.normalizers_field.map(lambda subcomponent: subcomponent.final)),
-                post_normalizers=tuple(self.post_normalizers_field.map(lambda subcomponent: subcomponent.final)),
-                pre_normalized_types=self.pre_normalized_types_field.types,
-                tags=self.tags_field.finals,
-            )
+        super().link_finals(trace)
+        self.final.link_passthrough_structure(
+            normalizers=tuple(self.normalizers_field.map(lambda subcomponent: subcomponent.final)),
+            post_normalizers=tuple(self.post_normalizers_field.map(lambda subcomponent: subcomponent.final)),
+            pre_normalized_types=self.pre_normalized_types_field.types,
+            tags=self.tags_field.finals,
+        )

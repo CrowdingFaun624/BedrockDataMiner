@@ -58,9 +58,10 @@ class SwitchStructureComponent(PassthroughStructureComponent[SwitchStructure]):
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_switch_structure(
-                switch_function=self.switch_function_field.subcomponent.final,
-                switches={key: (structure_field.map(lambda subcomponent: subcomponent.final), type_field.types) for key, (structure_field, type_field) in self.subcomponents_field.items()},
-            )
+        super().link_finals(trace)
+        self.final.link_switch_structure(
+            switch_function=self.switch_function_field.subcomponent.final,
+            structures={key_field.key: key_field.structure_field.map(lambda component: component.final) for key_field in self.subcomponents_field},
+            tags={key.key: tags for key in self.subcomponents_field if len(tags := set(key.tags_field.map(lambda subcomponent: subcomponent.final))) != 0},
+            types={key_field.key: key_field.types_field.types for key_field in self.subcomponents_field},
+        )

@@ -51,12 +51,11 @@ class ConditionStructureComponent(PassthroughStructureComponent[ConditionStructu
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_condition_structure(
-                substructures=[(
-                    type_field.types,
-                    filter_field.map(lambda subcomponent: subcomponent.final),
-                    structure_field.map(lambda subcomponent: subcomponent.final)
-                ) for filter_field, structure_field, type_field in self.substructures_field],
-            )
+        super().link_finals(trace)
+        self.final.link_condition_structure(
+            substructures=[(
+                type_field.types,
+                filter_field.map(lambda subcomponent: subcomponent.final),
+                structure_field.map(lambda subcomponent: subcomponent.final)
+            ) for filter_field, structure_field, type_field in self.substructures_field],
+        )

@@ -43,11 +43,7 @@ class SerializerComponent(Component[Serializer]):
         return self.serializer_class_field.object_class(self.name, self.full_name, self.domain, self.arguments)
 
     def check(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            self.serializer_class_field.object_class.type_verifier.verify(self.arguments, trace)
+        self.serializer_class_field.object_class.type_verifier.verify(self.arguments, trace)
 
     def finalize(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().finalize(trace)
-            self.final.finalize()
+        self.final.finalize()

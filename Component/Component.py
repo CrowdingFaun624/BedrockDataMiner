@@ -339,45 +339,84 @@ class Component[a]():
 
     def create_final_component(self, trace:Trace) -> a|EllipsisType:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''
-        with trace.enter(self, self.name, ...):
-            for field in self.fields:
-                field.resolve_create_finals(trace)
-            for inline_component in self.inline_components:
-                inline_component.final = inline_component.create_final_component(trace)
-            return self.create_final(trace)
+        with trace.enter(self, self.trace_name, ...):
+            if not self.abstract:
+                for inline_component in self.inline_components:
+                    inline_component.final = inline_component.create_final_component(trace)
+                output = self.create_final(trace)
+            else: output = ...
+            for reference_component in self.reference_inheritance_cache.values():
+                reference_component.final = reference_component.create_final_component(trace)
+            return output
         return ...
 
     def create_final(self, trace:Trace) -> a:
         '''
         Method overridden by subclasses. Returns the Component's object.
 
-        You do not have to wrap this method in `with trace.enter` ....
+        You do not have to wrap this method in `with trace.enter` or use super().create_final.
         '''
         ...
 
-    def link_finals(self, trace:Trace) -> None:
+    def link_final_component(self, trace:Trace) -> None:
         '''Links this Component's final object to other final objects.'''
-        with trace.enter(self, self.name, ...):
-            for field in self.fields:
-                field.resolve_link_finals(trace)
-            for inline_component in self.inline_components:
-                inline_component.link_finals(trace)
+        with trace.enter(self, self.trace_name, ...):
+            if not self.abstract:
+                for field in self.fields:
+                    field.resolve_link_finals(trace)
+                for inline_component in self.inline_components:
+                    inline_component.link_final_component(trace)
+                self.link_finals(trace)
+            for reference_component in self.reference_inheritance_cache.values():
+                reference_component.link_final_component(trace)
+
+    def link_finals(self, trace:Trace) -> None:
+        '''
+        Method overridden by subclasses. Links things from Fields to the final.
+
+        You do not have to wrap this method in `with trace.enter` or use super().link_finals.
+        '''
+        pass
+
+    def check_component(self, trace:Trace) -> None:
+        '''Make sure that this Component's types are all in order; no error could occur.'''
+        with trace.enter(self, self.trace_name, ...):
+            if not self.abstract:
+                for field in self.fields:
+                    field.check(self, trace)
+                for inline_component in self.inline_components:
+                    inline_component.check_component(trace)
+                self.check(trace)
+            for reference_component in self.reference_inheritance_cache.values():
+                reference_component.check_component(trace)
 
     def check(self, trace:Trace) -> None:
-        '''Make sure that this Component's types are all in order; no error could occur.'''
-        with trace.enter(self, self.name, ...):
-            for field in self.fields:
-                field.check(self, trace)
-            for inline_component in self.inline_components:
-                inline_component.check(trace)
+        '''
+        Method overridden by subclasses. Raises exceptions.
+
+        You do not have to wrap this method in `with trace.enter` or use super().check.
+        '''
+        pass
+
+    def finalize_component(self, trace:Trace) -> None:
+        '''Used to call on the structure once all Structures and Components are guaranteed to be linked.'''
+        with trace.enter(self, self.trace_name, ...):
+            if not self.abstract:
+                for field in self.fields:
+                    field.finalize(trace)
+                for inline_component in self.inline_components:
+                    inline_component.finalize_component(trace)
+                self.finalize(trace)
+            for reference_component in self.reference_inheritance_cache.values():
+                reference_component.finalize_component(trace)
 
     def finalize(self, trace:Trace) -> None:
-        '''Used to call on the structure once all structures and components are guaranteed to be linked.'''
-        with trace.enter(self, self.name, ...):
-            for field in self.fields:
-                field.finalize(trace)
-            for inline_component in self.inline_components:
-                inline_component.finalize(trace)
+        '''
+        Method overridden by subclasses. Called once all Structures and Components are guaranteed to be linked.
+
+        You do not have to wrap this method in `with trace.enter` or use super().finalize.
+        '''
+        pass
 
     def get_propagated_variables(self) -> tuple[dict[str,bool], dict[str,set]]:
         return {}, {}

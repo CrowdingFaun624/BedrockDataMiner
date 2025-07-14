@@ -87,28 +87,24 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            parent = cast("DataminerCollectionComponent", self.get_inline_parent())
-            self.final.link_subcomponents(
-                trace,
-                file_name=parent.file_name,
-                name=parent.name,
-                structure=parent.structure_field.subcomponent.final,
-                dataminer_class=self.dataminer_field.object_class,
-                dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.subcomponent.final)),
-                start_version=self.old_field.map(lambda subcomponent: subcomponent.final),
-                end_version=self.new_field.map(lambda subcomponent: subcomponent.final),
-                structure_info=StructureInfo(self.structure_info, self.domain, repr(self)),
-                version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.final))
-            )
+        parent = cast("DataminerCollectionComponent", self.get_inline_parent())
+        self.final.link_subcomponents(
+            trace,
+            file_name=parent.file_name,
+            name=parent.name,
+            structure=parent.structure_field.subcomponent.final,
+            dataminer_class=self.dataminer_field.object_class,
+            dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.subcomponent.final)),
+            start_version=self.old_field.map(lambda subcomponent: subcomponent.final),
+            end_version=self.new_field.map(lambda subcomponent: subcomponent.final),
+            structure_info=StructureInfo(self.structure_info, self.domain, repr(self)),
+            version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.final))
+        )
 
     def check(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            if self.dataminer_field.exists:
-                if not self.files_field_exists:
-                    trace.exception(DataminerCollectionFileError(False, "when \"name\" is not null"))
-            else:
-                if self.files_field_exists:
-                    trace.exception(DataminerCollectionFileError(True, "when \"name\" is null"))
+        if self.dataminer_field.exists:
+            if not self.files_field_exists:
+                trace.exception(DataminerCollectionFileError(False, "when \"name\" is not null"))
+        else:
+            if self.files_field_exists:
+                trace.exception(DataminerCollectionFileError(True, "when \"name\" is null"))

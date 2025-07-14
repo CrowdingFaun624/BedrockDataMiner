@@ -55,7 +55,5 @@ class LogComponent(Component[Log]):
         )
 
     def check(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            if self.domain.log_directory not in self.file.parents:
-                trace.exception(LogInvalidFileError(self.final, self.file))
+        if self.domain.log_directory not in self.file.parents:
+            trace.exception(LogInvalidFileError(self.final, self.file))

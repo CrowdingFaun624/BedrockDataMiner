@@ -137,7 +137,7 @@ def create_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Doma
             for group in groups:
                 with trace.enter(group, group.name, ...):
                     for component in group.components.values():
-                        component_output = component.create_final(trace)
+                        component_output = component.create_final_component(trace)
                         if component_output is ...: # happens if create_final_component has an error or component is abstract
                             continue
                         component.final = component_output
@@ -149,7 +149,7 @@ def link_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Domain
             for group in groups:
                 with trace.enter(group, group.name, ...):
                     for component in group.components.values():
-                        component.link_final(trace)
+                        component.link_final_component(trace)
     print_exceptions(domain, trace)
 
 def check_components(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
@@ -158,7 +158,7 @@ def check_components(all_components:dict["Domain.Domain",list[Group]], domain:"D
             for group in groups:
                 with trace.enter(group, group.name, ...):
                     for component in group.components.values():
-                        component.check(trace)
+                        component.check_component(trace)
     print_exceptions(domain, trace)
 
 def finalize_components(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
@@ -168,7 +168,7 @@ def finalize_components(all_components:dict["Domain.Domain",list[Group]], domain
                 remove_components:list[str] = []
                 with trace.enter(group, group.name, ...):
                     for component in group.components.values():
-                        component.finalize(trace)
+                        component.finalize_component(trace)
                         if component.abstract:
                             remove_components.append(component.name)
                     for remove_component in remove_components:

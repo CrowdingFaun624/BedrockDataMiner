@@ -77,23 +77,19 @@ class VersionTagComponent(Component[VersionTag]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            latest_slot_component = self.latest_slot_field.subcomponent
-            self.final.link_finals(
-                latest_slot=latest_slot_component.final if latest_slot_component is not None else None,
-                auto_assign=list(self.auto_assigner_field.map(lambda component: component.final)),
-            )
+        latest_slot_component = self.latest_slot_field.subcomponent
+        self.final.link_finals(
+            latest_slot=latest_slot_component.final if latest_slot_component is not None else None,
+            auto_assign=list(self.auto_assigner_field.map(lambda component: component.final)),
+        )
 
     def check(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            if not self.is_order_tag:
-                if self.latest_slot_field.subcomponent is not None:
-                    trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "latest_slot"))
-                if self.is_major_tag:
-                    trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_major_tag"))
-                if self.is_fork_tag:
-                    trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_fork_tag"))
-                if self.is_development_tag:
-                    trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_development_tag"))
+        if not self.is_order_tag:
+            if self.latest_slot_field.subcomponent is not None:
+                trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "latest_slot"))
+            if self.is_major_tag:
+                trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_major_tag"))
+            if self.is_fork_tag:
+                trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_fork_tag"))
+            if self.is_development_tag:
+                trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_development_tag"))

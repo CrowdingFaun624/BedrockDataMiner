@@ -65,16 +65,15 @@ class SequenceStructureComponent(IterableStructureComponent[SequenceStructure]):
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_sequence_structure(
-                addition_cost=self.addition_cost,
-                deletion_cost=self.deletion_cost,
-                key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
-                key_weight=self.key_weight if self.key_weight is not None else (0 if all(issubclass(key_type, int) for key_type in self.key_types_field.types) else self.structure_type.KEY_WEIGHT),
-                max_square_length=self.max_square_length,
-                substitution_cost=self.substitution_cost,
-                value_structure=self.value_structure_field.map(lambda subcomponent: subcomponent.final),
-                value_types=self.value_types_field.types,
-                value_weight=self.value_weight,
-            )
+        super().link_finals(trace)
+        self.final.link_sequence_structure(
+            addition_cost=self.addition_cost,
+            deletion_cost=self.deletion_cost,
+            key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
+            key_weight=self.key_weight if self.key_weight is not None else (0 if all(issubclass(key_type, int) for key_type in self.key_types_field.types) else self.structure_type.KEY_WEIGHT),
+            max_square_length=self.max_square_length,
+            substitution_cost=self.substitution_cost,
+            value_structure=self.value_structure_field.map(lambda subcomponent: subcomponent.final),
+            value_types=self.value_types_field.types,
+            value_weight=self.value_weight,
+        )

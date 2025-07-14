@@ -40,13 +40,11 @@ class StructureComponent[a: Structure](Component[a]):
         )
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_structure(
-                children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
-                children_has_normalizer=self.variable_bools["children_has_normalizer"],
-                children_tags={tag.final for tag in self.children_tags},
-            )
+        self.final.link_structure(
+            children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
+            children_has_normalizer=self.variable_bools["children_has_normalizer"],
+            children_tags={tag.final for tag in self.children_tags},
+        )
 
     def get_propagated_variables(self) -> tuple[dict[str, bool], dict[str, set]]:
         self.children_tags:set[StructureTagComponent] = set()

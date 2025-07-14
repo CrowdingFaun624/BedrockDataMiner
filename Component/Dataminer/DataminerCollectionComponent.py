@@ -72,43 +72,39 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent[Datamine
         )
 
     def link_finals(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_subcomponents(
-                structure=self.structure_field.subcomponent.final,
-                dataminer_settings=list(self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.subcomponent.final))
-            )
+        self.final.link_subcomponents(
+            structure=self.structure_field.subcomponent.final,
+            dataminer_settings=list(self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.subcomponent.final))
+        )
 
     def check(self, trace:Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().check(trace)
-            dataminer_settings_components = self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.subcomponent)
+        dataminer_settings_components = self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.subcomponent)
 
-            # ending DataminerSettings must have null versions on corresponding versions; middle ones cannot be null.
-            used_versions:list[Version] = []
-            for index, dataminer_settings_component in enumerate(dataminer_settings_components):
-                with trace.enter_key(index, dataminer_settings_component):
-                    new_version = dataminer_settings_component.new_field.map(lambda subcomponent: subcomponent.final)
-                    old_version = dataminer_settings_component.old_field.map(lambda subcomponent: subcomponent.final)
-                    if index == 0:
-                        if new_version is not None:
-                            trace.exception(Exceptions.ComponentVersionRangeExists(new_version, True))
-                            continue
-                    else:
-                        if new_version is None:
-                            trace.exception(Exceptions.ComponentVersionRangeMissing("new"))
-                            continue
-                        used_versions.append(new_version)
-                    if index == len(self.dataminer_settings_field) - 1:
-                        if old_version is not None:
-                            trace.exception(Exceptions.ComponentVersionRangeExists(old_version, False))
-                            continue
-                    else:
-                        if old_version is None:
-                            trace.exception(Exceptions.ComponentVersionRangeMissing("old"))
-                            continue
-                        used_versions.append(old_version)
+        # ending DataminerSettings must have null versions on corresponding versions; middle ones cannot be null.
+        used_versions:list[Version] = []
+        for index, dataminer_settings_component in enumerate(dataminer_settings_components):
+            with trace.enter_key(index, dataminer_settings_component):
+                new_version = dataminer_settings_component.new_field.map(lambda subcomponent: subcomponent.final)
+                old_version = dataminer_settings_component.old_field.map(lambda subcomponent: subcomponent.final)
+                if index == 0:
+                    if new_version is not None:
+                        trace.exception(Exceptions.ComponentVersionRangeExists(new_version, True))
+                        continue
+                else:
+                    if new_version is None:
+                        trace.exception(Exceptions.ComponentVersionRangeMissing("new"))
+                        continue
+                    used_versions.append(new_version)
+                if index == len(self.dataminer_settings_field) - 1:
+                    if old_version is not None:
+                        trace.exception(Exceptions.ComponentVersionRangeExists(old_version, False))
+                        continue
+                else:
+                    if old_version is None:
+                        trace.exception(Exceptions.ComponentVersionRangeMissing("old"))
+                        continue
+                    used_versions.append(old_version)
 
-            for new_version, old_version in batched(used_versions, 2, strict=True):
-                if new_version != old_version:
-                    trace.exception(Exceptions.ComponentVersionRangeGap(new_version, old_version))
+        for new_version, old_version in batched(used_versions, 2, strict=True):
+            if new_version != old_version:
+                trace.exception(Exceptions.ComponentVersionRangeGap(new_version, old_version))

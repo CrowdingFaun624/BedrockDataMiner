@@ -95,10 +95,8 @@ class AccessorComponent(Component[AccessorCreator]):
         )
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link(
-                accessor_type=self.accessor_type_field.subcomponent.final,
-                version=self.get_inline_parent().get_inline_parent().final,
-                version_file=self.get_inline_parent().final,
-            )
+        self.final.link(
+            accessor_type=self.accessor_type_field.subcomponent.final,
+            version=self.get_inline_parent().get_inline_parent().final,
+            version_file=self.get_inline_parent().final,
+        )

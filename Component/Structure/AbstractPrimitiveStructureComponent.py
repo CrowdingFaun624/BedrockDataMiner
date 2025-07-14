@@ -54,12 +54,11 @@ class AbstractPrimitiveStructureComponent[a: PrimitiveStructure](StructureCompon
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_primitive_structure(
-                delegate=self.delegate_field.create_delegate(self.final, trace),
-                normalizers=tuple(self.normalizers_field.map(lambda subcomponent: subcomponent.final)),
-                pre_normalized_types=self.pre_normalized_types_field.types,
-                tags=self.tags_field.finals,
-                this_types=self.this_types_field.types,
-            )
+        super().link_finals(trace)
+        self.final.link_primitive_structure(
+            delegate=self.delegate_field.create_delegate(self.final, trace),
+            normalizers=tuple(self.normalizers_field.map(lambda subcomponent: subcomponent.final)),
+            pre_normalized_types=self.pre_normalized_types_field.types,
+            tags=self.tags_field.finals,
+            this_types=self.this_types_field.types,
+        )

@@ -70,16 +70,15 @@ class IterableStructureComponent[a: IterableStructure](StructureComponent[a]):
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_iterable_structure(
-                delegate=self.delegate_field.create_delegate(self.final, trace, self.delegate_keys),
-                key_function=self.key_function_field.function,
-                key_types=self.key_types_field.types,
-                normalizers=tuple(self.normalizers_field.map(lambda subcomponent: subcomponent.final)),
-                post_normalizers=tuple(self.post_normalizers_field.map(lambda subcomponent: subcomponent.final)),
-                pre_normalized_types=self.pre_normalized_types_field.types,
-                required_keys=set(self.required_keys),
-                tags=self.tags_field.finals,
-                this_types=self.this_types_field.types,
-            )
+        super().link_finals(trace)
+        self.final.link_iterable_structure(
+            delegate=self.delegate_field.create_delegate(self.final, trace, self.delegate_keys),
+            key_function=self.key_function_field.function,
+            key_types=self.key_types_field.types,
+            normalizers=tuple(self.normalizers_field.map(lambda subcomponent: subcomponent.final)),
+            post_normalizers=tuple(self.post_normalizers_field.map(lambda subcomponent: subcomponent.final)),
+            pre_normalized_types=self.pre_normalized_types_field.types,
+            required_keys=set(self.required_keys),
+            tags=self.tags_field.finals,
+            this_types=self.this_types_field.types,
+        )

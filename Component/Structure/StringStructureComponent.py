@@ -41,11 +41,10 @@ class StringStructureComponent(AbstractPrimitiveStructureComponent[StringStructu
         return fields
 
     def link_finals(self, trace: Trace) -> None:
-        with trace.enter(self, self.name, ...):
-            super().link_finals(trace)
-            self.final.link_string_structure(
-                max_square_length=self.max_square_length,
-                similarity_function=self.similarity_function_field.function if self.similarity_function_field.function is not None else cast(Callable[[SCon], str], lambda a: a.data),
-                similarity_weight_function=self.similarity_weight_function_field.function if self.similarity_weight_function_field.function is not None else lambda a: [1 for i in a]
-                # TODO: similarity_function cannot be None if this_types is not a str!
-            )
+        super().link_finals(trace)
+        self.final.link_string_structure(
+            max_square_length=self.max_square_length,
+            similarity_function=self.similarity_function_field.function if self.similarity_function_field.function is not None else cast(Callable[[SCon], str], lambda a: a.data),
+            similarity_weight_function=self.similarity_weight_function_field.function if self.similarity_weight_function_field.function is not None else lambda a: [1 for i in a]
+            # TODO: similarity_function cannot be None if this_types is not a str!
+        )
