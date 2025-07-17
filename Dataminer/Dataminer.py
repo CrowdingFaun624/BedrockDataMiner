@@ -5,7 +5,7 @@ from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.DataminerSettings import DataminerSettings
 from Downloader.Accessor import Accessor
 from Utilities.File import File, new_file
-from Utilities.TypeVerifier import TypedDictTypeVerifier, TypeVerifier
+from Utilities.TypeVerifier import TypedDictTypeVerifier
 from Version.Version import Version
 
 
@@ -22,7 +22,7 @@ class Dataminer():
         "dependencies",
     )
 
-    parameters:TypeVerifier|None = TypedDictTypeVerifier()
+    parameters:TypedDictTypeVerifier|None = TypedDictTypeVerifier()
     '''TypeVerifier for verifying the json arguments of this Dataminer'''
 
     def __init__(self, version:Version, settings:DataminerSettings) -> None:

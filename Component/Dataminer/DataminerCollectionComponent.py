@@ -82,29 +82,35 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent[Datamine
 
         # ending DataminerSettings must have null versions on corresponding versions; middle ones cannot be null.
         used_versions:list[Version] = []
+        error_exists:bool = False # used to prevent `batched` from giving a separate error
         for index, dataminer_settings_component in enumerate(dataminer_settings_components):
             with trace.enter_key(index, dataminer_settings_component):
                 new_version = dataminer_settings_component.new_field.map(lambda subcomponent: subcomponent.final)
                 old_version = dataminer_settings_component.old_field.map(lambda subcomponent: subcomponent.final)
                 if index == 0:
                     if new_version is not None:
+                        error_exists = True
                         trace.exception(Exceptions.ComponentVersionRangeExists(new_version, True))
                         continue
                 else:
                     if new_version is None:
+                        error_exists = True
                         trace.exception(Exceptions.ComponentVersionRangeMissing("new"))
                         continue
                     used_versions.append(new_version)
                 if index == len(self.dataminer_settings_field) - 1:
                     if old_version is not None:
+                        error_exists = True
                         trace.exception(Exceptions.ComponentVersionRangeExists(old_version, False))
                         continue
                 else:
                     if old_version is None:
+                        error_exists = True
                         trace.exception(Exceptions.ComponentVersionRangeMissing("old"))
                         continue
                     used_versions.append(old_version)
 
-        for new_version, old_version in batched(used_versions, 2, strict=True):
-            if new_version != old_version:
-                trace.exception(Exceptions.ComponentVersionRangeGap(new_version, old_version))
+        if not error_exists:
+            for new_version, old_version in batched(used_versions, 2, strict=True):
+                if new_version != old_version:
+                    trace.exception(Exceptions.ComponentVersionRangeGap(new_version, old_version))

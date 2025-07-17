@@ -86,7 +86,7 @@ def parse(reader:"Reader", source_component:Component, is_key:bool) -> tuple[Any
     if output is ...:
         pre_number_index = reader.index
         if first_char == "-" or first_char.isdigit():
-            number_string = reader.read_while(lambda char: char not in NUMBER_CHARACTERS)
+            number_string = reader.read_while(lambda char: char in NUMBER_CHARACTERS)
             number_suffix = reader.read(1)
             if number_suffix == "i":
                 output, output_expressions = int(number_string), ()

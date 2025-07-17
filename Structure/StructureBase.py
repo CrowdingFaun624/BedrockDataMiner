@@ -35,6 +35,7 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         delegate:Delegate[Con[D], Don[D]|Diff[Don[D]], Self, str, Any, str, Any]|None,
         domain:"Domain.Domain",
     ) -> None:
+        self.trace_name = self.full_name
         self.default_delegate = default_delegate
         self.delegate = delegate
         self.domain = domain

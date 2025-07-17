@@ -12,9 +12,9 @@ def get_levenshtein_distance(data1:str, data2:str) -> int:
     for y in range(len(data2)):
         for x in range(len(data1)):
             distances[y + 1][x + 1] = min(
-                distances[y+1][x] + 1,
-                distances[y][x+1] + 1,
-                distances[y][x] + int(data1[x] != data2[y]),
+                distances[y+1][x] + 2,
+                distances[y][x+1] + 2,
+                distances[y][x] + (2 if data1[x] == data2[y] else (1 if data1[x].lower() == data1[y].lower() else 0)),
             )
     distance = distances[len(data2)][len(data1)]
     return distance
@@ -26,12 +26,15 @@ def guess_intent(user_input:str, items:list[str], threshold:int) -> str|None:
     '''
     if len(user_input) < 2: return None
     similarities:dict[str,int] = {option: get_levenshtein_distance(user_input, option) for option in items}
-    min_option, min_distance = None, None
+    min_option, min_distance, second_min_distance = None, None, None
     for option, distance in similarities.items():
         if distance > threshold: continue
-        if min_distance is None or distance < min_distance:
+        if min_distance is None or distance <= min_distance:
             min_option = option
+            second_min_distance = min_distance
             min_distance = distance
+    if min_distance is not None and second_min_distance is not None and second_min_distance <= min_distance - 0:
+        return None
     return min_option
 
 def deduplicate_aliases[a](aliases:Mapping[str,Iterable[str]], items:Mapping[str,a]) -> Mapping[str,a]:

@@ -80,7 +80,7 @@ class Group():
                     trace.exception(UnrecognizedComponentTypeError(component_type_str, f"{self.domain.name}!{self.name}/{component_name}>", list(component_types_dict.keys()), message))
                     continue
                 component = component_type(component_data, component_name, self.domain, self, index, trace)
-                if component.abstract or not component.init(trace):
+                if component.completed_init and (component.abstract or not component.init(trace)):
                     components[component_name] = component
         return components
 

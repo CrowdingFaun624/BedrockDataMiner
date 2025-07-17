@@ -1,3 +1,4 @@
+from types import EllipsisType
 from typing import Sequence
 
 from Component.Capabilities import Capabilities
@@ -39,11 +40,10 @@ class SerializerComponent(Component[Serializer]):
 
         return (self.serializer_class_field,)
 
-    def create_final(self, trace:Trace) -> Serializer:
+    def create_final(self, trace:Trace) -> Serializer|EllipsisType:
+        if self.serializer_class_field.object_class.type_verifier.verify(self.arguments, trace):
+            return ...
         return self.serializer_class_field.object_class(self.name, self.full_name, self.domain, self.arguments)
 
-    def check(self, trace:Trace) -> None:
-        self.serializer_class_field.object_class.type_verifier.verify(self.arguments, trace)
-
-    def finalize(self, trace:Trace) -> None:
+    def finalize_component(self, trace:Trace) -> None:
         self.final.finalize()

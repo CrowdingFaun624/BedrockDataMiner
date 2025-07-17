@@ -64,6 +64,7 @@ class Component[a]():
 
     __slots__ = (
         "abstract",
+        "completed_init",
         "data",
         "domain",
         "expressions",
@@ -118,6 +119,7 @@ class Component[a]():
         self.variables_display:str = "" # overridden by copy_reference. Sole purpose is for __repr__. Without this, many different Components would look the same.
         # Must store all reference inheritance Components from this Component.
 
+        self.completed_init:bool = False
         with trace.enter(self, self.name, ...):
             name_exception:bool = False
             if index is not None and any(char in INVALID_NAME_CHARS for char in name):
@@ -193,6 +195,7 @@ class Component[a]():
             self.abstract:bool = self.data.get("abstract", False) or any(variable.undefined for variable in self.variables.values())
             if not inherit: # the object resulting from this InheritedComponent should remember this.
                 self.data.pop("abstract", False)
+            self.completed_init = True
 
     def init(self, trace:Trace) -> bool: # returns if there was an exception
         if hasattr(self, "fields"):
@@ -350,7 +353,7 @@ class Component[a]():
             return output
         return ...
 
-    def create_final(self, trace:Trace) -> a:
+    def create_final(self, trace:Trace) -> a|EllipsisType:
         '''
         Method overridden by subclasses. Returns the Component's object.
 

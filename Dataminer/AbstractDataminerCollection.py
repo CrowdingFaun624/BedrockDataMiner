@@ -55,8 +55,12 @@ class AbstractDataminerCollection():
             raise Exceptions.DataminerNullReturnError(self)
         version.data_directory.mkdir(exist_ok=True)
         data_file_path = self.get_data_file_path(version)
+        parents:list[Path] = []
         for parent in data_file_path.parents:
             if parent.exists(): break
+            parents.append(parent)
+        parents.reverse() # reverse because subdirectories need to exist before contents can.
+        for parent in parents:
             parent.mkdir()
         with open(data_file_path, "wt") as f:
             json.dump(data, f, separators=(",", ":"), cls=self.domain.json_encoder)
