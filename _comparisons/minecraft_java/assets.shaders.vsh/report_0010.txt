@@ -1,0 +1,76 @@
+Difference of "text_packs" between "21w15a" (snapshot of "1.17") and "21w16a" (snapshot of "1.17").
+
+Changed resource pack "minecraft":
+	Total file: 65 (+2, -0)
+	Changed file "core/rendertype_text_see_through.vsh":
+		Total line: 18 (+0, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4  4   in vec4 Color;
+		 5  5   in vec2 UV0;
+		 6    - in vec2 UV2;
+		 7  6   
+		 8  7   uniform mat4 ModelViewMat;
+		 9  8   uniform mat4 ProjMat;
+		10  9   
+		11 10   out vec4 vertexColor;
+		12 11   out vec2 texCoord0;
+		13    - out vec2 texCoord2;
+		14 12   
+		15 13   void main() {
+		16 14       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		17 15   
+		18 16       vertexColor = Color;
+		19 17       texCoord0 = UV0;
+		20    -     texCoord2 = UV2;
+		21 18   }
+		        '''
+	Added file "core/rendertype_text_intensity.vsh":
+		'''
+		#version 150
+		
+		in vec3 Position;
+		in vec4 Color;
+		in vec2 UV0;
+		in ivec2 UV2;
+		
+		uniform sampler2D Sampler2;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		
+		out float vertexDistance;
+		out vec4 vertexColor;
+		out vec2 texCoord0;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		    vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		    texCoord0 = UV0;
+		}
+		'''
+	Added file "core/rendertype_text_intensity_see_through.vsh":
+		'''
+		#version 150
+		
+		in vec3 Position;
+		in vec4 Color;
+		in vec2 UV0;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		
+		out vec4 vertexColor;
+		out vec2 texCoord0;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    vertexColor = Color;
+		    texCoord0 = UV0;
+		}
+		'''

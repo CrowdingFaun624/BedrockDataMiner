@@ -1,0 +1,99 @@
+Difference of "text_packs" between "25w21a" (snapshot of "1.21.6") and "1.21.6-pre1" (pre-release of "1.21.6").
+
+Changed resource pack "minecraft":
+	Changed file "core/rendertype_clouds.vsh":
+		Total line: 90 (+7, -18)
+		          '''
+		          ...
+		 24  24   const vec3[] vertices = vec3[](
+		 25  25       // Bottom face
+		 26  26       vec3(1, 0, 0),
+		 27  27       vec3(1, 0, 1),
+		 28  28       vec3(0, 0, 1),
+		 29     -     vec3(0, 0, 1),
+		 30  29       vec3(0, 0, 0),
+		 31     -     vec3(1, 0, 0),
+		 32  30       // Top face
+		 33  31       vec3(0, 1, 0),
+		 34  32       vec3(0, 1, 1),
+		 35     -     vec3(1, 1, 1),
+		 36  33       vec3(1, 1, 1),
+		 37  34       vec3(1, 1, 0),
+		 38     -     vec3(0, 1, 0),
+		 39  35       // North face
+		 40  36       vec3(0, 0, 0),
+		 41  37       vec3(0, 1, 0),
+		 42     -     vec3(1, 1, 0),
+		 43  38       vec3(1, 1, 0),
+		 44  39       vec3(1, 0, 0),
+		 45     -     vec3(0, 0, 0),
+		 46  40       // South face
+		 47  41       vec3(1, 0, 1),
+		 48  42       vec3(1, 1, 1),
+		 49     -     vec3(0, 1, 1),
+		 50  43       vec3(0, 1, 1),
+		 51  44       vec3(0, 0, 1),
+		 52     -     vec3(1, 0, 1),
+		 53  45       // West face
+		 54  46       vec3(0, 0, 1),
+		 55  47       vec3(0, 1, 1),
+		 56     -     vec3(0, 1, 0),
+		 57  48       vec3(0, 1, 0),
+		 58  49       vec3(0, 0, 0),
+		 59     -     vec3(0, 0, 1),
+		 60  50       // East face
+		 61  51       vec3(1, 0, 0),
+		 62  52       vec3(1, 1, 0),
+		 63     -     vec3(1, 1, 1),
+		 64  53       vec3(1, 1, 1),
+		     54 +     vec3(1, 0, 1)
+		 65     -     vec3(1, 0, 1),
+		 66     -     vec3(1, 0, 0)
+		 67  55   );
+		 68  56   
+		 69  57   const vec4[] faceColors = vec4[](
+		 70  58       // Bottom face
+		 71  59       vec4(0.7, 0.7, 0.7, 0.8),
+		 72  60       // Top face
+		 73  61       vec4(1.0, 1.0, 1.0, 0.8),
+		 74  62       // North face
+		     63 +     vec4(0.8, 0.8, 0.8, 0.8),
+		     64 +     // South face
+		 75  65       vec4(0.8, 0.8, 0.8, 0.8),
+		     66 +     // West face
+		     67 +     vec4(0.9, 0.9, 0.9, 0.8),
+		     68 +     // East face
+		     69 +     vec4(0.9, 0.9, 0.9, 0.8)
+		     70 + );
+		     71 + 
+		     72 + void main() {
+		     73 +     int quadVertex = gl_VertexID % 4;
+		     74 +     int index = (gl_VertexID / 4) * 3;
+		 76     -     // South face
+		 77     -     vec4(0.8, 0.8, 0.8, 0.8),
+		 78     -     // West face
+		 79     -     vec4(0.9, 0.9, 0.9, 0.8),
+		 80     -     // East face
+		 81     -     vec4(0.9, 0.9, 0.9, 0.8)
+		 82     - );
+		 83  75   
+		 84     - void main() {
+		 85     -     int quadVertex = gl_VertexID % 6;
+		 86     -     int index = (gl_VertexID / 6) * 3;
+		 87  76       int cellX = texelFetch(CloudFaces, index).r;
+		 88  77       int cellZ = texelFetch(CloudFaces, index + 1).r;
+		 89  78       int dirAndFlags = texelFetch(CloudFaces, index + 2).r;
+		 90  79       int direction = dirAndFlags & FLAG_MASK_DIR;
+		 91  80       bool isInsideFace = (dirAndFlags & FLAG_INSIDE_FACE) == FLAG_INSIDE_FACE;
+		 92  81       bool useTopColor = (dirAndFlags & FLAG_USE_TOP_COLOR) == FLAG_USE_TOP_COLOR;
+		 93  82       cellX = (cellX << 1) | ((dirAndFlags & FLAG_EXTRA_X) >> 7);
+		 94  83       cellZ = (cellZ << 1) | ((dirAndFlags & FLAG_EXTRA_Z) >> 6);
+		     84 +     vec3 faceVertex = vertices[(direction * 4) + (isInsideFace ? 3 - quadVertex : quadVertex)];
+		 95     -     vec3 faceVertex = vertices[(direction * 6) + (isInsideFace ? 5 - quadVertex : quadVertex)];
+		 96  85       vec3 pos = (faceVertex * CellSize) + (vec3(cellX, 0, cellZ) * CellSize) + CloudOffset;
+		 97  86       gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+		 98  87   
+		 99  88       vertexDistance = fog_spherical_distance(pos);
+		100  89       vertexColor = (useTopColor ? faceColors[1] : faceColors[direction]) * CloudColor;
+		          ...
+		          '''

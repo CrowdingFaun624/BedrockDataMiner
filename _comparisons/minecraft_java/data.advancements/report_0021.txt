@@ -1,0 +1,61 @@
+Difference of "advancements" between "18w08a" (snapshot of "1.13") and "18w08b" (snapshot of "1.13").
+
+Changed data pack "minecraft":
+	Total file: 562 (+2, -0)
+	Changed file "recipes/food/dried_kelp.json":
+		Changed field "criteria":
+			Total criterion: 3 (+2, -1)
+			Removed criterion "has_kelp":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions": field "items": item field "item": "minecraft:kelp_top"
+			Added criterion "has_at_least_9_dried_kelp":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions":
+					field "items":
+						item:
+							field "item": "minecraft:dried_kelp"
+							field "count": field "min": 9.0
+			Added criterion "has_dried_kelp_block":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions": field "items": item field "item": "minecraft:dried_kelp_block"
+		Changed field "requirements":
+			Changed requirement:
+				Total criterion: 3 (+1, -0)
+				Changed criterion from "has_kelp" to "has_dried_kelp_block".
+				Added criterion "has_at_least_9_dried_kelp".
+	Added file "recipes/building_blocks/dried_kelp_block.json":
+		field "parent": "minecraft:recipes/root"
+		field "rewards": field "recipes": recipe "minecraft:dried_kelp_block"
+		field "criteria":
+			criterion "has_at_least_9_dried_kelp":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions":
+					field "items":
+						item:
+							field "item": "minecraft:dried_kelp"
+							field "count": field "min": 9.0
+			criterion "has_dried_kelp_block":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions": field "items": item field "item": "minecraft:dried_kelp_block"
+			criterion "has_the_recipe":
+				field "trigger": "minecraft:recipe_unlocked"
+				field "conditions": field "recipe": "minecraft:dried_kelp_block"
+		field "requirements":
+			requirement:
+				criterion "has_at_least_9_dried_kelp"
+				criterion "has_dried_kelp_block"
+				criterion "has_the_recipe"
+	Added file "recipes/food/dried_kelp_from_smelting.json":
+		field "parent": "minecraft:recipes/root"
+		field "rewards": field "recipes": recipe "minecraft:dried_kelp_from_smelting"
+		field "criteria":
+			criterion "has_kelp":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions": field "items": item field "item": "minecraft:kelp_top"
+			criterion "has_the_recipe":
+				field "trigger": "minecraft:recipe_unlocked"
+				field "conditions": field "recipe": "minecraft:dried_kelp_from_smelting"
+		field "requirements":
+			requirement:
+				criterion "has_kelp"
+				criterion "has_the_recipe"

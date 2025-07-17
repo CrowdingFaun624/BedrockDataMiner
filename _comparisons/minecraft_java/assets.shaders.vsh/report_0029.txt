@@ -1,0 +1,51 @@
+Difference of "text_packs" between "25w16a" (snapshot of "1.21.6") and "25w17a" (snapshot of "1.21.6").
+
+Changed resource pack "minecraft":
+	Total file: 41 (+2, -0)
+	Changed file "core/position.vsh":
+		Total line: 15 (+0, -4)
+		        '''
+		        ...
+		 9  9   out float vertexDistance;
+		10 10   
+		11 11   void main() {
+		12 12       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		13 13   
+		14    - #ifdef FOG_IS_SKY
+		15    -     vertexDistance = fog_distance(Position, FOG_SHAPE_CYLINDER);
+		16    - #else
+		17 14       vertexDistance = fog_distance(Position, FogShape);
+		18    - #endif
+		19 15   }
+		        '''
+	Added file "core/sky.vsh":
+		'''
+		#version 150
+		
+		#moj_import <minecraft:fog.glsl>
+		#moj_import <minecraft:dynamictransforms.glsl>
+		#moj_import <minecraft:projection.glsl>
+		
+		in vec3 Position;
+		
+		out float vertexDistance;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    vertexDistance = fog_distance(Position, FOG_SHAPE_CYLINDER);
+		}
+		'''
+	Added file "core/stars.vsh":
+		'''
+		#version 150
+		
+		#moj_import <minecraft:dynamictransforms.glsl>
+		#moj_import <minecraft:projection.glsl>
+		
+		in vec3 Position;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		}
+		'''

@@ -1,0 +1,894 @@
+Addition of "text_packs" at "13w38a" (snapshot of "1.7.2").
+
+resource pack "minecraft":
+	file "program/antialias.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		void main(){
+		    vec4 c  = texture2D (DiffuseSampler, texCoord);
+		    vec4 u1 = texture2D (DiffuseSampler, texCoord + vec2 (              0.0, -oneTexel.y      ));
+		    vec4 u2 = texture2D (DiffuseSampler, texCoord + vec2 (              0.0, -oneTexel.y * 2.0));
+		    vec4 d1 = texture2D (DiffuseSampler, texCoord + vec2 (              0.0,  oneTexel.y      ));
+		    vec4 d2 = texture2D (DiffuseSampler, texCoord + vec2 (              0.0,  oneTexel.y * 2.0));
+		    vec4 l1 = texture2D (DiffuseSampler, texCoord + vec2 (-oneTexel.x,                     0.0));
+		    vec4 l2 = texture2D (DiffuseSampler, texCoord + vec2 (-oneTexel.x * 2.0,               0.0));
+		    vec4 r1 = texture2D (DiffuseSampler, texCoord + vec2 ( oneTexel.x,                     0.0));
+		    vec4 r2 = texture2D (DiffuseSampler, texCoord + vec2 ( oneTexel.x * 2.0,               0.0));
+		    
+		    vec4 v1 = mix (c, mix (l1, l2, 0.667), 0.75);
+		    vec4 v2 = mix (c, mix (r1, r2, 0.667), 0.75);
+		    vec4 v3 = mix (c, mix (u1, u2, 0.667), 0.75);
+		    vec4 v4 = mix (c, mix (d1, d2, 0.667), 0.75);
+		
+		    vec4 v5 = mix (v1, v2, 0.5);
+		    vec4 v6 = mix (v3, v4, 0.5);
+		
+		    vec4 color = mix (v5, v6, 0.5);
+		    gl_FragColor = color;
+		}
+		'''
+	file "program/bits.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		uniform float Resolution = 4.0;
+		uniform float Saturation = 1.5;
+		uniform float MosaicSize = 8.0;
+		
+		void main() {
+		    vec2 mosaicInSize = InSize / MosaicSize;
+		    vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		    
+		    vec4 baseTexel = texture2D(DiffuseSampler, texCoord - fractPix);
+		    
+		    baseTexel = baseTexel - fract(baseTexel * Resolution) / Resolution;
+		    float luma = dot(baseTexel.rgb, vec3(0.3, 0.59, 0.11));
+		    vec3 chroma = (baseTexel.rgb - luma) * Saturation;
+		    baseTexel = vec4(luma + chroma, 1.0);
+		
+		    gl_FragColor = baseTexel;
+		}
+		'''
+	file "program/blit.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		
+		void main(){
+		    gl_FragColor = vec4(texture2D(DiffuseSampler, texCoord).rgb, 1.0);
+		}
+		'''
+	file "program/blobs.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		void main(){
+		    vec4 u  = texture2D(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y));
+		    vec4 d  = texture2D(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y));
+		    vec4 l  = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0));
+		    vec4 r  = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0));
+		    
+		    vec4 v1 = min(l, r);
+		    vec4 v2 = min(u, d);
+		    vec4 v3 = min(v1, v2);
+		
+		    vec4 ul = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x, -oneTexel.y));
+		    vec4 dr = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,  oneTexel.y));
+		    vec4 dl = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,  oneTexel.y));
+		    vec4 ur = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x, -oneTexel.y));
+		
+		    vec4 v4 = min(ul, dr);
+		    vec4 v5 = min(ur, dl);
+		    vec4 v6 = min(v4, v5);
+		    
+		    vec4 v7 = min(v3, v6);
+		    
+		    vec4 uu = texture2D(DiffuseSampler, texCoord + vec2(              0.0, -oneTexel.y * 2.0));
+		    vec4 dd = texture2D(DiffuseSampler, texCoord + vec2(              0.0,  oneTexel.y * 2.0));
+		    vec4 ll = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x * 2.0,               0.0));
+		    vec4 rr = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x * 2.0,               0.0));
+		
+		    vec4 v8 = min(uu, dd);
+		    vec4 v9 = min(ll, rr);
+		    vec4 v10 = min(v8, v9);
+		
+		    vec4 v11 = min(v7, v10);
+		    
+		    vec4 c  = texture2D(DiffuseSampler, texCoord);
+		    vec4 color = min(c, v11);
+		    gl_FragColor = color;
+		}
+		'''
+	file "program/blobs2.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform float Radius;
+		
+		void main(){
+		    vec4 c  = texture2D(DiffuseSampler, texCoord);
+		    vec4 maxVal = c;
+		    for(float u = 0.0; u <= Radius; u += 1.0) {
+		        for(float v = 0.0; v <= Radius; v += 1.0) {
+		            float weight = (((sqrt(u * u + v * v) / (Radius)) > 1.0) ? 0.0 : 1.0);
+		            
+		            vec4 s0 = texture2D(DiffuseSampler, texCoord + vec2(-u * oneTexel.x, -v * oneTexel.y));
+		            vec4 s1 = texture2D(DiffuseSampler, texCoord + vec2( u * oneTexel.x,  v * oneTexel.y));
+		            vec4 s2 = texture2D(DiffuseSampler, texCoord + vec2(-u * oneTexel.x,  v * oneTexel.y));
+		            vec4 s3 = texture2D(DiffuseSampler, texCoord + vec2( u * oneTexel.x, -v * oneTexel.y));
+		            
+		            vec4 o0 = max(s0, s1);
+		            vec4 o1 = max(s2, s3);
+		            vec4 tempMax = max(o0, o1);
+		            maxVal = mix(maxVal, max(maxVal, tempMax), weight);
+		        }
+		    }
+		
+		    gl_FragColor = maxVal;
+		}
+		'''
+	file "program/blur.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		uniform vec2 BlurDir;
+		uniform float Radius;
+		
+		void main() {
+		    vec4 blurred = vec4(0.0);
+		    float totalStrength = 0.0;
+		    for(float r = -Radius; r <= Radius; r += 1.0) {
+		    	float strength = abs(1.0 - r / Radius);
+		    	strength = strength * strength;
+		    	totalStrength = totalStrength + strength;
+		    	blurred = blurred + texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir) * strength;
+		    }
+		    gl_FragColor = blurred / totalStrength;
+		}
+		'''
+	file "program/color_convolve.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		uniform vec3 Gray = vec3(0.3, 0.59, 0.11);
+		uniform vec3 RedMatrix   = vec3(1.0, 0.0, 0.0);
+		uniform vec3 GreenMatrix = vec3(0.0, 1.0, 0.0);
+		uniform vec3 BlueMatrix  = vec3(0.0, 0.0, 1.0);
+		uniform vec3 Offset = vec3(0.0, 0.0, 0.0);
+		uniform vec3 ColorScale = vec3(1.0, 1.0, 1.0);
+		uniform float Saturation = 1.8;
+		
+		void main() {
+		    vec3 InPixel = texture2D(DiffuseSampler, texCoord).rgb;
+		    
+		    // Color Matrix
+		    float RedValue = dot(InPixel, RedMatrix);
+		    float GreenValue = dot(InPixel, GreenMatrix);
+		    float BlueValue = dot(InPixel, BlueMatrix);
+		    vec3 OutColor = vec3(RedValue, GreenValue, BlueValue);
+		    
+		    // Offset & Scale
+		    OutColor = (OutColor * ColorScale) + Offset;
+		    
+		    // Saturation
+		    float Luma = dot(OutColor, Gray);
+		    vec3 Chroma = OutColor - Luma;
+		    OutColor = (Chroma * Saturation) + Luma;
+		    
+		    gl_FragColor = vec4(OutColor, 1.0);
+		}
+		'''
+	file "program/deconverge.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		uniform vec3 ConvergeX = vec3(-1.0,  0.0, 0.5);
+		uniform vec3 ConvergeY = vec3( 0.0, -1.0, 0.5);
+		uniform vec3 RadialConvergeX = vec3(1.0, 1.0, 1.0);
+		uniform vec3 RadialConvergeY = vec3(1.0, 1.0, 1.0);
+		
+		void main() {
+		    vec3 CoordX = texCoord.x * RadialConvergeX;
+		    vec3 CoordY = texCoord.y * RadialConvergeY;
+		    
+		    CoordX += ConvergeX * oneTexel.x - (RadialConvergeX - 1.0) * 0.5;
+		    CoordY += ConvergeY * oneTexel.y - (RadialConvergeY - 1.0) * 0.5;
+		    
+		    float RedValue   = texture2D(DiffuseSampler, vec2(CoordX.x, CoordY.x)).r;
+		    float GreenValue = texture2D(DiffuseSampler, vec2(CoordX.y, CoordY.y)).g;
+		    float BlueValue  = texture2D(DiffuseSampler, vec2(CoordX.z, CoordY.z)).b;
+		    
+		    gl_FragColor = vec4(RedValue, GreenValue, BlueValue, 1.0);
+		}
+		'''
+	file "program/downscale.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		void main() {
+		    vec3 Texel0 = texture2D(DiffuseSampler, texCoord).rgb;
+		    vec3 Texel1 = texture2D(DiffuseSampler, texCoord + vec2(oneTexel.x, 0.0)).rgb;
+		    vec3 Texel2 = texture2D(DiffuseSampler, texCoord + vec2(0.0, oneTexel.y)).rgb;
+		    vec3 Texel3 = texture2D(DiffuseSampler, texCoord + oneTexel).rgb;
+		    
+		    gl_FragColor = vec4((Texel0 + Texel1 + Texel2 + Texel3) * 0.25, 1.0);
+		}
+		'''
+	file "program/fxaa.fsh":
+		'''
+		#extension GL_EXT_gpu_shader4 : enable
+		
+		uniform sampler2D DiffuseSampler;
+		uniform vec2 OutSize;
+		
+		uniform float VxOffset;
+		uniform float SpanMax;
+		uniform float ReduceMul;
+		
+		varying vec2 texCoord;
+		varying vec4 posPos;
+		
+		#define FxaaTex(t, p) texture2D(t, p)
+		
+		#if __VERSION__ >= 130
+		    #define OffsetVec(a, b) ivec2(a, b)
+		    #define FxaaTexOff(t, p, o, r) textureOffset(t, p, o)
+		#elif defined(GL_EXT_gpu_shader4)
+		    #define OffsetVec(a, b) ivec2(a, b)
+		    #define FxaaTexOff(t, p, o, r) texture2DLodOffset(t, p, 0.0, o)
+		#else
+		    #define OffsetVec(a, b) vec2(a, b)
+		    #define FxaaTexOff(t, p, o, r) texture2D(t, p + o * r)
+		#endif
+		
+		vec3 FxaaPixelShader(
+		  vec4 posPos,   // Output of FxaaVertexShader interpolated across screen.
+		  sampler2D tex, // Input texture.
+		  vec2 rcpFrame) // Constant {1.0/frameWidth, 1.0/frameHeight}.
+		{
+		
+		    #define FXAA_REDUCE_MIN   (1.0/128.0)
+		    //#define FXAA_REDUCE_MUL   (1.0/8.0)
+		    //#define FXAA_SPAN_MAX     8.0
+		
+		    vec3 rgbNW = FxaaTex(tex, posPos.zw).xyz;
+		    vec3 rgbNE = FxaaTexOff(tex, posPos.zw, OffsetVec(1,0), rcpFrame.xy).xyz;
+		    vec3 rgbSW = FxaaTexOff(tex, posPos.zw, OffsetVec(0,1), rcpFrame.xy).xyz;
+		    vec3 rgbSE = FxaaTexOff(tex, posPos.zw, OffsetVec(1,1), rcpFrame.xy).xyz;
+		
+		    vec3 rgbM  = FxaaTex(tex, posPos.xy).xyz;
+		
+		    vec3 luma = vec3(0.299, 0.587, 0.114);
+		    float lumaNW = dot(rgbNW, luma);
+		    float lumaNE = dot(rgbNE, luma);
+		    float lumaSW = dot(rgbSW, luma);
+		    float lumaSE = dot(rgbSE, luma);
+		    float lumaM  = dot(rgbM,  luma);
+		
+		    float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));
+		    float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));
+		
+		    vec2 dir;
+		    dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));
+		    dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));
+		
+		    float dirReduce = max(
+		        (lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * ReduceMul),
+		        FXAA_REDUCE_MIN);
+		    float rcpDirMin = 1.0/(min(abs(dir.x), abs(dir.y)) + dirReduce);
+		    dir = min(vec2( SpanMax,  SpanMax),
+		          max(vec2(-SpanMax, -SpanMax),
+		          dir * rcpDirMin)) * rcpFrame.xy;
+		
+		    vec3 rgbA = (1.0/2.0) * (
+		        FxaaTex(tex, posPos.xy + dir * vec2(1.0/3.0 - 0.5)).xyz +
+		        FxaaTex(tex, posPos.xy + dir * vec2(2.0/3.0 - 0.5)).xyz);
+		    vec3 rgbB = rgbA * (1.0/2.0) + (1.0/4.0) * (
+		        FxaaTex(tex, posPos.xy + dir * vec2(0.0/3.0 - 0.5)).xyz +
+		        FxaaTex(tex, posPos.xy + dir * vec2(3.0/3.0 - 0.5)).xyz);
+		
+		    float lumaB = dot(rgbB, luma);
+		
+		    if ((lumaB < lumaMin) || (lumaB > lumaMax)) {
+		        return rgbA;
+		    } else {
+		        return rgbB;
+		    }
+		}
+		
+		void main() {
+		    gl_FragColor = vec4(FxaaPixelShader(posPos, DiffuseSampler, 1.0 / OutSize), 1.0);
+		}
+		'''
+	file "program/invert.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		
+		uniform float InverseAmount;
+		
+		void main(){
+		    vec4 diffuseColor = texture2D(DiffuseSampler, texCoord);
+		    vec4 invertColor = 1.0 - diffuseColor;
+		    vec4 outColor = mix(diffuseColor, invertColor, InverseAmount);
+		    gl_FragColor = vec4(outColor.rgb, 1.0);
+		}
+		'''
+	file "program/ntsc_decode.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		const vec4 Zero = vec4(0.0);
+		const vec4 One = vec4(1.0);
+		
+		const float Pi = 3.1415926535;
+		const float Pi2 = 6.283185307;
+		
+		const vec4 A2 = vec4(1.0);
+		const vec4 B = vec4(0.5);
+		const float P = 1.0;
+		const float CCFrequency = 3.59754545;
+		const float NotchWidth = 2.0;
+		const float NotchUpperFrequency = 3.59754545 + NotchWidth;
+		const float NotchLowerFrequency = 3.59754545 - NotchWidth;
+		const float YFrequency = 6.0;
+		const float IFrequency = 1.2;
+		const float QFrequency = 0.6;
+		const float ScanTime = 52.6;
+		const vec3 YIQ2R = vec3(1.0, 0.956, 0.621);
+		const vec3 YIQ2G = vec3(1.0, -0.272, -0.647);
+		const vec3 YIQ2B = vec3(1.0, -1.106, 1.703);
+		const vec4 MinC = vec4(-1.1183);
+		const vec4 CRange = vec4(3.2366);
+		const float Pi2Length = Pi2 / 83.0;
+		const vec4 NotchOffset = vec4(0.0, 1.0, 2.0, 3.0);
+		const vec4 W = vec4(Pi2 * CCFrequency * ScanTime);
+		
+		void main() {
+		    vec4 YAccum = Zero;
+		    vec4 IAccum = Zero;
+		    vec4 QAccum = Zero;
+		    float QuadXSize = InSize.x * 4.0;
+		    float TimePerSample = ScanTime / QuadXSize;
+		    
+		    // Frequency cutoffs for the individual portions of the signal that we extract.
+		    // Y1 and Y2 are the positive and negative frequency limits of the notch filter on Y.
+		    // Y3 is the center of the frequency response of the Y filter.
+		    // I is the center of the frequency response of the I filter.
+		    // Q is the center of the frequency response of the Q filter.
+		    float Fc_y1 = NotchLowerFrequency * TimePerSample;
+		    float Fc_y2 = NotchUpperFrequency * TimePerSample;
+		    float Fc_y3 = YFrequency * TimePerSample;
+		    float Fc_i = IFrequency * TimePerSample;
+		    float Fc_q = QFrequency * TimePerSample;
+		    float Pi2Fc_y1 = Fc_y1 * Pi2;
+		    float Pi2Fc_y2 = Fc_y2 * Pi2;
+		    float Pi2Fc_y3 = Fc_y3 * Pi2;
+		    float Pi2Fc_i = Fc_i * Pi2;
+		    float Pi2Fc_q = Fc_q * Pi2;
+		    float Fc_y1_2 = Fc_y1 * 2.0;
+		    float Fc_y2_2 = Fc_y2 * 2.0;
+		    float Fc_y3_2 = Fc_y3 * 2.0;
+		    float Fc_i_2 = Fc_i * 2.0;
+		    float Fc_q_2 = Fc_q * 2.0;
+		    vec4 CoordY = vec4(texCoord.y);
+		    
+		    // 83 composite samples wide, 4 composite pixels per texel
+		    for (float n = -41.0; n < 42.0; n += 4.0)
+		    {
+		        vec4 n4 = n + NotchOffset;
+		        vec4 CoordX = texCoord.x + oneTexel.x * n4 * 0.25;
+		        vec2 TexCoord = vec2(CoordX.x, CoordY.y);
+		        vec4 C = texture2D(DiffuseSampler, TexCoord) * CRange + MinC;
+		        vec4 WT = W * (CoordX + A2 * CoordY * InSize.y + B);
+		        vec4 Cosine = 0.54 + 0.46 * cos(Pi2Length * n4);
+		        
+		        vec4 SincYIn1 = Pi2Fc_y1 * n4;
+		        vec4 SincYIn2 = Pi2Fc_y2 * n4;
+		        vec4 SincYIn3 = Pi2Fc_y3 * n4;
+		        vec4 SincY1 = sin(SincYIn1) / SincYIn1;
+		        vec4 SincY2 = sin(SincYIn2) / SincYIn2;
+		        vec4 SincY3 = sin(SincYIn3) / SincYIn3;
+		        
+		        // These zero-checks could be made more efficient, but we are trying to support
+		        // downlevel GLSL
+		        if(SincYIn1.x == 0.0) SincY1.x = 1.0;
+		        if(SincYIn1.y == 0.0) SincY1.y = 1.0;
+		        if(SincYIn1.z == 0.0) SincY1.z = 1.0;
+		        if(SincYIn1.w == 0.0) SincY1.w = 1.0;
+		        if(SincYIn2.x == 0.0) SincY2.x = 1.0;
+		        if(SincYIn2.y == 0.0) SincY2.y = 1.0;
+		        if(SincYIn2.z == 0.0) SincY2.z = 1.0;
+		        if(SincYIn2.w == 0.0) SincY2.w = 1.0;
+		        if(SincYIn3.x == 0.0) SincY3.x = 1.0;
+		        if(SincYIn3.y == 0.0) SincY3.y = 1.0;
+		        if(SincYIn3.z == 0.0) SincY3.z = 1.0;
+		        if(SincYIn3.w == 0.0) SincY3.w = 1.0;
+		        vec4 IdealY = (Fc_y1_2 * SincY1 - Fc_y2_2 * SincY2) + Fc_y3_2 * SincY3;
+		        vec4 FilterY = Cosine * IdealY;
+		        
+		        vec4 SincIIn = Pi2Fc_i * n4;
+		        vec4 SincI = sin(SincIIn) / SincIIn;
+		        if(SincIIn.x == 0.0) SincI.x = 1.0;
+		        if(SincIIn.y == 0.0) SincI.y = 1.0;
+		        if(SincIIn.z == 0.0) SincI.z = 1.0;
+		        if(SincIIn.w == 0.0) SincI.w = 1.0;
+		        vec4 IdealI = Fc_i_2 * SincI;
+		        vec4 FilterI = Cosine * IdealI;
+		
+		        vec4 SincQIn = Pi2Fc_q * n4;
+		        vec4 SincQ = sin(SincQIn) / SincQIn;
+		        if(SincQIn.x == 0.0) SincQ.x = 1.0;
+		        if(SincQIn.y == 0.0) SincQ.y = 1.0;
+		        if(SincQIn.z == 0.0) SincQ.z = 1.0;
+		        if(SincQIn.w == 0.0) SincQ.w = 1.0;
+		        vec4 IdealQ = Fc_q_2 * SincQ;
+		        vec4 FilterQ = Cosine * IdealQ;
+		        
+		        YAccum += C * FilterY;
+		        IAccum += C * cos(WT) * FilterI;
+		        QAccum += C * sin(WT) * FilterQ;
+		    }
+		    
+		    float Y = dot(YAccum, One);
+		    float I = dot(IAccum, One) * 2.0;
+		    float Q = dot(QAccum, One) * 2.0;
+		    
+		    vec3 YIQ = vec3(Y, I, Q);
+		    vec3 OutRGB = vec3(dot(YIQ, YIQ2R), dot(YIQ, YIQ2G), dot(YIQ, YIQ2B));
+		    
+		    gl_FragColor = vec4(OutRGB, 1.0);
+		}
+		'''
+	file "program/ntsc_encode.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		const float Pi2 = 6.283185307;
+		
+		const vec4 A2 = vec4(1.0);
+		const vec4 B = vec4(0.5);
+		const float P = 1.0;
+		const float CCFrequency = 3.59754545;
+		const float ScanTime = 52.6;
+		const float Pi2ScanTime = Pi2 * ScanTime;
+		const vec4 YTransform = vec4(0.299, 0.587, 0.114, 0.0);
+		const vec4 ITransform = vec4(0.595716, -0.274453, -0.321263, 0.0);
+		const vec4 QTransform = vec4(0.211456, -0.522591, 0.31135, 0.0);
+		const vec4 MinC = vec4(-1.1183);
+		const vec4 InvCRange = vec4(1.0 / 3.2366);
+		
+		void main() {
+		    vec2 InverseP = vec2(P, 0.0) * oneTexel;
+		    
+		    // UVs for four linearly-interpolated samples spread 0.25 texels apart
+		    vec2 C0 = texCoord;
+		    vec2 C1 = texCoord + InverseP * 0.25;
+		    vec2 C2 = texCoord + InverseP * 0.50;
+		    vec2 C3 = texCoord + InverseP * 0.75;
+		    vec4 Cx = vec4(C0.x, C1.x, C2.x, C3.x);
+		    vec4 Cy = vec4(C0.y, C1.y, C2.y, C3.y);
+		    
+		    vec4 Texel0 = texture2D(DiffuseSampler, C0);
+		    vec4 Texel1 = texture2D(DiffuseSampler, C1);
+		    vec4 Texel2 = texture2D(DiffuseSampler, C2);
+		    vec4 Texel3 = texture2D(DiffuseSampler, C3);
+		
+		    // Calculate the expected time of the sample.
+		    vec4 T = A2 * Cy * vec4(InSize.y) + B + Cx;
+		    vec4 W = vec4(Pi2ScanTime * CCFrequency);
+		    vec4 TW = T * W;
+		    vec4 Y = vec4(dot(Texel0, YTransform), dot(Texel1, YTransform), dot(Texel2, YTransform), dot(Texel3, YTransform));
+		    vec4 I = vec4(dot(Texel0, ITransform), dot(Texel1, ITransform), dot(Texel2, ITransform), dot(Texel3, ITransform));
+		    vec4 Q = vec4(dot(Texel0, QTransform), dot(Texel1, QTransform), dot(Texel2, QTransform), dot(Texel3, QTransform));
+		    
+		    vec4 Encoded = Y + I * cos(TW) + Q * sin(TW);
+		    gl_FragColor = (Encoded - MinC) * InvCRange;
+		}
+		'''
+	file "program/outline.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		void main(){
+		    vec4 center = texture2D(DiffuseSampler, texCoord);
+		    vec4 up     = texture2D(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y));
+		    vec4 down   = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0));
+		    vec4 left   = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0));
+		    vec4 right  = texture2D(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y));
+		    vec4 uDiff = center - up;
+		    vec4 dDiff = center - down;
+		    vec4 lDiff = center - left;
+		    vec4 rDiff = center - right;
+		    vec4 sum = uDiff + dDiff + lDiff + rDiff;
+		    vec3 clamped = clamp(center.rgb - sum.rgb, 0.0, 1.0);
+		    gl_FragColor = vec4(clamped, 1.0);
+		}
+		'''
+	file "program/outline_combine.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		uniform sampler2D OutlineSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		void main(){
+		    vec4 diffuseTexel = texture2D(DiffuseSampler, texCoord);
+		    vec4 outlineTexel = texture2D(OutlineSampler, texCoord);
+		    gl_FragColor = vec4(diffuseTexel.rgb + diffuseTexel.rgb * outlineTexel.rgb * vec3(0.75), 1.0);
+		}
+		'''
+	file "program/outline_soft.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform float LumaRamp;
+		uniform float LumaLevel;
+		
+		void main(){
+		    vec4 center = texture2D(DiffuseSampler, texCoord);
+		    vec4 up     = texture2D(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y));
+		    vec4 up2    = texture2D(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y) * 2.0);
+		    vec4 down   = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0));
+		    vec4 down2  = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0) * 2.0);
+		    vec4 left   = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0));
+		    vec4 left2  = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0) * 2.0);
+		    vec4 right  = texture2D(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y));
+		    vec4 right2 = texture2D(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y) * 2.0);
+		    vec4 uDiff = abs(center - up);
+		    vec4 dDiff = abs(center - down);
+		    vec4 lDiff = abs(center - left);
+		    vec4 rDiff = abs(center - right);
+		    vec4 u2Diff = abs(center - up2);
+		    vec4 d2Diff = abs(center - down2);
+		    vec4 l2Diff = abs(center - left2);
+		    vec4 r2Diff = abs(center - right2);
+		    vec4 sum = uDiff + dDiff + lDiff + rDiff + u2Diff + d2Diff + l2Diff + r2Diff;
+		    vec4 gray = vec4(0.3, 0.59, 0.11, 0.0);
+		    float sumLuma = 1.0 - dot(clamp(sum, 0.0, 1.0), gray);
+		    
+		    // Get luminance of center pixel and adjust
+		    float centerLuma = dot(center + (center - pow(center, vec4(LumaRamp))), gray);
+		    
+		    // Quantize the luma value
+		    centerLuma = centerLuma - fract(centerLuma * LumaLevel) / LumaLevel;
+		    
+		    // Re-scale to full range
+		    centerLuma = centerLuma * (LumaLevel / (LumaLevel - 1.0));
+		    
+		    // Blend with outline
+		    centerLuma = centerLuma * sumLuma;
+		    
+		    gl_FragColor = vec4(centerLuma, centerLuma, centerLuma, 1.0);
+		}
+		'''
+	file "program/outline_watercolor.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform float LumaRamp;
+		
+		void main(){
+		    vec4 center = texture2D(DiffuseSampler, texCoord);
+		    vec4 up     = texture2D(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y));
+		    vec4 up2    = texture2D(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y) * 2.0);
+		    vec4 down   = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0));
+		    vec4 down2  = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0) * 2.0);
+		    vec4 left   = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0));
+		    vec4 left2  = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0) * 2.0);
+		    vec4 right  = texture2D(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y));
+		    vec4 right2 = texture2D(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y) * 2.0);
+		    vec4 ul     = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x, -oneTexel.y));
+		    vec4 ur     = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x, -oneTexel.y));
+		    vec4 bl     = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,  oneTexel.y));
+		    vec4 br     = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,  oneTexel.y));
+		    vec4 gray = vec4(0.3, 0.59, 0.11, 0.0);
+		    float uDiff = dot(abs(center - up), gray);
+		    float dDiff = dot(abs(center - down), gray);
+		    float lDiff = dot(abs(center - left), gray);
+		    float rDiff = dot(abs(center - right), gray);
+		    float u2Diff = dot(abs(center - up2), gray);
+		    float d2Diff = dot(abs(center - down2), gray);
+		    float l2Diff = dot(abs(center - left2), gray);
+		    float r2Diff = dot(abs(center - right2), gray);
+		    float ulDiff = dot(abs(center - ul), gray);
+		    float urDiff = dot(abs(center - ur), gray);
+		    float blDiff = dot(abs(center - bl), gray);
+		    float brDiff = dot(abs(center - br), gray);
+		    float sum = uDiff + dDiff + lDiff + rDiff + u2Diff + d2Diff + l2Diff + r2Diff + ulDiff + urDiff + blDiff + brDiff;
+		    float sumLuma = clamp(sum, 0.0, 1.0);
+		    
+		    gl_FragColor = vec4(sumLuma, sumLuma, sumLuma, 1.0);
+		}
+		'''
+	file "program/overlay.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		uniform sampler2D OverlaySampler;
+		
+		uniform vec2 InSize;
+		
+		varying vec2 texCoord;
+		
+		uniform float MosaicSize = 1.0;
+		uniform vec3 RedMatrix   = vec3(1.0, 0.0, 0.0);
+		uniform vec3 GreenMatrix = vec3(0.0, 1.0, 0.0);
+		uniform vec3 BlueMatrix  = vec3(0.0, 0.0, 1.0);
+		
+		void main(){
+		    vec2 mosaicInSize = InSize / MosaicSize;
+		    vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		    
+		    vec4 baseTexel = texture2D(DiffuseSampler, texCoord - fractPix);
+		    float red = dot(baseTexel.rgb, RedMatrix);
+		    float green = dot(baseTexel.rgb, GreenMatrix);
+		    float blue = dot(baseTexel.rgb, BlueMatrix);
+		    
+		    vec4 overlayTexel = texture2D(OverlaySampler, vec2(texCoord.x, 1.0 - texCoord.y));
+		    gl_FragColor = mix(vec4(red, green, blue, 1.0), overlayTexel, overlayTexel.a);
+		}
+		'''
+	file "program/phosphor.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		uniform sampler2D PrevSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		uniform vec3 Phosphor = vec3(0.7, 0.7, 0.7);
+		uniform float LerpFactor = 1.0;
+		
+		void main() {
+		    vec3 CurrTexel = texture2D(DiffuseSampler, texCoord).rgb;
+		    vec3 PrevTexel = texture2D(PrevSampler, texCoord).rgb;
+		    
+		    gl_FragColor = vec4(max(PrevTexel * Phosphor, CurrTexel), 1.0);
+		}
+		'''
+	file "program/scan_pincushion.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		const vec4 Zero = vec4(0.0);
+		const vec4 Half = vec4(0.5);
+		const vec4 One = vec4(1.0);
+		const vec4 Two = vec4(2.0);
+		
+		const float Pi = 3.1415926535;
+		const float PincushionAmount = 0.02;
+		const float CurvatureAmount = 0.02;
+		const float ScanlineAmount = 0.8;
+		const float ScanlineScale = 1.0;
+		const float ScanlineHeight = 1.0;
+		const float ScanlineBrightScale = 1.0;
+		const float ScanlineBrightOffset = 0.0;
+		const float ScanlineOffset = 0.0;
+		const vec3 Floor = vec3(0.05, 0.05, 0.05);
+		const vec3 Power = vec3(0.8, 0.8, 0.8);
+		
+		void main() {
+		    vec4 InTexel = texture2D(DiffuseSampler, texCoord);
+		    
+		    vec2 PinUnitCoord = texCoord * Two.xy - One.xy;
+		    float PincushionR2 = pow(length(PinUnitCoord), 2.0);
+		    vec2 PincushionCurve = PinUnitCoord * PincushionAmount * PincushionR2;
+		    vec2 ScanCoord = texCoord;
+		    
+		    ScanCoord *= One.xy - PincushionAmount * 0.2;
+		    ScanCoord += PincushionAmount * 0.1;
+		    ScanCoord += PincushionCurve;
+		
+		    vec2 CurvatureClipCurve = PinUnitCoord * CurvatureAmount * PincushionR2;
+		    vec2 ScreenClipCoord = texCoord;
+		    ScreenClipCoord -= Half.xy;
+		    ScreenClipCoord *= One.xy - CurvatureAmount * 0.2;
+		    ScreenClipCoord += Half.xy;
+		    ScreenClipCoord += CurvatureClipCurve;
+		    
+		    // -- Alpha Clipping --
+		    if (ScanCoord.x < 0.0) discard;
+		    if (ScanCoord.y < 0.0) discard;
+		    if (ScanCoord.x > 1.0) discard;
+		    if (ScanCoord.y > 1.0) discard;
+		
+		    // -- Scanline Simulation --
+		    float InnerSine = ScanCoord.y * InSize.y * ScanlineScale * 0.25;
+		    float ScanBrightMod = sin(InnerSine * Pi + ScanlineOffset * InSize.y * 0.25);
+		    float ScanBrightness = mix(1.0, (pow(ScanBrightMod * ScanBrightMod, ScanlineHeight) * ScanlineBrightScale + 1.0) * 0.5, ScanlineAmount);
+		    vec3 ScanlineTexel = InTexel.rgb * ScanBrightness;
+		    
+		    // -- Color Compression (increasing the floor of the signal without affecting the ceiling) --
+		    ScanlineTexel = Floor + (One.xyz - Floor) * ScanlineTexel;
+		    
+		    ScanlineTexel.rgb = pow(ScanlineTexel.rgb, Power);
+		
+		    gl_FragColor = vec4(ScanlineTexel.rgb, 1.0);
+		}
+		'''
+	file "program/sobel.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		void main(){
+		    vec4 center = texture2D(DiffuseSampler, texCoord);
+		    vec4 left   = texture2D(DiffuseSampler, texCoord - vec2(oneTexel.x, 0.0));
+		    vec4 right  = texture2D(DiffuseSampler, texCoord + vec2(oneTexel.x, 0.0));
+		    vec4 up     = texture2D(DiffuseSampler, texCoord - vec2(0.0, oneTexel.y));
+		    vec4 down   = texture2D(DiffuseSampler, texCoord + vec2(0.0, oneTexel.y));
+		    vec4 leftDiff  = center - left;
+		    vec4 rightDiff = center - right;
+		    vec4 upDiff    = center - up;
+		    vec4 downDiff  = center - down;
+		    vec4 total = clamp(leftDiff + rightDiff + upDiff + downDiff, 0.0, 1.0);
+		    gl_FragColor = vec4(total.rgb, 1.0);
+		}
+		'''
+	file "program/wobble.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		uniform float Time;
+		uniform vec2 Frequency;
+		uniform vec2 WobbleAmount;
+		
+		vec3 hue(float h)
+		{
+		    float r = abs(h * 6.0 - 3.0) - 1.0;
+		    float g = 2 - abs(h * 6.0 - 2.0);
+		    float b = 2 - abs(h * 6.0 - 4.0);
+		    return clamp(vec3(r,g,b), 0.0, 1.0);
+		}
+		
+		vec3 HSVtoRGB(vec3 hsv) {
+		    return ((hue(hsv.x) - 1.0) * hsv.y + 1.0) * hsv.z;
+		}
+		
+		vec3 RGBtoHSV(vec3 rgb) {
+		    vec3 hsv = vec3(0.0);
+		    hsv.z = max(rgb.r, max(rgb.g, rgb.b));
+		    float min = min(rgb.r, min(rgb.g, rgb.b));
+		    float c = hsv.z - min;
+		
+		    if (c != 0)
+		    {
+		        hsv.y = c / hsv.z;
+		        vec3 delta = (hsv.z - rgb) / c;
+		        delta.rgb -= delta.brg;
+		        delta.rg += vec2(2.0, 4.0);
+		        if (rgb.r >= hsv.z) {
+		            hsv.x = delta.b;
+		        } else if (rgb.g >= hsv.z) {
+		            hsv.x = delta.r;
+		        } else {
+		            hsv.x = delta.g;
+		        }
+		        hsv.x = fract(hsv.x / 6.0);
+		    }
+		    return hsv;
+		}
+		
+		void main() {
+		    float xOffset = sin(texCoord.y * Frequency.x + Time * 3.1415926535 * 2.0) * WobbleAmount.x;
+		    float yOffset = cos(texCoord.x * Frequency.y + Time * 3.1415926535 * 2.0) * WobbleAmount.y;
+		    vec2 offset = vec2(xOffset, yOffset);
+		    vec3 rgb = texture2D(DiffuseSampler, texCoord + offset).rgb;
+		    vec3 hsv = RGBtoHSV(rgb);
+		    hsv.x = fract(hsv.x + Time);
+		    gl_FragColor = vec4(HSVtoRGB(hsv), 1.0);
+		}
+		'''

@@ -1,0 +1,56 @@
+Difference of "text_packs" between "25w19a" (snapshot of "1.21.6") and "25w20a" (snapshot of "1.21.6").
+
+Changed resource pack "minecraft":
+	Changed file "core/rendertype_crumbling.fsh":
+		Total line: 23 (+5, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:fog.glsl>
+		 3  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 4  5   
+		 5  6   uniform sampler2D Sampler0;
+		 6  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 7 10   in vec4 vertexColor;
+		 8 11   in vec2 texCoord0;
+		 9 12   in vec2 texCoord2;
+		10 13   
+		11 14   out vec4 fragColor;
+		        ...
+		13 16   void main() {
+		14 17       vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		15 18       if (color.a < 0.1) {
+		16 19           discard;
+		17 20       }
+		   21 +     color = color * ColorModulator;
+		   22 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		18    -     fragColor = color * ColorModulator;
+		19 23   }
+		        '''
+	Changed file "core/rendertype_translucent_moving_block.fsh":
+		Total line: 20 (+5, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:fog.glsl>
+		 3  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 4  5   
+		 5  6   uniform sampler2D Sampler0;
+		 6  7   uniform sampler2D Sampler2;
+		 7  8   
+		    9 + in float sphericalVertexDistance;
+		   10 + in float cylindricalVertexDistance;
+		 8 11   in vec4 vertexColor;
+		 9 12   in vec2 texCoord0;
+		10 13   
+		11 14   out vec4 fragColor;
+		12 15   
+		13 16   void main() {
+		14 17       vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		   18 +     color = color * ColorModulator;
+		   19 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		15    -     fragColor = color * ColorModulator;
+		16 20   }
+		        '''

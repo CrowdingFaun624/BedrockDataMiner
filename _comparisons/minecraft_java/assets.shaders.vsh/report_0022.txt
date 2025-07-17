@@ -1,0 +1,124 @@
+Difference of "text_packs" between "24w10a" (snapshot of "1.20.5") and "24w11a" (snapshot of "1.20.5").
+
+Changed resource pack "minecraft":
+	Total file: 64 (+0, -4)
+	Moved file from "program/blobs.vsh" to "program/blur.vsh".
+	Changed file "program/blur.vsh":
+		Total line: 21 (+8, -4)
+		        '''
+		        ...
+		 2  2   
+		 3  3   in vec4 Position;
+		 4  4   
+		 5  5   uniform mat4 ProjMat;
+		 6  6   uniform vec2 InSize;
+		    7 + uniform vec2 OutSize;
+		    8 + uniform vec2 BlurDir;
+		 7  9   
+		 8 10   out vec2 texCoord;
+		   11 + out vec2 sampleStep;
+		 9    - out vec2 oneTexel;
+		10 12   
+		   13 + void main() {
+		11    - void main(){
+		12 14       vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		13 15       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		   16 + 
+		   17 +     vec2 oneTexel = 1.0 / InSize;
+		   18 +     sampleStep = oneTexel * BlurDir;
+		14 19   
+		   20 +     texCoord = Position.xy / OutSize;
+		15    -     oneTexel = 1.0 / InSize;
+		16    -     texCoord = outPos.xy * 0.5 + 0.5;
+		17 21   }
+		        '''
+	Removed file "program/bumpy.vsh":
+		'''
+		#version 150
+		
+		in vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 InSize;
+		
+		out vec2 texCoord;
+		out vec2 oneTexel;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    oneTexel = 1.0 / InSize;
+		    texCoord = outPos.xy * 0.5 + 0.5;
+		}
+		'''
+	Removed file "program/downscale.vsh":
+		'''
+		#version 150
+		
+		in vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 InSize;
+		uniform vec2 OutSize;
+		
+		out vec2 texCoord;
+		out vec2 oneTexel;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    oneTexel = 1.0 / InSize;
+		    texCoord = outPos.xy * 0.5 + 0.5;
+		}
+		'''
+	Removed file "program/flip.vsh":
+		'''
+		#version 150
+		
+		in vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 InSize;
+		uniform vec2 OutSize;
+		uniform vec2 ScreenSize;
+		
+		out vec2 texCoord;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    vec2 inOutRatio = OutSize / InSize;
+		    vec2 inScreenRatio = ScreenSize / InSize;
+		    texCoord = Position.xy / OutSize;
+		    texCoord.y = 1.0 - texCoord.y;
+		    texCoord.x = texCoord.x * inOutRatio.x;
+		    texCoord.y = texCoord.y * inOutRatio.y;
+		    texCoord.y -= 1.0 - inScreenRatio.y;
+		}
+		'''
+	Removed file "program/fxaa.vsh":
+		'''
+		#version 150
+		
+		in vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 OutSize;
+		
+		uniform float SubPixelShift;
+		
+		out vec2 texCoord;
+		out vec4 posPos;
+		
+		void main() {
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    texCoord = Position.xy / OutSize;
+		    posPos.xy = texCoord.xy;
+		    posPos.zw = texCoord.xy - (1.0/OutSize * vec2(0.5 + SubPixelShift));
+		}
+		'''

@@ -1,0 +1,435 @@
+Difference of "text_packs" between "25w18a" (snapshot of "1.21.6") and "25w19a" (snapshot of "1.21.6").
+
+Changed resource pack "minecraft":
+	Changed file "core/entity.fsh":
+		Total line: 32 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec4 vertexColor;
+		10 11   in vec4 lightMapColor;
+		11 12   in vec4 overlayColor;
+		12 13   in vec2 texCoord0;
+		13 14   
+		        ...
+		25 26       color.rgb = mix(overlayColor.rgb, color.rgb, overlayColor.a);
+		26 27   #endif
+		27 28   #ifndef EMISSIVE
+		28 29       color *= lightMapColor;
+		29 30   #endif
+		   31 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		30    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		31 32   }
+		        '''
+	Changed file "core/glint.fsh":
+		Total line: 22 (+3, -2)
+		        '''
+		        ...
+		 4  4   #moj_import <minecraft:globals.glsl>
+		 5  5   #moj_import <minecraft:dynamictransforms.glsl>
+		 6  6   
+		 7  7   uniform sampler2D Sampler0;
+		 8  8   
+		    9 + in float sphericalVertexDistance;
+		   10 + in float cylindricalVertexDistance;
+		 9    - in float vertexDistance;
+		10 11   in vec2 texCoord0;
+		11 12   
+		12 13   out vec4 fragColor;
+		13 14   
+		14 15   void main() {
+		15 16       vec4 color = texture(Sampler0, texCoord0) * ColorModulator;
+		16 17       if (color.a < 0.1) {
+		17 18           discard;
+		18 19       }
+		   20 +     float fade = (1.0f - total_fog_value(sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd)) * GlintAlpha;
+		19    -     float fade = linear_fog_fade(vertexDistance, FogStart, FogEnd) * GlintAlpha;
+		20 21       fragColor = vec4(color.rgb * fade, color.a);
+		21 22   }
+		        '''
+	Changed file "core/panorama.fsh":
+		Total line: 11 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform samplerCube Sampler0;
+		 3    - uniform sampler2D Sampler0;
+		 4  4   
+		    5 + in vec3 texCoord0;
+		 5    - in vec2 texCoord0;
+		 6  6   
+		 7  7   out vec4 fragColor;
+		 8  8   
+		 9  9   void main() {
+		10 10       fragColor = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/particle.fsh":
+		Total line: 21 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec2 texCoord0;
+		10 11   in vec4 vertexColor;
+		11 12   
+		12 13   out vec4 fragColor;
+		13 14   
+		14 15   void main() {
+		15 16       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		16 17       if (color.a < 0.1) {
+		17 18           discard;
+		18 19       }
+		   20 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		19    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		20 21   }
+		        '''
+	Changed file "core/position.fsh":
+		Total line: 13 (+3, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		    6 + in float sphericalVertexDistance;
+		    7 + in float cylindricalVertexDistance;
+		 6    - in float vertexDistance;
+		 7  8   
+		 8  9   out vec4 fragColor;
+		 9 10   
+		10 11   void main() {
+		   12 +     fragColor = apply_fog(ColorModulator, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		11    -     fragColor = linear_fog(ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
+		12 13   }
+		        '''
+	Changed file "core/rendertype_beacon_beam.fsh":
+		Total line: 19 (+1, -1)
+		        '''
+		        ...
+		13 13   
+		14 14   void main() {
+		15 15       vec4 color = texture(Sampler0, texCoord0);
+		16 16       color *= vertexColor * ColorModulator;
+		17 17       float fragmentDistance = -ProjMat[3].z / ((gl_FragCoord.z) * -2.0 + 1.0 - ProjMat[2].z);
+		   18 +     fragColor = apply_fog(color, fragmentDistance, fragmentDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		18    -     fragColor = linear_fog(color, fragmentDistance, FogStart, FogEnd, FogColor);
+		19 19   }
+		        '''
+	Changed file "core/rendertype_clouds.fsh":
+		Total line: 15 (+1, -1)
+		        '''
+		        ...
+		 8  8   
+		 9  9   out vec4 fragColor;
+		10 10   
+		11 11   void main() {
+		12 12       vec4 color = vertexColor;
+		   13 +     color.a *= 1.0f - linear_fog_value(vertexDistance, 0, FogCloudsEnd);
+		13    -     color.a *= linear_fog_fade(vertexDistance, 0, FogCloudsEnd);
+		14 14       fragColor = color;
+		15 15   }
+		        '''
+	Changed file "core/rendertype_end_portal.fsh":
+		Total line: 63 (+3, -2)
+		        '''
+		        ...
+		 6  6   
+		 7  7   uniform sampler2D Sampler0;
+		 8  8   uniform sampler2D Sampler1;
+		 9  9   
+		10 10   in vec4 texProj0;
+		   11 + in float sphericalVertexDistance;
+		   12 + in float cylindricalVertexDistance;
+		11    - in float vertexDistance;
+		12 13   
+		13 14   const vec3[] COLORS = vec3[](
+		14 15       vec3(0.022087, 0.098399, 0.110818),
+		15 16       vec3(0.011892, 0.095924, 0.089485),
+		16 17       vec3(0.027636, 0.101689, 0.100326),
+		        ...
+		56 57   void main() {
+		57 58       vec3 color = textureProj(Sampler0, texProj0).rgb * COLORS[0];
+		58 59       for (int i = 0; i < PORTAL_LAYERS; i++) {
+		59 60           color += textureProj(Sampler1, texProj0 * end_portal_layer(float(i + 1))).rgb * COLORS[i];
+		60 61       }
+		   62 +     fragColor = apply_fog(vec4(color, 1.0), sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		61    -     fragColor = linear_fog(vec4(color, 1.0), vertexDistance, FogStart, FogEnd, FogColor);
+		62 63   }
+		        '''
+	Changed file "core/rendertype_entity_decal.fsh":
+		Total line: 24 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec4 vertexColor;
+		10 11   in vec4 overlayColor;
+		11 12   in vec2 texCoord0;
+		12 13   
+		13 14   out vec4 fragColor;
+		        ...
+		17 18       if (color.a < 0.1) {
+		18 19           discard;
+		19 20       }
+		20 21       color.rgb = mix(overlayColor.rgb, color.rgb, overlayColor.a);
+		21 22       color *= vertexColor * ColorModulator;
+		   23 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		22    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		23 24   }
+		        '''
+	Changed file "core/rendertype_entity_shadow.fsh":
+		Total line: 19 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec4 vertexColor;
+		10 11   in vec2 texCoord0;
+		11 12   
+		12 13   out vec4 fragColor;
+		13 14   
+		14 15   void main() {
+		15 16       vec4 color = texture(Sampler0, clamp(texCoord0, 0.0, 1.0));
+		16 17       color *= vertexColor * ColorModulator;
+		   18 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		17    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		18 19   }
+		        '''
+	Changed file "core/rendertype_item_entity_translucent_cull.fsh":
+		Total line: 22 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec4 vertexColor;
+		10 11   in vec2 texCoord0;
+		11 12   in vec2 texCoord1;
+		12 13   
+		13 14   out vec4 fragColor;
+		        ...
+		15 16   void main() {
+		16 17       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		17 18       if (color.a < 0.1) {
+		18 19           discard;
+		19 20       }
+		   21 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		20    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		21 22   }
+		        '''
+	Changed file "core/rendertype_leash.fsh":
+		Total line: 14 (+3, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   
+		 5  5   
+		    6 + in float sphericalVertexDistance;
+		    7 + in float cylindricalVertexDistance;
+		 6    - in float vertexDistance;
+		 7  8   flat in vec4 vertexColor;
+		 8  9   
+		 9 10   out vec4 fragColor;
+		10 11   
+		11 12   void main() {
+		   13 +     fragColor = apply_fog(vertexColor, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		12    -     fragColor = linear_fog(vertexColor, vertexDistance, FogStart, FogEnd, FogColor);
+		13 14   }
+		        '''
+	Changed file "core/rendertype_lightning.fsh":
+		Total line: 14 (+3, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		    6 + in float sphericalVertexDistance;
+		    7 + in float cylindricalVertexDistance;
+		 6    - in float vertexDistance;
+		 7  8   in vec4 vertexColor;
+		 8  9   
+		 9 10   out vec4 fragColor;
+		10 11   
+		11 12   void main() {
+		   13 +     fragColor = vertexColor * ColorModulator * (1.0f - total_fog_value(sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd));
+		12    -     fragColor = vertexColor * ColorModulator * linear_fog_fade(vertexDistance, FogStart, FogEnd);
+		13 14   }
+		        '''
+	Changed file "core/rendertype_lines.fsh":
+		Total line: 15 (+3, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		    6 + in float sphericalVertexDistance;
+		    7 + in float cylindricalVertexDistance;
+		 6    - in float vertexDistance;
+		 7  8   in vec4 vertexColor;
+		 8  9   
+		 9 10   out vec4 fragColor;
+		10 11   
+		11 12   void main() {
+		12 13       vec4 color = vertexColor * ColorModulator;
+		   14 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		13    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		14 15   }
+		        '''
+	Changed file "core/rendertype_text.fsh":
+		Total line: 21 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec4 vertexColor;
+		10 11   in vec2 texCoord0;
+		11 12   
+		12 13   out vec4 fragColor;
+		13 14   
+		14 15   void main() {
+		15 16       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		16 17       if (color.a < 0.1) {
+		17 18           discard;
+		18 19       }
+		   20 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		19    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		20 21   }
+		        '''
+	Changed file "core/rendertype_text_background.fsh":
+		Total line: 21 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec4 vertexColor;
+		10 11   in vec2 texCoord0;
+		11 12   
+		12 13   out vec4 fragColor;
+		13 14   
+		14 15   void main() {
+		15 16       vec4 color = vertexColor * ColorModulator;
+		16 17       if (color.a < 0.1) {
+		17 18           discard;
+		18 19       }
+		   20 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		19    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		20 21   }
+		        '''
+	Changed file "core/rendertype_text_intensity.fsh":
+		Total line: 21 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec4 vertexColor;
+		10 11   in vec2 texCoord0;
+		11 12   
+		12 13   out vec4 fragColor;
+		13 14   
+		14 15   void main() {
+		15 16       vec4 color = texture(Sampler0, texCoord0).rrrr * vertexColor * ColorModulator;
+		16 17       if (color.a < 0.1) {
+		17 18           discard;
+		18 19       }
+		   20 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		19    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		20 21   }
+		        '''
+	Changed file "core/sky.fsh":
+		Total line: 13 (+3, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		    6 + in float sphericalVertexDistance;
+		    7 + in float cylindricalVertexDistance;
+		 6    - in float vertexDistance;
+		 7  8   
+		 8  9   out vec4 fragColor;
+		 9 10   
+		10 11   void main() {
+		   12 +     fragColor = apply_fog(ColorModulator, sphericalVertexDistance, cylindricalVertexDistance, 0.0, FogSkyEnd, FogSkyEnd, FogSkyEnd, FogColor);
+		11    -     fragColor = linear_fog(ColorModulator, vertexDistance, 0.0, FogSkyEnd, FogColor);
+		12 13   }
+		        '''
+	Changed file "core/terrain.fsh":
+		Total line: 23 (+3, -2)
+		        '''
+		        ...
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:dynamictransforms.glsl>
+		 5  5   
+		 6  6   uniform sampler2D Sampler0;
+		 7  7   
+		    8 + in float sphericalVertexDistance;
+		    9 + in float cylindricalVertexDistance;
+		 8    - in float vertexDistance;
+		 9 10   in vec4 vertexColor;
+		10 11   in vec2 texCoord0;
+		11 12   
+		12 13   out vec4 fragColor;
+		13 14   
+		        ...
+		16 17   #ifdef ALPHA_CUTOUT
+		17 18       if (color.a < ALPHA_CUTOUT) {
+		18 19           discard;
+		19 20       }
+		20 21   #endif
+		   22 +     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+		21    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		22 23   }
+		        '''

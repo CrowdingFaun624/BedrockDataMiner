@@ -1,0 +1,31 @@
+Difference of "text_packs" between "24w07a" (snapshot of "1.20.5") and "24w09a" (snapshot of "1.20.5").
+
+Changed resource pack "minecraft":
+	Changed file "program/blur.fsh":
+		Total line: 34 (+2, -1)
+		        '''
+		        ...
+		 7  7   
+		 8  8   uniform vec2 InSize;
+		 9  9   
+		10 10   uniform vec2 BlurDir;
+		11 11   uniform float Radius;
+		   12 + uniform float Alpha;
+		12 13   
+		13 14   out vec4 fragColor;
+		14 15   
+		15 16   void main() {
+		16 17       vec4 blurred = vec4(0.0);
+		17 18       float totalStrength = 0.0;
+		18 19       float totalAlpha = 0.0;
+		19 20       float totalSamples = 0.0;
+		20 21       for(float r = -Radius; r <= Radius; r += 1.0) {
+		   22 +         vec4 sampleValue = texture(DiffuseSampler, texCoord + oneTexel * r * Alpha * BlurDir);
+		21    -         vec4 sampleValue = texture(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+		22 23   
+		23 24   		// Accumulate average alpha
+		24 25           totalAlpha = totalAlpha + sampleValue.a;
+		25 26           totalSamples = totalSamples + 1.0;
+		26 27   
+		        ...
+		        '''

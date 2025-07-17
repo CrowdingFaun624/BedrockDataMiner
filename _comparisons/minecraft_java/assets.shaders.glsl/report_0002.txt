@@ -1,0 +1,19 @@
+Difference of "text_packs" between "1.18" and "1.18.1-pre1" (pre-release of "1.18.1").
+
+Changed resource pack "minecraft":
+	Changed file "include/fog.glsl":
+		Total line: 26 (+6, -0)
+		        '''
+		        ...
+		16 16           return 0.0;
+		17 17       }
+		18 18   
+		19 19       return smoothstep(fogEnd, fogStart, vertexDistance);
+		20 20   }
+		   21 + 
+		   22 + float cylindrical_distance(mat4 modelViewMat, vec3 pos) {
+		   23 +     float distXZ = length((modelViewMat * vec4(pos.x, 0.0, pos.z, 1.0)).xyz);
+		   24 +     float distY = length((modelViewMat * vec4(0.0, pos.y, 0.0, 1.0)).xyz);
+		   25 +     return max(distXZ, distY);
+		   26 + }
+		        '''

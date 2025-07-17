@@ -1,0 +1,51 @@
+Difference of "text_packs" between "25w16a" (snapshot of "1.21.6") and "25w17a" (snapshot of "1.21.6").
+
+Changed resource pack "minecraft":
+	Total file: 46 (+2, -0)
+	Changed file "core/position.fsh":
+		Total line: 12 (+0, -7)
+		        '''
+		        ...
+		 6  6   in float vertexDistance;
+		 7  7   
+		 8  8   out vec4 fragColor;
+		 9  9   
+		10 10   void main() {
+		11    - #ifdef FOG_IS_SKY
+		12    -     float fogStart = 0.0;
+		13    -     float fogEnd = FogSkyEnd;
+		14    - #else
+		15    -     float fogStart = FogStart;
+		16    -     float fogEnd = FogEnd;
+		17    - #endif
+		   11 +     fragColor = linear_fog(ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
+		18    -     fragColor = linear_fog(ColorModulator, vertexDistance, fogStart, fogEnd, FogColor);
+		19 12   }
+		        '''
+	Added file "core/sky.fsh":
+		'''
+		#version 150
+		
+		#moj_import <minecraft:fog.glsl>
+		#moj_import <minecraft:dynamictransforms.glsl>
+		
+		in float vertexDistance;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    fragColor = linear_fog(ColorModulator, vertexDistance, 0.0, FogSkyEnd, FogColor);
+		}
+		'''
+	Added file "core/stars.fsh":
+		'''
+		#version 150
+		
+		#moj_import <minecraft:dynamictransforms.glsl>
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    fragColor = ColorModulator;
+		}
+		'''

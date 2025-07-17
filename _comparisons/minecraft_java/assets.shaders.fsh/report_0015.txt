@@ -1,0 +1,212 @@
+Difference of "text_packs" between "21w11a" (snapshot of "1.17") and "21w13a" (snapshot of "1.17").
+
+Changed resource pack "minecraft":
+	Changed file "core/rendertype_beacon_beam.fsh":
+		Total line: 22 (+8, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <fog.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - uniform sampler2D Sampler2;
+		 5  6   
+		 6  7   uniform vec4 ColorModulator;
+		    8 + uniform float FogStart;
+		    9 + uniform float FogEnd;
+		   10 + uniform vec4 FogColor;
+		 7 11   
+		   12 + in float vertexDistance;
+		 8 13   in vec4 vertexColor;
+		 9 14   in vec2 texCoord0;
+		10    - in vec2 texCoord2;
+		11    - in vec4 normal;
+		12 15   
+		13 16   out vec4 fragColor;
+		14 17   
+		15 18   void main() {
+		   19 +     vec4 color = texture(Sampler0, texCoord0);
+		   20 +     color *= vertexColor * ColorModulator;
+		16    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		   21 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		17    -     fragColor = color * ColorModulator;
+		18 22   }
+		        '''
+	Changed file "core/rendertype_energy_swirl.fsh":
+		Total line: 23 (+7, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <fog.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - uniform sampler2D Sampler1;
+		 5    - uniform sampler2D Sampler2;
+		 6  6   
+		 7  7   uniform vec4 ColorModulator;
+		    8 + uniform float FogStart;
+		    9 + uniform float FogEnd;
+		 8 10   
+		   11 + in float vertexDistance;
+		 9 12   in vec4 vertexColor;
+		10 13   in vec2 texCoord0;
+		11    - in vec4 normal;
+		12 14   
+		13 15   out vec4 fragColor;
+		14 16   
+		15 17   void main() {
+		   18 +     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		16    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		17 19       if (color.a < 0.1) {
+		18 20           discard;
+		19 21       }
+		   22 +     fragColor = color * linear_fog_fade(vertexDistance, FogStart, FogEnd);
+		20    -     fragColor = color * ColorModulator;
+		21 23   }
+		        '''
+	Changed file "core/rendertype_entity_solid.fsh":
+		Total line: 26 (+4, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <fog.glsl>
+		 4  4   
+		 5  5   uniform sampler2D Sampler0;
+		 6    - uniform sampler2D Sampler1;
+		 7  6   
+		 8  7   uniform vec4 ColorModulator;
+		 9  8   uniform float FogStart;
+		10  9   uniform float FogEnd;
+		11 10   uniform vec4 FogColor;
+		12 11   
+		13 12   in float vertexDistance;
+		14 13   in vec4 vertexColor;
+		   14 + in vec4 lightMapColor;
+		   15 + in vec4 overlayColor;
+		15 16   in vec2 texCoord0;
+		16    - in vec2 texCoord1;
+		17 17   in vec4 normal;
+		18 18   
+		19 19   out vec4 fragColor;
+		20 20   
+		21 21   void main() {
+		22 22       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		   23 +     color.rgb = mix(overlayColor.rgb, color.rgb, overlayColor.a);
+		   24 +     color *= lightMapColor;
+		23 25       fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		24 26   }
+		        '''
+	Changed file "core/rendertype_eyes.fsh":
+		Total line: 20 (+6, -6)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <fog.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - uniform sampler2D Sampler1;
+		 5    - uniform sampler2D Sampler2;
+		 6  6   
+		 7  7   uniform vec4 ColorModulator;
+		    8 + uniform float FogStart;
+		    9 + uniform float FogEnd;
+		 8 10   
+		   11 + in float vertexDistance;
+		 9 12   in vec4 vertexColor;
+		10 13   in vec2 texCoord0;
+		11    - in vec2 texCoord1;
+		12    - in vec2 texCoord2;
+		13    - in vec4 normal;
+		14 14   
+		15 15   out vec4 fragColor;
+		16 16   
+		17 17   void main() {
+		18 18       vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		   19 +     fragColor = color * ColorModulator * linear_fog_fade(vertexDistance, FogStart, FogEnd);
+		19    -     fragColor = color * ColorModulator;
+		20 20   }
+		        '''
+	Changed file "core/rendertype_item_entity_translucent_cull.fsh":
+		Total line: 27 (+0, -2)
+		        '''
+		        ...
+		 2  2   
+		 3  3   #moj_import <fog.glsl>
+		 4  4   
+		 5  5   uniform sampler2D Sampler0;
+		 6  6   uniform sampler2D Sampler1;
+		 7    - uniform sampler2D Sampler2;
+		 8  7   
+		 9  8   uniform vec4 ColorModulator;
+		10  9   uniform float FogStart;
+		11 10   uniform float FogEnd;
+		12 11   uniform vec4 FogColor;
+		13 12   
+		14 13   in float vertexDistance;
+		15 14   in vec4 vertexColor;
+		16 15   in vec2 texCoord0;
+		17 16   in vec2 texCoord1;
+		18    - in vec2 texCoord2;
+		19 17   in vec4 normal;
+		20 18   
+		21 19   out vec4 fragColor;
+		22 20   
+		23 21   void main() {
+		        ...
+		        '''
+	Changed file "core/rendertype_lightning.fsh":
+		Total line: 16 (+8, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <fog.glsl>
+		    4 + 
+		    5 + uniform vec4 ColorModulator;
+		    6 + uniform float FogStart;
+		    7 + uniform float FogEnd;
+		    8 + 
+		    9 + in float vertexDistance;
+		 3 10   in vec4 vertexColor;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6 11   
+		 7 12   out vec4 fragColor;
+		 8 13   
+		 9 14   void main() {
+		   15 +     fragColor = vertexColor * ColorModulator * linear_fog_fade(vertexDistance, FogStart, FogEnd);
+		10    -     fragColor = vertexColor * ColorModulator;
+		11 16   }
+		        '''
+	Changed file "core/rendertype_tripwire.fsh":
+		Total line: 25 (+8, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <fog.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - uniform sampler2D Sampler2;
+		 5  6   
+		 6  7   uniform vec4 ColorModulator;
+		    8 + uniform float FogStart;
+		    9 + uniform float FogEnd;
+		   10 + uniform vec4 FogColor;
+		 7 11   
+		   12 + in float vertexDistance;
+		 8 13   in vec4 vertexColor;
+		 9 14   in vec2 texCoord0;
+		10    - in vec2 texCoord2;
+		11 15   in vec4 normal;
+		12 16   
+		13 17   out vec4 fragColor;
+		14 18   
+		15 19   void main() {
+		   20 +     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		16    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		17 21       if (color.a < 0.1) {
+		18 22           discard;
+		19 23       }
+		   24 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		20    -     fragColor = color * ColorModulator;
+		21 25   }
+		        '''

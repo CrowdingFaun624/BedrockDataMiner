@@ -1,0 +1,451 @@
+Difference of "text_packs" between "21w10a" (snapshot of "1.17") and "21w11a" (snapshot of "1.17").
+
+Changed resource pack "minecraft":
+	Changed file "core/rendertype_cutout.vsh":
+		Total line: 29 (+3, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <light.glsl>
+		    4 + 
+		 3  5   in vec3 Position;
+		 4  6   in vec4 Color;
+		 5  7   in vec2 UV0;
+		 6  8   in ivec2 UV2;
+		 7  9   in vec3 Normal;
+		        ...
+		19 21   
+		20 22   void main() {
+		21 23       gl_Position = ProjMat * ModelViewMat * vec4(Position + ChunkOffset, 1.0);
+		22 24   
+		23 25       vertexDistance = length((ModelViewMat * vec4(Position + ChunkOffset, 1.0)).xyz);
+		   26 +     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		24    -     vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		25 27       texCoord0 = UV0;
+		26 28       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 29   }
+		        '''
+	Changed file "core/rendertype_cutout_mipped.vsh":
+		Total line: 29 (+3, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <light.glsl>
+		    4 + 
+		 3  5   in vec3 Position;
+		 4  6   in vec4 Color;
+		 5  7   in vec2 UV0;
+		 6  8   in ivec2 UV2;
+		 7  9   in vec3 Normal;
+		        ...
+		19 21   
+		20 22   void main() {
+		21 23       gl_Position = ProjMat * ModelViewMat * vec4(Position + ChunkOffset, 1.0);
+		22 24   
+		23 25       vertexDistance = length((ModelViewMat * vec4(Position + ChunkOffset, 1.0)).xyz);
+		   26 +     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		24    -     vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		25 27       texCoord0 = UV0;
+		26 28       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 29   }
+		        '''
+	Changed file "core/rendertype_entity_cutout.vsh":
+		Total line: 37 (+3, -1)
+		        '''
+		        ...
+		18 18   uniform vec3 Light0_Direction;
+		19 19   uniform vec3 Light1_Direction;
+		20 20   
+		21 21   out float vertexDistance;
+		22 22   out vec4 vertexColor;
+		   23 + out vec4 lightMapColor;
+		23 24   out vec4 overlayColor;
+		24 25   out vec2 texCoord0;
+		25 26   out vec4 normal;
+		26 27   
+		27 28   void main() {
+		28 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		29 30   
+		30 31       vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   32 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		   33 +     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		31    -     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		32 34       overlayColor = texelFetch(Sampler1, UV1, 0);
+		33 35       texCoord0 = UV0;
+		34 36       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		35 37   }
+		        '''
+	Changed file "core/rendertype_entity_cutout_no_cull.vsh":
+		Total line: 37 (+3, -1)
+		        '''
+		        ...
+		18 18   uniform vec3 Light0_Direction;
+		19 19   uniform vec3 Light1_Direction;
+		20 20   
+		21 21   out float vertexDistance;
+		22 22   out vec4 vertexColor;
+		   23 + out vec4 lightMapColor;
+		23 24   out vec4 overlayColor;
+		24 25   out vec2 texCoord0;
+		25 26   out vec4 normal;
+		26 27   
+		27 28   void main() {
+		28 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		29 30   
+		30 31       vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   32 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		   33 +     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		31    -     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		32 34       overlayColor = texelFetch(Sampler1, UV1, 0);
+		33 35       texCoord0 = UV0;
+		34 36       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		35 37   }
+		        '''
+	Changed file "core/rendertype_entity_cutout_no_cull_z_offset.vsh":
+		Total line: 37 (+8, -3)
+		        '''
+		        ...
+		 3  3   #moj_import <light.glsl>
+		 4  4   
+		 5  5   in vec3 Position;
+		 6  6   in vec4 Color;
+		 7  7   in vec2 UV0;
+		    8 + in ivec2 UV1;
+		 8    - in vec2 UV1;
+		 9  9   in ivec2 UV2;
+		10 10   in vec3 Normal;
+		11 11   
+		   12 + uniform sampler2D Sampler1;
+		12 13   uniform sampler2D Sampler2;
+		13 14   
+		14 15   uniform mat4 ModelViewMat;
+		15 16   uniform mat4 ProjMat;
+		16 17   
+		17 18   uniform vec3 Light0_Direction;
+		18 19   uniform vec3 Light1_Direction;
+		19 20   
+		   21 + out float vertexDistance;
+		20 22   out vec4 vertexColor;
+		   23 + out vec4 lightMapColor;
+		   24 + out vec4 overlayColor;
+		21 25   out vec2 texCoord0;
+		22    - out vec2 texCoord1;
+		23 26   out vec4 normal;
+		24 27   
+		25 28   void main() {
+		26 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		27 30   
+		   31 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   32 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		   33 +     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		   34 +     overlayColor = texelFetch(Sampler1, UV1, 0);
+		28    -     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		29 35       texCoord0 = UV0;
+		30    -     texCoord1 = UV1;
+		31 36       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		32 37   }
+		        '''
+	Changed file "core/rendertype_entity_decal.vsh":
+		Total line: 35 (+15, -7)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <light.glsl>
+		    4 + 
+		 3  5   in vec3 Position;
+		 4  6   in vec4 Color;
+		 5  7   in vec2 UV0;
+		    8 + in ivec2 UV1;
+		    9 + in ivec2 UV2;
+		 6    - in vec2 UV1;
+		 7    - in vec2 UV2;
+		 8 10   in vec3 Normal;
+		   11 + 
+		   12 + uniform sampler2D Sampler1;
+		   13 + uniform sampler2D Sampler2;
+		 9 14   
+		10 15   uniform mat4 ModelViewMat;
+		11 16   uniform mat4 ProjMat;
+		   17 + 
+		   18 + uniform vec3 Light0_Direction;
+		   19 + uniform vec3 Light1_Direction;
+		12 20   
+		   21 + out float vertexDistance;
+		13 22   out vec4 vertexColor;
+		   23 + out vec4 overlayColor;
+		14 24   out vec2 texCoord0;
+		15    - out vec2 texCoord1;
+		16    - out vec2 texCoord2;
+		17 25   out vec4 normal;
+		18 26   
+		19 27   void main() {
+		20 28       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		21 29   
+		   30 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   31 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		   32 +     overlayColor = texelFetch(Sampler1, UV1, 0);
+		22    -     vertexColor = Color;
+		23 33       texCoord0 = UV0;
+		24    -     texCoord1 = UV1;
+		25    -     texCoord2 = UV2;
+		26 34       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 35   }
+		        '''
+	Changed file "core/rendertype_entity_no_outline.vsh":
+		Total line: 31 (+11, -7)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <light.glsl>
+		    4 + 
+		 3  5   in vec3 Position;
+		 4  6   in vec4 Color;
+		 5  7   in vec2 UV0;
+		    8 + in ivec2 UV2;
+		 6    - in vec2 UV1;
+		 7    - in vec2 UV2;
+		 8  9   in vec3 Normal;
+		   10 + 
+		   11 + uniform sampler2D Sampler2;
+		 9 12   
+		10 13   uniform mat4 ModelViewMat;
+		11 14   uniform mat4 ProjMat;
+		   15 + 
+		   16 + uniform vec3 Light0_Direction;
+		   17 + uniform vec3 Light1_Direction;
+		12 18   
+		   19 + out float vertexDistance;
+		13 20   out vec4 vertexColor;
+		14 21   out vec2 texCoord0;
+		15    - out vec2 texCoord1;
+		16    - out vec2 texCoord2;
+		17 22   out vec4 normal;
+		18 23   
+		19 24   void main() {
+		20 25       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		21 26   
+		   27 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   28 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		22    -     vertexColor = Color;
+		23 29       texCoord0 = UV0;
+		24    -     texCoord1 = UV1;
+		25    -     texCoord2 = UV2;
+		26 30       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 31   }
+		        '''
+	Changed file "core/rendertype_entity_shadow.vsh":
+		Total line: 20 (+2, -9)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4  4   in vec4 Color;
+		 5  5   in vec2 UV0;
+		 6    - in vec2 UV1;
+		 7    - in vec2 UV2;
+		 8    - in vec3 Normal;
+		 9  6   
+		10  7   uniform mat4 ModelViewMat;
+		11  8   uniform mat4 ProjMat;
+		12  9   
+		   10 + out float vertexDistance;
+		13 11   out vec4 vertexColor;
+		14 12   out vec2 texCoord0;
+		15    - out vec2 texCoord1;
+		16    - out vec2 texCoord2;
+		17    - out vec4 normal;
+		18 13   
+		19 14   void main() {
+		20 15       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		21 16   
+		   17 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		22 18       vertexColor = Color;
+		23 19       texCoord0 = UV0;
+		24    -     texCoord1 = UV1;
+		25    -     texCoord2 = UV2;
+		26    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 20   }
+		        '''
+	Changed file "core/rendertype_entity_smooth_cutout.vsh":
+		Total line: 37 (+3, -1)
+		        '''
+		        ...
+		18 18   uniform vec3 Light0_Direction;
+		19 19   uniform vec3 Light1_Direction;
+		20 20   
+		21 21   out float vertexDistance;
+		22 22   out vec4 vertexColor;
+		   23 + out vec4 lightMapColor;
+		23 24   out vec4 overlayColor;
+		24 25   out vec2 texCoord0;
+		25 26   out vec4 normal;
+		26 27   
+		27 28   void main() {
+		28 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		29 30   
+		30 31       vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   32 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		   33 +     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		31    -     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		32 34       overlayColor = texelFetch(Sampler1, UV1, 0);
+		33 35       texCoord0 = UV0;
+		34 36       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		35 37   }
+		        '''
+	Changed file "core/rendertype_entity_translucent.vsh":
+		Total line: 37 (+3, -1)
+		        '''
+		        ...
+		18 18   uniform vec3 Light0_Direction;
+		19 19   uniform vec3 Light1_Direction;
+		20 20   
+		21 21   out float vertexDistance;
+		22 22   out vec4 vertexColor;
+		   23 + out vec4 lightMapColor;
+		23 24   out vec4 overlayColor;
+		24 25   out vec2 texCoord0;
+		25 26   out vec4 normal;
+		26 27   
+		27 28   void main() {
+		28 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		29 30   
+		30 31       vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   32 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		   33 +     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		31    -     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		32 34       overlayColor = texelFetch(Sampler1, UV1, 0);
+		33 35       texCoord0 = UV0;
+		34 36       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		35 37   }
+		        '''
+	Changed file "core/rendertype_leash.vsh":
+		Total line: 21 (+2, -0)
+		        '''
+		        ...
+		 8  8   
+		 9  9   uniform mat4 ModelViewMat;
+		10 10   uniform mat4 ProjMat;
+		11 11   uniform vec4 ColorModulator;
+		12 12   
+		   13 + out float vertexDistance;
+		13 14   flat out vec4 vertexColor;
+		14 15   
+		15 16   void main() {
+		16 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		17 18   
+		   19 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		18 20       vertexColor = Color * ColorModulator * texelFetch(Sampler2, UV2 / 16, 0);
+		19 21   }
+		        '''
+	Changed file "core/rendertype_lines.vsh":
+		Total line: 33 (+2, -0)
+		        '''
+		        ...
+		 7  7   uniform mat4 ModelViewMat;
+		 8  8   uniform mat4 ProjMat;
+		 9  9   uniform float LineWidth;
+		10 10   uniform vec2 ScreenSize;
+		11 11   
+		   12 + out float vertexDistance;
+		12 13   out vec4 vertexColor;
+		13 14   
+		14 15   void main() {
+		15 16       vec4 linePosStart = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		16 17       vec4 linePosEnd = ProjMat * ModelViewMat * vec4(Position + Normal, 1.0);
+		        ...
+		25 26           gl_Position = vec4((ndc1 + vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		26 27       } else {
+		27 28           gl_Position = vec4((ndc1 - vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		28 29       }
+		29 30   
+		   31 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		30 32       vertexColor = Color;
+		31 33   }
+		        '''
+	Changed file "core/rendertype_solid.vsh":
+		Total line: 29 (+3, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <light.glsl>
+		    4 + 
+		 3  5   in vec3 Position;
+		 4  6   in vec4 Color;
+		 5  7   in vec2 UV0;
+		 6  8   in ivec2 UV2;
+		 7  9   in vec3 Normal;
+		        ...
+		19 21   
+		20 22   void main() {
+		21 23       gl_Position = ProjMat * ModelViewMat * vec4(Position + ChunkOffset, 1.0);
+		22 24   
+		23 25       vertexDistance = length((ModelViewMat * vec4(Position + ChunkOffset, 1.0)).xyz);
+		   26 +     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		24    -     vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		25 27       texCoord0 = UV0;
+		26 28       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 29   }
+		        '''
+	Changed file "core/rendertype_translucent.vsh":
+		Total line: 29 (+3, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <light.glsl>
+		    4 + 
+		 3  5   in vec3 Position;
+		 4  6   in vec4 Color;
+		 5  7   in vec2 UV0;
+		 6  8   in ivec2 UV2;
+		 7  9   in vec3 Normal;
+		        ...
+		13 15   uniform vec3 ChunkOffset;
+		14 16   
+		15 17   out float vertexDistance;
+		16 18   out vec4 vertexColor;
+		17 19   out vec2 texCoord0;
+		18    - out vec2 texCoord2;
+		19 20   out vec4 normal;
+		20 21   
+		21 22   void main() {
+		22 23       gl_Position = ProjMat * ModelViewMat * vec4(Position + ChunkOffset, 1.0);
+		23 24   
+		24 25       vertexDistance = length((ModelViewMat * vec4(Position + ChunkOffset, 1.0)).xyz);
+		   26 +     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		25    -     vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		26 27       texCoord0 = UV0;
+		27 28       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		28 29   }
+		        '''
+	Changed file "core/rendertype_translucent_moving_block.vsh":
+		Total line: 24 (+4, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4  4   in vec4 Color;
+		 5  5   in vec2 UV0;
+		    6 + in ivec2 UV2;
+		 6    - in vec2 UV2;
+		 7  7   in vec3 Normal;
+		    8 + 
+		    9 + uniform sampler2D Sampler2;
+		 8 10   
+		 9 11   uniform mat4 ModelViewMat;
+		10 12   uniform mat4 ProjMat;
+		11 13   
+		12 14   out vec4 vertexColor;
+		13 15   out vec2 texCoord0;
+		14    - out vec2 texCoord2;
+		15 16   out vec4 normal;
+		16 17   
+		17 18   void main() {
+		18 19       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 20   
+		   21 +     vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		20    -     vertexColor = Color;
+		21 22       texCoord0 = UV0;
+		22    -     texCoord2 = UV2;
+		23 23       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		24 24   }
+		        '''

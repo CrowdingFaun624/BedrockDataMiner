@@ -1,0 +1,270 @@
+Difference of "text_packs" between "21w11a" (snapshot of "1.17") and "21w13a" (snapshot of "1.17").
+
+Changed resource pack "minecraft":
+	Changed file "core/rendertype_beacon_beam.vsh":
+		Total line: 20 (+2, -6)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4  4   in vec4 Color;
+		 5  5   in vec2 UV0;
+		 6    - in vec2 UV2;
+		 7    - in vec3 Normal;
+		 8  6   
+		 9  7   uniform mat4 ModelViewMat;
+		10  8   uniform mat4 ProjMat;
+		11  9   
+		   10 + out float vertexDistance;
+		12 11   out vec4 vertexColor;
+		13 12   out vec2 texCoord0;
+		14    - out vec2 texCoord2;
+		15    - out vec4 normal;
+		16 13   
+		17 14   void main() {
+		18 15       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 16   
+		   17 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		20 18       vertexColor = Color;
+		21 19       texCoord0 = UV0;
+		22    -     texCoord2 = UV2;
+		23    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		24 20   }
+		        '''
+	Changed file "core/rendertype_energy_swirl.vsh":
+		Total line: 21 (+2, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4  4   in vec4 Color;
+		 5  5   in vec2 UV0;
+		 6    - in vec2 UV1;
+		 7    - in vec2 UV2;
+		 8    - in vec3 Normal;
+		 9  6   
+		10  7   uniform mat4 ModelViewMat;
+		11  8   uniform mat4 ProjMat;
+		12  9   uniform mat4 TextureMat;
+		13 10   
+		   11 + out float vertexDistance;
+		14 12   out vec4 vertexColor;
+		15 13   out vec2 texCoord0;
+		16    - out vec4 normal;
+		17 14   
+		18 15   void main() {
+		19 16       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		20 17   
+		   18 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		21 19       vertexColor = Color;
+		22 20       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		23    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		24 21   }
+		        '''
+	Changed file "core/rendertype_entity_solid.vsh":
+		Total line: 37 (+7, -4)
+		        '''
+		        ...
+		 3  3   #moj_import <light.glsl>
+		 4  4   
+		 5  5   in vec3 Position;
+		 6  6   in vec4 Color;
+		 7  7   in vec2 UV0;
+		    8 + in ivec2 UV1;
+		 8    - in vec2 UV1;
+		 9  9   in ivec2 UV2;
+		10 10   in vec3 Normal;
+		11 11   
+		   12 + uniform sampler2D Sampler1;
+		12 13   uniform sampler2D Sampler2;
+		13 14   
+		14 15   uniform mat4 ModelViewMat;
+		15 16   uniform mat4 ProjMat;
+		16 17   
+		17 18   uniform vec3 Light0_Direction;
+		18 19   uniform vec3 Light1_Direction;
+		19 20   
+		20 21   out float vertexDistance;
+		21 22   out vec4 vertexColor;
+		   23 + out vec4 lightMapColor;
+		   24 + out vec4 overlayColor;
+		22 25   out vec2 texCoord0;
+		23    - out vec2 texCoord1;
+		24 26   out vec4 normal;
+		25 27   
+		26 28   void main() {
+		27 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		28 30   
+		29 31       vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   32 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		   33 +     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		   34 +     overlayColor = texelFetch(Sampler1, UV1, 0);
+		30    -     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		31 35       texCoord0 = UV0;
+		32    -     texCoord1 = UV1;
+		33 36       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		34 37   }
+		        '''
+	Changed file "core/rendertype_eyes.vsh":
+		Total line: 20 (+2, -9)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4  4   in vec4 Color;
+		 5  5   in vec2 UV0;
+		 6    - in vec2 UV1;
+		 7    - in vec2 UV2;
+		 8    - in vec3 Normal;
+		 9  6   
+		10  7   uniform mat4 ModelViewMat;
+		11  8   uniform mat4 ProjMat;
+		12  9   
+		   10 + out float vertexDistance;
+		13 11   out vec4 vertexColor;
+		14 12   out vec2 texCoord0;
+		15    - out vec2 texCoord1;
+		16    - out vec2 texCoord2;
+		17    - out vec4 normal;
+		18 13   
+		19 14   void main() {
+		20 15       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		21 16   
+		   17 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		22 18       vertexColor = Color;
+		23 19       texCoord0 = UV0;
+		24    -     texCoord1 = UV1;
+		25    -     texCoord2 = UV2;
+		26    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 20   }
+		        '''
+	Changed file "core/rendertype_item_entity_translucent_cull.vsh":
+		Total line: 36 (+4, -2)
+		        '''
+		        ...
+		 4  4   
+		 5  5   in vec3 Position;
+		 6  6   in vec4 Color;
+		 7  7   in vec2 UV0;
+		 8  8   in vec2 UV1;
+		    9 + in ivec2 UV2;
+		 9    - in vec2 UV2;
+		10 10   in vec3 Normal;
+		   11 + 
+		   12 + uniform sampler2D Sampler2;
+		11 13   
+		12 14   uniform mat4 ModelViewMat;
+		13 15   uniform mat4 ProjMat;
+		14 16   
+		15 17   uniform vec3 Light0_Direction;
+		        ...
+		24 26   
+		25 27   void main() {
+		26 28       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		27 29   
+		28 30       vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   31 +     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		29    -     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		30 32       texCoord0 = UV0;
+		31 33       texCoord1 = UV1;
+		32 34       texCoord2 = UV2;
+		33 35       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		34 36   }
+		        '''
+	Changed file "core/rendertype_lightning.vsh":
+		Total line: 17 (+2, -0)
+		        '''
+		        ...
+		 4  4   in vec4 Color;
+		 5  5   
+		 6  6   uniform mat4 ModelViewMat;
+		 7  7   uniform mat4 ProjMat;
+		 8  8   
+		    9 + out float vertexDistance;
+		 9 10   out vec4 vertexColor;
+		10 11   
+		11 12   void main() {
+		12 13       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		13 14   
+		   15 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		14 16       vertexColor = Color;
+		15 17   }
+		        '''
+	Changed file "core/rendertype_lines.vsh":
+		Total line: 45 (+16, -4)
+		        '''
+		        ...
+		10 10   uniform vec2 ScreenSize;
+		11 11   
+		12 12   out float vertexDistance;
+		13 13   out vec4 vertexColor;
+		14 14   
+		   15 + const float VIEW_SHRINK = 1.0 - (1.0 / 256.0);
+		   16 + const mat4 VIEW_SCALE = mat4(
+		   17 +     VIEW_SHRINK, 0.0, 0.0, 0.0,
+		   18 +     0.0, VIEW_SHRINK, 0.0, 0.0,
+		   19 +     0.0, 0.0, VIEW_SHRINK, 0.0,
+		   20 +     0.0, 0.0, 0.0, 1.0
+		   21 + );
+		   22 + 
+		15 23   void main() {
+		   24 +     vec4 linePosStart = ProjMat * VIEW_SCALE * ModelViewMat * vec4(Position, 1.0);
+		   25 +     vec4 linePosEnd = ProjMat * VIEW_SCALE * ModelViewMat * vec4(Position + Normal, 1.0);
+		16    -     vec4 linePosStart = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		17    -     vec4 linePosEnd = ProjMat * ModelViewMat * vec4(Position + Normal, 1.0);
+		18 26   
+		19 27       vec3 ndc1 = linePosStart.xyz / linePosStart.w;
+		20 28       vec3 ndc2 = linePosEnd.xyz / linePosEnd.w;
+		   29 + 
+		   30 +     vec2 lineScreenDirection = normalize((ndc2.xy - ndc1.xy) * ScreenSize);
+		   31 +     vec2 lineOffset = vec2(-lineScreenDirection.y, lineScreenDirection.x) * LineWidth / ScreenSize;
+		21 32   
+		   33 +     if (lineOffset.x < 0.0) {
+		   34 +         lineOffset *= -1.0;
+		   35 +     }
+		22    -     vec2 lineScreenDirection = normalize((ndc2.xy - ndc1.xy) * ScreenSize);
+		23    -     vec2 lineOffset = vec2(-lineScreenDirection.y, lineScreenDirection.x) * LineWidth / ScreenSize;
+		24 36   
+		25 37       if (gl_VertexID % 2 == 0) {
+		26 38           gl_Position = vec4((ndc1 + vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		27 39       } else {
+		28 40           gl_Position = vec4((ndc1 - vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		        ...
+		        '''
+	Changed file "core/rendertype_tripwire.vsh":
+		Total line: 29 (+8, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <light.glsl>
+		    4 + 
+		 3  5   in vec3 Position;
+		 4  6   in vec4 Color;
+		 5  7   in vec2 UV0;
+		    8 + in ivec2 UV2;
+		 6    - in vec2 UV2;
+		 7  9   in vec3 Normal;
+		   10 + 
+		   11 + uniform sampler2D Sampler2;
+		 8 12   
+		 9 13   uniform mat4 ModelViewMat;
+		10 14   uniform mat4 ProjMat;
+		11 15   uniform vec3 ChunkOffset;
+		12 16   
+		   17 + out float vertexDistance;
+		13 18   out vec4 vertexColor;
+		14 19   out vec2 texCoord0;
+		15    - out vec2 texCoord2;
+		16 20   out vec4 normal;
+		17 21   
+		18 22   void main() {
+		19 23       gl_Position = ProjMat * ModelViewMat * vec4(Position + ChunkOffset, 1.0);
+		20 24   
+		   25 +     vertexDistance = length((ModelViewMat * vec4(Position + ChunkOffset, 1.0)).xyz);
+		   26 +     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		21    -     vertexColor = Color;
+		22 27       texCoord0 = UV0;
+		23    -     texCoord2 = UV2;
+		24 28       normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		25 29   }
+		        '''

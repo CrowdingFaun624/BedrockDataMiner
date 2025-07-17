@@ -1,0 +1,429 @@
+Difference of "text_packs" between "24w04a" (snapshot of "1.20.5") and "24w05a" (snapshot of "1.20.5").
+
+Changed resource pack "minecraft":
+	Total file: 85 (+0, -2)
+	Removed file "core/position_color_normal.fsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		uniform vec4 ColorModulator;
+		uniform float FogStart;
+		uniform float FogEnd;
+		uniform vec4 FogColor;
+		
+		in float vertexDistance;
+		in vec4 vertexColor;
+		in vec4 normal;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 color = vertexColor * ColorModulator;
+		    if (color.a < 0.1) {
+		        discard;
+		    }
+		    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		}
+		'''
+	Removed file "core/position_tex_color_normal.fsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		uniform sampler2D Sampler0;
+		
+		uniform vec4 ColorModulator;
+		uniform float FogStart;
+		uniform float FogEnd;
+		uniform vec4 FogColor;
+		
+		in vec2 texCoord0;
+		in float vertexDistance;
+		in vec4 vertexColor;
+		in vec4 normal;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		    if (color.a < 0.1) {
+		        discard;
+		    }
+		    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		}
+		'''
+	Moved file from "core/position_tex_lightmap_color.fsh" to "core/rendertype_clouds.fsh".
+	Changed file "core/rendertype_clouds.fsh":
+		Total line: 24 (+8, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <fog.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4  6   
+		 5  7   uniform vec4 ColorModulator;
+		    8 + uniform float FogStart;
+		    9 + uniform float FogEnd;
+		   10 + uniform vec4 FogColor;
+		 6 11   
+		 7 12   in vec2 texCoord0;
+		   13 + in float vertexDistance;
+		 8    - in vec2 texCoord2;
+		 9 14   in vec4 vertexColor;
+		10 15   
+		11 16   out vec4 fragColor;
+		12 17   
+		13 18   void main() {
+		   19 +     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		14    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		15 20       if (color.a < 0.1) {
+		16 21           discard;
+		17 22       }
+		   23 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		18    -     fragColor = color * ColorModulator;
+		19 24   }
+		        '''
+	Changed file "core/rendertype_armor_cutout_no_cull.fsh":
+		Total line: 25 (+0, -1)
+		        '''
+		        ...
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15 15   in vec2 texCoord1;
+		16    - in vec4 normal;
+		17 16   
+		18 17   out vec4 fragColor;
+		19 18   
+		20 19   void main() {
+		21 20       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_crumbling.fsh":
+		Total line: 19 (+0, -1)
+		        '''
+		        ...
+		 5  5   uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec4 vertexColor;
+		 8  8   in vec2 texCoord0;
+		 9  9   in vec2 texCoord2;
+		10    - in vec4 normal;
+		11 10   
+		12 11   out vec4 fragColor;
+		13 12   
+		14 13   void main() {
+		15 14       vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_cutout.fsh":
+		Total line: 24 (+0, -1)
+		        '''
+		        ...
+		10 10   uniform vec4 FogColor;
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15    - in vec4 normal;
+		16 15   
+		17 16   out vec4 fragColor;
+		18 17   
+		19 18   void main() {
+		20 19       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_cutout_mipped.fsh":
+		Total line: 24 (+0, -1)
+		        '''
+		        ...
+		10 10   uniform vec4 FogColor;
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15    - in vec4 normal;
+		16 15   
+		17 16   out vec4 fragColor;
+		18 17   
+		19 18   void main() {
+		20 19       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_alpha.fsh":
+		Total line: 18 (+0, -1)
+		        '''
+		        ...
+		 4  4   
+		 5  5   in vec4 vertexColor;
+		 6  6   in vec2 texCoord0;
+		 7  7   in vec2 texCoord1;
+		 8  8   in vec2 texCoord2;
+		 9    - in vec4 normal;
+		10  9   
+		11 10   out vec4 fragColor;
+		12 11   
+		13 12   void main() {
+		14 13       vec4 color = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_cutout.fsh":
+		Total line: 29 (+0, -1)
+		        '''
+		        ...
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec4 lightMapColor;
+		15 15   in vec4 overlayColor;
+		16 16   in vec2 texCoord0;
+		17    - in vec4 normal;
+		18 17   
+		19 18   out vec4 fragColor;
+		20 19   
+		21 20   void main() {
+		22 21       vec4 color = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_cutout_no_cull.fsh":
+		Total line: 29 (+0, -1)
+		        '''
+		        ...
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec4 lightMapColor;
+		15 15   in vec4 overlayColor;
+		16 16   in vec2 texCoord0;
+		17    - in vec4 normal;
+		18 17   
+		19 18   out vec4 fragColor;
+		20 19   
+		21 20   void main() {
+		22 21       vec4 color = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_cutout_no_cull_z_offset.fsh":
+		Total line: 29 (+0, -1)
+		        '''
+		        ...
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec4 lightMapColor;
+		15 15   in vec4 overlayColor;
+		16 16   in vec2 texCoord0;
+		17    - in vec4 normal;
+		18 17   
+		19 18   out vec4 fragColor;
+		20 19   
+		21 20   void main() {
+		22 21       vec4 color = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_decal.fsh":
+		Total line: 27 (+0, -1)
+		        '''
+		        ...
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec4 overlayColor;
+		15 15   in vec2 texCoord0;
+		16    - in vec4 normal;
+		17 16   
+		18 17   out vec4 fragColor;
+		19 18   
+		20 19   void main() {
+		21 20       vec4 color = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_no_outline.fsh":
+		Total line: 21 (+0, -1)
+		        '''
+		        ...
+		10 10   uniform vec4 FogColor;
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15    - in vec4 normal;
+		16 15   
+		17 16   out vec4 fragColor;
+		18 17   
+		19 18   void main() {
+		20 19       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_smooth_cutout.fsh":
+		Total line: 29 (+0, -1)
+		        '''
+		        ...
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec4 lightMapColor;
+		15 15   in vec4 overlayColor;
+		16 16   in vec2 texCoord0;
+		17    - in vec4 normal;
+		18 17   
+		19 18   out vec4 fragColor;
+		20 19   
+		21 20   void main() {
+		22 21       vec4 color = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_solid.fsh":
+		Total line: 25 (+0, -1)
+		        '''
+		        ...
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec4 lightMapColor;
+		15 15   in vec4 overlayColor;
+		16 16   in vec2 texCoord0;
+		17    - in vec4 normal;
+		18 17   
+		19 18   out vec4 fragColor;
+		20 19   
+		21 20   void main() {
+		22 21       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_translucent.fsh":
+		Total line: 29 (+0, -1)
+		        '''
+		        ...
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec4 lightMapColor;
+		15 15   in vec4 overlayColor;
+		16 16   in vec2 texCoord0;
+		17    - in vec4 normal;
+		18 17   
+		19 18   out vec4 fragColor;
+		20 19   
+		21 20   void main() {
+		22 21       vec4 color = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_translucent_cull.fsh":
+		Total line: 25 (+0, -1)
+		        '''
+		        ...
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15 15   in vec2 texCoord1;
+		16    - in vec4 normal;
+		17 16   
+		18 17   out vec4 fragColor;
+		19 18   
+		20 19   void main() {
+		21 20       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_translucent_emissive.fsh":
+		Total line: 26 (+0, -1)
+		        '''
+		        ...
+		10 10   
+		11 11   in float vertexDistance;
+		12 12   in vec4 vertexColor;
+		13 13   in vec4 overlayColor;
+		14 14   in vec2 texCoord0;
+		15    - in vec4 normal;
+		16 15   
+		17 16   out vec4 fragColor;
+		18 17   
+		19 18   void main() {
+		20 19       vec4 color = texture(Sampler0, texCoord0);
+		        ...
+		        '''
+	Changed file "core/rendertype_item_entity_translucent_cull.fsh":
+		Total line: 25 (+0, -1)
+		        '''
+		        ...
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15 15   in vec2 texCoord1;
+		16    - in vec4 normal;
+		17 16   
+		18 17   out vec4 fragColor;
+		19 18   
+		20 19   void main() {
+		21 20       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_solid.fsh":
+		Total line: 21 (+0, -1)
+		        '''
+		        ...
+		10 10   uniform vec4 FogColor;
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15    - in vec4 normal;
+		16 15   
+		17 16   out vec4 fragColor;
+		18 17   
+		19 18   void main() {
+		20 19       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_translucent.fsh":
+		Total line: 21 (+0, -1)
+		        '''
+		        ...
+		10 10   uniform vec4 FogColor;
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15    - in vec4 normal;
+		16 15   
+		17 16   out vec4 fragColor;
+		18 17   
+		19 18   void main() {
+		20 19       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''
+	Changed file "core/rendertype_translucent_moving_block.fsh":
+		Total line: 16 (+0, -1)
+		        '''
+		        ...
+		 5  5   
+		 6  6   uniform vec4 ColorModulator;
+		 7  7   
+		 8  8   in vec4 vertexColor;
+		 9  9   in vec2 texCoord0;
+		10    - in vec4 normal;
+		11 10   
+		12 11   out vec4 fragColor;
+		13 12   
+		14 13   void main() {
+		15 14       vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_tripwire.fsh":
+		Total line: 24 (+0, -1)
+		        '''
+		        ...
+		10 10   uniform vec4 FogColor;
+		11 11   
+		12 12   in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15    - in vec4 normal;
+		16 15   
+		17 16   out vec4 fragColor;
+		18 17   
+		19 18   void main() {
+		20 19       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		        ...
+		        '''

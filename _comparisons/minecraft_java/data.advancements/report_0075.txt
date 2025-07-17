@@ -1,0 +1,309 @@
+Difference of "advancements" between "20w19a" (snapshot of "1.16-231620") and "20w20a" (snapshot of "1.16-231620").
+
+Changed data pack "minecraft":
+	Total file: 918 (+10, -0)
+	Changed file "adventure/bullseye.json":
+		Changed field "display":
+			Changed field "frame" from "task" to "challenge".
+		Changed field "criteria":
+			Changed criterion "bullseye":
+				Changed field "conditions":
+					Added field "projectile":
+						predicate 0:
+							field "condition": "minecraft:entity_properties"
+							field "predicate": field "distance": field "horizontal": field "min": 30.0
+							field "entity": "this"
+		Added field "rewards": field "experience": 50.
+	Changed file "husbandry/break_diamond_hoe.json":
+		Changed field "display":
+			Changed field "icon":
+				Changed field "item" from "minecraft:diamond_hoe" to "minecraft:netherite_hoe".
+			Changed field "title":
+				Changed field "translate" from "advancements.husbandry.break_diamond_hoe.title" to "advancements.husbandry.netherite_hoe.title".
+			Changed field "description":
+				Changed field "translate" from "advancements.husbandry.break_diamond_hoe.description" to "advancements.husbandry.netherite_hoe.description".
+		Changed field "criteria":
+			Total criterion: 1 (+1, -1)
+			Removed criterion "broke_hoe":
+				field "trigger": "minecraft:item_durability_changed"
+				field "conditions":
+					field "item": field "item": "minecraft:diamond_hoe"
+					field "durability": 0
+			Added criterion "netherite_hoe":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions": field "items": item field "item": "minecraft:netherite_hoe"
+		Changed field "requirements":
+			Changed requirement:
+				Changed criterion from "broke_hoe" to "netherite_hoe".
+	Changed file "husbandry/bred_all_animals.json":
+		Changed field "criteria":
+			Total criterion: 17 (+1, -0)
+			Added criterion "minecraft:strider":
+				field "trigger": "minecraft:bred_animals"
+				field "conditions":
+					field "parent":
+						predicate 0:
+							field "condition": "minecraft:entity_properties"
+							field "predicate": field "type": "minecraft:strider"
+							field "entity": "this"
+		Changed field "requirements":
+			Total requirement: 17 (+1, -0)
+			Added requirement criterion "minecraft:strider".
+	Changed file "husbandry/safely_harvest_honey.json":
+		Changed field "criteria":
+			Changed criterion "safely_harvest_honey" from:
+				field "trigger": "minecraft:safely_harvest_honey"
+				field "conditions":
+					field "block": field "tag": "minecraft:beehives"
+					field "item": field "item": "minecraft:glass_bottle"
+			to:
+				field "trigger": "minecraft:item_used_on_block"
+				field "conditions":
+					field "location":
+						field "smokey": true
+						field "block": field "block": "minecraft:beehive"
+					field "item": field "item": "minecraft:glass_bottle"
+	Changed file "story/mine_stone.json":
+		Changed field "criteria":
+			Changed criterion "get_stone":
+				Changed field "conditions":
+					Changed field "items":
+						Total item: 1 (+1, -1)
+						Removed item field "item": "minecraft:cobblestone".
+						Added item field "tag": "minecraft:stone_tool_materials".
+	Added file "nether/charge_respawn_anchor.json":
+		field "parent": "minecraft:nether/obtain_crying_obsidian"
+		field "display":
+			field "icon": field "item": "minecraft:respawn_anchor"
+			field "title": field "translate": "advancements.nether.charge_respawn_anchor.title"
+			field "description": field "translate": "advancements.nether.charge_respawn_anchor.description"
+			field "frame": "task"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "charge_respawn_anchor":
+				field "trigger": "minecraft:item_used_on_block"
+				field "conditions":
+					field "location":
+						field "block":
+							field "block": "minecraft:respawn_anchor"
+							field "state": state "charges": "4"
+					field "item": field "item": "minecraft:glowstone"
+		field "requirements": requirement criterion "charge_respawn_anchor"
+	Added file "nether/distract_piglin.json":
+		field "parent": "minecraft:nether/root"
+		field "display":
+			field "icon": field "item": "minecraft:gold_ingot"
+			field "title": field "translate": "advancements.nether.distract_piglin.title"
+			field "description": field "translate": "advancements.nether.distract_piglin.description"
+			field "frame": "task"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "distract_piglin":
+				field "trigger": "minecraft:thrown_item_picked_up_by_entity"
+				field "conditions":
+					field "player":
+						predicate 0:
+							field "condition": "minecraft:inverted"
+							field "term":
+								field "condition": "minecraft:entity_properties"
+								field "predicate": field "equipment": slot "head": field "item": "minecraft:golden_helmet"
+								field "entity": "this"
+						predicate 1:
+							field "condition": "minecraft:inverted"
+							field "term":
+								field "condition": "minecraft:entity_properties"
+								field "predicate": field "equipment": slot "chest": field "item": "minecraft:golden_chestplate"
+								field "entity": "this"
+						predicate 2:
+							field "condition": "minecraft:inverted"
+							field "term":
+								field "condition": "minecraft:entity_properties"
+								field "predicate": field "equipment": slot "legs": field "item": "minecraft:golden_leggings"
+								field "entity": "this"
+						predicate 3:
+							field "condition": "minecraft:inverted"
+							field "term":
+								field "condition": "minecraft:entity_properties"
+								field "predicate": field "equipment": slot "feet": field "item": "minecraft:golden_boots"
+								field "entity": "this"
+					field "item": field "tag": "minecraft:piglin_loved"
+					field "entity":
+						predicate 0:
+							field "condition": "minecraft:entity_properties"
+							field "predicate": field "type": "minecraft:piglin"
+							field "entity": "this"
+		field "requirements": requirement criterion "distract_piglin"
+	Added file "nether/explore_nether.json":
+		field "parent": "minecraft:nether/ride_strider"
+		field "display":
+			field "icon":
+				field "item": "minecraft:netherite_boots"
+				field "nbt": "{Damage:0}"
+			field "title": field "translate": "advancements.nether.explore_nether.title"
+			field "description": field "translate": "advancements.nether.explore_nether.description"
+			field "frame": "challenge"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "minecraft:nether_wastes":
+				field "trigger": "minecraft:location"
+				field "conditions": field "location": field "biome": "minecraft:nether_wastes"
+			criterion "minecraft:soul_sand_valley":
+				field "trigger": "minecraft:location"
+				field "conditions": field "location": field "biome": "minecraft:soul_sand_valley"
+			criterion "minecraft:warped_forest":
+				field "trigger": "minecraft:location"
+				field "conditions": field "location": field "biome": "minecraft:warped_forest"
+			criterion "minecraft:crimson_forest":
+				field "trigger": "minecraft:location"
+				field "conditions": field "location": field "biome": "minecraft:crimson_forest"
+			criterion "minecraft:basalt_deltas":
+				field "trigger": "minecraft:location"
+				field "conditions": field "location": field "biome": "minecraft:basalt_deltas"
+		field "requirements":
+			requirement criterion "minecraft:nether_wastes"
+			requirement criterion "minecraft:soul_sand_valley"
+			requirement criterion "minecraft:warped_forest"
+			requirement criterion "minecraft:crimson_forest"
+			requirement criterion "minecraft:basalt_deltas"
+	Added file "nether/find_bastion.json":
+		field "parent": "minecraft:nether/root"
+		field "display":
+			field "icon": field "item": "minecraft:polished_blackstone_bricks"
+			field "title": field "translate": "advancements.nether.find_bastion.title"
+			field "description": field "translate": "advancements.nether.find_bastion.description"
+			field "frame": "task"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "bastion":
+				field "trigger": "minecraft:location"
+				field "conditions": field "location": field "feature": "bastion_remnant"
+		field "requirements": requirement criterion "bastion"
+	Added file "nether/loot_bastion.json":
+		field "parent": "minecraft:nether/find_bastion"
+		field "display":
+			field "icon": field "item": "minecraft:chest"
+			field "title": field "translate": "advancements.nether.loot_bastion.title"
+			field "description": field "translate": "advancements.nether.loot_bastion.description"
+			field "frame": "task"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "loot_bastion_other":
+				field "trigger": "minecraft:player_generates_container_loot"
+				field "conditions": field "loot_table": "minecraft:chests/bastion_other"
+			criterion "loot_bastion_treasure":
+				field "trigger": "minecraft:player_generates_container_loot"
+				field "conditions": field "loot_table": "minecraft:chests/bastion_treasure"
+			criterion "loot_bastion_hoglin_stable":
+				field "trigger": "minecraft:player_generates_container_loot"
+				field "conditions": field "loot_table": "minecraft:chests/bastion_hoglin_stable"
+			criterion "loot_bastion_bridge":
+				field "trigger": "minecraft:player_generates_container_loot"
+				field "conditions": field "loot_table": "minecraft:chests/bastion_bridge"
+		field "requirements":
+			requirement:
+				criterion "loot_bastion_other"
+				criterion "loot_bastion_treasure"
+				criterion "loot_bastion_hoglin_stable"
+				criterion "loot_bastion_bridge"
+	Added file "nether/netherite_armor.json":
+		field "parent": "minecraft:nether/obtain_ancient_debris"
+		field "display":
+			field "icon":
+				field "item": "minecraft:netherite_chestplate"
+				field "nbt": "{Damage:0}"
+			field "title": field "translate": "advancements.nether.netherite_armor.title"
+			field "description": field "translate": "advancements.nether.netherite_armor.description"
+			field "frame": "challenge"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "netherite_armor":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions":
+					field "items":
+						item field "item": "minecraft:netherite_helmet"
+						item field "item": "minecraft:netherite_chestplate"
+						item field "item": "minecraft:netherite_leggings"
+						item field "item": "minecraft:netherite_boots"
+		field "requirements": requirement criterion "netherite_armor"
+	Added file "nether/obtain_ancient_debris.json":
+		field "parent": "minecraft:nether/root"
+		field "display":
+			field "icon": field "item": "minecraft:ancient_debris"
+			field "title": field "translate": "advancements.nether.obtain_ancient_debris.title"
+			field "description": field "translate": "advancements.nether.obtain_ancient_debris.description"
+			field "frame": "task"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "ancient_debris":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions": field "items": item field "item": "minecraft:ancient_debris"
+		field "requirements": requirement criterion "ancient_debris"
+	Added file "nether/obtain_crying_obsidian.json":
+		field "parent": "minecraft:nether/root"
+		field "display":
+			field "icon": field "item": "minecraft:crying_obsidian"
+			field "title": field "translate": "advancements.nether.obtain_crying_obsidian.title"
+			field "description": field "translate": "advancements.nether.obtain_crying_obsidian.description"
+			field "frame": "task"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "crying_obsidian":
+				field "trigger": "minecraft:inventory_changed"
+				field "conditions": field "items": item field "item": "minecraft:crying_obsidian"
+		field "requirements": requirement criterion "crying_obsidian"
+	Added file "nether/ride_strider.json":
+		field "parent": "minecraft:nether/root"
+		field "display":
+			field "icon":
+				field "item": "minecraft:warped_fungus_on_a_stick"
+				field "nbt": "{Damage:0}"
+			field "title": field "translate": "advancements.nether.ride_strider.title"
+			field "description": field "translate": "advancements.nether.ride_strider.description"
+			field "frame": "task"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "used_warped_fungus_on_a_stick":
+				field "trigger": "minecraft:item_durability_changed"
+				field "conditions":
+					field "player":
+						predicate 0:
+							field "condition": "minecraft:entity_properties"
+							field "predicate": field "vehicle": field "type": "minecraft:strider"
+							field "entity": "this"
+					field "item": field "item": "minecraft:warped_fungus_on_a_stick"
+		field "requirements": requirement criterion "used_warped_fungus_on_a_stick"
+	Added file "nether/use_lodestone.json":
+		field "parent": "minecraft:nether/obtain_ancient_debris"
+		field "display":
+			field "icon": field "item": "minecraft:lodestone"
+			field "title": field "translate": "advancements.nether.use_lodestone.title"
+			field "description": field "translate": "advancements.nether.use_lodestone.description"
+			field "frame": "task"
+			field "show_toast": true
+			field "announce_to_chat": true
+			field "hidden": false
+		field "criteria":
+			criterion "use_lodestone":
+				field "trigger": "minecraft:item_used_on_block"
+				field "conditions":
+					field "location": field "block": field "block": "minecraft:lodestone"
+					field "item": field "item": "minecraft:compass"
+		field "requirements": requirement criterion "use_lodestone"

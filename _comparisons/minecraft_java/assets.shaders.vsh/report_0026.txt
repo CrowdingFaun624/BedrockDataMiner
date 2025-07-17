@@ -1,0 +1,140 @@
+Difference of "text_packs" between "25w05a" (snapshot of "1.21.5") and "25w06a" (snapshot of "1.21.5").
+
+Changed resource pack "minecraft":
+	Total file: 39 (+1, -0)
+	Changed file "post/blit.vsh":
+		Total line: 15 (+2, -2)
+		        '''
+		        ...
+		 6  6   uniform vec2 OutSize;
+		 7  7   
+		 8  8   out vec2 texCoord;
+		 9  9   
+		10 10   void main(){
+		   11 +     vec4 outPos = ProjMat * vec4(Position.xy * OutSize, 0.0, 1.0);
+		11    -     vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		12 12       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		13 13   
+		   14 +     texCoord = Position.xy;
+		14    -     texCoord = Position.xy / OutSize;
+		15 15   }
+		        '''
+	Changed file "post/blur.vsh":
+		Total line: 21 (+2, -2)
+		        '''
+		        ...
+		 9  9   
+		10 10   out vec2 texCoord;
+		11 11   out vec2 sampleStep;
+		12 12   
+		13 13   void main() {
+		   14 +     vec4 outPos = ProjMat * vec4(Position.xy * OutSize, 0.0, 1.0);
+		14    -     vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		15 15       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		16 16   
+		17 17       vec2 oneTexel = 1.0 / InSize;
+		18 18       sampleStep = oneTexel * BlurDir;
+		19 19   
+		   20 +     texCoord = Position.xy;
+		20    -     texCoord = Position.xy / OutSize;
+		21 21   }
+		        '''
+	Changed file "post/invert.vsh":
+		Total line: 20 (+2, -2)
+		        '''
+		        ...
+		 7  7   uniform vec2 OutSize;
+		 8  8   
+		 9  9   out vec2 texCoord;
+		10 10   
+		11 11   void main(){
+		   12 +     vec4 outPos = ProjMat * vec4(Position.xy * OutSize, 0.0, 1.0);
+		12    -     vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		13 13       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		14 14   
+		15 15       vec2 sizeRatio = OutSize / InSize;
+		   16 +     texCoord = Position.xy;
+		16    -     texCoord = Position.xy / OutSize;
+		17 17       texCoord.x = texCoord.x * sizeRatio.x;
+		18 18       texCoord.y = texCoord.y * sizeRatio.y;
+		19 19       texCoord.y = sizeRatio.y - texCoord.y;
+		20 20   }
+		        '''
+	Changed file "post/rotscale.vsh":
+		Total line: 29 (+2, -2)
+		        '''
+		        ...
+		12 12   
+		13 13   out vec2 texCoord;
+		14 14   out vec2 scaledCoord;
+		15 15   
+		16 16   void main(){
+		   17 +     vec4 outPos = ProjMat * vec4(Position.xy * OutSize, 0.0, 1.0);
+		17    -     vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		18 18       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		19 19   
+		   20 +     texCoord = Position.xy;
+		20    -     texCoord = Position.xy / OutSize;
+		21 21   
+		22 22       float Deg2Rad = 0.0174532925;
+		23 23       float InRadians = InRotation * Deg2Rad;
+		24 24       float Cosine = cos(InRadians);
+		25 25       float Sine = sin(InRadians);
+		        ...
+		        '''
+	Changed file "post/screenquad.vsh":
+		Total line: 14 (+2, -2)
+		        '''
+		        ...
+		 6  6   uniform vec2 OutSize;
+		 7  7   
+		 8  8   out vec2 texCoord;
+		 9  9   
+		10 10   void main() {
+		   11 +     vec4 outPos = ProjMat * vec4(Position.xy * OutSize, 0.0, 1.0);
+		11    -     vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		12 12       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		   13 +     texCoord = Position.xy;
+		13    -     texCoord = Position.xy / OutSize;
+		14 14   }
+		        '''
+	Changed file "post/sobel.vsh":
+		Total line: 19 (+2, -2)
+		        '''
+		        ...
+		 8  8   
+		 9  9   out vec2 texCoord;
+		10 10   out vec2 oneTexel;
+		11 11   
+		12 12   void main(){
+		   13 +     vec4 outPos = ProjMat * vec4(Position.xy * OutSize, 0.0, 1.0);
+		13    -     vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		14 14       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		15 15   
+		16 16       oneTexel = 1.0 / InSize;
+		17 17   
+		   18 +     texCoord = Position.xy;
+		18    -     texCoord = Position.xy / OutSize;
+		19 19   }
+		        '''
+	Added file "core/rendertype_world_border.vsh":
+		'''
+		#version 150
+		
+		in vec3 Position;
+		in vec2 UV0;
+		
+		uniform mat4 TextureMat;
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		uniform vec3 ModelOffset;
+		
+		out vec2 texCoord0;
+		
+		void main() {
+		    vec3 pos = Position + ModelOffset;
+		    gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+		
+		    texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		}
+		'''

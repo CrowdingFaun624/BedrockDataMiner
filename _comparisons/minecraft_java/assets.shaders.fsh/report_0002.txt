@@ -1,0 +1,24 @@
+Difference of "text_packs" between "13w38c-1516" (snapshot of "1.7.2") and "13w39a" (snapshot of "1.7.2").
+
+Changed resource pack "minecraft":
+	Changed file "program/blur.fsh":
+		Total line: 23 (+2, -2)
+		        '''
+		        ...
+		12 12   
+		13 13   void main() {
+		14 14       vec4 blurred = vec4(0.0);
+		15 15       float totalStrength = 0.0;
+		16 16       for(float r = -Radius; r <= Radius; r += 1.0) {
+		   17 +         float strength = abs(1.0 - r / Radius);
+		   18 +         strength = strength * strength;
+		17    -     	float strength = abs(1.0 - r / Radius);
+		18    -     	strength = strength * strength;
+		   19 +         totalStrength = totalStrength + strength;
+		   20 +         blurred = blurred + texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir) * strength;
+		19    -     	totalStrength = totalStrength + strength;
+		20    -     	blurred = blurred + texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir) * strength;
+		21 21       }
+		22 22       gl_FragColor = blurred / totalStrength;
+		23 23   }
+		        '''

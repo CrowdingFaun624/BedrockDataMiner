@@ -1,0 +1,101 @@
+Difference of "text_packs" between "23w17a" (snapshot of "1.20") and "23w18a" (snapshot of "1.20").
+
+Changed resource pack "minecraft":
+	Total file: 70 (+2, -0)
+	Moved file from "core/block.vsh" to "core/rendertype_gui_overlay.vsh".
+	Changed file "core/rendertype_gui_overlay.vsh":
+		Total line: 15 (+0, -9)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4  4   in vec4 Color;
+		 5    - in vec2 UV0;
+		 6    - in vec2 UV2;
+		 7    - in vec3 Normal;
+		 8  5   
+		 9  6   uniform mat4 ModelViewMat;
+		10  7   uniform mat4 ProjMat;
+		11  8   
+		12  9   out vec4 vertexColor;
+		13    - out vec2 texCoord0;
+		14    - out vec2 texCoord2;
+		15    - out vec4 normal;
+		16 10   
+		17 11   void main() {
+		18 12       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 13   
+		20 14       vertexColor = Color;
+		21    -     texCoord0 = UV0;
+		22    -     texCoord2 = UV2;
+		23    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		24 15   }
+		        '''
+	Moved file from "core/new_entity.vsh" to "core/rendertype_gui.vsh".
+	Changed file "core/rendertype_gui.vsh":
+		Total line: 15 (+0, -12)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4  4   in vec4 Color;
+		 5    - in vec2 UV0;
+		 6    - in vec2 UV1;
+		 7    - in vec2 UV2;
+		 8    - in vec3 Normal;
+		 9  5   
+		10  6   uniform mat4 ModelViewMat;
+		11  7   uniform mat4 ProjMat;
+		12  8   
+		13  9   out vec4 vertexColor;
+		14    - out vec2 texCoord0;
+		15    - out vec2 texCoord1;
+		16    - out vec2 texCoord2;
+		17    - out vec4 normal;
+		18 10   
+		19 11   void main() {
+		20 12       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		21 13   
+		22 14       vertexColor = Color;
+		23    -     texCoord0 = UV0;
+		24    -     texCoord1 = UV1;
+		25    -     texCoord2 = UV2;
+		26    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 15   }
+		        '''
+	Added file "core/rendertype_gui_ghost_recipe_overlay.vsh":
+		'''
+		#version 150
+		
+		in vec3 Position;
+		in vec4 Color;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		
+		out vec4 vertexColor;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    vertexColor = Color;
+		}
+		'''
+	Added file "core/rendertype_gui_text_highlight.vsh":
+		'''
+		#version 150
+		
+		in vec3 Position;
+		in vec4 Color;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		
+		out vec4 vertexColor;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    vertexColor = Color;
+		}
+		'''

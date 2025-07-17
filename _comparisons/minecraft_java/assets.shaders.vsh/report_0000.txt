@@ -1,0 +1,159 @@
+Addition of "text_packs" at "13w38a" (snapshot of "1.7.2").
+
+resource pack "minecraft":
+	file "program/blit.vsh":
+		'''
+		#version 120
+		
+		attribute vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 OutSize;
+		
+		varying vec2 texCoord;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    texCoord = Position.xy / OutSize;
+		    texCoord.y = 1.0 - texCoord.y;
+		}
+		'''
+	file "program/blobs.vsh":
+		'''
+		#version 120
+		
+		attribute vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 InSize;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    oneTexel = 1.0 / InSize;
+		    texCoord = outPos.xy * 0.5 + 0.5;
+		}
+		'''
+	file "program/downscale.vsh":
+		'''
+		#version 120
+		
+		attribute vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 InSize;
+		uniform vec2 OutSize;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    oneTexel = 1.0 / InSize;
+		    texCoord = outPos.xy * 0.5 + 0.5;
+		    texCoord.y = 1.0 - texCoord.y;
+		}
+		'''
+	file "program/flip.vsh":
+		'''
+		#version 120
+		
+		attribute vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 InSize;
+		uniform vec2 OutSize;
+		uniform vec2 ScreenSize;
+		
+		varying vec2 texCoord;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    vec2 inOutRatio = OutSize / InSize;
+		    vec2 inScreenRatio = ScreenSize / InSize;
+		    texCoord = Position.xy / OutSize;
+		    texCoord.x = texCoord.x * inOutRatio.x;
+		    texCoord.y = texCoord.y * inOutRatio.y;
+		    texCoord.y -= 1.0 - inScreenRatio.y;
+		}
+		'''
+	file "program/fxaa.vsh":
+		'''
+		#version 120
+		
+		attribute vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 OutSize;
+		
+		uniform float SubPixelShift;
+		
+		varying vec2 texCoord;
+		varying vec4 posPos;
+		
+		void main() {
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    texCoord = Position.xy / OutSize;
+		    texCoord.y = 1.0 - texCoord.y;
+		    posPos.xy = texCoord.xy;
+		    posPos.zw = texCoord.xy - (1.0/OutSize * vec2(0.5 + SubPixelShift));
+		}
+		'''
+	file "program/invert.vsh":
+		'''
+		#version 120
+		
+		attribute vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 InSize;
+		uniform vec2 OutSize;
+		
+		varying vec2 texCoord;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    vec2 sizeRatio = OutSize / InSize;
+		    texCoord = Position.xy / OutSize;
+		    texCoord.x = texCoord.x * sizeRatio.x;
+		    texCoord.y = texCoord.y * sizeRatio.y;
+		    texCoord.y = sizeRatio.y - texCoord.y;
+		}
+		'''
+	file "program/sobel.vsh":
+		'''
+		#version 120
+		
+		attribute vec4 Position;
+		
+		uniform mat4 ProjMat;
+		uniform vec2 InSize;
+		uniform vec2 OutSize;
+		
+		varying vec2 texCoord;
+		varying vec2 oneTexel;
+		
+		void main(){
+		    vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		    gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		
+		    oneTexel = 1.0 / InSize;
+		
+		    texCoord = Position.xy / OutSize;
+		    texCoord.y = 1.0 - texCoord.y;    
+		}
+		'''

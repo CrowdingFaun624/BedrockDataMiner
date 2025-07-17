@@ -1,0 +1,105 @@
+Difference of "text_packs" between "25w15a" (snapshot of "1.21.6") and "25w16a" (snapshot of "1.21.6").
+
+Changed resource pack "minecraft":
+	Total file: 6 (+2, -0)
+	Changed file "include/fog.glsl":
+		Total line: 42 (+13, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + const int FOG_SHAPE_SPHERE = 0;
+		    4 + const int FOG_SHAPE_CYLINDER = 1;
+		    5 + 
+		    6 + layout(std140) uniform Fog {
+		    7 +     vec4 FogColor;
+		    8 +     int FogShape;
+		    9 +     float FogStart;
+		   10 +     float FogEnd;
+		   11 +     float FogSkyEnd;
+		   12 +     float FogCloudsEnd;
+		   13 + };
+		   14 + 
+		 3 15   vec4 linear_fog(vec4 inColor, float vertexDistance, float fogStart, float fogEnd, vec4 fogColor) {
+		 4 16       if (vertexDistance <= fogStart) {
+		 5 17           return inColor;
+		 6 18       }
+		 7 19   
+		        ...
+		18 30   
+		19 31       return smoothstep(fogEnd, fogStart, vertexDistance);
+		20 32   }
+		21 33   
+		22 34   float fog_distance(vec3 pos, int shape) {
+		   35 +     if (shape == FOG_SHAPE_SPHERE) {
+		23    -     if (shape == 0) {
+		24 36           return length(pos);
+		25 37       } else {
+		26 38           float distXZ = length(pos.xz);
+		27 39           float distY = abs(pos.y);
+		28 40           return max(distXZ, distY);
+		        ...
+		        '''
+	Changed file "include/light.glsl":
+		Total line: 17 (+6, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #define MINECRAFT_LIGHT_POWER   (0.6)
+		 4  4   #define MINECRAFT_AMBIENT_LIGHT (0.4)
+		 5  5   
+		    6 + layout(std140) uniform Lighting {
+		    7 +     vec3 Light0_Direction;
+		    8 +     vec3 Light1_Direction;
+		    9 + };
+		   10 + 
+		 6 11   vec4 minecraft_mix_light(vec3 lightDir0, vec3 lightDir1, vec3 normal, vec4 color) {
+		 7 12       float light0 = max(0.0, dot(lightDir0, normal));
+		 8 13       float light1 = max(0.0, dot(lightDir1, normal));
+		 9 14       float lightAccum = min(1.0, (light0 + light1) * MINECRAFT_LIGHT_POWER + MINECRAFT_AMBIENT_LIGHT);
+		10 15       return vec4(color.rgb * lightAccum, color.a);
+		11    - }
+		12    - 
+		13    - vec4 minecraft_sample_lightmap(sampler2D lightMap, ivec2 uv) {
+		14    -     return texture(lightMap, clamp(uv / 256.0, vec2(0.5 / 16.0), vec2(15.5 / 16.0)));
+		15 16   }
+		   17 + 
+		        '''
+	Changed file "include/projection.glsl":
+		Total line: 12 (+4, -0)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + layout(std140) uniform Projection {
+		    4 +     mat4 ProjMat;
+		    5 + };
+		    6 + 
+		 3  7   vec4 projection_from_position(vec4 position) {
+		 4  8       vec4 projection = position * 0.5;
+		 5  9       projection.xy = vec2(projection.x + projection.w, projection.y + projection.w);
+		 6 10       projection.zw = position.zw;
+		 7 11       return projection;
+		        ...
+		        '''
+	Added file "include/dynamictransforms.glsl":
+		'''
+		#version 150
+		
+		layout(std140) uniform DynamicTransforms {
+		    mat4 ModelViewMat;
+		    vec4 ColorModulator;
+		    vec3 ModelOffset;
+		    mat4 TextureMat;
+		    float LineWidth;
+		};
+		'''
+	Added file "include/globals.glsl":
+		'''
+		#version 150
+		
+		layout(std140) uniform Globals {
+		    vec2 ScreenSize;
+		    float GlintAlpha;
+		    float GameTime;
+		    int MenuBlurRadius;
+		};
+		'''

@@ -1,0 +1,64 @@
+Difference of "processor_list" between "1.19.4" and "23w12a" (snapshot of "1.20").
+
+Changed data pack "minecraft":
+	Total file: 37 (+1, -0)
+	Added file "trail_ruins_suspicious_sand.json":
+		field "processors":
+			processor:
+				field "processor_type": "minecraft:rule"
+				field "rules":
+					rule 0:
+						field "input_predicate":
+							field "block": "minecraft:sand"
+							field "predicate_type": "minecraft:random_block_match"
+							field "probability": 0.2
+						field "location_predicate": field "predicate_type": "minecraft:always_true"
+						field "output_state": field "Name": "minecraft:gravel"
+					rule 1:
+						field "input_predicate":
+							field "block": "minecraft:sand"
+							field "predicate_type": "minecraft:random_block_match"
+							field "probability": 0.2
+						field "location_predicate": field "predicate_type": "minecraft:always_true"
+						field "output_state": field "Name": "minecraft:dirt"
+					rule 2:
+						field "input_predicate":
+							field "block": "minecraft:sand"
+							field "predicate_type": "minecraft:random_block_match"
+							field "probability": 0.1
+						field "location_predicate": field "predicate_type": "minecraft:always_true"
+						field "output_state": field "Name": "minecraft:coarse_dirt"
+			processor:
+				field "delegate":
+					field "processor_type": "minecraft:rule"
+					field "rules":
+						rule 0:
+							field "block_entity_modifier":
+								field "type": "minecraft:append_loot"
+								field "loot_table": "minecraft:archaeology/trail_ruins"
+							field "input_predicate":
+								field "predicate_type": "minecraft:tag_match"
+								field "tag": "minecraft:trail_ruins_replaceable"
+							field "location_predicate": field "predicate_type": "minecraft:always_true"
+							field "output_state":
+								field "Name": "minecraft:suspicious_sand"
+								field "Properties": property "dusted": "0"
+				field "limit": 6
+				field "processor_type": "minecraft:capped"
+			processor:
+				field "delegate":
+					field "processor_type": "minecraft:rule"
+					field "rules":
+						rule 0:
+							field "block_entity_modifier":
+								field "type": "minecraft:append_loot"
+								field "loot_table": "minecraft:archaeology/trail_ruins"
+							field "input_predicate":
+								field "predicate_type": "minecraft:tag_match"
+								field "tag": "minecraft:trail_ruins_replaceable"
+							field "location_predicate": field "predicate_type": "minecraft:always_true"
+							field "output_state":
+								field "Name": "minecraft:suspicious_gravel"
+								field "Properties": property "dusted": "0"
+				field "limit": 2
+				field "processor_type": "minecraft:capped"

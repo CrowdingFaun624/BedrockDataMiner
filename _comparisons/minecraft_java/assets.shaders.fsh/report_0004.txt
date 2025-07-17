@@ -1,0 +1,19 @@
+Difference of "text_packs" between "13w42a" (snapshot of "1.7.2") and "13w42b" (snapshot of "1.7.2").
+
+Changed resource pack "minecraft":
+	Changed file "program/wobble.fsh":
+		Total line: 58 (+1, -1)
+		        '''
+		        ...
+		49 49   
+		50 50   void main() {
+		51 51       float xOffset = sin(texCoord.y * Frequency.x + Time * 3.1415926535 * 2.0) * WobbleAmount.x;
+		52 52       float yOffset = cos(texCoord.x * Frequency.y + Time * 3.1415926535 * 2.0) * WobbleAmount.y;
+		53 53       vec2 offset = vec2(xOffset, yOffset);
+		   54 +     vec4 rgb = texture2D(DiffuseSampler, texCoord + offset);
+		54    -     vec4 rgb = texture2D(DiffuseSampler, texCoord + offset).rgb;
+		55 55       vec3 hsv = RGBtoHSV(rgb.rgb);
+		56 56       hsv.x = fract(hsv.x + Time);
+		57 57       gl_FragColor = vec4(HSVtoRGB(hsv), rgb.a);
+		58 58   }
+		        '''

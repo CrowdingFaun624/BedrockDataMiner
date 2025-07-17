@@ -1,0 +1,17 @@
+Difference of "text_packs" between "21w10a" (snapshot of "1.17") and "21w11a" (snapshot of "1.17").
+
+Changed resource pack "minecraft":
+	Changed file "include/light.glsl":
+		Total line: 17 (+4, -0)
+		        '''
+		        ...
+		 9  9       float light0 = max(0.0, dot(lightDir0, normal));
+		10 10       float light1 = max(0.0, dot(lightDir1, normal));
+		11 11       float lightAccum = min(1.0, (light0 + light1) * MINECRAFT_LIGHT_POWER + MINECRAFT_AMBIENT_LIGHT);
+		12 12       return vec4(color.rgb * lightAccum, color.a);
+		13 13   }
+		   14 + 
+		   15 + vec4 minecraft_sample_lightmap(sampler2D lightMap, ivec2 uv) {
+		   16 +     return texture(lightMap, clamp(uv / 256.0, vec2(0.5 / 16.0), vec2(15.5 / 16.0)));
+		   17 + }
+		        '''

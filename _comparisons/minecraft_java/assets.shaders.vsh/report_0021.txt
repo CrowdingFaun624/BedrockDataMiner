@@ -1,0 +1,1032 @@
+Difference of "text_packs" between "24w04a" (snapshot of "1.20.5") and "24w05a" (snapshot of "1.20.5").
+
+Changed resource pack "minecraft":
+	Total file: 68 (+0, -2)
+	Changed file "core/particle.vsh":
+		Total line: 26 (+1, -1)
+		        '''
+		        ...
+		18 18   out vec4 vertexColor;
+		19 19   
+		20 20   void main() {
+		21 21       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		22 22   
+		   23 +     vertexDistance = fog_distance(Position, FogShape);
+		23    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		24 24       texCoord0 = UV0;
+		25 25       vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		26 26   }
+		        '''
+	Changed file "core/position.vsh":
+		Total line: 17 (+1, -1)
+		        '''
+		        ...
+		11 11   out float vertexDistance;
+		12 12   
+		13 13   void main() {
+		14 14       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		15 15   
+		   16 +     vertexDistance = fog_distance(Position, FogShape);
+		16    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		17 17   }
+		        '''
+	Removed file "core/position_color_normal.vsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		in vec3 Position;
+		in vec4 Color;
+		in vec3 Normal;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ModelViewProjMat;
+		uniform int FogShape;
+		
+		out float vertexDistance;
+		out vec4 vertexColor;
+		out vec4 normal;
+		
+		void main() {
+		    gl_Position = ModelViewProjMat * vec4(Position, 1.0);
+		
+		    vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		    vertexColor = Color;
+		    normal = ModelViewProjMat * vec4(Normal, 0.0);
+		}
+		'''
+	Removed file "core/position_tex_color_normal.vsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		in vec3 Position;
+		in vec2 UV0;
+		in vec4 Color;
+		in vec3 Normal;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		uniform int FogShape;
+		
+		out vec2 texCoord0;
+		out float vertexDistance;
+		out vec4 vertexColor;
+		out vec4 normal;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    texCoord0 = UV0;
+		    vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		    vertexColor = Color;
+		    normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		}
+		'''
+	Moved file from "core/position_tex_lightmap_color.vsh" to "core/rendertype_clouds.vsh".
+	Changed file "core/rendertype_clouds.vsh":
+		Total line: 25 (+8, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <fog.glsl>
+		    4 + 
+		 3  5   in vec3 Position;
+		 4  6   in vec2 UV0;
+		 5    - in vec2 UV2;
+		 6  7   in vec4 Color;
+		    8 + in vec3 Normal;
+		 7  9   
+		 8 10   uniform mat4 ModelViewMat;
+		 9 11   uniform mat4 ProjMat;
+		   12 + uniform int FogShape;
+		10 13   
+		11 14   out vec2 texCoord0;
+		   15 + out float vertexDistance;
+		12    - out vec2 texCoord2;
+		13 16   out vec4 vertexColor;
+		14 17   
+		15 18   void main() {
+		   19 +     vec4 pos = ModelViewMat * vec4(Position, 1.0);
+		   20 +     gl_Position = ProjMat * pos;
+		16    -     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		17 21   
+		18 22       texCoord0 = UV0;
+		   23 +     vertexDistance = fog_distance(pos.xyz, FogShape);
+		19    -     texCoord2 = UV2;
+		20 24       vertexColor = Color;
+		21 25   }
+		        '''
+	Changed file "core/rendertype_armor_cutout_no_cull.vsh":
+		Total line: 34 (+1, -3)
+		        '''
+		        ...
+		21 21   
+		22 22   out float vertexDistance;
+		23 23   out vec4 vertexColor;
+		24 24   out vec2 texCoord0;
+		25 25   out vec2 texCoord1;
+		26    - out vec4 normal;
+		27 26   
+		28 27   void main() {
+		29 28       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		30 29   
+		   30 +     vertexDistance = fog_distance(Position, FogShape);
+		31    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		32 31       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		33 32       texCoord0 = UV0;
+		34 33       texCoord1 = UV1;
+		35    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		36 34   }
+		        '''
+	Changed file "core/rendertype_armor_entity_glint.vsh":
+		Total line: 21 (+1, -1)
+		        '''
+		        ...
+		14 14   out vec2 texCoord0;
+		15 15   
+		16 16   void main() {
+		17 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		18 18   
+		   19 +     vertexDistance = fog_distance(Position, FogShape);
+		19    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		20 20       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		21 21   }
+		        '''
+	Changed file "core/rendertype_armor_glint.vsh":
+		Total line: 21 (+1, -1)
+		        '''
+		        ...
+		14 14   out vec2 texCoord0;
+		15 15   
+		16 16   void main() {
+		17 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		18 18   
+		   19 +     vertexDistance = fog_distance(Position, FogShape);
+		19    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		20 20       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		21 21   }
+		        '''
+	Changed file "core/rendertype_breeze_wind.vsh":
+		Total line: 32 (+1, -1)
+		        '''
+		        ...
+		22 22   out vec2 texCoord0;
+		23 23   
+		24 24   void main() {
+		25 25       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		26 26   
+		   27 +     vertexDistance = fog_distance(Position, FogShape);
+		27    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		28 28       lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		29 29       vertexColor = Color * lightMapColor;
+		30 30   
+		31 31       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		32 32   }
+		        '''
+	Changed file "core/rendertype_crumbling.vsh":
+		Total line: 22 (+0, -2)
+		        '''
+		        ...
+		10 10   uniform mat4 ProjMat;
+		11 11   
+		12 12   out vec4 vertexColor;
+		13 13   out vec2 texCoord0;
+		14 14   out vec2 texCoord2;
+		15    - out vec4 normal;
+		16 15   
+		17 16   void main() {
+		18 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 18   
+		20 19       vertexColor = Color;
+		21 20       texCoord0 = UV0;
+		22 21       texCoord2 = UV2;
+		23    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		24 22   }
+		        '''
+	Changed file "core/rendertype_cutout.vsh":
+		Total line: 30 (+1, -3)
+		        '''
+		        ...
+		17 17   uniform int FogShape;
+		18 18   
+		19 19   out float vertexDistance;
+		20 20   out vec4 vertexColor;
+		21 21   out vec2 texCoord0;
+		22    - out vec4 normal;
+		23 22   
+		24 23   void main() {
+		25 24       vec3 pos = Position + ChunkOffset;
+		26 25       gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+		27 26   
+		   27 +     vertexDistance = fog_distance(pos, FogShape);
+		28    -     vertexDistance = fog_distance(ModelViewMat, pos, FogShape);
+		29 28       vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		30 29       texCoord0 = UV0;
+		31    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		32 30   }
+		        '''
+	Changed file "core/rendertype_cutout_mipped.vsh":
+		Total line: 30 (+1, -3)
+		        '''
+		        ...
+		17 17   uniform int FogShape;
+		18 18   
+		19 19   out float vertexDistance;
+		20 20   out vec4 vertexColor;
+		21 21   out vec2 texCoord0;
+		22    - out vec4 normal;
+		23 22   
+		24 23   void main() {
+		25 24       vec3 pos = Position + ChunkOffset;
+		26 25       gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+		27 26   
+		   27 +     vertexDistance = fog_distance(pos, FogShape);
+		28    -     vertexDistance = fog_distance(ModelViewMat, pos, FogShape);
+		29 28       vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		30 29       texCoord0 = UV0;
+		31    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		32 30   }
+		        '''
+	Changed file "core/rendertype_energy_swirl.vsh":
+		Total line: 24 (+1, -1)
+		        '''
+		        ...
+		16 16   out vec2 texCoord0;
+		17 17   
+		18 18   void main() {
+		19 19       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		20 20   
+		   21 +     vertexDistance = fog_distance(Position, FogShape);
+		21    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		22 22       vertexColor = Color;
+		23 23       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		24 24   }
+		        '''
+	Changed file "core/rendertype_entity_alpha.vsh":
+		Total line: 25 (+0, -2)
+		        '''
+		        ...
+		12 12   
+		13 13   out vec4 vertexColor;
+		14 14   out vec2 texCoord0;
+		15 15   out vec2 texCoord1;
+		16 16   out vec2 texCoord2;
+		17    - out vec4 normal;
+		18 17   
+		19 18   void main() {
+		20 19       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		21 20   
+		22 21       vertexColor = Color;
+		23 22       texCoord0 = UV0;
+		24 23       texCoord1 = UV1;
+		25 24       texCoord2 = UV2;
+		26    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		27 25   }
+		        '''
+	Changed file "core/rendertype_entity_cutout.vsh":
+		Total line: 37 (+1, -4)
+		        '''
+		        ...
+		13 13   uniform sampler2D Sampler1;
+		14 14   uniform sampler2D Sampler2;
+		15 15   
+		16 16   uniform mat4 ModelViewMat;
+		17 17   uniform mat4 ProjMat;
+		18    - uniform mat3 IViewRotMat;
+		19 18   uniform int FogShape;
+		20 19   
+		21 20   uniform vec3 Light0_Direction;
+		22 21   uniform vec3 Light1_Direction;
+		23 22   
+		24 23   out float vertexDistance;
+		25 24   out vec4 vertexColor;
+		26 25   out vec4 lightMapColor;
+		27 26   out vec4 overlayColor;
+		28 27   out vec2 texCoord0;
+		29    - out vec4 normal;
+		30 28   
+		31 29   void main() {
+		32 30       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		33 31   
+		   32 +     vertexDistance = fog_distance(Position, FogShape);
+		34    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		35 33       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		36 34       lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		37 35       overlayColor = texelFetch(Sampler1, UV1, 0);
+		38 36       texCoord0 = UV0;
+		39    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		40 37   }
+		        '''
+	Changed file "core/rendertype_entity_cutout_no_cull.vsh":
+		Total line: 37 (+1, -4)
+		        '''
+		        ...
+		13 13   uniform sampler2D Sampler1;
+		14 14   uniform sampler2D Sampler2;
+		15 15   
+		16 16   uniform mat4 ModelViewMat;
+		17 17   uniform mat4 ProjMat;
+		18    - uniform mat3 IViewRotMat;
+		19 18   uniform int FogShape;
+		20 19   
+		21 20   uniform vec3 Light0_Direction;
+		22 21   uniform vec3 Light1_Direction;
+		23 22   
+		24 23   out float vertexDistance;
+		25 24   out vec4 vertexColor;
+		26 25   out vec4 lightMapColor;
+		27 26   out vec4 overlayColor;
+		28 27   out vec2 texCoord0;
+		29    - out vec4 normal;
+		30 28   
+		31 29   void main() {
+		32 30       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		33 31   
+		   32 +     vertexDistance = fog_distance(Position, FogShape);
+		34    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		35 33       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		36 34       lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		37 35       overlayColor = texelFetch(Sampler1, UV1, 0);
+		38 36       texCoord0 = UV0;
+		39    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		40 37   }
+		        '''
+	Changed file "core/rendertype_entity_cutout_no_cull_z_offset.vsh":
+		Total line: 37 (+1, -4)
+		        '''
+		        ...
+		13 13   uniform sampler2D Sampler1;
+		14 14   uniform sampler2D Sampler2;
+		15 15   
+		16 16   uniform mat4 ModelViewMat;
+		17 17   uniform mat4 ProjMat;
+		18    - uniform mat3 IViewRotMat;
+		19 18   uniform int FogShape;
+		20 19   
+		21 20   uniform vec3 Light0_Direction;
+		22 21   uniform vec3 Light1_Direction;
+		23 22   
+		24 23   out float vertexDistance;
+		25 24   out vec4 vertexColor;
+		26 25   out vec4 lightMapColor;
+		27 26   out vec4 overlayColor;
+		28 27   out vec2 texCoord0;
+		29    - out vec4 normal;
+		30 28   
+		31 29   void main() {
+		32 30       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		33 31   
+		   32 +     vertexDistance = fog_distance(Position, FogShape);
+		34    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		35 33       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		36 34       lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		37 35       overlayColor = texelFetch(Sampler1, UV1, 0);
+		38 36       texCoord0 = UV0;
+		39    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		40 37   }
+		        '''
+	Changed file "core/rendertype_entity_decal.vsh":
+		Total line: 35 (+1, -4)
+		        '''
+		        ...
+		13 13   uniform sampler2D Sampler1;
+		14 14   uniform sampler2D Sampler2;
+		15 15   
+		16 16   uniform mat4 ModelViewMat;
+		17 17   uniform mat4 ProjMat;
+		18    - uniform mat3 IViewRotMat;
+		19 18   uniform int FogShape;
+		20 19   
+		21 20   uniform vec3 Light0_Direction;
+		22 21   uniform vec3 Light1_Direction;
+		23 22   
+		24 23   out float vertexDistance;
+		25 24   out vec4 vertexColor;
+		26 25   out vec4 overlayColor;
+		27 26   out vec2 texCoord0;
+		28    - out vec4 normal;
+		29 27   
+		30 28   void main() {
+		31 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		32 30   
+		   31 +     vertexDistance = fog_distance(Position, FogShape);
+		33    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		34 32       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		35 33       overlayColor = texelFetch(Sampler1, UV1, 0);
+		36 34       texCoord0 = UV0;
+		37    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		38 35   }
+		        '''
+	Changed file "core/rendertype_entity_glint.vsh":
+		Total line: 21 (+1, -2)
+		        '''
+		        ...
+		 5  5   in vec3 Position;
+		 6  6   in vec2 UV0;
+		 7  7   
+		 8  8   uniform mat4 ModelViewMat;
+		 9  9   uniform mat4 ProjMat;
+		10    - uniform mat3 IViewRotMat;
+		11 10   uniform mat4 TextureMat;
+		12 11   uniform int FogShape;
+		13 12   
+		14 13   out float vertexDistance;
+		15 14   out vec2 texCoord0;
+		16 15   
+		17 16   void main() {
+		18 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 18   
+		   19 +     vertexDistance = fog_distance(Position, FogShape);
+		20    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		21 20       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		22 21   }
+		        '''
+	Changed file "core/rendertype_entity_glint_direct.vsh":
+		Total line: 21 (+1, -2)
+		        '''
+		        ...
+		 5  5   in vec3 Position;
+		 6  6   in vec2 UV0;
+		 7  7   
+		 8  8   uniform mat4 ModelViewMat;
+		 9  9   uniform mat4 ProjMat;
+		10    - uniform mat3 IViewRotMat;
+		11 10   uniform mat4 TextureMat;
+		12 11   uniform int FogShape;
+		13 12   
+		14 13   out float vertexDistance;
+		15 14   out vec2 texCoord0;
+		16 15   
+		17 16   void main() {
+		18 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 18   
+		   19 +     vertexDistance = fog_distance(Position, FogShape);
+		20    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		21 20       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		22 21   }
+		        '''
+	Changed file "core/rendertype_entity_no_outline.vsh":
+		Total line: 31 (+1, -4)
+		        '''
+		        ...
+		11 11   
+		12 12   uniform sampler2D Sampler2;
+		13 13   
+		14 14   uniform mat4 ModelViewMat;
+		15 15   uniform mat4 ProjMat;
+		16    - uniform mat3 IViewRotMat;
+		17 16   uniform int FogShape;
+		18 17   
+		19 18   uniform vec3 Light0_Direction;
+		20 19   uniform vec3 Light1_Direction;
+		21 20   
+		22 21   out float vertexDistance;
+		23 22   out vec4 vertexColor;
+		24 23   out vec2 texCoord0;
+		25    - out vec4 normal;
+		26 24   
+		27 25   void main() {
+		28 26       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		29 27   
+		   28 +     vertexDistance = fog_distance(Position, FogShape);
+		30    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		31 29       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		32 30       texCoord0 = UV0;
+		33    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		34 31   }
+		        '''
+	Changed file "core/rendertype_entity_shadow.vsh":
+		Total line: 23 (+1, -2)
+		        '''
+		        ...
+		 6  6   in vec4 Color;
+		 7  7   in vec2 UV0;
+		 8  8   
+		 9  9   uniform mat4 ModelViewMat;
+		10 10   uniform mat4 ProjMat;
+		11    - uniform mat3 IViewRotMat;
+		12 11   uniform int FogShape;
+		13 12   
+		14 13   out float vertexDistance;
+		15 14   out vec4 vertexColor;
+		16 15   out vec2 texCoord0;
+		17 16   
+		18 17   void main() {
+		19 18       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		20 19   
+		   20 +     vertexDistance = fog_distance(Position, FogShape);
+		21    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		22 21       vertexColor = Color;
+		23 22       texCoord0 = UV0;
+		24 23   }
+		        '''
+	Changed file "core/rendertype_entity_smooth_cutout.vsh":
+		Total line: 37 (+1, -4)
+		        '''
+		        ...
+		13 13   uniform sampler2D Sampler1;
+		14 14   uniform sampler2D Sampler2;
+		15 15   
+		16 16   uniform mat4 ModelViewMat;
+		17 17   uniform mat4 ProjMat;
+		18    - uniform mat3 IViewRotMat;
+		19 18   uniform int FogShape;
+		20 19   
+		21 20   uniform vec3 Light0_Direction;
+		22 21   uniform vec3 Light1_Direction;
+		23 22   
+		24 23   out float vertexDistance;
+		25 24   out vec4 vertexColor;
+		26 25   out vec4 lightMapColor;
+		27 26   out vec4 overlayColor;
+		28 27   out vec2 texCoord0;
+		29    - out vec4 normal;
+		30 28   
+		31 29   void main() {
+		32 30       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		33 31   
+		   32 +     vertexDistance = fog_distance(Position, FogShape);
+		34    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		35 33       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		36 34       lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		37 35       overlayColor = texelFetch(Sampler1, UV1, 0);
+		38 36       texCoord0 = UV0;
+		39    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		40 37   }
+		        '''
+	Changed file "core/rendertype_entity_solid.vsh":
+		Total line: 37 (+1, -4)
+		        '''
+		        ...
+		13 13   uniform sampler2D Sampler1;
+		14 14   uniform sampler2D Sampler2;
+		15 15   
+		16 16   uniform mat4 ModelViewMat;
+		17 17   uniform mat4 ProjMat;
+		18    - uniform mat3 IViewRotMat;
+		19 18   uniform int FogShape;
+		20 19   
+		21 20   uniform vec3 Light0_Direction;
+		22 21   uniform vec3 Light1_Direction;
+		23 22   
+		24 23   out float vertexDistance;
+		25 24   out vec4 vertexColor;
+		26 25   out vec4 lightMapColor;
+		27 26   out vec4 overlayColor;
+		28 27   out vec2 texCoord0;
+		29    - out vec4 normal;
+		30 28   
+		31 29   void main() {
+		32 30       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		33 31   
+		   32 +     vertexDistance = fog_distance(Position, FogShape);
+		34    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		35 33       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		36 34       lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		37 35       overlayColor = texelFetch(Sampler1, UV1, 0);
+		38 36       texCoord0 = UV0;
+		39    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		40 37   }
+		        '''
+	Changed file "core/rendertype_entity_translucent.vsh":
+		Total line: 37 (+1, -4)
+		        '''
+		        ...
+		13 13   uniform sampler2D Sampler1;
+		14 14   uniform sampler2D Sampler2;
+		15 15   
+		16 16   uniform mat4 ModelViewMat;
+		17 17   uniform mat4 ProjMat;
+		18    - uniform mat3 IViewRotMat;
+		19 18   uniform int FogShape;
+		20 19   
+		21 20   uniform vec3 Light0_Direction;
+		22 21   uniform vec3 Light1_Direction;
+		23 22   
+		24 23   out float vertexDistance;
+		25 24   out vec4 vertexColor;
+		26 25   out vec4 lightMapColor;
+		27 26   out vec4 overlayColor;
+		28 27   out vec2 texCoord0;
+		29    - out vec4 normal;
+		30 28   
+		31 29   void main() {
+		32 30       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		33 31   
+		   32 +     vertexDistance = fog_distance(Position, FogShape);
+		34    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		35 33       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		36 34       lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
+		37 35       overlayColor = texelFetch(Sampler1, UV1, 0);
+		38 36       texCoord0 = UV0;
+		39    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		40 37   }
+		        '''
+	Changed file "core/rendertype_entity_translucent_cull.vsh":
+		Total line: 36 (+1, -4)
+		        '''
+		        ...
+		12 12   
+		13 13   uniform sampler2D Sampler2;
+		14 14   
+		15 15   uniform mat4 ModelViewMat;
+		16 16   uniform mat4 ProjMat;
+		17    - uniform mat3 IViewRotMat;
+		18 17   uniform int FogShape;
+		19 18   
+		20 19   uniform vec3 Light0_Direction;
+		21 20   uniform vec3 Light1_Direction;
+		22 21   
+		23 22   out float vertexDistance;
+		24 23   out vec4 vertexColor;
+		25 24   out vec2 texCoord0;
+		26 25   out vec2 texCoord1;
+		27 26   out vec2 texCoord2;
+		28    - out vec4 normal;
+		29 27   
+		30 28   void main() {
+		31 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		32 30   
+		   31 +     vertexDistance = fog_distance(Position, FogShape);
+		33    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		34 32       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		35 33       texCoord0 = UV0;
+		36 34       texCoord1 = UV1;
+		37 35       texCoord2 = UV2;
+		38    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		39 36   }
+		        '''
+	Changed file "core/rendertype_entity_translucent_emissive.vsh":
+		Total line: 33 (+0, -2)
+		        '''
+		        ...
+		20 20   
+		21 21   out float vertexDistance;
+		22 22   out vec4 vertexColor;
+		23 23   out vec4 overlayColor;
+		24 24   out vec2 texCoord0;
+		25    - out vec4 normal;
+		26 25   
+		27 26   void main() {
+		28 27       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		29 28   
+		30 29       vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		31 30       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+		32 31       overlayColor = texelFetch(Sampler1, UV1, 0);
+		33 32       texCoord0 = UV0;
+		34    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		35 33   }
+		        '''
+	Changed file "core/rendertype_eyes.vsh":
+		Total line: 23 (+1, -2)
+		        '''
+		        ...
+		 6  6   in vec4 Color;
+		 7  7   in vec2 UV0;
+		 8  8   
+		 9  9   uniform mat4 ModelViewMat;
+		10 10   uniform mat4 ProjMat;
+		11    - uniform mat3 IViewRotMat;
+		12 11   uniform int FogShape;
+		13 12   
+		14 13   out float vertexDistance;
+		15 14   out vec4 vertexColor;
+		16 15   out vec2 texCoord0;
+		17 16   
+		18 17   void main() {
+		19 18       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		20 19   
+		   20 +     vertexDistance = fog_distance(Position, FogShape);
+		21    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		22 21       vertexColor = Color;
+		23 22       texCoord0 = UV0;
+		24 23   }
+		        '''
+	Changed file "core/rendertype_glint.vsh":
+		Total line: 21 (+1, -2)
+		        '''
+		        ...
+		 5  5   in vec3 Position;
+		 6  6   in vec2 UV0;
+		 7  7   
+		 8  8   uniform mat4 ModelViewMat;
+		 9  9   uniform mat4 ProjMat;
+		10    - uniform mat3 IViewRotMat;
+		11 10   uniform mat4 TextureMat;
+		12 11   uniform int FogShape;
+		13 12   
+		14 13   out float vertexDistance;
+		15 14   out vec2 texCoord0;
+		16 15   
+		17 16   void main() {
+		18 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 18   
+		   19 +     vertexDistance = fog_distance(Position, FogShape);
+		20    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		21 20       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		22 21   }
+		        '''
+	Changed file "core/rendertype_glint_direct.vsh":
+		Total line: 21 (+1, -2)
+		        '''
+		        ...
+		 5  5   in vec3 Position;
+		 6  6   in vec2 UV0;
+		 7  7   
+		 8  8   uniform mat4 ModelViewMat;
+		 9  9   uniform mat4 ProjMat;
+		10    - uniform mat3 IViewRotMat;
+		11 10   uniform mat4 TextureMat;
+		12 11   uniform int FogShape;
+		13 12   
+		14 13   out float vertexDistance;
+		15 14   out vec2 texCoord0;
+		16 15   
+		17 16   void main() {
+		18 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 18   
+		   19 +     vertexDistance = fog_distance(Position, FogShape);
+		20    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		21 20       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		22 21   }
+		        '''
+	Changed file "core/rendertype_glint_translucent.vsh":
+		Total line: 21 (+1, -2)
+		        '''
+		        ...
+		 5  5   in vec3 Position;
+		 6  6   in vec2 UV0;
+		 7  7   
+		 8  8   uniform mat4 ModelViewMat;
+		 9  9   uniform mat4 ProjMat;
+		10    - uniform mat3 IViewRotMat;
+		11 10   uniform mat4 TextureMat;
+		12 11   uniform int FogShape;
+		13 12   
+		14 13   out float vertexDistance;
+		15 14   out vec2 texCoord0;
+		16 15   
+		17 16   void main() {
+		18 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		19 18   
+		   19 +     vertexDistance = fog_distance(Position, FogShape);
+		20    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		21 20       texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		22 21   }
+		        '''
+	Changed file "core/rendertype_item_entity_translucent_cull.vsh":
+		Total line: 36 (+1, -4)
+		        '''
+		        ...
+		12 12   
+		13 13   uniform sampler2D Sampler2;
+		14 14   
+		15 15   uniform mat4 ModelViewMat;
+		16 16   uniform mat4 ProjMat;
+		17    - uniform mat3 IViewRotMat;
+		18 17   uniform int FogShape;
+		19 18   
+		20 19   uniform vec3 Light0_Direction;
+		21 20   uniform vec3 Light1_Direction;
+		22 21   
+		23 22   out float vertexDistance;
+		24 23   out vec4 vertexColor;
+		25 24   out vec2 texCoord0;
+		26 25   out vec2 texCoord1;
+		27 26   out vec2 texCoord2;
+		28    - out vec4 normal;
+		29 27   
+		30 28   void main() {
+		31 29       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		32 30   
+		   31 +     vertexDistance = fog_distance(Position, FogShape);
+		33    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		34 32       vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color) * texelFetch(Sampler2, UV2 / 16, 0);
+		35 33       texCoord0 = UV0;
+		36 34       texCoord1 = UV1;
+		37 35       texCoord2 = UV2;
+		38    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		39 36   }
+		        '''
+	Changed file "core/rendertype_leash.vsh":
+		Total line: 24 (+1, -2)
+		        '''
+		        ...
+		 8  8   
+		 9  9   uniform sampler2D Sampler2;
+		10 10   
+		11 11   uniform mat4 ModelViewMat;
+		12 12   uniform mat4 ProjMat;
+		13    - uniform mat3 IViewRotMat;
+		14 13   uniform vec4 ColorModulator;
+		15 14   uniform int FogShape;
+		16 15   
+		17 16   out float vertexDistance;
+		18 17   flat out vec4 vertexColor;
+		19 18   
+		20 19   void main() {
+		21 20       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		22 21   
+		   22 +     vertexDistance = fog_distance(Position, FogShape);
+		23    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		24 23       vertexColor = Color * ColorModulator * texelFetch(Sampler2, UV2 / 16, 0);
+		25 24   }
+		        '''
+	Changed file "core/rendertype_lightning.vsh":
+		Total line: 20 (+1, -2)
+		        '''
+		        ...
+		 5  5   in vec3 Position;
+		 6  6   in vec4 Color;
+		 7  7   
+		 8  8   uniform mat4 ModelViewMat;
+		 9  9   uniform mat4 ProjMat;
+		10    - uniform mat3 IViewRotMat;
+		11 10   uniform int FogShape;
+		12 11   
+		13 12   out float vertexDistance;
+		14 13   out vec4 vertexColor;
+		15 14   
+		16 15   void main() {
+		17 16       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		18 17   
+		   18 +     vertexDistance = fog_distance(Position, FogShape);
+		19    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		20 19       vertexColor = Color;
+		21 20   }
+		        '''
+	Changed file "core/rendertype_lines.vsh":
+		Total line: 48 (+1, -1)
+		        '''
+		        ...
+		41 41           gl_Position = vec4((ndc1 + vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		42 42       } else {
+		43 43           gl_Position = vec4((ndc1 - vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		44 44       }
+		45 45   
+		   46 +     vertexDistance = fog_distance(Position, FogShape);
+		46    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		47 47       vertexColor = Color;
+		48 48   }
+		        '''
+	Changed file "core/rendertype_solid.vsh":
+		Total line: 30 (+1, -3)
+		        '''
+		        ...
+		17 17   uniform int FogShape;
+		18 18   
+		19 19   out float vertexDistance;
+		20 20   out vec4 vertexColor;
+		21 21   out vec2 texCoord0;
+		22    - out vec4 normal;
+		23 22   
+		24 23   void main() {
+		25 24       vec3 pos = Position + ChunkOffset;
+		26 25       gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+		27 26   
+		   27 +     vertexDistance = fog_distance(pos, FogShape);
+		28    -     vertexDistance = fog_distance(ModelViewMat, pos, FogShape);
+		29 28       vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		30 29       texCoord0 = UV0;
+		31    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		32 30   }
+		        '''
+	Changed file "core/rendertype_text.vsh":
+		Total line: 26 (+1, -2)
+		        '''
+		        ...
+		 9  9   
+		10 10   uniform sampler2D Sampler2;
+		11 11   
+		12 12   uniform mat4 ModelViewMat;
+		13 13   uniform mat4 ProjMat;
+		14    - uniform mat3 IViewRotMat;
+		15 14   uniform int FogShape;
+		16 15   
+		17 16   out float vertexDistance;
+		18 17   out vec4 vertexColor;
+		19 18   out vec2 texCoord0;
+		20 19   
+		21 20   void main() {
+		22 21       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		23 22   
+		   23 +     vertexDistance = fog_distance(Position, FogShape);
+		24    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		25 24       vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		26 25       texCoord0 = UV0;
+		27 26   }
+		        '''
+	Changed file "core/rendertype_text_background.vsh":
+		Total line: 23 (+1, -2)
+		        '''
+		        ...
+		 8  8   
+		 9  9   uniform sampler2D Sampler2;
+		10 10   
+		11 11   uniform mat4 ModelViewMat;
+		12 12   uniform mat4 ProjMat;
+		13    - uniform mat3 IViewRotMat;
+		14 13   uniform int FogShape;
+		15 14   
+		16 15   out float vertexDistance;
+		17 16   out vec4 vertexColor;
+		18 17   
+		19 18   void main() {
+		20 19       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		21 20   
+		   21 +     vertexDistance = fog_distance(Position, FogShape);
+		22    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		23 22       vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		24 23   }
+		        '''
+	Changed file "core/rendertype_text_intensity.vsh":
+		Total line: 26 (+1, -2)
+		        '''
+		        ...
+		 9  9   
+		10 10   uniform sampler2D Sampler2;
+		11 11   
+		12 12   uniform mat4 ModelViewMat;
+		13 13   uniform mat4 ProjMat;
+		14    - uniform mat3 IViewRotMat;
+		15 14   uniform int FogShape;
+		16 15   
+		17 16   out float vertexDistance;
+		18 17   out vec4 vertexColor;
+		19 18   out vec2 texCoord0;
+		20 19   
+		21 20   void main() {
+		22 21       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		23 22   
+		   23 +     vertexDistance = fog_distance(Position, FogShape);
+		24    -     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
+		25 24       vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		26 25       texCoord0 = UV0;
+		27 26   }
+		        '''
+	Changed file "core/rendertype_translucent.vsh":
+		Total line: 30 (+1, -3)
+		        '''
+		        ...
+		17 17   uniform int FogShape;
+		18 18   
+		19 19   out float vertexDistance;
+		20 20   out vec4 vertexColor;
+		21 21   out vec2 texCoord0;
+		22    - out vec4 normal;
+		23 22   
+		24 23   void main() {
+		25 24       vec3 pos = Position + ChunkOffset;
+		26 25       gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+		27 26   
+		   27 +     vertexDistance = fog_distance(pos, FogShape);
+		28    -     vertexDistance = fog_distance(ModelViewMat, pos, FogShape);
+		29 28       vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		30 29       texCoord0 = UV0;
+		31    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		32 30   }
+		        '''
+	Changed file "core/rendertype_translucent_moving_block.vsh":
+		Total line: 22 (+0, -2)
+		        '''
+		        ...
+		11 11   uniform mat4 ModelViewMat;
+		12 12   uniform mat4 ProjMat;
+		13 13   
+		14 14   out vec4 vertexColor;
+		15 15   out vec2 texCoord0;
+		16    - out vec4 normal;
+		17 16   
+		18 17   void main() {
+		19 18       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		20 19   
+		21 20       vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+		22 21       texCoord0 = UV0;
+		23    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		24 22   }
+		        '''
+	Changed file "core/rendertype_tripwire.vsh":
+		Total line: 30 (+1, -3)
+		        '''
+		        ...
+		17 17   uniform int FogShape;
+		18 18   
+		19 19   out float vertexDistance;
+		20 20   out vec4 vertexColor;
+		21 21   out vec2 texCoord0;
+		22    - out vec4 normal;
+		23 22   
+		24 23   void main() {
+		25 24       vec3 pos = Position + ChunkOffset;
+		26 25       gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+		27 26   
+		   27 +     vertexDistance = fog_distance(pos, FogShape);
+		28    -     vertexDistance = fog_distance(ModelViewMat, pos, FogShape);
+		29 28       vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+		30 29       texCoord0 = UV0;
+		31    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		32 30   }
+		        '''

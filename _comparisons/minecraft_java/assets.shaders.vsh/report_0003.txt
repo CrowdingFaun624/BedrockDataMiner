@@ -1,0 +1,85 @@
+Difference of "text_packs" between "1.12.2" and "17w43a" (snapshot of "1.13").
+
+Changed resource pack "minecraft":
+	Changed file "program/blit.vsh":
+		Total line: 15 (+0, -1)
+		        '''
+		        ...
+		10 10   void main(){
+		11 11       vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		12 12       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		13 13   
+		14 14       texCoord = Position.xy / OutSize;
+		15    -     texCoord.y = 1.0 - texCoord.y;
+		16 15   }
+		        '''
+	Changed file "program/downscale.vsh":
+		Total line: 18 (+0, -1)
+		        '''
+		        ...
+		13 13       vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		14 14       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		15 15   
+		16 16       oneTexel = 1.0 / InSize;
+		17 17       texCoord = outPos.xy * 0.5 + 0.5;
+		18    -     texCoord.y = 1.0 - texCoord.y;
+		19 18   }
+		        '''
+	Changed file "program/flip.vsh":
+		Total line: 23 (+1, -0)
+		        '''
+		        ...
+		14 14       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		15 15   
+		16 16       vec2 inOutRatio = OutSize / InSize;
+		17 17       vec2 inScreenRatio = ScreenSize / InSize;
+		18 18       texCoord = Position.xy / OutSize;
+		   19 +     texCoord.y = 1.0 - texCoord.y;
+		19 20       texCoord.x = texCoord.x * inOutRatio.x;
+		20 21       texCoord.y = texCoord.y * inOutRatio.y;
+		21 22       texCoord.y -= 1.0 - inScreenRatio.y;
+		22 23   }
+		        '''
+	Changed file "program/fxaa.vsh":
+		Total line: 20 (+0, -1)
+		        '''
+		        ...
+		13 13   void main() {
+		14 14       vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		15 15       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		16 16   
+		17 17       texCoord = Position.xy / OutSize;
+		18    -     texCoord.y = 1.0 - texCoord.y;
+		19 18       posPos.xy = texCoord.xy;
+		20 19       posPos.zw = texCoord.xy - (1.0/OutSize * vec2(0.5 + SubPixelShift));
+		21 20   }
+		        '''
+	Changed file "program/rotscale.vsh":
+		Total line: 30 (+0, -1)
+		        '''
+		        ...
+		17 17   void main(){
+		18 18       vec4 outPos = ProjMat * vec4(Position.xy, 0.0, 1.0);
+		19 19       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		20 20   
+		21 21       texCoord = Position.xy / OutSize;
+		22    -     texCoord.y = 1.0 - texCoord.y;
+		23 22   
+		24 23       float Deg2Rad = 0.0174532925;
+		25 24       float InRadians = InRotation * Deg2Rad;
+		26 25       float Cosine = cos(InRadians);
+		27 26       float Sine = sin(InRadians);
+		        ...
+		        '''
+	Changed file "program/sobel.vsh":
+		Total line: 19 (+0, -1)
+		        '''
+		        ...
+		14 14       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		15 15   
+		16 16       oneTexel = 1.0 / InSize;
+		17 17   
+		18 18       texCoord = Position.xy / OutSize;
+		19    -     texCoord.y = 1.0 - texCoord.y;    
+		20 19   }
+		        '''

@@ -1,0 +1,73 @@
+Difference of "text_packs" between "14w04b-1554" (snapshot of "1.8") and "14w05a" (snapshot of "1.8").
+
+Changed resource pack "minecraft":
+	Total file: 25 (+1, -0)
+	Changed file "program/blit.fsh":
+		Total line: 11 (+3, -1)
+		        '''
+		 1  1   #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		    5 + uniform vec4 ColorModulate;
+		    6 + 
+		 5  7   varying vec2 texCoord;
+		 6  8   
+		 7  9   void main(){
+		   10 +     gl_FragColor = texture2D(DiffuseSampler, texCoord) * ColorModulate;
+		 8    -     gl_FragColor = texture2D(DiffuseSampler, texCoord);
+		 9 11   }
+		        '''
+	Changed file "program/blur.fsh":
+		Total line: 23 (+2, -2)
+		        '''
+		        ...
+		12 12   
+		13 13   void main() {
+		14 14       vec4 blurred = vec4(0.0);
+		15 15       float totalStrength = 0.0;
+		16 16       for(float r = -Radius; r <= Radius; r += 1.0) {
+		   17 +         float strength = 1.0 - abs(r / Radius);
+		   18 +         //strength = strength * strength;
+		17    -         float strength = abs(1.0 - r / Radius);
+		18    -         strength = strength * strength;
+		19 19           totalStrength = totalStrength + strength;
+		20 20           blurred = blurred + texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir) * strength;
+		21 21       }
+		22 22       gl_FragColor = vec4(blurred.rgb / totalStrength, texture2D(DiffuseSampler, texCoord).a);
+		23 23   }
+		        '''
+	Added file "program/spiderclip.fsh":
+		'''
+		#version 120
+		
+		uniform sampler2D DiffuseSampler;
+		uniform sampler2D BlurSampler;
+		
+		varying vec2 texCoord;
+		varying vec2 scaledCoord;
+		
+		uniform vec2 InSize;
+		uniform vec4 Scissor;
+		uniform vec4 Vignette;
+		
+		void main() {
+		    vec4 ScaledTexel = texture2D(DiffuseSampler, scaledCoord);
+		    vec4 BlurTexel = texture2D(BlurSampler, texCoord);
+		    vec4 OutTexel = ScaledTexel;
+		
+		    // -- Alpha Clipping --
+		    if (scaledCoord.x < Scissor.x) OutTexel = BlurTexel;
+		    if (scaledCoord.y < Scissor.y) OutTexel = BlurTexel;
+		    if (scaledCoord.x > Scissor.z) OutTexel = BlurTexel;
+		    if (scaledCoord.y > Scissor.w) OutTexel = BlurTexel;
+		
+		    clamp(scaledCoord, 0.0, 1.0);
+		
+		    if (scaledCoord.x < Vignette.x) OutTexel = mix(BlurTexel, OutTexel, (Scissor.x - scaledCoord.x) / (Scissor.x - Vignette.x));
+		    if (scaledCoord.y < Vignette.y) OutTexel = mix(BlurTexel, OutTexel, (Scissor.y - scaledCoord.y) / (Scissor.y - Vignette.y));
+		    if (scaledCoord.x > Vignette.z) OutTexel = mix(BlurTexel, OutTexel, (Scissor.z - scaledCoord.x) / (Scissor.z - Vignette.z));
+		    if (scaledCoord.y > Vignette.w) OutTexel = mix(BlurTexel, OutTexel, (Scissor.w - scaledCoord.y) / (Scissor.w - Vignette.w));
+		    gl_FragColor = OutTexel;
+		}
+		'''

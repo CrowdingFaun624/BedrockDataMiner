@@ -1,0 +1,452 @@
+Difference of "text_packs" between "1.14.4" and "19w34a" (snapshot of "1.15").
+
+Changed resource pack "minecraft":
+	Changed file "program/antialias.fsh":
+		Total line: 29 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/bits.fsh":
+		Total line: 27 (+3, -3)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		 7  7   
+		 8  8   uniform vec2 InSize;
+		 9  9   
+		   10 + uniform float Resolution;
+		   11 + uniform float Saturation;
+		10    - uniform float Resolution = 4.0;
+		11    - uniform float Saturation = 1.5;
+		   12 + uniform float MosaicSize;
+		12    - uniform float MosaicSize = 8.0;
+		13 13   
+		14 14   void main() {
+		15 15       vec2 mosaicInSize = InSize / MosaicSize;
+		16 16       vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		17 17   
+		        ...
+		        '''
+	Changed file "program/blit.fsh":
+		Total line: 11 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   uniform vec4 ColorModulate;
+		 6  6   
+		        ...
+		        '''
+	Changed file "program/blobs.fsh":
+		Total line: 43 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/blobs2.fsh":
+		Total line: 30 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/blur.fsh":
+		Total line: 31 (+4, -4)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		14 14       vec4 blurred = vec4(0.0);
+		15 15       float totalStrength = 0.0;
+		16 16       float totalAlpha = 0.0;
+		17 17       float totalSamples = 0.0;
+		18 18       for(float r = -Radius; r <= Radius; r += 1.0) {
+		   19 +         vec4 sampleValue = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+		19    -         vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+		20 20   
+		21 21   		// Accumulate average alpha
+		   22 +         totalAlpha = totalAlpha + sampleValue.a;
+		22    -         totalAlpha = totalAlpha + sample.a;
+		23 23           totalSamples = totalSamples + 1.0;
+		24 24   
+		25 25   		// Accumulate smoothed blur
+		26 26           float strength = 1.0 - abs(r / Radius);
+		27 27           totalStrength = totalStrength + strength;
+		   28 +         blurred = blurred + sampleValue;
+		28    -         blurred = blurred + sample;
+		29 29       }
+		30 30       gl_FragColor = vec4(blurred.rgb / (Radius * 2.0 + 1.0), totalAlpha);
+		31 31   }
+		        '''
+	Changed file "program/bumpy.fsh":
+		Total line: 34 (+2, -2)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		27 27   
+		28 28       float f = 1.0;
+		29 29       f += (du * i) - (dd * i);
+		30 30       f += (dr * i) - (dl * i);
+		31 31   
+		   32 +     vec4 color = c * clamp(f, 0.5, 2.0);
+		32    -     vec4 color = c * clamp(f, 0.5, 2);
+		33 33       gl_FragColor = vec4(color.rgb, 1.0);
+		34 34   }
+		        '''
+	Changed file "program/color_convolve.fsh":
+		Total line: 36 (+3, -3)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		 7  7   
+		 8  8   uniform vec2 InSize;
+		 9  9   
+		   10 + uniform vec3 Gray;
+		   11 + uniform vec3 RedMatrix;
+		10    - uniform vec3 Gray = vec3(0.3, 0.59, 0.11);
+		11    - uniform vec3 RedMatrix   = vec3(1.0, 0.0, 0.0);
+		   12 + uniform vec3 GreenMatrix;
+		   13 + uniform vec3 BlueMatrix;
+		   14 + uniform vec3 Offset;
+		   15 + uniform vec3 ColorScale;
+		   16 + uniform float Saturation;
+		12    - uniform vec3 GreenMatrix = vec3(0.0, 1.0, 0.0);
+		13    - uniform vec3 BlueMatrix  = vec3(0.0, 0.0, 1.0);
+		14    - uniform vec3 Offset = vec3(0.0, 0.0, 0.0);
+		15    - uniform vec3 ColorScale = vec3(1.0, 1.0, 1.0);
+		16    - uniform float Saturation = 1.8;
+		17 17   
+		18 18   void main() {
+		19 19       vec4 InTexel = texture2D(DiffuseSampler, texCoord);
+		20 20   
+		21 21       // Color Matrix
+		        ...
+		        '''
+	Changed file "program/deconverge.fsh":
+		Total line: 28 (+3, -3)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		 7  7   
+		 8  8   uniform vec2 InSize;
+		 9  9   
+		   10 + uniform vec3 ConvergeX;
+		   11 + uniform vec3 ConvergeY;
+		10    - uniform vec3 ConvergeX = vec3(-1.0,  0.0, 0.5);
+		11    - uniform vec3 ConvergeY = vec3( 0.0, -1.0, 0.5);
+		   12 + uniform vec3 RadialConvergeX;
+		   13 + uniform vec3 RadialConvergeY;
+		12    - uniform vec3 RadialConvergeX = vec3(1.0, 1.0, 1.0);
+		13    - uniform vec3 RadialConvergeY = vec3(1.0, 1.0, 1.0);
+		14 14   
+		15 15   void main() {
+		16 16       vec3 CoordX = texCoord.x * RadialConvergeX;
+		17 17       vec3 CoordY = texCoord.y * RadialConvergeY;
+		18 18   
+		        ...
+		        '''
+	Changed file "program/downscale.fsh":
+		Total line: 17 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/entity_sobel.fsh":
+		Total line: 21 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/fxaa.fsh":
+		Total line: 85 (+1, -0)
+		        '''
+		    1 + #version 110
+		 1  2   #extension GL_EXT_gpu_shader4 : enable
+		 2  3   
+		 3  4   uniform sampler2D DiffuseSampler;
+		 4  5   uniform vec2 OutSize;
+		 5  6   
+		        ...
+		        '''
+	Changed file "program/invert.fsh":
+		Total line: 14 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   
+		        ...
+		        '''
+	Changed file "program/notch.fsh":
+		Total line: 23 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   uniform sampler2D DitherSampler;
+		 5  5   
+		 6  6   varying vec2 texCoord;
+		        ...
+		        '''
+	Changed file "program/ntsc_decode.fsh":
+		Total line: 132 (+1, -1)
+		          '''
+		      1 + #version 110
+		  1     - #version 120
+		  2   2   
+		  3   3   uniform sampler2D DiffuseSampler;
+		  4   4   uniform sampler2D BaseSampler;
+		  5   5   
+		  6   6   varying vec2 texCoord;
+		          ...
+		          '''
+	Changed file "program/ntsc_encode.fsh":
+		Total line: 50 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/outline.fsh":
+		Total line: 21 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/outline_combine.fsh":
+		Total line: 13 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   uniform sampler2D OutlineSampler;
+		 5  5   
+		 6  6   varying vec2 texCoord;
+		        ...
+		        '''
+	Changed file "program/outline_soft.fsh":
+		Total line: 46 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/outline_watercolor.fsh":
+		Total line: 41 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/overlay.fsh":
+		Total line: 27 (+3, -3)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   uniform sampler2D OverlaySampler;
+		 5  5   
+		 6  6   uniform vec2 InSize;
+		 7  7   
+		 8  8   varying vec2 texCoord;
+		 9  9   
+		   10 + uniform float MosaicSize;
+		   11 + uniform vec3 RedMatrix;
+		10    - uniform float MosaicSize = 1.0;
+		11    - uniform vec3 RedMatrix   = vec3(1.0, 0.0, 0.0);
+		   12 + uniform vec3 GreenMatrix;
+		   13 + uniform vec3 BlueMatrix;
+		12    - uniform vec3 GreenMatrix = vec3(0.0, 1.0, 0.0);
+		13    - uniform vec3 BlueMatrix  = vec3(0.0, 0.0, 1.0);
+		14 14   
+		15 15   void main(){
+		16 16       vec2 mosaicInSize = InSize / MosaicSize;
+		17 17       vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		18 18   
+		        ...
+		        '''
+	Changed file "program/phosphor.fsh":
+		Total line: 18 (+2, -3)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   uniform sampler2D PrevSampler;
+		 5  5   
+		 6  6   varying vec2 texCoord;
+		 7  7   varying vec2 oneTexel;
+		 8  8   
+		 9  9   uniform vec2 InSize;
+		10 10   
+		   11 + uniform vec3 Phosphor;
+		11    - uniform vec3 Phosphor = vec3(0.7, 0.7, 0.7);
+		12    - uniform float LerpFactor = 1.0;
+		13 12   
+		14 13   void main() {
+		15 14       vec4 CurrTexel = texture2D(DiffuseSampler, texCoord);
+		16 15       vec4 PrevTexel = texture2D(PrevSampler, texCoord);
+		17 16   
+		        ...
+		        '''
+	Changed file "program/scan_pincushion.fsh":
+		Total line: 64 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/sobel.fsh":
+		Total line: 20 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		        '''
+	Changed file "program/spiderclip.fsh":
+		Total line: 31 (+1, -1)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   uniform sampler2D BlurSampler;
+		 5  5   
+		 6  6   varying vec2 texCoord;
+		        ...
+		        '''
+	Changed file "program/wobble.fsh":
+		Total line: 58 (+4, -4)
+		        '''
+		    1 + #version 110
+		 1    - #version 120
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   varying vec2 texCoord;
+		 6  6   varying vec2 oneTexel;
+		        ...
+		12 12   uniform vec2 WobbleAmount;
+		13 13   
+		14 14   vec3 hue(float h)
+		15 15   {
+		16 16       float r = abs(h * 6.0 - 3.0) - 1.0;
+		   17 +     float g = 2.0 - abs(h * 6.0 - 2.0);
+		   18 +     float b = 2.0 - abs(h * 6.0 - 4.0);
+		17    -     float g = 2 - abs(h * 6.0 - 2.0);
+		18    -     float b = 2 - abs(h * 6.0 - 4.0);
+		19 19       return clamp(vec3(r,g,b), 0.0, 1.0);
+		20 20   }
+		21 21   
+		22 22   vec3 HSVtoRGB(vec3 hsv) {
+		23 23       return ((hue(hsv.x) - 1.0) * hsv.y + 1.0) * hsv.z;
+		        ...
+		27 27       vec3 hsv = vec3(0.0);
+		28 28       hsv.z = max(rgb.r, max(rgb.g, rgb.b));
+		29 29       float min = min(rgb.r, min(rgb.g, rgb.b));
+		30 30       float c = hsv.z - min;
+		31 31   
+		   32 +     if (c != 0.0)
+		32    -     if (c != 0)
+		33 33       {
+		34 34           hsv.y = c / hsv.z;
+		35 35           vec3 delta = (hsv.z - rgb) / c;
+		36 36           delta.rgb -= delta.brg;
+		37 37           delta.rg += vec2(2.0, 4.0);
+		        ...
+		        '''

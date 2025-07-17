@@ -1,0 +1,23 @@
+Difference of "text_packs" between "24w38a" (snapshot of "1.21.2") and "24w39a" (snapshot of "1.21.2").
+
+Changed resource pack "minecraft":
+	Changed file "core/lightmap.fsh":
+		Total line: 68 (+2, -2)
+		        '''
+		        ...
+		23 23       vec3 nx = 1.0 - x;
+		24 24       return 1.0 - nx * nx * nx * nx;
+		25 25   }
+		26 26   
+		27 27   void main() {
+		   28 +     float block_brightness = get_brightness(floor(texCoord.x * 16) / 15) * BlockFactor;
+		   29 +     float sky_brightness = get_brightness(floor(texCoord.y * 16) / 15) * SkyFactor;
+		28    -     float block_brightness = get_brightness(texCoord.x) * BlockFactor;
+		29    -     float sky_brightness = get_brightness(texCoord.y) * SkyFactor;
+		30 30   
+		31 31       // cubic nonsense, dips to yellowish in the middle, white when fully saturated
+		32 32       vec3 color = vec3(
+		33 33           block_brightness,
+		34 34           block_brightness * ((block_brightness * 0.6 + 0.4) * 0.6 + 0.4),
+		        ...
+		        '''

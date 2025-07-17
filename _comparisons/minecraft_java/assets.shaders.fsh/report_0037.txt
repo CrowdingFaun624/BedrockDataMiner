@@ -1,0 +1,902 @@
+Difference of "text_packs" between "25w15a" (snapshot of "1.21.6") and "25w16a" (snapshot of "1.21.6").
+
+Changed resource pack "minecraft":
+	Total file: 44 (+1, -0)
+	Changed file "core/entity.fsh":
+		Total line: 31 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec4 vertexColor;
+		14 10   in vec4 lightMapColor;
+		15 11   in vec4 overlayColor;
+		        ...
+		        '''
+	Changed file "core/glint.fsh":
+		Total line: 21 (+2, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:globals.glsl>
+		    5 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  6   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    7 + uniform sampler2D Sampler0;
+		10    - uniform float GlintAlpha;
+		11  8   
+		12  9   in float vertexDistance;
+		13 10   in vec2 texCoord0;
+		14 11   
+		15 12   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/gui.fsh":
+		Total line: 23 (+10, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + // Can't moj_import in things used during startup, when resource packs don't exist.
+		    4 + // This is a copy of dynamicimports.glsl
+		    5 + layout(std140) uniform DynamicTransforms {
+		    6 +     mat4 ModelViewMat;
+		    7 +     vec4 ColorModulator;
+		    8 +     vec3 ModelOffset;
+		    9 +     mat4 TextureMat;
+		   10 +     float LineWidth;
+		   11 + };
+		   12 + 
+		 3 13   in vec4 vertexColor;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6 14   
+		 7 15   out vec4 fragColor;
+		 8 16   
+		 9 17   void main() {
+		10 18       vec4 color = vertexColor;
+		        ...
+		        '''
+	Changed file "core/lightmap.fsh":
+		Total line: 70 (+14, -12)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + layout(std140) uniform LightmapInfo {
+		    4 +     float AmbientLightFactor;
+		    5 +     float SkyFactor;
+		 3    - uniform float AmbientLightFactor;
+		    6 +     float BlockFactor;
+		    7 +     int UseBrightLightmap;
+		    8 +     float NightVisionFactor;
+		    9 +     float DarknessScale;
+		   10 +     float DarkenWorldFactor;
+		   11 +     float BrightnessFactor;
+		   12 +     vec3 SkyLightColor;
+		   13 + } lightmapInfo;
+		 4    - uniform float SkyFactor;
+		 5    - uniform float BlockFactor;
+		 6    - uniform int UseBrightLightmap;
+		 7    - uniform vec3 SkyLightColor;
+		 8    - uniform float NightVisionFactor;
+		 9    - uniform float DarknessScale;
+		10    - uniform float DarkenWorldFactor;
+		11    - uniform float BrightnessFactor;
+		12 14   
+		13 15   in vec2 texCoord;
+		14 16   
+		15 17   out vec4 fragColor;
+		16 18   
+		17 19   float get_brightness(float level) {
+		18 20       float curved_level = level / (4.0 - 3.0 * level);
+		   21 +     return mix(curved_level, 1.0, lightmapInfo.AmbientLightFactor);
+		19    -     return mix(curved_level, 1.0, AmbientLightFactor);
+		20 22   }
+		21 23   
+		22 24   vec3 notGamma(vec3 x) {
+		23 25       vec3 nx = 1.0 - x;
+		24 26       return 1.0 - nx * nx * nx * nx;
+		25 27   }
+		26 28   
+		27 29   void main() {
+		   30 +     float block_brightness = get_brightness(floor(texCoord.x * 16) / 15) * lightmapInfo.BlockFactor;
+		   31 +     float sky_brightness = get_brightness(floor(texCoord.y * 16) / 15) * lightmapInfo.SkyFactor;
+		28    -     float block_brightness = get_brightness(floor(texCoord.x * 16) / 15) * BlockFactor;
+		29    -     float sky_brightness = get_brightness(floor(texCoord.y * 16) / 15) * SkyFactor;
+		30 32   
+		31 33       // cubic nonsense, dips to yellowish in the middle, white when fully saturated
+		32 34       vec3 color = vec3(
+		33 35           block_brightness,
+		34 36           block_brightness * ((block_brightness * 0.6 + 0.4) * 0.6 + 0.4),
+		35 37           block_brightness * (block_brightness * block_brightness * 0.6 + 0.4)
+		36 38       );
+		37 39   
+		   40 +     if (lightmapInfo.UseBrightLightmap != 0) {
+		38    -     if (UseBrightLightmap != 0) {
+		39 41           color = mix(color, vec3(0.99, 1.12, 1.0), 0.25);
+		40 42           color = clamp(color, 0.0, 1.0);
+		41 43       } else {
+		   44 +         color += lightmapInfo.SkyLightColor * sky_brightness;
+		42    -         color += SkyLightColor * sky_brightness;
+		43 45           color = mix(color, vec3(0.75), 0.04);
+		44 46   
+		45 47           vec3 darkened_color = color * vec3(0.7, 0.6, 0.6);
+		   48 +         color = mix(color, darkened_color, lightmapInfo.DarkenWorldFactor);
+		46    -         color = mix(color, darkened_color, DarkenWorldFactor);
+		47 49       }
+		48 50   
+		   51 +     if (lightmapInfo.NightVisionFactor > 0.0) {
+		49    -     if (NightVisionFactor > 0.0) {
+		50 52           // scale up uniformly until 1.0 is hit by one of the colors
+		51 53           float max_component = max(color.r, max(color.g, color.b));
+		52 54           if (max_component < 1.0) {
+		53 55               vec3 bright_color = color / max_component;
+		   56 +             color = mix(color, bright_color, lightmapInfo.NightVisionFactor);
+		54    -             color = mix(color, bright_color, NightVisionFactor);
+		55 57           }
+		56 58       }
+		57 59   
+		   60 +     if (lightmapInfo.UseBrightLightmap == 0) {
+		   61 +         color = clamp(color - vec3(lightmapInfo.DarknessScale), 0.0, 1.0);
+		58    -     if (UseBrightLightmap == 0) {
+		59    -         color = clamp(color - vec3(DarknessScale), 0.0, 1.0);
+		60 62       }
+		61 63   
+		62 64       vec3 notGamma = notGamma(color);
+		   65 +     color = mix(color, notGamma, lightmapInfo.BrightnessFactor);
+		63    -     color = mix(color, notGamma, BrightnessFactor);
+		64 66       color = mix(color, vec3(0.75), 0.04);
+		65 67       color = clamp(color, 0.0, 1.0);
+		66 68   
+		67 69       fragColor = vec4(color, 1.0);
+		68 70   }
+		        '''
+	Changed file "core/particle.fsh":
+		Total line: 20 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec2 texCoord0;
+		14 10   in vec4 vertexColor;
+		15 11   
+		        ...
+		        '''
+	Changed file "core/position.fsh":
+		Total line: 19 (+6, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		    5 + 
+		    6 + in float vertexDistance;
+		 4  7   
+		 5    - uniform vec4 ColorModulator;
+		 6    - uniform float FogStart;
+		 7    - uniform float FogEnd;
+		    8 + out vec4 fragColor;
+		 8    - uniform vec4 FogColor;
+		 9  9   
+		   10 + void main() {
+		   11 + #ifdef FOG_IS_SKY
+		   12 +     float fogStart = 0.0;
+		   13 +     float fogEnd = FogSkyEnd;
+		   14 + #else
+		   15 +     float fogStart = FogStart;
+		   16 +     float fogEnd = FogEnd;
+		   17 + #endif
+		   18 +     fragColor = linear_fog(ColorModulator, vertexDistance, fogStart, fogEnd, FogColor);
+		10    - in float vertexDistance;
+		11    - 
+		12    - out vec4 fragColor;
+		13    - 
+		14    - void main() {
+		15    -     fragColor = linear_fog(ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
+		16 19   }
+		        '''
+	Changed file "core/position_color.fsh":
+		Total line: 15 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   in vec4 vertexColor;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   out vec4 fragColor;
+		 8  8   
+		 9  9   void main() {
+		10 10       vec4 color = vertexColor;
+		        ...
+		        '''
+	Changed file "core/position_color_lightmap.fsh":
+		Total line: 15 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler2;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec4 vertexColor;
+		 8  8   in vec2 texCoord2;
+		 9  9   
+		10 10   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/position_color_tex_lightmap.fsh":
+		Total line: 19 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec4 vertexColor;
+		 8  8   in vec2 texCoord0;
+		 9  9   in vec2 texCoord2;
+		10 10   
+		        ...
+		        '''
+	Changed file "core/position_tex.fsh":
+		Total line: 17 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec2 texCoord0;
+		 8  8   
+		 9  9   out vec4 fragColor;
+		10 10   
+		        ...
+		        '''
+	Changed file "core/position_tex_color.fsh":
+		Total line: 26 (+10, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + // Can't moj_import in things used during startup, when resource packs don't exist.
+		    4 + // This is a copy of dynamicimports.glsl
+		    5 + layout(std140) uniform DynamicTransforms {
+		    6 +     mat4 ModelViewMat;
+		    7 +     vec4 ColorModulator;
+		    8 +     vec3 ModelOffset;
+		    9 +     mat4 TextureMat;
+		   10 +     float LineWidth;
+		   11 + };
+		   12 + 
+		 3 13   uniform sampler2D Sampler0;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6 14   
+		 7 15   in vec2 texCoord0;
+		 8 16   in vec4 vertexColor;
+		 9 17   
+		10 18   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_beacon_beam.fsh":
+		Total line: 19 (+2, -6)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		    5 + #moj_import <minecraft:projection.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  6   
+		 7    - uniform mat4 ProjMat;
+		 8    - uniform vec4 ColorModulator;
+		 9    - uniform float FogStart;
+		10    - uniform float FogEnd;
+		    7 + uniform sampler2D Sampler0;
+		11    - uniform vec4 FogColor;
+		12  8   
+		13  9   in vec4 vertexColor;
+		14 10   in vec2 texCoord0;
+		15 11   
+		16 12   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_clouds.fsh":
+		Total line: 15 (+3, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   
+		 5    - uniform float FogStart;
+		 6    - uniform float FogEnd;
+		 7    - uniform vec4 FogColor;
+		 8  5   
+		 9  6   in float vertexDistance;
+		10  7   in vec4 vertexColor;
+		11  8   
+		12  9   out vec4 fragColor;
+		13 10   
+		14 11   void main() {
+		   12 +     vec4 color = vertexColor;
+		   13 +     color.a *= linear_fog_fade(vertexDistance, 0, FogCloudsEnd);
+		   14 +     fragColor = color;
+		15    -     fragColor = linear_fog(vertexColor, vertexDistance, FogStart, FogEnd, FogColor);
+		16 15   }
+		        '''
+	Changed file "core/rendertype_crumbling.fsh":
+		Total line: 19 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec4 vertexColor;
+		 8  8   in vec2 texCoord0;
+		 9  9   in vec2 texCoord2;
+		10 10   
+		        ...
+		        '''
+	Changed file "core/rendertype_end_portal.fsh":
+		Total line: 62 (+2, -6)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   #moj_import <minecraft:matrix.glsl>
+		    5 + #moj_import <minecraft:globals.glsl>
+		 5    - 
+		 6    - uniform sampler2D Sampler0;
+		 7    - uniform sampler2D Sampler1;
+		 8  6   
+		    7 + uniform sampler2D Sampler0;
+		 9    - uniform float GameTime;
+		10    - uniform float FogStart;
+		11    - uniform float FogEnd;
+		    8 + uniform sampler2D Sampler1;
+		12    - uniform vec4 FogColor;
+		13  9   
+		14 10   in vec4 texProj0;
+		15 11   in float vertexDistance;
+		16 12   
+		17 13   const vec3[] COLORS = vec3[](
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_decal.fsh":
+		Total line: 23 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec4 vertexColor;
+		14 10   in vec4 overlayColor;
+		15 11   in vec2 texCoord0;
+		        ...
+		        '''
+	Changed file "core/rendertype_entity_shadow.fsh":
+		Total line: 18 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec4 vertexColor;
+		14 10   in vec2 texCoord0;
+		15 11   
+		        ...
+		        '''
+	Changed file "core/rendertype_item_entity_translucent_cull.fsh":
+		Total line: 21 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec4 vertexColor;
+		14 10   in vec2 texCoord0;
+		15 11   in vec2 texCoord1;
+		        ...
+		        '''
+	Changed file "core/rendertype_leash.fsh":
+		Total line: 13 (+0, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4  4   
+		 5    - uniform float FogStart;
+		 6    - uniform float FogEnd;
+		 7    - uniform vec4 FogColor;
+		 8  5   
+		 9  6   in float vertexDistance;
+		10  7   flat in vec4 vertexColor;
+		11  8   
+		12  9   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_lightning.fsh":
+		Total line: 13 (+0, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6    - uniform float FogStart;
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 7    - uniform float FogEnd;
+		 8  5   
+		 9  6   in float vertexDistance;
+		10  7   in vec4 vertexColor;
+		11  8   
+		12  9   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_lines.fsh":
+		Total line: 14 (+0, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6    - uniform float FogStart;
+		 7    - uniform float FogEnd;
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 8    - uniform vec4 FogColor;
+		 9  5   
+		10  6   in float vertexDistance;
+		11  7   in vec4 vertexColor;
+		12  8   
+		13  9   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_outline.fsh":
+		Total line: 18 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec4 vertexColor;
+		 8  8   in vec2 texCoord0;
+		 9  9   
+		10 10   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_text.fsh":
+		Total line: 20 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec4 vertexColor;
+		14 10   in vec2 texCoord0;
+		15 11   
+		        ...
+		        '''
+	Changed file "core/rendertype_text_background.fsh":
+		Total line: 20 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec4 vertexColor;
+		14 10   in vec2 texCoord0;
+		15 11   
+		        ...
+		        '''
+	Changed file "core/rendertype_text_background_see_through.fsh":
+		Total line: 15 (+1, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		 3    - uniform vec4 ColorModulator;
+		 4  4   
+		 5  5   in vec4 vertexColor;
+		 6  6   
+		 7  7   out vec4 fragColor;
+		 8  8   
+		        ...
+		        '''
+	Changed file "core/rendertype_text_intensity.fsh":
+		Total line: 20 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec4 vertexColor;
+		14 10   in vec2 texCoord0;
+		15 11   
+		        ...
+		        '''
+	Changed file "core/rendertype_text_intensity_see_through.fsh":
+		Total line: 18 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec4 vertexColor;
+		 8  8   in vec2 texCoord0;
+		 9  9   
+		10 10   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_text_see_through.fsh":
+		Total line: 18 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec4 vertexColor;
+		 8  8   in vec2 texCoord0;
+		 9  9   
+		10 10   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_translucent_moving_block.fsh":
+		Total line: 16 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4  6   uniform sampler2D Sampler2;
+		 5    - 
+		 6    - uniform vec4 ColorModulator;
+		 7  7   
+		 8  8   in vec4 vertexColor;
+		 9  9   in vec2 texCoord0;
+		10 10   
+		11 11   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "core/rendertype_water_mask.fsh":
+		Total line: 9 (+1, -1)
+		      '''
+		1 1   #version 150
+		2 2   
+		  3 + #moj_import <minecraft:dynamictransforms.glsl>
+		3   - uniform vec4 ColorModulator;
+		4 4   
+		5 5   out vec4 fragColor;
+		6 6   
+		7 7   void main() {
+		8 8       fragColor = ColorModulator;
+		      ...
+		      '''
+	Changed file "core/rendertype_world_border.fsh":
+		Total line: 17 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:dynamictransforms.glsl>
+		    4 + 
+		 3  5   uniform sampler2D Sampler0;
+		 4    - 
+		 5    - uniform vec4 ColorModulator;
+		 6  6   
+		 7  7   in vec2 texCoord0;
+		 8  8   
+		 9  9   out vec4 fragColor;
+		10 10   
+		        ...
+		        '''
+	Changed file "core/terrain.fsh":
+		Total line: 22 (+1, -5)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <minecraft:fog.glsl>
+		    4 + #moj_import <minecraft:dynamictransforms.glsl>
+		 4    - 
+		 5    - uniform sampler2D Sampler0;
+		 6  5   
+		 7    - uniform vec4 ColorModulator;
+		 8    - uniform float FogStart;
+		 9    - uniform float FogEnd;
+		    6 + uniform sampler2D Sampler0;
+		10    - uniform vec4 FogColor;
+		11  7   
+		12  8   in float vertexDistance;
+		13  9   in vec4 vertexColor;
+		14 10   in vec2 texCoord0;
+		15 11   
+		        ...
+		        '''
+	Changed file "post/bits.fsh":
+		Total line: 35 (+6, -1)
+		        '''
+		        ...
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 oneTexel;
+		 7  7   
+		    8 + layout(std140) uniform SamplerInfo {
+		    9 +     vec2 OutSize;
+		   10 +     vec2 InSize;
+		   11 + };
+		 8    - uniform vec2 InSize;
+		 9 12   
+		   13 + layout(std140) uniform BitsConfig {
+		   14 +     float Resolution;
+		   15 +     float MosaicSize;
+		10    - uniform float Resolution;
+		   16 + };
+		11    - uniform float MosaicSize;
+		12 17   
+		13 18   out vec4 fragColor;
+		14 19   
+		15 20   const float Saturation = 1.5;
+		16 21   
+		        ...
+		        '''
+	Changed file "post/blit.fsh":
+		Total line: 15 (+3, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		    5 + layout(std140) uniform BlitConfig {
+		    6 +     vec4 ColorModulate;
+		    7 + };
+		 5    - uniform vec4 ColorModulate;
+		 6  8   
+		 7  9   in vec2 texCoord;
+		 8 10   
+		 9 11   out vec4 fragColor;
+		10 12   
+		        ...
+		        '''
+	Changed file "post/box_blur.fsh":
+		Total line: 28 (+8, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:globals.glsl>
+		    4 + 
+		    5 + uniform sampler2D InSampler;
+		    6 + 
+		    7 + layout(std140) uniform BlurConfig {
+		    8 +     vec2 BlurDir;
+		    9 +     float Radius;
+		   10 + };
+		 3    - uniform sampler2D InSampler;
+		 4 11   
+		 5 12   in vec2 texCoord;
+		 6 13   in vec2 sampleStep;
+		 7    - 
+		 8    - uniform float Radius;
+		 9 14   
+		10 15   out vec4 fragColor;
+		11 16   
+		12 17   // This shader relies on GL_LINEAR sampling to reduce the amount of texture samples in half.
+		13 18   // Instead of sampling each pixel position with a step of 1 we sample between pixels with a step of 2.
+		14 19   // In the end we sample the last pixel with a half weight, since the amount of pixels to sample is always odd (actualRadius * 2 + 1).
+		15 20   void main() {
+		16 21       vec4 blurred = vec4(0.0);
+		   22 +     float actualRadius = Radius >= 0.5 ? round(Radius) : float(MenuBlurRadius);
+		17    -     float actualRadius = round(Radius);
+		18 23       for (float a = -actualRadius + 0.5; a <= actualRadius; a += 2.0) {
+		19 24           blurred += texture(InSampler, texCoord + sampleStep * a);
+		20 25       }
+		21 26       blurred += texture(InSampler, texCoord + sampleStep * actualRadius) / 2.0;
+		22 27       fragColor = blurred / (actualRadius + 0.5);
+		        ...
+		        '''
+	Changed file "post/color_convolve.fsh":
+		Total line: 39 (+7, -1)
+		        '''
+		        ...
+		 2  2   
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 oneTexel;
+		    7 + 
+		    8 + layout(std140) uniform SamplerInfo {
+		    9 +     vec2 OutSize;
+		   10 +     vec2 InSize;
+		   11 + };
+		 7    - uniform vec2 InSize;
+		 8 12   
+		   13 + layout(std140) uniform ColorConfig {
+		   14 +     vec3 RedMatrix;
+		   15 +     vec3 GreenMatrix;
+		 9    - uniform vec3 RedMatrix;
+		   16 +     vec3 BlueMatrix;
+		   17 + };
+		10    - uniform vec3 GreenMatrix;
+		11    - uniform vec3 BlueMatrix;
+		12 18   
+		13 19   const vec3 Gray = vec3(0.3, 0.59, 0.11);
+		14 20   const float Saturation = 1.8;
+		15 21   
+		16 22   out vec4 fragColor;
+		        ...
+		        '''
+	Changed file "post/invert.fsh":
+		Total line: 18 (+3, -1)
+		        '''
+		        ...
+		 2  2   
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   
+		    7 + layout(std140) uniform InvertConfig {
+		    8 +     float InverseAmount;
+		    9 + };
+		 7    - uniform float InverseAmount;
+		 8 10   
+		 9 11   out vec4 fragColor;
+		10 12   
+		11 13   void main(){
+		12 14       vec4 diffuseColor = texture(InSampler, texCoord);
+		        ...
+		        '''
+	Changed file "post/spiderclip.fsh":
+		Total line: 39 (+6, -0)
+		        '''
+		        ...
+		 4  4   uniform sampler2D BlurSampler;
+		 5  5   
+		 6  6   in vec2 texCoord;
+		 7  7   in vec2 scaledCoord;
+		 8  8   
+		    9 + layout(std140) uniform SamplerInfo {
+		   10 +     vec2 OutSize;
+		   11 +     vec2 InSize;
+		   12 + };
+		   13 + 
+		   14 + layout(std140) uniform SpiderConfig {
+		   15 +     vec4 Scissor;
+		   16 +     vec4 Vignette;
+		   17 + };
+		 9    - uniform vec2 InSize;
+		10    - uniform vec4 Scissor;
+		11    - uniform vec4 Vignette;
+		12 18   
+		13 19   out vec4 fragColor;
+		14 20   
+		15 21   void main() {
+		16 22       vec4 ScaledTexel = texture(InSampler, scaledCoord);
+		        ...
+		        '''
+	Added file "core/panorama.fsh":
+		'''
+		#version 150
+		
+		uniform sampler2D Sampler0;
+		
+		in vec2 texCoord0;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    fragColor = texture(Sampler0, texCoord0);
+		}
+		'''

@@ -1,0 +1,102 @@
+Difference of "text_packs" between "24w20a" (snapshot of "1.21") and "24w21a" (snapshot of "1.21").
+
+Changed resource pack "minecraft":
+	Total file: 64 (+0, -3)
+	Changed file "core/blit_screen.fsh":
+		Total line: 11 (+2, -8)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5    - uniform vec4 ColorModulator;
+		 6    - 
+		 7  5   in vec2 texCoord;
+		 8    - in vec4 vertexColor;
+		 9  6   
+		10  7   out vec4 fragColor;
+		11    - 
+		12    - void main() {
+		13    -     vec4 color = texture(DiffuseSampler, texCoord) * vertexColor;
+		14  8   
+		    9 + void main() {
+		   10 +     fragColor = texture(DiffuseSampler, texCoord);
+		15    -     // blit final output of compositor into displayed back buffer
+		16    -     fragColor = color * ColorModulator;
+		17 11   }
+		        '''
+	Removed file "core/position_color_tex.fsh":
+		'''
+		#version 150
+		
+		uniform sampler2D Sampler0;
+		
+		uniform vec4 ColorModulator;
+		
+		in vec4 vertexColor;
+		in vec2 texCoord0;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		    if (color.a < 0.1) {
+		        discard;
+		    }
+		    fragColor = color * ColorModulator;
+		}
+		'''
+	Removed file "core/rendertype_armor_glint.fsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		uniform sampler2D Sampler0;
+		
+		uniform vec4 ColorModulator;
+		uniform float FogStart;
+		uniform float FogEnd;
+		uniform float GlintAlpha;
+		
+		in float vertexDistance;
+		in vec2 texCoord0;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 color = texture(Sampler0, texCoord0) * ColorModulator;
+		    if (color.a < 0.1) {
+		        discard;
+		    }
+		    float fade = linear_fog_fade(vertexDistance, FogStart, FogEnd) * GlintAlpha;
+		    fragColor = vec4(color.rgb * fade, color.a);
+		}
+		'''
+	Removed file "core/rendertype_glint_direct.fsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		uniform sampler2D Sampler0;
+		
+		uniform vec4 ColorModulator;
+		uniform float FogStart;
+		uniform float FogEnd;
+		uniform float GlintAlpha;
+		
+		in float vertexDistance;
+		in vec2 texCoord0;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 color = texture(Sampler0, texCoord0) * ColorModulator;
+		    if (color.a < 0.1) {
+		        discard;
+		    }
+		    float fade = linear_fog_fade(vertexDistance, FogStart, FogEnd) * GlintAlpha;
+		    fragColor = vec4(color.rgb * fade, color.a);
+		}
+		'''

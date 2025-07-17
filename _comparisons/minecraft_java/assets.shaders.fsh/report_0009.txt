@@ -1,0 +1,60 @@
+Difference of "text_packs" between "1.8.1-pre4" (pre-release of "1.8.1") and "1.8.1-pre5" (pre-release of "1.8.1").
+
+Changed resource pack "minecraft":
+	Changed file "program/blit.fsh":
+		Total line: 11 (+1, -2)
+		        '''
+		        ...
+		 5  5   uniform vec4 ColorModulate;
+		 6  6   
+		 7  7   varying vec2 texCoord;
+		 8  8   
+		 9  9   void main(){
+		   10 +     gl_FragColor = texture2D(DiffuseSampler, texCoord) * ColorModulate;
+		10    -     vec4 outColor = texture2D(DiffuseSampler, texCoord) * ColorModulate;
+		11    -     gl_FragColor = vec4(outColor.rgb, 1.0);
+		12 11   }
+		        '''
+	Changed file "program/blur.fsh":
+		Total line: 31 (+10, -2)
+		        '''
+		        ...
+		11 11   uniform float Radius;
+		12 12   
+		13 13   void main() {
+		14 14       vec4 blurred = vec4(0.0);
+		15 15       float totalStrength = 0.0;
+		   16 +     float totalAlpha = 0.0;
+		   17 +     float totalSamples = 0.0;
+		   18 +     for(float r = -Radius; r <= Radius; r += 1.0) {
+		   19 +         vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+		   20 + 
+		   21 + 		// Accumulate average alpha
+		   22 +         totalAlpha = totalAlpha + sample.a;
+		   23 +         totalSamples = totalSamples + 1.0;
+		   24 + 
+		   25 + 		// Accumulate smoothed blur
+		16    -     for(float r = -Radius; r <= Radius; r += 1.0) {
+		17    -         vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+		18 26           float strength = 1.0 - abs(r / Radius);
+		19 27           totalStrength = totalStrength + strength;
+		   28 +         blurred = blurred + sample;
+		20    -         blurred = blurred + sample * strength;
+		21 29       }
+		   30 +     gl_FragColor = vec4(blurred.rgb / (Radius * 2.0 + 1.0), totalAlpha);
+		22    -     gl_FragColor = vec4(blurred.rgb / totalStrength, 1.0);
+		23 31   }
+		        '''
+	Changed file "program/entity_sobel.fsh":
+		Total line: 21 (+1, -1)
+		        '''
+		        ...
+		15 15       float rightDiff = abs(center.a - right.a);
+		16 16       float upDiff    = abs(center.a - up.a);
+		17 17       float downDiff  = abs(center.a - down.a);
+		18 18       float total = clamp(leftDiff + rightDiff + upDiff + downDiff, 0.0, 1.0);
+		19 19       vec3 outColor = center.rgb * center.a + left.rgb * left.a + right.rgb * right.a + up.rgb * up.a + down.rgb * down.a;
+		   20 +     gl_FragColor = vec4(outColor * 0.2, total);
+		20    -     gl_FragColor = vec4(outColor, total);
+		21 21   }
+		        '''

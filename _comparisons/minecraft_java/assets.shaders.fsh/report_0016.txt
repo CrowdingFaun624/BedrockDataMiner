@@ -1,0 +1,32 @@
+Difference of "text_packs" between "21w14a" (snapshot of "1.17") and "21w15a" (snapshot of "1.17").
+
+Changed resource pack "minecraft":
+	Changed file "core/rendertype_beacon_beam.fsh":
+		Total line: 23 (+3, -2)
+		        '''
+		        ...
+		 2  2   
+		 3  3   #moj_import <fog.glsl>
+		 4  4   
+		 5  5   uniform sampler2D Sampler0;
+		 6  6   
+		    7 + uniform mat4 ProjMat;
+		 7  8   uniform vec4 ColorModulator;
+		 8  9   uniform float FogStart;
+		 9 10   uniform float FogEnd;
+		10 11   uniform vec4 FogColor;
+		11 12   
+		12    - in float vertexDistance;
+		13 13   in vec4 vertexColor;
+		14 14   in vec2 texCoord0;
+		15 15   
+		16 16   out vec4 fragColor;
+		17 17   
+		18 18   void main() {
+		19 19       vec4 color = texture(Sampler0, texCoord0);
+		20 20       color *= vertexColor * ColorModulator;
+		   21 +     float fragmentDistance = -ProjMat[3].z / ((gl_FragCoord.z) * -2.0 + 1.0 - ProjMat[2].z);
+		   22 +     fragColor = linear_fog(color, fragmentDistance, FogStart, FogEnd, FogColor);
+		21    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		22 23   }
+		        '''

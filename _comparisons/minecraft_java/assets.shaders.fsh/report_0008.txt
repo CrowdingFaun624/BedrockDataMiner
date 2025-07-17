@@ -1,0 +1,586 @@
+Difference of "text_packs" between "14w25a" (snapshot of "1.8") and "14w25b" (snapshot of "1.8").
+
+Changed resource pack "minecraft":
+	Changed file "program/antialias.fsh":
+		Total line: 29 (+2, -2)
+		        '''
+		        ...
+		13 13       vec4 d2 = texture2D (DiffuseSampler, texCoord + vec2 (              0.0,  oneTexel.y * 2.0));
+		14 14       vec4 l1 = texture2D (DiffuseSampler, texCoord + vec2 (-oneTexel.x,                     0.0));
+		15 15       vec4 l2 = texture2D (DiffuseSampler, texCoord + vec2 (-oneTexel.x * 2.0,               0.0));
+		16 16       vec4 r1 = texture2D (DiffuseSampler, texCoord + vec2 ( oneTexel.x,                     0.0));
+		17 17       vec4 r2 = texture2D (DiffuseSampler, texCoord + vec2 ( oneTexel.x * 2.0,               0.0));
+		   18 + 
+		18    -     
+		19 19       vec4 v1 = mix (c, mix (l1, l2, 0.667), 0.75);
+		20 20       vec4 v2 = mix (c, mix (r1, r2, 0.667), 0.75);
+		21 21       vec4 v3 = mix (c, mix (u1, u2, 0.667), 0.75);
+		22 22       vec4 v4 = mix (c, mix (d1, d2, 0.667), 0.75);
+		23 23   
+		24 24       vec4 v5 = mix (v1, v2, 0.5);
+		25 25       vec4 v6 = mix (v3, v4, 0.5);
+		26 26   
+		27 27       vec4 color = mix (v5, v6, 0.5);
+		   28 +     gl_FragColor = vec4(color.rgb, 1.0);
+		28    -     gl_FragColor = vec4(color.rgb, c.a);
+		29 29   }
+		        '''
+	Changed file "program/bits.fsh":
+		Total line: 27 (+3, -2)
+		        '''
+		        ...
+		12 12   uniform float MosaicSize = 8.0;
+		13 13   
+		14 14   void main() {
+		15 15       vec2 mosaicInSize = InSize / MosaicSize;
+		16 16       vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		   17 + 
+		17    -     
+		18 18       vec4 baseTexel = texture2D(DiffuseSampler, texCoord - fractPix);
+		   19 + 
+		   20 +     vec3 fractTexel = baseTexel.rgb - fract(baseTexel.rgb * Resolution) / Resolution;
+		19    -     
+		   21 +     float luma = dot(fractTexel, vec3(0.3, 0.59, 0.11));
+		   22 +     vec3 chroma = (fractTexel - luma) * Saturation;
+		   23 +     baseTexel.rgb = luma + chroma;
+		   24 +     baseTexel.a = 1.0;
+		20    -     baseTexel = baseTexel - fract(baseTexel * Resolution) / Resolution;
+		21    -     float luma = dot(baseTexel.rgb, vec3(0.3, 0.59, 0.11));
+		22    -     vec3 chroma = (baseTexel.rgb - luma) * Saturation;
+		23    -     baseTexel = vec4(luma + chroma, baseTexel.a);
+		24 25   
+		25 26       gl_FragColor = baseTexel;
+		26 27   }
+		        '''
+	Changed file "program/blit.fsh":
+		Total line: 12 (+2, -1)
+		        '''
+		        ...
+		 5  5   uniform vec4 ColorModulate;
+		 6  6   
+		 7  7   varying vec2 texCoord;
+		 8  8   
+		 9  9   void main(){
+		   10 +     vec4 outColor = texture2D(DiffuseSampler, texCoord) * ColorModulate;
+		   11 +     gl_FragColor = vec4(outColor.rgb, 1.0);
+		10    -     gl_FragColor = texture2D(DiffuseSampler, texCoord) * ColorModulate;
+		11 12   }
+		        '''
+	Changed file "program/blobs.fsh":
+		Total line: 43 (+6, -6)
+		        '''
+		        ...
+		 8  8   void main(){
+		 9  9       vec4 u  = texture2D(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y));
+		10 10       vec4 d  = texture2D(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y));
+		11 11       vec4 l  = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0));
+		12 12       vec4 r  = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0));
+		   13 + 
+		13    -     
+		14 14       vec4 v1 = min(l, r);
+		15 15       vec4 v2 = min(u, d);
+		16 16       vec4 v3 = min(v1, v2);
+		17 17   
+		18 18       vec4 ul = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x, -oneTexel.y));
+		        ...
+		21 21       vec4 ur = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x, -oneTexel.y));
+		22 22   
+		23 23       vec4 v4 = min(ul, dr);
+		24 24       vec4 v5 = min(ur, dl);
+		25 25       vec4 v6 = min(v4, v5);
+		   26 + 
+		26    -     
+		27 27       vec4 v7 = min(v3, v6);
+		   28 + 
+		28    -     
+		29 29       vec4 uu = texture2D(DiffuseSampler, texCoord + vec2(              0.0, -oneTexel.y * 2.0));
+		30 30       vec4 dd = texture2D(DiffuseSampler, texCoord + vec2(              0.0,  oneTexel.y * 2.0));
+		31 31       vec4 ll = texture2D(DiffuseSampler, texCoord + vec2(-oneTexel.x * 2.0,               0.0));
+		32 32       vec4 rr = texture2D(DiffuseSampler, texCoord + vec2( oneTexel.x * 2.0,               0.0));
+		33 33   
+		34 34       vec4 v8 = min(uu, dd);
+		35 35       vec4 v9 = min(ll, rr);
+		36 36       vec4 v10 = min(v8, v9);
+		   37 + 
+		   38 +     vec4 v11 = min(v7, v10);
+		37 39   
+		38    -     vec4 v11 = min(v7, v10);
+		39    -     
+		40 40       vec4 c  = texture2D(DiffuseSampler, texCoord);
+		41 41       vec4 color = min(c, v11);
+		   42 +     gl_FragColor = vec4(color.rgb, 1.0);
+		42    -     gl_FragColor = vec4(color.rgb, c.a);
+		43 43   }
+		        '''
+	Changed file "program/blobs2.fsh":
+		Total line: 30 (+3, -3)
+		        '''
+		        ...
+		11 11       vec4 c  = texture2D(DiffuseSampler, texCoord);
+		12 12       vec4 maxVal = c;
+		13 13       for(float u = 0.0; u <= Radius; u += 1.0) {
+		14 14           for(float v = 0.0; v <= Radius; v += 1.0) {
+		15 15               float weight = (((sqrt(u * u + v * v) / (Radius)) > 1.0) ? 0.0 : 1.0);
+		   16 + 
+		16    -             
+		17 17               vec4 s0 = texture2D(DiffuseSampler, texCoord + vec2(-u * oneTexel.x, -v * oneTexel.y));
+		18 18               vec4 s1 = texture2D(DiffuseSampler, texCoord + vec2( u * oneTexel.x,  v * oneTexel.y));
+		19 19               vec4 s2 = texture2D(DiffuseSampler, texCoord + vec2(-u * oneTexel.x,  v * oneTexel.y));
+		20 20               vec4 s3 = texture2D(DiffuseSampler, texCoord + vec2( u * oneTexel.x, -v * oneTexel.y));
+		   21 + 
+		21    -             
+		22 22               vec4 o0 = max(s0, s1);
+		23 23               vec4 o1 = max(s2, s3);
+		24 24               vec4 tempMax = max(o0, o1);
+		25 25               maxVal = mix(maxVal, max(maxVal, tempMax), weight);
+		26 26           }
+		27 27       }
+		28 28   
+		   29 +     gl_FragColor = vec4(maxVal.rgb, 1.0);
+		29    -     gl_FragColor = vec4(maxVal.rgb, c.a);
+		30 30   }
+		        '''
+	Changed file "program/blur.fsh":
+		Total line: 23 (+2, -2)
+		        '''
+		        ...
+		13 13   void main() {
+		14 14       vec4 blurred = vec4(0.0);
+		15 15       float totalStrength = 0.0;
+		16 16       for(float r = -Radius; r <= Radius; r += 1.0) {
+		17 17           vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+		   18 +         float strength = 1.0 - abs(r / Radius);
+		18    -         float strength = (1.0 - abs(r / Radius)) * sample.a;
+		19 19           totalStrength = totalStrength + strength;
+		20 20           blurred = blurred + sample * strength;
+		21 21       }
+		   22 +     gl_FragColor = vec4(blurred.rgb / totalStrength, 1.0);
+		22    -     gl_FragColor = vec4(blurred.rgb / totalStrength, (blurred.a * Radius) / totalStrength);
+		23 23   }
+		        '''
+	Changed file "program/bumpy.fsh":
+		Total line: 34 (+1, -1)
+		        '''
+		        ...
+		28 28       float f = 1.0;
+		29 29       f += (du * i) - (dd * i);
+		30 30       f += (dr * i) - (dl * i);
+		31 31   
+		32 32       vec4 color = c * clamp(f, 0.5, 2);
+		   33 +     gl_FragColor = vec4(color.rgb, 1.0);
+		33    -     gl_FragColor = vec4(color.rgb, c.a);
+		34 34   }
+		        '''
+	Changed file "program/color_convolve.fsh":
+		Total line: 36 (+5, -5)
+		        '''
+		        ...
+		15 15   uniform vec3 ColorScale = vec3(1.0, 1.0, 1.0);
+		16 16   uniform float Saturation = 1.8;
+		17 17   
+		18 18   void main() {
+		19 19       vec4 InTexel = texture2D(DiffuseSampler, texCoord);
+		   20 + 
+		20    -     
+		21 21       // Color Matrix
+		22 22       float RedValue = dot(InTexel.rgb, RedMatrix);
+		23 23       float GreenValue = dot(InTexel.rgb, GreenMatrix);
+		24 24       float BlueValue = dot(InTexel.rgb, BlueMatrix);
+		25 25       vec3 OutColor = vec3(RedValue, GreenValue, BlueValue);
+		   26 + 
+		26    -     
+		27 27       // Offset & Scale
+		28 28       OutColor = (OutColor * ColorScale) + Offset;
+		   29 + 
+		29    -     
+		30 30       // Saturation
+		31 31       float Luma = dot(OutColor, Gray);
+		32 32       vec3 Chroma = OutColor - Luma;
+		33 33       OutColor = (Chroma * Saturation) + Luma;
+		   34 + 
+		   35 +     gl_FragColor = vec4(OutColor, 1.0);
+		34    -     
+		35    -     gl_FragColor = vec4(OutColor, InTexel.a);
+		36 36   }
+		        '''
+	Changed file "program/deconverge.fsh":
+		Total line: 28 (+4, -4)
+		        '''
+		        ...
+		13 13   uniform vec3 RadialConvergeY = vec3(1.0, 1.0, 1.0);
+		14 14   
+		15 15   void main() {
+		16 16       vec3 CoordX = texCoord.x * RadialConvergeX;
+		17 17       vec3 CoordY = texCoord.y * RadialConvergeY;
+		   18 + 
+		18    -     
+		19 19       CoordX += ConvergeX * oneTexel.x - (RadialConvergeX - 1.0) * 0.5;
+		20 20       CoordY += ConvergeY * oneTexel.y - (RadialConvergeY - 1.0) * 0.5;
+		   21 + 
+		21    -     
+		22 22       float RedValue   = texture2D(DiffuseSampler, vec2(CoordX.x, CoordY.x)).r;
+		23 23       float GreenValue = texture2D(DiffuseSampler, vec2(CoordX.y, CoordY.y)).g;
+		24 24       float BlueValue  = texture2D(DiffuseSampler, vec2(CoordX.z, CoordY.z)).b;
+		25 25       float AlphaValue  = texture2D(DiffuseSampler, texCoord).a;
+		   26 + 
+		   27 +     gl_FragColor = vec4(RedValue, GreenValue, BlueValue, 1.0);
+		26    -     
+		27    -     gl_FragColor = vec4(RedValue, GreenValue, BlueValue, AlphaValue);
+		28 28   }
+		        '''
+	Changed file "program/downscale.fsh":
+		Total line: 17 (+2, -2)
+		        '''
+		        ...
+		10 10   void main() {
+		11 11       vec3 Texel0 = texture2D(DiffuseSampler, texCoord).rgb;
+		12 12       vec3 Texel1 = texture2D(DiffuseSampler, texCoord + vec2(oneTexel.x, 0.0)).rgb;
+		13 13       vec3 Texel2 = texture2D(DiffuseSampler, texCoord + vec2(0.0, oneTexel.y)).rgb;
+		14 14       vec3 Texel3 = texture2D(DiffuseSampler, texCoord + oneTexel).rgb;
+		   15 + 
+		   16 +     gl_FragColor = vec4((Texel0 + Texel1 + Texel2 + Texel3) * 0.25, 1.0);
+		15    -     
+		16    -     gl_FragColor = vec4((Texel0 + Texel1 + Texel2 + Texel3) * 0.25, Texel0.a);
+		17 17   }
+		        '''
+	Changed file "program/fxaa.fsh":
+		Total line: 84 (+1, -1)
+		        '''
+		        ...
+		78 78       }
+		79 79   }
+		80 80   
+		81 81   void main() {
+		82 82       vec4 baseTexel = texture2D(DiffuseSampler, posPos.xy);
+		   83 +     gl_FragColor = vec4(FxaaPixelShader(posPos, DiffuseSampler, 1.0 / OutSize), 1.0);
+		83    -     gl_FragColor = vec4(FxaaPixelShader(posPos, DiffuseSampler, 1.0 / OutSize), baseTexel.a);
+		84 84   }
+		        '''
+	Changed file "program/invert.fsh":
+		Total line: 14 (+1, -1)
+		        '''
+		        ...
+		 8  8   
+		 9  9   void main(){
+		10 10       vec4 diffuseColor = texture2D(DiffuseSampler, texCoord);
+		11 11       vec4 invertColor = 1.0 - diffuseColor;
+		12 12       vec4 outColor = mix(diffuseColor, invertColor, InverseAmount);
+		   13 +     gl_FragColor = vec4(outColor.rgb, 1.0);
+		13    -     gl_FragColor = vec4(outColor.rgb, diffuseColor.a);
+		14 14   }
+		        '''
+	Changed file "program/notch.fsh":
+		Total line: 23 (+3, -3)
+		        '''
+		        ...
+		 7  7   
+		 8  8   uniform vec2 InSize;
+		 9  9   
+		10 10   void main() {
+		11 11       vec2 halfSize = InSize * 0.5;
+		   12 + 
+		12    -     
+		13 13       vec2 steppedCoord = texCoord;
+		14 14       steppedCoord.x = float(int(steppedCoord.x*halfSize.x)) / halfSize.x;
+		15 15       steppedCoord.y = float(int(steppedCoord.y*halfSize.y)) / halfSize.y;
+		   16 + 
+		16    -     
+		17 17       vec4 noise = texture2D(DitherSampler, steppedCoord * halfSize / 4.0);
+		18 18       vec4 col = texture2D(DiffuseSampler, steppedCoord) + noise * vec4(1.0/12.0, 1.0/12.0, 1.0/6.0, 1.0);
+		19 19       float r = float(int(col.r*8.0))/8.0;
+		20 20       float g = float(int(col.g*8.0))/8.0;
+		21 21       float b = float(int(col.b*4.0))/4.0;
+		   22 +     gl_FragColor = vec4(r, g, b, 1.0);
+		22    -     gl_FragColor = vec4(r, g, b, col.a);
+		23 23   }
+		        '''
+	Changed file "program/ntsc_decode.fsh":
+		Total line: 132 (+10, -10)
+		          '''
+		          ...
+		 38  38       vec4 YAccum = Zero;
+		 39  39       vec4 IAccum = Zero;
+		 40  40       vec4 QAccum = Zero;
+		 41  41       float QuadXSize = InSize.x * 4.0;
+		 42  42       float TimePerSample = ScanTime / QuadXSize;
+		     43 + 
+		 43     -     
+		 44  44       // Frequency cutoffs for the individual portions of the signal that we extract.
+		 45  45       // Y1 and Y2 are the positive and negative frequency limits of the notch filter on Y.
+		 46  46       // Y3 is the center of the frequency response of the Y filter.
+		 47  47       // I is the center of the frequency response of the I filter.
+		 48  48       // Q is the center of the frequency response of the Q filter.
+		          ...
+		 60  60       float Fc_y2_2 = Fc_y2 * 2.0;
+		 61  61       float Fc_y3_2 = Fc_y3 * 2.0;
+		 62  62       float Fc_i_2 = Fc_i * 2.0;
+		 63  63       float Fc_q_2 = Fc_q * 2.0;
+		 64  64       vec4 CoordY = vec4(texCoord.y);
+		     65 + 
+		 65     -     
+		 66  66       vec4 BaseTexel = texture2D(DiffuseSampler, texCoord);
+		 67  67       // 83 composite samples wide, 4 composite pixels per texel
+		 68  68       for (float n = -41.0; n < 42.0; n += 4.0)
+		 69  69       {
+		 70  70           vec4 n4 = n + NotchOffset;
+		 71  71           vec4 CoordX = texCoord.x + oneTexel.x * n4 * 0.25;
+		 72  72           vec2 TexCoord = vec2(CoordX.x, CoordY.y);
+		 73  73           vec4 C = texture2D(DiffuseSampler, TexCoord) * CRange + MinC;
+		 74  74           vec4 WT = W * (CoordX + A2 * CoordY * InSize.y + B);
+		 75  75           vec4 Cosine = 0.54 + 0.46 * cos(Pi2Length * n4);
+		     76 + 
+		 76     -         
+		 77  77           vec4 SincYIn1 = Pi2Fc_y1 * n4;
+		 78  78           vec4 SincYIn2 = Pi2Fc_y2 * n4;
+		 79  79           vec4 SincYIn3 = Pi2Fc_y3 * n4;
+		 80  80           vec4 SincY1 = sin(SincYIn1) / SincYIn1;
+		 81  81           vec4 SincY2 = sin(SincYIn2) / SincYIn2;
+		 82  82           vec4 SincY3 = sin(SincYIn3) / SincYIn3;
+		     83 + 
+		 83     -         
+		 84  84           // These zero-checks could be made more efficient, but we are trying to support
+		 85  85           // downlevel GLSL
+		 86  86           if(SincYIn1.x == 0.0) SincY1.x = 1.0;
+		 87  87           if(SincYIn1.y == 0.0) SincY1.y = 1.0;
+		 88  88           if(SincYIn1.z == 0.0) SincY1.z = 1.0;
+		          ...
+		 95  95           if(SincYIn3.y == 0.0) SincY3.y = 1.0;
+		 96  96           if(SincYIn3.z == 0.0) SincY3.z = 1.0;
+		 97  97           if(SincYIn3.w == 0.0) SincY3.w = 1.0;
+		 98  98           vec4 IdealY = (Fc_y1_2 * SincY1 - Fc_y2_2 * SincY2) + Fc_y3_2 * SincY3;
+		 99  99           vec4 FilterY = Cosine * IdealY;
+		    100 + 
+		100     -         
+		101 101           vec4 SincIIn = Pi2Fc_i * n4;
+		102 102           vec4 SincI = sin(SincIIn) / SincIIn;
+		103 103           if(SincIIn.x == 0.0) SincI.x = 1.0;
+		104 104           if(SincIIn.y == 0.0) SincI.y = 1.0;
+		105 105           if(SincIIn.z == 0.0) SincI.z = 1.0;
+		          ...
+		113 113           if(SincQIn.y == 0.0) SincQ.y = 1.0;
+		114 114           if(SincQIn.z == 0.0) SincQ.z = 1.0;
+		115 115           if(SincQIn.w == 0.0) SincQ.w = 1.0;
+		116 116           vec4 IdealQ = Fc_q_2 * SincQ;
+		117 117           vec4 FilterQ = Cosine * IdealQ;
+		    118 + 
+		118     -         
+		119 119           YAccum += C * FilterY;
+		120 120           IAccum += C * cos(WT) * FilterI;
+		121 121           QAccum += C * sin(WT) * FilterQ;
+		122 122       }
+		    123 + 
+		123     -     
+		124 124       float Y = dot(YAccum, One);
+		125 125       float I = dot(IAccum, One) * 2.0;
+		126 126       float Q = dot(QAccum, One) * 2.0;
+		    127 + 
+		127     -     
+		128 128       vec3 YIQ = vec3(Y, I, Q);
+		129 129       vec3 OutRGB = vec3(dot(YIQ, YIQ2R), dot(YIQ, YIQ2G), dot(YIQ, YIQ2B));
+		    130 + 
+		    131 +     gl_FragColor = vec4(OutRGB, 1.0);
+		130     -     
+		131     -     gl_FragColor = vec4(OutRGB, BaseTexel.a);
+		132 132   }
+		          '''
+	Changed file "program/outline.fsh":
+		Total line: 21 (+1, -1)
+		        '''
+		        ...
+		15 15       vec4 dDiff = center - down;
+		16 16       vec4 lDiff = center - left;
+		17 17       vec4 rDiff = center - right;
+		18 18       vec4 sum = uDiff + dDiff + lDiff + rDiff;
+		19 19       vec3 clamped = clamp(center.rgb - sum.rgb, 0.0, 1.0);
+		   20 +     gl_FragColor = vec4(clamped, 1.0);
+		20    -     gl_FragColor = vec4(clamped, center.a);
+		21 21   }
+		        '''
+	Changed file "program/outline_combine.fsh":
+		Total line: 13 (+1, -1)
+		        '''
+		        ...
+		 7  7   varying vec2 oneTexel;
+		 8  8   
+		 9  9   void main(){
+		10 10       vec4 diffuseTexel = texture2D(DiffuseSampler, texCoord);
+		11 11       vec4 outlineTexel = texture2D(OutlineSampler, texCoord);
+		   12 +     gl_FragColor = vec4(diffuseTexel.rgb + diffuseTexel.rgb * outlineTexel.rgb * vec3(0.75), 1.0);
+		12    -     gl_FragColor = vec4(diffuseTexel.rgb + diffuseTexel.rgb * outlineTexel.rgb * vec3(0.75), diffuseTexel.a);
+		13 13   }
+		        '''
+	Changed file "program/outline_soft.fsh":
+		Total line: 46 (+6, -6)
+		        '''
+		        ...
+		27 27       vec4 l2Diff = abs(center - left2);
+		28 28       vec4 r2Diff = abs(center - right2);
+		29 29       vec4 sum = uDiff + dDiff + lDiff + rDiff + u2Diff + d2Diff + l2Diff + r2Diff;
+		30 30       vec4 gray = vec4(0.3, 0.59, 0.11, 0.0);
+		31 31       float sumLuma = 1.0 - dot(clamp(sum, 0.0, 1.0), gray);
+		   32 + 
+		32    -     
+		33 33       // Get luminance of center pixel and adjust
+		34 34       float centerLuma = dot(center + (center - pow(center, vec4(LumaRamp))), gray);
+		   35 + 
+		35    -     
+		36 36       // Quantize the luma value
+		37 37       centerLuma = centerLuma - fract(centerLuma * LumaLevel) / LumaLevel;
+		   38 + 
+		38    -     
+		39 39       // Re-scale to full range
+		40 40       centerLuma = centerLuma * (LumaLevel / (LumaLevel - 1.0));
+		   41 + 
+		41    -     
+		42 42       // Blend with outline
+		43 43       centerLuma = centerLuma * sumLuma;
+		   44 + 
+		   45 +     gl_FragColor = vec4(centerLuma, centerLuma, centerLuma, 1.0);
+		44    -     
+		45    -     gl_FragColor = vec4(centerLuma, centerLuma, centerLuma, center.a);
+		46 46   }
+		        '''
+	Changed file "program/outline_watercolor.fsh":
+		Total line: 41 (+2, -2)
+		        '''
+		        ...
+		34 34       float urDiff = dot(abs(center - ur), gray);
+		35 35       float blDiff = dot(abs(center - bl), gray);
+		36 36       float brDiff = dot(abs(center - br), gray);
+		37 37       float sum = uDiff + dDiff + lDiff + rDiff + u2Diff + d2Diff + l2Diff + r2Diff + ulDiff + urDiff + blDiff + brDiff;
+		38 38       float sumLuma = clamp(sum, 0.0, 1.0);
+		   39 + 
+		   40 +     gl_FragColor = vec4(sumLuma, sumLuma, sumLuma, 1.0);
+		39    -     
+		40    -     gl_FragColor = vec4(sumLuma, sumLuma, sumLuma, center.a);
+		41 41   }
+		        '''
+	Changed file "program/overlay.fsh":
+		Total line: 27 (+4, -3)
+		        '''
+		        ...
+		13 13   uniform vec3 BlueMatrix  = vec3(0.0, 0.0, 1.0);
+		14 14   
+		15 15   void main(){
+		16 16       vec2 mosaicInSize = InSize / MosaicSize;
+		17 17       vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		   18 + 
+		18    -     
+		19 19       vec4 baseTexel = texture2D(DiffuseSampler, texCoord - fractPix);
+		20 20       float red = dot(baseTexel.rgb, RedMatrix);
+		21 21       float green = dot(baseTexel.rgb, GreenMatrix);
+		22 22       float blue = dot(baseTexel.rgb, BlueMatrix);
+		   23 + 
+		23    -     
+		24 24       vec4 overlayTexel = texture2D(OverlaySampler, vec2(texCoord.x, 1.0 - texCoord.y));
+		   25 +     overlayTexel.a = 1.0;
+		   26 +     gl_FragColor = mix(vec4(red, green, blue, 1.0), overlayTexel, overlayTexel.a);
+		25    -     gl_FragColor = mix(vec4(red, green, blue, baseTexel.a), overlayTexel, overlayTexel.a);
+		26 27   }
+		        '''
+	Changed file "program/phosphor.fsh":
+		Total line: 19 (+2, -2)
+		        '''
+		        ...
+		12 12   uniform float LerpFactor = 1.0;
+		13 13   
+		14 14   void main() {
+		15 15       vec4 CurrTexel = texture2D(DiffuseSampler, texCoord);
+		16 16       vec4 PrevTexel = texture2D(PrevSampler, texCoord);
+		   17 + 
+		   18 +     gl_FragColor = vec4(max(PrevTexel.rgb * Phosphor, CurrTexel.rgb), 1.0);
+		17    -     
+		18    -     gl_FragColor = vec4(max(PrevTexel.rgb * Phosphor, CurrTexel.rgb), CurrTexel.a);
+		19 19   }
+		        '''
+	Changed file "program/scan_pincushion.fsh":
+		Total line: 64 (+6, -6)
+		        '''
+		        ...
+		24 24   const vec3 Floor = vec3(0.05, 0.05, 0.05);
+		25 25   const vec3 Power = vec3(0.8, 0.8, 0.8);
+		26 26   
+		27 27   void main() {
+		28 28       vec4 InTexel = texture2D(DiffuseSampler, texCoord);
+		   29 + 
+		29    -     
+		30 30       vec2 PinUnitCoord = texCoord * Two.xy - One.xy;
+		31 31       float PincushionR2 = pow(length(PinUnitCoord), 2.0);
+		32 32       vec2 PincushionCurve = PinUnitCoord * PincushionAmount * PincushionR2;
+		33 33       vec2 ScanCoord = texCoord;
+		   34 + 
+		34    -     
+		35 35       ScanCoord *= One.xy - PincushionAmount * 0.2;
+		36 36       ScanCoord += PincushionAmount * 0.1;
+		37 37       ScanCoord += PincushionCurve;
+		38 38   
+		39 39       vec2 CurvatureClipCurve = PinUnitCoord * CurvatureAmount * PincushionR2;
+		40 40       vec2 ScreenClipCoord = texCoord;
+		41 41       ScreenClipCoord -= Half.xy;
+		42 42       ScreenClipCoord *= One.xy - CurvatureAmount * 0.2;
+		43 43       ScreenClipCoord += Half.xy;
+		44 44       ScreenClipCoord += CurvatureClipCurve;
+		   45 + 
+		45    -     
+		46 46       // -- Alpha Clipping --
+		47 47       if (ScanCoord.x < 0.0) discard;
+		48 48       if (ScanCoord.y < 0.0) discard;
+		49 49       if (ScanCoord.x > 1.0) discard;
+		50 50       if (ScanCoord.y > 1.0) discard;
+		        ...
+		52 52       // -- Scanline Simulation --
+		53 53       float InnerSine = ScanCoord.y * InSize.y * ScanlineScale * 0.25;
+		54 54       float ScanBrightMod = sin(InnerSine * Pi + ScanlineOffset * InSize.y * 0.25);
+		55 55       float ScanBrightness = mix(1.0, (pow(ScanBrightMod * ScanBrightMod, ScanlineHeight) * ScanlineBrightScale + 1.0) * 0.5, ScanlineAmount);
+		56 56       vec3 ScanlineTexel = InTexel.rgb * ScanBrightness;
+		   57 + 
+		57    -     
+		58 58       // -- Color Compression (increasing the floor of the signal without affecting the ceiling) --
+		59 59       ScanlineTexel = Floor + (One.xyz - Floor) * ScanlineTexel;
+		   60 + 
+		60    -     
+		61 61       ScanlineTexel.rgb = pow(ScanlineTexel.rgb, Power);
+		62 62   
+		   63 +     gl_FragColor = vec4(ScanlineTexel.rgb, 1.0);
+		63    -     gl_FragColor = vec4(ScanlineTexel.rgb, InTexel.a);
+		64 64   }
+		        '''
+	Changed file "program/sobel.fsh":
+		Total line: 20 (+1, -1)
+		        '''
+		        ...
+		14 14       vec4 leftDiff  = center - left;
+		15 15       vec4 rightDiff = center - right;
+		16 16       vec4 upDiff    = center - up;
+		17 17       vec4 downDiff  = center - down;
+		18 18       vec4 total = clamp(leftDiff + rightDiff + upDiff + downDiff, 0.0, 1.0);
+		   19 +     gl_FragColor = vec4(total.rgb, 1.0);
+		19    -     gl_FragColor = vec4(total.rgb, center.a);
+		20 20   }
+		        '''
+	Changed file "program/spiderclip.fsh":
+		Total line: 31 (+1, -1)
+		        '''
+		        ...
+		25 25   
+		26 26       if (scaledCoord.x < Vignette.x) OutTexel = mix(BlurTexel, OutTexel, (Scissor.x - scaledCoord.x) / (Scissor.x - Vignette.x));
+		27 27       if (scaledCoord.y < Vignette.y) OutTexel = mix(BlurTexel, OutTexel, (Scissor.y - scaledCoord.y) / (Scissor.y - Vignette.y));
+		28 28       if (scaledCoord.x > Vignette.z) OutTexel = mix(BlurTexel, OutTexel, (Scissor.z - scaledCoord.x) / (Scissor.z - Vignette.z));
+		29 29       if (scaledCoord.y > Vignette.w) OutTexel = mix(BlurTexel, OutTexel, (Scissor.w - scaledCoord.y) / (Scissor.w - Vignette.w));
+		   30 +     gl_FragColor = vec4(OutTexel.rgb, 1.0);
+		30    -     gl_FragColor = OutTexel;
+		31 31   }
+		        '''
+	Changed file "program/wobble.fsh":
+		Total line: 58 (+1, -1)
+		        '''
+		        ...
+		52 52       float yOffset = cos(texCoord.x * Frequency.y + Time * 3.1415926535 * 2.0) * WobbleAmount.y;
+		53 53       vec2 offset = vec2(xOffset, yOffset);
+		54 54       vec4 rgb = texture2D(DiffuseSampler, texCoord + offset);
+		55 55       vec3 hsv = RGBtoHSV(rgb.rgb);
+		56 56       hsv.x = fract(hsv.x + Time);
+		   57 +     gl_FragColor = vec4(HSVtoRGB(hsv), 1.0);
+		57    -     gl_FragColor = vec4(HSVtoRGB(hsv), rgb.a);
+		58 58   }
+		        '''

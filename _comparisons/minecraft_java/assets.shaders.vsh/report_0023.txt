@@ -1,0 +1,100 @@
+Difference of "text_packs" between "24w20a" (snapshot of "1.21") and "24w21a" (snapshot of "1.21").
+
+Changed resource pack "minecraft":
+	Total file: 61 (+0, -3)
+	Changed file "core/blit_screen.vsh":
+		Total line: 11 (+4, -11)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   in vec3 Position;
+		 4    - in vec2 UV;
+		 5    - in vec4 Color;
+		 6    - 
+		 7    - uniform mat4 ModelViewMat;
+		 8    - uniform mat4 ProjMat;
+		 9    - 
+		10    - out vec2 texCoord;
+		11    - out vec4 vertexColor;
+		12  4   
+		    5 + out vec2 texCoord;
+		13    - void main() {
+		14    -     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		15  6   
+		    7 + void main() {
+		    8 +     vec2 screenPos = Position.xy * 2.0 - 1.0;
+		    9 +     gl_Position = vec4(screenPos.x, screenPos.y, 1.0, 1.0);
+		16    -     texCoord = UV;
+		   10 +     texCoord = Position.xy;
+		17    -     vertexColor = Color;
+		18 11   }
+		        '''
+	Removed file "core/position_color_tex.vsh":
+		'''
+		#version 150
+		
+		in vec3 Position;
+		in vec4 Color;
+		in vec2 UV0;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		
+		out vec4 vertexColor;
+		out vec2 texCoord0;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    vertexColor = Color;
+		    texCoord0 = UV0;
+		}
+		'''
+	Removed file "core/rendertype_armor_glint.vsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		in vec3 Position;
+		in vec2 UV0;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		uniform mat4 TextureMat;
+		uniform int FogShape;
+		
+		out float vertexDistance;
+		out vec2 texCoord0;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    vertexDistance = fog_distance(Position, FogShape);
+		    texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		}
+		'''
+	Removed file "core/rendertype_glint_direct.vsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		in vec3 Position;
+		in vec2 UV0;
+		
+		uniform mat4 ModelViewMat;
+		uniform mat4 ProjMat;
+		uniform mat4 TextureMat;
+		uniform int FogShape;
+		
+		out float vertexDistance;
+		out vec2 texCoord0;
+		
+		void main() {
+		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		
+		    vertexDistance = fog_distance(Position, FogShape);
+		    texCoord0 = (TextureMat * vec4(UV0, 0.0, 1.0)).xy;
+		}
+		'''

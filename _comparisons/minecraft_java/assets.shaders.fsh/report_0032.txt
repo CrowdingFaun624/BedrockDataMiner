@@ -1,0 +1,372 @@
+Difference of "text_packs" between "1.21.1" and "24w33a" (snapshot of "1.21.2").
+
+Changed resource pack "minecraft":
+	Total file: 65 (+1, -0)
+	Changed file "core/blit_screen.fsh":
+		Total line: 11 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   
+		 7  7   out vec4 fragColor;
+		 8  8   
+		 9  9   void main() {
+		   10 +     fragColor = texture(InSampler, texCoord);
+		10    -     fragColor = texture(DiffuseSampler, texCoord);
+		11 11   }
+		        '''
+	Changed file "core/position_tex_color.fsh":
+		Total line: 18 (+1, -1)
+		        '''
+		        ...
+		 9  9   
+		10 10   out vec4 fragColor;
+		11 11   
+		12 12   void main() {
+		13 13       vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		   14 +     if (color.a == 0.0) {
+		14    -     if (color.a < 0.1) {
+		15 15           discard;
+		16 16       }
+		17 17       fragColor = color * ColorModulator;
+		18 18   }
+		        '''
+	Changed file "core/rendertype_clouds.fsh":
+		Total line: 16 (+0, -8)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   #moj_import <fog.glsl>
+		 4  4   
+		 5    - uniform sampler2D Sampler0;
+		 6    - 
+		 7    - uniform vec4 ColorModulator;
+		 8  5   uniform float FogStart;
+		 9  6   uniform float FogEnd;
+		10  7   uniform vec4 FogColor;
+		11  8   
+		12    - in vec2 texCoord0;
+		13  9   in float vertexDistance;
+		14 10   in vec4 vertexColor;
+		15 11   
+		16 12   out vec4 fragColor;
+		17 13   
+		18 14   void main() {
+		19    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		20    -     if (color.a < 0.1) {
+		21    -         discard;
+		22    -     }
+		   15 +     fragColor = linear_fog(vertexColor, vertexDistance, FogStart, FogEnd, FogColor);
+		23    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		24 16   }
+		        '''
+	Changed file "program/bits.fsh":
+		Total line: 29 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 oneTexel;
+		 7  7   
+		 8  8   uniform vec2 InSize;
+		        ...
+		15 15   
+		16 16   void main() {
+		17 17       vec2 mosaicInSize = InSize / MosaicSize;
+		18 18       vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		19 19   
+		   20 +     vec4 baseTexel = texture(InSampler, texCoord - fractPix);
+		20    -     vec4 baseTexel = texture(DiffuseSampler, texCoord - fractPix);
+		21 21   
+		22 22       vec3 fractTexel = baseTexel.rgb - fract(baseTexel.rgb * Resolution) / Resolution;
+		23 23       float luma = dot(fractTexel, vec3(0.3, 0.59, 0.11));
+		24 24       vec3 chroma = (fractTexel - luma) * Saturation;
+		25 25       baseTexel.rgb = luma + chroma;
+		        ...
+		        '''
+	Changed file "program/blit.fsh":
+		Total line: 13 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   uniform vec4 ColorModulate;
+		 6  6   
+		 7  7   in vec2 texCoord;
+		 8  8   
+		 9  9   out vec4 fragColor;
+		10 10   
+		11 11   void main(){
+		   12 +     fragColor = texture(InSampler, texCoord) * ColorModulate;
+		12    -     fragColor = texture(DiffuseSampler, texCoord) * ColorModulate;
+		13 13   }
+		        '''
+	Changed file "program/box_blur.fsh":
+		Total line: 24 (+3, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 sampleStep;
+		 7  7   
+		 8  8   uniform float Radius;
+		        ...
+		15 15   // In the end we sample the last pixel with a half weight, since the amount of pixels to sample is always odd (actualRadius * 2 + 1).
+		16 16   void main() {
+		17 17       vec4 blurred = vec4(0.0);
+		18 18       float actualRadius = round(Radius * RadiusMultiplier);
+		19 19       for (float a = -actualRadius + 0.5; a <= actualRadius; a += 2.0) {
+		   20 +         blurred += texture(InSampler, texCoord + sampleStep * a);
+		20    -         blurred += texture(DiffuseSampler, texCoord + sampleStep * a);
+		21 21       }
+		   22 +     blurred += texture(InSampler, texCoord + sampleStep * actualRadius) / 2.0;
+		22    -     blurred += texture(DiffuseSampler, texCoord + sampleStep * actualRadius) / 2.0;
+		23 23       fragColor = blurred / (actualRadius + 0.5);
+		24 24   }
+		        '''
+	Changed file "program/color_convolve.fsh":
+		Total line: 38 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 oneTexel;
+		 7  7   
+		 8  8   uniform vec2 InSize;
+		        ...
+		16 16   uniform float Saturation;
+		17 17   
+		18 18   out vec4 fragColor;
+		19 19   
+		20 20   void main() {
+		   21 +     vec4 InTexel = texture(InSampler, texCoord);
+		21    -     vec4 InTexel = texture(DiffuseSampler, texCoord);
+		22 22   
+		23 23       // Color Matrix
+		24 24       float RedValue = dot(InTexel.rgb, RedMatrix);
+		25 25       float GreenValue = dot(InTexel.rgb, GreenMatrix);
+		26 26       float BlueValue = dot(InTexel.rgb, BlueMatrix);
+		        ...
+		        '''
+	Changed file "program/entity_outline_box_blur.fsh":
+		Total line: 18 (+3, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 sampleStep;
+		 7  7   
+		 8  8   out vec4 fragColor;
+		 9  9   
+		10 10   void main() {
+		11 11       vec4 blurred = vec4(0.0);
+		12 12       float radius = 2.0;
+		13 13       for (float a = -radius + 0.5; a <= radius; a += 2.0) {
+		   14 +         blurred += texture(InSampler, texCoord + sampleStep * a);
+		14    -         blurred += texture(DiffuseSampler, texCoord + sampleStep * a);
+		15 15       }
+		   16 +     blurred += texture(InSampler, texCoord + sampleStep * radius) / 2.0;
+		16    -     blurred += texture(DiffuseSampler, texCoord + sampleStep * radius) / 2.0;
+		17 17       fragColor = vec4((blurred / (radius + 0.5)).rgb, blurred.a);
+		18 18   }
+		        '''
+	Changed file "program/entity_sobel.fsh":
+		Total line: 23 (+3, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 oneTexel;
+		 7  7   
+		 8  8   out vec4 fragColor;
+		 9  9   
+		10 10   void main(){
+		   11 +     vec4 center = texture(InSampler, texCoord);
+		   12 +     vec4 left = texture(InSampler, texCoord - vec2(oneTexel.x, 0.0));
+		11    -     vec4 center = texture(DiffuseSampler, texCoord);
+		12    -     vec4 left = texture(DiffuseSampler, texCoord - vec2(oneTexel.x, 0.0));
+		   13 +     vec4 right = texture(InSampler, texCoord + vec2(oneTexel.x, 0.0));
+		   14 +     vec4 up = texture(InSampler, texCoord - vec2(0.0, oneTexel.y));
+		   15 +     vec4 down = texture(InSampler, texCoord + vec2(0.0, oneTexel.y));
+		13    -     vec4 right = texture(DiffuseSampler, texCoord + vec2(oneTexel.x, 0.0));
+		14    -     vec4 up = texture(DiffuseSampler, texCoord - vec2(0.0, oneTexel.y));
+		15    -     vec4 down = texture(DiffuseSampler, texCoord + vec2(0.0, oneTexel.y));
+		16 16       float leftDiff  = abs(center.a - left.a);
+		17 17       float rightDiff = abs(center.a - right.a);
+		18 18       float upDiff    = abs(center.a - up.a);
+		19 19       float downDiff  = abs(center.a - down.a);
+		20 20       float total = clamp(leftDiff + rightDiff + upDiff + downDiff, 0.0, 1.0);
+		        ...
+		        '''
+	Changed file "program/invert.fsh":
+		Total line: 16 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   
+		 7  7   uniform float InverseAmount;
+		 8  8   
+		 9  9   out vec4 fragColor;
+		10 10   
+		11 11   void main(){
+		   12 +     vec4 diffuseColor = texture(InSampler, texCoord);
+		12    -     vec4 diffuseColor = texture(DiffuseSampler, texCoord);
+		13 13       vec4 invertColor = 1.0 - diffuseColor;
+		14 14       vec4 outColor = mix(diffuseColor, invertColor, InverseAmount);
+		15 15       fragColor = vec4(outColor.rgb, 1.0);
+		16 16   }
+		        '''
+	Changed file "program/spiderclip.fsh":
+		Total line: 33 (+2, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D InSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4  4   uniform sampler2D BlurSampler;
+		 5  5   
+		 6  6   in vec2 texCoord;
+		 7  7   in vec2 scaledCoord;
+		 8  8   
+		        ...
+		11 11   uniform vec4 Vignette;
+		12 12   
+		13 13   out vec4 fragColor;
+		14 14   
+		15 15   void main() {
+		   16 +     vec4 ScaledTexel = texture(InSampler, scaledCoord);
+		16    -     vec4 ScaledTexel = texture(DiffuseSampler, scaledCoord);
+		17 17       vec4 BlurTexel = texture(BlurSampler, texCoord);
+		18 18       vec4 OutTexel = ScaledTexel;
+		19 19   
+		20 20       // -- Alpha Clipping --
+		21 21       if (scaledCoord.x < Scissor.x) OutTexel = BlurTexel;
+		        ...
+		        '''
+	Changed file "program/transparency.fsh":
+		Total line: 70 (+4, -4)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + uniform sampler2D MainSampler;
+		    4 + uniform sampler2D MainDepthSampler;
+		 3    - uniform sampler2D DiffuseSampler;
+		 4    - uniform sampler2D DiffuseDepthSampler;
+		 5  5   uniform sampler2D TranslucentSampler;
+		 6  6   uniform sampler2D TranslucentDepthSampler;
+		 7  7   uniform sampler2D ItemEntitySampler;
+		 8  8   uniform sampler2D ItemEntityDepthSampler;
+		 9  9   uniform sampler2D ParticlesSampler;
+		        ...
+		49 49   vec3 blend( vec3 dst, vec4 src ) {
+		50 50       return ( dst * ( 1.0 - src.a ) ) + src.rgb;
+		51 51   }
+		52 52   
+		53 53   void main() {
+		   54 +     color_layers[0] = vec4( texture( MainSampler, texCoord ).rgb, 1.0 );
+		   55 +     depth_layers[0] = texture( MainDepthSampler, texCoord ).r;
+		54    -     color_layers[0] = vec4( texture( DiffuseSampler, texCoord ).rgb, 1.0 );
+		55    -     depth_layers[0] = texture( DiffuseDepthSampler, texCoord ).r;
+		56 56       active_layers = 1;
+		57 57   
+		58 58       try_insert( texture( TranslucentSampler, texCoord ), texture( TranslucentDepthSampler, texCoord ).r );
+		59 59       try_insert( texture( ItemEntitySampler, texCoord ), texture( ItemEntityDepthSampler, texCoord ).r );
+		60 60       try_insert( texture( ParticlesSampler, texCoord ), texture( ParticlesDepthSampler, texCoord ).r );
+		        ...
+		        '''
+	Added file "core/lightmap.fsh":
+		'''
+		#version 150
+		
+		uniform float AmbientLightFactor;
+		uniform float SkyFactor;
+		uniform float BlockFactor;
+		uniform int UseBrightLightmap;
+		uniform vec3 SkyLightColor;
+		uniform float NightVisionFactor;
+		uniform float DarknessScale;
+		uniform float DarkenWorldFactor;
+		uniform float BrightnessFactor;
+		
+		in vec2 texCoord;
+		
+		out vec4 fragColor;
+		
+		float get_brightness(float level) {
+		    float curved_level = level / (4.0 - 3.0 * level);
+		    return mix(curved_level, 1.0, AmbientLightFactor);
+		}
+		
+		vec3 notGamma(vec3 x) {
+		    vec3 nx = 1.0 - x;
+		    return 1.0 - nx * nx * nx * nx;
+		}
+		
+		void main() {
+		    float block_brightness = get_brightness(texCoord.x) * BlockFactor;
+		    float sky_brightness = get_brightness(texCoord.y) * SkyFactor;
+		
+		    // cubic nonsense, dips to yellowish in the middle, white when fully saturated
+		    vec3 color = vec3(
+		        block_brightness,
+		        block_brightness * ((block_brightness * 0.6 + 0.4) * 0.6 + 0.4),
+		        block_brightness * (block_brightness * block_brightness * 0.6 + 0.4)
+		    );
+		
+		    if (UseBrightLightmap != 0) {
+		        color = mix(color, vec3(0.99, 1.12, 1.0), 0.25);
+		        color = clamp(color, 0.0, 1.0);
+		    } else {
+		        color += SkyLightColor * sky_brightness;
+		        color = mix(color, vec3(0.75), 0.04);
+		
+		        vec3 darkened_color = color * vec3(0.7, 0.6, 0.6);
+		        color = mix(color, darkened_color, DarkenWorldFactor);
+		    }
+		
+		    if (NightVisionFactor > 0.0) {
+		        // scale up uniformly until 1.0 is hit by one of the colors
+		        float max_component = max(color.r, max(color.g, color.b));
+		        if (max_component < 1.0) {
+		            vec3 bright_color = color / max_component;
+		            color = mix(color, bright_color, NightVisionFactor);
+		        }
+		    }
+		
+		    if (UseBrightLightmap == 0) {
+		        color = clamp(color - vec3(DarknessScale), 0.0, 1.0);
+		    }
+		
+		    vec3 notGamma = notGamma(color);
+		    color = mix(color, notGamma, BrightnessFactor);
+		    color = mix(color, vec3(0.75), 0.04);
+		    color = clamp(color, 0.0, 1.0);
+		
+		    fragColor = vec4(color, 1.0);
+		}
+		'''

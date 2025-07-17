@@ -1,0 +1,134 @@
+Difference of "text_packs" between "25w06a" (snapshot of "1.21.5") and "25w07a" (snapshot of "1.21.5").
+
+Changed resource pack "minecraft":
+	Changed file "core/rendertype_end_portal.fsh":
+		Total line: 66 (+7, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:fog.glsl>
+		 3  4   #moj_import <minecraft:matrix.glsl>
+		 4  5   
+		 5  6   uniform sampler2D Sampler0;
+		 6  7   uniform sampler2D Sampler1;
+		 7  8   
+		 8  9   uniform float GameTime;
+		   10 + uniform float FogStart;
+		   11 + uniform float FogEnd;
+		   12 + uniform vec4 FogColor;
+		 9    - uniform int EndPortalLayers;
+		10 13   
+		11 14   in vec4 texProj0;
+		   15 + in float vertexDistance;
+		12 16   
+		13 17   const vec3[] COLORS = vec3[](
+		14 18       vec3(0.022087, 0.098399, 0.110818),
+		15 19       vec3(0.011892, 0.095924, 0.089485),
+		16 20       vec3(0.027636, 0.101689, 0.100326),
+		        ...
+		53 57   
+		54 58   out vec4 fragColor;
+		55 59   
+		56 60   void main() {
+		57 61       vec3 color = textureProj(Sampler0, texProj0).rgb * COLORS[0];
+		   62 +     for (int i = 0; i < PORTAL_LAYERS; i++) {
+		58    -     for (int i = 0; i < EndPortalLayers; i++) {
+		59 63           color += textureProj(Sampler1, texProj0 * end_portal_layer(float(i + 1))).rgb * COLORS[i];
+		60 64       }
+		   65 +     fragColor = linear_fog(vec4(color, 1.0), vertexDistance, FogStart, FogEnd, FogColor);
+		61    -     fragColor = vec4(color, 1.0);
+		62 66   }
+		        '''
+	Changed file "post/bits.fsh":
+		Total line: 30 (+3, -2)
+		        '''
+		        ...
+		 6  6   in vec2 oneTexel;
+		 7  7   
+		 8  8   uniform vec2 InSize;
+		 9  9   
+		10 10   uniform float Resolution;
+		11    - uniform float Saturation;
+		12 11   uniform float MosaicSize;
+		   12 + 
+		   13 + out vec4 fragColor;
+		13 14   
+		   15 + const float Saturation = 1.5;
+		14    - out vec4 fragColor;
+		15 16   
+		16 17   void main() {
+		17 18       vec2 mosaicInSize = InSize / MosaicSize;
+		18 19       vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		19 20   
+		        ...
+		        '''
+	Changed file "post/box_blur.fsh":
+		Total line: 23 (+1, -2)
+		        '''
+		        ...
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 sampleStep;
+		 7  7   
+		 8  8   uniform float Radius;
+		 9    - uniform float RadiusMultiplier;
+		10  9   
+		11 10   out vec4 fragColor;
+		12 11   
+		13 12   // This shader relies on GL_LINEAR sampling to reduce the amount of texture samples in half.
+		14 13   // Instead of sampling each pixel position with a step of 1 we sample between pixels with a step of 2.
+		15 14   // In the end we sample the last pixel with a half weight, since the amount of pixels to sample is always odd (actualRadius * 2 + 1).
+		16 15   void main() {
+		17 16       vec4 blurred = vec4(0.0);
+		   17 +     float actualRadius = round(Radius);
+		18    -     float actualRadius = round(Radius * RadiusMultiplier);
+		19 18       for (float a = -actualRadius + 0.5; a <= actualRadius; a += 2.0) {
+		20 19           blurred += texture(InSampler, texCoord + sampleStep * a);
+		21 20       }
+		22 21       blurred += texture(InSampler, texCoord + sampleStep * actualRadius) / 2.0;
+		23 22       fragColor = blurred / (actualRadius + 0.5);
+		        ...
+		        '''
+	Changed file "post/color_convolve.fsh":
+		Total line: 33 (+2, -7)
+		        '''
+		        ...
+		 2  2   
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   in vec2 oneTexel;
+		 7    - 
+		 8  7   uniform vec2 InSize;
+		 9  8   
+		10    - uniform vec3 Gray;
+		11  9   uniform vec3 RedMatrix;
+		12 10   uniform vec3 GreenMatrix;
+		13 11   uniform vec3 BlueMatrix;
+		   12 + 
+		   13 + const vec3 Gray = vec3(0.3, 0.59, 0.11);
+		14    - uniform vec3 Offset;
+		15    - uniform vec3 ColorScale;
+		   14 + const float Saturation = 1.8;
+		16    - uniform float Saturation;
+		17 15   
+		18 16   out vec4 fragColor;
+		19 17   
+		20 18   void main() {
+		21 19       vec4 InTexel = texture(InSampler, texCoord);
+		        ...
+		23 21       // Color Matrix
+		24 22       float RedValue = dot(InTexel.rgb, RedMatrix);
+		25 23       float GreenValue = dot(InTexel.rgb, GreenMatrix);
+		26 24       float BlueValue = dot(InTexel.rgb, BlueMatrix);
+		27 25       vec3 OutColor = vec3(RedValue, GreenValue, BlueValue);
+		28    - 
+		29    -     // Offset & Scale
+		30    -     OutColor = (OutColor * ColorScale) + Offset;
+		31 26   
+		32 27       // Saturation
+		33 28       float Luma = dot(OutColor, Gray);
+		34 29       vec3 Chroma = OutColor - Luma;
+		35 30       OutColor = (Chroma * Saturation) + Luma;
+		        ...
+		        '''
