@@ -215,6 +215,7 @@ class Field():
     __slots__ = (
         "cumulative_path",
         "domain",
+        "name",
         "trace_path",
     )
 
@@ -225,9 +226,11 @@ class Field():
         '''
         self.trace_path = path
         self.cumulative_path = path if cumulative_path is None else cumulative_path
+        self.name = "".join(f"({item})" for item in self.cumulative_path)
 
-    def set_domain(self, domain:"Domain.Domain") -> None:
-        self.domain = domain
+    def set_component(self, component:"Component") -> None:
+        self.name = component.full_name + "".join(f"({item})" for item in self.cumulative_path)
+        self.domain = component.domain
 
     def set_field(
         self,
@@ -269,4 +272,4 @@ class Field():
         ...
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} id {id(self)}>"
+        return f"<{self.__class__.__name__} {self.name}>"

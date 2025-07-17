@@ -107,8 +107,5 @@ class ComponentListField[a:Component](Field):
         '''
         return map(function, self.subcomponents)
 
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} len {len(self)} id {id(self)}>"
-
     def __len__(self) -> int:
         return len(self.subcomponents_data)

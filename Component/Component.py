@@ -208,7 +208,7 @@ class Component[a]():
             return True
         self.fields:Sequence["Field"] = self.initialize_fields(self.evaluated_data)
         for field in self.fields:
-            field.set_domain(self.domain)
+            field.set_component(self)
         return False
 
     def copy_inherit(self, other:"Component", trace:Trace, parent_variables:Mapping[str,"Variable.Variable"]) -> "Component|EllipsisType":

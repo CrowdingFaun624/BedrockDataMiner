@@ -28,10 +28,10 @@ class FieldContainer[a: Field](Field):
         super().__init__(path, cumulative_path)
         self.fields = fields
 
-    def set_domain(self, domain: "Domain.Domain") -> None:
-        super().set_domain(domain)
+    def set_component(self, component:"Component") -> None:
+        super().set_component(component)
         for field in self.fields:
-            field.set_domain(domain)
+            field.set_component(component)
 
     def set_field(
         self,
@@ -68,6 +68,3 @@ class FieldContainer[a: Field](Field):
             super().finalize(trace)
             for field in self.fields:
                 field.finalize(trace)
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} len {len(self.fields)} id {id(self)}>"

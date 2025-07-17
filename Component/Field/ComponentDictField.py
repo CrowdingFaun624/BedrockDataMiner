@@ -138,8 +138,5 @@ class ComponentDictField[a:Component](Field):
                     if required_type is not None and not issubclass(linked_object, required_type):
                         trace.exception(Exceptions.LinkedComponentTypeError(key, required_type, linked_object))
 
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} len {len(self)} id {id(self)}>"
-
     def __len__(self) -> int:
         return 0 if self.subcomponents is None else len(self.subcomponents)
