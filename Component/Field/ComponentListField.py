@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING, Any, Callable, Iterator, Mapping, Sequence, cast
 
-import Utilities.Exceptions as Exceptions
 from Component.Component import Component
 from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
-from Component.Field.Field import Field, InlinePermissions, choose_component
+from Component.Field.Field import Field, choose_component
 from Component.Pattern import AbstractPattern
+from Component.Permissions import InlineUsage
 from Component.ScriptImporter import ScriptSetSetSet
 from Utilities.Trace import Trace
 
@@ -15,10 +15,7 @@ class ComponentListField[a:Component](Field):
     '''A link to multiple other Components.'''
 
     __slots__ = (
-        "allow_inline",
         "assume_type",
-        "has_inline_components",
-        "has_reference_components",
         "pattern",
         "subcomponents",
         "subcomponents_data",
@@ -31,7 +28,6 @@ class ComponentListField[a:Component](Field):
         path:tuple[str,...],
         cumulative_path:tuple[str,...]|None=None,
         *,
-        allow_inline:InlinePermissions=InlinePermissions.mixed,
         assume_type:str|None=None,
     ) -> None:
         '''
@@ -39,7 +35,6 @@ class ComponentListField[a:Component](Field):
         :pattern: The Pattern used to search for Components.
         :path: The keys from the next parent Field.
         :cumulative_path: The keys from the next parent Component.
-        :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
         super().__init__(path, cumulative_path)
@@ -47,9 +42,6 @@ class ComponentListField[a:Component](Field):
         self.subcomponents_data:Sequence[str|ComponentTypedDicts] = cast(Any, (subcomponents_data,)) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
         self.subcomponents:list[a]
         self.pattern = pattern
-        self.allow_inline = allow_inline
-        self.has_reference_components = False
-        self.has_inline_components = False
         self.assume_type = assume_type
 
     def set_field(
@@ -66,24 +58,15 @@ class ComponentListField[a:Component](Field):
             inline_components:list[a] = []
             for index, subcomponent_data in enumerate(self.subcomponents_data):
                 with trace.enter_key(index, subcomponent_data):
-                    subcomponent, is_inline = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.cumulative_path, functions, create_component_function, self.assume_type)
-                    self.has_reference_components = self.has_reference_components or not is_inline
-                    self.has_inline_components = self.has_inline_components or is_inline
+                    subcomponent, inline_usage, inheritance_usage = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.cumulative_path, functions, create_component_function, self.assume_type)
                     if subcomponent is ...:
                         continue
+                    subcomponent.check_permissions(self, inline_usage, inheritance_usage, trace)
                     self.subcomponents.append(subcomponent)
-                    if is_inline:
+                    if inline_usage is InlineUsage.inline:
                         inline_components.append(subcomponent)
             return self.subcomponents, inline_components
         return (), ()
-
-    def check(self, source_component:"Component", trace:Trace) -> None:
-        with trace.enter_keys(self.trace_path, self.subcomponents_data):
-            super().check(source_component, trace)
-            if self.has_reference_components and self.allow_inline is InlinePermissions.inline:
-                trace.exception(Exceptions.ReferenceComponentError(source_component, self))
-            if self.has_inline_components and self.allow_inline is InlinePermissions.reference:
-                trace.exception(Exceptions.InlineComponentError(source_component, self))
 
     def extend(self, new_components:Sequence[a]) -> None:
         '''

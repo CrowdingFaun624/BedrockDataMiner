@@ -1,9 +1,10 @@
-from typing import TYPE_CHECKING, Mapping, Sequence, cast
+from typing import TYPE_CHECKING, Mapping, Sequence
 
 import Utilities.Exceptions as Exceptions
 from Component.Component import Component
-from Component.ComponentTyping import CreateComponentFunction, TypeAliasTypedDict
+from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.Field import choose_component
+from Component.Permissions import InlineUsage
 from Component.ScriptImporter import ScriptSetSetSet
 from Component.Structure.Field.AbstractTypeField import (
     TYPE_ALIAS_PATTERN,
@@ -41,6 +42,7 @@ class TypeListField(AbstractTypeField):
             components_used:list["TypeAliasComponent"] = []
             already_types:set[str] = set()
             subcomponents:list["type|TypeAliasComponent"] = []
+            inline_components:list["TypeAliasComponent"] = []
             for subcomponent_data in self.subcomponent_data:
                 with trace.enter_keys(self.trace_path, subcomponent_data):
                     if subcomponent_data in already_types:
@@ -50,17 +52,17 @@ class TypeListField(AbstractTypeField):
                         subcomponent_type = self.domain.type_stuff.default_types[subcomponent_data]
                         subcomponents.append(subcomponent_type)
                     else:
-                        subcomponent, is_inline = choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, local_group, global_groups, trace,
+                        subcomponent, inline_usage, inheritance_usage = choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, local_group, global_groups, trace,
                             self.cumulative_path, functions, create_component_function, None, self.domain.type_stuff.default_types)
                         if subcomponent is ...:
                             continue
-                        if is_inline:
-                            trace.exception(Exceptions.InlineComponentError(source_component, self, cast(TypeAliasTypedDict, subcomponent_data)))
-                            continue
+                        subcomponent.check_permissions(self, inline_usage, inheritance_usage, trace)
+                        if inline_usage is InlineUsage.inline:
+                            inline_components.append(subcomponent)
                         components_used.append(subcomponent)
                         subcomponents.append(subcomponent)
             self._types = subcomponents
-            return components_used, ()
+            return components_used, inline_components
         return (), ()
 
     def __len__(self) -> int:

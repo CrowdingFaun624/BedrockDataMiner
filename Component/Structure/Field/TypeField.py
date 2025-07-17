@@ -1,15 +1,15 @@
-from typing import TYPE_CHECKING, Mapping, Sequence, cast
+from typing import TYPE_CHECKING, Mapping, Sequence
 
 from Component.Component import Component
-from Component.ComponentTyping import CreateComponentFunction, TypeAliasTypedDict
+from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.Field import choose_component
+from Component.Permissions import InlineUsage
 from Component.ScriptImporter import ScriptSetSetSet
 from Component.Structure.Field.AbstractTypeField import (
     TYPE_ALIAS_PATTERN,
     AbstractTypeField,
 )
 from Component.Structure.TypeAliasComponent import TypeAliasComponent
-from Utilities.Exceptions import InlineComponentError
 from Utilities.Trace import Trace
 
 if TYPE_CHECKING:
@@ -42,13 +42,11 @@ class TypeField(AbstractTypeField):
                 self._types = (self.domain.type_stuff.default_types[self.subcomponent_data],)
                 return (), ()
             else:
-                component, is_inline = choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_PATTERN, local_group, global_groups, trace, self.cumulative_path,
+                component, inline_usage, inheritance_usage = choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_PATTERN, local_group, global_groups, trace, self.cumulative_path,
                     functions, create_component_function, None, self.domain.type_stuff.default_types)
                 if component is ...:
                     return (), ()
-                if is_inline:
-                    trace.exception(InlineComponentError(source_component, self, cast(TypeAliasTypedDict, self.subcomponent_data)))
-                    return (), ()
+                component.check_permissions(self, inline_usage, inheritance_usage, trace)
                 self._types = (component,)
-                return (component,), ()
+                return (component,), (component,) if inline_usage is InlineUsage.inline else ()
         return (), ()

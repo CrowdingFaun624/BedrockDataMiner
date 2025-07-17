@@ -1,11 +1,10 @@
-import enum
 from types import EllipsisType
 from typing import TYPE_CHECKING, Callable, Iterable, Mapping, Sequence, cast
 
-import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
 from Component.Pattern import AbstractPattern
+from Component.Permissions import InheritanceUsage, InlineUsage
 from Component.ScriptImporter import ScriptSetSetSet
 from Utilities.Trace import Trace
 
@@ -50,15 +49,6 @@ def get_options(
     )
     return options
 
-class InlinePermissions(enum.Enum):
-    "Use when creating a Field to specify if it's allowed to have inline Components."
-    inline = 0
-    "Inline Components are allowed."
-    mixed = 1
-    "Both inline and reference Components are allowed."
-    reference = 2
-    "Only reference Components are allowed."
-
 def resolve_reference(component_data:str, local_group:"Group") -> str:
     '''
     Returns an unambiguous reference that directs to the same Component as it does at `source_component`.
@@ -95,7 +85,8 @@ def refer_to_component[a:"Component"](
         pattern_fail_error:Callable[[], Exceptions.InvalidComponentError],
         functions:ScriptSetSetSet,
         create_component_function:CreateComponentFunction,
-    ) -> a|EllipsisType:
+        is_inline:bool,
+    ) -> tuple[a|EllipsisType, InlineUsage, InheritanceUsage]:
     '''
     Function for referring to a Component. Raises an error if the pattern does not match the Component.
     :component: The Component found through `component_data`. May be an InheritedComponent.
@@ -106,17 +97,29 @@ def refer_to_component[a:"Component"](
     :pattern_fail_error: The InvalidComponentError to raise if the Component does not match the Pattern.
     '''
     if allow_inherited:
-        return cast(a, component)
+        return cast(a, component), InlineUsage.unknown, InheritanceUsage.unknown # this is only called by InheritedComponent, which does not care about these parts.
     new_component = component.inheritance(set(), global_groups, parent_component.variables if parent_component is not None else {}, functions, create_component_function, trace)
-    if new_component is ...:
-        return ... # error
+    if new_component is ...: # error
+        return ..., InlineUsage.unknown, InheritanceUsage.unknown
+
+    inline_usage:InlineUsage = InlineUsage.inline if is_inline else InlineUsage.reference
+
+    inheritance_usage:InheritanceUsage
+    if new_component.is_reference_inheritance:
+        inheritance_usage = InheritanceUsage.reference_inheritance
+        inline_usage = InlineUsage.reference
+    elif new_component.inherit_parent is not None:
+        inheritance_usage = InheritanceUsage.regular_inheritance
+    else:
+        inheritance_usage = InheritanceUsage.normal
+
     if not pattern.contains(new_component):
         trace.exception(pattern_fail_error())
-        return ...
+        return ..., inline_usage, inheritance_usage
     if new_component.abstract: # meaning it has undefined Variables
         trace.exception(Exceptions.AbstractComponentError(new_component, [variable.name for variable in new_component.variables.values() if variable.undefined]))
-        return ...
-    return new_component
+        return ..., inline_usage, inheritance_usage
+    return new_component, inline_usage, inheritance_usage
 
 def choose_component[a: "Component"](
         component_data:str|ComponentTypedDicts,
@@ -131,7 +134,7 @@ def choose_component[a: "Component"](
         assume_type:str|None,
         other_options:Iterable[str]|None=None,
         allow_inherited:bool=False
-    ) -> tuple[a|EllipsisType,bool]:
+    ) -> tuple[a|EllipsisType, InlineUsage, InheritanceUsage]:
     '''
     Finds a Component with the same name and properties if `component_data` is a str.
     If `component_data` is a dict, it creates a new inline Component using the `create_component_function`.
@@ -152,23 +155,22 @@ def choose_component[a: "Component"](
     if isinstance(component_data, dict):
         component = create_component_function(component_data, source_component, assume_type, keys)
         if component is ...:
-            return ..., True
-        output = refer_to_component(component, source_component, global_groups, pattern, trace, allow_inherited,
-            lambda: Exceptions.InvalidComponentError(component, None, pattern, component.my_capabilities, None), functions, create_component_function)
-        return output, output is ... or not output.is_reference_inheritance
+            return ..., InlineUsage.unknown, InheritanceUsage.unknown
+        return refer_to_component(component, source_component, global_groups, pattern, trace, allow_inherited,
+            lambda: Exceptions.InvalidComponentError(component, None, pattern, component.my_capabilities, None), functions, create_component_function, True)
 
-    # neither ! nor /
     bang_index = component_data.find("!")
     slash_index = component_data.rfind("/", bang_index if bang_index != -1 else 0)
 
+    # neither ! nor /
     if bang_index == -1 and slash_index == -1:
         group = local_group
         if (component := group.components.get(component_data)) is None:
             options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
             trace.exception(Exceptions.UnrecognizedComponentError(component_data, component_data, options))
-            return ..., False
+            return ..., InlineUsage.reference, InheritanceUsage.unknown
         return refer_to_component(component, None, global_groups, pattern, trace, allow_inherited, lambda: Exceptions.InvalidComponentError(
-            component, component_data, pattern, component.my_capabilities, get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)), functions, create_component_function), False
+            component, component_data, pattern, component.my_capabilities, get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)), functions, create_component_function, False)
 
     # only /
     elif bang_index == -1:
@@ -179,7 +181,7 @@ def choose_component[a: "Component"](
         if (group := domain_components.get(group_name)) is None:
             options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
             trace.exception(Exceptions.UnrecognizedGroupError(alias_group_name, component_data, options))
-            return ..., False
+            return ..., InlineUsage.reference, InheritanceUsage.unknown
 
     # ! and /
     else:
@@ -188,7 +190,7 @@ def choose_component[a: "Component"](
         if (domain_components := global_groups.get(domain_name)) is None:
             options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
             trace.exception(Exceptions.UnrecognizedComponentDomainError(domain_name, component_data, options))
-            return ..., False
+            return ..., InlineUsage.reference, InheritanceUsage.unknown
         if slash_index != -1:
             alias_group_name = component_path[:slash_index-bang_index-1]
             group_name = local_group.group_aliases.get(alias_group_name, alias_group_name)
@@ -196,18 +198,18 @@ def choose_component[a: "Component"](
             if (group := domain_components.get(group_name)) is None:
                 options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
                 trace.exception(Exceptions.UnrecognizedGroupError(alias_group_name, component_data, options))
-                return ..., False
+                return ..., InlineUsage.reference, InheritanceUsage.unknown
         else:
             options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
             trace.exception(Exceptions.MalformedComponentReferenceError(component_data, options, "because it has a ! and no /"))
-            return ..., False
+            return ..., InlineUsage.reference, InheritanceUsage.unknown
 
     if (component := group.components.get(component_name)) is None:
         options = get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)
         trace.exception(Exceptions.UnrecognizedComponentError(component_name, component_data, options))
-        return ..., False
+        return ..., InlineUsage.reference, InheritanceUsage.unknown
     return refer_to_component(component, None, global_groups, pattern, trace, allow_inherited, lambda: Exceptions.InvalidComponentError(
-        component, component_data, pattern, component.my_capabilities, get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)), functions, create_component_function), False
+        component, component_data, pattern, component.my_capabilities, get_options(component_data, source_component, pattern, local_group, global_groups, other_options, allow_inherited)), functions, create_component_function, False)
 
 class Field():
     '''Abstract class of Fields. Fields are a modular way to manage the data of Components.'''

@@ -5,8 +5,9 @@ from Component.Component import Component
 from Component.ComponentTyping import VersionTagTypedDict
 from Component.Field.ComponentField import OptionalComponentField
 from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field, InlinePermissions
+from Component.Field.Field import Field
 from Component.Pattern import Pattern
+from Component.Permissions import InheritancePermissions, InlinePermissions
 from Component.VersionTag.LatestSlotComponent import LATEST_SLOT_PATTERN
 from Component.VersionTag.VersionTagAutoAssignerComponent import (
     VERSION_TAG_AUTO_ASSIGNER_PATTERN,
@@ -36,6 +37,8 @@ class VersionTagComponent(Component[VersionTag]):
         TypedDictKeyTypeVerifier("is_unreleased_tag", False, bool),
         TypedDictKeyTypeVerifier("latest_slot", False, str),
     )
+    inline_permissions = InlinePermissions.reference
+    inheritance_permissions = InheritancePermissions.normal
 
     @property
     def assume_used(self) -> bool:
@@ -60,8 +63,8 @@ class VersionTagComponent(Component[VersionTag]):
         self.is_major_tag = data.get("is_major_tag", False)
         self.is_unreleased_tag = data.get("is_unreleased_tag", False)
 
-        self.auto_assigner_field = ComponentListField(data.get("auto_assign", ()), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ("auto_assign",), allow_inline=InlinePermissions.mixed)
-        self.latest_slot_field = OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=InlinePermissions.reference)
+        self.auto_assigner_field = ComponentListField(data.get("auto_assign", ()), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ("auto_assign",))
+        self.latest_slot_field = OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",))
         return (self.auto_assigner_field, self.latest_slot_field)
 
     def create_final(self, trace:Trace) -> VersionTag:

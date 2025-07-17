@@ -7,8 +7,9 @@ from Component.Dataminer.AbstractDataminerCollectionComponent import (
     ABSTRACT_DATAMINER_COLLECTION_PATTERN,
 )
 from Component.Field.ComponentField import ComponentField
-from Component.Field.Field import Field, InlinePermissions
+from Component.Field.Field import Field
 from Component.Field.ScriptedClassField import ScriptedClassField
+from Component.Permissions import InheritancePermissions, InlinePermissions
 from Component.Structure.StructureBaseComponent import STRUCTURE_BASE_PATTERN
 from Tablifier.Tablifier import Tablifier
 from Utilities.Trace import Trace
@@ -26,6 +27,8 @@ class TablifierComponent(Component[Tablifier]):
         TypedDictKeyTypeVerifier("type", False, str),
         TypedDictKeyTypeVerifier("version_provider", True, str),
     )
+    inline_permissions = InlinePermissions.reference
+    inheritance_permissions = InheritancePermissions.normal
 
     @property
     def assume_used(self) -> bool:
@@ -41,8 +44,8 @@ class TablifierComponent(Component[Tablifier]):
     def initialize_fields(self, data: TablifierTypedDict) -> Sequence[Field]:
         self.file_name = data["file_name"]
 
-        self.dataminer_collection_field = ComponentField(data["dataminer_collection"], ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("dataminer_collection",), allow_inline=InlinePermissions.reference)
-        self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=InlinePermissions.reference)
+        self.dataminer_collection_field = ComponentField(data["dataminer_collection"], ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("dataminer_collection",))
+        self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",))
         self.version_provider_field = ScriptedClassField(data["version_provider"], lambda script_set_set_set: script_set_set_set.version_provider_classes, ("version_provider",))
         return (self.dataminer_collection_field, self.structure_field, self.version_provider_field)
 

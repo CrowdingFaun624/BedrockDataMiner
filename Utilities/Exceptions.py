@@ -15,12 +15,12 @@ from typing import (
 if TYPE_CHECKING:
     from Component.Capabilities import Capabilities
     from Component.Component import Component
-    from Component.ComponentTyping import ComponentTypedDicts
-    from Component.Expression.Expression import Expression, Reader
+    from Component.Expression.Expression import Reader
     from Component.Expression.Variable import Variable
     from Component.Field.Field import Field
     from Component.Group import Group
     from Component.Pattern import AbstractPattern
+    from Component.Permissions import InheritanceUsage, InlineUsage
     from Component.Version.VersionComponent import VersionComponent
     from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
     from Dataminer.BuiltIns.TagSearcherDataminer import DataReader
@@ -127,6 +127,17 @@ def nearest_message(value:str, options:list[str], show_original:bool=True) -> st
         return f" Did you mean {nearest} instead of {value}?"
     else:
         return f" Did you mean {nearest}?"
+
+def format_list[A](_list:Sequence[A], string_function:Callable[[A],str]=str, *, conjunction:str="and", empty_string="nothing") -> str:
+    if len(_list) == 0:
+        return empty_string
+    elif len(_list) == 1:
+        return string_function(_list[0])
+    elif len(_list) == 2:
+        return f"{string_function(_list[0])} {conjunction} {string_function(_list[1])}"
+    else:
+        last_index = len(_list) - 1
+        return ", ".join(string_function(item) if index != last_index else f"{conjunction} {string_function(item)}" for index, item in enumerate(_list))
 
 # Within this file, an "Exception" is an abstract type and
 # an "Error" is a concrete type.
@@ -618,25 +629,6 @@ class InheritanceLoopError(ComponentException):
     def __str__(self) -> str:
         return f"There is a Component inheritance loop involving {{{", ".join(component.full_name for component in self.involved_components)}}}{message(self.message)}"
 
-class InlineComponentError(ComponentException):
-    "An inline Component exists where it is not allowed."
-
-    def __init__(self, component:"Component", field:"Field|None", subcomponent_data:Optional["ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:
-        '''
-        :component: The Component with the disallowed inline subcomponent.
-        :field: The Field with the disallowed inline subcomponent.
-        :subcomponent_data: The data used to specify the subcomponent.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(component, field, subcomponent_data, message)
-        self.component = component
-        self.field = field
-        self.subcomponent_data = subcomponent_data
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.component}{f", {self.field}" if self.field is not None else ""} attempted to create a disallowed inline Component{message(self.message, yes_message=" %s")}{message(self.subcomponent_data, yes_message=": %s")}"
-
 class InvalidComponentError(ComponentException):
     "The referenced Component has the wrong properties."
 
@@ -771,6 +763,48 @@ class NotExpressionError(ComponentException):
     def __str__(self) -> str:
         return f"\"{self.source} from is not an expression{message(self.message)}"
 
+class PermissionInlineError(ComponentException):
+    "A Component's usage conflicts with its InlinePermissions"
+
+    def __init__(self, component:"Component", field:"Field", required_usage:tuple["InlineUsage",...], actual_usage:"InlineUsage", message:Optional[str]=None) -> None:
+        '''
+        :component: The sub-Component whose permissions were broken.
+        :field: The Field with the disallowed inline subcomponent.
+        :required_usage: How the Component should be referenced.
+        :actual_usage: How the Component was actually referenced.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, field, message)
+        self.component = component
+        self.field = field
+        self.required_usage = required_usage
+        self.actual_usage = actual_usage
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.field} attempted to {self.actual_usage.name} {self.component}, but only {format_list(self.required_usage, lambda item: item.value)} is allowed{message(self.message)}"
+
+class PermissionInheritanceError(ComponentException):
+    "A Component's usage conflicts with its InheritancePermissions"
+
+    def __init__(self, component:"Component", field:"Field", required_usage:tuple["InheritanceUsage",...], actual_usage:"InheritanceUsage", message:Optional[str]=None) -> None:
+        '''
+        :component: The sub-Component whose permissions were broken.
+        :field: The Field with the disallowed inline subcomponent.
+        :required_usage: How the Component should be referenced.
+        :actual_usage: How the Component was actually referenced.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, field, message)
+        self.component = component
+        self.field = field
+        self.required_usage = required_usage
+        self.actual_usage = actual_usage
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.field} attempted to {self.actual_usage.name} {self.component}, but only {format_list(self.required_usage, lambda item: item.value)} is allowed{message(self.message)}"
+
 class ReaderSourceEndError(ComponentException):
     "Cannot parse an Expression because the end of the source was reached."
 
@@ -786,25 +820,6 @@ class ReaderSourceEndError(ComponentException):
 
     def __str__(self) -> str:
         return f"\"{self.reader.source}\" at {self.index} reached the end of the source{message(self.message)}"
-
-class ReferenceComponentError(ComponentException):
-    "A reference Component exists where it is not allowed."
-
-    def __init__(self, component:"Component", field:"Field", subcomponent_name:Optional[str]=None, message:Optional[str]=None) -> None:
-        '''
-        :component: The Component with the disallowed inline subcomponent.
-        :field: The Field with the disallowed inline subcomponent.
-        :subcomponent_name: The name of the subcomponent.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(component, field, subcomponent_name, message)
-        self.component = component
-        self.field = field
-        self.subcomponent_name = subcomponent_name
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.component}, {self.field} attempted to reference a disallowed reference Component{message(self.subcomponent_name, "", " \"%s\"")}{message(self.message)}"
 
 class ReferenceInheritanceDataError(ComponentException):
     "Attempted to write new data onto a Component using reference inheritance."

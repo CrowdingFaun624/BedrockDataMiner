@@ -4,6 +4,7 @@ from Component.Capabilities import Capabilities
 from Component.Component import Component
 from Component.ComponentTyping import TypeAliasTypedDict
 from Component.Field.Field import Field
+from Component.Permissions import InlinePermissions
 from Component.Structure.Field.TypeListField import TypeListField
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
@@ -21,6 +22,7 @@ class TypeAliasComponent(Component[TypeListField]): # truly unusual Component ty
         TypedDictKeyTypeVerifier("type", False, str),
         TypedDictKeyTypeVerifier("types", True, ListTypeVerifier(str, list)),
     )
+    inline_permissions = InlinePermissions.reference
 
     __slots__ = (
         "types_field",

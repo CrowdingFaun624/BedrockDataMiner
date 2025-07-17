@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Mapping, Self, Sequence
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import InlinePermissions
 from Component.Field.FieldListField import FieldListField
 from Component.Pattern import Pattern
 from Component.ScriptImporter import ScriptSetSetSet
@@ -31,7 +30,7 @@ class KeysImportField(ComponentListField["KeymapStructureComponent|SwitchStructu
         :path: The keys from the next parent Field.
         :cumulative_path: The keys from the next parent Component.
         '''
-        super().__init__(subcomponents_data, IMPORTABLE_KEYS_PATTERN, path, cumulative_path, allow_inline=InlinePermissions.reference)
+        super().__init__(subcomponents_data, IMPORTABLE_KEYS_PATTERN, path, cumulative_path)
         self.import_into_keys:FieldListField[KeyField]
 
     def set_field(

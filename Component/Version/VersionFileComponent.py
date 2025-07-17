@@ -6,8 +6,9 @@ from Component.Component import Component
 from Component.ComponentTyping import VersionFileTypedDict
 from Component.Field.ComponentField import ComponentField
 from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field, InlinePermissions
+from Component.Field.Field import Field
 from Component.Pattern import Pattern
+from Component.Permissions import InheritancePermissions, InlinePermissions
 from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
 from Utilities.Exceptions import VersionFileInvalidAccessorError
 from Utilities.Trace import Trace
@@ -32,7 +33,8 @@ class VersionFileComponent(Component[VersionFile]):
         TypedDictKeyTypeVerifier("type", False, str),
         TypedDictKeyTypeVerifier("version_file_type", True, str),
     )
-    allow_reference_inheritance = False
+    inline_permissions = InlinePermissions.inline
+    inheritance_permissions = InheritancePermissions.normal
 
     __slots__ = (
         "accessors_field",
@@ -40,8 +42,8 @@ class VersionFileComponent(Component[VersionFile]):
     )
 
     def initialize_fields(self, data: VersionFileTypedDict) -> Sequence[Field]:
-        self.version_file_type_field = ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ("version_file_type",), allow_inline=InlinePermissions.reference)
-        self.accessors_field = ComponentListField(data["accessors"], ACCESSOR_PATTERN, ("accessors",), allow_inline=InlinePermissions.inline, assume_type=AccessorComponent.class_name)
+        self.version_file_type_field = ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ("version_file_type",))
+        self.accessors_field = ComponentListField(data["accessors"], ACCESSOR_PATTERN, ("accessors",), assume_type=AccessorComponent.class_name)
         return (self.version_file_type_field, self.accessors_field)
 
     def create_final(self, trace:Trace) -> VersionFile:

@@ -6,8 +6,9 @@ from Component.Capabilities import Capabilities
 from Component.Component import Component
 from Component.ComponentTyping import AccessorTypedDict
 from Component.Field.ComponentField import ComponentField
-from Component.Field.Field import Field, InlinePermissions
+from Component.Field.Field import Field
 from Component.Pattern import Pattern
+from Component.Permissions import InheritancePermissions, InlinePermissions
 from Downloader.Accessor import Accessor
 from Downloader.AccessorType import AccessorType
 from Utilities.Trace import Trace
@@ -75,7 +76,8 @@ class AccessorComponent(Component[AccessorCreator]):
         TypedDictKeyTypeVerifier("arguments", True, dict),
         TypedDictKeyTypeVerifier("type", False, str),
     )
-    allow_reference_inheritance = False
+    inline_permissions = InlinePermissions.inline
+    inheritance_permissions = InheritancePermissions.normal
 
     __slots__ = (
         "arguments",
@@ -84,7 +86,7 @@ class AccessorComponent(Component[AccessorCreator]):
 
     def initialize_fields(self, data: AccessorTypedDict) -> Sequence[Field]:
         self.arguments = data["arguments"]
-        self.accessor_type_field = ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ("accessor_type",), allow_inline=InlinePermissions.reference)
+        self.accessor_type_field = ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ("accessor_type",))
         return (self.accessor_type_field,)
 
     def create_final(self, trace:Trace) -> AccessorCreator:

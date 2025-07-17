@@ -8,10 +8,11 @@ from Component.Dataminer.AbstractDataminerCollectionComponent import (
 )
 from Component.Field.ComponentField import ComponentField, OptionalComponentField
 from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field, InlinePermissions
+from Component.Field.Field import Field
 from Component.Field.FieldListField import FieldListField
 from Component.Field.ScriptedClassField import OptionalScriptedClassField
 from Component.Pattern import Pattern
+from Component.Permissions import InlinePermissions
 from Component.Version.VersionComponent import VERSION_PATTERN
 from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
 from Dataminer.Dataminer import NullDataminer
@@ -46,7 +47,7 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
         TypedDictKeyTypeVerifier("structure_info", False, dict),
         TypedDictKeyTypeVerifier("type", False, str),
     )
-    allow_reference_inheritance = False
+    inline_permissions = InlinePermissions.inline
 
     __slots__ = (
         "arguments",
@@ -66,7 +67,7 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
 
         self.new_field = OptionalComponentField(data["new"], VERSION_PATTERN, ("new",))
         self.old_field = OptionalComponentField(data["old"], VERSION_PATTERN, ("old",))
-        self.files_field = ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=InlinePermissions.reference)
+        self.files_field = ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",))
         self.dataminer_field = OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=NullDataminer)
         self.dependencies_field = FieldListField([
             ComponentField(
@@ -74,7 +75,6 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
                 ABSTRACT_DATAMINER_COLLECTION_PATTERN,
                 (str(index),),
                 ("dependencies", str(index)),
-                allow_inline=InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", ()))
         ], ("dependencies",))
         return (self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field)

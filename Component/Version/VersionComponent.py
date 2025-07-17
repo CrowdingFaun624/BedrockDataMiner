@@ -7,8 +7,9 @@ from Component.Component import Component
 from Component.ComponentTyping import VersionFileTypedDict, VersionTypedDict
 from Component.Field.ComponentField import OptionalComponentField
 from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field, InlinePermissions
+from Component.Field.Field import Field
 from Component.Pattern import Pattern
+from Component.Permissions import InheritancePermissions, InlinePermissions
 from Component.Version.VersionFileComponent import (
     VERSION_FILE_PATTERN,
     VersionFileComponent,
@@ -47,6 +48,8 @@ class VersionComponent(Component[Version]):
         TypedDictKeyTypeVerifier("time", True, (str, type(None))),
         TypedDictKeyTypeVerifier("type", False, str),
     )
+    inline_permissions = InlinePermissions.reference
+    inheritance_permissions = InheritancePermissions.normal
 
     @property
     def assume_used(self) -> bool:
@@ -73,9 +76,9 @@ class VersionComponent(Component[Version]):
     def initialize_fields(self, data:VersionTypedDict) -> Sequence[Field]:
         self.time = datetime.fromisoformat(data["time"]) if data["time"] is not None else None
 
-        self.parent_field = OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",), allow_inline=InlinePermissions.reference)
-        self.tags_field = ComponentListField(data["tags"], VERSION_TAG_PATTERN, ("tags",), allow_inline=InlinePermissions.reference)
-        self.files_field = ComponentListField(self.normalize_files(data["files"]), VERSION_FILE_PATTERN, ("files",), allow_inline=InlinePermissions.inline, assume_type=VersionFileComponent.class_name)
+        self.parent_field = OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",))
+        self.tags_field = ComponentListField(data["tags"], VERSION_TAG_PATTERN, ("tags",))
+        self.files_field = ComponentListField(self.normalize_files(data["files"]), VERSION_FILE_PATTERN, ("files",), assume_type=VersionFileComponent.class_name)
         return (self.parent_field, self.tags_field, self.files_field)
 
     def create_final(self, trace:Trace) -> Version:

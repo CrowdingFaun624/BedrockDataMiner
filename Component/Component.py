@@ -3,15 +3,13 @@ from typing import TYPE_CHECKING, Any, Mapping, Self, Sequence
 
 import Component.Expression.Variable as Variable  # import loop
 import Domain.Domain as Domain
+import Utilities.Exceptions as Exceptions
 from Component.Expression.Expression import Expression
-from Utilities.Exceptions import (
-    AbstractComponentError,
-    AttributeNoneError,
-    ComponentInvalidNameCharacterError,
-    ComponentInvalidNameError,
-    ComponentNameNumberError,
-    ReferenceInheritanceDataError,
-    VariableUnusedError,
+from Component.Permissions import (
+    InheritancePermissions,
+    InheritanceUsage,
+    InlinePermissions,
+    InlineUsage,
 )
 from Utilities.Trace import Trace
 
@@ -57,10 +55,8 @@ class Component[a]():
     '''
     If the final of this Component may be accessed directly by Scripts.
     '''
-    allow_reference_inheritance:bool = True
-    '''
-    If False, all inheritance will be forced to regular inheritance.
-    '''
+    inline_permissions:InlinePermissions = InlinePermissions.mixed
+    inheritance_permissions:InheritancePermissions = InheritancePermissions.mixed
 
     __slots__ = (
         "abstract",
@@ -123,19 +119,19 @@ class Component[a]():
         with trace.enter(self, self.name, ...):
             name_exception:bool = False
             if index is not None and any(char in INVALID_NAME_CHARS for char in name):
-                trace.exception(ComponentInvalidNameCharacterError(self, INVALID_NAME_CHARS_DISPLAY, "and whitespace characters"))
+                trace.exception(Exceptions.ComponentInvalidNameCharacterError(self, INVALID_NAME_CHARS_DISPLAY, "and whitespace characters"))
                 name_exception = True
             elif index is not None and name in INVALID_NAMES:
-                trace.exception(ComponentInvalidNameError(self, sorted(INVALID_NAMES)))
+                trace.exception(Exceptions.ComponentInvalidNameError(self, sorted(INVALID_NAMES)))
                 name_exception = True
             elif index is not None and self.restrict_to_file_names and any(char in INVALID_NAME_CHARS_FILE for char in name):
-                trace.exception(ComponentInvalidNameCharacterError(self, list(INVALID_NAME_CHARS_FILE), "(must be a valid file name)"))
+                trace.exception(Exceptions.ComponentInvalidNameCharacterError(self, list(INVALID_NAME_CHARS_FILE), "(must be a valid file name)"))
                 name_exception = True
             elif index is not None and self.restrict_to_file_names and name.upper() in INVALID_NAMES_FILE:
-                trace.exception(ComponentInvalidNameError(self, sorted(INVALID_NAMES_FILE), "(must be a valid file name; case insensitive)"))
+                trace.exception(Exceptions.ComponentInvalidNameError(self, sorted(INVALID_NAMES_FILE), "(must be a valid file name; case insensitive)"))
                 name_exception = True
             elif index is not None and is_number(name):
-                trace.exception(ComponentNameNumberError(self))
+                trace.exception(Exceptions.ComponentNameNumberError(self))
                 name_exception = True
             if name_exception:
                 self.fields = ()
@@ -189,7 +185,7 @@ class Component[a]():
                 del self.variables[unused_above_variable]
             if not inherit:
                 unused_variables = self.variables.keys() - used_variables
-                trace.exceptions(VariableUnusedError(self, variable_name, self.variables[variable_name].value, sorted(used_variables)) for variable_name in unused_variables)
+                trace.exceptions(Exceptions.VariableUnusedError(self, variable_name, self.variables[variable_name].value, sorted(used_variables)) for variable_name in unused_variables)
 
             # "abstract" key is popped because we don't want Components that inherit this to also be abstract.
             self.abstract:bool = self.data.get("abstract", False) or any(variable.undefined for variable in self.variables.values())
@@ -201,7 +197,7 @@ class Component[a]():
         if hasattr(self, "fields"):
             raise RuntimeError(f"Called `init` on {self} twice!")
         if self.abstract:
-            trace.exception(AbstractComponentError(self, [variable.name for variable in self.variables.values() if variable.undefined]))
+            trace.exception(Exceptions.AbstractComponentError(self, [variable.name for variable in self.variables.values() if variable.undefined]))
             return True
         self.evaluated_data = self.data if len(self.expressions) == 0 else Variable.evaluate_expressions(self.data, self.variables)
         if self.verify_arguments(self.evaluated_data, trace):
@@ -235,7 +231,7 @@ class Component[a]():
         Copies this Component, keeping the same name, Domain, Group, but with new Variables only.
         '''
         if len(other.data) > 0: # since other is InheritedComponent, "inherit" and other keys will be removed.
-            trace.exception(ReferenceInheritanceDataError(other, self))
+            trace.exception(Exceptions.ReferenceInheritanceDataError(other, self))
             return ...
         new_variables = self.variables.copy()
         new_variables.update(other.variables)
@@ -258,6 +254,22 @@ class Component[a]():
             return output
         return ...
 
+    def check_permissions(self, field:"Field", inline_usage:InlineUsage, inheritance_usage:InheritanceUsage, trace:Trace) -> None:
+        if inline_usage is not InlineUsage.unknown:
+            if self.inline_permissions is InlinePermissions.inline and inline_usage is not InlineUsage.inline:
+                trace.exception(Exceptions.PermissionInlineError(self, field, (InlineUsage.inline,), inline_usage))
+            if self.inline_permissions is InlinePermissions.reference and inline_usage is not InlineUsage.reference:
+                trace.exception(Exceptions.PermissionInlineError(self, field, (InlineUsage.reference,), inline_usage))
+            if self.inline_permissions is InlinePermissions.none:
+                trace.exception(Exceptions.PermissionInlineError(self, field, (), inline_usage))
+        if inheritance_usage is not InheritanceUsage.unknown:
+            if self.inheritance_permissions is InheritancePermissions.normal and inheritance_usage is not InheritanceUsage.normal:
+                trace.exception(Exceptions.PermissionInheritanceError(self, field, (InheritanceUsage.normal,), inheritance_usage))
+            if self.inheritance_permissions is InheritancePermissions.regular_inheritance and not (inheritance_usage is InheritanceUsage.normal or inheritance_usage is InheritanceUsage.regular_inheritance):
+                trace.exception(Exceptions.PermissionInheritanceError(self, field, (InheritanceUsage.normal, InheritanceUsage.regular_inheritance), inheritance_usage))
+            if self.inheritance_permissions is InheritancePermissions.reference_inheritance and not (inheritance_usage is InheritanceUsage.normal or inheritance_usage is InheritanceUsage.reference_inheritance):
+                trace.exception(Exceptions.PermissionInheritanceError(self, field, (InheritanceUsage.normal, InheritanceUsage.reference_inheritance), inheritance_usage))
+
     @property
     def assume_used(self) -> bool:
         '''
@@ -271,13 +283,13 @@ class Component[a]():
     def get_index(self) -> int:
         "Returns the index of this Component in the Group. Raises an error if it doesn't have an index."
         if self.index is None:
-            raise AttributeNoneError("index", self)
+            raise Exceptions.AttributeNoneError("index", self)
         return self.index
 
     def get_inline_parent(self) -> "Component":
         "Returns the parent of this Component if it is an inline Component. If it isn't, an error is raised."
         if self.inline_parent is None:
-            raise AttributeNoneError("inline_parent", self)
+            raise Exceptions.AttributeNoneError("inline_parent", self)
         return self.inline_parent
 
     def get_inline_component_name(self, path:tuple[str,...]) -> str:

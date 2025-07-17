@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Mapping, Self, Sequence
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import InlinePermissions
 from Component.ScriptImporter import ScriptSetSetSet
 from Component.Structure.StructureTagComponent import TAG_PATTERN, StructureTagComponent
 from Structure.StructureTag import StructureTag
@@ -26,7 +25,7 @@ class TagListField(ComponentListField["StructureTagComponent"]):
         :path: The keys from the next parent Field.
         :cumulative_path: The keys from the next parent Component.
         '''
-        super().__init__(subcomponents_strs, TAG_PATTERN, path, cumulative_path, allow_inline=InlinePermissions.reference)
+        super().__init__(subcomponents_strs, TAG_PATTERN, path, cumulative_path)
         self.tag_sets:list[set["StructureTagComponent"]] = []
         self.import_from_field:TagListField|None = None
         self._finals:set[StructureTag]|None = None

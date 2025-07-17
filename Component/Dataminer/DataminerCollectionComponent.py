@@ -11,7 +11,7 @@ from Component.Dataminer.DataminerSettingsComponent import (
     DataminerSettingsComponent,
 )
 from Component.Field.ComponentField import ComponentField
-from Component.Field.Field import Field, InlinePermissions
+from Component.Field.Field import Field
 from Component.Field.FieldListField import FieldListField
 from Component.Structure.StructureBaseComponent import STRUCTURE_BASE_PATTERN
 from Dataminer.DataminerCollection import DataminerCollection
@@ -49,14 +49,13 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent[Datamine
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
 
-        self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=InlinePermissions.reference)
+        self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",))
         self.dataminer_settings_field = FieldListField([
             ComponentField(
                 dataminer_settings_data,
                 DATAMINER_SETTINGS_PATTERN,
                 (str(index),),
                 ("dataminers", str(index)),
-                allow_inline=InlinePermissions.inline,
                 assume_type=DataminerSettingsComponent.class_name,
             ) for index, dataminer_settings_data in enumerate(data["dataminers"])
         ], ("dataminers",))

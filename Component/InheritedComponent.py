@@ -76,7 +76,7 @@ class InheritedComponent(Component):
             memo.add(self)
             if self.result is not None:
                 return self.result
-            supercomponent_that_may_be_an_ellipsis, _ = Field.choose_component(self.supercomponent, self, ALL_PATTERN, self.group, global_groups, trace, (), functions, create_component_function, None, allow_inherited=True)
+            supercomponent_that_may_be_an_ellipsis, _, _ = Field.choose_component(self.supercomponent, self, ALL_PATTERN, self.group, global_groups, trace, (), functions, create_component_function, None, allow_inherited=True)
             if supercomponent_that_may_be_an_ellipsis is ...: # exception occured.
                 return ...
             supercomponent = supercomponent_that_may_be_an_ellipsis
@@ -88,7 +88,7 @@ class InheritedComponent(Component):
         # the following code is removed from the above Trace to clean up error messages.
         if supercomponent is None:
             return ...
-        if not supercomponent.allow_reference_inheritance or self.inheritance_type is InheritanceType.inherit:
+        if self.inheritance_type is InheritanceType.inherit:
             output = supercomponent.copy_inherit(self, trace, parent_variables)
         else:
             output = supercomponent.copy_reference(self, global_groups, functions, create_component_function, trace)

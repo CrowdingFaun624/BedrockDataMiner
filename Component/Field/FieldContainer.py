@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, Mapping, MutableSequence, Sequence
 
-import Domain.Domain as Domain
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.Field import Field

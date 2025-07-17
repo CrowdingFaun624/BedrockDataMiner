@@ -5,6 +5,7 @@ from Component.Component import Component
 from Component.ComponentTyping import StructureTagTypedDict
 from Component.Field.Field import Field
 from Component.Pattern import Pattern
+from Component.Permissions import InheritancePermissions, InlinePermissions
 from Structure.StructureTag import StructureTag
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
@@ -20,6 +21,8 @@ class StructureTagComponent(Component[StructureTag]):
         TypedDictKeyTypeVerifier("is_file", False, bool),
         TypedDictKeyTypeVerifier("type", False, str),
     )
+    inline_permissions = InlinePermissions.reference
+    inheritance_permissions = InheritancePermissions.normal
 
     @property
     def assume_used(self) -> bool:
