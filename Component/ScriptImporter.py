@@ -1,10 +1,12 @@
 from itertools import chain
-from typing import Any, Callable, Iterable, TypeIs
+from types import EllipsisType
+from typing import Any, Callable, Iterable, NoReturn, TypeIs, overload
 
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 from Component.Component import Component
 from Utilities.Scripts import Script
+from Utilities.Trace import Trace
 
 
 class ScriptSet[a]():
@@ -55,7 +57,11 @@ class ScriptSet[a]():
             options.extend(f"{object_name}" for object_name in self.scripts_by_name)
         return options
 
-    def get(self, key:str, source_domain:"Domain.Domain", full_key:str|None=None, ) -> a:
+    @overload
+    def get(self, key:str, source_domain:"Domain.Domain", trace:None=None, full_key:str|None=None) -> a: ...
+    @overload
+    def get(self, key:str, source_domain:"Domain.Domain", trace:Trace, full_key:str|None=None) -> a|EllipsisType: ...
+    def get(self, key:str, source_domain:"Domain.Domain", trace:Trace|None=None, full_key:str|None=None) -> a|EllipsisType:
         '''
         :key: The name of the object.
         :source: The Component referencing this Script.
@@ -72,19 +78,20 @@ class ScriptSet[a]():
             return script.object
         # cannot find Script, show a nice error message.
         elif len(split_key) == 2 and (script := self.domain_scripts.get((split_key[0], split_key[1]))) is not None:
-            raise Exceptions.WrongScriptError(full_key, script, self.type_name, self.get_options(source_domain))
+            raise_error(Exceptions.WrongScriptError(full_key, script, self.type_name, self.get_options(source_domain)), trace)
         elif len(split_key) == 2 and script is None and not any(file_name == split_key[0] for (file_name, object_name) in self.all_scripts):
-            raise Exceptions.UnrecognizedScriptFileNameError(full_key, split_key[0], self.get_options(source_domain))
+            raise_error(Exceptions.UnrecognizedScriptFileNameError(full_key, split_key[0], self.get_options(source_domain)), trace)
         elif len(split_key) == 2 and script is None:
-            raise Exceptions.UnrecognizedScriptObjectNameError(full_key, split_key[0], split_key[1], self.get_options(source_domain))
+            raise_error(Exceptions.UnrecognizedScriptObjectNameError(full_key, split_key[0], split_key[1], self.get_options(source_domain)), trace)
         elif len(split_key) == 2 and script is None and len(file_names := [file_name for (file_name, object_name), script in self.domain_scripts.items() if file_name == split_key[0]]) > 0:
-            raise Exceptions.WrongScriptFileError(full_key, file_names[0], self.type_name, self.get_options(source_domain))
+            raise_error(Exceptions.WrongScriptFileError(full_key, file_names[0], self.type_name, self.get_options(source_domain)), trace)
         elif len(duplications := [script for (file_name, object_name), script in self.all_scripts.items() if file_name == key or object_name == key]) > 0:
-            raise Exceptions.ScriptGeneralityError(full_key, duplications, self.get_options(source_domain))
+            raise_error(Exceptions.ScriptGeneralityError(full_key, duplications, self.get_options(source_domain)), trace)
         elif len(scripts := [script for (file_name, object_name), script in self.domain_scripts.items() if file_name == key or object_name == key]) > 0:
-            raise Exceptions.ScriptGeneralityError(full_key, scripts, self.get_options(source_domain))
+            raise_error(Exceptions.ScriptGeneralityError(full_key, scripts, self.get_options(source_domain)), trace)
         else:
-            raise Exceptions.UnrecognizedScriptError(full_key, self.get_options(source_domain))
+            raise_error(Exceptions.UnrecognizedScriptError(full_key, self.get_options(source_domain)), trace)
+        return ...
 
 class ScriptSetSet[a]():
 
@@ -105,14 +112,14 @@ class ScriptSetSet[a]():
     def get_options(self, source:"Component") -> list[str]:
         return list(chain.from_iterable(script_set.get_options(source.domain) for script_set in self.script_sets.values()))
 
-    def get(self, key:str, source:"Component") -> a:
+    def get(self, key:str, source:"Component", trace:Trace) -> a|EllipsisType:
         if len(split_key := key.split("!", maxsplit=1)) == 2:
             domain_name, subkey = split_key
             if (script_set := self.script_sets.get(domain_name)) is None:
                 raise Exceptions.UnrecognizedScriptDomainError(domain_name, key, self.get_options(source))
-            return script_set.get(subkey, source.domain, key)
+            return script_set.get(subkey, source.domain, trace, key)
         else:
-            return self.script_sets[self.domain.name].get(key, source.domain)
+            return self.script_sets[self.domain.name].get(key, source.domain, trace)
 
 class ScriptSetSetSet():
 
@@ -141,6 +148,12 @@ class ScriptSetSetSet():
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} of {self.domain.name}>"
+
+def raise_error(exception:Exception, trace:Trace|None) -> None|NoReturn:
+    if trace is None:
+        raise exception
+    else:
+        trace.exception(exception)
 
 def add_to_deduplicated_dict[K, V](_dict:dict[K, V], key:K, value:V, duplicated_keys:set[K]) -> None:
     if key not in duplicated_keys:

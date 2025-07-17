@@ -82,8 +82,9 @@ class OptionalDelegateField(Field):
             if self.delegate_name is None:
                 self.delegate_type = None
             else:
-                delegate_type = functions.delegate_classes.get(self.delegate_name, source_component)
-                self.delegate_type = delegate_type
+                delegate_type = functions.delegate_classes.get(self.delegate_name, source_component, trace)
+                if delegate_type is not ...:
+                    self.delegate_type = delegate_type
             if self.delegate_type is not None and self.delegate_type.uses_versions:
                 source_component.variable_bools["children_has_version_domains"] = True
             return (), ()

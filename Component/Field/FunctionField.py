@@ -37,8 +37,9 @@ class FunctionField(Field):
         trace:Trace,
     ) -> tuple[Sequence["Component"],Sequence["Component"]]:
         with trace.enter_keys(self.trace_path, self.function_name):
-            function = functions.callables.get(self.function_name, source_component)
-            self.function = function
+            function = functions.callables.get(self.function_name, source_component, trace)
+            if function is not ...:
+                self.function = function
             return (), ()
         return (), ()
 

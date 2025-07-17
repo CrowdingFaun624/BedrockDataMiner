@@ -41,7 +41,9 @@ class ScriptedClassField[A](Field):
         trace:Trace,
     ) -> tuple[Sequence["Component"],Sequence["Component"]]:
         with trace.enter_keys(self.trace_path, self.class_name):
-            self.object_class = self.scripted_objects_function(functions).get(self.class_name, source_component)
+            function = self.scripted_objects_function(functions).get(self.class_name, source_component, trace)
+            if function is not ...:
+                self.object_class = function
             return (), ()
         return (), ()
 
