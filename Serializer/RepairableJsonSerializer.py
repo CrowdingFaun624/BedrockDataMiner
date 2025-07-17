@@ -68,6 +68,14 @@ class MatchCondition(ContentCondition):
     def match(self, data: bytes, is_exception:bool) -> bool:
         return data == self.content
 
+class ContainsCondition(ContentCondition):
+
+    __slots__ = ()
+    name = "contains"
+
+    def match(self, data: bytes, is_exception: bool) -> bool:
+        return self.content in data
+
 class SuffixCondition(ContentCondition):
 
     __slots__ = ()
@@ -126,6 +134,7 @@ condition_types_list:list[type[Condition]] = [
     AndCondition,
     ExceptionCondition,
     MatchCondition,
+    ContainsCondition,
     OrCondition,
     PrefixCondition,
     SuffixCondition,
