@@ -1,8 +1,11 @@
 {
     "group_aliases": {
+        "block_models": "structures/assets/block_models",
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "temp": "structures/misc/template",
-        "s": "serializers"
+        "s": "serializers",
+        "vector": "structures/misc/vector"
     },
     "base": {
         "type": "StructureBase",
@@ -35,16 +38,24 @@
         "this_types": "dict",
         "pre_normalized_types": "file",
         "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "root"
+            "type": "Condition",
+            "pre_normalized_types": "file",
+            "substructures": [
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "fix_json", "value": false, "default": true}, "structure": "#!file{serializer=@minecraft_common!s/json}"},
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "fix_json", "value": true}, "structure": "#!file{serializer=@s/blockstates_fixer}"}
+            ]
         }
+    },
+    "file": {
+        "type": "File",
+        "serializer": "#serializer",
+        "file_types": "file",
+        "content_types": "dict",
+        "structure": "root"
     },
     "blockstate_condition": {
         "type": "Dict",
-        "value_types": ["str", "list"],
+        "value_types": ["str", "list", "bool"],
         "delegate_arguments": {
             "field": "state",
             "measure_length": true
@@ -53,6 +64,7 @@
         "value_structure": {
             "type": "Union",
             "substructures": {
+                "bool": null, // outdated
                 "str": "misc/string",
                 "list": "blockstate_conditions"
             }
@@ -74,8 +86,22 @@
     "root": {
         "inherit": "temp/SortedKeymap",
         "keys": {
+            "__comment": {"types": "str", "tags": "t/outdated"},
+            ",facing=_comment": {"types": "str", "tags": "t/outdated"},
             "multipart": {"types": "list", "structure": "multipart"},
-            "variants": {"types": "dict", "structure": "variants"}
+            "variants": {"types": "dict", "structure": "variants"},
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "tags": "t/outdated"},
+            "inheritFrom": {"types": "str", "tags": "t/outdated"},
+            "inventoryRender3D": {"types": "bool", "tags": "t/outdated"},
+            "randomOffsetX": {"types": "bool", "tags": "t/outdated"},
+            "randomOffsetY": {"types": "bool", "tags": "t/outdated"},
+            "randomOffsetZ": {"types": "bool", "tags": "t/outdated"},
+            "rotation": {"types": "list", "structure": "vector/vector.decimal", "tags": "t/outdated"},
+            "rotationOrigin": {"types": "list", "structure": "vector/vector.decimal", "tags": "t/outdated"},
+            "translation": {"types": "list", "structure": "vector/vector.decimal", "tags": "t/outdated"},
+            "useAmbientOcclusion": {"types": "bool", "tags": "t/outdated"},
+            "elements": {"types": "list", "structure": "block_models/elements", "tags": "t/outdated"},
+            "faces": {"types": "list", "structure": "faces", "tags": "t/outdated"}
         }
     },
     "multipart": {
@@ -155,6 +181,37 @@
             "y": {"types": "int"},
             "uvlock": {"types": "bool"},
             "weight": {"types": "int"}
+        }
+    },
+    "faces": {
+        "inherit": "temp/Set",
+        "$field": "face",
+        "value_types": "dict",
+        "value_structure": "face"
+    },
+    "face": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "overlay": {"types": "bool", "tags": "t/outdated"},
+            "shade": {"types": "float", "tags": "t/outdated"},
+            "tint": {"types": "bool", "tags": "t/outdated"},
+            "textureFacing": {"types": "str", "tags": "t/outdated"},
+            "cullFacing": {"types": "str"},
+            "vertices": {"types": "list", "structure": "vertices"}
+        }
+    },
+    "vertices": {
+        "inherit": "temp/Sequence",
+        "$field": "vertex",
+        "value_types": "dict",
+        "value_structure": "vertex"
+    },
+    "vertex": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "position": {"types": "list", "structure": "vector/vector.float"},
+            "color": {"types": "list", "structure": "vector/vector.float"},
+            "texcoord": {"types": "list", "structure": "vector/vector.decimal"}
         }
     }
 }

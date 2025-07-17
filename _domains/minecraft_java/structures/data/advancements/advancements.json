@@ -1,9 +1,11 @@
 {
     "group_aliases": {
         "a": "structures/misc/types",
+        "item_old": "structures/misc/item_old",
         "s": "serializers",
         "temp": "structures/misc/template",
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "tc": "structures/misc/text_component"
     },
     "base": {
@@ -27,14 +29,34 @@
     "display": {
         "inherit": "temp/SortedKeymap",
         "keys": {
-            "icon": {"types": "a/compound", "structure": "misc/item_data_slotless"},
+            "icon": {"types": ["a/compound", "str"], "structure": "display:icon"},
             "title": {"types": "tc/root_type", "structure": "tc/root"},
             "description": {"types": "tc/root_type", "structure": "tc/root"},
             "frame": {"types": "str"},
             "background": {"types": "str"},
             "show_toast": {"types": "bool"},
             "announce_to_chat": {"types": "bool"},
-            "hidden": {"types": "bool"}
+            "hidden": {"types": "bool"},
+            "rewards": {"types": "dict", "structure": "rewards", "tags": "t/outdated"}
+        }
+    },
+    "display:icon": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "normalizers/normalizers advancements_display_icon_switch"
+        },
+        "substructures": {
+            "older": {"types": "str", "tags": "t/outdated"},
+            "old": {"types": "dict", "structure": "display:icon.old", "tags": "t/outdated"},
+            "new": {"types": "a/compound", "structure": "misc/item_data_slotless"}
+        }
+    },
+    "display:icon.old": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "item": {"types": "str"},
+            "data": {"types": "int", "tags": "t/outdated"},
+            "nbt": {"types": "str"} // TODO: process SNBT
         }
     },
     "requirements": {

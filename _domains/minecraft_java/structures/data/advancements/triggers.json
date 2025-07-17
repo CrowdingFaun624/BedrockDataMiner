@@ -31,11 +31,12 @@
             }
         },
         "substructures": {
-            "minecraft:allay_drop_item_on_block": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.location]}"},
+            "minecraft:allay_drop_item_on_block": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.location, @trigger.item{tags=@t/outdated}]}"},
             "minecraft:any_block_use": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.location]}"},
             "minecraft:arbitrary_player_tick": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}", "tags": ["t/outdated"]},
             "minecraft:avoid_vibration": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}"},
             "minecraft:bee_nest_destroyed": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.block_id, @trigger.item, @trigger.bee_nest]}"},
+                      "bred_animals": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.bred_animals]}", "tags": "t/outdated"},
             "minecraft:bred_animals": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.bred_animals]}"},
             "minecraft:brewed_potion": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.potion_id]}"},
             "minecraft:bring_home_corruption": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}", "tags": ["t/april_fools"]},
@@ -43,6 +44,7 @@
             "minecraft:channeled_lightning": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.victims]}"},
             "minecraft:compost_staff": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}", "tags": ["t/april_fools"]},
             "minecraft:construct_beacon": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.construct_beacon]}"},
+                      "consume_item": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.item]}", "tags": "t/outdated"},
             "minecraft:consume_item": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.item]}"},
             "minecraft:crafter_recipe_crafted": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.recipe_crafted]}"},
             "minecraft:cured_zombie_villager": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.villager, @trigger.zombie]}"},
@@ -63,18 +65,19 @@
             "minecraft:inventory_changed": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.items, @trigger.slots]}"},
             "minecraft:item_delivered_to_player": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}", "tags": ["t/outdated"]},
             "minecraft:item_durability_changed": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.item_durability_changed, @trigger.item]}"},
-            "minecraft:item_used_on_block": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.location]}"},
+            "minecraft:item_used_on_block": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.location, @trigger.item{tags=@t/outdated}]}"},
             "minecraft:kill_mob_near_sculk_catalyst": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.entity, @trigger.killing_blow]}"},
             "minecraft:killed_by_arrow": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.fired_from_weapon, @trigger.unique_entity_types, @trigger.victims]}"},
+            "minecraft:killed_by_crossbow": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.fired_from_weapon, @trigger.unique_entity_types, @trigger.victims]}"},
             // heehee I discovered this one ^ (wasn't on MCW before)
             "minecraft:levitation": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.distance, @trigger.duration]}"},
             "minecraft:lightning_strike": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.lightning_strike]}"},
-            "minecraft:location": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}"},
+            "minecraft:location": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.location{tags=@t/outdated}, @conditions/condition.location{tags=@t/outdated}]}"},
             "minecraft:nether_travel": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.start_position, @trigger.distance]}"},
             "minecraft:peel_block": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}", "tags": ["t/april_fools"]},
             "minecraft:peel_potato_armor": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}", "tags": ["t/april_fools"]},
             "minecraft:peel_potato_sheep": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player]}", "tags": ["t/april_fools"]},
-            "minecraft:placed_block": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.location]}"},
+            "minecraft:placed_block": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.location, @trigger.block_id{tags=@t/outdated}]}"},
             "minecraft:player_damaged": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.damage]}", "tags": ["t/outdated"]},
             "minecraft:player_generates_container_loot": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.loot_table]}"},
             "minecraft:player_hurt_entity": {"types": "dict", "structure": "#!trigger{imports=[@trigger.player, @trigger.damage, @trigger.entity]}"},
@@ -128,6 +131,8 @@
     },
     "trigger.block_id": {
         "type": "Keymap",
+        "$tags": [],
+        "tags": "#tags",
         "keys": {
             "block": {"types": "str"}
         }
@@ -174,7 +179,7 @@
     "trigger.construct_beacon": {
         "inherit": "temp/SortedKeymap",
         "keys": {
-            "level": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"}
+            "level": {"types": ["misc/decimal", "dict"], "structure": "misc/range_decimal_or_decimal"}
         }
     },
     "trigger.damage": {
@@ -215,6 +220,8 @@
     },
     "trigger.item": {
         "type": "Keymap",
+        "$tags": [],
+        "tags": "#tags",
         "keys": {
             "item": {"types": "a/compound", "structure": "conditions/condition.item"}
         }
@@ -223,7 +230,7 @@
         "inherit": "temp/SortedKeymap",
         "keys": {
             "delta": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
-            "durability": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"}
+            "durability": {"types": ["misc/decimal", "dict"], "structure": "misc/range_decimal_or_decimal"}
         }
     },
     "trigger.items": {
@@ -253,8 +260,17 @@
     },
     "trigger.location": {
         "type": "Keymap",
+        "$tags": [],
+        "tags": "#tags",
         "keys": {
-            "location": {"types": "list", "structure": "pred/predicate_list"}
+            "location": {"types": ["list", "dict"], "structure": "trigger.location:location"}
+        }
+    },
+    "trigger.location:location": {
+        "type": "Union",
+        "substructures": {
+            "list": "pred/predicate_list",
+            "dict": "conditions/condition.location"
         }
     },
     "trigger.loot_table": {
@@ -327,6 +343,7 @@
     "trigger.target_hit": {
         "inherit": "temp/SortedKeymap",
         "keys": {
+            "signalStrength": {"types": "int", "tags": "t/outdated"},
             "signal_strength": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
             "projectile": {"types": ["dict", "list"], "structure": "entity_condition_or_predicate_list"}
         }

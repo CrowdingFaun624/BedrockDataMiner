@@ -4,6 +4,7 @@
         "carver": "structures/data/generation/carver",
         "pf": "structures/data/generation/placed_feature",
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "particle": "structures/data/particles/particles",
         "temp": "structures/misc/template"
     },
@@ -17,6 +18,7 @@
         "inherit": "temp/SortedKeymap",
         "keys": {
             "has_precipitation": {"types": "bool"},
+            "precipitation": {"types": "str", "tags": "t/outdated"},
             "temperature": {"types": "float"},
             "temperature_modifier": {"types": "str"},
             "downfall": {"types": "float"},
@@ -43,7 +45,7 @@
             "ambient_sound": {"types": ["a/string", "a/compound"], "structure": "misc/sound_event"},
             "mood_sound": {"types": "dict", "structure": "effects.mood_sound"},
             "additions_sound": {"types": "dict", "structure": "effects.additions_sound"},
-            "music": {"types": "list", "structure": "effects.musics"},
+            "music": {"types": ["list", "dict"], "structure": "effects.musics"},
             "music_volume": {"types": "float"}
         }
     },
@@ -64,10 +66,16 @@
         }
     },
     "effects.musics": {
-        "inherit": "temp/Set",
-        "$field": "music",
-        "value_types": "dict",
-        "value_structure": "effects.music"
+        "type": "Union",
+        "substructures": {
+            "dict": "effects.music.data",
+            "list":{
+                "inherit": "temp/Set",
+                "$field": "music",
+                "value_types": "dict",
+                "value_structure": "effects.music"
+            }
+        }
     },
     "effects.music": {
         "inherit": "temp/SortedKeymap",

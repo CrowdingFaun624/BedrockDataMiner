@@ -2,7 +2,9 @@
     "group_aliases": {
         "a": "structures/misc/types",
         "be": "structures/misc/block_entity",
+        "entity": "structures/misc/entity",
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "temp": "structures/misc/template"
     },
     "base": {
@@ -37,19 +39,28 @@
         "inherit": "temp/Set.nbt",
         "$field": "loot table",
         "value_types": "a/compound",
-        "value_structure": "#!weighted_item{types=@a/string, structure=@misc/string.nbt}"
+        "value_structure": "loot_tables:item"
+    },
+    "loot_tables:item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "weight": {"types": "a/int"},
+            "data": {"types": "a/string", "structure": "misc/string.nbt"}
+        }
     },
     "spawn_potentials": {
         "inherit": "temp/Set.nbt",
         "$field": "spawn potential",
         "value_types": "a/compound",
-        "value_structure": "#!weighted_item{types=@a/compound, structure=@be/block_entity.mob_spawner:entity}"
+        "value_structure": "spawn_potentials:item"
     },
-    "weighted_item": {
+    "spawn_potentials:item": {
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
+            "Weight": {"types": "a/int", "tags": "t/outdated"},
             "weight": {"types": "a/int"},
-            "data": {"types": "#types", "structure": "#structure"}
+            "Entity": {"types": "a/compound", "structure": "entity/entity", "tags": "t/outdated"},
+            "data": {"types": "a/compound", "structure": "be/block_entity.mob_spawner:entity"}
         }
     }
 }

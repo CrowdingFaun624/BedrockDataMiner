@@ -1,0 +1,167 @@
+{ // the old "tag" format in items
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "be": "structures/misc/block_entity",
+        "bs": "structures/misc/block_state",
+        "entity": "structures/misc/entity",
+        "misc": "structures/misc/misc",
+        "t": "structure_tags",
+        "temp": "structures/misc/template"
+    },
+    "tag": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "AttributeModifiers": {"types": "a/list", "structure": "tag.attribute_modifiers"},
+            "author": {"types": "a/string"},
+            "BlockEntityTag": {"types": "a/compound", "structure": "be/block_entity"},
+            "BlockStateTag": {"types": "a/compound", "structure": "bs/properties"},
+            "BucketVariantTag": {"types": "a/int"},
+            "CanDestroy": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='block'}"},
+            "CanPlaceOn": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='block'}"},
+            "Charged": {"types": "a/bool"},
+            "ChargedProjectiles": {"types": "a/list", "structure": "misc/item_data_slotless_list"},
+            "CustomPotionEffects": {"types": "a/list", "structure": "misc/effect_data_list", "tags": "t/outdated"},
+            "custom_potion_effects": {"types": "a/list", "structure": "misc/effect_data_list"},
+            "CustomModelData": {"types": "a/int"},
+            "CustomPotionColor": {"types": "a/int"},
+            "Damage": {"types": "a/int"},
+            "DebugProperty": {"types": "a/compound", "structure": "tag.debug_property"},
+            "Decorations": {"types": "a/list", "structure": "tag.decorations"},
+            "display": {"types": "a/compound", "structure": "tag.display"},
+            "Effects": {"types": "a/list", "structure": "tag.effects", "tags": "t/outdated"},
+            "effects": {"types": "a/list", "structure": "tag.effects"},
+            "ench": {"types": "a/list", "structure": "tag.enchantments", "tags": "t/outdated"},
+            "Enchantments": {"types": "a/list", "structure": "tag.enchantments"},
+            "EntityTag": {"types": "a/compound", "structure": "entity/entity"},
+            "Explosion": {"types": "a/compound", "structure": "misc/firework_explosion"},
+            "filtered_pages": {"types": "a/compound", "structure": "tag.filtered_pages"},
+            "filtered_title": {"types": "a/string"},
+            "Fireworks": {"types": "a/compound", "structure": "tag.fireworks"},
+            "generation": {"types": "a/int"},
+            "HideFlags": {"types": "a/int"},
+            "instrument": {"types": "a/string"},
+            "Items": {"types": "a/list", "structure": "misc/item_data_slotless_list"},
+            "LocName": {"types": "a/string", "tags": "t/outdated"},
+            "LodestoneDimension": {"types": "a/string"},
+            "LodestonePos": {"types": "a/compound", "structure": "tag.lodestone_pos"},
+            "LodestoneTracked": {"types": "a/bool"},
+            "map": {"types": "a/int"},
+            "map_scale_direction": {"types": "a/int"},
+            "map_to_lock": {"types": "a/bool"},
+            "pages": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='page'}"},
+            "Potion": {"types": "a/string"},
+            "Recipes": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='recipe'}"},
+            "RepairCost": {"types": "a/int"},
+            "resolved": {"types": "a/bool"},
+            "SkullOwner": {"types": ["a/string", "a/compound"], "structure": "misc/profile"},
+            "StoredEnchantments": {"types": "a/list", "structure": "tag.enchantments"},
+            "title": {"types": "a/string"},
+            "Trim": {"types": "a/compound", "structure": "tag.trim"},
+            "Unbreakable": {"types": "a/bool"}
+        }
+    },
+    "tag.trim": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "material": {"types": "a/string"},
+            "pattern": {"types": "a/string"}
+        }
+    },
+    "tag.attribute_modifiers": {
+        "inherit": "temp/Set.nbt",
+        "$field": "attribute modifier",
+        "value_types": "a/compound",
+        "value_structure": "tag.attribute_modifiers:item"
+    },
+    "tag.attribute_modifiers:item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "AttributeName": {"types": "a/string"},
+            "Name": {"types": "a/string"},
+            "Slot": {"types": "a/string"},
+            "Operation": {"types": "a/int"},
+            "Amount": {"types": "a/double"},
+            "UUID": {"types": "a/int_array", "structure": "#!misc/uuid_list.nbt"}
+        }
+    },
+    "tag.debug_property": {
+        "inherit": "temp/Dict.nbt",
+        "$field": "block",
+        "value_types": "a/string",
+        "value_structure": null
+    },
+    "tag.decorations": {
+        "inherit": "temp/Set.nbt",
+        "$field": "decoration",
+        "value_types": "a/compound",
+        "value_structure": "tag.decorations:item"
+    },
+    "tag.decorations:item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "id": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "type": {"types": "a/byte"},
+            "x": {"types": "a/double"},
+            "z": {"types": "a/double"},
+            "rot": {"types": "a/double"}
+        }
+    },
+    "tag.display": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "Name": {"types": "a/string"},
+            "Lore": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='line'}"},
+            "color": {"types": "a/int"}, // armor only
+            "MapColor": {"types": "a/int"} // maps only
+        }
+    },
+    "tag.effects": { // suspicious stew
+        "inherit": "temp/Set.nbt",
+        "$field": "effect",
+        "value_types": "a/compound",
+        "value_structure": "tag.effects:item"
+    },
+    "tag.effects:item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "EffectId": {"types": "a/int", "delegate_arguments": {"always_print": true}},
+            "id": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "EffectDuration": {"types": "a/int"},
+            "duration": {"types": "a/int"}
+        }
+    },
+    "tag.enchantments": {
+        "inherit": "temp/Set.nbt",
+        "$field": "enchantment",
+        "value_types": "a/compound",
+        "value_structure": "tag.enchantments:item"
+    },
+    "tag.enchantments:item": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "id": {"types": ["a/string", "a/short"], "delegate_arguments": {"always_print": true}},
+            "lvl": {"types": "a/short"}
+        }
+    },
+    "tag.filtered_pages": {
+        "inherit": "temp/Dict.nbt",
+        "$field": "page",
+        "value_types": "a/string",
+        "value_structure": null
+    },
+    "tag.fireworks": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "Explosions": {"types": "a/list", "structure": "misc/firework_explosion_list"},
+            "Flight": {"types": "a/byte"}
+        }
+    },
+    "tag.lodestone_pos": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "X": {"types": "a/int"},
+            "Y": {"types": "a/int"},
+            "Z": {"types": "a/int"}
+        }
+    }
+}

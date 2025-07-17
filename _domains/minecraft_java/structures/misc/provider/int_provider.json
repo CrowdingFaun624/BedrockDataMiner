@@ -1,6 +1,7 @@
 {
     "group_aliases": {
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "temp": "structures/misc/template"
     },
     "int_provider": {
@@ -23,16 +24,52 @@
         }
     },
     "int_provider:all": {
-        "inherit": "temp/SortedKeymap",
+        "type": "Keymap",
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}}
         }
     },
-    "int_provider:clamped": {
-        "inherit": "temp/SortedKeymap",
+    "int_provider:value": {
+        "type": "Keymap",
         "keys": {
+            "value": {"types": "dict", "structure": "#!value{imports=imports}", "tags": "t/outdated"}
+        }
+    },
+    "value": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "#imports"
+    },
+    "int_provider:clamped": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"types": "dict", "structure": {
+                "inherit": "temp/SortedKeymap",
+                "keys": {
+                    "min_inclusive": {"types": "int"},
+                    "max_inclusive": {"types": "int"}
+                }
+            }, "tags": "t/outdated"},
             "min_inclusive": {"types": "int"},
             "max_inclusive": {"types": "int"}
+        }
+    },
+    "int_provider:clamped_source": {
+        "type": "Keymap",
+        "keys": {
+            "source": {"types": ["int", "dict"], "structure": "int_provider"}
+        }
+    },
+    "int_provider:distribution": {
+        "type": "Keymap",
+        "keys": {
+            "distribution": {"types": "list", "structure": "int_provider.weighted_list:distribution"}
+        }
+    },
+    "int_provider:normal": {
+        "type": "Keymap",
+        "keys": {
+            "mean": {"types": "misc/decimal"},
+            "deviation": {"types": "misc/decimal"}
         }
     },
     "int_provider.constant": {
@@ -44,33 +81,23 @@
     },
     "int_provider.uniform": {
         "inherit": "temp/SortedKeymap",
-        "imports": ["int_provider:all", "int_provider:clamped"]
+        "imports": ["int_provider:all", "int_provider:clamped", "#!int_provider:value{imports=@int_provider:clamped}"]
     },
     "int_provider.biased_to_bottom": {
         "inherit": "temp/SortedKeymap",
-        "imports": ["int_provider:all", "int_provider:clamped"]
+        "imports": ["int_provider:all", "int_provider:clamped", "#!int_provider:value{imports=@int_provider:clamped}"]
     },
     "int_provider.clamped": {
         "inherit": "temp/SortedKeymap",
-        "imports": ["int_provider:all", "int_provider:clamped"],
-        "keys": {
-            "source": {"types": ["int", "dict"], "structure": "int_provider"}
-        }
+        "imports": ["int_provider:all", "int_provider:clamped", "int_provider:clamped_source", "#!int_provider:value{imports=[@int_provider:clamped, @int_provider:clamped_source]}"]
     },
     "int_provider.clamped_normal": {
         "inherit": "temp/SortedKeymap",
-        "imports": ["int_provider:all", "int_provider:clamped"],
-        "keys": {
-            "mean": {"types": "misc/decimal"},
-            "deviation": {"types": "misc/decimal"}
-        }
+        "imports": ["int_provider:all", "int_provider:clamped", "int_provider:normal", "#!int_provider:value{imports=[@int_provider:clamped, @int_provider:normal]}"]
     },
     "int_provider.weighted_list": {
         "inherit": "temp/SortedKeymap",
-        "imports": ["int_provider:all"],
-        "keys": {
-            "distribution": {"types": "list", "structure": "int_provider.weighted_list:distribution"}
-        }
+        "imports": ["int_provider:all", "int_provider:distribution", "#!int_provider:value{imports=@int_provider:distribution}"]
     },
     "int_provider.weighted_list:distribution": {
         "inherit": "temp/Set",

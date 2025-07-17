@@ -8,7 +8,7 @@
     "base": {
         "inherit": "temp/base_multiple_pack_files",
         "$name": "structures",
-        "$pack_type": "data pack",
+        "$pack_type": "pack", // is resource pack before 17w43a
         "$types": "a/compound",
         "$serializer": "minecraft_common!serializers/nbt_big",
         "$structure": "root"
@@ -16,7 +16,8 @@
     "root": {
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
-            "DataVersion": {"types": "a/int"},
+            "version": {"types": "a/int"},
+            "DataVersion": {"types": "a/int", "delegate_arguments": {"always_print": true}},
             "author": {"types": "a/string"},
             "size": {"types": "a/list", "structure": "vector/vector.tag_int"},
             "palette": {"types": "a/list", "structure": "palette"},
@@ -51,9 +52,48 @@
         "value_structure": null
     },
     "blocks": {
+        "type": "Condition",
+        "pre_normalized_types": "a/list",
+        "substructures": [
+            {"types": "dict", "filter": {"type": "EqFilter", "key": "old_blocks", "value": false, "default": true}, "structure": "blocks:new"},
+            {"types": "dict", "filter": {"type": "EqFilter", "key": "old_blocks", "value": true}, "structure": "blocks:old"}
+        ]
+    },
+    "blocks:old": {
         "type": "Keymap",
         "normalizers": {
-            "function_name": "minecraft_common!normalizers/volume_normalize_nbt",
+            "function_name": "minecraft_common!normalizers/volume_normalize_nbt volume_normalize_nbt_old"
+        },
+        "delegate": "minecraft_common!VolumeDelegate",
+        "delegate_arguments": {
+            "field": "block"
+        },
+        "pre_normalized_types": "a/list",
+        "keys": {
+            "states": {"types": "dict", "structure": "volume_states"},
+            "data": {"types": "dict", "structure": "volume_additional_data"},
+            "palette": {"types": "dict", "structure": "very_old_palette"},
+            "size": {"types": "tuple", "structure": "vector/vector.tuple_int"}
+        }
+    },
+    "very_old_palette": {
+        "inherit": "temp/Dict",
+        "$field": "character",
+        "key_weight": 0,
+        "value_types": "dict",
+        "value_structure": "very_old_palette:item"
+    },
+    "very_old_palette:item": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "block_id": {"types": "int", "delegate_arguments": {"always_print": true}, "similarity_weight": 5},
+            "data": {"types": "int"}
+        }
+    },
+    "blocks:new": {
+        "type": "Keymap",
+        "normalizers": {
+            "function_name": "minecraft_common!normalizers/volume_normalize_nbt volume_normalize_nbt",
             "arguments": {
                 "position_key": "pos",
                 "state_key": "state"
@@ -67,16 +107,7 @@
         "keys": {
             "states": {"types": "dict", "structure": "volume_states"},
             "data": {"types": "dict", "structure": "volume_additional_data"},
-            "size": {"types": "tuple", "structure": {
-                "type": "Dict",
-                "allow_key_moves": false,
-                "key_weight": 0,
-                "key_types": "int",
-                "delegate": null,
-                "this_types": "tuple",
-                "value_types": "int",
-                "value_structure": null
-            }}
+            "size": {"types": "tuple", "structure": "vector/vector.tuple_int"}
         }
     },
     "volume_states": {

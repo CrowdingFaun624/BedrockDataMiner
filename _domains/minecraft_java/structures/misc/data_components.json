@@ -13,7 +13,7 @@
         "$keymap_field": "component",
         "$measure_length": true,
         "keys": {
-            "minecraft:attribute_modifiers": {"types": "a/list", "structure": "component.attribute_modifiers"},
+            "minecraft:attribute_modifiers": {"types": ["a/compound", "a/list"], "structure": "component.attribute_modifiers"},
             "minecraft:axolotl/variant": {"types": "a/string"},
             "minecraft:banner_patterns": {"types": "a/list", "structure": "component.banner_patterns"},
             "minecraft:base_color": {"types": "a/string"},
@@ -59,6 +59,8 @@
             "minecraft:frog/variant": {"types": "a/string"},
             "minecraft:glider": {"types": "a/compound", "structure": "structures/misc/misc/empty_compound"},
             "minecraft:heat": {"types": "a/compound", "structure": "component.heat", "tags": ["t/april_fools"]},
+            "minecraft:hide_additional_tooltip": {"types": "a/compound", "structure": "misc/empty_compound", "tags": ["t/outdated"]},
+            "minecraft:hide_tooltip": {"types": "a/compound", "structure": "misc/empty_compound", "tags": ["t/outdated"]},
             "minecraft:horse/variant": {"types": "a/string"},
             "minecraft:hovered": {"types": "a/bool", "tags": ["t/april_fools"]},
             "minecraft:instrument": {"types": ["a/string", "a/compound"], "structure": "component.instrument:union"},
@@ -244,6 +246,18 @@
         }
     },
     "component.attribute_modifiers": {
+        "type": "Union",
+        "substructures": {
+            "a/list": "component.attribute_modifiers:list",
+            "a/compound": {
+                "inherit": "temp/SortedKeymap.nbt",
+                "keys": {
+                    "modifiers": {"types": "a/list", "structure": "component.attribute_modifiers:list"}
+                }
+            }
+        }
+    },
+    "component.attribute_modifiers:list": {
         "inherit": "temp/Set.nbt",
         "$field": "attribute modifier",
         "value_types": "a/compound",
@@ -440,6 +454,22 @@
         }
     },
     "component.enchantments": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "normalizers/normalizers data_component_enchantments_switch" // detects if "levels" key is present
+        },
+        "substructures": {
+            "old": {"types": "a/compound", "structure": "component.enchantments:old", "tags": "t/outdated"},
+            "new": {"types": "a/compound", "structure": "component.enchantments:new"}
+        }
+    },
+    "component.enchantments:old": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "levels": {"types": "a/compound", "structure": "component.enchantments:new"}
+        }
+    },
+    "component.enchantments:new": {
         "inherit": "temp/Dict.nbt",
         "$field": "enchantment",
         "value_types": "a/int",
@@ -633,6 +663,7 @@
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
             "item_damage_per_attack": {"types": "a/int"},
+            "can_disable_blocking": {"types": "a/bool", "tags": "t/outdated"},
             "disable_blocking_for_seconds": {"types": "a/float"}
         }
     },

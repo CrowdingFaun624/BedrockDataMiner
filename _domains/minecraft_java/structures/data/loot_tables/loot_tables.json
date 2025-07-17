@@ -3,6 +3,8 @@
         "entry": "structures/data/loot_tables/entry",
         "item_modifier": "structures/data/loot_tables/item_modifier",
         "temp": "structures/misc/template",
+        "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "np": "structures/misc/provider/number_provider",
         "pred": "structures/misc/predicate"
     },
@@ -39,9 +41,24 @@
         "keys": {
             "conditions": {"types": "list", "structure": "pred/predicate_list"},
             "functions": {"types": "list", "structure": "item_modifier/item_modifier_list"},
-            "rolls": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "rolls": {"types": ["misc/decimal", "dict"], "structure": "#!np/number_provider{types=@misc/decimal}"},
             "bonus_rolls": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "items": {"types": "list", "structure": "items", "tags": "t/outdated"},
             "entries": {"types": "list", "structure": "entry/entry_list"}
+        }
+    },
+    "items": {
+        "inherit": "temp/Set",
+        "$field": "item",
+        "value_types": "dict",
+        "value_structure": "item"
+    },
+    "item": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "item": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "functions": {"types": "list", "structure": "item_modifier/item_modifier_list"},
+            "weight": {"types": "int"}
         }
     }
 }

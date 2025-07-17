@@ -1,8 +1,10 @@
 {
     "group_aliases": {
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "temp": "structures/misc/template",
-        "s": "serializers"
+        "s": "serializers",
+        "vector": "structures/misc/vector"
     },
     "base": {
         "type": "StructureBase",
@@ -11,10 +13,6 @@
             "name": "block_models"
         },
         "structure": "resource_packs"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
     },
     "resource_packs": {
         "type": "Dict",
@@ -46,42 +44,25 @@
             "structure": "root"
         }
     },
-    "vector_decimal": {
-        "type": "Dict",
-        "allow_key_moves": false,
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "value_types": "decimal",
-        "delegate_arguments": {
-            "print_all": true,
-            "print_flat": true,
-            "field": "component"
-        },
-        "value_structure": null
-    },
-    "vector_int": {
-        "type": "Dict",
-        "allow_key_moves": false,
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "value_types": "int",
-        "delegate_arguments": {
-            "print_all": true,
-            "print_flat": true,
-            "field": "component"
-        },
-        "value_structure": null
-    },
     "root": {
         "inherit": "temp/SortedKeymap",
         "keys": {
+            "__comment": {"types": "str", "tags": "t/outdated"},
+            "inheritFrom": {"types": "str", "tags": "t/outdated"},
+            "inventoryRender3D": {"types": "bool", "tags": "t/outdated"},
+            "randomOffsetX": {"types": "bool", "tags": "t/outdated"},
+            "randomOffsetY": {"types": "bool", "tags": "t/outdated"},
+            "randomOffsetZ": {"types": "bool", "tags": "t/outdated"},
+            "rotateVariantTextures": {"types": "bool", "tags": "t/outdated"},
+            "rotation": {"types": "list", "structure": "vector/vector.decimal", "tags": "t/outdated"},
+            "rotationOrigin": {"types": "list", "structure": "vector/vector.decimal", "tags": "t/outdated"},
+            "translation": {"types": "list", "structure": "vector/vector.decimal", "tags": "t/outdated"},
             "parent": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "useAmbientOcclusion": {"types": "bool", "tags": "t/outdated"},
             "ambientocclusion": {"types": "bool"},
             "display": {"types": "dict", "structure": "display"},
             "textures": {"types": "dict", "structure": "textures"},
-            "texture_size": {"types": "list", "structure": "vector_int"},
+            "texture_size": {"types": "list", "structure": "vector/vector.int"},
             "gui_light": {"types": "str"},
             "groups": {"types": "list", "structure": "groups"},
             "elements": {"types": "list", "structure": "elements"}
@@ -90,8 +71,10 @@
     "display": {
         "inherit": "temp/SortedKeymap",
         "keys": {
+            "thirdperson": {"types": "dict", "structure": "display.item", "tags": "t/outdated"},
             "thirdperson_righthand": {"types": "dict", "structure": "display.item"},
             "thirdperson_lefthand": {"types": "dict", "structure": "display.item"},
+            "firstperson": {"types": "dict", "structure": "display.item", "tags": "t/outdated"},
             "firstperson_righthand": {"types": "dict", "structure": "display.item"},
             "firstperson_lefthand": {"types": "dict", "structure": "display.item"},
             "gui": {"types": "dict", "structure": "display.item"},
@@ -103,9 +86,9 @@
     "display.item": {
         "inherit": "temp/SortedKeymap",
         "keys": {
-            "rotation": {"types": "list", "structure": "vector_decimal"},
-            "translation": {"types": "list", "structure": "vector_decimal"},
-            "scale": {"types": "list", "structure": "vector_decimal"}
+            "rotation": {"types": "list", "structure": "vector/vector.decimal"},
+            "translation": {"types": "list", "structure": "vector/vector.decimal"},
+            "scale": {"types": "list", "structure": "vector/vector.decimal"}
         }
     },
     "textures": {
@@ -136,9 +119,9 @@
         "inherit": "temp/SortedKeymap",
         "keys": {
             "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
-            "origin": {"types": "list", "structure": "vector_int"},
+            "origin": {"types": "list", "structure": "vector/vector.int"},
             "color": {"types": "int"},
-            "children": {"types": "list", "structure": "vector_int"}
+            "children": {"types": "list", "structure": "vector/vector.int"}
         }
     },
     "elements": {
@@ -155,25 +138,113 @@
         "value_structure": "element"
     },
     "element": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_get_key",
+            "arguments": {
+                "key": "type",
+                "default": "_new"
+            }
+        },
+        "substructures": {
+            "_new": {"types": "dict", "structure": "element.new"},
+            "cube": {"types": "dict", "structure": "element.cube"},
+            "plane": {"types": "dict", "structure": "element.plane"}
+        }
+    },
+    "element.new": {
         "inherit": "temp/SortedKeymap",
         "keys": {
             "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
             "__comment": {"types": "str", "structure": "misc/string"},
-            "from": {"types": "list", "structure": "vector_decimal"},
-            "to": {"types": "list", "structure": "vector_decimal"},
-            "rotation": {"types": "dict", "structure": "element.rotation"},
+            "from": {"types": "list", "structure": "vector/vector.decimal"},
+            "to": {"types": "list", "structure": "vector/vector.decimal"},
+            "rotation": {"types": "dict", "structure": "element.new:rotation"},
             "shade": {"types": "bool"},
             "light_emission": {"types": "int"},
             "faces": {"types": "dict", "structure": "faces"}
         }
     },
-    "element.rotation": {
+    "element.new:rotation": {
         "inherit": "temp/SortedKeymap",
         "keys": {
-            "origin": {"types": "list", "structure": "vector_decimal"},
+            "origin": {"types": "list", "structure": "vector/vector.decimal"},
             "axis": {"types": "str"},
-            "angle": {"types": "decimal"},
+            "angle": {"types": "misc/decimal"},
             "rescale": {"types": "bool"}
+        }
+    },
+    "element:all": { // only for old elements before 14w25a
+        "type": "Keymap",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "__comment": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "from": {"types": "list", "structure": "vector/vector.decimal"},
+            "to": {"types": "list", "structure": "vector/vector.decimal"},
+            "origin": {"types": "list", "structure": "vector/vector.decimal"},
+            "rotation": {"types": "list", "structure": "vector/vector.decimal"},
+            "uv": {"types": "list", "structure": "element:uv"}
+        }
+    },
+    "element.cube": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "element:all",
+        "keys": {
+            "faceData": {"types": ["list", "dict"], "structure": "element.cube:face_data"},
+            "shade": {"types": ["bool", "float", "list"], "structure": "element.cube:faces"},
+            "overlay": {"types": ["bool", "float", "list"], "structure": "element.cube:faces", "tags": "t/outdated"},
+            "cull": {"types": ["bool", "float", "list"], "structure": "element.cube:faces", "tags": "t/outdated"},
+            "tintOverlay": {"types": ["bool", "float", "list"], "structure": "element.cube:faces", "tags": "t/outdated"},
+            "tint": {"types": ["bool", "float", "list"], "structure": "element.cube:faces", "tags": "t/outdated"}
+        }
+    },
+    "element.cube:faces": {
+        "type": "Union",
+        "substructures": {
+            "bool": null,
+            "float": null,
+            "list": {
+                "inherit": "temp/List",
+                "$field": "face",
+                "value_types": ["bool", "float"],
+                "value_structure": null
+            }
+        }
+    },
+    "element.cube:face_data": {
+        "type": "Union",
+        "substructures": {
+            "dict": "faces",
+            "list": "face_list"
+        }
+    },
+    "element:uv": {
+        "inherit": "temp/List",
+        "$field": "item",
+        "value_types": ["int", "str", "list"],
+        "value_structure": "element:uv.union"
+    },
+    "element:uv.union": {
+        "type": "Union",
+        "substructures": {
+            "list": "element:uv",
+            "int": null,
+            "str": null
+        }
+    },
+    "element.plane": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "element:all",
+        "keys": {
+            "facing": {"types": "str"},
+            "twoSided": {"types": "bool"},
+            "faceData": {"types": "dict", "structure": "face"},
+            "rescaleRotation": {"types": "bool"},
+            "shade": {"types": "float"},
+            "overlay": {"types": "bool", "tags": "t/outdated"},
+            "cull": {"types": "bool", "tags": "t/outdated"},
+            "tintOverlay": {"types": "bool", "tags": "t/outdated"},
+            "tint": {"types": ["bool", "float"], "tags": "t/outdated"}
         }
     },
     "faces": {
@@ -192,13 +263,26 @@
             "east": {"types": "dict", "structure": "face"}
         }
     },
+    "face_list": {
+        "inherit": "temp/List",
+        "$field": "face",
+        "value_types": "dict",
+        "value_structure": "face"
+    },
     "face": {
         "inherit": "temp/SortedKeymap",
         "keys": {
-            "uv": {"types": "list", "structure": "vector_decimal"},
+            "uv": {"types": "list", "structure": "vector/vector.decimal"},
             "texture": {"types": "str"},
+            "cull": {"types": "bool", "tags": "t/outdated"},
+            "cullfacing": {"types": "str", "tags": "t/outdated"},
             "cullface": {"types": "str"},
             "rotation": {"types": "int"},
+            "overlay": {"types": "bool", "tags": "t/outdated"},
+            "shade": {"types": "float"},
+            "textureFacing": {"types": "str", "tags": "t/outdated"},
+            "tint": {"types": "bool", "tags": "t/outdated"},
+            "tintOverlay": {"types": "bool", "tags": "t/outdated"},
             "tintindex": {"types": "int"}
         }
     }

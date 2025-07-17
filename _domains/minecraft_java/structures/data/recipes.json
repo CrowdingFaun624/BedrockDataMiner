@@ -2,6 +2,7 @@
     "group_aliases": {
         "a": "structures/misc/types",
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "temp": "structures/misc/template",
         "data_components": "structures/misc/data_components"
     },
@@ -12,19 +13,54 @@
         "$types": "dict",
         "$structure": "recipe"
     },
-    "item_single": {
+    "ingredients": {
+        "type": "Union",
+        "substructures": {
+            "str": null,
+            "list": "ingredients.list",
+            "dict": "ingredients.old"
+        }
+    },
+    "ingredients.list": {
+        "inherit": "temp/Set",
+        "$field": "item",
+        "value_types": ["str", "list", "dict"],
+        "value_structure": "ingredients"
+    },
+    "ingredients.old": {
         "inherit": "temp/SortedKeymap",
+        "tags": "t/outdated",
         "keys": {
-            "id": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
-            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+            "item": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "tag": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "item_single": {
+        "type": "Union",
+        "substructures": {
+            "str": null, // outdated
+            "dict": {
+                "inherit": "temp/SortedKeymap",
+                "keys": {
+                    "id": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+                    "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+                }
+            }
         }
     },
     "item_multi": {
-        "inherit": "temp/SortedKeymap",
-        "keys": {
-            "id": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
-            "count": {"types": "int"},
-            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+        "type": "Union",
+        "substructures": {
+            "str": null, // outdated
+            "dict": {
+                "inherit": "temp/SortedKeymap",
+                "keys": {
+                    "item": {"types": "str", "delegate_arguments": {"always_print": true}, "tags": "t/outdated"},
+                    "id": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+                    "count": {"types": "int"},
+                    "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+                }
+            }
         }
     },
     "recipe": {
@@ -36,26 +72,49 @@
             }
         },
         "substructures": {
+                      "blasting": {"types": "dict", "structure": "recipe.smelting", "tags": "t/outdated"},
             "minecraft:blasting": {"types": "dict", "structure": "recipe.smelting"},
+                      "campfire": {"types": "dict", "structure": "recipe.campfire_cooking", "tags": "t/outdated"},
             "minecraft:campfire_cooking": {"types": "dict", "structure": "recipe.campfire_cooking"},
+                      "crafting_shaped": {"types": "dict", "structure": "recipe.crafting_shaped", "tags": "t/outdated"},
             "minecraft:crafting_shaped": {"types": "dict", "structure": "recipe.crafting_shaped"},
+                      "crafting_shapeless": {"types": "dict", "structure": "recipe.crafting_shapeless", "tags": "t/outdated"},
             "minecraft:crafting_shapeless": {"types": "dict", "structure": "recipe.crafting_shapeless"},
             "minecraft:crafting_transmute": {"types": "dict", "structure": "recipe.crafting_transmute"},
+                      "crafting_special_armordye": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_armordye": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_banneraddpattern": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
+                      "crafting_special_bannerduplicate": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_bannerduplicate": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_bookcloning": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_bookcloning": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_firework_rocket": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_firework_rocket": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_firework_star": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_firework_star": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_firework_star_fade": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_firework_star_fade": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_mapcloning": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_mapcloning": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_mapextending": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_mapextending": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_repairitem": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_repairitem": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_shielddecoration": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_shielddecoration": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_shulkerboxcoloring": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
+            "minecraft:crafting_special_shulkerboxcoloring": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_suspiciousstew": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
+            "minecraft:crafting_special_suspiciousstew": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "crafting_special_tippedarrow": {"types": "dict", "structure": "recipe.crafting_special", "tags": "t/outdated"},
             "minecraft:crafting_special_tippedarrow": {"types": "dict", "structure": "recipe.crafting_special"},
             "minecraft:crafting_decorated_pot": {"types": "dict", "structure": "recipe.crafting_special"},
+                      "smelting": {"types": "dict", "structure": "recipe.smelting", "tags": "t/outdated"},
             "minecraft:smelting": {"types": "dict", "structure": "recipe.smelting"},
+            "minecraft:smithing": {"types": "dict", "structure": "recipe.smithing_transform", "tags": "t/outdated"},
             "minecraft:smithing_transform": {"types": "dict", "structure": "recipe.smithing_transform"},
             "minecraft:smithing_trim": {"types": "dict", "structure": "recipe.smithing_trim"},
+                      "smoking": {"types": "dict", "structure": "recipe.smelting", "tags": "t/outdated"},
             "minecraft:smoking": {"types": "dict", "structure": "recipe.smelting"},
             "minecraft:stonecutting": {"types": "dict", "structure": "recipe.stonecutting"}
         }
@@ -82,9 +141,9 @@
         "inherit": "temp/SortedKeymap",
         "imports": ["recipe:all", "recipe:recipe_book"],
         "keys": {
-            "ingredient": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='ingredient'}"},
+            "ingredient": {"types": ["str", "list", "dict"], "structure": "ingredients"},
             "cookingtime": {"types": "int"},
-            "result": {"types": "dict", "structure": "item_single"},
+            "result": {"types": ["str", "dict"], "structure": "item_single"},
             "experience": {"types": "float"}
         }
     },
@@ -95,7 +154,7 @@
             "show_notification": {"types": "bool"}, // MC-260148
             "pattern": {"types": "list", "structure": "recipe.crafting_shaped:pattern"},
             "key": {"types": "dict", "structure": "recipe.crafting_shaped:key"},
-            "result": {"types": "dict", "structure": "item_multi"}
+            "result": {"types": ["str", "dict"], "structure": "item_multi"}
         }
     },
     "recipe.crafting_shaped:pattern": {
@@ -108,15 +167,15 @@
     "recipe.crafting_shaped:key": {
         "inherit": "temp/Dict",
         "$field": "key",
-        "value_types": ["str", "list"],
-        "value_structure": "#!misc/named_list_or_item{name='item'}"
+        "value_types": ["str", "list", "dict"],
+        "value_structure": "ingredients"
     },
     "recipe.crafting_shapeless": {
         "inherit": "temp/SortedKeymap",
         "imports": ["recipe:all", "recipe:recipe_book", "recipe:recipe_book_group"],
         "keys": {
-            "ingredients": {"types": ["str", "list"], "structure": "#!misc/named_list_of_named_list_or_item{name='ingredient'}"},
-            "result": {"types": "dict", "structure": "item_multi"}
+            "ingredients": {"types": ["str", "list", "dict"], "structure": "ingredients"},
+            "result": {"types": ["str", "dict"], "structure": "item_multi"}
         }
     },
     "recipe.crafting_special": {
@@ -129,16 +188,16 @@
         "keys": {
             "input": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
             "material": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
-            "result": {"types": "dict", "structure": "item_single"}
+            "result": {"types": ["str", "dict"], "structure": "item_single"}
         }
     },
     "recipe.smelting": {
         "inherit": "temp/SortedKeymap",
         "imports": ["recipe:all", "recipe:recipe_book", "recipe:recipe_book_group"],
         "keys": {
-            "ingredient": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='ingredient'}"},
+            "ingredient": {"types": ["str", "list", "dict"], "structure": "ingredients"},
             "cookingtime": {"types": "int"},
-            "result": {"types": "dict", "structure": "item_single"},
+            "result": {"types": ["str", "dict"], "structure": "item_single"},
             "experience": {"types": "float"}
         }
     },
@@ -146,10 +205,10 @@
         "inherit": "temp/SortedKeymap",
         "imports": ["recipe:all"],
         "keys": {
-            "template": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
-            "base": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
-            "addition": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
-            "result": {"types": "dict", "structure": "item_multi"}
+            "template": {"types": ["str", "list", "dict"], "structure": "ingredients"},
+            "base": {"types": ["str", "list", "dict"], "structure": "ingredients"},
+            "addition": {"types": ["str", "list", "dict"], "structure": "ingredients"},
+            "result": {"types": ["str", "dict"], "structure": "item_multi"}
         }
     },
     "recipe.smithing_trim": {
@@ -157,17 +216,18 @@
         "imports": ["recipe:all"],
         "keys": {
             "pattern": {"types": "str"},
-            "template": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
-            "base": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
-            "addition": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"}
+            "template": {"types": ["str", "list", "dict"], "structure": "ingredients"},
+            "base": {"types": ["str", "list", "dict"], "structure": "ingredients"},
+            "addition": {"types": ["str", "list", "dict"], "structure": "ingredients"}
         }
     },
     "recipe.stonecutting": {
         "inherit": "temp/SortedKeymap",
         "imports": ["recipe:all"],
         "keys": {
-            "ingredient": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='item'}"},
-            "result": {"types": "dict", "structure": "item_multi"}
+            "ingredient": {"types": ["str", "list", "dict"], "structure": "ingredients"},
+            "result": {"types": ["str", "dict"], "structure": "item_multi"},
+            "count": {"types": "int", "tags": "t/outdated"}
         }
     }
 }

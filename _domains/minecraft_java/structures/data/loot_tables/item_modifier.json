@@ -4,11 +4,13 @@
         "attribute": "structures/misc/attribute",
         "data_components": "structures/misc/data_components",
         "conditions": "structures/data/advancements/conditions",
+        "entry": "structures/data/loot_tables/entry",
         "lm": "structures/data/loot_tables/list_modifier",
         "misc": "structures/misc/misc",
         "np": "structures/misc/provider/number_provider",
         "pred": "structures/misc/predicate",
         "source": "structures/data/loot_tables/source",
+        "t": "structure_tags",
         "tc": "structures/misc/text_component",
         "temp": "structures/misc/template"
     },
@@ -43,18 +45,24 @@
         "substructures": {
             "minecraft:apply_bonus": {"types": "dict", "structure": "item_modifier.apply_bonus"},
             "minecraft:copy_components": {"types": "dict", "structure": "item_modifier.copy_components"},
+            "minecraft:copy_nbt": {"types": "dict", "structure": "item_modifier.copy_custom_data", "tags": "t/outdated"},
             "minecraft:copy_custom_data": {"types": "dict", "structure": "item_modifier.copy_custom_data"},
             "minecraft:copy_name": {"types": "dict", "structure": "item_modifier.copy_name"},
             "minecraft:copy_state": {"types": "dict", "structure": "item_modifier.copy_state"},
+                      "enchant_randomly": {"types": "dict", "structure": "item_modifier.enchant_randomly", "tags": "t/outdated"},
             "minecraft:enchant_randomly": {"types": "dict", "structure": "item_modifier.enchant_randomly"},
+                      "enchant_with_levels": {"types": "dict", "structure": "item_modifier.enchant_with_levels", "tags": "t/outdated"},
             "minecraft:enchant_with_levels": {"types": "dict", "structure": "item_modifier.enchant_with_levels"},
             "minecraft:enchanted_count_increase": {"types": "dict", "structure": "item_modifier.enchanted_count_increase"},
             "minecraft:exploration_map": {"types": "dict", "structure": "item_modifier.exploration_map"},
             "minecraft:explosion_decay": {"types": "dict", "structure": "item_modifier.explosion_decay"},
             "minecraft:fill_player_head": {"types": "dict", "structure": "item_modifier.fill_player_head"},
             "minecraft:filtered": {"types": "dict", "structure": "item_modifier.filtered"},
+                      "furnace_smelt": {"types": "dict", "structure": "item_modifier.furnace_smelt", "tags": "t/outdated"},
             "minecraft:furnace_smelt": {"types": "dict", "structure": "item_modifier.furnace_smelt"},
             "minecraft:limit_count": {"types": "dict", "structure": "item_modifier.limit_count"},
+                      "looting_enchant": {"types": "dict", "structure": "item_modifier.looting_enchant", "tags": "t/outdated"},
+            "minecraft:looting_enchant": {"types": "dict", "structure": "item_modifier.looting_enchant", "tags": "t/outdated"},
             "minecraft:modify_contents": {"types": "dict", "structure": "item_modifier.modify_contents"},
             "minecraft:reference": {"types": "dict", "structure": "item_modifier.reference"},
             "minecraft:sequence": {"types": "dict", "structure": "item_modifier.sequence"},
@@ -63,18 +71,25 @@
             "minecraft:set_book_cover": {"types": "dict", "structure": "item_modifier.set_book_cover"},
             "minecraft:set_components": {"types": "dict", "structure": "item_modifier.set_components"},
             "minecraft:set_contents": {"types": "dict", "structure": "item_modifier.set_contents"},
+                      "set_count": {"types": "dict", "structure": "item_modifier.set_count", "tags": "t/outdated"},
             "minecraft:set_count": {"types": "dict", "structure": "item_modifier.set_count"},
             "minecraft:set_custom_data": {"types": "dict", "structure": "item_modifier.set_custom_data"},
             "minecraft:set_custom_model_data": {"types": "dict", "structure": "item_modifier.set_custom_model_data"},
+                      "set_damage": {"types": "dict", "structure": "item_modifier.set_damage", "tags": "t/outdated"},
             "minecraft:set_damage": {"types": "dict", "structure": "item_modifier.set_damage"},
+                      "set_data": {"types": "dict", "structure": "item_modifier.set_data", "tags": "t/outdated"},
+            "minecraft:set_data": {"types": "dict", "structure": "item_modifier.set_data", "tags": "t/outdated"},
             "minecraft:set_enchantments": {"types": "dict", "structure": "item_modifier.set_enchantments"},
             "minecraft:set_fireworks": {"types": "dict", "structure": "item_modifier.set_fireworks"},
             "minecraft:set_firework_explosion": {"types": "dict", "structure": "item_modifer.set_firework_explosion"},
+            "minecraft:set_goat_horn_sound": {"types": "dict", "structure": "item_modifier.set_instrument", "tags": "t/outdated"},
             "minecraft:set_instrument": {"types": "dict", "structure": "item_modifier.set_instrument"},
             "minecraft:set_item": {"types": "dict", "structure": "item_modifier.set_item"},
             "minecraft:set_loot_table": {"types": "dict", "structure": "item_modifier.set_loot_table"},
             "minecraft:set_lore": {"types": "dict", "structure": "#!lm/list_modifier{values=@tc/lines, values_key='lore', value_types=@a/list}"},
             "minecraft:set_name": {"types": "dict", "structure": "item_modifier.set_name"},
+                      "set_nbt": {"types": "dict", "structure": "item_modifier.set_nbt", "tags": "t/outdated"},
+            "minecraft:set_nbt": {"types": "dict", "structure": "item_modifier.set_nbt", "tags": "t/outdated"},
             "minecraft:set_ominous_bottle_amplifier": {"types": "dict", "structure": "item_modifier.set_ominous_bottle_amplifier"},
             "minecraft:set_potion": {"types": "dict", "structure": "item_modifier.set_potion"},
             "minecraft:set_stew_effect": {"types": "dict", "structure": "item_modifier.set_stew_effect"},
@@ -131,6 +146,7 @@
         "imports": "item_modifier:all",
         "keys": {
             "source": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "components": {"types": "list", "structure": "#!misc/named_list{name='component'}", "tags": "t/outdated"},
             "include": {"types": "list", "structure": "#!misc/named_list{name='component'}"},
             "exclude": {"types": "list", "structure": "#!misc/named_list{name='component'}"}
         }
@@ -176,6 +192,7 @@
         "inherit": "temp/SortedKeymap",
         "imports": "item_modifier:all",
         "keys": {
+            "enchantments": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='enchantment'}", "tags": "t/outdated"},
             "options": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='enchantment'}"},
             "only_compatible": {"types": "bool"}
         }
@@ -184,8 +201,9 @@
         "inherit": "temp/SortedKeymap",
         "imports": "item_modifier:all",
         "keys": {
+            "treasure": {"types": "bool", "tags": "t/outdated"},
             "options": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='enchantment'}"},
-            "levels": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"}
+            "levels": {"types": ["misc/decimal", "dict"], "structure": "#!np/number_provider{types=@misc/decimal}"}
         }
     },
     "item_modifier.enchanted_count_increase": {
@@ -242,12 +260,20 @@
                     "dict": {
                         "inherit": "temp/SortedKeymap",
                         "keys": {
-                            "min": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
-                            "max": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"}
+                            "min": {"types": ["misc/decimal", "dict"], "structure": "#!np/number_provider{types=@misc/decimal}"},
+                            "max": {"types": ["misc/decimal", "dict"], "structure": "#!np/number_provider{types=@misc/decimal}"}
                         }
                     }
                 }
             }}
+        }
+    },
+    "item_modifier.looting_enchant": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "count": {"types": ["misc/decimal", "dict"], "structure": "#!np/number_provider{types=@misc/decimal}"},
+            "limit": {"types": "int"}
         }
     },
     "item_modifier.modify_contents": {
@@ -308,7 +334,8 @@
         "inherit": "temp/SortedKeymap",
         "imports": "item_modifier:all",
         "keys": {
-            "entries": {"types": "list", "structure": "#!misc/named_list{name='foo'}"}, // wiki does not explain these.
+            "type": {"types": "str", "tags": "t/outdated", "delegate_arguments": {"always_print": true}},
+            "entries": {"types": "list", "structure": "entry/entry_list"},
             "component": {"types": "str"}
         }
     },
@@ -316,7 +343,7 @@
         "inherit": "temp/SortedKeymap",
         "imports": "item_modifier:all",
         "keys": {
-            "count": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "count": {"types": ["misc/decimal", "dict"], "structure": "#!np/number_provider{types=@misc/decimal}"},
             "add": {"types": "bool"}
         }
     },
@@ -379,8 +406,15 @@
         "inherit": "temp/SortedKeymap",
         "imports": "item_modifier:all",
         "keys": {
-            "damage": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
+            "damage": {"types": ["misc/decimal", "dict"], "structure": "#!np/number_provider{types=@misc/decimal}"},
             "add": {"types": "bool"}
+        }
+    },
+    "item_modifier.set_data": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "data": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"}
         }
     },
     "item_modifier.set_enchantments": {
@@ -439,6 +473,13 @@
             "name": {"types": "tc/root_type", "structure": "tc/root"},
             "entity": {"types": "str"},
             "target": {"types": "str"}
+        }
+    },
+    "item_modifier.set_nbt": {
+        "inherit": "temp/SortedKeymap",
+        "imports": "item_modifier:all",
+        "keys": {
+            "tag": {"types": "str"}
         }
     },
     "item_modifier.set_ominous_bottle_amplifier": {

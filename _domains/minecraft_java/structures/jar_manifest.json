@@ -5,25 +5,10 @@
         "temp": "structures/misc/template"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "delegate_arguments": {
-            "name": "jar_manifest"
-        },
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "s/manifest_serializer",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "manifest"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "jar_manifest",
+        "$serializer": "#@s/manifest_serializer",
+        "$structure": "#@manifest"
     },
     "manifest": {
         "inherit": "temp/SortedKeymap",
@@ -31,6 +16,12 @@
             // MOJANGCS.SF
             "Signature-Version": {"types": "str"},
             "Created-By": {"types": "str"},
+            "Ant-Version": {"types": "str"},
+            "Class-Path": {"types": "str"},
+            "SHA1-Digest-Manifest": {"types": "str"},
+            "SHA1-Digest-Manifest-Main-Attributes": {"types": "str"},
+            "SHA-256-Digest-Manifest": {"types": "str"},
+            "SHA-256-Digest-Manifest-Main-Attributes": {"types": "str"},
             "SHA-384-Digest-Manifest": {"types": "str"},
             "SHA-384-Digest-Manifest-Main-Attributes": {"types": "str"},
             // MANIFEST.MF
@@ -42,13 +33,21 @@
     },
     "files": {
         "type": "Dict",
-        "value_types": "str",
+        "value_types": "dict",
         "delegate_arguments": {
             "measure_length": true,
             "sort": "sort_by_key",
             "field": "file"
         },
         "key_structure": "misc/string",
-        "value_structure": null
+        "value_structure": "attributes"
+    },
+    "attributes": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "SHA1-Digest": {"types": "str"},
+            "SHA-256-Digest": {"types": "str"},
+            "SHA-384-Digest": {"types": "str"}
+        }
     }
 }

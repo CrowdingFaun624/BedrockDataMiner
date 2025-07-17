@@ -1,7 +1,7 @@
 import math
 from itertools import product
 from types import EllipsisType
-from typing import Any, MutableMapping, TypedDict, cast
+from typing import Any, MutableMapping, NotRequired, TypedDict, cast
 
 import Domain.Domain as Domain
 from Component.ComponentFunctions import component_function
@@ -19,9 +19,14 @@ from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifi
 
 LAYER_CHARACTERS_DEFAULT = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+={[}];:'<,>./?αβγδεζηθικλμνξπρσςτυφχψωΓΔΘΛΞΠΣΦΨΩБбгДдËëЖжЗзИиЙйЛлФфЦцЧчШшЩщЪъЫыЬьЭэЮюЯя"
 
+class PaletteItem(TypedDict):
+    block_id: int
+    data: int
+
 class DataTypedDict(TypedDict):
     states: dict[tuple[int,int,int],int]
     data: dict[tuple[int,int,int],MutableMapping[Any,Any]]
+    palette: NotRequired[dict[str,PaletteItem]]
     size: tuple[int,int,int]
 
 @component_function()
@@ -33,6 +38,7 @@ class VolumeDelegate(LineDelegate[
 
     __slots__ = (
         "layer_characters",
+        "palette_substructure",
         "print_additional_data",
         "substructure",
     )
@@ -60,6 +66,7 @@ class VolumeDelegate(LineDelegate[
     def finalize(self, domain:"Domain.Domain", trace:Trace) -> None:
         super().finalize(domain, trace)
         structure = cast(DictStructure[Any, Any, Any, Any, Any, Any, Any, list[LineType], list[LineType]], self.structure.value_structures["data"])
+        self.palette_substructure = cast(DictStructure[Any, Any, Any, Any, Any, Any, Any, list[LineType], list[LineType]], self.structure.value_structures.get("palette"))
         substructure = structure.value_structure
         if substructure is None or not isinstance(substructure, MappingStructure):
             raise TypeError(f"Substructure of {self} is not an AbstractMappingStructure, but instead {substructure}!")
@@ -198,6 +205,7 @@ class VolumeDelegate(LineDelegate[
         additional_data_container:IDon[Diff[SDon[tuple[int,int,int]]], Diff[IDon[Diff[Any], Diff[Any], MutableMapping[Any, Any], Any, Any]],
             MutableMapping[tuple[int,int,int], MutableMapping[Any, Any]], SCon[tuple[int,int,int]], ICon[Any, Any, MutableMapping[Any, Any]]] = data_dict["data"].last_value
         additional_data:dict[tuple[int,int,int], Diff[IDon[Diff[Any], Diff[Any], MutableMapping[Any, Any], Any, Any]]] = {key.last_value.last_value: value for key, value in additional_data_container.items()}
+        palette:IDon|None = data_dict["palette"].last_value if "palette" in data_dict else None
 
         output:list[LineType] = []
         layers_to_print:set[int] = set()
@@ -227,4 +235,9 @@ class VolumeDelegate(LineDelegate[
             with trace.enter_key(f"layer {layer}", layer):
                 output.append((0, f"Changed layer {layer}/{max_size[1]}:"))
                 output.extend(self.compare_text_layer(states, block_data_comparisons[layer], layer, max_size, trace, environment))
+        if palette is not None:
+            output.append((0, "Palette:"))
+            substructure_output = self.palette_substructure.print_comparison(palette, bundle, trace, environment)
+            if substructure_output is not ...:
+                output.extend((indentation + 1, line) for indentation, line in substructure_output)
         return output

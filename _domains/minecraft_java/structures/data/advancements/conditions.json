@@ -3,6 +3,7 @@
         "a": "structures/misc/types",
         "misc": "structures/misc/misc",
         "np": "structures/misc/provider/number_provider",
+        "t": "structure_tags",
         "temp": "structures/misc/template"
     },
     "decimal": {
@@ -30,11 +31,13 @@
     "condition.block": {
         "inherit": "temp/SortedKeymap",
         "keys": {
+            "block": {"types": "str", "tags": "t/outdated"},
             "blocks": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='block'}"},
             "nbt": {"types": "str"},
             "state": {"types": "dict", "structure": "condition.block_state"},
             "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
-            "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"}
+            "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"},
+            "tag": {"types": "str", "tags": "t/outdated"}
         }
     },
     "condition.block_state": {
@@ -48,6 +51,7 @@
         "keys": {
             "blocked": {"types": "bool"},
             "dealt": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
+            "is_projectile": {"types": "bool", "tags": "t/outdated"},
             "source_entity": {"types": "dict", "structure": "condition.entity"},
             "taken": {"types": ["decimal", "dict"], "structure": "misc/range_decimal_or_decimal"},
             "type": {"types": "dict", "structure": "condition.damage_type"}
@@ -59,12 +63,15 @@
             "direct_entity": {"types": "dict", "structure": "condition.entity"},
             "source_entity": {"types": "dict", "structure": "condition.entity"},
             "is_direct": {"types": "bool"},
+            "is_lightning": {"types": "bool", "tags": "t/outdated"},
+            "is_projectile": {"types": "bool", "tags": "t/outdated"},
             "tags": {"types": "list", "structure": "condition.tags"}
         }
     },
     "condition.distance": {
         "inherit": "temp/SortedKeymap",
         "keys": {
+            "min": {"types": "int", "tags": "t/outdated"},
             "absolute": {"types": ["dict", "decimal"], "structure": "misc/range_decimal_or_decimal"},
             "horizontal": {"types": ["dict", "decimal"], "structure": "misc/range_decimal_or_decimal"},
             "x": {"types": ["dict", "decimal"], "structure": "misc/range_decimal_or_decimal"},
@@ -87,8 +94,24 @@
         "value_types": "dict",
         "value_structure": "condition.effect"
     },
+    "condition.enchantments": {
+        "inherit": "temp/Set.nbt",
+        "$field": "enchantment",
+        "tags": "t/outdated",
+        "value_types": "a/compound",
+        "value_structure": "condition.enchantment"
+    },
+    "condition.enchantment": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "tags": "t/outdated",
+        "keys": {
+            "enchantment": {"types": "a/string", "structure": "misc/string.nbt", "tags": "t/outdated", "delegate_arguments": {"always_print": true}},
+            "levels": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"}
+        }
+    },
     "condition.entity": {
         "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:old",
         "keys": {
             "type": {"types": ["list", "str"], "structure": "#!misc/named_list_or_item{name='entity'}"},
             "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
@@ -108,13 +131,15 @@
             "movement": {"types": "dict", "structure": "condition.movement"},
             "periodic_tick": {"types": "int"},
             "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"},
-            "type_specific": {"types": "dict", "structure": "condition.type_specific"}
+            "type_specific": {"types": "dict", "structure": "condition.type_specific"},
+            "catType": {"types": "str", "tags": "t/outdated"}
         }
     },
     "condition.fluid": {
         "inherit": "temp/SortedKeymap",
         "keys": {
             "blocks": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='fluid'}"},
+            "fluids": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='fluid'}", "tags": "t/outdated"},
             "nbt": {"types": "str"},
             "state": {"types": "dict", "structure": "condition.block_state"},
             "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
@@ -140,10 +165,15 @@
     "condition.item": {
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
+            "item": {"types": "a/string", "tags": "t/outdated"},
             "items": {"types": ["a/list", "a/string"], "structure": "#!misc/named_list_or_item.nbt{name='item'}"},
-            "count": {"types": ["a/int", "a/compound"], "structure": "misc/range_int_or_int.nbt"},
+            "count": {"types": ["a/float", "a/int", "a/compound"], "structure": "misc/range_decimal_or_decimal.nbt"},
+            "enchantments": {"types": "a/list", "structure": "condition.enchantments", "tags": "t/outdated"},
             "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
-            "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"}
+            "predicates": {"types": "a/compound", "structure": "structures/misc/data_component_predicates/data_component_predicates"},
+            "data": {"types": "a/int", "tags": "t/outdated"},
+            "tag": {"types": "a/string", "tags": "t/outdated"}, // in this case, means an item tag, not the NBT item tag.
+            "nbt": {"types": "a/string", "tags": "t/outdated"}
         }
     },
     "condition.items": {
@@ -176,15 +206,20 @@
     },
     "condition.location": {
         "inherit": "temp/SortedKeymap",
+        "$tags": [],
+        "tags": "#tags",
         "keys": {
+            "biome": {"types": "str", "tags": "t/outdated"},
             "biomes": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='biome'}"},
             "block": {"types": "dict", "structure": "condition.block"},
             "dimension": {"types": "str"},
+            "feature": {"types": "str", "tags": "t/outdated"},
             "fluid": {"types": "dict", "structure": "condition.fluid"},
             "light": {"types": "dict", "structure": "condition.light"},
             "position": {"types": "dict", "structure": "condition.position"},
             "smokey": {"types": "bool"},
             "can_see_sky": {"types": "bool"},
+            "structure": {"types": "str", "tags": "t/outdated"},
             "structures": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='structure'}"}
         }
     },
@@ -239,7 +274,7 @@
         "keys": {
             "empty": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
             "full": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"},
-            "occupied": {"types": ["int", "dict"], "structure": "misc/range_int_or_int"}
+            "occupied": {"types": ["misc/decimal", "dict"], "structure": "misc/range_decimal_or_decimal"}
         }
     },
     "condition.stat": {
@@ -271,6 +306,7 @@
     },
     "condition.type_specific": {
         "type": "Switch",
+        "imports": "condition.type_specific:old",
         "switch_function": {
             "function_name": "get_key",
             "arguments": {
@@ -298,6 +334,33 @@
             "minecraft:tropical_fish": {"types": "dict", "structure": "condition.type_specific.variant"},
             "minecraft:villager": {"types": "dict", "structure": "condition.type_specific.variant"},
             "minecraft:wolf": {"types": "dict", "structure": "condition.type_specific.wolf"}
+        }
+    },
+    "condition.type_specific:old": {
+        "type": "Keymap", // imported into both Switch and Keymap.
+        "tags": "t/outdated",
+        "keys": {
+            "axolotl": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "cat": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "fishing_hook": {"types": "dict", "structure": "condition.type_specific.fishing_hook"},
+            "fox": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "frog": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "horse": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "lightning": {"types": "dict", "structure": "condition.type_specific.lightning"},
+            "lightning_bolt": {"types": "dict", "structure": "condition.type_specific.lightning"},
+            "llama": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "mooshroom": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "painting": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "parrot": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "player": {"types": "dict", "structure": "condition.type_specific.player"},
+            "rabbit": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "raider": {"types": "dict", "structure": "condition.type_specific.raider"},
+            "salmon": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "sheep": {"types": "dict", "structure": "condition.type_specific.sheep"},
+            "slime": {"types": "dict", "structure": "condition.type_specific.slime"},
+            "tropical_fish": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "villager": {"types": "dict", "structure": "condition.type_specific.variant"},
+            "wolf": {"types": "dict", "structure": "condition.type_specific.wolf"}
         }
     },
     "condition.type_specific:all": {
@@ -366,6 +429,7 @@
     },
     "condition.type_specific.wolf": {
         "inherit": "temp/SortedKeymap",
+        "imports": "condition.type_specific:all",
         "keys": {
             "variant": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='variant'}"}
         }

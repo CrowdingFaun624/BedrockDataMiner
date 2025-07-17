@@ -130,6 +130,7 @@
             "minecraft:snowball": {"types": "a/compound", "structure": "entity.snowball"},
             "minecraft:spawner_minecart": {"types": "a/compound", "structure": "entity.spawner_minecart"},
             "minecraft:spectral_arrow": {"types": "a/compound", "structure": "entity.spectral_arrow"},
+            "Spider": {"types": "a/compound", "structure": "entity.spider", "tags": "t/outdated"},
             "minecraft:spider": {"types": "a/compound", "structure": "entity.spider"},
             "minecraft:splash_potion": {"types": "a/compound", "structure": "entity.splash_potion"},
             "minecraft:strider": {"types": "a/compound", "structure": "entity.strider"},
@@ -144,6 +145,7 @@
             "minecraft:tropical_fish": {"types": "a/compound", "structure": "entity.tropical_fish"},
             "minecraft:turtle": {"types": "a/compound", "structure": "entity.turtle"},
             "minecraft:vex": {"types": "a/compound", "structure": "entity.vex"},
+            "Villager": {"types": "a/compound", "structure": "entity.villager", "tags": "t/outdated"},
             "minecraft:villager": {"types": "a/compound", "structure": "entity.villager"},
             "minecraft:vindicator": {"types": "a/compound", "structure": "entity.vindicator"},
             "minecraft:wandering_trader": {"types": "a/compound", "structure": "entity.wandering_trader"},
@@ -155,6 +157,7 @@
             "minecraft:wither_skull": {"types": "a/compound", "structure": "entity.wither_skull"},
             "minecraft:wolf": {"types": "a/compound", "structure": "entity.wolf"},
             "minecraft:zoglin": {"types": "a/compound", "structure": "entity.zoglin"},
+            "Zombie": {"types": "a/compound", "structure": "entity.zombie", "tags": "t/outdated"},
             "minecraft:zombie": {"types": "a/compound", "structure": "entity.zombie"},
             "minecraft:zombie_horse": {"types": "a/compound", "structure": "entity.zombie_horse"},
             "minecraft:zombie_villager": {"types": "a/compound", "structure": "entity.zombie_villager"},
@@ -316,6 +319,7 @@
             "data": {"types": "a/compound", "structure": "misc/any_nbt.compound"},
             "Dimension": {"types": "a/int", "tags": "t/outdated"}, // is it actually outdated??
             "fall_distance": {"types": "a/double"},
+            "FallDistance": {"types": "a/float", "tags": "t/outdated"},
             "Fire": {"types": "a/short"},
             "Glowing": {"types": "a/bool"},
             "HasVisualFire": {"types": "a/bool"},
@@ -330,6 +334,8 @@
             "Silent": {"types": "a/bool"},
             "Tags": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='tag'}"},
             "TicksFrozen": {"types": "a/int"},
+            "UUIDLeast": {"types": "a/long", "tags": "t/outdated"},
+            "UUIDMost": {"types": "a/long", "tags": "t/outdated"},
             "UUID": {"types": "a/int_array", "structure": "misc/uuid_list.nbt"}
         }
     },
@@ -354,8 +360,12 @@
             "AbsorptionAmount": {"types": "a/float"},
             "active_effects": {"types": "a/list", "structure": "class.living_entity:active_effects"},
             "attributes": {"types": "a/list", "structure": "class.living_entity:attributes"},
+            "Attributes": {"types": "a/list", "structure": "class.living_entity:attributes"},
             "Brain": {"types": "a/compound", "structure": "#!brain{imports=brain_imports}"},
+            "brain": {"types": "a/compound", "structure": "#!brain{imports=brain_imports}", "tags": "t/outdated"},
             "DeathTime": {"types": "a/short"},
+            "ArmorDropChances": {"types": "a/list", "structure": "class.living_entity:drop_chances.list", "tags": "t/outdated"},
+            "HandDropChances": {"types": "a/list", "structure": "class.living_entity:drop_chances.list", "tags": "t/outdated"},
             "drop_chances": {"types": "a/compound", "structure": "class.living_entity:drop_chances"},
             "ArmorItems": {"types": "a/list", "structure": "misc/item_data_slotless_list", "tags": "t/outdated"},
             "equipment": {"types": "a/compound", "structure": "class.living_entity:equipment"},
@@ -386,8 +396,11 @@
     "class.living_entity:attribute": {
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
+            "Name": {"types": "a/string", "structure": "misc/string.nbt", "delegate_arguments": {"always_print": true}, "tags": "t/outdated"},
             "id": {"types": "a/string", "structure": "misc/string.nbt", "delegate_arguments": {"always_print": true}},
+            "Base": {"types": "a/double", "tags": "t/outdated"},
             "base": {"types": "a/double"},
+            "Modifiers": {"types": "a/list", "structure": "class.living_entity:attribute.modifiers", "tags": "t/outdated"},
             "modifiers": {"types": "a/list", "structure": "class.living_entity:attribute.modifiers"}
         }
     },
@@ -400,9 +413,15 @@
     "class.living_entity:attribute.modifier": {
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
+            "Amount": {"types": "a/double", "delegate_arguments": {"always_print": true}, "tags": "t/outdated"},
             "amount": {"types": "a/double", "delegate_arguments": {"always_print": true}},
+            "Name": {"types": "a/string", "structure": "misc/string.nbt", "delegate_arguments": {"always_print": true}, "tags": "t/outdated"},
             "id": {"types": "a/string", "structure": "misc/string.nbt", "delegate_arguments": {"always_print": true}},
-            "operation": {"types": "a/string", "delegate_arguments": {"always_print": true}}
+            "Operation": {"types": "a/int", "delegate_arguments": {"always_print": true}, "tags": "t/outdated"},
+            "operation": {"types": "a/string", "delegate_arguments": {"always_print": true}},
+            "UUIDLeast": {"types": "a/long", "tags": "t/outdated"},
+            "UUIDMost": {"types": "a/long", "tags": "t/outdated"},
+            "UUID": {"types": "a/int_array", "structure": "misc/uuid_list.nbt", "tags": "t/outdated"}
         }
     },
     "class.living_entity:drop_chances": {
@@ -417,6 +436,12 @@
             "body": {"types": "a/float"},
             "saddle": {"types": "a/float"}
         }
+    },
+    "class.living_entity:drop_chances.list": {
+        "inherit": "temp/List.nbt",
+        "$field": "slot",
+        "value_types": "a/float",
+        "value_structure": null
     },
     "class.living_entity:equipment": {
         "inherit": "temp/SortedKeymap.nbt",
@@ -529,9 +554,18 @@
             "AngryAt": {"types": "a/int_array", "structure": "misc/uuid_list.nbt"}
         }
     },
+    "interface.saddleable": {
+        "type": "Keymap",
+        "keys": {
+            "Saddle": {"types": "a/bool"}
+        }
+    },
     "interface.villager_data_holder": {
         "type": "Keymap",
         "keys": {
+            "Career": {"types": "a/int", "tags": "t/outdated"},
+            "CareerLevel": {"types": "a/int", "tags": "t/outdated"},
+            "Profession": {"types": "a/int", "tags": "t/outdated"},
             "FoodLevel": {"types": "a/int", "tags": "t/outdated"},
             "food_level": {"types": "a/int", "tags": "t/outdated"},
             "lastRestock": {"types": "a/int"},
@@ -565,7 +599,9 @@
     "brain": {
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
-            "memories": {"types": "a/compound", "structure": "#!brain:memory:abstract{imports=imports}"} // only possible tag in Brain is memories.
+            "memories": {"types": "a/compound", "structure": "#!brain:memory:abstract{imports=imports}"},
+            "registered_memories": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='memory'}", "tags": "t/outdated"},
+            "registered_sensors": {"types": "a/list", "structure": "#!misc/named_list.nbt{name='sensor'}", "tags": "t/outdated"}
         }
     },
     "brain.allay": {
@@ -1298,7 +1334,7 @@
     },
     "entity.pig": {
         "inherit": "temp/SortedKeymap.nbt",
-        "imports": ["class.entity", "class.living_entity", "class.mob", "class.ageable_mob"],
+        "imports": ["class.entity", "class.living_entity", "class.mob", "class.ageable_mob", "interface.saddleable"],
         "keys": {
             "variant": {"types": "a/string"}
         }
@@ -1539,7 +1575,7 @@
     },
     "entity.strider": {
         "inherit": "temp/SortedKeymap.nbt",
-        "imports": ["class.entity", "class.living_entity", "class.mob", "class.ageable_mob"]
+        "imports": ["class.entity", "class.living_entity", "class.mob", "class.ageable_mob", "interface.saddleable"]
     },
     "entity.squid": {
         "inherit": "temp/SortedKeymap.nbt",
@@ -1724,6 +1760,9 @@
         "inherit": "temp/SortedKeymap.nbt",
         "imports": ["class.entity", "class.living_entity", "class.mob"],
         "keys": {
+            "ConversionTime": {"types": "a/int", "tags": "t/outdated"},
+            "IsVillager": {"types": "a/bool", "tags": "t/outdated"},
+            "VillagerProfession": {"types": "a/int"},
             "CanBreakDoors": {"types": "a/bool"},
             "DrownedConversionTime": {"types": "a/int"},
             "InWaterTime": {"types": "a/int"},

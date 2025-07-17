@@ -2,7 +2,8 @@
     "group_aliases": {
         "misc": "structures/misc/misc",
         "temp": "structures/misc/template",
-        "s": "serializers"
+        "s": "serializers",
+        "t": "structure_tags"
     },
     "base": {
         "type": "StructureBase",
@@ -166,14 +167,8 @@
     },
     "uniform": {
         "type": "Switch",
-        // "switch_function": {
-        //     "function_name": "normalizers/normalizers post_effect_switch"
-        // },
         "switch_function": {
-            "function_name": "get_key",
-            "arguments": {
-                "key": "type"
-            }
+            "function_name": "normalizers/normalizers post_effect_choose_uniform"
         },
         "substructures": {
             "float": {"types": "dict", "structure": "uniform.float"},
@@ -187,7 +182,8 @@
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
-            "value": {"types": "decimal"}
+            "value": {"types": "decimal"},
+            "values": {"types": "list", "structure": "vector_decimal", "tags": "t/outdated"}
         }
     },
     "uniform.matrix": {
@@ -195,7 +191,9 @@
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
-            "value": {"types": "list", "structure": "vector_decimal"}
+            "value": {"types": "list", "structure": "vector_decimal"},
+            "values": {"types": "list", "structure": "vector_decimal", "tags": "t/outdated"},
+            "RadiusMultiplier": {"types": "float", "tags": "t/outdated"}
         }
     }
 }

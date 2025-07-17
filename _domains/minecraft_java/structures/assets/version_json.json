@@ -1,6 +1,7 @@
 {
     "group_aliases": {
         "temp": "structures/misc/template",
+        "t": "structure_tags",
         "s": "serializers"
     },
     "base": {
@@ -31,8 +32,9 @@
             "name": {"types": "str", "delegate_arguments": {"always_print": true}},
             "world_version": {"types": "int"},
             "series_id": {"types": "str"},
+            "release_target": {"types": "str", "tags": "t/outdated"},
             "protocol_version": {"types": "int"},
-            "pack_version": {"types": "dict", "structure": "pack_version"},
+            "pack_version": {"types": ["int", "dict"], "structure": "pack_version"},
             "build_time": {"types": "str"},
             "java_component": {"types": "str"},
             "java_version": {"types": "int"},
@@ -41,14 +43,17 @@
         }
     },
     "pack_version": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order",
-            "field": "version"
-        },
-        "keys": {
-            "resource": {"types": "int"},
-            "data": {"types": "int"}
+        "type": "Union",
+        "substructures": {
+            "int": null, // outdated
+            "dict": {
+                "inherit": "temp/SortedKeymap",
+                "$keymap_field": "version",
+                "keys": {
+                    "resource": {"types": "int"},
+                    "data": {"types": "int"}
+                }
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
         "conditions": "structures/data/advancements/conditions",
         "misc": "structures/misc/misc",
         "np": "structures/misc/provider/number_provider",
+        "t": "structure_tags",
         "temp": "structures/misc/template"
     },
     "predicate": {
@@ -16,18 +17,25 @@
         },
         "substructures": {
             "minecraft:all_of": {"types": "dict", "structure": "predicate.metapredicate"},
+            "minecraft:alternative": {"types": "dict", "structure": "predicate.metapredicate"},
             "minecraft:any_of": {"types": "dict", "structure": "predicate.metapredicate"},
             "minecraft:block_state_property": {"types": "dict", "structure": "predicate.block_state_property"},
             "minecraft:damage_source_properties": {"types": "dict", "structure": "predicate.damage_source_properties"},
             "minecraft:enchantment_active_check": {"types": "dict", "structure": "predicate.enchantment_active_check"},
+            "minecraft:entity_present": {"types": "dict", "structure": "predicate.entity_present", "tags": "t/outdated"},
+                      "entity_properties": {"types": "dict", "structure": "predicate.entity_properties", "tags": "t/outdated"},
             "minecraft:entity_properties": {"types": "dict", "structure": "predicate.entity_properties"},
             "minecraft:entity_scores": {"types": "dict", "structure": "predicate.entity_scores"},
             "minecraft:inverted": {"types": "dict", "structure": "predicate.inverted"},
+                      "killed_by_player": {"types": "dict", "structure": "predicate.killed_by_player", "tags": "t/outdated"},
             "minecraft:killed_by_player": {"types": "dict", "structure": "predicate.killed_by_player"},
             "minecraft:location_check": {"types": "dict", "structure": "predicate.location_check"},
             "minecraft:match_tool": {"types": "dict", "structure": "predicate.match_tool"},
+                      "random_chance": {"types": "dict", "structure": "predicate.random_chance", "tags": "t/outdated"},
             "minecraft:random_chance": {"types": "dict", "structure": "predicate.random_chance"},
             "minecraft:random_chance_with_enchanted_bonus": {"types": "dict", "structure": "predicate.random_chance_with_enchanted_bonus"},
+                      "random_chance_with_looting": {"types": "dict", "structure": "predicate.random_chance_with_looting", "tags": "t/outdated"},
+            "minecraft:random_chance_with_looting": {"types": "dict", "structure": "predicate.random_chance_with_looting", "tags": "t/outdated"},
             "minecraft:reference": {"types": "dict", "structure": "predicate.reference"},
             "minecraft:survives_explosion": {"types": "dict", "structure": "predicate.survives_explosion"},
             "minecraft:table_bonus": {"types": "dict", "structure": "predicate.table_bonus"},
@@ -77,12 +85,26 @@
             "active": {"types": "bool"}
         }
     },
+    "predicate.entity_present": {
+        "inherit" :"temp/SortedKeymap",
+        "imports": ["common.all"],
+        "keys": {
+            "entity": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
     "predicate.entity_properties": {
         "inherit": "temp/SortedKeymap",
         "imports": ["common.all"],
         "keys": {
+            "properties": {"types": "dict", "structure": "predicate.entity_properties:properties", "tags": "t/outdated"},
             "entity": {"types": "str", "delegate_arguments": {"always_print": true}},
             "predicate": {"types": "dict", "structure": "conditions/condition.entity"}
+        }
+    },
+    "predicate.entity_properties:properties": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "on_fire": {"types": "bool"}
         }
     },
     "predicate.entity_scores": {
@@ -133,8 +155,17 @@
         "imports": ["common.all"],
         "keys": {
             "unenchanted_chance": {"types": "float"},
+            "chance": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}", "tags": "t/outdated"},
             "enchanted_chance": {"types": ["float", "dict"], "structure": "#!np/number_provider{types='float'}"},
             "enchantment": {"types": "str"}
+        }
+    },
+    "predicate.random_chance_with_looting": {
+        "inherit": "temp/SortedKeymap",
+        "imports": ["common.all"],
+        "keys": {
+            "chance": {"types": "float"},
+            "looting_multiplier": {"types": "float"}
         }
     },
     "predicate.reference": {

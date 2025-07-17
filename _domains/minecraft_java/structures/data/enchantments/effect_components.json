@@ -10,6 +10,7 @@
         "float_provider": "structures/misc/provider/float_provider",
         "block_predicate": "structures/misc/block_predicate",
         "bs": "structures/misc/block_state",
+        "t": "structure_tags",
         "vector": "structures/misc/vector"
     },
     "level_based_value_type": {
@@ -52,7 +53,7 @@
             "minecraft:tick": {"types": "list", "structure": "#!component_list{structure=@component.entity_effect}"},
             "minecraft:trident_return_acceleration": {"types": "list", "structure": "#!component_list{structure=@component.value_effect}"},
             "minecraft:trident_sound": {"types": "list", "structure": "component.trident_sound"},
-            "minecraft:trident_spin_attack_strength": {"types": "dict", "structure": "effect.value"}
+            "minecraft:trident_spin_attack_strength": {"types": ["dict", "list"], "structure": "value_effect_list_or_value_effect"}
         }
     },
     "component_list": {
@@ -124,6 +125,13 @@
             "enchanted": {"types": "str"}
         }
     },
+    "value_effect_list_or_value_effect": {
+        "type": "Union",
+        "substructures": {
+            "list": "value_effect_list",
+            "dict": "effect.value"
+        }
+    },
     "value_effect_list": {
         "inherit": "temp/Set",
         "$field": "value effect",
@@ -193,7 +201,9 @@
             "attribute": {"types": "str"},
             "amount": {"types": "level_based_value_type", "structure": "level_based_value"},
             "operation": {"types": "str"},
-            "id": {"types": "str"}
+            "name": {"types": "str", "tags": "t/outdated"},
+            "id": {"types": "str"},
+            "uuid": {"types": "str", "tags": "t/outdated"}
         }
     },
     "location_effect_list": { // technically only can refer to location if the above is also a location
@@ -214,11 +224,13 @@
             "minecraft:all_of": {"types": "dict", "structure": "effect.entity.all_of"},
             "minecraft:apply_mob_effect": {"types": "dict", "structure": "effect.entity.apply_mob_effect"},
             "minecraft:damage_entity": {"types": "dict", "structure": "effect.entity.damage_entity"},
+            "minecraft:damage_item": {"types": "dict", "structure": "effect.entity.change_item_damage", "tags": "t/outdated"},
             "minecraft:change_item_damage": {"types": "dict", "structure": "effect.entity.change_item_damage"},
             "minecraft:explode": {"types": "dict", "structure": "effect.entity.explode"},
             "minecraft:ignite": {"types": "dict", "structure": "effect.entity.ignite"},
             "minecraft:play_sound": {"types": "dict", "structure": "effect.entity.play_sound"},
             "minecraft:replace_block": {"types": "dict", "structure": "effect.entity.replace_block"},
+            "minecraft:replace_disc": {"types": "dict", "structure": "effect.entity.replace_disk", "tags": "t/outdated"},
             "minecraft:replace_disk": {"types": "dict", "structure": "effect.entity.replace_disk"},
             "minecraft:run_function": {"types": "dict", "structure": "effect.entity.run_function"},
             "minecraft:set_block_properties": {"types": "dict", "structure": "effect.entity.set_block_properties"},
@@ -333,7 +345,7 @@
         "imports": "effect.entity:all",
         "keys": {
             "offset": {"types": "list", "structure": "vector/vector.int"},
-            "proprties": {"types": "a/compound", "structure": "bs/properties"},
+            "properties": {"types": "a/compound", "structure": "bs/properties"},
             "trigger_game_event": {"types": "str"}
         }
     },
@@ -417,7 +429,9 @@
             "attribute": {"types": "str"},
             "amount": {"types": "level_based_value_type", "structure": "level_based_value"},
             "operation": {"types": "str"},
-            "id": {"types": "str"}
+            "name": {"types": "str", "tags": "t/outdated"},
+            "id": {"types": "str"},
+            "uuid": {"types": "str", "tags": "t/outdated"}
         }
     },
     "level_based_value": {

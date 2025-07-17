@@ -50,15 +50,15 @@ class ManifestSerializer(Serializer):
             output[key] = value
         return output
 
-    def deserialize(self, data: bytes) -> dict[str,Any]:
+    def deserialize(self, data: bytes) -> dict[str,dict[str,str]]:
         lines = data.decode("UTF8").splitlines()
         line_reader = LineReader(lines)
         header_clump:dict[str,Any] = self.parse_clump(line_reader)
         assert "files" not in header_clump
-        files:dict[str,str] = {}
+        files:dict[str,dict[str,str]] = {}
         while line_reader:
             clump = self.parse_clump(line_reader)
-            assert clump.keys() == {"Name", "SHA-384-Digest"}
-            files[clump["Name"]] = clump["SHA-384-Digest"]
+            name = clump.pop("Name")
+            files[name] = clump
         header_clump["files"] = files
         return header_clump

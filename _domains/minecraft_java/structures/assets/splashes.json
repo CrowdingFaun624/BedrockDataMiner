@@ -1,7 +1,8 @@
 {
     "group_aliases": {
         "misc": "structures/misc/misc",
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/misc/template"
     },
     "base": {
         "type": "StructureBase",
@@ -25,24 +26,25 @@
         "this_types": "list",
         "pre_normalized_types": "file",
         "structure": {
-            "type": "File",
-            "serializer": "s/lines_serializer",
-            "file_types": "file",
-            "content_types": "list",
-            "structure": "splashes"
+            "type": "Condition",
+            "pre_normalized_types": "file",
+            "substructures": [
+                {"types": "list", "structure": "#!file{serializer=@s/cp1252_lines_serializer}", "filter": {"type": "EqFilter", "key": "repair_aaa", "value": true}},
+                {"types": "list", "structure": "#!file{serializer=@s/lines_serializer}", "filter": {"type": "EqFilter", "key": "repair_aaa", "value": false, "default": true}}
+            ]
         }
     },
+    "file": {
+        "type": "File",
+        "serializer": "#serializer",
+        "file_types": "file",
+        "content_types": "list",
+        "structure": "splashes"
+    },
     "splashes": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
+        "inherit": "temp/Set",
+        "$field": "splash",
         "value_types": "str",
-        "delegate_arguments": {
-            "field": "splash",
-            "show_item_key": false,
-            "measure_length": true
-        },
         "value_structure": "misc/string"
     }
 }

@@ -1,6 +1,8 @@
 {
     "group_aliases": {
         "a": "structures/misc/types",
+        "item_old": "structures/misc/item_old",
+        "t": "structure_tags",
         "temp": "structures/misc/template",
         "vector": "structures/misc/vector"
     },
@@ -88,6 +90,8 @@
     "banner_pattern": {
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
+            "Color": {"types": "a/int", "tags": "t/outdated", "delegate_arguments": {"always_print": true}},
+            "Pattern": {"types": "a/string", "tags": "t/outdated", "delegate_arguments": {"always_print": true}},
             "color": {"types": "a/string", "delegate_arguments": {"always_print": true}},
             "pattern": {"types": ["a/string", "a/compound"], "structure": "banner_pattern_definition_or_id", "delegate_arguments": {"always_print": true}}
         }
@@ -353,8 +357,11 @@
         "inherit": "temp/SortedKeymap.nbt",
         "keys": {
             "id": {"types": "a/string", "structure": "string.nbt", "delegate_arguments": {"always_print": true}},
+            "Count": {"types": "a/byte", "tags": "t/outdated"},
             "count": {"types": "a/int"},
-            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+            "Damage": {"types": "a/short", "tags": "t/outdated"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
+            "tag": {"types": "a/compound", "structure": "item_old/tag"}
         }
     },
     "item_data_slotless_list": {
@@ -368,8 +375,11 @@
         "keys": {
             "Slot": {"types": "a/byte"},
             "id": {"types": "a/string", "structure": "string.nbt", "delegate_arguments": {"always_print": true}},
+            "Count": {"types": "a/byte", "tags": "t/outdated"},
             "count": {"types": "a/int"},
-            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"}
+            "Damage": {"types": "a/short", "tags": "t/outdated"},
+            "components": {"types": "a/compound", "structure": "structures/misc/data_components/data_components"},
+            "tag": {"types": "a/compound", "structure": "item_old/tag"}
         }
     },
     "item_type": {
@@ -445,21 +455,43 @@
             "a/compound": {
                 "inherit": "temp/SortedKeymap.nbt",
                 "keys": {
+                    "Name": {"types": "a/string", "structure": "string.nbt", "delegate_arguments": {"always_print": true}, "tags": "t/outdated"},
                     "name": {"types": "a/string", "structure": "string.nbt", "delegate_arguments": {"always_print": true}},
+                    "Id": {"types": "a/int_array", "structure": "uuid_list.nbt", "tags": "t/outdated"},
                     "id": {"types": "a/int_array", "structure": "uuid_list.nbt"},
+                    "Properties": {"types": "a/compound", "structure": "profile.properties.old"},
                     "properties": {"types": "a/list", "structure": "profile.properties"}
                 }
             }
         }
     },
+    "profile.properties.old": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "textures": {"types": "a/list", "structure": "profile.properties.old.textures"}
+        }
+    },
     "profile.properties": {
         "inherit": "temp/Set.nbt",
         "$field": "property",
-        "value_types": "dict",
+        "value_types": "a/compound",
         "value_structure": "profile.properties.item"
     },
+    "profile.properties.old.textures": {
+        "inherit": "temp/Set.nbt",
+        "$field": "texture",
+        "value_types": "a/compound",
+        "value_structure": "profile.properties.old.texture"
+    },
+    "profile.properties.old.texture": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "Value": {"types": "a/string"}, // todo: do base64 processing
+            "Signature": {"types": "a/string"}
+        }
+    },
     "profile.properties.item": {
-        "inherit": "temp/SortedKeymap",
+        "inherit": "temp/SortedKeymap.nbt",
         "keys": {
             "name": {"types": "a/string", "delegate_arguments": {"always_print": true}},
             "value": {"types": "a/string", "delegate_arguments": {"always_print": true}},
@@ -473,11 +505,26 @@
             "min": {"types": "decimal"}
         }
     },
+    "range_decimal.nbt": {
+        "inherit": "temp/SortedKeymap.nbt",
+        "keys": {
+            "max": {"types": ["a/int", "a/float"]},
+            "min": {"types": ["a/int", "a/float"]}
+        }
+    },
     "range_decimal_or_decimal": {
         "type": "Union",
         "substructures": {
             "decimal": null,
             "dict": "range_decimal"
+        }
+    },
+    "range_decimal_or_decimal.nbt": {
+        "type": "Union",
+        "substructures": {
+            "a/int": null,
+            "a/float": null,
+            "a/compound": "range_decimal.nbt"
         }
     },
     "range_int": {
@@ -538,7 +585,9 @@
         }
     },
     "string": {
-        "type": "String"
+        "type": "String",
+        "$limit": 10000,
+        "max_square_length": "#limit"
     },
     "string.nbt": {
         "type": "String",

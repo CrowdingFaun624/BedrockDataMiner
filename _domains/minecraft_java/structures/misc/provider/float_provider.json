@@ -1,6 +1,7 @@
 {
     "group_aliases": {
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "temp": "structures/misc/template"
     },
     "float_provider": {
@@ -21,16 +22,46 @@
         }
     },
     "float_provider:all": {
-        "inherit": "temp/SortedKeymap",
+        "type": "Keymap",
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}}
         }
     },
-    "float_provider:clamped": {
+    "float_provider:value": {
+        "type": "Keymap",
+        "keys": {
+            "value": {"types": "dict", "structure": "#!value{imports=imports}"}
+        }
+    },
+    "value": {
         "inherit": "temp/SortedKeymap",
+        "imports": "#imports"
+    },
+    "float_provider:clamped": {
+        "type": "Keymap",
         "keys": {
             "min": {"types": "float"},
             "max": {"types": "float"}
+        }
+    },
+    "float_provider:clamped_range": {
+        "type": "Keymap",
+        "keys": {
+            "min_inclusive": {"types": "float"},
+            "max_exclusive": {"types": "float"}
+        }
+    },
+    "float_provider:normal": {
+        "type": "Keymap",
+        "keys": {
+            "mean": {"types": "misc/decimal"},
+            "deviation": {"types": "misc/decimal"}
+        }
+    },
+    "float_provider:plateau": {
+        "type": "Keymap",
+        "keys": {
+            "plateau": {"types": "float"}
         }
     },
     "float_provider.constant": {
@@ -42,25 +73,14 @@
     },
     "float_provider.uniform": {
         "inherit": "temp/SortedKeymap",
-        "imports": ["float_provider:all"],
-        "keys": {
-            "min_inclusive": {"types": "float"},
-            "max_exclusive": {"types": "float"}
-        }
+        "imports": ["float_provider:all", "float_provider:clamped_range", "#!float_provider:value{imports=@float_provider:clamped_range}"]
     },
     "float_provider.clamped_normal": {
         "inherit": "temp/SortedKeymap",
-        "imports": ["float_provider:all", "float_provider:clamped"],
-        "keys": {
-            "mean": {"types": "misc/decimal"},
-            "deviation": {"types": "misc/decimal"}
-        }
+        "imports": ["float_provider:all", "float_provider:clamped", "float_provider:normal", "#!float_provider:value{imports=[@float_provider:clamped, @float_provider:normal]}"]
     },
     "float_provider.trapezoid": {
         "inherit": "temp/SortedKeymap",
-        "imports": ["float_provider:all", "float_provider:clamped"],
-        "keys": {
-            "plateau": {"types": "float"}
-        }
+        "imports": ["float_provider:all", "float_provider:clamped", "float_provider:plateau", "#!float_provider:value{imports=[@float_provider:clamped, @float_provider:plateau]}"]
     }
 }

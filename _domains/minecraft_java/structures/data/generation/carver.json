@@ -5,6 +5,7 @@
         "fp": "structures/misc/provider/float_provider",
         "hp": "structures/misc/provider/height_provider",
         "misc": "structures/misc/misc",
+        "t": "structure_tags",
         "temp": "structures/misc/template"
     },
     "base": {
@@ -37,12 +38,14 @@
     "carver": {
         "type": "Switch",
         "switch_function": {
-            "function_name": "get_key",
+            "function_name": "get_get_key",
             "arguments": {
-                "key": "type"
+                "key": "type",
+                "default": "old"
             }
         },
         "substructures": {
+            "old": {"types": "dict", "structure": "old_carver", "tags": "t/outdated"},
             "minecraft:cave": {"types": "dict", "structure": "#!carver:abstract{imports=[@config.cave]}"},
             "minecraft:nether_cave": {"types": "dict", "structure": "#!carver:abstract{imports=[@config.cave]}"},
             "minecraft:canyon": {"types": "dict", "structure": "#!carver:abstract{imports=[@config.canyon]}"}
@@ -102,6 +105,12 @@
             "vertical_radius_default_factor": {"types": "float"},
             "vertical_radius_center_factor": {"types": "float"},
             "width_smoothness": {"types": "int"}
+        }
+    },
+    "old_carver": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "air": {"types": ["str", "list"], "structure": "#!misc/named_list_or_item{name='carver'}"}
         }
     }
 }
