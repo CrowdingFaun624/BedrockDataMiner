@@ -141,24 +141,30 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                         if keys_identical:
                             cumulative_items[cumulative_index][0][-1][0].append(branch)
                         else:
-                            any_changes = True
+                            if self.get_key_weight(key, value, trace, environment) > 0 or any(self.get_key_weight(previous_key, previous_value, trace, environment) > 0 for (_, previous_key), (_, previous_value) in zip(*cumulative_items[cumulative_index])):
+                                any_changes = True
                             cumulative_items[cumulative_index][0].append(([branch], key))
                         if values_identical:
                             cumulative_items[cumulative_index][1][-1][0].append(branch)
                         else:
-                            any_changes = True
+                            if self.get_value_weight(key, value, trace, environment) > 0 or any(self.get_value_weight(previous_key, previous_value, trace, environment) > 0 for (_, previous_key), (_, previous_value) in zip(*cumulative_items[cumulative_index])):
+                                any_changes = True
                             cumulative_items[cumulative_index][1].append(([branch], value))
                     any_changes = any_changes or len(unassigned_indices) > 0
                     cumulative_mapping.update((key, (index, branch)) for index, (key, _) in enumerate(unassigned_indices.values(), len(cumulative_items)))
                     cumulative_items.extend(([([branch], key)], [([branch], value)]) for key, value in unassigned_indices.values())
-                else: # branch == 0
-                    cumulative_items.extend(([([0], key)], [([branch], value)]) for key, value in data.items())
+                else: # first branch
+                    cumulative_items.extend(([([branch], key)], [([branch], value)]) for key, value in data.items())
                     cumulative_mapping.update((key, (index, 0)) for index, key in enumerate(data.keys()))
                     current_length = len(cumulative_items)
                 previous_length = current_length
             del similarities
-            assembled_output, any_internal_changes = self.assemble_output(cumulative_items, trace, environment)
-            return idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_internal_changes
+            assembled_output = self.assemble_output(cumulative_items, trace, environment)
+            return idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_changes
+            # we use `any_changes` in the third tuple item instead of `any_internal_changes` because it describes
+            # "if the combined data is or contains any Diffs with a `length` greater than 1." (from Structure.compare).
+            # If no items of the output are a have a sub-Diff with a `length` greater than 1, then `any_internal_changes`
+            # will remain False, but there will be Diffs in the output with `length` greater than 1.
         return ..., False, False
 
     def get_similarity(self, data1: ICon[Con[K], Con[V], D], data2: ICon[Con[K], Con[V], D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, float]:
@@ -189,7 +195,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                             perfect_matches.add(index1)
                 for generator in generators_to_remove:
                     del active_generators[generator]
-            del perfect_matches
+            del perfect_matches; del generators_to_remove; del active_generators
 
             similarities.sort(key=(lambda item: (3 - item[3] * 2 - item[4], 1 - item[0], item[2])) if self.allow_same_key_optimization else (lambda item: (1 - item[0], 3 - item[3] * 2 - item[4], item[2])))
             used_indices1:set[int] = set()

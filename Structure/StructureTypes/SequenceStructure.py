@@ -123,8 +123,8 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
                     any_changes = any_changes or has_changes
                 else:
                     cumulative_items.extend(([([branch2], key)], [([branch2], value)]) for key, value in data2.items())
-            assembled_output, any_internal_changes = self.assemble_output(cumulative_items, trace, environment)
-            return idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_internal_changes
+            assembled_output = self.assemble_output(cumulative_items, trace, environment)
+            return idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_changes
         return ..., False, False
 
     def get_similarity(self, data1: ICon[Con[K], Con[V], D], data2: ICon[Con[K], Con[V], D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
@@ -137,7 +137,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
             if (len(data1_list) - prefix_len - suffix_len) * (len(data2_list) - prefix_len - suffix_len) > self.max_square_length:
                 raise SequenceTooLongError(self, len(data1_list), len(data2_list))
             distances, path = self.get_distances(data1_list, data2_list, branch2, prefix_len, suffix_len, trace, environment)
-            levenshtein_distance:float = distances[len(data2_list) - prefix_len - suffix_len, len(data1_list) - prefix_len - suffix_len]
+            levenshtein_distance = float(distances[len(data2_list) - prefix_len - suffix_len, len(data1_list) - prefix_len - suffix_len])
             max_length = max(len(data1_list), len(data2_list))
             output = (1 - (levenshtein_distance / max_length), self.path_implies_identicalness(len(data1_list), len(data2_list), prefix_len, suffix_len, path))
             return self.similarity_cache.set(output, data1, data2, structure_info1, structure_info2)
@@ -193,7 +193,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         key2, value2 = data2[y + prefix_len]
         key_similarity, keys_identical = self.get_key_similarity(key1, key2, value1, value2, key_branch1, branch2, trace, environment)
         value_similarity, values_identical = self.get_value_similarity(key1, key2, value1, value2, value_branch1, branch2, trace, environment)
-        substitution_cost = self.substitution_cost * (1 - (key_similarity * self.key_weight + value_similarity * self.value_weight) / (self.key_weight + self.value_weight))
+        substitution_cost = distances[y, x] + self.substitution_cost * (1 - (key_similarity * self.key_weight + value_similarity * self.value_weight) / (self.key_weight + self.value_weight))
         if keys_identical and values_identical:
             return substitution_cost, DIAGONAL_NO_CHANGE
         elif substitution_cost < addition_cost and substitution_cost < deletion_cost:
@@ -238,6 +238,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
                 item[1][-1][0].append(branch2) # add value branch
                 # data2[y] is forgotten because the key and value are equal to the key and value in item.
             elif path_item == DIAGONAL_SUBSTITUTION_KEY:
+                any_changes = True
                 x -= 1; y -= 1
                 item = cumulative_items[prefix_len + x]
                 output.append(item)
@@ -245,6 +246,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
                 item[1][-1][0].append(branch2) # add value branch
                 # data2[y][1] is forgotten because the value is equal to the value in item.
             elif path_item == DIAGONAL_SUBSTITUTION_VALUE:
+                any_changes = True
                 x -= 1; y -= 1
                 item = cumulative_items[prefix_len + x]
                 output.append(item)
@@ -291,7 +293,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         '''
         initial_x = data1_length - prefix_len - suffix_len
         initial_y = data2_length - prefix_len - suffix_len
-        return data1_length == data2_length and all(path[initial_y - pos, initial_x - pos] == DIAGONAL_NO_CHANGE for pos in range(path.shape[0]))
+        return data1_length == data2_length and all(path[initial_y - pos, initial_x - pos] == DIAGONAL_NO_CHANGE or pos == data1_length - prefix_len - suffix_len for pos in range(path.shape[0]))
 
     def render_full_path(self, path:"numpy.ndarray[tuple[int, int], numpy.dtype[numpy.int8]]") -> None:
         '''

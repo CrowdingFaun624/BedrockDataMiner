@@ -234,6 +234,8 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                 with trace.enter_key(key, value), data_path.append(key.data):
                     key_structure = self.get_key_structure(key.data, value.data, trace, environment)
                     value_structure = self.get_value_structure(key.data, value.data, trace, environment)
+                    if (value_tags := self.get_value_tags(key.data, value.data, trace, environment)) is not None and tag in value_tags:
+                        output.append(data_path.copy(...).embed(value.data))
                     if key_structure is not None:
                         output.extend(key_structure.get_tag_paths(key, tag, data_path, trace, environment))
                     if value_structure is not None:
@@ -246,7 +248,8 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         for value_type in value_types:
             if isinstance(value.data, value_type):
                 return TypeUse(value_type, Region.value_types, NonEmptyUse(self, None, StructureUse(self, None, parent_use)), usage_tracker)
-        else: raise StructureTypeError(value_types, type(key.data), "Value")
+        else:
+            raise StructureTypeError(value_types, type(key.data), "Value")
 
     def always_empty(self) -> bool: # gives empty KeymapStructure the ability to refuse a NonEmptyUse being unused.
         return False
@@ -266,7 +269,8 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                 if isinstance(data.data, this_type):
                     output.add(TypeUse(this_type, Region.this_types, non_empty_use, usage_tracker))
                     break
-            else: raise StructureTypeError(self.this_types, type(data.data), "Data")
+            else:
+                raise StructureTypeError(self.this_types, type(data.data), "Data")
             for key, value in data.items():
                 current_length += 1
                 with trace.enter_key(key, value):
@@ -274,7 +278,8 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                         if isinstance(key.data, key_type):
                             output.add(TypeUse(key_type, Region.key_types, non_empty_use, usage_tracker))
                             break
-                    else: raise StructureTypeError(self.key_types, type(key.data), "Key")
+                    else:
+                        raise StructureTypeError(self.key_types, type(key.data), "Key")
                     output.add(self.get_value_type_use(key, value, usage_tracker, parent_use, trace, environment))
                     key_structure = self.get_key_structure(key.data, value.data, trace, environment)
                     if key_structure is not None:
@@ -344,17 +349,15 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         cumulative_items:list[tuple[list[tuple[list[int], Con[K]]], list[tuple[list[int], Con[V]]]]],
         trace:Trace,
         environment:ComparisonEnvironment,
-    ) -> tuple[list[tuple[Diff[Don[K]], Diff[Don[V]]]], bool]:
+    ) -> list[tuple[Diff[Don[K]], Diff[Don[V]]]]:
         output:list[tuple[Diff[Don[K]], Diff[Don[V]]]] = []
-        internal_changes = False
         for key_diff, value_diff in cumulative_items:
             simple_key_map = {branch: key for bundle, key in key_diff for branch in bundle}
             simple_value_map = {branch: value for bundle, value in value_diff for branch in bundle}
-            key, key_internal_changes = self.get_item_diff(key_diff, lambda key, branch: self.get_key_structure_chain_end(key, simple_value_map[branch], trace, environment[branch]), trace, environment)
-            value, value_internal_changes = self.get_item_diff(value_diff, lambda value, branch: self.get_value_structure_chain_end(simple_key_map[branch], value, trace, environment[branch]), trace, environment)
-            internal_changes = internal_changes or value_internal_changes or key_internal_changes
+            key = self.get_item_diff(key_diff, lambda key, branch: self.get_key_structure(key.data, simple_value_map[branch].data, trace, environment[branch]), trace, environment)
+            value = self.get_item_diff(value_diff, lambda value, branch: self.get_value_structure(simple_key_map[branch].data, value.data, trace, environment[branch]), trace, environment)
             output.append((key, value))
-        return output, internal_changes
+        return output
 
     def get_item_diff[A](
         self,
@@ -362,7 +365,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         structure_function:Callable[[Con[A], int],Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None],
         trace:Trace,
         environment:ComparisonEnvironment,
-    ) -> tuple[Diff[Don[A]], bool]: # Diff and if the Diff has any internal changes.
+    ) -> Diff[Don[A]]: # Diff and if the Diff has any internal changes.
         structure_bundles:list[tuple[Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None, list[tuple[tuple[int,...], Con[A]]]]] = []
         for bundle, item in item_diff:
             previous_structure, previous_bundles = structure_bundles[-1] if len(structure_bundles) != 0 else (..., [])
@@ -394,4 +397,4 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                     # if comparison_output is an IDon, then any change becomes an internal change.
                     internal_changes = internal_changes or any_changes
                     advanced_diff[tuple(branch for bundle, _ in bundles for branch in bundle)] = comparison_output
-        return Diff(advanced_diff, internal_changes), internal_changes
+        return Diff(advanced_diff, internal_changes)

@@ -52,7 +52,12 @@ class ICon[K:Hashable, V, D](Con[D]):
         return self._items.values()
 
     def as_don(self, bundle:tuple[int,...]) -> "IDon[K, V, D, K, V]":
-        return IDon({branch: self for branch in bundle}, self._items, self.hash)
+        hashable_stuff:list[Hashable] = []
+        for key, value in self.items(): # hash must be the same as when created by idon_with_list
+            hashable_stuff.append(key)
+            hashable_stuff.append(value)
+        items_hash = hash(tuple(hashable_stuff))
+        return IDon({branch: self for branch in bundle}, self._items, items_hash)
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self._items}>"
