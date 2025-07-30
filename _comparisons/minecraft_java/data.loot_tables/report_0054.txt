@@ -1,26 +1,96 @@
-Difference of "loot_tables" between "1.14-pre1" (pre-release of "1.14") and "1.14-pre2" (pre-release of "1.14").
+Difference of "loot_tables" between "19w40a" (snapshot of "1.15") and "19w41a" (snapshot of "1.15").
 
 Changed data pack "minecraft":
-	Changed file "blocks/tall_seagrass.json":
-		Changed field "pools":
-			Total pool: 1 (+1, -1)
-			Added pool 0:
+	Total file: 756 (+3, -1)
+	Removed file "blocks/bee_hive.json":
+		field "type": "minecraft:block"
+		field "pools":
+			pool 0:
 				field "rolls": 1
 				field "entries":
 					entry 0:
-						field "type": "minecraft:item"
-						field "name": "minecraft:seagrass"
-				field "conditions":
-					predicate 0:
-						field "condition": "minecraft:match_tool"
-						field "predicate": field "item": "minecraft:shears"
-			Removed pool 0:
+						field "type": "minecraft:alternatives"
+						field "children":
+							entry 0:
+								field "name": "minecraft:bee_hive"
+								field "type": "minecraft:item"
+								field "conditions":
+									predicate 0:
+										field "predicate":
+											field "enchantments":
+												enchantment:
+													field "enchantment": "minecraft:silk_touch"
+													field "levels": field "min": 1
+										field "condition": "minecraft:match_tool"
+								field "functions":
+									item modifier 0:
+										field "source": "block_entity"
+										field "ops":
+											copy operation 0:
+												field "source": "Bees"
+												field "target": "BlockEntityTag.Bees"
+												field "op": "replace"
+										field "function": "minecraft:copy_nbt"
+									item modifier 1:
+										field "block": "minecraft:bee_hive"
+										field "properties": property "honey_level"
+										field "function": "minecraft:copy_state"
+							entry 1:
+								field "name": "minecraft:bee_hive"
+								field "type": "minecraft:item"
+	Added file "blocks/beehive.json":
+		field "type": "minecraft:block"
+		field "pools":
+			pool 0:
 				field "rolls": 1
 				field "entries":
 					entry 0:
+						field "type": "minecraft:alternatives"
+						field "children":
+							entry 0:
+								field "name": "minecraft:beehive"
+								field "type": "minecraft:item"
+								field "conditions":
+									predicate 0:
+										field "predicate":
+											field "enchantments":
+												enchantment:
+													field "enchantment": "minecraft:silk_touch"
+													field "levels": field "min": 1
+										field "condition": "minecraft:match_tool"
+								field "functions":
+									item modifier 0:
+										field "source": "block_entity"
+										field "ops":
+											copy operation 0:
+												field "source": "Bees"
+												field "target": "BlockEntityTag.Bees"
+												field "op": "replace"
+										field "function": "minecraft:copy_nbt"
+									item modifier 1:
+										field "block": "minecraft:beehive"
+										field "properties": property "honey_level"
+										field "function": "minecraft:copy_state"
+							entry 1:
+								field "name": "minecraft:beehive"
+								field "type": "minecraft:item"
+	Added file "blocks/honey_block.json":
+		field "type": "minecraft:block"
+		field "pools":
+			pool 0:
+				field "conditions": predicate 0: field "condition": "minecraft:survives_explosion"
+				field "rolls": 1
+				field "entries":
+					entry 0:
+						field "name": "minecraft:honey_block"
 						field "type": "minecraft:item"
-						field "name": "minecraft:air"
-				field "conditions":
-					predicate 0:
-						field "condition": "minecraft:match_tool"
-						field "predicate": field "item": "minecraft:shears"
+	Added file "blocks/honeycomb_block.json":
+		field "type": "minecraft:block"
+		field "pools":
+			pool 0:
+				field "conditions": predicate 0: field "condition": "minecraft:survives_explosion"
+				field "rolls": 1
+				field "entries":
+					entry 0:
+						field "name": "minecraft:honeycomb_block"
+						field "type": "minecraft:item"

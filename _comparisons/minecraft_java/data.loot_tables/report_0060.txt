@@ -1,101 +1,102 @@
-Difference of "loot_tables" between "19w40a" (snapshot of "1.15") and "19w41a" (snapshot of "1.15").
+Difference of "loot_tables" between "20w11a" (snapshot of "1.16-231620") and "20w12a" (snapshot of "1.16-231620").
 
 Changed data pack "minecraft":
-	Total file: 756 (+3, -1)
-	Removed file "blocks/bee_hive.json":
-		field "type": "minecraft:block"
-		field "pools":
-			pool 0:
+	Total file: 817 (+2, -0)
+	Changed file "blocks/nether_gold_ore.json":
+		Unchanged field "type": "minecraft:block".
+		Changed field "pools":
+			Total pool: 1 (+1, -1)
+			Added pool 0:
 				field "rolls": 1
 				field "entries":
 					entry 0:
 						field "type": "minecraft:alternatives"
 						field "children":
 							entry 0:
+								field "name": "minecraft:nether_gold_ore"
 								field "type": "minecraft:item"
 								field "conditions":
 									predicate 0:
-										field "condition": "minecraft:match_tool"
 										field "predicate":
 											field "enchantments":
 												enchantment:
 													field "enchantment": "minecraft:silk_touch"
 													field "levels": field "min": 1
+										field "condition": "minecraft:match_tool"
+							entry 1:
+								field "name": "minecraft:gold_nugget"
+								field "type": "minecraft:item"
 								field "functions":
 									item modifier 0:
-										field "function": "minecraft:copy_nbt"
-										field "source": "block_entity"
-										field "ops":
-											copy operation 0:
-												field "source": "Bees"
-												field "target": "BlockEntityTag.Bees"
-												field "op": "replace"
+										field "count":
+											field "min": 2.0
+											field "max": 6.0
+											field "type": "minecraft:uniform"
+										field "function": "minecraft:set_count"
 									item modifier 1:
-										field "function": "minecraft:copy_state"
-										field "block": "minecraft:bee_hive"
-										field "properties": property "honey_level"
-								field "name": "minecraft:bee_hive"
-							entry 1:
-								field "type": "minecraft:item"
-								field "name": "minecraft:bee_hive"
-	Changed file "chests/shipwreck_supply.json":
+										field "enchantment": "minecraft:fortune"
+										field "formula": "minecraft:ore_drops"
+										field "function": "minecraft:apply_bonus"
+									item modifier 2: field "function": "minecraft:explosion_decay"
+			Removed pool 0:
+				field "conditions": predicate 0: field "condition": "minecraft:survives_explosion"
+				field "rolls": 1
+				field "entries":
+					entry 0:
+						field "name": "minecraft:nether_gold_ore"
+						field "type": "minecraft:item"
+	Changed file "blocks/player_head.json":
+		Unchanged field "type": "minecraft:block".
 		Changed field "pools":
 			Changed pool 0:
 				Changed field "entries":
-					Changed entry 5: empty.
-	Added file "blocks/beehive.json":
+					Changed entry 0:
+						Unchanged field "name": "minecraft:player_head".
+						Unchanged field "type": "minecraft:item".
+						Changed field "functions":
+							Changed item modifier 0:
+								Changed field "ops":
+									Changed copy operation 0:
+										Changed field "source" from "Owner" to "SkullOwner".
+										Unchanged field "target": "SkullOwner".
+										Unchanged field "op": "replace".
+	Changed file "gameplay/fishing.json":
+		Unchanged field "type": "minecraft:fishing".
+		Changed field "pools":
+			Changed pool 0:
+				Changed field "entries":
+					Changed entry 1:
+						Unchanged field "type": "minecraft:loot_table".
+						Added field "conditions":
+							predicate 0:
+								field "entity": "this"
+								field "predicate": field "fishing_hook": field "in_open_water": true
+								field "condition": "minecraft:entity_properties"
+	Changed file "gameplay/piglin_bartering.json":
+		Unchanged field "type": "minecraft:barter".
+		Changed field "pools":
+			Changed pool 0:
+				Changed field "entries":
+					Changed entry 1:
+						Changed field "name" from "minecraft:enchanted_book" to "minecraft:book".
+						Unchanged field "type": "minecraft:item".
+	Added file "blocks/polished_basalt.json":
 		field "type": "minecraft:block"
 		field "pools":
 			pool 0:
-				field "rolls": 1
-				field "entries":
-					entry 0:
-						field "type": "minecraft:alternatives"
-						field "children":
-							entry 0:
-								field "type": "minecraft:item"
-								field "conditions":
-									predicate 0:
-										field "condition": "minecraft:match_tool"
-										field "predicate":
-											field "enchantments":
-												enchantment:
-													field "enchantment": "minecraft:silk_touch"
-													field "levels": field "min": 1
-								field "functions":
-									item modifier 0:
-										field "function": "minecraft:copy_nbt"
-										field "source": "block_entity"
-										field "ops":
-											copy operation 0:
-												field "source": "Bees"
-												field "target": "BlockEntityTag.Bees"
-												field "op": "replace"
-									item modifier 1:
-										field "function": "minecraft:copy_state"
-										field "block": "minecraft:beehive"
-										field "properties": property "honey_level"
-								field "name": "minecraft:beehive"
-							entry 1:
-								field "type": "minecraft:item"
-								field "name": "minecraft:beehive"
-	Added file "blocks/honey_block.json":
-		field "type": "minecraft:block"
-		field "pools":
-			pool 0:
-				field "rolls": 1
-				field "entries":
-					entry 0:
-						field "type": "minecraft:item"
-						field "name": "minecraft:honey_block"
 				field "conditions": predicate 0: field "condition": "minecraft:survives_explosion"
-	Added file "blocks/honeycomb_block.json":
-		field "type": "minecraft:block"
-		field "pools":
-			pool 0:
 				field "rolls": 1
 				field "entries":
 					entry 0:
+						field "name": "minecraft:polished_basalt"
 						field "type": "minecraft:item"
-						field "name": "minecraft:honeycomb_block"
+	Added file "blocks/respawn_anchor.json":
+		field "type": "minecraft:block"
+		field "pools":
+			pool 0:
 				field "conditions": predicate 0: field "condition": "minecraft:survives_explosion"
+				field "rolls": 1
+				field "entries":
+					entry 0:
+						field "name": "minecraft:respawn_anchor"
+						field "type": "minecraft:item"

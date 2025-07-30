@@ -1,8 +1,69 @@
-Difference of "loot_tables" between "22w05a" (snapshot of "1.18.2") and "22w06a" (snapshot of "1.18.2").
+Difference of "loot_tables" between "1.20.2" and "23w40a" (snapshot of "1.20.3").
 
 Changed data pack "minecraft":
-	Changed file "chests/shipwreck_supply.json":
+	Changed file "blocks/decorated_pot.json":
+		Unchanged field "type": "minecraft:block".
 		Changed field "pools":
-			Changed pool 0:
-				Changed field "entries":
-					Changed entry 6: empty.
+			Total pool: 1 (+1, -1)
+			Added pool 0:
+				field "rolls": 1.0
+				field "bonus_rolls": 0.0
+				field "entries":
+					entry 0:
+						field "type": "minecraft:alternatives"
+						field "children":
+							entry 0:
+								field "name": "minecraft:sherds"
+								field "type": "minecraft:dynamic"
+								field "conditions":
+									predicate 0:
+										field "block": "minecraft:decorated_pot"
+										field "properties": state "cracked": "true"
+										field "condition": "minecraft:block_state_property"
+							entry 1:
+								field "name": "minecraft:decorated_pot"
+								field "type": "minecraft:item"
+								field "functions":
+									item modifier 0:
+										field "source": "block_entity"
+										field "ops":
+											copy operation 0:
+												field "source": "sherds"
+												field "target": "BlockEntityTag.sherds"
+												field "op": "replace"
+										field "function": "minecraft:copy_nbt"
+			Removed pool 0:
+				field "rolls": 1.0
+				field "bonus_rolls": 0.0
+				field "entries":
+					entry 0:
+						field "type": "minecraft:alternatives"
+						field "children":
+							entry 0:
+								field "name": "minecraft:sherds"
+								field "type": "minecraft:dynamic"
+								field "conditions":
+									predicate 0:
+										field "predicate": field "tag": "minecraft:breaks_decorated_pots"
+										field "condition": "minecraft:match_tool"
+									predicate 1:
+										field "term":
+											field "predicate":
+												field "enchantments":
+													enchantment:
+														field "enchantment": "minecraft:silk_touch"
+														field "levels": field "min": 1
+											field "condition": "minecraft:match_tool"
+										field "condition": "minecraft:inverted"
+							entry 1:
+								field "name": "minecraft:decorated_pot"
+								field "type": "minecraft:item"
+								field "functions":
+									item modifier 0:
+										field "source": "block_entity"
+										field "ops":
+											copy operation 0:
+												field "source": "sherds"
+												field "target": "BlockEntityTag.sherds"
+												field "op": "replace"
+										field "function": "minecraft:copy_nbt"

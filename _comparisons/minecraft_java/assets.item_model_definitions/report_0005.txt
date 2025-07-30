@@ -4,78 +4,80 @@ Changed resource pack "minecraft":
 	Changed file "crossbow.json":
 		Changed field "model" from:
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:select"
-				field "cases":
-					case:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/crossbow_arrow"
-						field "when": "arrow"
-					case:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/crossbow_firework"
-						field "when": "rocket"
-				field "fallback":
-					field "type": "minecraft:model"
-					field "model": "minecraft:item/crossbow"
-				field "property": "minecraft:charge_type"
+			field "property": "minecraft:using_item"
 			field "on_true":
 				field "type": "minecraft:range_dispatch"
+				field "property": "minecraft:crossbow/pull"
 				field "entries":
 					entry:
+						field "threshold": 0.58
 						field "model":
 							field "type": "minecraft:model"
 							field "model": "minecraft:item/crossbow_pulling_1"
-						field "threshold": 0.58
 					entry:
+						field "threshold": 1.0
 						field "model":
 							field "type": "minecraft:model"
 							field "model": "minecraft:item/crossbow_pulling_2"
-						field "threshold": 1.0
 				field "fallback":
 					field "type": "minecraft:model"
 					field "model": "minecraft:item/crossbow_pulling_0"
-				field "property": "minecraft:crossbow/pull"
-			field "property": "minecraft:using_item"
+			field "on_false":
+				field "type": "minecraft:select"
+				field "property": "minecraft:charge_type"
+				field "cases":
+					case:
+						field "when": "arrow"
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/crossbow_arrow"
+					case:
+						field "when": "rocket"
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/crossbow_firework"
+				field "fallback":
+					field "type": "minecraft:model"
+					field "model": "minecraft:item/crossbow"
 		to:
 			field "type": "minecraft:select"
+			field "property": "minecraft:charge_type"
 			field "cases":
 				case:
+					field "when": "arrow"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/crossbow_arrow"
-					field "when": "arrow"
 				case:
+					field "when": "rocket"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/crossbow_firework"
-					field "when": "rocket"
 			field "fallback":
 				field "type": "minecraft:condition"
-				field "on_false":
-					field "type": "minecraft:model"
-					field "model": "minecraft:item/crossbow"
+				field "property": "minecraft:using_item"
 				field "on_true":
 					field "type": "minecraft:range_dispatch"
+					field "property": "minecraft:crossbow/pull"
 					field "entries":
 						entry:
+							field "threshold": 0.58
 							field "model":
 								field "type": "minecraft:model"
 								field "model": "minecraft:item/crossbow_pulling_1"
-							field "threshold": 0.58
 						entry:
+							field "threshold": 1.0
 							field "model":
 								field "type": "minecraft:model"
 								field "model": "minecraft:item/crossbow_pulling_2"
-							field "threshold": 1.0
 					field "fallback":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/crossbow_pulling_0"
-					field "property": "minecraft:crossbow/pull"
-				field "property": "minecraft:using_item"
-			field "property": "minecraft:charge_type"
+				field "on_false":
+					field "type": "minecraft:model"
+					field "model": "minecraft:item/crossbow"
 	Changed file "test_block.json":
 		Changed field "model":
 			Changed field "block_state_property" from "test_block_mode" to "mode".
+			Unchanged field "type": "minecraft:select".
+			Unchanged field "property": "minecraft:block_state".

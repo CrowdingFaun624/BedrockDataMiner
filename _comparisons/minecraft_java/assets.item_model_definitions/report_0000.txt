@@ -307,18 +307,18 @@ resource pack "minecraft":
 			field "model": "minecraft:block/bedrock"
 	file "bee_nest.json":
 		field "model":
-			field "type": "minecraft:select"
 			field "block_state_property": "honey_level"
+			field "type": "minecraft:select"
+			field "property": "minecraft:block_state"
 			field "cases":
 				case:
+					field "when": "5"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:block/bee_nest_honey"
-					field "when": "5"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:block/bee_nest_empty"
-			field "property": "minecraft:block_state"
 	file "bee_spawn_egg.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -336,18 +336,18 @@ resource pack "minecraft":
 			field "model": "minecraft:item/beef"
 	file "beehive.json":
 		field "model":
-			field "type": "minecraft:select"
 			field "block_state_property": "honey_level"
+			field "type": "minecraft:select"
+			field "property": "minecraft:block_state"
 			field "cases":
 				case:
+					field "when": "5"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:block/beehive_honey"
-					field "when": "5"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:block/beehive_empty"
-			field "property": "minecraft:block_state"
 	file "beetroot.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -457,13 +457,13 @@ resource pack "minecraft":
 	file "black_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/black_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -474,12 +474,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/black_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/black_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/black_bundle"
-			field "property": "minecraft:display_context"
 	file "black_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -587,13 +587,13 @@ resource pack "minecraft":
 	file "blue_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/blue_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -604,12 +604,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/blue_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/blue_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/blue_bundle"
-			field "property": "minecraft:display_context"
 	file "blue_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -707,28 +707,28 @@ resource pack "minecraft":
 	file "bow.json":
 		field "model":
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:model"
-				field "model": "minecraft:item/bow"
+			field "property": "minecraft:using_item"
 			field "on_true":
 				field "type": "minecraft:range_dispatch"
+				field "property": "minecraft:use_duration"
+				field "scale": 0.05
 				field "entries":
 					entry:
+						field "threshold": 0.65
 						field "model":
 							field "type": "minecraft:model"
 							field "model": "minecraft:item/bow_pulling_1"
-						field "threshold": 0.65
 					entry:
+						field "threshold": 0.9
 						field "model":
 							field "type": "minecraft:model"
 							field "model": "minecraft:item/bow_pulling_2"
-						field "threshold": 0.9
 				field "fallback":
 					field "type": "minecraft:model"
 					field "model": "minecraft:item/bow_pulling_0"
-				field "property": "minecraft:use_duration"
-				field "scale": 0.05
-			field "property": "minecraft:using_item"
+			field "on_false":
+				field "type": "minecraft:model"
+				field "model": "minecraft:item/bow"
 	file "bowl.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -809,13 +809,13 @@ resource pack "minecraft":
 	file "brown_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/brown_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -826,12 +826,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/brown_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/brown_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/brown_bundle"
-			field "property": "minecraft:display_context"
 	file "brown_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -889,29 +889,29 @@ resource pack "minecraft":
 			field "model": "minecraft:block/brown_wool"
 	file "brush.json":
 		field "model":
+			field "period": 10.0
 			field "type": "minecraft:range_dispatch"
+			field "property": "minecraft:use_cycle"
+			field "scale": 0.1
 			field "entries":
 				entry:
+					field "threshold": 0.25
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/brush_brushing_0"
-					field "threshold": 0.25
 				entry:
+					field "threshold": 0.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/brush_brushing_1"
-					field "threshold": 0.5
 				entry:
+					field "threshold": 0.75
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/brush_brushing_2"
-					field "threshold": 0.75
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/brush"
-			field "period": 10.0
-			field "property": "minecraft:use_cycle"
-			field "scale": 0.1
 	file "bubble_coral.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -935,13 +935,13 @@ resource pack "minecraft":
 	file "bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -952,12 +952,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/bundle"
-			field "property": "minecraft:display_context"
 	file "burn_pottery_sherd.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -1050,255 +1050,255 @@ resource pack "minecraft":
 	file "chainmail_boots.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_boots_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/chainmail_boots"
-			field "property": "minecraft:trim_material"
 	file "chainmail_chestplate.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_chestplate_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/chainmail_chestplate"
-			field "property": "minecraft:trim_material"
 	file "chainmail_helmet.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_helmet_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/chainmail_helmet"
-			field "property": "minecraft:trim_material"
 	file "chainmail_leggings.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/chainmail_leggings_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/chainmail_leggings"
-			field "property": "minecraft:trim_material"
 	file "charcoal.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -1374,19 +1374,19 @@ resource pack "minecraft":
 	file "chest.json":
 		field "model":
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:special"
-				field "base": "minecraft:item/chest"
-				field "model":
-					field "type": "minecraft:chest"
-					field "texture": "minecraft:normal"
+			field "property": "minecraft:xmas"
 			field "on_true":
 				field "type": "minecraft:special"
 				field "base": "minecraft:item/chest"
 				field "model":
 					field "type": "minecraft:chest"
 					field "texture": "minecraft:christmas"
-			field "property": "minecraft:xmas"
+			field "on_false":
+				field "type": "minecraft:special"
+				field "base": "minecraft:item/chest"
+				field "model":
+					field "type": "minecraft:chest"
+					field "texture": "minecraft:normal"
 	file "chest_minecart.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -1481,334 +1481,334 @@ resource pack "minecraft":
 	file "clock.json":
 		field "model":
 			field "type": "minecraft:range_dispatch"
+			field "property": "minecraft:time"
+			field "scale": 64.0
 			field "entries":
 				entry:
+					field "threshold": 0.0
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_00"
-					field "threshold": 0.0
 				entry:
+					field "threshold": 0.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_01"
-					field "threshold": 0.5
 				entry:
+					field "threshold": 1.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_02"
-					field "threshold": 1.5
 				entry:
+					field "threshold": 2.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_03"
-					field "threshold": 2.5
 				entry:
+					field "threshold": 3.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_04"
-					field "threshold": 3.5
 				entry:
+					field "threshold": 4.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_05"
-					field "threshold": 4.5
 				entry:
+					field "threshold": 5.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_06"
-					field "threshold": 5.5
 				entry:
+					field "threshold": 6.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_07"
-					field "threshold": 6.5
 				entry:
+					field "threshold": 7.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_08"
-					field "threshold": 7.5
 				entry:
+					field "threshold": 8.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_09"
-					field "threshold": 8.5
 				entry:
+					field "threshold": 9.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_10"
-					field "threshold": 9.5
 				entry:
+					field "threshold": 10.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_11"
-					field "threshold": 10.5
 				entry:
+					field "threshold": 11.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_12"
-					field "threshold": 11.5
 				entry:
+					field "threshold": 12.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_13"
-					field "threshold": 12.5
 				entry:
+					field "threshold": 13.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_14"
-					field "threshold": 13.5
 				entry:
+					field "threshold": 14.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_15"
-					field "threshold": 14.5
 				entry:
+					field "threshold": 15.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_16"
-					field "threshold": 15.5
 				entry:
+					field "threshold": 16.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_17"
-					field "threshold": 16.5
 				entry:
+					field "threshold": 17.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_18"
-					field "threshold": 17.5
 				entry:
+					field "threshold": 18.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_19"
-					field "threshold": 18.5
 				entry:
+					field "threshold": 19.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_20"
-					field "threshold": 19.5
 				entry:
+					field "threshold": 20.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_21"
-					field "threshold": 20.5
 				entry:
+					field "threshold": 21.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_22"
-					field "threshold": 21.5
 				entry:
+					field "threshold": 22.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_23"
-					field "threshold": 22.5
 				entry:
+					field "threshold": 23.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_24"
-					field "threshold": 23.5
 				entry:
+					field "threshold": 24.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_25"
-					field "threshold": 24.5
 				entry:
+					field "threshold": 25.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_26"
-					field "threshold": 25.5
 				entry:
+					field "threshold": 26.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_27"
-					field "threshold": 26.5
 				entry:
+					field "threshold": 27.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_28"
-					field "threshold": 27.5
 				entry:
+					field "threshold": 28.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_29"
-					field "threshold": 28.5
 				entry:
+					field "threshold": 29.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_30"
-					field "threshold": 29.5
 				entry:
+					field "threshold": 30.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_31"
-					field "threshold": 30.5
 				entry:
+					field "threshold": 31.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_32"
-					field "threshold": 31.5
 				entry:
+					field "threshold": 32.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_33"
-					field "threshold": 32.5
 				entry:
+					field "threshold": 33.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_34"
-					field "threshold": 33.5
 				entry:
+					field "threshold": 34.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_35"
-					field "threshold": 34.5
 				entry:
+					field "threshold": 35.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_36"
-					field "threshold": 35.5
 				entry:
+					field "threshold": 36.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_37"
-					field "threshold": 36.5
 				entry:
+					field "threshold": 37.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_38"
-					field "threshold": 37.5
 				entry:
+					field "threshold": 38.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_39"
-					field "threshold": 38.5
 				entry:
+					field "threshold": 39.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_40"
-					field "threshold": 39.5
 				entry:
+					field "threshold": 40.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_41"
-					field "threshold": 40.5
 				entry:
+					field "threshold": 41.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_42"
-					field "threshold": 41.5
 				entry:
+					field "threshold": 42.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_43"
-					field "threshold": 42.5
 				entry:
+					field "threshold": 43.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_44"
-					field "threshold": 43.5
 				entry:
+					field "threshold": 44.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_45"
-					field "threshold": 44.5
 				entry:
+					field "threshold": 45.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_46"
-					field "threshold": 45.5
 				entry:
+					field "threshold": 46.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_47"
-					field "threshold": 46.5
 				entry:
+					field "threshold": 47.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_48"
-					field "threshold": 47.5
 				entry:
+					field "threshold": 48.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_49"
-					field "threshold": 48.5
 				entry:
+					field "threshold": 49.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_50"
-					field "threshold": 49.5
 				entry:
+					field "threshold": 50.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_51"
-					field "threshold": 50.5
 				entry:
+					field "threshold": 51.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_52"
-					field "threshold": 51.5
 				entry:
+					field "threshold": 52.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_53"
-					field "threshold": 52.5
 				entry:
+					field "threshold": 53.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_54"
-					field "threshold": 53.5
 				entry:
+					field "threshold": 54.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_55"
-					field "threshold": 54.5
 				entry:
+					field "threshold": 55.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_56"
-					field "threshold": 55.5
 				entry:
+					field "threshold": 56.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_57"
-					field "threshold": 56.5
 				entry:
+					field "threshold": 57.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_58"
-					field "threshold": 57.5
 				entry:
+					field "threshold": 58.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_59"
-					field "threshold": 58.5
 				entry:
+					field "threshold": 59.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_60"
-					field "threshold": 59.5
 				entry:
+					field "threshold": 60.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_61"
-					field "threshold": 60.5
 				entry:
+					field "threshold": 61.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_62"
-					field "threshold": 61.5
 				entry:
+					field "threshold": 62.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_63"
-					field "threshold": 62.5
 				entry:
+					field "threshold": 63.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/clock_00"
-					field "threshold": 63.5
-			field "property": "minecraft:time"
-			field "scale": 64.0
 	file "closed_eyeblossom.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -1906,351 +1906,351 @@ resource pack "minecraft":
 			field "model": "minecraft:item/comparator"
 	file "compass.json":
 		field "model":
-			field "type": "minecraft:condition"
 			field "component": "minecraft:lodestone_tracker"
-			field "on_false":
-				field "type": "minecraft:range_dispatch"
-				field "entries":
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_16"
-						field "threshold": 0.0
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_17"
-						field "threshold": 0.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_18"
-						field "threshold": 1.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_19"
-						field "threshold": 2.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_20"
-						field "threshold": 3.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_21"
-						field "threshold": 4.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_22"
-						field "threshold": 5.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_23"
-						field "threshold": 6.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_24"
-						field "threshold": 7.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_25"
-						field "threshold": 8.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_26"
-						field "threshold": 9.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_27"
-						field "threshold": 10.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_28"
-						field "threshold": 11.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_29"
-						field "threshold": 12.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_30"
-						field "threshold": 13.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_31"
-						field "threshold": 14.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_00"
-						field "threshold": 15.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_01"
-						field "threshold": 16.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_02"
-						field "threshold": 17.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_03"
-						field "threshold": 18.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_04"
-						field "threshold": 19.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_05"
-						field "threshold": 20.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_06"
-						field "threshold": 21.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_07"
-						field "threshold": 22.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_08"
-						field "threshold": 23.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_09"
-						field "threshold": 24.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_10"
-						field "threshold": 25.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_11"
-						field "threshold": 26.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_12"
-						field "threshold": 27.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_13"
-						field "threshold": 28.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_14"
-						field "threshold": 29.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_15"
-						field "threshold": 30.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_16"
-						field "threshold": 31.5
-				field "property": "minecraft:compass"
-				field "scale": 32.0
-				field "target": "spawn"
-			field "on_true":
-				field "type": "minecraft:range_dispatch"
-				field "entries":
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_16"
-						field "threshold": 0.0
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_17"
-						field "threshold": 0.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_18"
-						field "threshold": 1.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_19"
-						field "threshold": 2.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_20"
-						field "threshold": 3.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_21"
-						field "threshold": 4.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_22"
-						field "threshold": 5.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_23"
-						field "threshold": 6.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_24"
-						field "threshold": 7.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_25"
-						field "threshold": 8.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_26"
-						field "threshold": 9.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_27"
-						field "threshold": 10.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_28"
-						field "threshold": 11.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_29"
-						field "threshold": 12.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_30"
-						field "threshold": 13.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_31"
-						field "threshold": 14.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_00"
-						field "threshold": 15.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_01"
-						field "threshold": 16.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_02"
-						field "threshold": 17.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_03"
-						field "threshold": 18.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_04"
-						field "threshold": 19.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_05"
-						field "threshold": 20.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_06"
-						field "threshold": 21.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_07"
-						field "threshold": 22.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_08"
-						field "threshold": 23.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_09"
-						field "threshold": 24.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_10"
-						field "threshold": 25.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_11"
-						field "threshold": 26.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_12"
-						field "threshold": 27.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_13"
-						field "threshold": 28.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_14"
-						field "threshold": 29.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_15"
-						field "threshold": 30.5
-					entry:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/compass_16"
-						field "threshold": 31.5
-				field "property": "minecraft:compass"
-				field "scale": 32.0
-				field "target": "lodestone"
+			field "type": "minecraft:condition"
 			field "property": "minecraft:has_component"
+			field "on_true":
+				field "target": "lodestone"
+				field "type": "minecraft:range_dispatch"
+				field "property": "minecraft:compass"
+				field "scale": 32.0
+				field "entries":
+					entry:
+						field "threshold": 0.0
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_16"
+					entry:
+						field "threshold": 0.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_17"
+					entry:
+						field "threshold": 1.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_18"
+					entry:
+						field "threshold": 2.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_19"
+					entry:
+						field "threshold": 3.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_20"
+					entry:
+						field "threshold": 4.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_21"
+					entry:
+						field "threshold": 5.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_22"
+					entry:
+						field "threshold": 6.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_23"
+					entry:
+						field "threshold": 7.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_24"
+					entry:
+						field "threshold": 8.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_25"
+					entry:
+						field "threshold": 9.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_26"
+					entry:
+						field "threshold": 10.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_27"
+					entry:
+						field "threshold": 11.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_28"
+					entry:
+						field "threshold": 12.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_29"
+					entry:
+						field "threshold": 13.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_30"
+					entry:
+						field "threshold": 14.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_31"
+					entry:
+						field "threshold": 15.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_00"
+					entry:
+						field "threshold": 16.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_01"
+					entry:
+						field "threshold": 17.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_02"
+					entry:
+						field "threshold": 18.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_03"
+					entry:
+						field "threshold": 19.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_04"
+					entry:
+						field "threshold": 20.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_05"
+					entry:
+						field "threshold": 21.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_06"
+					entry:
+						field "threshold": 22.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_07"
+					entry:
+						field "threshold": 23.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_08"
+					entry:
+						field "threshold": 24.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_09"
+					entry:
+						field "threshold": 25.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_10"
+					entry:
+						field "threshold": 26.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_11"
+					entry:
+						field "threshold": 27.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_12"
+					entry:
+						field "threshold": 28.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_13"
+					entry:
+						field "threshold": 29.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_14"
+					entry:
+						field "threshold": 30.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_15"
+					entry:
+						field "threshold": 31.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_16"
+			field "on_false":
+				field "target": "spawn"
+				field "type": "minecraft:range_dispatch"
+				field "property": "minecraft:compass"
+				field "scale": 32.0
+				field "entries":
+					entry:
+						field "threshold": 0.0
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_16"
+					entry:
+						field "threshold": 0.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_17"
+					entry:
+						field "threshold": 1.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_18"
+					entry:
+						field "threshold": 2.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_19"
+					entry:
+						field "threshold": 3.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_20"
+					entry:
+						field "threshold": 4.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_21"
+					entry:
+						field "threshold": 5.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_22"
+					entry:
+						field "threshold": 6.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_23"
+					entry:
+						field "threshold": 7.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_24"
+					entry:
+						field "threshold": 8.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_25"
+					entry:
+						field "threshold": 9.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_26"
+					entry:
+						field "threshold": 10.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_27"
+					entry:
+						field "threshold": 11.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_28"
+					entry:
+						field "threshold": 12.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_29"
+					entry:
+						field "threshold": 13.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_30"
+					entry:
+						field "threshold": 14.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_31"
+					entry:
+						field "threshold": 15.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_00"
+					entry:
+						field "threshold": 16.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_01"
+					entry:
+						field "threshold": 17.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_02"
+					entry:
+						field "threshold": 18.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_03"
+					entry:
+						field "threshold": 19.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_04"
+					entry:
+						field "threshold": 20.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_05"
+					entry:
+						field "threshold": 21.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_06"
+					entry:
+						field "threshold": 22.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_07"
+					entry:
+						field "threshold": 23.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_08"
+					entry:
+						field "threshold": 24.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_09"
+					entry:
+						field "threshold": 25.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_10"
+					entry:
+						field "threshold": 26.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_11"
+					entry:
+						field "threshold": 27.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_12"
+					entry:
+						field "threshold": 28.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_13"
+					entry:
+						field "threshold": 29.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_14"
+					entry:
+						field "threshold": 30.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_15"
+					entry:
+						field "threshold": 31.5
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/compass_16"
 	file "composter.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -2467,41 +2467,41 @@ resource pack "minecraft":
 	file "crossbow.json":
 		field "model":
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:select"
-				field "cases":
-					case:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/crossbow_arrow"
-						field "when": "arrow"
-					case:
-						field "model":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/crossbow_firework"
-						field "when": "rocket"
-				field "fallback":
-					field "type": "minecraft:model"
-					field "model": "minecraft:item/crossbow"
-				field "property": "minecraft:charge_type"
+			field "property": "minecraft:using_item"
 			field "on_true":
 				field "type": "minecraft:range_dispatch"
+				field "property": "minecraft:crossbow/pull"
 				field "entries":
 					entry:
+						field "threshold": 0.58
 						field "model":
 							field "type": "minecraft:model"
 							field "model": "minecraft:item/crossbow_pulling_1"
-						field "threshold": 0.58
 					entry:
+						field "threshold": 1.0
 						field "model":
 							field "type": "minecraft:model"
 							field "model": "minecraft:item/crossbow_pulling_2"
-						field "threshold": 1.0
 				field "fallback":
 					field "type": "minecraft:model"
 					field "model": "minecraft:item/crossbow_pulling_0"
-				field "property": "minecraft:crossbow/pull"
-			field "property": "minecraft:using_item"
+			field "on_false":
+				field "type": "minecraft:select"
+				field "property": "minecraft:charge_type"
+				field "cases":
+					case:
+						field "when": "arrow"
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/crossbow_arrow"
+					case:
+						field "when": "rocket"
+						field "model":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/crossbow_firework"
+				field "fallback":
+					field "type": "minecraft:model"
+					field "model": "minecraft:item/crossbow"
 	file "crying_obsidian.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -2551,13 +2551,13 @@ resource pack "minecraft":
 	file "cyan_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/cyan_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -2568,12 +2568,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/cyan_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/cyan_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/cyan_bundle"
-			field "property": "minecraft:display_context"
 	file "cyan_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -2881,192 +2881,192 @@ resource pack "minecraft":
 	file "diamond_boots.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_boots_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/diamond_boots"
-			field "property": "minecraft:trim_material"
 	file "diamond_chestplate.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_chestplate_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/diamond_chestplate"
-			field "property": "minecraft:trim_material"
 	file "diamond_helmet.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_helmet_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/diamond_helmet"
-			field "property": "minecraft:trim_material"
 	file "diamond_hoe.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -3078,66 +3078,66 @@ resource pack "minecraft":
 	file "diamond_leggings.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/diamond_leggings_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/diamond_leggings"
-			field "property": "minecraft:trim_material"
 	file "diamond_ore.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -3276,13 +3276,13 @@ resource pack "minecraft":
 	file "elytra.json":
 		field "model":
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:model"
-				field "model": "minecraft:item/elytra"
+			field "property": "minecraft:broken"
 			field "on_true":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/elytra_broken"
-			field "property": "minecraft:broken"
+			field "on_false":
+				field "type": "minecraft:model"
+				field "model": "minecraft:item/elytra"
 	file "emerald.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -3465,8 +3465,8 @@ resource pack "minecraft":
 			field "tints":
 				tint:
 					field "type": "minecraft:grass"
-					field "downfall": 1.0
 					field "temperature": 0.5
+					field "downfall": 1.0
 	file "field_masoned_banner_pattern.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -3516,13 +3516,13 @@ resource pack "minecraft":
 	file "fishing_rod.json":
 		field "model":
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:model"
-				field "model": "minecraft:item/fishing_rod"
+			field "property": "minecraft:fishing_rod/cast"
 			field "on_true":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/fishing_rod_cast"
-			field "property": "minecraft:fishing_rod/cast"
+			field "on_false":
+				field "type": "minecraft:model"
+				field "model": "minecraft:item/fishing_rod"
 	file "fletching_table.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -3678,13 +3678,13 @@ resource pack "minecraft":
 	file "goat_horn.json":
 		field "model":
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:model"
-				field "model": "minecraft:item/goat_horn"
+			field "property": "minecraft:using_item"
 			field "on_true":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/tooting_goat_horn"
-			field "property": "minecraft:using_item"
+			field "on_false":
+				field "type": "minecraft:model"
+				field "model": "minecraft:item/goat_horn"
 	file "goat_spawn_egg.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -3723,66 +3723,66 @@ resource pack "minecraft":
 	file "golden_boots.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_boots_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/golden_boots"
-			field "property": "minecraft:trim_material"
 	file "golden_carrot.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -3790,129 +3790,129 @@ resource pack "minecraft":
 	file "golden_chestplate.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_chestplate_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/golden_chestplate"
-			field "property": "minecraft:trim_material"
 	file "golden_helmet.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_helmet_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/golden_helmet"
-			field "property": "minecraft:trim_material"
 	file "golden_hoe.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -3924,66 +3924,66 @@ resource pack "minecraft":
 	file "golden_leggings.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/golden_leggings_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/golden_leggings"
-			field "property": "minecraft:trim_material"
 	file "golden_pickaxe.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -4019,8 +4019,8 @@ resource pack "minecraft":
 			field "tints":
 				tint:
 					field "type": "minecraft:grass"
-					field "downfall": 1.0
 					field "temperature": 0.5
+					field "downfall": 1.0
 	file "gravel.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -4042,13 +4042,13 @@ resource pack "minecraft":
 	file "gray_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/gray_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -4059,12 +4059,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/gray_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/gray_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/gray_bundle"
-			field "property": "minecraft:display_context"
 	file "gray_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -4129,13 +4129,13 @@ resource pack "minecraft":
 	file "green_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/green_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -4146,12 +4146,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/green_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/green_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/green_bundle"
-			field "property": "minecraft:display_context"
 	file "green_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -4382,129 +4382,129 @@ resource pack "minecraft":
 	file "iron_boots.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_boots_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/iron_boots"
-			field "property": "minecraft:trim_material"
 	file "iron_chestplate.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_chestplate_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/iron_chestplate"
-			field "property": "minecraft:trim_material"
 	file "iron_door.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -4523,66 +4523,66 @@ resource pack "minecraft":
 	file "iron_helmet.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_helmet_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/iron_helmet"
-			field "property": "minecraft:trim_material"
 	file "iron_hoe.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -4598,66 +4598,66 @@ resource pack "minecraft":
 	file "iron_leggings.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/iron_leggings_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/iron_leggings"
-			field "property": "minecraft:trim_material"
 	file "iron_nugget.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -4809,8 +4809,8 @@ resource pack "minecraft":
 			field "tints":
 				tint:
 					field "type": "minecraft:grass"
-					field "downfall": 1.0
 					field "temperature": 0.5
+					field "downfall": 1.0
 	file "lava_bucket.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -4826,8 +4826,10 @@ resource pack "minecraft":
 	file "leather_boots.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_quartz_trim"
@@ -4835,8 +4837,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_iron_trim"
@@ -4844,8 +4846,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_netherite_trim"
@@ -4853,8 +4855,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_redstone_trim"
@@ -4862,8 +4864,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_copper_trim"
@@ -4871,8 +4873,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_gold_trim"
@@ -4880,8 +4882,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_emerald_trim"
@@ -4889,8 +4891,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_diamond_trim"
@@ -4898,8 +4900,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_lapis_trim"
@@ -4907,8 +4909,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_amethyst_trim"
@@ -4916,8 +4918,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_boots_resin_trim"
@@ -4925,7 +4927,6 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/leather_boots"
@@ -4933,12 +4934,13 @@ resource pack "minecraft":
 					tint:
 						field "type": "minecraft:dye"
 						field "default": -6265536
-			field "property": "minecraft:trim_material"
 	file "leather_chestplate.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_quartz_trim"
@@ -4946,8 +4948,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_iron_trim"
@@ -4955,8 +4957,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_netherite_trim"
@@ -4964,8 +4966,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_redstone_trim"
@@ -4973,8 +4975,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_copper_trim"
@@ -4982,8 +4984,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_gold_trim"
@@ -4991,8 +4993,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_emerald_trim"
@@ -5000,8 +5002,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_diamond_trim"
@@ -5009,8 +5011,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_lapis_trim"
@@ -5018,8 +5020,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_amethyst_trim"
@@ -5027,8 +5029,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_chestplate_resin_trim"
@@ -5036,7 +5038,6 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/leather_chestplate"
@@ -5044,12 +5045,13 @@ resource pack "minecraft":
 					tint:
 						field "type": "minecraft:dye"
 						field "default": -6265536
-			field "property": "minecraft:trim_material"
 	file "leather_helmet.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_quartz_trim"
@@ -5057,8 +5059,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_iron_trim"
@@ -5066,8 +5068,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_netherite_trim"
@@ -5075,8 +5077,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_redstone_trim"
@@ -5084,8 +5086,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_copper_trim"
@@ -5093,8 +5095,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_gold_trim"
@@ -5102,8 +5104,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_emerald_trim"
@@ -5111,8 +5113,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_diamond_trim"
@@ -5120,8 +5122,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_lapis_trim"
@@ -5129,8 +5131,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_amethyst_trim"
@@ -5138,8 +5140,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_helmet_resin_trim"
@@ -5147,7 +5149,6 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/leather_helmet"
@@ -5155,7 +5156,6 @@ resource pack "minecraft":
 					tint:
 						field "type": "minecraft:dye"
 						field "default": -6265536
-			field "property": "minecraft:trim_material"
 	file "leather_horse_armor.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -5167,8 +5167,10 @@ resource pack "minecraft":
 	file "leather_leggings.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_quartz_trim"
@@ -5176,8 +5178,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_iron_trim"
@@ -5185,8 +5187,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_netherite_trim"
@@ -5194,8 +5196,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_redstone_trim"
@@ -5203,8 +5205,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_copper_trim"
@@ -5212,8 +5214,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_gold_trim"
@@ -5221,8 +5223,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_emerald_trim"
@@ -5230,8 +5232,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_diamond_trim"
@@ -5239,8 +5241,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_lapis_trim"
@@ -5248,8 +5250,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_amethyst_trim"
@@ -5257,8 +5259,8 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/leather_leggings_resin_trim"
@@ -5266,7 +5268,6 @@ resource pack "minecraft":
 							tint:
 								field "type": "minecraft:dye"
 								field "default": -6265536
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/leather_leggings"
@@ -5274,7 +5275,6 @@ resource pack "minecraft":
 					tint:
 						field "type": "minecraft:dye"
 						field "default": -6265536
-			field "property": "minecraft:trim_material"
 	file "lectern.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -5285,93 +5285,93 @@ resource pack "minecraft":
 			field "model": "minecraft:item/lever"
 	file "light.json":
 		field "model":
-			field "type": "minecraft:select"
 			field "block_state_property": "level"
+			field "type": "minecraft:select"
+			field "property": "minecraft:block_state"
 			field "cases":
 				case:
+					field "when": "0"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_00"
-					field "when": "0"
 				case:
+					field "when": "1"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_01"
-					field "when": "1"
 				case:
+					field "when": "2"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_02"
-					field "when": "2"
 				case:
+					field "when": "3"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_03"
-					field "when": "3"
 				case:
+					field "when": "4"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_04"
-					field "when": "4"
 				case:
+					field "when": "5"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_05"
-					field "when": "5"
 				case:
+					field "when": "6"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_06"
-					field "when": "6"
 				case:
+					field "when": "7"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_07"
-					field "when": "7"
 				case:
+					field "when": "8"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_08"
-					field "when": "8"
 				case:
+					field "when": "9"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_09"
-					field "when": "9"
 				case:
+					field "when": "10"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_10"
-					field "when": "10"
 				case:
+					field "when": "11"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_11"
-					field "when": "11"
 				case:
+					field "when": "12"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_12"
-					field "when": "12"
 				case:
+					field "when": "13"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_13"
-					field "when": "13"
 				case:
+					field "when": "14"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_14"
-					field "when": "14"
 				case:
+					field "when": "15"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/light_15"
-					field "when": "15"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/light"
-			field "property": "minecraft:block_state"
 	file "light_blue_banner.json":
 		field "model":
 			field "type": "minecraft:special"
@@ -5389,13 +5389,13 @@ resource pack "minecraft":
 	file "light_blue_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/light_blue_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -5406,12 +5406,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/light_blue_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/light_blue_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/light_blue_bundle"
-			field "property": "minecraft:display_context"
 	file "light_blue_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -5476,13 +5476,13 @@ resource pack "minecraft":
 	file "light_gray_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/light_gray_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -5493,12 +5493,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/light_gray_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/light_gray_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/light_gray_bundle"
-			field "property": "minecraft:display_context"
 	file "light_gray_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -5587,13 +5587,13 @@ resource pack "minecraft":
 	file "lime_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/lime_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -5604,12 +5604,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/lime_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/lime_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/lime_bundle"
-			field "property": "minecraft:display_context"
 	file "lime_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -5705,13 +5705,13 @@ resource pack "minecraft":
 	file "magenta_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/magenta_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -5722,12 +5722,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/magenta_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/magenta_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/magenta_bundle"
-			field "property": "minecraft:display_context"
 	file "magenta_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -6155,192 +6155,192 @@ resource pack "minecraft":
 	file "netherite_boots.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_boots_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/netherite_boots"
-			field "property": "minecraft:trim_material"
 	file "netherite_chestplate.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_chestplate_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/netherite_chestplate"
-			field "property": "minecraft:trim_material"
 	file "netherite_helmet.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_helmet_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/netherite_helmet"
-			field "property": "minecraft:trim_material"
 	file "netherite_hoe.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -6352,66 +6352,66 @@ resource pack "minecraft":
 	file "netherite_leggings.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/netherite_leggings_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/netherite_leggings"
-			field "property": "minecraft:trim_material"
 	file "netherite_pickaxe.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -6564,13 +6564,13 @@ resource pack "minecraft":
 	file "orange_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/orange_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -6581,12 +6581,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/orange_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/orange_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/orange_bundle"
-			field "property": "minecraft:display_context"
 	file "orange_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -6895,13 +6895,13 @@ resource pack "minecraft":
 	file "pink_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/pink_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -6912,12 +6912,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/pink_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/pink_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/pink_bundle"
-			field "property": "minecraft:display_context"
 	file "pink_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -7251,13 +7251,13 @@ resource pack "minecraft":
 	file "purple_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/purple_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -7268,12 +7268,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/purple_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/purple_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/purple_bundle"
-			field "property": "minecraft:display_context"
 	file "purple_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -7433,176 +7433,176 @@ resource pack "minecraft":
 			field "model": "minecraft:block/raw_iron_block"
 	file "recovery_compass.json":
 		field "model":
+			field "target": "recovery"
 			field "type": "minecraft:range_dispatch"
+			field "property": "minecraft:compass"
+			field "scale": 32.0
 			field "entries":
 				entry:
+					field "threshold": 0.0
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_16"
-					field "threshold": 0.0
 				entry:
+					field "threshold": 0.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_17"
-					field "threshold": 0.5
 				entry:
+					field "threshold": 1.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_18"
-					field "threshold": 1.5
 				entry:
+					field "threshold": 2.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_19"
-					field "threshold": 2.5
 				entry:
+					field "threshold": 3.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_20"
-					field "threshold": 3.5
 				entry:
+					field "threshold": 4.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_21"
-					field "threshold": 4.5
 				entry:
+					field "threshold": 5.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_22"
-					field "threshold": 5.5
 				entry:
+					field "threshold": 6.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_23"
-					field "threshold": 6.5
 				entry:
+					field "threshold": 7.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_24"
-					field "threshold": 7.5
 				entry:
+					field "threshold": 8.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_25"
-					field "threshold": 8.5
 				entry:
+					field "threshold": 9.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_26"
-					field "threshold": 9.5
 				entry:
+					field "threshold": 10.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_27"
-					field "threshold": 10.5
 				entry:
+					field "threshold": 11.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_28"
-					field "threshold": 11.5
 				entry:
+					field "threshold": 12.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_29"
-					field "threshold": 12.5
 				entry:
+					field "threshold": 13.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_30"
-					field "threshold": 13.5
 				entry:
+					field "threshold": 14.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_31"
-					field "threshold": 14.5
 				entry:
+					field "threshold": 15.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_00"
-					field "threshold": 15.5
 				entry:
+					field "threshold": 16.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_01"
-					field "threshold": 16.5
 				entry:
+					field "threshold": 17.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_02"
-					field "threshold": 17.5
 				entry:
+					field "threshold": 18.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_03"
-					field "threshold": 18.5
 				entry:
+					field "threshold": 19.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_04"
-					field "threshold": 19.5
 				entry:
+					field "threshold": 20.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_05"
-					field "threshold": 20.5
 				entry:
+					field "threshold": 21.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_06"
-					field "threshold": 21.5
 				entry:
+					field "threshold": 22.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_07"
-					field "threshold": 22.5
 				entry:
+					field "threshold": 23.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_08"
-					field "threshold": 23.5
 				entry:
+					field "threshold": 24.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_09"
-					field "threshold": 24.5
 				entry:
+					field "threshold": 25.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_10"
-					field "threshold": 25.5
 				entry:
+					field "threshold": 26.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_11"
-					field "threshold": 26.5
 				entry:
+					field "threshold": 27.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_12"
-					field "threshold": 27.5
 				entry:
+					field "threshold": 28.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_13"
-					field "threshold": 28.5
 				entry:
+					field "threshold": 29.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_14"
-					field "threshold": 29.5
 				entry:
+					field "threshold": 30.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_15"
-					field "threshold": 30.5
 				entry:
+					field "threshold": 31.5
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/recovery_compass_16"
-					field "threshold": 31.5
-			field "property": "minecraft:compass"
-			field "scale": 32.0
-			field "target": "recovery"
 	file "red_banner.json":
 		field "model":
 			field "type": "minecraft:special"
@@ -7620,13 +7620,13 @@ resource pack "minecraft":
 	file "red_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/red_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -7637,12 +7637,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/red_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/red_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/red_bundle"
-			field "property": "minecraft:display_context"
 	file "red_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -7935,15 +7935,15 @@ resource pack "minecraft":
 	file "shield.json":
 		field "model":
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:special"
-				field "base": "minecraft:item/shield"
-				field "model": field "type": "minecraft:shield"
+			field "property": "minecraft:using_item"
 			field "on_true":
 				field "type": "minecraft:special"
 				field "base": "minecraft:item/shield_blocking"
 				field "model": field "type": "minecraft:shield"
-			field "property": "minecraft:using_item"
+			field "on_false":
+				field "type": "minecraft:special"
+				field "base": "minecraft:item/shield"
+				field "model": field "type": "minecraft:shield"
 	file "short_grass.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -7951,8 +7951,8 @@ resource pack "minecraft":
 			field "tints":
 				tint:
 					field "type": "minecraft:grass"
-					field "downfall": 1.0
 					field "temperature": 0.5
+					field "downfall": 1.0
 	file "shroomlight.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -8298,19 +8298,19 @@ resource pack "minecraft":
 	file "spyglass.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
-					field "model":
-						field "type": "minecraft:model"
-						field "model": "minecraft:item/spyglass"
 					field "when":
 						condition "gui"
 						condition "ground"
 						condition "fixed"
+					field "model":
+						field "type": "minecraft:model"
+						field "model": "minecraft:item/spyglass"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/spyglass_in_hand"
-			field "property": "minecraft:display_context"
 	file "squid_spawn_egg.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -8566,8 +8566,8 @@ resource pack "minecraft":
 			field "tints":
 				tint:
 					field "type": "minecraft:grass"
-					field "downfall": 1.0
 					field "temperature": 0.5
+					field "downfall": 1.0
 	file "target.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -8630,19 +8630,19 @@ resource pack "minecraft":
 	file "trapped_chest.json":
 		field "model":
 			field "type": "minecraft:condition"
-			field "on_false":
-				field "type": "minecraft:special"
-				field "base": "minecraft:item/trapped_chest"
-				field "model":
-					field "type": "minecraft:chest"
-					field "texture": "minecraft:trapped"
+			field "property": "minecraft:xmas"
 			field "on_true":
 				field "type": "minecraft:special"
 				field "base": "minecraft:item/trapped_chest"
 				field "model":
 					field "type": "minecraft:chest"
 					field "texture": "minecraft:christmas"
-			field "property": "minecraft:xmas"
+			field "on_false":
+				field "type": "minecraft:special"
+				field "base": "minecraft:item/trapped_chest"
+				field "model":
+					field "type": "minecraft:chest"
+					field "texture": "minecraft:trapped"
 	file "trial_key.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -8654,27 +8654,27 @@ resource pack "minecraft":
 	file "trident.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
-					field "model":
-						field "type": "minecraft:model"
-						field "model": "minecraft:item/trident"
 					field "when":
 						condition "gui"
 						condition "ground"
 						condition "fixed"
+					field "model":
+						field "type": "minecraft:model"
+						field "model": "minecraft:item/trident"
 			field "fallback":
 				field "type": "minecraft:condition"
-				field "on_false":
-					field "type": "minecraft:special"
-					field "base": "minecraft:item/trident_in_hand"
-					field "model": field "type": "minecraft:trident"
+				field "property": "minecraft:using_item"
 				field "on_true":
 					field "type": "minecraft:special"
 					field "base": "minecraft:item/trident_throwing"
 					field "model": field "type": "minecraft:trident"
-				field "property": "minecraft:using_item"
-			field "property": "minecraft:display_context"
+				field "on_false":
+					field "type": "minecraft:special"
+					field "base": "minecraft:item/trident_in_hand"
+					field "model": field "type": "minecraft:trident"
 	file "tripwire_hook.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -8749,66 +8749,66 @@ resource pack "minecraft":
 	file "turtle_helmet.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:trim_material"
 			field "cases":
 				case:
+					field "when": "minecraft:quartz"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_quartz_trim"
-					field "when": "minecraft:quartz"
 				case:
+					field "when": "minecraft:iron"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_iron_trim"
-					field "when": "minecraft:iron"
 				case:
+					field "when": "minecraft:netherite"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_netherite_trim"
-					field "when": "minecraft:netherite"
 				case:
+					field "when": "minecraft:redstone"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_redstone_trim"
-					field "when": "minecraft:redstone"
 				case:
+					field "when": "minecraft:copper"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_copper_trim"
-					field "when": "minecraft:copper"
 				case:
+					field "when": "minecraft:gold"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_gold_trim"
-					field "when": "minecraft:gold"
 				case:
+					field "when": "minecraft:emerald"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_emerald_trim"
-					field "when": "minecraft:emerald"
 				case:
+					field "when": "minecraft:diamond"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_diamond_trim"
-					field "when": "minecraft:diamond"
 				case:
+					field "when": "minecraft:lapis"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_lapis_trim"
-					field "when": "minecraft:lapis"
 				case:
+					field "when": "minecraft:amethyst"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_amethyst_trim"
-					field "when": "minecraft:amethyst"
 				case:
+					field "when": "minecraft:resin"
 					field "model":
 						field "type": "minecraft:model"
 						field "model": "minecraft:item/turtle_helmet_resin_trim"
-					field "when": "minecraft:resin"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/turtle_helmet"
-			field "property": "minecraft:trim_material"
 	file "turtle_scute.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -9200,13 +9200,13 @@ resource pack "minecraft":
 	file "white_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/white_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -9217,12 +9217,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/white_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/white_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/white_bundle"
-			field "property": "minecraft:display_context"
 	file "white_candle.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -9328,11 +9328,9 @@ resource pack "minecraft":
 					field "value": -11701600
 	file "wolf_armor.json":
 		field "model":
-			field "type": "minecraft:condition"
 			field "component": "minecraft:dyed_color"
-			field "on_false":
-				field "type": "minecraft:model"
-				field "model": "minecraft:item/wolf_armor"
+			field "type": "minecraft:condition"
+			field "property": "minecraft:has_component"
 			field "on_true":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/wolf_armor_dyed"
@@ -9343,7 +9341,9 @@ resource pack "minecraft":
 					tint:
 						field "type": "minecraft:dye"
 						field "default": 0
-			field "property": "minecraft:has_component"
+			field "on_false":
+				field "type": "minecraft:model"
+				field "model": "minecraft:item/wolf_armor"
 	file "wolf_spawn_egg.json":
 		field "model":
 			field "type": "minecraft:model"
@@ -9400,13 +9400,13 @@ resource pack "minecraft":
 	file "yellow_bundle.json":
 		field "model":
 			field "type": "minecraft:select"
+			field "property": "minecraft:display_context"
 			field "cases":
 				case:
+					field "when": "gui"
 					field "model":
 						field "type": "minecraft:condition"
-						field "on_false":
-							field "type": "minecraft:model"
-							field "model": "minecraft:item/yellow_bundle"
+						field "property": "minecraft:bundle/has_selected_item"
 						field "on_true":
 							field "type": "minecraft:composite"
 							field "models":
@@ -9417,12 +9417,12 @@ resource pack "minecraft":
 								model:
 									field "type": "minecraft:model"
 									field "model": "minecraft:item/yellow_bundle_open_front"
-						field "property": "minecraft:bundle/has_selected_item"
-					field "when": "gui"
+						field "on_false":
+							field "type": "minecraft:model"
+							field "model": "minecraft:item/yellow_bundle"
 			field "fallback":
 				field "type": "minecraft:model"
 				field "model": "minecraft:item/yellow_bundle"
-			field "property": "minecraft:display_context"
 	file "yellow_candle.json":
 		field "model":
 			field "type": "minecraft:model"
