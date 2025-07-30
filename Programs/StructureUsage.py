@@ -134,7 +134,7 @@ def get_usage_of(
                     memory_usage.adjust()
 
             for _, structure_dataminer_collections in structures_used.items():
-                structure_dataminer_collections[0].clear_old_caches({dataminer_collection.get_structure_info(version) for dataminer_collection in structure_dataminer_collections})
+                structure_dataminer_collections[0].clear_old_caches({(version, dataminer_collection.get_structure_info(version)) for dataminer_collection in structure_dataminer_collections})
             version.close_accessors()
 
             print(f"\t{version}")

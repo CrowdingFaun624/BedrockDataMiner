@@ -20,9 +20,9 @@ def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
         print(domain.name)
         dataminer_collections = domain.dataminer_collections
         structure_tags = domain.structure_tags
-        versions = domain.versions
+        versions = list(reversed(list(domain.versions.values())))
 
-        for version in reversed(versions.values()):
+        for version in versions:
             print(f"\t{version.name}")
             dataminer_collection = None
             try:
@@ -30,7 +30,7 @@ def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
                 for dataminer_collection in dataminer_collections.values():
                     # print(f"\t\t{dataminer_collection}")
                     dataminer_collection.get_referenced_files(version, structure_tags, referenced_files)
-                    dataminer_collection.clear_old_caches({dataminer_collection.get_structure_info(version)})
+                    dataminer_collection.clear_old_caches({(version, dataminer_collection.get_structure_info(version))})
                 memory_usage.adjust()
             except Exception:
                 if dataminer_collection is None:

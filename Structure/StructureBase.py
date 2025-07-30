@@ -43,7 +43,7 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
     def finalize(self) -> None:
         self.cache_substructures = [structure for structure in self.get_descendants(set()) if isinstance(structure, CacheStructure)]
 
-    def clear_old_caches(self, structure_infos:Container[StructureInfo]) -> None:
+    def clear_old_caches(self, structure_infos:Container[tuple[Version, StructureInfo]]) -> None:
         for cache_structure in self.cache_substructures:
             cache_structure.clear_old()
         for structure in self.get_descendants(set()):

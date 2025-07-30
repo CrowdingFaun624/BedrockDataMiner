@@ -55,7 +55,7 @@ def compare_all_of(
                     initial_print(version, dataminer_collection, domain)
                 undataminable_versions_between = []
                 previous_successful_version = version
-                dataminer_collection.clear_old_caches({dataminer_collection.get_structure_info(version)}) # must occur AFTER comparing.
+                dataminer_collection.clear_old_caches({(version, dataminer_collection.get_structure_info(version))}) # must occur AFTER comparing.
                 memory_usage.adjust()
             else:
                 undataminable_versions_between.append(version)

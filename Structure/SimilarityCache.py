@@ -3,7 +3,9 @@ from typing import Container
 from weakref import WeakKeyDictionary
 
 from Structure.Container import Con
+from Structure.StructureEnvironment import PrinterEnvironment
 from Structure.StructureInfo import StructureInfo
+from Version.Version import Version
 
 DEFAULT_REMOVAL_THRESHOLD:int = 2
 removal_threshold:int = DEFAULT_REMOVAL_THRESHOLD # modified by MemoryUsage
@@ -18,12 +20,12 @@ class SimilarityCache[A: Con]():
 
     def __init__(self) -> None:
         # weird data structure because WeakRefs are weird and special.
-        self.cache:dict[tuple[StructureInfo, StructureInfo], WeakKeyDictionary[A, WeakKeyDictionary[A, tuple[float, bool, int]]]]\
+        self.cache:dict[tuple[Version, Version, StructureInfo, StructureInfo], WeakKeyDictionary[A, WeakKeyDictionary[A, tuple[float, bool, int]]]]\
             = defaultdict(lambda: WeakKeyDictionary())
         self.index:int = 0
 
-    def get(self, item1:A, item2:A, structure_info1:StructureInfo, structure_info2:StructureInfo) -> tuple[float, bool]|None:
-        environment_cache = self.cache.get((structure_info1, structure_info2))
+    def get(self, item1:A, item2:A, environment1:PrinterEnvironment, environment2:PrinterEnvironment) -> tuple[float, bool]|None:
+        environment_cache = self.cache.get((environment1.version, environment2.version, environment1.structure_info, environment2.structure_info))
         if environment_cache is None:
             return None
         subcache = environment_cache.get(item1)
@@ -35,10 +37,10 @@ class SimilarityCache[A: Con]():
         similarity, identical, _ = cached_item
         return similarity, identical
 
-    def set(self, similarity_tuple:tuple[float, bool], item1:A, item2:A, environment1:StructureInfo, environment2:StructureInfo) -> tuple[float, bool]:
+    def set(self, similarity_tuple:tuple[float, bool], item1:A, item2:A, environment1:PrinterEnvironment, environment2:PrinterEnvironment) -> tuple[float, bool]:
         if disabled:
             return similarity_tuple
-        environment_cache = self.cache[environment1, environment2]
+        environment_cache = self.cache[environment1.version, environment2.version, environment1.structure_info, environment2.structure_info]
         subcache = environment_cache.get(item1)
         if subcache is None:
             subcache = environment_cache[item1] = WeakKeyDictionary()
@@ -46,18 +48,18 @@ class SimilarityCache[A: Con]():
         subcache[item2] = (similarity, identical, self.index)
         return similarity_tuple
 
-    def clear(self, keep:Container[StructureInfo]) -> None:
+    def clear(self, keep:Container[tuple[Version, StructureInfo]]) -> None:
         '''
         Clears all environment caches that do not have both environments in `keep`.
         :keep: A Container of PrinterEnvironments to keep in the cache.
         '''
-        removals:list[tuple[StructureInfo, StructureInfo]] = []
+        removals:list[tuple[Version, Version, StructureInfo, StructureInfo]] = []
         cache = self.cache
         index = self.index
-        for (environment1, environment2), environment_cache in cache.items():
+        for (version1, version2, structure_info1, structure_info2), environment_cache in cache.items():
             # environment_cache would have length 0 if all keys were garbage collected.
-            if len(environment_cache) == 0 or environment1 not in keep and environment2 not in keep:
-                removals.append((environment1, environment2))
+            if len(environment_cache) == 0 or (version1, structure_info1) not in keep and (version2, structure_info2) not in keep:
+                removals.append((version1, version2, structure_info1, structure_info2))
                 continue
             subremovals:list[A] = []
             for key1, subcache in environment_cache.items():

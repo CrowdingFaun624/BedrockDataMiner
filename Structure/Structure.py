@@ -12,6 +12,7 @@ from Structure.StructureInfo import StructureInfo
 from Structure.StructureTag import StructureTag
 from Structure.Uses import UsageTracker, Use
 from Utilities.Trace import Trace
+from Version.Version import Version
 
 
 class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
@@ -47,7 +48,7 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
         self.children_has_garbage_collection = children_has_garbage_collection
         self.children_tags = children_tags
 
-    def clear_similarity_cache(self, keep:Container[StructureInfo]) -> None:
+    def clear_similarity_cache(self, keep:Container[tuple[Version, StructureInfo]]) -> None:
         for similarity_cache in self.get_similarity_caches():
             similarity_cache.clear(keep)
 

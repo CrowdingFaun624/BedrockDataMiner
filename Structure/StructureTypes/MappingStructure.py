@@ -169,7 +169,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
 
     def get_similarity(self, data1: ICon[Con[K], Con[V], D], data2: ICon[Con[K], Con[V], D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, float]:
         with trace.enter(self, self.trace_name, (data1, data2)):
-            if (output := self.similarity_cache.get(data1, data2, structure_info1 := (environment[branch1].structure_info), structure_info2 := (environment[branch2].structure_info))) is not None:
+            if (output := self.similarity_cache.get(data1, data2, environment1 := environment[branch1], environment2 := environment[branch2])) is not None:
                 return output
             similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]] = []
             data1_list = list(data1.items())
@@ -211,7 +211,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                 cumulative_similarity += similarity * similarity_weight
                 identical = identical and (keys_identical or key_weight == 0) and (values_identical or value_weight == 0)
             output = (cumulative_similarity / maximum_similarity) if maximum_similarity != 0 else 1.0, identical and cumulative_similarity == maximum_similarity
-            return self.similarity_cache.set(output, data1, data2, structure_info1, structure_info2)
+            return self.similarity_cache.set(output, data1, data2, environment1, environment2)
         return 0.0, False
 
     def get_best_key_value_pair[A, B](

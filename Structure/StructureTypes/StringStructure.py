@@ -56,18 +56,18 @@ class StringStructure[D, BO, CO](PrimitiveStructure[D, BO, CO]):
 
     def get_similarity(self, data1: SCon[D], data2: SCon[D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.trace_name, (data1, data2)):
-            if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
+            if (output := self.similarity_cache.get(data1, data2, environment1 := environment[branch1], environment2 := environment[branch2])) is not None:
                 return output
             data1_str = self.similarity_function(data1)
             data2_str = self.similarity_function(data2)
             similarity_weight1 = self.similarity_weight_function(data1_str)
             similarity_weight2 = self.similarity_weight_function(data2_str)
             if len(data1_str) == 0 and len(data2_str) == 0:
-                return self.similarity_cache.set((1.0, True), data1, data2, structure_info1, structure_info2)
+                return self.similarity_cache.set((1.0, True), data1, data2, environment1, environment2)
             elif data1_str == data2_str:
                 # the one situation where the boolean may not necessarily equal the float.
-                return self.similarity_cache.set((1.0, data1 == data2), data1, data2, structure_info1, structure_info2)
+                return self.similarity_cache.set((1.0, data1 == data2), data1, data2, environment1, environment2)
             max_weight = sum(similarity_weight1) + sum(similarity_weight2)
             levenshtein_distance = self.get_levenshtein_distance(data1_str, data2_str, similarity_weight1, similarity_weight2)
-            return self.similarity_cache.set((1 - (levenshtein_distance / max_weight), levenshtein_distance == 0), data1, data2, structure_info1, structure_info2)
+            return self.similarity_cache.set((1 - (levenshtein_distance / max_weight), levenshtein_distance == 0), data1, data2, environment1, environment2)
         return 0.0, False

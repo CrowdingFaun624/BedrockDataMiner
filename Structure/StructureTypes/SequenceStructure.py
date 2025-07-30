@@ -129,7 +129,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
 
     def get_similarity(self, data1: ICon[Con[K], Con[V], D], data2: ICon[Con[K], Con[V], D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.trace_name, (data1, data2)):
-            if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
+            if (output := self.similarity_cache.get(data1, data2, environment1 := environment[branch1], environment2 := environment[branch2])) is not None:
                 return output
             data1_list = [((branch1, key), (branch1, value)) for key, value in data1.items()]
             data2_list = list(data2.items())
@@ -140,7 +140,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
             levenshtein_distance = float(distances[len(data2_list) - prefix_len - suffix_len, len(data1_list) - prefix_len - suffix_len])
             max_length = max(len(data1_list), len(data2_list))
             output = (1 - (levenshtein_distance / max_length), self.path_implies_identicalness(len(data1_list), len(data2_list), prefix_len, suffix_len, path))
-            return self.similarity_cache.set(output, data1, data2, structure_info1, structure_info2)
+            return self.similarity_cache.set(output, data1, data2, environment1, environment2)
         return 0.0, False
 
     def get_prefix_suffix_len(self, data1:list[tuple[tuple[int, Con[K]], tuple[int, Con[V]]]], data2:list[tuple[Con[K], Con[V]]]) -> tuple[int, int]:

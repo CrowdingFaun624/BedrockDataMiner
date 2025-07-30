@@ -21,7 +21,7 @@ def check_types(version:Version, dataminers:list[AbstractDataminerCollection], d
         except Exception as e:
             print(f"Failed on {dataminer_collection} on {version}")
             traceback.print_exception(e)
-        dataminer_collection.clear_old_caches({environment.structure_info})
+        dataminer_collection.clear_old_caches({(version, environment.structure_info)})
         memory_usage.adjust()
 
 def check_all_structure_types(domain:Domain.Domain) -> None:
