@@ -22,10 +22,13 @@ class TypeSet[T]():
         if _type in self.types: return True
         elif _type in self.not_types: return False
         else:
-            for other_type in self.types:
-                if issubclass(_type, other_type):
+            for superclass in _type.mro():
+                if superclass in self.types:
                     self.types.add(_type)
                     return True
+                elif superclass in self.not_types:
+                    self.not_types.add(_type)
+                    return False
             else:
                 self.not_types.add(_type)
                 return False
@@ -67,10 +70,13 @@ class TypeDict[T, A]():
         if _type in self.types: return True
         elif _type in self.not_types: return False
         else:
-            for other_type, value in self.types.items():
-                if issubclass(_type, other_type):
-                    self.types[_type] = value
+            for superclass in _type.mro():
+                if superclass in self.types:
+                    self.types[_type] = self.types[superclass]
                     return True
+                elif superclass in self.not_types:
+                    self.not_types.add(_type)
+                    return False
             else:
                 self.not_types.add(_type)
                 return False
@@ -89,10 +95,13 @@ class TypeDict[T, A]():
         elif _type in self.not_types:
             raise KeyError(_type)
         else:
-            for other_type, value in self.types.items():
-                if issubclass(_type, other_type):
-                    self.types[_type] = value
+            for superclass in _type.mro():
+                if superclass in self.types:
+                    value = self.types[_type] = self.types[superclass]
                     return value
+                elif superclass in self.not_types:
+                    self.not_types.add(_type)
+                    raise KeyError(_type)
             else:
                 self.not_types.add(_type)
                 raise KeyError(_type)
@@ -103,10 +112,13 @@ class TypeDict[T, A]():
         elif _type in self.not_types:
             return default
         else:
-            for other_type, value in self.types.items():
-                if issubclass(_type, other_type):
-                    self.types[_type] = value
+            for superclass in _type.mro():
+                if superclass in self.types:
+                    value = self.types[_type] = self.types[superclass]
                     return value
+                elif superclass in self.not_types:
+                    self.not_types.add(_type)
+                    return default
             else:
                 self.not_types.add(_type)
                 return default
