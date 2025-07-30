@@ -34,6 +34,7 @@ class StoredAccessor(DirectoryAccessor):
     def file_list(self) -> Sequence[str]:
         if self._file_list is None:
             output = self._file_list = sorted(self.index.get().keys())
+        else: output = self._file_list
         if self.constrained_memory:
             self._file_list = None
         return output

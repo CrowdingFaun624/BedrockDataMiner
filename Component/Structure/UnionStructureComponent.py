@@ -12,7 +12,6 @@ from Component.Structure.StructureComponent import STRUCTURE_COMPONENT_PATTERN
 from Structure.Structure import Structure
 from Structure.StructureTypes.UnionStructure import UnionStructure
 from Utilities.Trace import Trace
-from Utilities.TypeUtilities import TypeDict
 from Utilities.TypeVerifier import (
     DictTypeVerifier,
     TypedDictKeyTypeVerifier,
@@ -38,7 +37,7 @@ class UnionStructureComponent(PassthroughStructureComponent[UnionStructure]):
         self.subcomponents_field = [
             (
                 (subcomponent_field := OptionalComponentField(subcomponent_str, STRUCTURE_COMPONENT_PATTERN, ("substructures", type_str))),
-                TypeField(type_str, ("substructures", type_str)).verify_with(subcomponent_field).add_to_set(self.my_type).make_default(self.pre_normalized_types_field),
+                TypeField(type_str, ("substructures", type_str)).verify_with(subcomponent_field).add_to_set(self.my_type),
             )
             for type_str, subcomponent_str in data["substructures"].items()
         ]

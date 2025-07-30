@@ -14,7 +14,7 @@ def get_levenshtein_distance(data1:str, data2:str) -> int:
             distances[y + 1][x + 1] = min(
                 distances[y+1][x] + 2,
                 distances[y][x+1] + 2,
-                distances[y][x] + (2 if data1[x] == data2[y] else (1 if data1[x].lower() == data1[y].lower() else 0)),
+                distances[y][x] + (0 if data1[x] == data2[y] else (1 if data1[x].lower() == data2[y].lower() else 2)),
             )
     distance = distances[len(data2)][len(data1)]
     return distance
@@ -28,7 +28,7 @@ def guess_intent(user_input:str, items:list[str], threshold:int) -> str|None:
     similarities:dict[str,int] = {option: get_levenshtein_distance(user_input, option) for option in items}
     min_option, min_distance, second_min_distance = None, None, None
     for option, distance in similarities.items():
-        if distance > threshold: continue
+        if distance > threshold * 2: continue # distances are multiplied by two, so threshold is too.
         if min_distance is None or distance <= min_distance:
             min_option = option
             second_min_distance = min_distance
