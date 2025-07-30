@@ -24,6 +24,7 @@ from Utilities.TypeVerifier import (
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
+    UnionTypeVerifier,
 )
 
 if TYPE_CHECKING:
@@ -39,11 +40,12 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
     my_capabilities = Capabilities(is_dataminer_settings=True)
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("arguments", False, dict),
-        TypedDictKeyTypeVerifier("dependencies", False, ListTypeVerifier(str, list)),
-        TypedDictKeyTypeVerifier("files", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("dependencies", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("files", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
         TypedDictKeyTypeVerifier("name", True, (str, type(None))),
         TypedDictKeyTypeVerifier("new", True, (str, type(None))),
         TypedDictKeyTypeVerifier("old", True, (str, type(None))),
+        TypedDictKeyTypeVerifier("optional_dependencies", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
         TypedDictKeyTypeVerifier("structure_info", False, dict),
         TypedDictKeyTypeVerifier("type", False, str),
     )
@@ -57,6 +59,7 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
         "files_field_exists",
         "new_field",
         "old_field",
+        "optional_dependencies_field",
         "structure_info",
     )
 
@@ -69,15 +72,9 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
         self.old_field = OptionalComponentField(data["old"], VERSION_PATTERN, ("old",))
         self.files_field = ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",))
         self.dataminer_field = OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=NullDataminer)
-        self.dependencies_field = FieldListField([
-            ComponentField(
-                dependency_name,
-                ABSTRACT_DATAMINER_COLLECTION_PATTERN,
-                (str(index),),
-                ("dependencies", str(index)),
-            ) for index, dependency_name in enumerate(data.get("dependencies", ()))
-        ], ("dependencies",))
-        return (self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field)
+        self.dependencies_field = ComponentListField(data.get("dependencies", ()), ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("dependencies",))
+        self.optional_dependencies_field = ComponentListField(data.get("optional_dependencies", ()), ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("optional_dependencies",))
+        return (self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field, self.optional_dependencies_field)
 
     def create_final(self, trace:Trace) -> DataminerSettings:
         return DataminerSettings(
@@ -94,7 +91,8 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
             name=parent.name,
             structure=parent.structure_field.subcomponent.final,
             dataminer_class=self.dataminer_field.object_class,
-            dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.subcomponent.final)),
+            dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.final)),
+            optional_dependencies=list(self.optional_dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.final)),
             start_version=self.old_field.map(lambda subcomponent: subcomponent.final),
             end_version=self.new_field.map(lambda subcomponent: subcomponent.final),
             structure_info=StructureInfo(self.structure_info, self.domain, repr(self)),

@@ -12,14 +12,15 @@ from Version.Version import Version
 class Dataminer():
 
     __slots__ = (
-        "version",
-        "settings",
-        "domain",
-        "file_name",
-        "name",
-        "files",
-        "files_str",
         "dependencies",
+        "domain",
+        "files",
+        "file_name",
+        "files_str",
+        "name",
+        "optional_dependencies",
+        "settings",
+        "version",
     )
 
     parameters:TypedDictTypeVerifier|None = TypedDictTypeVerifier()
@@ -34,6 +35,7 @@ class Dataminer():
         self.files = set(self.settings.version_file_types)
         self.files_str = {version_file_type.name for version_file_type in self.files}
         self.dependencies = self.settings.dependencies
+        self.optional_dependencies = self.settings.optional_dependencies
         if not isinstance(self, NullDataminer) and self.version not in self.settings.version_range:
             raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, f"in Dataminer {self}")
 

@@ -174,7 +174,7 @@ class TagSearcherDataminer(Dataminer):
         self.none_okay = none_okay
 
     def activate(self, environment:DataminerEnvironment) -> list[DataPath|Any]:
-        dependencies = set(self.dependencies)
+        dependencies = set(self.dependencies) | set(self.optional_dependencies)
         all_tags = self.domain.structure_tags
         printer_environment = environment.get_printer_environment(self.version, self.settings.structure_info)
         tag_dataminer_collections:defaultdict[AbstractDataminerCollection,list[StructureTag]] = defaultdict(lambda: [])

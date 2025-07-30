@@ -1,7 +1,7 @@
 import json
+from itertools import chain
 from pathlib import Path
-from types import EllipsisType
-from typing import Any, Container, Iterable, Sequence
+from typing import Any, Container, Iterable, Mapping, Sequence
 
 from ordered_set import OrderedSet
 
@@ -68,9 +68,17 @@ class AbstractDataminerCollection():
         printer_environment = environment.get_printer_environment(version, self.get_structure_info(version))
         self.structure.type_check_from_raw(data, version, printer_environment)
 
-        return self.get_data_file(version) # since the normalizing immediately before may modify it.
+        return data
 
-    def get_dependencies(self, version:Version) -> Iterable["AbstractDataminerCollection"]: ...
+    def get_dependencies(self, version:Version) -> Iterable["AbstractDataminerCollection"]:
+        '''
+        Returns both required and optional dependencies.
+        '''
+        return chain(self.get_required_dependencies(version), self.get_optional_dependencies(version))
+
+    def get_required_dependencies(self, version:Version) -> Iterable["AbstractDataminerCollection"]: ...
+
+    def get_optional_dependencies(self, version:Version) -> Iterable["AbstractDataminerCollection"]: ...
 
     def get_data_file(self, version:Version, non_exist_ok:bool=False) -> Any:
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
@@ -152,7 +160,7 @@ class AbstractDataminerCollection():
         '''Clears all caches of this DataminerCollection's Structure.'''
         self.structure.clear_all_caches()
 
-    def clear_old_caches(self, structure_infos:Container[StructureInfo]) -> None:
+    def clear_old_caches(self, structure_infos:Container[tuple[Version, StructureInfo]]) -> None:
         '''Clears items from caches of this DataminerCollection's Structure and all of its children that are too old.'''
         self.structure.clear_old_caches(structure_infos)
 
@@ -178,7 +186,7 @@ class AbstractDataminerCollection():
     def get_all_uses(self) -> OrderedSet[Use]:
         return self.structure.get_all_uses(set(), None)
 
-    def get_referenced_files(self, version:Version, structure_tags:dict[str,StructureTag], referenced_files:set[int]) -> None:
+    def get_referenced_files(self, version:Version, structure_tags:Mapping[str,StructureTag], referenced_files:set[int]) -> None:
         structure_environment = StructureEnvironment(EnvironmentType.garbage_collection, self.domain)
         file_tags = [structure_tag for structure_tag in structure_tags.values() if structure_tag.is_file]
         structure = self.structure
@@ -188,19 +196,15 @@ class AbstractDataminerCollection():
         if data_file is None or not self.supports_version(version): # sometimes data_file may exist but the Version is still unsupported.
             return
 
-        normalized_data:Any|EllipsisType = ...
         structure_info = self.get_structure_info(version)
         environment = PrinterEnvironment(structure_environment, structure_info, None, version, 0)
         trace = Trace()
 
         if structure.children_has_garbage_collection:
-            normalized_data = structure.normalize_from_raw(data_file, trace, environment)
             structure.print_exception_list(trace, (version,))
 
         if structure.has_tags(file_tags):
-            if normalized_data is ...:
-                normalized_data = structure.normalize_from_raw(data_file, trace, environment)
-            containerized_data = structure.containerize(normalized_data, trace, environment)
+            containerized_data = structure.containerize(data_file, trace, environment)
             structure.print_exception_list(trace, (version,))
             if containerized_data is ...: raise InvalidStateError()
             for file_tag, paths in self.get_tag_paths_from_containerized(containerized_data, version, file_tags, environment).items(): # this is necessary just in case files are referenced only by a hash that isn't used.

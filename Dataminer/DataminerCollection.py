@@ -23,8 +23,11 @@ class DataminerCollection(AbstractDataminerCollection):
     def get_structure_info(self, version: Version) -> StructureInfo:
         return self.get_dataminer_settings(version).structure_info
 
-    def get_dependencies(self, version: Version) -> Iterable[AbstractDataminerCollection]:
+    def get_required_dependencies(self, version: Version) -> Iterable[AbstractDataminerCollection]:
         return self.get_dataminer_settings(version).dependencies
+
+    def get_optional_dependencies(self, version: Version) -> Iterable[AbstractDataminerCollection]:
+        return self.get_dataminer_settings(version).optional_dependencies
 
     def datamine(self, version: Version, environment: DataminerEnvironment) -> Any:
         return self.get_dataminer(version).activate(environment)
@@ -56,5 +59,5 @@ class DataminerCollection(AbstractDataminerCollection):
             for required_version_file_type in dataminer_settings.version_file_types
         ) and all(
             dependency.supports_version(version)
-            for dependency in dataminer_settings.dependencies
+            for dependency in dataminer_settings.dependencies # does not contain optional dependencies
         )

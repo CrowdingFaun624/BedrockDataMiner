@@ -9,6 +9,11 @@ from Utilities.UserInput import input_multi
 from Version.Version import Version
 
 
+def print_error(message:str, domain:"Domain.Domain") -> None:
+    print(message)
+    if (log := domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
+        log.write(message)
+
 def get_dataminable_dataminers(version:Version, domain:Domain.Domain) -> Iterable[AbstractDataminerCollection]:
     '''
     Returns the names of all data files that this Version supports.
@@ -27,7 +32,7 @@ def get_dataminer_order(version:Version, unordered_dataminers:Sequence[AbstractD
     ordered_dataminers:list[AbstractDataminerCollection] = []
     already_added:set[AbstractDataminerCollection] = set()
     for dataminer in unordered_dataminers:
-        if dataminer not in already_added:
+        if dataminer not in already_added and dataminer.supports_version(version):
             resolve_dataminer_order(ordered_dataminers, already_added, dataminer, version)
     return ordered_dataminers
 
@@ -37,8 +42,11 @@ def resolve_dataminer_order(
     current_dataminer:AbstractDataminerCollection,
     version:Version
 ) -> None:
-    for dependency in current_dataminer.get_dependencies(version):
+    for dependency in current_dataminer.get_required_dependencies(version):
         if dependency not in already_added:
+            resolve_dataminer_order(dataminers, already_added, dependency, version)
+    for dependency in current_dataminer.get_optional_dependencies(version):
+        if dependency not in already_added and dependency.supports_version(version):
             resolve_dataminer_order(dataminers, already_added, dependency, version)
     dataminers.append(current_dataminer)
     already_added.add(current_dataminer)
@@ -89,13 +97,13 @@ def run(
             failure_dataminers_set.add(dataminer_collection.name)
             failure_dataminers.append((dataminer_collection, e))
             if print_messages:
-                traceback.print_exception(e)
-                print(f"Failed to store {dataminer_collection.name} for {version}.")
+                print_error("".join(traceback.format_exception(e)), version.domain)
+                print_error(f"Failed to store {dataminer_collection.name} for {version}.", version.domain)
         else:
             if print_messages:
                 print(f"Successfully stored {dataminer_collection.name} for {version}.")
     if len(failure_dataminers) > 0 and print_messages:
-        print(f"Failed to store dataminers: [{", ".join(dataminer[0].name for dataminer in failure_dataminers)}]")
+        print_error(f"Failed to store dataminers: [{", ".join(dataminer[0].name for dataminer in failure_dataminers)}]", version.domain)
     return failure_dataminers
 
 def user_interface(domain:Domain.Domain) -> None:
@@ -120,4 +128,4 @@ def user_interface(domain:Domain.Domain) -> None:
         if len(failure_dataminers) > 0:
             cannot_datamine.append(version)
     if len(versions) > 1:
-        print(f"Failed to datamine {len(cannot_datamine)} versions:\n{", ".join(version.name for version in cannot_datamine)}")
+        print_error(f"Failed to datamine {len(cannot_datamine)} versions:\n{", ".join(version.name for version in cannot_datamine)}", domain)

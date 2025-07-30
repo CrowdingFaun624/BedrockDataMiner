@@ -58,7 +58,7 @@ class CoverageDataminer(AbstractDataminerCollection):
     def get_structure_info(self, version: Version) -> StructureInfo:
         return self.structure_info
 
-    def get_dependencies(self, version: Version) -> Iterable[DataminerCollection]:
+    def get_required_dependencies(self, version: Version) -> Iterable[DataminerCollection]:
         return (
             dataminer_collection for dataminer_collection in self.domain.dataminer_collections.values()
             if dataminer_collection is not self
@@ -67,6 +67,9 @@ class CoverageDataminer(AbstractDataminerCollection):
             if (dataminer := dataminer_collection.get_dataminer_class(version)) is not None
             if issubclass(dataminer, FileDataminer)
         )
+
+    def get_optional_dependencies(self, version: Version) -> Iterable[AbstractDataminerCollection]:
+        return ()
 
     def supports_version(self, version: Version) -> bool:
         return self.file_list_dataminer.supports_version(version)
@@ -103,7 +106,7 @@ class CoverageDataminer(AbstractDataminerCollection):
         file_set = FileSet(file_set_list)
         version_files_covered:set[str] = set()
         version_files_covered_dict:dict[Dataminer,set[str]] = {}
-        for dataminer_collection in self.get_dependencies(version):
+        for dataminer_collection in self.get_required_dependencies(version):
             self.do_dataminer_collection(dataminer_collection, version, environment, file_set, version_files_covered, version_files_covered_dict)
         leftover_files = file_set_set - version_files_covered
         # comparison

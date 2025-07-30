@@ -23,6 +23,7 @@ class DataminerSettings():
         "file_name",
         "full_name",
         "name",
+        "optional_dependencies",
         "structure",
         "structure_info",
         "version_file_types",
@@ -42,6 +43,7 @@ class DataminerSettings():
         structure:StructureBase,
         dataminer_class:type["Dataminer"]|None,
         dependencies:list["AbstractDataminerCollection"],
+        optional_dependencies:list["AbstractDataminerCollection"],
         start_version:Version|None,
         end_version:Version|None,
         structure_info:StructureInfo,
@@ -53,6 +55,7 @@ class DataminerSettings():
             self.structure:StructureBase = structure
             self.dataminer_class:type["Dataminer"]|None = dataminer_class
             self.dependencies:list["AbstractDataminerCollection"] = dependencies
+            self.optional_dependencies:list["AbstractDataminerCollection"] = optional_dependencies
             self.version_range:VersionRange = VersionRange(start_version, end_version)
             self.structure_info:StructureInfo = structure_info
             self.version_file_types:list[VersionFileType] = version_file_types
