@@ -182,6 +182,9 @@ class TAG_String(str, TAG):
     def __repr__(self) -> str:
         return f"\"{escape_string(self)}\""
 
+    def __str__(self) -> str:
+        return f"\"{escape_string(self)}\""
+
     def __stringify__(self) -> str:
         # for DefaultDelegate
         return str(self)
