@@ -6,11 +6,10 @@
         "structure": "resource_packs"
     },
     "resource_packs": {
-        "type": "Dict",
-        "allow_key_moves": false,
-        "delegate": "tablifiers/sound_definitions/ResourcePackDelegate",
-        "value_types": "dict",
-        "normalizers": [
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": [
             {
                 "function_name": "tablifiers/sound_definitions/normalize"
             },
@@ -27,7 +26,13 @@
                 "function_name": "tablifiers/sound_definitions/make_all_tags"
             }
         ],
-        "value_structure": "sound_events"
+        "structure": {
+            "type": "Dict",
+            "allow_key_moves": false,
+            "delegate": "tablifiers/sound_definitions/ResourcePackDelegate",
+            "value_types": "dict",
+            "value_structure": "sound_events"
+        }
     },
     "sound_events": {
         "type": "Dict",
@@ -37,22 +42,27 @@
         "value_structure": "sound_event"
     },
     "sound_event": {
-        "type": "Keymap",
-        "delegate": "tablifiers/sound_definitions/SoundEventDelegate",
-        "normalizers": {
-            "function_name": "delete_optional_keys",
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "delete_keys",
             "arguments": {
                 // https://bugs.mojang.com/browse/MCPE-153558
                 // https://bugs.mojang.com/browse/MCPE-178265
                 "keys": ["subtitle", "volume", "pitch"]
             }
         },
-        "keys": {
-            "name": {"types": "str", "similarity_weight": 0, "structure": "string"},
-            "category": {"types": "str", "structure": "category"},
-            "max_distance": {"types": "float", "structure": "make_float"},
-            "min_distance": {"types": "float", "structure": "make_float"},
-            "sounds": {"types": "list", "structure": "sounds"}
+        "structure": {
+            "type": "Keymap",
+            "delegate": "tablifiers/sound_definitions/SoundEventDelegate",
+            "keys": {
+                "name": {"types": "str", "similarity_weight": 0, "structure": "string"},
+                "category": {"types": "str", "structure": "category"},
+                "max_distance": {"types": ["int", "float"], "structure": "make_float"},
+                "min_distance": {"types": ["int", "float"], "structure": "make_float"},
+                "sounds": {"types": "list", "structure": "sounds"}
+            }
         }
     },
     "sounds": {
@@ -60,38 +70,42 @@
         "key_weight": 0,
         "key_types": "int",
         "this_types": "list",
-        "value_types": "dict",
+        "value_types": ["dict", "str"],
         "min_value_similarity_threshold": 0.3,
         "delegate": "tablifiers/sound_definitions/SoundsDelegate",
         "value_structure": "sound_properties"
     },
     "sound_properties": {
-        "type": "Keymap",
-        "pre_normalized_types": ["str", "dict"],
-        "delegate": "tablifiers/sound_definitions/SoundPropertiesDelegate",
-        "normalizers": [
+        "type": "Normalizer",
+        "outer_types": ["str", "dict"],
+        "inner_types": "dict",
+        "functions": [
             {
                 "function_name": "normalizers/normalizers sound_definitions_make_strings_to_dict"
             },
             {
                 // https://bugs.mojang.com/browse/MCPE-153561
-                "function_name": "delete_optional_key",
+                "function_name": "delete_key",
                 "arguments": {
                     "key": "pitch:"
                 }
             }
         ],
-        "key_structure": "not_code_string",
-        "keys": {
-            "name": {"types": "str", "structure": "string", "similarity_weight": 10, "required": true},
-            "type": {"types": "str", "structure": "primitive_string", "delegate_arguments": {"always_print": true}},
-            "weight": {"types": "int", "structure": "int"},
-            "volume": {"types": "float", "structure": "make_float"},
-            "pitch": {"types": "float", "structure": "make_float"},
-            "stream": {"types": "bool", "structure": "bool"},
-            "load_on_low_memory": {"types": "bool", "structure": "bool"},
-            "is3D": {"types": "bool", "structure": "bool"},
-            "exclude_from_pocket_platforms": {"types": "bool", "structure": "bool"}
+        "structure": {
+            "type": "Keymap",
+            "delegate": "tablifiers/sound_definitions/SoundPropertiesDelegate",
+            "key_structure": "not_code_string",
+            "keys": {
+                "name": {"types": "str", "structure": "string", "similarity_weight": 10, "required": true},
+                "type": {"types": "str", "structure": "primitive_string", "delegate_arguments": {"always_print": true}},
+                "weight": {"types": "int", "structure": "int"},
+                "volume": {"types": ["int", "float"], "structure": "make_float"},
+                "pitch": {"types": ["int", "float"], "structure": "make_float"},
+                "stream": {"types": "bool", "structure": "bool"},
+                "load_on_low_memory": {"types": "bool", "structure": "bool"},
+                "is3D": {"types": "bool", "structure": "bool"},
+                "exclude_from_pocket_platforms": {"types": "bool", "structure": "bool"}
+            }
         }
     },
     "category": {
@@ -126,15 +140,19 @@
         }
     },
     "make_float": {
-        "type": "Primitive",
-        "this_types": "float",
-        "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
-        "delegate_arguments": {
-            "code": false
-        },
-        "pre_normalized_types": ["float", "int"],
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": ["float", "int"],
+        "inner_types": "float",
+        "functions": {
             "function_name": "parse_float"
+        },
+        "structure": {
+            "type": "Primitive",
+            "this_types": "float",
+            "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
+            "delegate_arguments": {
+                "code": false
+            }
         }
     },
     "int": {

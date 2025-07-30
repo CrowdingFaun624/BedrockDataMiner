@@ -1,51 +1,14 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "fogs"
-        },
-        "this_types": "dict",
-        "structure": "fogs"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["int", "float"]
-    },
-    "fogs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "value_structure": "resource_packs",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "fog"
-        }
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "value_structure": "cache",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "resource pack"
-        }
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "fog"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "fogs",
+        "$file_field": "fog",
+        "$pack_type": "resource pack",
+        "$structure": "#@fog"
     },
     "fog": {
         "type": "Keymap",
@@ -98,8 +61,8 @@
     "distance.item": {
         "type": "Keymap",
         "keys": {
-            "fog_start": {"types": "decimal"},
-            "fog_end": {"types": "decimal"},
+            "fog_start": {"types": "temp/decimal"},
+            "fog_end": {"types": "temp/decimal"},
             "fog_color": {"types": "str"},
             "render_distance_type": {"types": "str"},
             "transition_fog": {"types": "dict", "structure": "transition_fog"}

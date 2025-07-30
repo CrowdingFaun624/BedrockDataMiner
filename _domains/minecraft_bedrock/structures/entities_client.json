@@ -1,76 +1,39 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "entities_client"
-        },
-        "this_types": "dict",
-        "structure": "entities"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
-    "entities": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "entity",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "key_structure": {
-            "type": "String",
-            "similarity_function": "normalizers/normalizers remove_file_suffix"
-        },
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "entity"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "entities_client",
+        "$file_field": "entity",
+        "$pack_type": "resource pack",
+        "$files_key_structure": "temp/string_remove_file_suffix",
+        "$structure": "#@entity"
     },
     "entity": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers entities_client_fix_old"
         },
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "keys": {
-            "defined_in": {"types": "list", "structure": "defined_in"},
-            "format_version": {"types": "str"},
-            "minecraft:client_entity": {"types": "dict", "similarity_weight": 20, "structure": {
-                "type": "Keymap",
-                "keys": {
-                    "description": {"types": "dict", "structure": "description"}
-                }
-            }}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "defined_in": {"types": "list", "structure": "defined_in"},
+                "format_version": {"types": "str"},
+                "minecraft:client_entity": {"types": "dict", "similarity_weight": 20, "structure": {
+                    "type": "Keymap",
+                    "keys": {
+                        "description": {"types": "dict", "structure": "description"}
+                    }
+                }}
+            }
         }
     },
     "defined_in": {
@@ -97,7 +60,7 @@
             "print_flat": true,
             "print_all": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "description": {

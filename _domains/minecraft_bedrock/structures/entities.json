@@ -1,19 +1,16 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "entities"
-        },
-        "this_types": "dict",
-        "structure": "entities"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "entities",
+        "$file_field": "entity",
+        "$pack_type": "behavior pack",
+        "$allow_file_moves": false,
+        "$structure": "#@entity"
     },
     "entity_types_type": {
         "type": "TypeAlias",
@@ -27,41 +24,6 @@
         "type": "TypeAlias",
         "types": ["dict", "list"]
     },
-    "entities": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "entity",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "allow_key_moves": false,
-        "value_structure": "behavior_packs"
-    },
-    "behavior_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "behavior pack"
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "entity"
-        }
-    },
     "entity": {
         "type": "Keymap",
         "delegate_arguments": {
@@ -72,26 +34,31 @@
             "definitions": {"types": "dict", "structure": "definitions", "tags": ["t/outdated"]},
             "use_beta_features": {"types": "bool"},
             "minecraft:entity": {"types": "dict", "structure": {
-                "type": "Keymap",
-                "normalizers": {
-                    "function_name": "delete_optional_keys",
+                "type": "Normalizer",
+                "outer_types": "dict",
+                "inner_types": "dict",
+                "functions": {
+                    "function_name": "delete_keys",
                     "arguments": {
                         "keys": ["minecraft:physics", "minecraft:pushable", "minecraft:conditional_bandwidth_optimization", "minecraft:raid_persistence"]
                     }
                 },
-                "delegate_arguments": {
-                    "sort": "sort_by_component_order"
-                },
-                "keys": {
-                    "format_version": {"types": ["float", "str"], "tags": ["t/outdated"]},
-                    "version": {"types": "decimal", "tags": ["t/outdated"]},
-                    "description": {"types": "dict", "structure": "description"},
-                    "component_groups": {"types": "dict", "structure": "component_groups"},
-                    "components": {"types": "dict", "structure": "components"},
-                    "events": {"types": "dict", "structure": "events"}
+                "structure": {
+                    "type": "Keymap",
+                    "delegate_arguments": {
+                        "sort": "sort_by_component_order"
+                    },
+                    "keys": {
+                        "format_version": {"types": ["float", "str"], "tags": ["t/outdated"]},
+                        "version": {"types": "temp/decimal", "tags": ["t/outdated"]},
+                        "description": {"types": "dict", "structure": "description"},
+                        "component_groups": {"types": "dict", "structure": "component_groups"},
+                        "components": {"types": "dict", "structure": "components"},
+                        "events": {"types": "dict", "structure": "events"}
+                    }
                 }
             }},
-            "version": {"types": "decimal", "tags": ["t/outdated"]}
+            "version": {"types": "temp/decimal", "tags": ["t/outdated"]}
         }
     },
     "definitions": {
@@ -185,53 +152,60 @@
         "key_weight": 1,
         "value_weight": 2,
         "value_types": "dict",
-        "key_structure": {
-            "type": "String",
-            "similarity_function": "normalizers/normalizers remove_minecraft_prefix"
-        },
+        "key_structure": "temp/string_remove_minecraft_prefix",
         "value_structure": "events_event"
     },
     "events_event": {
-        "type": "Keymap",
-        "normalizers": {
-            "function_name": "delete_optional_key",
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "delete_key",
             "arguments": {
                 "key": "minecraft:transformation"
             }
         },
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "keys": {
-            "trigger": {"types": "str"},
-            "weight": {"types": "int"},
-            "add": {"types": "dict", "structure": "component_groups_add_remove"},
-            "emit_particle": {"types": "dict", "structure": "event:emit_particle"},
-            "emit_vibration": {"types": "dict", "structure": "event:emit_vibration"},
-            "execute_event_on_home_block": {"types": "dict", "structure": "event"},
-            "filters": {"types": "dict", "structure": "filter"},
-            "first_valid": {"types": "list", "structure": "event:first_valid"},
-            "play_sound": {"types": "dict", "structure": "event:play_sound"},
-            "randomize": {"types": "list", "structure": "event:randomize"},
-            "remove": {"types": "dict", "structure": "component_groups_add_remove"},
-            "reset_target": {"types": "dict", "structure": "empty"},
-            "sequence": {"types": "list", "structure": "event:sequence"},
-            "set_home_position": {"types": "dict", "structure": "empty"},
-            "set_property": {"types": "dict", "structure": "event:set_property"},
-            "stop_movement": {"types": "dict", "structure": "empty"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "trigger": {"types": "str"},
+                "weight": {"types": "int"},
+                "add": {"types": "dict", "structure": "component_groups_add_remove"},
+                "emit_particle": {"types": "dict", "structure": "event:emit_particle"},
+                "emit_vibration": {"types": "dict", "structure": "event:emit_vibration"},
+                "execute_event_on_home_block": {"types": "dict", "structure": "event"},
+                "filters": {"types": "dict", "structure": "filter"},
+                "first_valid": {"types": "list", "structure": "event:first_valid"},
+                "play_sound": {"types": "dict", "structure": "event:play_sound"},
+                "randomize": {"types": "list", "structure": "event:randomize"},
+                "remove": {"types": "dict", "structure": "component_groups_add_remove"},
+                "reset_target": {"types": "dict", "structure": "empty"},
+                "sequence": {"types": "list", "structure": "event:sequence"},
+                "set_home_position": {"types": "dict", "structure": "empty"},
+                "set_property": {"types": "dict", "structure": "event:set_property"},
+                "stop_movement": {"types": "dict", "structure": "empty"}
+            }
         }
     },
     "component_groups_add_remove": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             // https://bugs.mojang.com/browse/MCPE-178417
-            "function_name": "delete_optional_keys",
+            "function_name": "delete_keys",
             "arguments": {
                 "keys": ["minecraft:silverfish_calm", "minecraft:silverfish_angry", "minecraft:enderman_calm", "minecraft:enderman_angry", "minecraft:sheep_sheared", "minecraft:sheep_dyeable"]
             }
         },
-        "keys": {
-            "component_groups": {"types": "list", "structure": "component_group_list"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "component_groups": {"types": "list", "structure": "component_group_list"}
+            }
         }
     },
     "component_group_list": {
@@ -246,7 +220,7 @@
         "key_types": "int",
         "this_types": "list",
         "value_types": "str",
-        "value_structure": {"type": "String", "similarity_function": "normalizers/normalizers remove_minecraft_prefix"}
+        "value_structure": "temp/string_remove_minecraft_prefix"
     },
     "component_list": {
         "type": "Dict",
@@ -346,17 +320,23 @@
         "value_structure": "components"
     },
     "components": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "delete_key",
+            "arguments": {
+                "key": "minecart:on_hurt_by_player"
+            }
+        },
+        "structure": "components_dict"
+    },
+    "components_dict": {
         "type": "Keymap",
         "delegate_arguments": {
             "field": "component",
             "sort": "sort_by_component_order",
             "measure_length": true
-        },
-        "normalizers": {
-            "function_name": "delete_optional_key",
-            "arguments": {
-                "key": "minecart:on_hurt_by_player"
-            }
         },
         "tags": ["t/entity_component"],
         "keys": {
@@ -802,7 +782,7 @@
             "measure_length": true
         },
         "value_types": "str",
-        "value_structure": {"type": "String", "similarity_function": "normalizers/normalizers remove_minecraft_prefix"}
+        "value_structure": "temp/string_remove_minecraft_prefix"
     },
     "block_list_or_block": {
         "type": "Union",
@@ -841,7 +821,7 @@
             "measure_length": true
         },
         "value_types": "str",
-        "value_structure": {"type": "String", "similarity_function": "normalizers/normalizers remove_minecraft_prefix"}
+        "value_structure": "temp/string_remove_minecraft_prefix"
     },
     "entity_list_or_entity": {
         "type": "Union",
@@ -884,19 +864,19 @@
             "cooldown": {"types": "int", "tags": ["t/not_in_documentation"]},
             "entity_filter": {"types": ["list", "str"], "structure": "entity_list_or_entity", "tags": ["t/outdated"], "similarity_weight": 7},
             "filters": {"types": "dict", "structure": "filter", "similarity_weight": 7},
-            "max_dist": {"types": "decimal"},
-            "max_distance": {"types": "decimal", "tags": ["t/outdated"]},
+            "max_dist": {"types": "temp/decimal"},
+            "max_distance": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "max_flee": {"types": "int", "tags": ["t/not_in_documentation"]},
             "must_reach": {"types": "bool", "tags": ["t/outdated"]},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
             "num_to_spawn": {"types": "int"},
             "priority": {"types": "int", "tags": ["t/not_in_documentation"]},
             "reevaluate_description": {"types": "bool", "tags": ["t/not_in_documentation"]},
-            "sprint_speed_modifier": {"types": "decimal", "tags": ["t/outdated"]},
-            "sprint_speed_multiplier": {"types": "decimal"},
-            "walk_speed_modifier": {"types": "decimal", "tags": ["t/outdated"]},
-            "walk_speed_multiplier": {"types": "decimal"},
+            "sprint_speed_modifier": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "sprint_speed_multiplier": {"types": "temp/decimal"},
+            "walk_speed_modifier": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "walk_speed_multiplier": {"types": "temp/decimal"},
             "within_default": {"types": "int", "tags": ["t/not_in_documentation"]}
         }
     },
@@ -1011,7 +991,7 @@
             "operator": {"types": "str", "delegate_arguments": {"always_print": true}},
             "subject": {"types": "str", "delegate_arguments": {"always_print": true}},
             "test": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "value": {"types": ["bool", "decimal", "str"], "delegate_arguments": {"always_print": true}}
+            "value": {"types": ["bool", "temp/decimal", "str"], "delegate_arguments": {"always_print": true}}
         }
     },
     "filter_old": {
@@ -1109,7 +1089,7 @@
     "range_decimal_or_decimal": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "dict": "range_dict_decimal",
             "list": "range_list_decimal"
         }
@@ -1121,8 +1101,8 @@
             "print_all": true
         },
         "keys": {
-            "range_max": {"types": "decimal"},
-            "range_min": {"types": "decimal"}
+            "range_max": {"types": "temp/decimal"},
+            "range_min": {"types": "temp/decimal"}
         }
     },
     "range_dict_int": {
@@ -1169,7 +1149,7 @@
             "print_all": true,
             "print_flat": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "range_list_int": {
@@ -1204,7 +1184,7 @@
             "print_all": true,
             "print_flat": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "vector_int": {
@@ -1300,7 +1280,7 @@
         },
         "keys": {
             "item": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "growth": {"types": "decimal"}
+            "growth": {"types": "temp/decimal"}
         }
     },
     "component.ambient_sound_interval": {
@@ -1308,8 +1288,8 @@
         "keys": {
             "event_name": {"types": "str", "delegate_arguments": {"always_print": true}},
             "event_names": {"types": "list", "structure": "component.ambient_sound_interval:event_names", "delegate_arguments": {"always_print": true}},
-            "range": {"types": "decimal"},
-            "value": {"types": "decimal"}
+            "range": {"types": "temp/decimal"},
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.ambient_sound_interval:event_names": {
@@ -1335,7 +1315,7 @@
     "component.anger_level": {
         "type": "Keymap",
         "keys": {
-            "anger_decrement_interval": {"types": "decimal"},
+            "anger_decrement_interval": {"types": "temp/decimal"},
             "angry_boost": {"types": "int"},
             "angry_threshold": {"types": "int"},
             "default_annoyingness": {"types": "int"},
@@ -1398,15 +1378,15 @@
         "keys": {
             "cause": {"types": "str"},
             "entity_filter": {"types": "dict", "structure": "filter"},
-            "damage_cooldown": {"types": "decimal"},
+            "damage_cooldown": {"types": "temp/decimal"},
             "damage_per_tick": {"types": "int"},
-            "damage_range": {"types": "decimal"}
+            "damage_range": {"types": "temp/decimal"}
         }
     },
     "component.attack": {
         "type": "Keymap",
         "keys": {
-            "damage": {"types": ["decimal", "dict", "list"], "structure": "component.attack:damage", "delegate_arguments": {"always_print": true}},
+            "damage": {"types": ["temp/decimal", "dict", "list"], "structure": "component.attack:damage", "delegate_arguments": {"always_print": true}},
             "effect_duration": {"types": "int"},
             "effect_name": {"types": "str"}
         }
@@ -1414,7 +1394,7 @@
     "component.attack:damage": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "dict": "range_dict_decimal",
             "list": "range_list_decimal"
         }
@@ -1423,7 +1403,7 @@
         "type": "Keymap",
         "keys": {
             "attack_cooldown_complete_event": {"types": "dict", "structure": "event_target"},
-            "attack_cooldown_time": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"}
+            "attack_cooldown_time": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"}
         }
     },
     "component.attack_damage": {
@@ -1441,11 +1421,11 @@
     "component.balloonable": {
         "type": "Keymap",
         "keys": {
-            "mass": {"types": "decimal"},
-            "max_distance": {"types": "decimal"},
+            "mass": {"types": "temp/decimal"},
+            "max_distance": {"types": "temp/decimal"},
             "on_balloon": {"types": "str"},
             "on_unballoon": {"types": "str"},
-            "soft_distance": {"types": "decimal"}
+            "soft_distance": {"types": "temp/decimal"}
         }
     },
     "component.barter": {
@@ -1459,7 +1439,7 @@
         "type": "Keymap",
         "keys": {
             "on_break": {"types": "list", "structure": "component.block_sensor:on_break"},
-            "sensor_radius": {"types": "decimal"},
+            "sensor_radius": {"types": "temp/decimal"},
             "sources": {"types": "list", "structure": "filter_list"}
         }
     },
@@ -1487,8 +1467,8 @@
         "type": "Keymap",
         "keys": {
             "boost_items": {"types": "list", "structure": "component.boostable:boost_items"},
-            "duration": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"}
+            "duration": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "component.boostable:boost_items": {
@@ -1547,8 +1527,8 @@
             "breathesWater": {"types": "bool", "tags": ["t/outdated"]},
             "generates_bubbles": {"types": "bool"},
             "generatesBubbles": {"types": "bool", "tags": ["t/outdated"]},
-            "inhale_time": {"types": "decimal"},
-            "inhaleTime": {"types": "decimal", "tags": ["t/outdated"]},
+            "inhale_time": {"types": "temp/decimal"},
+            "inhaleTime": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "non_breathe_blocks": {"types": "list", "structure": "block_list"},
             "suffocate_time": {"types": "int"},
             "suffocateTime": {"types": "int"},
@@ -1565,7 +1545,7 @@
             "allow_sitting": {"types": "bool"},
             "allowSitting": {"types": "bool", "tags": ["t/outdated"]},
             "blend_attributes": {"types": "bool"},
-            "breed_cooldown": {"types": "decimal"},
+            "breed_cooldown": {"types": "temp/decimal"},
             "breed_items": {"types": ["list", "str"], "structure": "item_list_or_item"},
             "breedItems": {"types": ["list", "str"], "structure": "item_list_or_item", "tags": ["t/outdated"]},
             "breeds_with": {"types": ["dict", "list"], "structure": "component.breedable:breeds_with_group"},
@@ -1574,7 +1554,7 @@
             "combine_parent_colors": {"types": "bool"},
             "deny_parents_variant": {"types": "dict", "structure": "component.breedable:deny_parents_variant"},
             "environment_requirements": {"types": "dict", "structure": "component.breedable:environment_requirements"},
-            "extra_baby_chance": {"types": "decimal"},
+            "extra_baby_chance": {"types": "temp/decimal"},
             "inherit_tamed": {"types": "bool"},
             "inheritTamed": {"types": "bool", "tags": ["t/outdated"]},
             "love_filters": {"types": "dict", "structure": "filter"},
@@ -1628,7 +1608,7 @@
     "component.breedable:deny_parents_variant": {
         "type": "Keymap",
         "keys": {
-            "chance": {"types": "decimal"},
+            "chance": {"types": "temp/decimal"},
             "max_variant": {"types": "int"},
             "min_variant": {"types": "int"}
         }
@@ -1638,17 +1618,17 @@
         "keys": {
             "blocks": {"types": ["list", "str"], "structure": "block_list_or_block"},
             "count": {"types": "int"},
-            "radius": {"types": "decimal"}
+            "radius": {"types": "temp/decimal"}
         }
     },
     "component.breedable:mutation_factor": {
         "type": "Keymap",
         "keys": {
-            "color": {"types": "decimal"},
-            "extra_baby_chance": {"types": "decimal"},
-            "extra_variant": {"types": "decimal"},
+            "color": {"types": "temp/decimal"},
+            "extra_baby_chance": {"types": "temp/decimal"},
+            "extra_variant": {"types": "temp/decimal"},
             "inherit_tamed": {"types": "bool"},
-            "variant": {"types": "decimal"}
+            "variant": {"types": "temp/decimal"}
         }
     },
     "component.breedable:parent_centric_attribute_blending": {
@@ -1680,7 +1660,7 @@
         "key_weight": 1,
         "value_weight": 5,
         "keys": {
-            "bribe_cooldown": {"types": "decimal"},
+            "bribe_cooldown": {"types": "temp/decimal"},
             "bribe_items": {"types": ["list", "str"], "structure": "item_list_or_item"},
             "bribeItems": {"types": ["list", "str"], "structure": "item_list_or_item", "tags": ["t/outdated"]}
         }
@@ -1689,10 +1669,10 @@
         "type": "Keymap",
         "keys": {
             "apply_gravity": {"types": "bool"},
-            "base_buoyancy": {"types": "decimal"},
-            "big_wave_probability": {"types": "decimal"},
-            "big_wave_speed": {"types": "decimal"},
-            "drag_down_on_buoyancy_removed": {"types": "decimal"},
+            "base_buoyancy": {"types": "temp/decimal"},
+            "big_wave_probability": {"types": "temp/decimal"},
+            "big_wave_speed": {"types": "temp/decimal"},
+            "drag_down_on_buoyancy_removed": {"types": "temp/decimal"},
             "liquid_blocks": {"types": "list", "structure": "block_list"},
             "simulate_waves": {"types": "bool"}
         }
@@ -1717,15 +1697,15 @@
             "celebration_targets": {"types": "dict", "structure": "filter"},
             "celebrate_sound": {"types": "str"},
             "duration": {"types": "int"},
-            "radius": {"types": "decimal"},
+            "radius": {"types": "temp/decimal"},
             "sound_interval": {"types": "range", "structure": "range_group_decimal"}
         }
     },
     "component.collision_box": {
         "type": "Keymap",
         "keys": {
-            "height": {"types": "decimal"},
-            "width": {"types": "decimal"}
+            "height": {"types": "temp/decimal"},
+            "width": {"types": "temp/decimal"}
         }
     },
     "component.color": {
@@ -1773,7 +1753,7 @@
         "keys": {
             "conditional_values": {"types": "list", "structure": "filter_list"},
             "max_dropped_ticks": {"types": "int"},
-            "max_optimized_distance": {"types": "decimal"},
+            "max_optimized_distance": {"types": "temp/decimal"},
             "use_motion_prediction_hints": {"types": "bool"}
         }
     },
@@ -1781,7 +1761,7 @@
         "type": "Keymap",
         "keys": {
             "max_dropped_ticks": {"types": "int"},
-            "max_optimized_distance": {"types": "decimal"},
+            "max_optimized_distance": {"types": "temp/decimal"},
             "use_motion_prediction_hints": {"types": "bool"}
         }
     },
@@ -1807,8 +1787,8 @@
     "component.custom_hit_test:hitboxes.item": {
         "type": "Keymap",
         "keys": {
-            "height": {"types": "decimal"},
-            "width": {"types": "decimal"},
+            "height": {"types": "temp/decimal"},
+            "width": {"types": "temp/decimal"},
             "pivot": {"types": "list", "structure": "vector_decimal"}
         }
     },
@@ -1819,9 +1799,9 @@
         "value_weight": 5,
         "keys": {
             "damage_per_hurt": {"types": "int"},
-            "damagePerHurt": {"types": "decimal", "tags": ["t/outdated"]},
-            "time_between_hurt": {"types": "decimal"},
-            "timeBetweenHurt": {"types": "decimal", "tags": ["t/outdated"]}
+            "damagePerHurt": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "time_between_hurt": {"types": "temp/decimal"},
+            "timeBetweenHurt": {"types": "temp/decimal", "tags": ["t/outdated"]}
         }
     },
     "component.damage_sensor:group": {
@@ -1862,8 +1842,8 @@
         "type": "Keymap",
         "keys": {
             "cause": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "damage_modifier": {"types": "decimal"},
-            "damage_multiplier": {"types": "decimal"},
+            "damage_modifier": {"types": "temp/decimal"},
+            "damage_multiplier": {"types": "temp/decimal"},
             "deals_damage": {"types": ["bool", "str"]},
             "on_damage": {"types": "dict", "structure": "event_target_filters_or_filter_list"},
             "on_damage_sound_event": {"types": "str"}
@@ -1872,15 +1852,15 @@
     "component.dash": {
         "type": "Keymap",
         "keys": {
-            "cooldown_time": {"types": "decimal"},
-            "horizontal_momentum": {"types": "decimal"},
-            "vertical_momentum": {"types": "decimal"}
+            "cooldown_time": {"types": "temp/decimal"},
+            "horizontal_momentum": {"types": "temp/decimal"},
+            "vertical_momentum": {"types": "temp/decimal"}
         }
     },
     "component.default_look_angle": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.despawn": {
@@ -1905,11 +1885,11 @@
     "component.drying_out_timer": {
         "type": "Keymap",
         "keys": {
-            "total_time": {"types": "decimal"},
+            "total_time": {"types": "temp/decimal"},
             "dried_out_event": {"types": "dict", "structure": "event"},
             "recover_after_dried_out_event": {"types": "dict", "structure": "event"},
             "stopped_drying_out_event": {"types": "dict", "structure": "event"},
-            "water_bottle_refill_time": {"types": "decimal"}
+            "water_bottle_refill_time": {"types": "temp/decimal"}
         }
     },
     "component.dweller": {
@@ -1917,8 +1897,8 @@
         "keys": {
             "dwelling_type": {"types": "str"},
             "dweller_role": {"types": "str"},
-            "update_interval_base": {"types": "decimal"},
-            "update_interval_variant": {"types": "decimal"},
+            "update_interval_base": {"types": "temp/decimal"},
+            "update_interval_variant": {"types": "temp/decimal"},
             "can_find_poi": {"types": "bool"},
             "first_founding_reward": {"types": "int"},
             "can_migrate": {"types": "bool"},
@@ -1946,18 +1926,18 @@
     "component.entity_sensor": {
         "type": "Keymap",
         "keys": {
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "event_filters": {"types": "dict", "structure": "filter"},
             "event": {"types": "str", "delegate_arguments": {"always_print": true}},
             "find_players_only": {"types": "bool"},
             "maximum_count": {"types": "int"},
             "minimum_count": {"types": "int"},
-            "range": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"},
+            "range": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"},
             "relative_range": {"types": "bool"},
             "require_all": {"types": "bool"},
-            "sensor_range": {"types": "decimal"},
+            "sensor_range": {"types": "temp/decimal"},
             "subsensors": {"types": "list", "structure": "component.entity_sensor:subsensors"},
-            "y_offset": {"types": "decimal"}
+            "y_offset": {"types": "temp/decimal"}
         }
     },
     "component.entity_sensor:subsensors": {
@@ -2058,7 +2038,7 @@
     "component.equipment:slot_drop_chance.item": {
         "type": "Keymap",
         "keys": {
-            "drop_chance": {"types": "decimal"},
+            "drop_chance": {"types": "temp/decimal"},
             "slot": {"types": "str", "delegate_arguments": {"always_print": true}}
         }
     },
@@ -2095,15 +2075,15 @@
     "component.exhaustion_values": {
         "type": "Keymap",
         "keys": {
-            "attack": {"types": "decimal"},
-            "damage": {"types": "decimal"},
-            "heal": {"types": "decimal"},
-            "jump": {"types": "decimal"},
-            "mine": {"types": "decimal"},
-            "sprint": {"types": "decimal"},
-            "sprint_jump": {"types": "decimal"},
-            "swim": {"types": "decimal"},
-            "walk": {"types": "decimal"}
+            "attack": {"types": "temp/decimal"},
+            "damage": {"types": "temp/decimal"},
+            "heal": {"types": "temp/decimal"},
+            "jump": {"types": "temp/decimal"},
+            "mine": {"types": "temp/decimal"},
+            "sprint": {"types": "temp/decimal"},
+            "sprint_jump": {"types": "temp/decimal"},
+            "swim": {"types": "temp/decimal"},
+            "walk": {"types": "temp/decimal"}
         }
     },
     "component.experience_reward": {
@@ -2129,17 +2109,17 @@
             "destroyAffectedByGriefing": {"types": "bool", "tags": ["t/outdated"]},
             "fire_affected_by_griefing": {"types": "bool"},
             "fireAffectedByGriefing": {"types": "bool", "tags": ["t/outdated"]},
-            "fuse_length": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"},
-            "fuseLength": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal", "tags": ["t/outdated"]},
+            "fuse_length": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"},
+            "fuseLength": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal", "tags": ["t/outdated"]},
             "fuse_lit": {"types": "bool"},
             "fuseLit": {"types": "bool", "tags": ["t/outdated"]},
-            "knockback_scaling": {"types": "decimal"},
-            "max_resistance": {"types": "decimal"},
-            "maxResistance": {"types": "decimal", "tags": ["t/outdated"]},
+            "knockback_scaling": {"types": "temp/decimal"},
+            "max_resistance": {"types": "temp/decimal"},
+            "maxResistance": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "negates_fall_damage": {"types": "bool"},
             "on_activate": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
             "particle_effect": {"types": "str"},
-            "power": {"types": "decimal", "delegate_arguments": {"always_print": true}},
+            "power": {"types": "temp/decimal", "delegate_arguments": {"always_print": true}},
             "sound_effect": {"types": "str"},
             "toggles_blocks": {"types": "bool"}
         }
@@ -2147,7 +2127,7 @@
     "component.fall_damage": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.fire_immune": {
@@ -2163,41 +2143,41 @@
             "priority": {"types": "int"},
             "xz_dist": {"types": "int"},
             "y_dist": {"types": "int"},
-            "y_offset": {"types": "decimal"}
+            "y_offset": {"types": "temp/decimal"}
         }
     },
     "component.flocking": {
         "type": "Keymap",
         "keys": {
-            "acceleration": {"types": "decimal", "tags": ["t/outdated"]},
-            "block_distance": {"types": "decimal"},
-            "block_weight": {"types": "decimal"},
-            "breach_influence": {"types": "decimal"},
-            "cohesion_threshold": {"types": "decimal"},
-            "cohesion_weight": {"types": "decimal"},
-            "goal_weight": {"types": "decimal"},
+            "acceleration": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "block_distance": {"types": "temp/decimal"},
+            "block_weight": {"types": "temp/decimal"},
+            "breach_influence": {"types": "temp/decimal"},
+            "cohesion_threshold": {"types": "temp/decimal"},
+            "cohesion_weight": {"types": "temp/decimal"},
+            "goal_weight": {"types": "temp/decimal"},
             "high_flock_limit": {"types": "int"},
             "in_water": {"types": "bool"},
-            "influence_radius": {"types": "decimal"},
-            "innner_cohesion_threshold": {"types": "decimal"},
-            "loner_chance": {"types": "decimal"},
+            "influence_radius": {"types": "temp/decimal"},
+            "innner_cohesion_threshold": {"types": "temp/decimal"},
+            "loner_chance": {"types": "temp/decimal"},
             "low_flock_limit": {"types": "int"},
             "match_variants": {"types": "bool"},
-            "max_flee_speed": {"types": "decimal", "tags": ["t/outdated"]},
-            "max_height": {"types": "decimal"},
-            "max_speed": {"types": "decimal", "tags": ["t/outdated"]},
-            "min_height": {"types": "decimal"},
-            "rotation_speed": {"types": "decimal", "tags": ["t/outdated"]},
-            "separation_threshold": {"types": "decimal"},
-            "separation_weight": {"types": "decimal"},
-            "terrain_avoid_distance": {"types": "decimal", "tags": ["t/outdated"]},
+            "max_flee_speed": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "max_height": {"types": "temp/decimal"},
+            "max_speed": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "min_height": {"types": "temp/decimal"},
+            "rotation_speed": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "separation_threshold": {"types": "temp/decimal"},
+            "separation_weight": {"types": "temp/decimal"},
+            "terrain_avoid_distance": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "use_center_of_mass": {"types": "bool"}
         }
     },
     "component.flying_speed": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.follow_range:group": {
@@ -2210,14 +2190,14 @@
     "component.follow_range": {
         "type": "Keymap",
         "keys": {
-            "max": {"types": "decimal"},
-            "value": {"types": "decimal"}
+            "max": {"types": "temp/decimal"},
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.friction_modifier": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.game_event_movement_tracking": {
@@ -2232,7 +2212,7 @@
         "type": "Keymap",
         "keys": {
             "genes": {"types": "list", "structure": "component.genetics:genes"},
-            "mutation_rate": {"types": "decimal"}
+            "mutation_rate": {"types": "temp/decimal"}
         }
     },
     "component.genetics:genes": {
@@ -2278,13 +2258,13 @@
             "either_allele": {"types": ["dict", "int", "list"], "structure": "range_int_or_int"},
             "hidden_allele": {"types": ["dict", "int", "list"], "structure": "range_int_or_int"},
             "main_allele": {"types": ["dict", "int", "list"], "structure": "range_int_or_int"},
-            "mutation_rate": {"types": "decimal"}
+            "mutation_rate": {"types": "temp/decimal"}
         }
     },
     "component.giveable": {
         "type": "Keymap",
         "keys": {
-            "cooldown": {"types": "decimal", "tags": ["t/outdated"]},
+            "cooldown": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "items": {"types": "list", "structure": "item_list", "tags": ["t/outdated"]},
             "on_give": {"types": "dict", "structure": "event_target", "tags": ["t/outdated"]},
             "triggers": {"types": "dict", "structure": "component.giveable:triggers"}
@@ -2293,7 +2273,7 @@
     "component.giveable:triggers": {
         "type": "Keymap",
         "keys": {
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "items": {"types": "list", "structure": "item_list"},
             "on_give": {"types": "dict", "structure": "event_target"}
         }
@@ -2301,20 +2281,20 @@
     "component.ground_offset": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.group_size": {
         "type": "Keymap",
         "keys": {
             "filters": {"types": "dict", "structure": "filter"},
-            "radius": {"types": "decimal"}
+            "radius": {"types": "temp/decimal"}
         }
     },
     "component.grows_crop": {
         "type": "Keymap",
         "keys": {
-            "chance": {"types": "decimal"},
+            "chance": {"types": "temp/decimal"},
             "charges": {"types": "int"}
         }
     },
@@ -2371,7 +2351,7 @@
         "type": "Keymap",
         "keys": {
             "amplifier": {"types": "int"},
-            "chance": {"types": "decimal"},
+            "chance": {"types": "temp/decimal"},
             "duration": {"types": "int"},
             "name": {"types": "str", "delegate_arguments": {"always_print": true}}
         }
@@ -2402,7 +2382,7 @@
     "component.horse.jump_strength": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": ["decimal", "dict", "list"], "structure": "range_decimal_or_decimal"}
+            "value": {"types": ["temp/decimal", "dict", "list"], "structure": "range_decimal_or_decimal"}
         }
     },
     "component.hurt_on_condition": {
@@ -2447,8 +2427,8 @@
     "component.input_air_controlled": {
         "type": "Keymap",
         "keys": {
-            "strafe_speed_modifier": {"types": "decimal"},
-            "backwards_movement_modifier": {"types": "decimal"}
+            "strafe_speed_modifier": {"types": "temp/decimal"},
+            "backwards_movement_modifier": {"types": "temp/decimal"}
         }
     },
     "component.inside_block_notifier": {
@@ -2497,7 +2477,7 @@
     "component.insomnia": {
         "type": "Keymap",
         "keys": {
-            "days_until_insomnia": {"types": "decimal"}
+            "days_until_insomnia": {"types": "temp/decimal"}
         }
     },
     "component.instant_despawn": {
@@ -2546,10 +2526,10 @@
             "add_items": {"types": "dict", "structure": "component.interact:add_items"},
             "admire": {"types": "bool", "tags": ["t/not_in_documentation"]},
             "barter": {"types": "bool", "tags": ["t/not_in_documentation"]},
-            "cooldown": {"types": "decimal"},
-            "cooldown_after_being_attacked": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
+            "cooldown_after_being_attacked": {"types": "temp/decimal"},
             "drop_item_slot": {"types": ["int", "str"]},
-            "drop_item_y_offset": {"types": "decimal"},
+            "drop_item_y_offset": {"types": "temp/decimal"},
             "equip_item_slot": {"types": ["int", "str"]},
             "event": {"types": "str", "tags": ["t/outdated"]},
             "filters": {"types": "dict", "structure": "filter", "tags": ["t/outdated"]},
@@ -2582,7 +2562,7 @@
         "keys": {
             "particle_offset_towards_interactor": {"types": "bool"},
             "particle_type": {"types": "str"},
-            "particle_y_offset": {"types": "decimal"}
+            "particle_y_offset": {"types": "temp/decimal"}
         }
     },
     "component.interact:repair_entity_item": {
@@ -2606,7 +2586,7 @@
         "type": "Keymap",
         "keys": {
             "table": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "y_offset": {"types": "decimal"}
+            "y_offset": {"types": "temp/decimal"}
         }
     },
     "component.inventory": {
@@ -2649,32 +2629,32 @@
     "component.jump.static": {
         "type": "Keymap",
         "keys": {
-            "jump_power": {"types": "decimal"}
+            "jump_power": {"types": "temp/decimal"}
         }
     },
     "component.knockback_resistance": {
         "type": "Keymap",
         "keys": {
-            "max": {"types": "decimal"},
-            "value": {"types": "decimal"}
+            "max": {"types": "temp/decimal"},
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.lava_movement": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.leashable": {
         "type": "Keymap",
         "keys": {
             "can_be_stolen": {"types": "bool"},
-            "hard_distance": {"types": "decimal"},
-            "max_distance": {"types": "decimal"},
+            "hard_distance": {"types": "temp/decimal"},
+            "max_distance": {"types": "temp/decimal"},
             "on_leash": {"types": "dict", "structure": "event_target"},
             "on_unleash": {"types": "dict", "structure": "event_target"},
             "presets": {"types": "list", "structure": "component.leashable:presets"},
-            "soft_distance": {"types": "decimal"}
+            "soft_distance": {"types": "temp/decimal"}
         }
     },
     "component.leashable:presets": {
@@ -2696,9 +2676,9 @@
             "filter": {"types": "dict", "structure": "filter"},
             "spring_type": {"types": "str"},
             "rotation_adjustment": {"types": "int"},
-            "soft_distance": {"types": "decimal"},
-            "hard_distance": {"types": "decimal"},
-            "max_distance": {"types": "decimal"}
+            "soft_distance": {"types": "temp/decimal"},
+            "hard_distance": {"types": "temp/decimal"},
+            "max_distance": {"types": "temp/decimal"}
         }
     },
     "component.looked_at": {
@@ -2709,12 +2689,12 @@
             "find_players_only": {"types": "bool"},
             "line_of_sight_obstruction_type": {"types": "str"},
             "look_at_locations": {"types": "list", "structure": "component.looked_at:look_at_locations"},
-            "looked_at_cooldown": {"types": "decimal"},
+            "looked_at_cooldown": {"types": "temp/decimal"},
             "looked_at_event": {"types": "trigger_type", "structure": "trigger"},
-            "min_looked_at_duration": {"types": "decimal"},
+            "min_looked_at_duration": {"types": "temp/decimal"},
             "not_looked_at_event": {"types": "trigger_type", "structure": "trigger"},
             "scale_fov_by_distance": {"types": "bool"},
-            "search_radius": {"types": "decimal"},
+            "search_radius": {"types": "temp/decimal"},
             "set_target": {"types": "str"}
         }
     },
@@ -2737,7 +2717,7 @@
                     "type": "Keymap",
                     "keys": {
                         "location": {"types": "str", "structure": {"type": "String"}},
-                        "vertical_offset": {"types": "decimal"}
+                        "vertical_offset": {"types": "temp/decimal"}
                     }
                 }
             }
@@ -2751,10 +2731,10 @@
         "keys": {
             "allow_invulnerable": {"types": "bool"},
             "filters": {"types": "dict", "structure": "filter"},
-            "look_cooldown": {"types": ["decimal", "dict", "list"], "structure": "range_decimal_or_decimal"},
+            "look_cooldown": {"types": ["temp/decimal", "dict", "list"], "structure": "range_decimal_or_decimal"},
             "look_event": {"types": "str"},
-            "search_radius": {"types": "decimal"},
-            "searchRadius": {"types": "decimal", "tags": ["t/outdated"]},
+            "search_radius": {"types": "temp/decimal"},
+            "searchRadius": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "set_target": {"types": "bool"},
             "setTarget": {"types": "bool", "tags": ["t/outdated"]}
         }
@@ -2776,7 +2756,7 @@
         "keys": {
             "cooldown_time": {"types": "int"},
             "entity_filter": {"types": "dict", "structure": "filter"},
-            "effect_range": {"types": "decimal"},
+            "effect_range": {"types": "temp/decimal"},
             "effect_time": {"types": "int"},
             "mob_effect": {"types": "str"}
         }
@@ -2804,74 +2784,74 @@
     "component.movement": {
         "type": "Keymap",
         "keys": {
-            "max": {"types": "decimal"},
-            "value": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"}
+            "max": {"types": "temp/decimal"},
+            "value": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"}
         }
     },
     "component.movement.amphibious": {
         "type": "Keymap",
         "keys": {
-            "max_turn": {"types": "decimal"}
+            "max_turn": {"types": "temp/decimal"}
         }
     },
     "component.movement.basic": {
         "type": "Keymap",
         "keys": {
-            "max_turn": {"types": "decimal"}
+            "max_turn": {"types": "temp/decimal"}
         }
     },
     "component.movement.fly": {
         "type": "Keymap",
         "keys": {
-            "start_speed": {"types": "decimal"},
-            "speed_when_turning": {"types": "decimal"}
+            "start_speed": {"types": "temp/decimal"},
+            "speed_when_turning": {"types": "temp/decimal"}
         }
     },
     "component.movement.generic": {
         "type": "Keymap",
         "keys": {
-            "max_turn": {"types": "decimal"}
+            "max_turn": {"types": "temp/decimal"}
         }
     },
     "component.movement.glide": {
         "type": "Keymap",
         "keys": {
-            "speed_when_turning": {"types": "decimal"},
-            "start_speed": {"types": "decimal"}
+            "speed_when_turning": {"types": "temp/decimal"},
+            "start_speed": {"types": "temp/decimal"}
         }
     },
     "component.movement.hover": {
         "type": "Keymap",
         "keys": {
-            "max_turn": {"types": "decimal"}
+            "max_turn": {"types": "temp/decimal"}
         }
     },
     "component.movement.jump": {
         "type": "Keymap",
         "keys": {
             "jump_delay": {"types": "range", "structure": "range_group_decimal"},
-            "max_turn": {"types": "decimal"}
+            "max_turn": {"types": "temp/decimal"}
         }
     },
     "component.movement.skip": {
         "type": "Keymap",
         "keys": {
-            "max_turn": {"types": "decimal"}
+            "max_turn": {"types": "temp/decimal"}
         }
     },
     "component.movement_sound_distance_offset": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.movement.sway": {
         "type": "Keymap",
         "keys": {
-            "max_turn": {"types": "decimal"},
-            "sway_amplitude": {"types": "decimal"},
-            "sway_frequency": {"types": "decimal"},
-            "value": {"types": "decimal", "tags": ["t/outdated"]}
+            "max_turn": {"types": "temp/decimal"},
+            "sway_amplitude": {"types": "temp/decimal"},
+            "sway_frequency": {"types": "temp/decimal"},
+            "value": {"types": "temp/decimal", "tags": ["t/outdated"]}
         }
     },
     "component.nameable": {
@@ -3048,7 +3028,7 @@
     "component.preferred_path": {
         "type": "Keymap",
         "keys": {
-            "default_block_cost": {"types": "decimal", "delegate_arguments": {"always_print": true}},
+            "default_block_cost": {"types": "temp/decimal", "delegate_arguments": {"always_print": true}},
             "jump_cost": {"types": "int", "delegate_arguments": {"always_print": true}},
             "max_fall_blocks": {"types": "int", "delegate_arguments": {"always_print": true}},
             "preferred_path_blocks": {"types": "list", "structure": "component.preferred_path:preferred_path_blocks"}
@@ -3082,8 +3062,8 @@
         "key_structure": {"type": "String"},
         "keys": {
             "anchor": {"types": "int"},
-            "angle_offset": {"types": "decimal"},
-            "angleoffset": {"types": "decimal", "tags": ["t/outdated"]},
+            "angle_offset": {"types": "temp/decimal"},
+            "angleoffset": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "catch_fire": {"types": "bool"},
             "catchFire": {"types": "bool", "tags": ["t/outdated"]},
             "crit_particle_on_hurt": {"types": "bool"},
@@ -3092,7 +3072,7 @@
             "destroyOnHurt": {"types": "bool"},
             "filter": {"types": "dict", "structure": "filter"},
             "fire_affected_by_griefing": {"types": "bool"},
-            "gravity": {"types": "decimal"},
+            "gravity": {"types": "temp/decimal"},
             "hit_ground_sound": {"types": "str"},
             "hit_nearest_passenger": {"types": "bool"},
             "hitGroundSound": {"types": "str", "tags": ["t/outdated"]},
@@ -3102,21 +3082,21 @@
             "hitWater": {"types": "bool", "tags": ["t/outdated"]},
             "homing": {"types": "bool"},
             "ignored_entities": {"types": "list", "structure": "entity_list"},
-            "inertia": {"types": "decimal"},
+            "inertia": {"types": "temp/decimal"},
             "is_dangerous": {"types": "bool"},
             "isdangerous": {"types": "bool", "tags": ["t/outdated"]},
             "knockback": {"types": "bool"},
             "lightning": {"types": "bool"},
-            "liquid_inertia": {"types": "decimal"},
+            "liquid_inertia": {"types": "temp/decimal"},
             "multiple_targets": {"types": "bool"},
             "multipletargets": {"types": "bool", "tags": ["t/outdated"]},
             "offset": {"types": "list", "structure": "vector_decimal"},
-            "on_fire_time": {"types": "decimal"},
+            "on_fire_time": {"types": "temp/decimal"},
             "on_hit": {"types": "dict", "structure": "component.projectile:on_hit"},
             "onHit": {"types": "dict", "structure": "component.projectile:on_hit", "tags": ["t/outdated"]},
             "particle": {"types": "str"},
-            "power": {"types": "decimal"},
-            "reflect_immunity": {"types": "decimal"},
+            "power": {"types": "temp/decimal"},
+            "reflect_immunity": {"types": "temp/decimal"},
             "reflect_on_hurt": {"types": "bool"},
             "reflectOnHurt": {"types": "bool", "tags": ["t/outdated"]},
             "semi_random_diff_damage": {"types": "bool", "tags": ["t/not_in_documentation"]},
@@ -3128,13 +3108,13 @@
             "should_bounce": {"types": "bool"},
             "shouldbounce": {"types": "bool", "tags": ["t/outdated"]},
             "splash_potion": {"types": "bool"},
-            "splash_range": {"types": "decimal"},
+            "splash_range": {"types": "temp/decimal"},
             "stop_on_hurt": {"types": "bool"},
             "stopOnHurt": {"types": "bool", "tags": ["t/outdated"]},
-            "uncertainty_base": {"types": "decimal"},
-            "uncertaintyBase": {"types": "decimal", "tags": ["t/outdated"]},
-            "uncertainty_multiplier": {"types": "decimal"},
-            "uncertaintyMultiplier": {"types": "decimal", "tags": ["t/outdated"]}
+            "uncertainty_base": {"types": "temp/decimal"},
+            "uncertaintyBase": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "uncertainty_multiplier": {"types": "temp/decimal"},
+            "uncertaintyMultiplier": {"types": "temp/decimal", "tags": ["t/outdated"]}
         }
     },
     "component.projectile:on_hit": {
@@ -3195,7 +3175,7 @@
             "affectProjectile": {"types": "bool", "tags": ["t/outdated"]},
             "affect_shooter": {"types": "bool"},
             "affect_splash_area": {"types": "bool"},
-            "splash_area": {"types": "decimal"},
+            "splash_area": {"types": "temp/decimal"},
             "affect_target": {"types": "bool"},
             "event_trigger": {"types": "dict", "structure": "event_target_filters"},
             "eventTrigger": {"types": "dict", "structure": "event_target_filters", "tags": ["t/outdated"]}
@@ -3212,7 +3192,7 @@
         "type": "Keymap",
         "keys": {
             "shape": {"types": "str"},
-            "size": {"types": "decimal"},
+            "size": {"types": "temp/decimal"},
             "snap_to_block": {"types": "bool"}
         }
     },
@@ -3228,7 +3208,7 @@
         "keys": {
             "ignite": {"types": "bool"},
             "knockback": {"types": "bool"},
-            "owner_damage": {"types": "decimal"}
+            "owner_damage": {"types": "temp/decimal"}
         }
     },
     "component.projectile:on_hit.impact_damage": {
@@ -3240,18 +3220,18 @@
             "catch_fire": {"types": "bool"},
             "catchFire": {"types": "bool", "tags": ["t/outdated"]},
             "channeling": {"types": "bool"},
-            "damage": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"},
+            "damage": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"},
             "destroy_on_hit": {"types": "bool"},
             "destroy_on_hit_requires_damage": {"types": "bool"},
             "destroyonhit": {"types": "bool", "tags": ["t/outdated"]},
             "filter": {"types": ["dict", "str"], "structure": "component:projectile:on_hit.impact_damage.filter"},
             "knockback": {"types": "bool"},
-            "max_critical_damage": {"types": "decimal"},
+            "max_critical_damage": {"types": "temp/decimal"},
             "maxcriticaldamage": {"types": "int", "tags": ["t/outdated"]},
             "min_critical_damage": {"types": "int"},
             "mincriticaldamage": {"types": "int", "tags": ["t/outdated"]},
-            "power_multiplier": {"types": "decimal"},
-            "powermultiplier": {"types": "decimal", "tags": ["t/outdated"]},
+            "power_multiplier": {"types": "temp/decimal"},
+            "powermultiplier": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "semi_random_diff_damage": {"types": "bool"},
             "semirandomdiffdamage": {"types": "bool", "tags": ["t/outdated"]},
             "set_last_hurt_requires_damage": {"types": "bool"},
@@ -3286,7 +3266,7 @@
             "particle_type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "on_other_hit": {"types": "bool"},
             "on_entity_hit": {"types": "bool"},
-            "num_particles": {"types": "decimal"}
+            "num_particles": {"types": "temp/decimal"}
         }
     },
     "component.projectile:on_hit.particle_on_hit.particle_item_name": {
@@ -3335,8 +3315,8 @@
             "duration": {"types": "int"},
             "particle": {"types": "str", "delegate_arguments": {"always_print": true}},
             "potion": {"types": "int"},
-            "radius": {"types": "decimal"},
-            "radius_on_use": {"types": "decimal"},
+            "radius": {"types": "temp/decimal"},
+            "radius_on_use": {"types": "temp/decimal"},
             "reapplication_delay": {"types": "int"}
         }
     },
@@ -3348,12 +3328,12 @@
         "keys": {
             "first_spawn_chance": {"types": "int", "tags": ["t/not_in_documentation"]},
             "first_spawn_count": {"types": "int"},
-            "first_spawn_percent_chance": {"types": "decimal"},
+            "first_spawn_percent_chance": {"types": "temp/decimal"},
             "firstSpawnChance": {"types": "int", "tags": ["t/outdated"]},
             "firstSpawnCount": {"types": "int", "tags": ["t/outdated"]},
-            "firstSpawnPercentChance": {"types": "decimal", "tags": ["t/outdated"]},
+            "firstSpawnPercentChance": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "on_spawn": {"types": ["dict", "list"], "structure": "trigger"},
-            "second_spawn_chance": {"types": "decimal"},
+            "second_spawn_chance": {"types": "temp/decimal"},
             "second_spawn_count": {"types": "int"},
             "secondSpawnChance": {"types": "int", "tags": ["t/outdated"]},
             "secondSpawnCount": {"types": "int", "tags": ["t/outdated"]},
@@ -3367,7 +3347,7 @@
     "component.projectile:on_hit.stick_in_ground": {
         "type": "Keymap",
         "keys": {
-            "shake_time": {"types": "decimal"}
+            "shake_time": {"types": "temp/decimal"}
         }
     },
     "component.projectile:on_hit.teleport_owner": {
@@ -3380,7 +3360,7 @@
     "component.push_through": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.pushable": {
@@ -3399,7 +3379,7 @@
     "component.rail_movement": {
         "type": "Keymap",
         "keys": {
-            "max_speed": {"types": "decimal"}
+            "max_speed": {"types": "temp/decimal"}
         }
     },
     "component.rail_sensor": {
@@ -3417,7 +3397,7 @@
     "component.ravager_blocked": {
         "type": "Keymap",
         "keys": {
-            "knockback_strength": {"types": "decimal"},
+            "knockback_strength": {"types": "temp/decimal"},
             "reaction_choices": {"types": "list", "structure": "component.ravager_blocked:reaction_choices"}
         }
     },
@@ -3459,7 +3439,7 @@
             "interact_text": {"types": "str"},
             "on_rider_enter_event": {"types": "str"},
             "on_rider_exit_event": {"types": "str"},
-            "passenger_max_width": {"types": "decimal"},
+            "passenger_max_width": {"types": "temp/decimal"},
             "priority": {"types": "int", "tags": ["t/deprecated"]},
             "pull_in_entities": {"types": "bool"},
             "rider_can_interact": {"types": "bool"},
@@ -3490,26 +3470,26 @@
     "component.rideable:seats.item": {
         "type": "Keymap",
         "keys": {
-            "camera_relax_distance_smoothing": {"types": "decimal"},
-            "lock_rider_rotation": {"types": "decimal"},
+            "camera_relax_distance_smoothing": {"types": "temp/decimal"},
+            "lock_rider_rotation": {"types": "temp/decimal"},
             "max_rider_count": {"types": "int"},
             "min_rider_count": {"types": "int"},
             "position": {"types": "list", "structure": "vector_decimal"},
             "rotate_rider_by": {"types": ["int", "str"]},
-            "third_person_camera_radius": {"types": "decimal"}
+            "third_person_camera_radius": {"types": "temp/decimal"}
         }
     },
     "component.scale": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.scale_by_age": {
         "type": "Keymap",
         "keys": {
-            "end_scale": {"types": "decimal"},
-            "start_scale": {"types": "decimal"}
+            "end_scale": {"types": "temp/decimal"},
+            "start_scale": {"types": "temp/decimal"}
         }
     },
     "component.scheduler:group": {
@@ -3523,8 +3503,8 @@
         "type": "Keymap",
         "keys": {
             "scheduled_events": {"types": "list", "structure": "component.scheduler:scheduled_events"},
-            "max_delay_secs": {"types": "decimal"},
-            "min_delay_secs": {"types": "decimal"}
+            "max_delay_secs": {"types": "temp/decimal"},
+            "min_delay_secs": {"types": "temp/decimal"}
         }
     },
     "component.scheduler:scheduled_events": {
@@ -3579,7 +3559,7 @@
             "barter": {"types": "bool"},
             "consume_item": {"types": "bool"},
             "craft_into": {"types": "str"},
-            "item": {"types": "str", "structure": {"type": "String", "similarity_function": "normalizers/normalizers remove_minecraft_prefix"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 16},
+            "item": {"types": "str", "structure": "temp/string_remove_minecraft_prefix", "delegate_arguments": {"always_print": true}, "similarity_weight": 16},
             "item_aux": {"types": "int", "tags": ["t/outdated"], "delegate_arguments": {"always_print": true}, "similarity_weight": 4},
             "max_amount": {"types": "int"},
             "pickup_limit": {"types": "int"},
@@ -3601,7 +3581,7 @@
             "auxVal": {"types": "int", "tags": ["t/outdated"], "delegate_arguments": {"always_print": true}},
             "def": {"types": "str", "delegate_arguments": {"always_print": true}},
             "magic": {"types": "bool"},
-            "power": {"types": "decimal"},
+            "power": {"types": "temp/decimal"},
             "projectiles": {"types": "list", "structure": "component.shooter:projectiles"},
             "sound": {"types": "str"},
             "type": {"types": "str", "delegate_arguments": {"always_print": true}}
@@ -3624,7 +3604,7 @@
         "type": "Keymap",
         "keys": {
             "aux_val": {"types": "int", "delegate_arguments": {"always_print": true}},
-            "chance": {"types": "decimal"},
+            "chance": {"types": "temp/decimal"},
             "def": {"types": "str", "delegate_arguments": {"always_print": true}},
             "filters": {"types": "dict", "structure": "filter"},
             "lose_target": {"types": "bool", "tags": ["t/not_in_documentation"]}
@@ -3646,7 +3626,7 @@
     "component.sound_volume": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.spawn_entity:group": {
@@ -3773,7 +3753,7 @@
         "key_weight": 1,
         "value_weight": 5,
         "keys": {
-            "probability": {"types": "decimal"},
+            "probability": {"types": "temp/decimal"},
             "tame_event": {"types": "dict", "structure": "event_target"},
             "tame_items": {"types": ["list", "str"], "structure": "item_list_or_item"},
             "tameItems": {"types": ["list", "str"], "structure": "item_list_or_item", "tags": ["t/outdated"]}
@@ -3845,12 +3825,12 @@
     "component.target_nearby_sensor": {
         "type": "Keymap",
         "keys": {
-            "inside_range": {"types": "decimal"},
+            "inside_range": {"types": "temp/decimal"},
             "must_see": {"types": "bool"},
             "on_inside_range": {"types": "dict", "structure": "event_target_filters"},
             "on_outside_range": {"types": "dict", "structure": "event_target"},
             "on_vision_lost_inside_range": {"types": "dict", "structure": "event_target"},
-            "outside_range": {"types": "decimal"}
+            "outside_range": {"types": "temp/decimal"}
         }
     },
     "component.teleport": {
@@ -3859,25 +3839,25 @@
         "key_weight": 1,
         "value_weight": 5,
         "keys": {
-            "dark_teleport_chance": {"types": "decimal"},
-            "light_teleport_chance": {"types": "decimal"},
-            "lightTeleportChance": {"types": "decimal", "tags": ["t/outdated"]},
-            "max_random_teleport_time": {"types": "decimal"},
-            "maxRandomTeleportTime": {"types": "decimal", "tags": ["t/outdated"]},
-            "min_random_teleport_time": {"types": "decimal"},
+            "dark_teleport_chance": {"types": "temp/decimal"},
+            "light_teleport_chance": {"types": "temp/decimal"},
+            "lightTeleportChance": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "max_random_teleport_time": {"types": "temp/decimal"},
+            "maxRandomTeleportTime": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "min_random_teleport_time": {"types": "temp/decimal"},
             "random_teleport_cube": {"types": "list", "structure": "vector_int"},
             "randomTeleportCube": {"types": "list", "structure": "vector_int", "tags": ["t/outdated"]},
             "random_teleports": {"types": "bool"},
             "randomTeleports": {"types": "bool", "tags": ["t/outdated"]},
-            "target_distance": {"types": "decimal"},
-            "targetDistance": {"types": "decimal", "tags": ["t/outdated"]},
-            "target_teleport_chance": {"types": "decimal"}
+            "target_distance": {"types": "temp/decimal"},
+            "targetDistance": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "target_teleport_chance": {"types": "temp/decimal"}
         }
     },
     "component.tick_world": {
         "type": "Keymap",
         "keys": {
-            "distance_to_players": {"types": "decimal"},
+            "distance_to_players": {"types": "temp/decimal"},
             "never_despawn": {"types": "bool"},
             "radius": {"types": "int"}
         }
@@ -3888,7 +3868,7 @@
             "looping": {"types": "bool"},
             "randomInterval": {"types": "bool"},
             "random_time_choices": {"types": "list", "structure": "component.timer:random_time_choices"},
-            "time": {"types": ["decimal", "dict", "list"], "structure": "range_decimal_or_decimal"},
+            "time": {"types": ["temp/decimal", "dict", "list"], "structure": "range_decimal_or_decimal"},
             "time_down_event": {"types": "dict", "structure": "event_target"}
         }
     },
@@ -3935,7 +3915,7 @@
         "keys": {
             "add": {"types": "list", "structure": "component.transformation:add"},
             "begin_transform_sound": {"types": "str"},
-            "delay": {"types": ["decimal", "dict"], "structure": "component.transformation:delay_group"},
+            "delay": {"types": ["temp/decimal", "dict"], "structure": "component.transformation:delay_group"},
             "drop_equipment": {"types": "bool"},
             "drop_inventory": {"types": "bool"},
             "into": {"types": "str"},
@@ -3963,27 +3943,27 @@
     "component.transformation:delay_group": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "dict": "component.transformation:delay"
         }
     },
     "component.transformation:delay": {
         "type": "Keymap",
         "keys": {
-            "block_assist_chance": {"types": "decimal"},
-            "block_chance": {"types": "decimal"},
+            "block_assist_chance": {"types": "temp/decimal"},
+            "block_chance": {"types": "temp/decimal"},
             "block_max": {"types": "int"},
             "block_radius": {"types": "int"},
             "block_types": {"types": "list", "structure": "block_list"},
-            "range_max": {"types": "decimal"},
-            "range_min": {"types": "decimal"},
-            "value": {"types": "decimal"}
+            "range_max": {"types": "temp/decimal"},
+            "range_min": {"types": "temp/decimal"},
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.trusting": {
         "type": "Keymap",
         "keys": {
-            "probability": {"types": "decimal"},
+            "probability": {"types": "temp/decimal"},
             "trust_event": {"types": ["dict", "str"], "structure": "event_target_or_str"},
             "trust_items": {"types": "list", "structure": "item_list"}
         }
@@ -4018,7 +3998,7 @@
     "component.underwater_movement": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.variant": {
@@ -4030,31 +4010,31 @@
     "component.walk_animation_speed": {
         "type": "Keymap",
         "keys": {
-            "value": {"types": "decimal"}
+            "value": {"types": "temp/decimal"}
         }
     },
     "component.water_movement": {
         "type": "Keymap",
         "keys": {
-            "drag_factor": {"types": "decimal"}
+            "drag_factor": {"types": "temp/decimal"}
         }
     },
     "component.wind_burst": {
         "type": "Keymap",
         "keys": {
-            "knockback_scaling": {"types": "decimal"},
+            "knockback_scaling": {"types": "temp/decimal"},
             "negates_fall_damage": {"types": "bool"},
             "particle_effect": {"types": "str"},
-            "radius": {"types": "decimal"},
+            "radius": {"types": "temp/decimal"},
             "sound_effect": {"types": "str"}
         }
     },
     "component.variable_max_auto_step": {
         "type": "Keymap",
         "keys": {
-            "base_value": {"types": "decimal"},
-            "controlled_value": {"types": "decimal"},
-            "jump_prevented_value": {"types": "decimal"}
+            "base_value": {"types": "temp/decimal"},
+            "controlled_value": {"types": "temp/decimal"},
+            "jump_prevented_value": {"types": "temp/decimal"}
         }
     },
     "component.wither_target_highest_damage": {
@@ -4089,11 +4069,11 @@
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
             "sound_interval": {"types": "range", "structure": "range_group_decimal"},
-            "sprint_speed_modifier": {"types": "decimal"},
+            "sprint_speed_modifier": {"types": "temp/decimal"},
             "target_blocks": {"types": "list", "structure": "block_list"},
             "target_selection_method": {"types": "str"},
             "tick_interval": {"types": "int"},
-            "walk_speed_modifier": {"types": "decimal"}
+            "walk_speed_modifier": {"types": "temp/decimal"}
         }
     },
     "behavior.avoid_mob_type": {
@@ -4108,16 +4088,16 @@
             "avoid_types": {"types": "list", "structure": "entity_list", "tags": ["t/outdated"]},
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
             "ignore_visibility": {"types": "bool"},
-            "max_dist": {"types": "decimal"},
-            "max_flee": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal"},
+            "max_flee": {"types": "temp/decimal"},
             "on_escape_event": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
-            "probability_per_strength": {"types": "decimal"},
+            "probability_per_strength": {"types": "temp/decimal"},
             "remove_target": {"types": "bool"},
             "sound_interval": {"types": "range", "structure": "range_group_decimal"},
-            "sprint_distance": {"types": "decimal"},
-            "sprint_speed_multiplier": {"types": "decimal"},
-            "walk_speed_multiplier": {"types": "decimal"}
+            "sprint_distance": {"types": "temp/decimal"},
+            "sprint_speed_multiplier": {"types": "temp/decimal"},
+            "walk_speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.barter": {
@@ -4126,14 +4106,14 @@
             "goal_radius": {"types": "int", "tags": ["t/outdated"]},
             "max_dist": {"types": "int", "tags": ["t/outdated"]},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal", "tags": ["t/outdated"]}
+            "speed_multiplier": {"types": "temp/decimal", "tags": ["t/outdated"]}
         }
     },
     "behavior.beg": {
         "type": "Keymap",
         "keys": {
             "items": {"types": "list", "structure": "item_list"},
-            "look_distance": {"types": "decimal"},
+            "look_distance": {"types": "temp/decimal"},
             "look_time": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int"}
         }
@@ -4154,8 +4134,8 @@
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_modifier": {"types": "decimal", "tags": ["t/outdated"]},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_modifier": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.casting_spell_goal": {
@@ -4168,7 +4148,7 @@
         "type": "Keymap",
         "keys": {
             "celebration_sound": {"types": "str"},
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "jump_interval": {"types": "range", "structure": "range_group_decimal"},
             "on_celebration_end_event": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
@@ -4179,7 +4159,7 @@
         "type": "Keymap",
         "keys": {
             "celebration_sound": {"types": "str"},
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "fireworks_interval": {"types": "range", "structure": "range_group_decimal", "tags": ["t/not_in_documentation"]},
             "jump_interval": {"types": "range", "structure": "range_group_decimal"},
             "on_celebration_end_event": {"types": "trigger_type", "structure": "trigger"},
@@ -4190,11 +4170,11 @@
     "behavior.charge_attack": {
         "type": "Keymap",
         "keys": {
-            "max_distance": {"types": "decimal"},
-            "min_distance": {"types": "decimal"},
+            "max_distance": {"types": "temp/decimal"},
+            "min_distance": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "success_rate": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "success_rate": {"types": "temp/decimal"}
         }
     },
     "behavior.charge_held_item": {
@@ -4207,33 +4187,33 @@
     "behavior.circle_around_anchor": {
         "type": "Keymap",
         "keys": {
-            "angle_change": {"types": "decimal"},
-            "goal_radius": {"types": "decimal"},
+            "angle_change": {"types": "temp/decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "height_above_target_range": {"types": "range", "structure": "range_group_decimal"},
-            "height_adjustment_chance": {"types": "decimal"},
-            "height_change_chance": {"types": "decimal", "tags": ["t/deprecated"]},
+            "height_adjustment_chance": {"types": "temp/decimal"},
+            "height_change_chance": {"types": "temp/decimal", "tags": ["t/deprecated"]},
             "height_offset_range": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int"},
-            "radius_adjustment_chance": {"types": "decimal"},
-            "radius_change_chance": {"types": "decimal", "tags": ["t/deprecated"]},
-            "radius_change": {"types": "decimal"},
+            "radius_adjustment_chance": {"types": "temp/decimal"},
+            "radius_change_chance": {"types": "temp/decimal", "tags": ["t/deprecated"]},
+            "radius_change": {"types": "temp/decimal"},
             "radius_range": {"types": "range", "structure": "range_group_decimal"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.controlled_by_player": {
         "type": "Keymap",
         "keys": {
-            "fractional_rotation": {"types": "decimal"},
-            "fractional_rotation_limit": {"types": "decimal"},
-            "mount_speed_multiplier": {"types": "decimal"},
+            "fractional_rotation": {"types": "temp/decimal"},
+            "fractional_rotation_limit": {"types": "temp/decimal"},
+            "mount_speed_multiplier": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
     "behavior.croak": {
         "type": "Keymap",
         "keys": {
-            "duration": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"},
+            "duration": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"},
             "filters": {"types": "dict", "structure": "filter"},
             "interval": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int"}
@@ -4245,20 +4225,20 @@
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
             "aggro_sound": {"types": "str"},
             "attack_interval": {"types": "int"},
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
             "reevaluate_description": {"types": "bool"},
             "on_defend_start": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
-            "sound_chance": {"types": "decimal"},
-            "within_radius": {"types": "decimal"}
+            "sound_chance": {"types": "temp/decimal"},
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.defend_village_target": {
         "type": "Keymap",
         "keys": {
-            "attack_chance": {"types": "decimal"},
+            "attack_chance": {"types": "temp/decimal"},
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
             "must_reach": {"types": "bool"},
             "priority": {"types": "int"}
@@ -4267,32 +4247,32 @@
     "behavior.delayed_attack": {
         "type": "Keymap",
         "keys": {
-            "attack_duration": {"types": "decimal"},
+            "attack_duration": {"types": "temp/decimal"},
             "attack_once": {"types": "bool"},
             "attack_types": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "cooldown_time": {"types": "decimal"},
-            "hit_delay_pct": {"types": "decimal"},
-            "inner_boundary_time_increase": {"types": "decimal"},
-            "max_dist": {"types": "decimal"},
-            "max_path_time": {"types": "decimal"},
-            "melee_fov": {"types": "decimal"},
-            "min_path_time": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "hit_delay_pct": {"types": "temp/decimal"},
+            "inner_boundary_time_increase": {"types": "temp/decimal"},
+            "max_dist": {"types": "temp/decimal"},
+            "max_path_time": {"types": "temp/decimal"},
+            "melee_fov": {"types": "temp/decimal"},
+            "min_path_time": {"types": "temp/decimal"},
             "on_attack": {"types": "trigger_type", "structure": "trigger"},
-            "outer_boundary_time_increase": {"types": "decimal"},
-            "path_fail_time_increase": {"types": "decimal"},
-            "path_inner_boundary": {"types": "decimal"},
-            "path_outer_boundary": {"types": "decimal"},
+            "outer_boundary_time_increase": {"types": "temp/decimal"},
+            "path_fail_time_increase": {"types": "temp/decimal"},
+            "path_inner_boundary": {"types": "temp/decimal"},
+            "path_outer_boundary": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "random_stop_interval": {"types": "int"},
-            "reach_multiplier": {"types": "decimal"},
+            "reach_multiplier": {"types": "temp/decimal"},
             "require_complete_path": {"types": "bool"},
             "set_persistent": {"types": "bool"},
             "sound_event": {"types": "str", "tags": ["t/outdated"]},
-            "speed_multiplier": {"types": "decimal"},
-            "target_dist": {"types": "decimal", "tags": ["t/unused"]},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "target_dist": {"types": "temp/decimal", "tags": ["t/unused"]},
             "track_target": {"types": "bool"},
-            "x_max_rotation": {"types": "decimal"},
-            "y_max_head_rotation": {"types": "decimal"}
+            "x_max_rotation": {"types": "temp/decimal"},
+            "y_max_head_rotation": {"types": "temp/decimal"}
         }
     },
     "behavior.dig": {
@@ -4300,8 +4280,8 @@
         "keys": {
             "allow_dig_when_named": {"types": "bool"},
             "digs_in_daylight": {"types": "bool"},
-            "duration": {"types": "decimal"},
-            "idle_time": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
+            "idle_time": {"types": "temp/decimal"},
             "on_start": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
             "suspicion_is_disturbance": {"types": "bool"},
@@ -4311,7 +4291,7 @@
     "behavior.drink_milk": {
         "type": "Keymap",
         "keys": {
-            "cooldown_seconds": {"types": "decimal"},
+            "cooldown_seconds": {"types": "temp/decimal"},
             "filters": {"types": "dict", "structure": "filter"},
             "priority": {"types": "int"}
         }
@@ -4325,12 +4305,12 @@
     "behavior.dragonchargeplayer": {
         "type": "Keymap",
         "keys": {
-            "active_speed": {"types": "decimal"},
-            "continue_charge_threshold_time": {"types": "decimal"},
-            "flight_speed": {"types": "decimal"},
+            "active_speed": {"types": "temp/decimal"},
+            "continue_charge_threshold_time": {"types": "temp/decimal"},
+            "flight_speed": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "target_zone": {"types": "range", "structure": "range_group_decimal"},
-            "turn_speed": {"types": "decimal"}
+            "turn_speed": {"types": "temp/decimal"}
         }
     },
     "behavior.dragondeath": {
@@ -4342,11 +4322,11 @@
     "behavior.dragonflaming": {
         "type": "Keymap",
         "keys": {
-            "cooldown_time": {"types": "decimal"},
-            "flame_time": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "flame_time": {"types": "temp/decimal"},
             "ground_flame_count": {"types": "int"},
             "priority": {"types": "int"},
-            "roar_time": {"types": "decimal"}
+            "roar_time": {"types": "temp/decimal"}
         }
     },
     "behavior.dragonholdingpattern": {
@@ -4370,15 +4350,15 @@
     "behavior.dragonstrafeplayer": {
         "type": "Keymap",
         "keys": {
-            "active_speed": {"types": "decimal"},
-            "fireball_range": {"types": "decimal"},
-            "flight_speed": {"types": "decimal"},
+            "active_speed": {"types": "temp/decimal"},
+            "fireball_range": {"types": "temp/decimal"},
+            "flight_speed": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "switch_direction_probability": {"types": "decimal"},
-            "target_in_range_and_in_view_time": {"types": "decimal"},
+            "switch_direction_probability": {"types": "temp/decimal"},
+            "target_in_range_and_in_view_time": {"types": "temp/decimal"},
             "target_zone": {"types": "range", "structure": "range_group_decimal"},
-            "turn_speed": {"types": "decimal"},
-            "view_angle": {"types": "decimal"}
+            "turn_speed": {"types": "temp/decimal"},
+            "view_angle": {"types": "temp/decimal"}
         }
     },
     "behavior.dragontakeoff": {
@@ -4392,7 +4372,7 @@
         "keys": {
             "potions": {"types": "list", "structure": "behavior.drink_potion:potions"},
             "priority": {"types": "int"},
-            "speed_modifier": {"types": "decimal"}
+            "speed_modifier": {"types": "temp/decimal"}
         }
     },
     "behavior.drink_potion:potions": {
@@ -4411,7 +4391,7 @@
     "behavior.drink_potion:potions.item": {
         "type": "Keymap",
         "keys": {
-            "chance": {"types": "decimal"},
+            "chance": {"types": "temp/decimal"},
             "filters": {"types": "dict", "structure": "filter"},
             "id": {"types": "int", "delegate_arguments": {"always_print": true}}
         }
@@ -4419,22 +4399,22 @@
     "behavior.drop_item_for": {
         "type": "Keymap",
         "keys": {
-            "cooldown": {"types": "decimal"},
-            "drop_item_chance": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
+            "drop_item_chance": {"types": "temp/decimal"},
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "loot_table": {"types": "str", "delegate_arguments": {"always_print": true}},
             "max_dist": {"types": "int", "tags": ["t/outdated"]},
-            "max_head_look_at_height": {"types": "decimal"},
-            "minimum_teleport_distance": {"types": "decimal"},
-            "offering_distance": {"types": "decimal"},
+            "max_head_look_at_height": {"types": "temp/decimal"},
+            "minimum_teleport_distance": {"types": "temp/decimal"},
+            "offering_distance": {"types": "temp/decimal"},
             "on_drop_attempt": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "seconds_before_pickup": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"},
+            "seconds_before_pickup": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "target_range": {"types": "list", "structure": "vector_decimal"},
             "teleport_offset": {"types": "list", "structure": "vector_decimal"},
             "time_of_day_range": {"types": "range", "structure": "range_group_decimal"}
@@ -4447,7 +4427,7 @@
             "on_eat": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
             "success_chance": {"types": "str"},
-            "time_until_eat": {"types": "decimal"}
+            "time_until_eat": {"types": "temp/decimal"}
         }
     },
     "behavior.eat_block:eat_and_replace_block_pairs": {
@@ -4473,22 +4453,22 @@
     "behavior.eat_carried_item": {
         "type": "Keymap",
         "keys": {
-            "delay_before_eating": {"types": "decimal"},
+            "delay_before_eating": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
     "behavior.eat_mob": {
         "type": "Keymap",
         "keys": {
-            "eat_animation_time": {"types": "decimal"},
+            "eat_animation_time": {"types": "temp/decimal"},
             "eat_mob_sound": {"types": "str"},
             "item_drop": {"types": "str", "tags": ["t/outdated"]},
             "loot_table": {"types": "str", "delegate_arguments": {"always_print": true}},
             "mob_loot": {"types": "list", "structure": "behavior.eat_mob:mob_loot", "tags": ["t/outdated"]},
             "priority": {"types": "int"},
-            "pull_in_force": {"types": "decimal"},
-            "reach_mob_distance": {"types": "decimal"},
-            "run_speed": {"types": "decimal"}
+            "pull_in_force": {"types": "temp/decimal"},
+            "reach_mob_distance": {"types": "temp/decimal"},
+            "run_speed": {"types": "temp/decimal"}
         }
     },
     "behavior.eat_mob:mob_loot": {
@@ -4515,7 +4495,7 @@
         "type": "Keymap",
         "keys": {
             "cooldown_time": {"types": "int"},
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "on_done": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"}
         }
@@ -4548,24 +4528,24 @@
         "type": "Keymap",
         "keys": {
             "dist_from_boundary": {"types": "list", "structure": "vector_decimal"},
-            "explore_dist": {"types": "decimal"},
-            "max_travel_time": {"types": "decimal"},
-            "max_wait_time": {"types": "decimal"},
-            "min_dist_from_target": {"types": "decimal"},
-            "min_perimeter": {"types": "decimal"},
-            "min_wait_time": {"types": "decimal"},
+            "explore_dist": {"types": "temp/decimal"},
+            "max_travel_time": {"types": "temp/decimal"},
+            "max_wait_time": {"types": "temp/decimal"},
+            "min_dist_from_target": {"types": "temp/decimal"},
+            "min_perimeter": {"types": "temp/decimal"},
+            "min_wait_time": {"types": "temp/decimal"},
             "next_xz": {"types": "int"},
             "next_y": {"types": "int"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "timer_ratio": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "timer_ratio": {"types": "temp/decimal"},
             "wait_time": {"types": "int", "tags": ["t/outdated"]}
         }
     },
     "behavior.feeling_happy": {
         "type": "Keymap",
         "keys": {
-            "cooldown_range": {"types": "decimal"},
+            "cooldown_range": {"types": "temp/decimal"},
             "duration_range": {"types": "range", "structure": "range_group_decimal"},
             "on_end": {"types": "dict", "structure": "event_target"},
             "priority": {"types": "int"}
@@ -4574,22 +4554,22 @@
     "behavior.fertilize_farm_block": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "max_fertilizer_usage": {"types": "int"},
             "priority": {"types": "int"},
-            "search_cooldown_max_seconds": {"types": "decimal"},
+            "search_cooldown_max_seconds": {"types": "temp/decimal"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.find_cover": {
         "type": "Keymap",
         "keys": {
-            "cooldown_time": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.find_mount": {
@@ -4597,11 +4577,11 @@
         "keys": {
             "avoid_water": {"types": "bool"},
             "max_failed_attempts": {"types": "int", "tags": ["t/not_in_documentation"]},
-            "mount_distance": {"types": "decimal"},
+            "mount_distance": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "start_delay": {"types": "int"},
             "target_needed": {"types": "bool"},
-            "within_radius": {"types": "decimal"}
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.find_underwater_treasure": {
@@ -4609,23 +4589,23 @@
         "keys": {
             "priority": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "stop_distance": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "stop_distance": {"types": "temp/decimal"}
         }
     },
     "behavior.fire_at_target": {
         "type": "Keymap",
         "keys": {
-            "attack_cooldown": {"types": "decimal"},
+            "attack_cooldown": {"types": "temp/decimal"},
             "attack_range": {"types": "range", "structure": "range_group_int"},
             "filters": {"types": "dict", "structure": "filter"},
             "owner_anchor": {"types": "int"},
             "owner_offset": {"types": "list", "structure": "vector_decimal"},
-            "post_shoot_delay": {"types": "decimal"},
-            "pre_shoot_delay": {"types": "decimal"},
+            "post_shoot_delay": {"types": "temp/decimal"},
+            "pre_shoot_delay": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "projectile_def": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "ranged_fov": {"types": "decimal"},
+            "ranged_fov": {"types": "temp/decimal"},
             "target_anchor": {"types": "int"},
             "target_offset": {"types": "list", "structure": "vector_decimal"}
         }
@@ -4634,7 +4614,7 @@
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.float": {
@@ -4676,7 +4656,7 @@
             "xz_distance": {"types": "int", "tags": ["t/outdated"]},
             "y_dist": {"types": "int"},
             "y_distance": {"types": "int", "tags": ["t/outdated"]},
-            "y_offset": {"types": "decimal"}
+            "y_offset": {"types": "temp/decimal"}
         }
     },
     "behavior.follow_caravan": {
@@ -4684,23 +4664,23 @@
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
             "entity_count": {"types": "int"},
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "filters": {"types": "dict", "structure": "filter"},
-            "max_dist": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal"},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
             "reevaluate_description": {"types": "bool"},
-            "sprint_speed_multiplier": {"types": "decimal"},
-            "walk_speed_multiplier": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"}
+            "sprint_speed_multiplier": {"types": "temp/decimal"},
+            "walk_speed_multiplier": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.follow_flock": {
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.follow_mob": {
@@ -4710,8 +4690,8 @@
             "filters": {"types": ["dict", "list"], "structure": "filter_or_filter_list"},
             "preferred_actor_type": {"types": "str"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "stop_distance": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "stop_distance": {"types": "temp/decimal"},
             "use_home_position_restriction": {"types": "bool"}
         }
     },
@@ -4720,41 +4700,41 @@
         "keys": {
             "can_teleport": {"types": "bool"},
             "ignore_vibration": {"types": "bool"},
-            "max_distance": {"types": "decimal"},
+            "max_distance": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "start_distance": {"types": "decimal"},
-            "stop_distance": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "start_distance": {"types": "temp/decimal"},
+            "stop_distance": {"types": "temp/decimal"}
         }
     },
     "behavior.follow_parent": {
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_modifier": {"types": "decimal", "tags": ["t/outdated"]},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_modifier": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.follow_target_captain": {
         "type": "Keymap",
         "keys": {
-            "follow_distance": {"types": "decimal"},
+            "follow_distance": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "within_radius": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.go_and_give_item_to_noteblock": {
         "type": "Keymap",
         "keys": {
-            "listen_time": {"types": "decimal"},
+            "listen_time": {"types": "temp/decimal"},
             "on_item_throw": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
-            "reach_block_distance": {"types": "decimal"},
-            "run_speed": {"types": "decimal"},
-            "throw_force": {"types": "decimal"},
+            "reach_block_distance": {"types": "temp/decimal"},
+            "run_speed": {"types": "temp/decimal"},
+            "throw_force": {"types": "temp/decimal"},
             "throw_sound": {"types": "str"},
-            "vertical_throw_mul": {"types": "decimal"}
+            "vertical_throw_mul": {"types": "temp/decimal"}
         }
     },
     "behavior.go_and_give_item_to_owner": {
@@ -4762,23 +4742,23 @@
         "keys": {
             "on_item_throw": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
-            "reach_mob_distance": {"types": "decimal"},
-            "run_speed": {"types": "decimal"},
-            "throw_force": {"types": "decimal"},
+            "reach_mob_distance": {"types": "temp/decimal"},
+            "run_speed": {"types": "temp/decimal"},
+            "throw_force": {"types": "temp/decimal"},
             "throw_sound": {"types": "str"},
-            "vertical_throw_mul": {"types": "decimal"}
+            "vertical_throw_mul": {"types": "temp/decimal"}
         }
     },
     "behavior.go_home": {
         "type": "Keymap",
         "keys": {
-            "calculate_new_path_radius": {"types": "decimal"},
-            "goal_radius": {"types": "decimal"},
+            "calculate_new_path_radius": {"types": "temp/decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "interval": {"types": "int"},
             "on_failed": {"types": "trigger_type", "structure": "trigger"},
             "on_home": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.guardian_attack": {
@@ -4787,44 +4767,44 @@
             "elder_extra_magic_damage": {"types": "int"},
             "hard_mode_extra_magic_damage": {"types": "int"},
             "magic_damage": {"types": "int"},
-            "min_distance": {"types": "decimal"},
+            "min_distance": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "sound_delay_time": {"types": "decimal"},
-            "x_max_rotation": {"types": "decimal"},
-            "y_max_rotation": {"types": "decimal"}
+            "sound_delay_time": {"types": "temp/decimal"},
+            "x_max_rotation": {"types": "temp/decimal"},
+            "y_max_rotation": {"types": "temp/decimal"}
         }
     },
     "behavior.harvest_farm_block": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
-            "max_seconds_before_search": {"types": "decimal"},
-            "search_cooldown_max_seconds": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
+            "max_seconds_before_search": {"types": "temp/decimal"},
+            "search_cooldown_max_seconds": {"types": "temp/decimal"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "seconds_until_new_task": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"},
+            "seconds_until_new_task": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
     "behavior.hide": {
         "type": "Keymap",
         "keys": {
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "poi_type": {"types": "str"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "timeout_cooldown": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "timeout_cooldown": {"types": "temp/decimal"}
         }
     },
     "behavior.hold_ground": {
         "type": "Keymap",
         "keys": {
             "broadcast": {"types": "bool"},
-            "broadcast_range": {"types": "decimal"},
+            "broadcast_range": {"types": "temp/decimal"},
             "hurt_by_target_event": {"types": "dict", "structure": "event_target", "tags": ["t/outdated"]},
-            "min_radius": {"types": "decimal"},
+            "min_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "within_radius_event": {"types": "dict", "structure": "event_target"}
         }
@@ -4834,15 +4814,15 @@
         "keys": {
             "alert_same_type": {"types": "bool"},
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "filters": {"types": "dict", "structure": "filter"},
-            "max_dist": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal"},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
             "not_entity_types": {"types": ["list", "str"], "structure": "entity_list_or_entity", "tags": ["t/outdated"]},
             "reevaluate_description": {"types": "bool"},
-            "sprint_speed_multiplier": {"types": "decimal"},
-            "walk_speed_multiplier": {"types": "decimal"},
+            "sprint_speed_multiplier": {"types": "temp/decimal"},
+            "walk_speed_multiplier": {"types": "temp/decimal"},
             "hurt_owner": {"types": "bool"},
             "priority": {"types": "int"}
         }
@@ -4850,37 +4830,37 @@
     "behavior.inspect_bookshelf": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.investigate_suspicious_location": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.jump_around_target": {
         "type": "Keymap",
         "keys": {
             "check_collision": {"types": "bool"},
-            "entity_bounding_box_scale": {"types": "decimal"},
+            "entity_bounding_box_scale": {"types": "temp/decimal"},
             "filters": {"types": "dict", "structure": "filter"},
             "jump_angles": {"types": "list", "structure": "behavior.jump_around_target:jump_angles"},
-            "jump_cooldown_duration": {"types": "decimal"},
-            "jump_cooldown_when_hurt_duration": {"types": "decimal"},
+            "jump_cooldown_duration": {"types": "temp/decimal"},
+            "jump_cooldown_when_hurt_duration": {"types": "temp/decimal"},
             "landing_distance_from_target": {"types": "range", "structure": "range_group_decimal"},
-            "landing_position_spread_degrees": {"types": "decimal"},
-            "last_hurt_duration": {"types": "decimal"},
+            "landing_position_spread_degrees": {"types": "temp/decimal"},
+            "last_hurt_duration": {"types": "temp/decimal"},
             "line_of_sight_obstruction_height_ignore": {"types": "int"},
-            "max_jump_velocity": {"types": "decimal"},
-            "prepare_jump_duration": {"types": "decimal"},
+            "max_jump_velocity": {"types": "temp/decimal"},
+            "prepare_jump_duration": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "required_vertical_space": {"types": "int"},
             "snap_to_surface_block_range": {"types": "int"},
@@ -4898,7 +4878,7 @@
             "sort": "sort_by_value",
             "measure_length": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "behavior.jump_to_block": {
@@ -4906,13 +4886,13 @@
         "keys": {
             "cooldown_range": {"types": "range", "structure": "range_group_decimal"},
             "forbidden_blocks": {"types": "list", "structure": "block_list"},
-            "max_velocity": {"types": "decimal"},
+            "max_velocity": {"types": "temp/decimal"},
             "minimum_distance": {"types": "int"},
             "minimum_path_length": {"types": "int"},
             "preferred_blocks": {"types": "list", "structure": "block_list"},
-            "preferred_blocks_chance": {"types": "decimal"},
+            "preferred_blocks_chance": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "scale_factor": {"types": "decimal"},
+            "scale_factor": {"types": "temp/decimal"},
             "search_height": {"types": "int"},
             "search_width": {"types": "int"}
         }
@@ -4920,13 +4900,13 @@
     "behavior.knockback_roar": {
         "type": "Keymap",
         "keys": {
-            "attack_time": {"types": "decimal"},
-            "cooldown_time": {"types": "decimal"},
+            "attack_time": {"types": "temp/decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
             "damage_filters": {"types": "dict", "structure": "filter"},
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "knockback_damage": {"types": "int"},
             "knockback_filters": {"types": "dict", "structure": "filter"},
-            "knockback_height_cap": {"types": "decimal"},
+            "knockback_height_cap": {"types": "temp/decimal"},
             "knockback_horizontal_strength": {"types": "int"},
             "knockback_range": {"types": "int"},
             "knockback_strength": {"types": "int", "tags": ["t/outdated"]},
@@ -4948,14 +4928,14 @@
         "keys": {
             "allow_laying_from_below": {"types": "bool"},
             "egg_type": {"types": "str"},
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "lay_egg_sound": {"types": "str"},
-            "lay_seconds": {"types": "decimal"},
+            "lay_seconds": {"types": "temp/decimal"},
             "on_lay": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "target_blocks": {"types": "list", "structure": "block_list"},
             "target_materials_above_block": {"types": "list", "structure": "block_list"},
             "use_default_animation": {"types": "bool"}
@@ -4967,8 +4947,8 @@
             "must_be_on_ground": {"types": "bool"},
             "priority": {"types": "int"},
             "set_persistent": {"types": "bool"},
-            "target_dist": {"types": "decimal"},
-            "yd": {"types": "decimal"}
+            "target_dist": {"types": "temp/decimal"},
+            "yd": {"types": "temp/decimal"}
         }
     },
     "behavior.look_at_entity": {
@@ -4977,10 +4957,10 @@
             "angle_of_view_horizontal": {"types": "int"},
             "angle_of_view_vertical": {"types": "int"},
             "filters": {"types": "dict", "structure": "filter"},
-            "look_distance": {"types": "decimal"},
+            "look_distance": {"types": "temp/decimal"},
             "look_time": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int", "tags": ["t/not_in_documentation"]},
-            "probability": {"types": "decimal"}
+            "probability": {"types": "temp/decimal"}
         }
     },
     "behavior.look_at_player": {
@@ -4988,13 +4968,13 @@
         "keys": {
             "angle_of_view_horizontal": {"types": "int"},
             "angle_of_view_vertical": {"types": "int"},
-            "look_distance": {"types": "decimal"},
+            "look_distance": {"types": "temp/decimal"},
             "look_time": {"types": "range", "structure": "range_group_decimal"},
             "max_look_time": {"types": "int"},
             "min_look_time": {"types": "int"},
             "priority": {"types": "int"},
-            "probability": {"types": "decimal"},
-            "target_distance": {"types": "decimal"}
+            "probability": {"types": "temp/decimal"},
+            "target_distance": {"types": "temp/decimal"}
         }
     },
     "behavior.look_at_target": {
@@ -5002,10 +4982,10 @@
         "keys": {
             "angle_of_view_horizontal": {"types": "int"},
             "angle_of_view_vertical": {"types": "int"},
-            "look_distance": {"types": "decimal"},
+            "look_distance": {"types": "temp/decimal"},
             "look_time": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int"},
-            "probability": {"types": "decimal"}
+            "probability": {"types": "temp/decimal"}
         }
     },
     "behavior.look_at_trading_player": {
@@ -5013,10 +4993,10 @@
         "keys": {
             "angle_of_view_horizontal": {"types": "int"},
             "angle_of_view_vertical": {"types": "int"},
-            "look_distance": {"types": "decimal"},
+            "look_distance": {"types": "temp/decimal"},
             "look_time": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int"},
-            "probability": {"types": "decimal"}
+            "probability": {"types": "temp/decimal"}
         }
     },
     "behavior.make_love": {
@@ -5031,31 +5011,31 @@
             "attack_once": {"types": "bool"},
             "attack_types": {"types": "str", "delegate_arguments": {"always_print": true}},
             "can_spread_on_fire": {"types": "bool", "tags": ["t/outdated"]},
-            "cooldown_time": {"types": "decimal"},
-            "inner_boundary_time_increase": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "inner_boundary_time_increase": {"types": "temp/decimal"},
             "look_distance": {"types": "int", "tags": ["t/outdated"]},
-            "max_dist": {"types": "decimal", "tags": ["t/unused"]},
-            "max_path_time": {"types": "decimal"},
-            "melee_fov": {"types": "decimal"},
-            "min_path_time": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal", "tags": ["t/unused"]},
+            "max_path_time": {"types": "temp/decimal"},
+            "melee_fov": {"types": "temp/decimal"},
+            "min_path_time": {"types": "temp/decimal"},
             "on_attack": {"types": "trigger_type", "structure": "trigger"},
             "on_kill": {"types": "trigger_type", "structure": "trigger"},
-            "outer_boundary_time_increase": {"types": "decimal"},
-            "path_fail_time_increase": {"types": "decimal"},
-            "path_inner_boundary": {"types": "decimal"},
-            "path_outer_boundary": {"types": "decimal"},
+            "outer_boundary_time_increase": {"types": "temp/decimal"},
+            "path_fail_time_increase": {"types": "temp/decimal"},
+            "path_inner_boundary": {"types": "temp/decimal"},
+            "path_outer_boundary": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "random_stop_interval": {"types": "decimal"},
-            "reach_multiplier": {"types": "decimal"},
+            "random_stop_interval": {"types": "temp/decimal"},
+            "reach_multiplier": {"types": "temp/decimal"},
             "require_complete_path": {"types": "bool"},
             "set_persistent": {"types": "bool"},
-            "speed_multiplier": {"types": "decimal"},
-            "target_dist": {"types": "decimal", "tags": ["t/unused"]},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "target_dist": {"types": "temp/decimal", "tags": ["t/unused"]},
             "target_tracking": {"types": "dict", "structure": "behavior.melee_attack:target_tracking", "tags": ["t/outdated"]},
             "track_target": {"types": "bool"},
             "untrackable_cooldown_delay": {"types": "int", "tags": ["t/outdated"]},
-            "x_max_rotation": {"types": "decimal"},
-            "y_max_head_rotation": {"types": "decimal"}
+            "x_max_rotation": {"types": "temp/decimal"},
+            "y_max_head_rotation": {"types": "temp/decimal"}
         }
     },
     "behavior.melee_attack:target_tracking": {
@@ -5092,48 +5072,48 @@
             "attack_once": {"types": "bool"},
             "attack_types": {"types": "str", "delegate_arguments": {"always_print": true}},
             "can_spread_on_fire": {"types": "bool"},
-            "cooldown_time": {"types": "decimal"},
-            "horizontal_reach": {"types": "decimal"},
-            "inner_boundary_time_increase": {"types": "decimal"},
-            "max_dist": {"types": "decimal", "tags": ["t/unused"]},
-            "max_path_time": {"types": "decimal"},
-            "melee_fov": {"types": "decimal"},
-            "min_path_time": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "horizontal_reach": {"types": "temp/decimal"},
+            "inner_boundary_time_increase": {"types": "temp/decimal"},
+            "max_dist": {"types": "temp/decimal", "tags": ["t/unused"]},
+            "max_path_time": {"types": "temp/decimal"},
+            "melee_fov": {"types": "temp/decimal"},
+            "min_path_time": {"types": "temp/decimal"},
             "on_attack": {"types": "trigger_type", "structure": "trigger"},
             "on_kill": {"types": "trigger_type", "structure": "trigger", "tags": ["t/not_in_documentation"]},
-            "outer_boundary_time_increase": {"types": "decimal"},
-            "path_fail_time_increase": {"types": "decimal"},
-            "path_inner_boundary": {"types": "decimal"},
-            "path_outer_boundary": {"types": "decimal"},
+            "outer_boundary_time_increase": {"types": "temp/decimal"},
+            "path_fail_time_increase": {"types": "temp/decimal"},
+            "path_inner_boundary": {"types": "temp/decimal"},
+            "path_outer_boundary": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "random_stop_interval": {"types": "int"},
-            "reach_multiplier": {"types": "decimal"},
+            "reach_multiplier": {"types": "temp/decimal"},
             "require_complete_path": {"types": "bool"},
             "set_persistent": {"types": "bool"},
-            "speed_multiplier": {"types": "decimal"},
-            "target_dist": {"types": "decimal", "tags": ["t/unused"]},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "target_dist": {"types": "temp/decimal", "tags": ["t/unused"]},
             "track_target": {"types": "bool"},
-            "x_max_rotation": {"types": "decimal"},
-            "y_max_head_rotation": {"types": "decimal"}
+            "x_max_rotation": {"types": "temp/decimal"},
+            "y_max_head_rotation": {"types": "temp/decimal"}
         }
     },
     "behavior.mingle": {
         "type": "Keymap",
         "keys": {
-            "cooldown_time": {"types": "decimal"},
-            "duration": {"types": "decimal"},
-            "mingle_distance": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "duration": {"types": "temp/decimal"},
+            "mingle_distance": {"types": "temp/decimal"},
             "mingle_partner_type": {"types": ["list", "str"], "structure": "entity_list_or_entity"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.mount_pathing": {
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "target_dist": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "target_dist": {"types": "temp/decimal"},
             "track_target": {"types": "bool"}
         }
     },
@@ -5143,7 +5123,7 @@
             "destination_pos_spread_degrees": {"types": "int"},
             "destination_position_range": {"types": "range", "structure": "range_group_decimal"},
             "filters": {"types": "dict", "structure": "filter"},
-            "movement_speed": {"types": "decimal"},
+            "movement_speed": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
@@ -5153,7 +5133,7 @@
             "destination_pos_spread_degrees": {"types": "int"},
             "destination_position_range": {"types": "range", "structure": "range_group_decimal"},
             "filters": {"types": "dict", "structure": "filter"},
-            "movement_speed": {"types": "decimal"},
+            "movement_speed": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
@@ -5161,20 +5141,20 @@
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "timeout_cooldown": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "timeout_cooldown": {"types": "temp/decimal"}
         }
     },
     "behavior.move_outdoors": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "timeout_cooldown": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "timeout_cooldown": {"types": "temp/decimal"}
         }
     },
     "behavior.move_through_village": {
@@ -5182,13 +5162,13 @@
         "keys": {
             "only_at_night": {"types": "bool"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_to_block": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "interval": {"types": "int", "tags": ["t/outdated"]},
             "on_reach": {"types": "trigger_type", "structure": "trigger"},
             "on_stay_completed": {"types": "trigger_type", "structure": "trigger"},
@@ -5196,9 +5176,9 @@
             "search_count": {"types": "int", "tags": ["t/outdated"]},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "start_chance": {"types": "decimal"},
-            "stay_duration": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "start_chance": {"types": "temp/decimal"},
+            "stay_duration": {"types": "temp/decimal"},
             "target_block_filters": {"types": "dict", "structure": "filter", "tags": ["t/not_in_documentation"]},
             "target_blocks": {"types": "list", "structure": "block_list"},
             "target_offset": {"types": "list", "structure": "vector_decimal"},
@@ -5209,79 +5189,79 @@
     "behavior.move_to_land": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_to_lava": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_to_liquid": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "material_type": {"types": "str"},
             "priority": {"types": "int"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_to_random_block": {
         "type": "Keymap",
         "keys": {
-            "block_distance": {"types": "decimal"},
-            "within_radius": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"},
+            "block_distance": {"types": "temp/decimal"},
+            "within_radius": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
     "behavior.move_to_village": {
         "type": "Keymap",
         "keys": {
-            "cooldown_time": {"types": "decimal"},
-            "goal_radius": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_to_water": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "search_count": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_towards_dwelling_restriction": {
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_towards_home_restriction": {
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_towards_restriction": {
@@ -5289,8 +5269,8 @@
         "keys": {
             "control_flags": {"types": "list", "structure": "behavior.move_towards_restriction:control_flags"},
             "priority": {"types": "int"},
-            "speed_modifier": {"types": "decimal", "tags": ["t/outdated"]},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_modifier": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.move_towards_restriction:control_flags": {
@@ -5313,18 +5293,18 @@
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal", "tags": ["t/not_in_documentation"]},
-            "within_radius": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal", "tags": ["t/not_in_documentation"]},
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.nap": {
         "type": "Keymap",
         "keys": {
             "can_nap_filters": {"types": "dict", "structure": "filter", "tags": ["t/not_in_documentation"]},
-            "cooldown_max": {"types": "decimal"},
-            "cooldown_min": {"types": "decimal"},
-            "mob_detect_dist": {"types": "decimal"},
-            "mob_detect_height": {"types": "decimal"},
+            "cooldown_max": {"types": "temp/decimal"},
+            "cooldown_min": {"types": "temp/decimal"},
+            "mob_detect_dist": {"types": "temp/decimal"},
+            "mob_detect_height": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "wake_mob_exceptions": {"types": "dict", "structure": "filter", "tags": ["t/not_in_documentation"]}
         }
@@ -5333,24 +5313,24 @@
         "type": "Keymap",
         "keys": {
             "attack_interval": {"types": "int"},
-            "attack_interval_min": {"types": "decimal"},
+            "attack_interval_min": {"types": "temp/decimal"},
             "attack_owner": {"types": "bool"},
             "entity_types": {"types": ["dict", "list", "str"], "structure": "behavior.nearest_attackable_target:entity_types"},
             "must_reach": {"types": "bool"},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
             "not_entity_types": {"types": "str", "tags": ["t/outdated"]},
-            "persist_time": {"types": "decimal"},
+            "persist_time": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "reevaluate_description": {"types": "bool"},
             "reselect_targets": {"types": "bool"},
             "scan_interval": {"types": "int"},
             "set_persistent": {"types": "bool"},
-            "target_invisible_multiplier": {"types": "decimal"},
-            "target_search_height": {"types": "decimal"},
-            "target_sneak_visibility_multiplier": {"types": "decimal"},
+            "target_invisible_multiplier": {"types": "temp/decimal"},
+            "target_search_height": {"types": "temp/decimal"},
+            "target_sneak_visibility_multiplier": {"types": "temp/decimal"},
             "within_default": {"types": "int", "tags": ["t/outdated"]},
-            "within_radius": {"types": "decimal"}
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.nearest_attackable_target:entity_types": {
@@ -5366,41 +5346,41 @@
         "keys": {
             "attack_interval": {"types": "int"},
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "must_reach": {"types": "bool"},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
-            "persist_time": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
+            "persist_time": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "reevaluate_description": {"types": "bool"},
             "reselect_targets": {"types": "bool"},
             "scan_interval": {"types": "int"},
             "set_persistent": {"types": "bool"},
-            "target_search_height": {"types": "decimal"},
-            "within_radius": {"types": "decimal"}
+            "target_search_height": {"types": "temp/decimal"},
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.ocelot_sit_on_block": {
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.ocelotattack": {
         "type": "Keymap",
         "keys": {
-            "cooldown_time": {"types": "decimal"},
-            "max_distance": {"types": "decimal"},
-            "max_sneak_range": {"types": "decimal"},
-            "max_sprint_range": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "max_distance": {"types": "temp/decimal"},
+            "max_sneak_range": {"types": "temp/decimal"},
+            "max_sprint_range": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "reach_multiplier": {"types": "decimal"},
-            "sneak_speed_multiplier": {"types": "decimal"},
-            "sprint_speed_multiplier": {"types": "decimal"},
-            "walk_speed_multiplier": {"types": "decimal"},
-            "x_max_rotation": {"types": "decimal"},
-            "y_max_head_rotation": {"types": "decimal"}
+            "reach_multiplier": {"types": "temp/decimal"},
+            "sneak_speed_multiplier": {"types": "temp/decimal"},
+            "sprint_speed_multiplier": {"types": "temp/decimal"},
+            "walk_speed_multiplier": {"types": "temp/decimal"},
+            "x_max_rotation": {"types": "temp/decimal"},
+            "y_max_head_rotation": {"types": "temp/decimal"}
         }
     },
     "behavior.offer_flower": {
@@ -5421,30 +5401,30 @@
         "type": "Keymap",
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "filters": {"types": "dict", "structure": "filter"},
-            "max_dist": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal"},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
             "reevaluate_description": {"types": "bool"},
-            "sprint_speed_multiplier": {"types": "decimal"},
-            "walk_speed_multiplier": {"types": "decimal"}
+            "sprint_speed_multiplier": {"types": "temp/decimal"},
+            "walk_speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.owner_hurt_target": {
         "type": "Keymap",
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "filters": {"types": "dict", "structure": "filter"},
-            "max_dist": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal"},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
             "reevaluate_description": {"types": "bool"},
-            "sprint_speed_multiplier": {"types": "decimal"},
-            "walk_speed_multiplier": {"types": "decimal"}
+            "sprint_speed_multiplier": {"types": "temp/decimal"},
+            "walk_speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.panic": {
@@ -5457,8 +5437,8 @@
             "prefer_water": {"types": "bool"},
             "priority": {"types": "int"},
             "sound_interval": {"types": "range", "structure": "range_group_decimal"},
-            "speed_modifier": {"types": "decimal", "tags": ["t/outdated"]},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_modifier": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.peek": {
@@ -5470,12 +5450,12 @@
     "behavior.pet_sleep_with_owner": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "search_height": {"types": "int"},
             "search_radius": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.pickup_items": {
@@ -5483,29 +5463,34 @@
         "keys": {
             "can_pickup_any_item": {"types": "bool"},
             "can_pickup_to_hand_or_equipment": {"types": "bool"},
-            "cooldown_after_being_attacked": {"types": "decimal"},
+            "cooldown_after_being_attacked": {"types": "temp/decimal"},
             "excluded_items": {"types": "list", "structure": "item_list"},
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "items": {"types": "list", "structure": "item_list", "tags": ["t/outdated"]},
-            "max_dist": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal"},
             "pickup_based_on_chance": {"types": "bool"},
             "pickup_same_items_as_in_hand": {"types": "bool", "tags": ["t/not_in_documentation"]},
             "priority": {"types": "int"},
             "search_height": {"types": "int", "tags": ["t/not_in_documentation"]},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "track_target": {"types": "bool"}
         }
     },
     "behavior.pig_zombie_anger_target": {
-        "type": "Keymap",
-        "normalizers": {
-            "function_name": "delete_optional_key",
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "delete_key",
             "arguments": {
                 "key": "priotiry"
             }
         },
-        "keys": {
-            "priority": {"types": "int"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "priority": {"types": "int"}
+            }
         }
     },
     "behavior.pig_zombie_hurt_by_other": {
@@ -5520,22 +5505,22 @@
             "priority": {"types": "int"},
             "xz_range": {"types": "int"},
             "y_range": {"types": "range", "structure": "range_group_int"},
-            "chance": {"types": "decimal"}
+            "chance": {"types": "temp/decimal"}
         }
     },
     "behavior.play": {
         "type": "Keymap",
         "keys": {
-            "chance_to_start": {"types": "decimal"},
+            "chance_to_start": {"types": "temp/decimal"},
             "filters": {"types": "dict", "structure": "filter"},
             "follow_distance": {"types": "int"},
             "friend_search_area": {"types": "list", "structure": "vector_decimal"},
             "friend_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "max_play_duration_seconds": {"types": "decimal"},
+            "max_play_duration_seconds": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "random_pos_search_height": {"types": "int"},
             "random_pos_search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.play_dead": {
@@ -5543,12 +5528,12 @@
         "keys": {
             "apply_regeneration": {"types": "bool"},
             "damage_sources": {"types": "list", "structure": "damage_source_list"},
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "filters": {"types": "dict", "structure": "filter"},
             "force_below_health": {"types": "int"},
             "priority": {"types": "int"},
             "random_damage_range": {"types": "range", "structure": "range_group_decimal"},
-            "random_start_chance": {"types": "decimal"}
+            "random_start_chance": {"types": "temp/decimal"}
         }
     },
     "behavior.player_ride_tamed": {
@@ -5561,49 +5546,49 @@
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_modifier": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_modifier": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.raid_garden": {
         "type": "Keymap",
         "keys": {
             "blocks": {"types": "list", "structure": "block_list"},
-            "eat_delay": {"types": "decimal"},
-            "full_delay": {"types": "decimal"},
-            "goal_radius": {"types": "decimal"},
+            "eat_delay": {"types": "temp/decimal"},
+            "full_delay": {"types": "temp/decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "initial_eat_delay": {"types": "int"},
             "max_to_eat": {"types": "int"},
             "priority": {"types": "int"},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.ram_attack": {
         "type": "Keymap",
         "keys": {
-            "baby_knockback_modifier": {"types": "decimal"},
+            "baby_knockback_modifier": {"types": "temp/decimal"},
             "cooldown_range": {"types": "range", "structure": "range_group_decimal"},
-            "knockback_force": {"types": "decimal"},
-            "knockback_height": {"types": "decimal"},
-            "min_ram_distance": {"types": "decimal"},
+            "knockback_force": {"types": "temp/decimal"},
+            "knockback_height": {"types": "temp/decimal"},
+            "min_ram_distance": {"types": "temp/decimal"},
             "on_start": {"types": "trigger_type", "structure": "trigger"},
             "pre_ram_sound": {"types": "str"},
             "priority": {"types": "int"},
-            "ram_distance": {"types": "decimal"},
+            "ram_distance": {"types": "temp/decimal"},
             "ram_impact_sound": {"types": "str"},
-            "ram_speed": {"types": "decimal"},
-            "run_speed": {"types": "decimal"}
+            "ram_speed": {"types": "temp/decimal"},
+            "run_speed": {"types": "temp/decimal"}
         }
     },
     "behavior.random_breach": {
         "type": "Keymap",
         "keys": {
-            "cooldown_time": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
             "interval": {"types": "int"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "xz_dist": {"types": "int"},
             "y_dist": {"types": "int"}
         }
@@ -5617,7 +5602,7 @@
             "avoid_damage_blocks": {"types": "bool"},
             "can_land_on_trees": {"types": "bool"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "xz_dist": {"types": "int"},
             "xz_distance": {"types": "int", "tags": ["t/outdated"]},
             "y_dist": {"types": "int"},
@@ -5631,10 +5616,10 @@
             "hover_height": {"types": "range", "structure": "range_group_decimal"},
             "interval": {"types": "int"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "xz_dist": {"types": "int"},
             "y_dist": {"types": "int"},
-            "y_offset": {"types": "decimal"}
+            "y_offset": {"types": "temp/decimal"}
         }
     },
     "behavior.random_look_around_and_sit": {
@@ -5642,14 +5627,14 @@
         "keys": {
             "continue_if_leashed": {"types": "bool"},
             "continue_sitting_on_reload": {"types": "bool"},
-            "max_angle_of_view_horizontal": {"types": "decimal"},
+            "max_angle_of_view_horizontal": {"types": "temp/decimal"},
             "max_look_count": {"types": "int"},
             "max_look_time": {"types": "int"},
-            "min_angle_of_view_horizontal": {"types": "decimal"},
+            "min_angle_of_view_horizontal": {"types": "temp/decimal"},
             "min_look_count": {"types": "int"},
             "min_look_time": {"types": "int"},
             "priority": {"types": "int", "tags": ["t/not_in_documentation"]},
-            "probability": {"types": "decimal"},
+            "probability": {"types": "temp/decimal"},
             "random_look_around_cooldown": {"types": "int"}
         }
     },
@@ -5658,19 +5643,19 @@
         "keys": {
             "angle_of_view_horizontal": {"types": "int"},
             "angle_of_view_vertical": {"types": "int"},
-            "look_distance": {"types": "decimal"},
+            "look_distance": {"types": "temp/decimal"},
             "look_time": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int"},
-            "probability": {"types": "decimal"}
+            "probability": {"types": "temp/decimal"}
         }
     },
     "behavior.random_search_and_dig": {
         "type": "Keymap",
         "keys": {
-            "cooldown_range": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"},
+            "cooldown_range": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"},
             "digging_duration_range": {"types": "range", "structure": "range_group_decimal"},
-            "find_valid_position_retries": {"types": "decimal"},
-            "goal_radius": {"types": "decimal"},
+            "find_valid_position_retries": {"types": "temp/decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "item_table": {"types": "str", "delegate_arguments": {"always_print": true}},
             "item": {"types": "str", "tags": ["t/outdated"]},
             "items": {"types": "list", "structure": "behavior.random_search_and_dig:items", "tags": ["t/outdated"]},
@@ -5681,13 +5666,13 @@
             "on_searching_start": {"types": "trigger_type", "structure": "trigger"},
             "on_success": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int", "tags": ["t/not_in_documentation"]},
-            "search_range_xz": {"types": "decimal"},
-            "search_range_y": {"types": "decimal"},
-            "spawn_item_after_seconds": {"types": "decimal"},
-            "spawn_item_pos_offset": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"},
+            "search_range_xz": {"types": "temp/decimal"},
+            "search_range_y": {"types": "temp/decimal"},
+            "spawn_item_after_seconds": {"types": "temp/decimal"},
+            "spawn_item_pos_offset": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "target_blocks": {"types": "list", "structure": "block_list"},
-            "target_dig_position_offset": {"types": "decimal"}
+            "target_dig_position_offset": {"types": "temp/decimal"}
         }
     },
     "behavior.random_search_and_dig:items": {
@@ -5713,10 +5698,10 @@
     "behavior.random_sitting": {
         "type": "Keymap",
         "keys": {
-            "cooldown": {"types": "decimal"},
-            "min_sit_time": {"types": "decimal"},
-            "start_chance": {"types": "decimal"},
-            "stop_chance": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
+            "min_sit_time": {"types": "temp/decimal"},
+            "start_chance": {"types": "temp/decimal"},
+            "stop_chance": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
@@ -5728,9 +5713,9 @@
         "keys": {
             "interval": {"types": "int"},
             "priority": {"types": "int"},
-            "speed_modifier": {"types": "decimal", "tags": ["t/outdated"]},
-            "speed_multiplier": {"types": "decimal"},
-            "xz_dist": {"types": "decimal"},
+            "speed_modifier": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "xz_dist": {"types": "temp/decimal"},
             "xz_distance": {"types": "int", "tags": ["t/outdated"]},
             "y_dist": {"types": "int"},
             "y_distance": {"types": "int", "tags": ["t/outdated"]}
@@ -5745,7 +5730,7 @@
             "avoid_surface": {"types": "bool"},
             "interval": {"types": "int"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "xz_dist": {"types": "int"},
             "xz_distance": {"types": "int", "tags": ["t/outdated"]},
             "y_dist": {"types": "int"},
@@ -5755,23 +5740,23 @@
     "behavior.ranged_attack": {
         "type": "Keymap",
         "keys": {
-            "attack_interval": {"types": "decimal"},
-            "attack_interval_max": {"types": "decimal"},
-            "attack_interval_min": {"types": "decimal"},
-            "attack_radius": {"types": "decimal"},
-            "attack_radius_min": {"types": "decimal"},
-            "burst_interval": {"types": "decimal"},
+            "attack_interval": {"types": "temp/decimal"},
+            "attack_interval_max": {"types": "temp/decimal"},
+            "attack_interval_min": {"types": "temp/decimal"},
+            "attack_radius": {"types": "temp/decimal"},
+            "attack_radius_min": {"types": "temp/decimal"},
+            "burst_interval": {"types": "temp/decimal"},
             "burst_shots": {"types": "int"},
-            "charge_charged_trigger": {"types": "decimal"},
-            "charge_shoot_trigger": {"types": "decimal"},
+            "charge_charged_trigger": {"types": "temp/decimal"},
+            "charge_shoot_trigger": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "ranged_fov": {"types": "decimal"},
+            "ranged_fov": {"types": "temp/decimal"},
             "set_persistent": {"types": "bool"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "swing": {"types": "bool"},
-            "target_in_sight_time": {"types": "decimal"},
-            "x_max_rotation": {"types": "decimal"},
-            "y_max_head_rotation": {"types": "decimal"}
+            "target_in_sight_time": {"types": "temp/decimal"},
+            "x_max_rotation": {"types": "temp/decimal"},
+            "y_max_head_rotation": {"types": "temp/decimal"}
         }
     },
     "behavior.receive_love": {
@@ -5795,16 +5780,16 @@
     "behavior.rise_to_liquid_level": {
         "type": "Keymap",
         "keys": {
-            "liquid_y_offset": {"types": "decimal"},
+            "liquid_y_offset": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "rise_delta": {"types": "decimal"},
-            "sink_delta": {"types": "decimal"}
+            "rise_delta": {"types": "temp/decimal"},
+            "sink_delta": {"types": "temp/decimal"}
         }
     },
     "behavior.rising": {
         "type": "Keymap",
         "keys": {
-            "cooldown_range": {"types": "decimal"},
+            "cooldown_range": {"types": "temp/decimal"},
             "duration_range": {"types": "range", "structure": "range_group_decimal"},
             "on_end": {"types": "dict", "structure": "event_target"},
             "priority": {"types": "int"}
@@ -5813,16 +5798,16 @@
     "behavior.river_follow": {
         "type": "Keymap",
         "keys": {
-            "centered_gap": {"types": "decimal"},
-            "follow_speed": {"types": "decimal"},
-            "look_ahead": {"types": "decimal"},
-            "priority": {"types": "decimal"}
+            "centered_gap": {"types": "temp/decimal"},
+            "follow_speed": {"types": "temp/decimal"},
+            "look_ahead": {"types": "temp/decimal"},
+            "priority": {"types": "temp/decimal"}
         }
     },
     "behavior.roar": {
         "type": "Keymap",
         "keys": {
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
@@ -5830,14 +5815,14 @@
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "probability": {"types": "decimal"}
+            "probability": {"types": "temp/decimal"}
         }
     },
     "behavior.run_around_like_crazy": {
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.scared": {
@@ -5851,7 +5836,7 @@
         "type": "Keymap",
         "keys": {
             "cooldown_range": {"types": "range", "structure": "range_group_decimal"},
-            "duration_range": {"types": "decimal"},
+            "duration_range": {"types": "temp/decimal"},
             "on_end": {"types": "dict", "structure": "event_target"},
             "priority": {"types": "int"}
         }
@@ -5879,12 +5864,12 @@
     "behavior.send_event:event_choices.item": {
         "type": "Keymap",
         "keys": {
-            "cast_duration": {"types": "decimal"},
-            "cooldown_time": {"types": "decimal", "tags": ["t/not_in_documentation"]},
+            "cast_duration": {"types": "temp/decimal"},
+            "cooldown_time": {"types": "temp/decimal", "tags": ["t/not_in_documentation"]},
             "filters": {"types": "dict", "structure": "filter", "tags": ["t/not_in_documentation"]},
             "look_at_target": {"types": "bool"},
-            "max_activation_range": {"types": "decimal", "tags": ["t/not_in_documentation"]},
-            "min_activation_range": {"types": "decimal", "tags": ["t/not_in_documentation"]},
+            "max_activation_range": {"types": "temp/decimal", "tags": ["t/not_in_documentation"]},
+            "min_activation_range": {"types": "temp/decimal", "tags": ["t/not_in_documentation"]},
             "particle_color": {"types": "str", "tags": ["t/not_in_documentation"]},
             "priority": {"types": "int"},
             "sequence": {"types": "list", "structure": "behavior.send_event:event_choices.item.sequence"},
@@ -5908,7 +5893,7 @@
     "behavior.send_event:event_choices.item.sequence.item": {
         "type": "Keymap",
         "keys": {
-            "base_delay": {"types": "decimal"},
+            "base_delay": {"types": "temp/decimal"},
             "event": {"types": "str", "delegate_arguments": {"always_print": true}},
             "sound_event": {"types": "str"}
         }
@@ -5917,13 +5902,13 @@
         "type": "Keymap",
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "filters": {"types": "dict", "structure": "filter", "tags": ["t/outdated"]},
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "items_filter": {"types": "list", "structure": "behavior.share_items:items_filter", "tags": ["t/outdated"]},
-            "max_dist": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "target_entity_filter": {"types": "list", "structure": "entity_list", "tags": ["t/outdated"]},
             "target_entity_items": {"types": "list", "structure": "behavior.share_items:target_entity_items", "tags": ["t/outdated"]}
         }
@@ -5984,23 +5969,23 @@
     "behavior.skeleton_horse_trap": {
         "type": "Keymap",
         "keys": {
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "within_radius": {"types": "decimal"}
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.sleep": {
         "type": "Keymap",
         "keys": {
             "can_sleep_while_riding": {"types": "bool"},
-            "cooldown_time": {"types": "decimal"},
-            "goal_radius": {"types": "decimal", "tags": ["t/not_in_documentation"]},
+            "cooldown_time": {"types": "temp/decimal"},
+            "goal_radius": {"types": "temp/decimal", "tags": ["t/not_in_documentation"]},
             "priority": {"types": "int"},
-            "sleep_collider_height": {"types": "decimal"},
-            "sleep_collider_width": {"types": "decimal"},
-            "sleep_y_offset": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"},
-            "timeout_cooldown": {"types": "decimal"}
+            "sleep_collider_height": {"types": "temp/decimal"},
+            "sleep_collider_width": {"types": "temp/decimal"},
+            "sleep_y_offset": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "timeout_cooldown": {"types": "temp/decimal"}
         }
     },
     "behavior.slime_attack": {
@@ -6008,32 +5993,32 @@
         "keys": {
             "priority": {"types": "int"},
             "set_persistent": {"types": "bool"},
-            "speed_multiplier": {"types": "decimal"},
-            "x_max_rotation": {"types": "decimal"},
-            "y_max_rotation": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "x_max_rotation": {"types": "temp/decimal"},
+            "y_max_rotation": {"types": "temp/decimal"}
         }
     },
     "behavior.slime_float": {
         "type": "Keymap",
         "keys": {
-            "jump_chance_percentage": {"types": "decimal"},
+            "jump_chance_percentage": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.slime_keep_on_jumping": {
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.slime_random_direction": {
         "type": "Keymap",
         "keys": {
             "add_random_time_range": {"types": "int"},
-            "min_change_direction_time": {"types": "decimal"},
-            "turn_range": {"types": "decimal"},
+            "min_change_direction_time": {"types": "temp/decimal"},
+            "turn_range": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
@@ -6042,24 +6027,24 @@
         "keys": {
             "items": {"types": "list", "structure": "item_list"},
             "priority": {"types": "int"},
-            "snacking_cooldown": {"types": "decimal"},
-            "snacking_cooldown_min": {"types": "decimal"},
-            "snacking_stop_chance": {"types": "decimal"}
+            "snacking_cooldown": {"types": "temp/decimal"},
+            "snacking_cooldown_min": {"types": "temp/decimal"},
+            "snacking_stop_chance": {"types": "temp/decimal"}
         }
     },
     "behavior.sneeze": {
         "type": "Keymap",
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "cooldown_time": {"types": "decimal"},
-            "drop_item_chance": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "drop_item_chance": {"types": "temp/decimal"},
             "loot_table": {"types": "str"},
             "prepare_sound": {"types": "str"},
-            "prepare_time": {"types": "decimal"},
+            "prepare_time": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "probability": {"types": "decimal"},
+            "probability": {"types": "temp/decimal"},
             "sound": {"types": "str"},
-            "within_radius": {"types": "decimal"}
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.sniff": {
@@ -6069,30 +6054,30 @@
         "value_weight": 5,
         "keys": {
             "cooldown_range": {"types": "range", "structure": "range_group_decimal"},
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "sniffing_radius": {"types": "decimal"},
-            "suspicion_radius": {"types": "decimal", "tags": ["t/outdated"]},
-            "suspicion_radius_horizontal": {"types": "decimal"},
-            "suspicion_radius_vertical": {"types": "decimal"}
+            "sniffing_radius": {"types": "temp/decimal"},
+            "suspicion_radius": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "suspicion_radius_horizontal": {"types": "temp/decimal"},
+            "suspicion_radius_vertical": {"types": "temp/decimal"}
         }
     },
     "behavior.sonic_boom": {
         "type": "Keymap",
         "keys": {
-            "attack_cooldown": {"types": "decimal"},
-            "attack_damage": {"types": "decimal"},
-            "attack_range_horizontal": {"types": "decimal"},
-            "attack_range_vertical": {"types": "decimal"},
+            "attack_cooldown": {"types": "temp/decimal"},
+            "attack_damage": {"types": "temp/decimal"},
+            "attack_range_horizontal": {"types": "temp/decimal"},
+            "attack_range_vertical": {"types": "temp/decimal"},
             "attack_sound": {"types": "str"},
             "charge_sound": {"types": "str"},
-            "duration": {"types": "decimal"},
-            "duration_until_attack_sound": {"types": "decimal"},
-            "knockback_height_cap": {"types": "decimal"},
-            "knockback_horizontal_strength": {"types": "decimal"},
-            "knockback_vertical_strength": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
+            "duration_until_attack_sound": {"types": "temp/decimal"},
+            "knockback_height_cap": {"types": "temp/decimal"},
+            "knockback_horizontal_strength": {"types": "temp/decimal"},
+            "knockback_vertical_strength": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.squid_dive": {
@@ -6128,17 +6113,17 @@
     "behavior.stalk_and_pounce_on_target": {
         "type": "Keymap",
         "keys": {
-            "interest_time": {"types": "decimal"},
-            "leap_dist": {"types": "decimal", "tags": ["t/not_in_documentation"]},
-            "leap_height": {"types": "decimal"},
-            "max_stalk_dist": {"types": "decimal"},
-            "pounce_max_dist": {"types": "decimal"},
+            "interest_time": {"types": "temp/decimal"},
+            "leap_dist": {"types": "temp/decimal", "tags": ["t/not_in_documentation"]},
+            "leap_height": {"types": "temp/decimal"},
+            "max_stalk_dist": {"types": "temp/decimal"},
+            "pounce_max_dist": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "set_persistent": {"types": "bool"},
-            "stalk_speed": {"types": "decimal"},
-            "strike_dist": {"types": "decimal"},
+            "stalk_speed": {"types": "temp/decimal"},
+            "strike_dist": {"types": "temp/decimal"},
             "stuck_blocks": {"types": "dict", "structure": "filter", "tags": ["t/not_in_documentation"]},
-            "stuck_time": {"types": "decimal"}
+            "stuck_time": {"types": "temp/decimal"}
         }
     },
     "behavior.stay_near_note_block": {
@@ -6146,9 +6131,9 @@
         "keys": {
             "listen_time": {"types": "int"},
             "priority": {"types": "int"},
-            "speed": {"types": "decimal"},
-            "start_distance": {"types": "decimal"},
-            "stop_distance": {"types": "decimal"}
+            "speed": {"types": "temp/decimal"},
+            "start_distance": {"types": "temp/decimal"},
+            "stop_distance": {"types": "temp/decimal"}
         }
     },
     "behavior.stay_while_sitting": {
@@ -6162,52 +6147,52 @@
         "keys": {
             "attack_once": {"types": "bool"},
             "attack_types": {"types": "str"},
-            "cooldown_time": {"types": "decimal"},
-            "inner_boundary_time_increase": {"types": "decimal"},
-            "max_dist": {"types": "decimal", "tags": ["t/unused"]},
-            "max_path_time": {"types": "decimal"},
-            "melee_fov": {"types": "decimal"},
-            "min_path_time": {"types": "decimal"},
-            "no_damage_range_multiplier": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "inner_boundary_time_increase": {"types": "temp/decimal"},
+            "max_dist": {"types": "temp/decimal", "tags": ["t/unused"]},
+            "max_path_time": {"types": "temp/decimal"},
+            "melee_fov": {"types": "temp/decimal"},
+            "min_path_time": {"types": "temp/decimal"},
+            "no_damage_range_multiplier": {"types": "temp/decimal"},
             "on_attack": {"types": "trigger_type", "structure": "trigger"},
-            "outer_boundary_time_increase": {"types": "decimal"},
-            "path_fail_time_increase": {"types": "decimal"},
-            "path_inner_boundary": {"types": "decimal"},
-            "path_outer_boundary": {"types": "decimal"},
+            "outer_boundary_time_increase": {"types": "temp/decimal"},
+            "path_fail_time_increase": {"types": "temp/decimal"},
+            "path_inner_boundary": {"types": "temp/decimal"},
+            "path_outer_boundary": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "random_stop_interval": {"types": "int"},
-            "reach_multiplier": {"types": "decimal"},
+            "reach_multiplier": {"types": "temp/decimal"},
             "require_complete_path": {"types": "bool"},
             "set_persistent": {"types": "bool"},
-            "speed_multiplier": {"types": "decimal"},
-            "stomp_range_multiplier": {"types": "decimal"},
-            "target_dist": {"types": "decimal", "tags": ["t/unused"]},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "stomp_range_multiplier": {"types": "temp/decimal"},
+            "target_dist": {"types": "temp/decimal", "tags": ["t/unused"]},
             "track_target": {"types": "bool"},
-            "x_max_rotation": {"types": "decimal"},
-            "y_max_head_rotation": {"types": "decimal"}
+            "x_max_rotation": {"types": "temp/decimal"},
+            "y_max_head_rotation": {"types": "temp/decimal"}
         }
     },
     "behavior.stomp_turtle_egg": {
         "type": "Keymap",
         "keys": {
-            "goal_radius": {"types": "decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "interval": {"types": "int"},
             "priority": {"types": "int"},
             "search_count": {"types": "int", "tags": ["t/outdated"]},
             "search_height": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.stroll_towards_village": {
         "type": "Keymap",
         "keys": {
-            "cooldown_time": {"types": "decimal"},
-            "goal_radius": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
+            "goal_radius": {"types": "temp/decimal"},
             "priority": {"types": "int"},
             "search_range": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "start_chance": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "start_chance": {"types": "temp/decimal"}
         }
     },
     "behavior.summon_entity": {
@@ -6242,20 +6227,20 @@
         "keys": {
             "attack_type": {"types": "str", "tags": ["t/outdated"]},
             "base_delay": {"types": "int", "tags": ["t/outdated"]},
-            "cast_duration": {"types": "decimal"},
+            "cast_duration": {"types": "temp/decimal"},
             "circles": {"types": "list", "structure": "behavior.summon_entity:summon_choices.item:sequence", "tags": ["t/outdated"]},
-            "cooldown_time": {"types": "decimal"},
+            "cooldown_time": {"types": "temp/decimal"},
             "delay_between_spawns": {"types": "int", "tags": ["t/outdated"]},
             "do_casting": {"types": "bool"},
             "filters": {"types": "dict", "structure": "filter"},
-            "max_activation_range": {"types": "decimal"},
-            "min_activation_range": {"types": "decimal"},
+            "max_activation_range": {"types": "temp/decimal"},
+            "min_activation_range": {"types": "temp/decimal"},
             "particle_color": {"types": "str"},
             "priority": {"types": "int", "tags": ["t/outdated"]},
             "range": {"types": "int", "tags": ["t/outdated"]},
             "start_sound_event": {"types": "str"},
             "summon_type": {"types": "str", "tags": ["t/outdated"]},
-            "weight": {"types": "decimal"},
+            "weight": {"types": "temp/decimal"},
             "sequence": {"types": "list", "structure": "behavior.summon_entity:summon_choices.item:sequence"}
         }
     },
@@ -6276,18 +6261,18 @@
     "behavior.summon_entity:summon_choices.item:sequence.item": {
         "type": "Keymap",
         "keys": {
-            "base_delay": {"types": "decimal"},
+            "base_delay": {"types": "temp/decimal"},
             "delay": {"types": "int", "tags": ["t/outdated"]},
-            "delay_per_summon": {"types": "decimal"},
-            "entity_lifespan": {"types": "decimal"},
+            "delay_per_summon": {"types": "temp/decimal"},
+            "entity_lifespan": {"types": "temp/decimal"},
             "entity_type": {"types": "str"},
             "num_entities_spawned": {"types": "int"},
-            "radius": {"types": "decimal", "tags": ["t/outdated"]},
+            "radius": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "shape": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "size": {"types": "decimal"},
+            "size": {"types": "temp/decimal"},
             "sound_event": {"types": "str"},
             "summon_cap": {"types": "int"},
-            "summon_cap_radius": {"types": "decimal"},
+            "summon_cap_radius": {"types": "temp/decimal"},
             "summon_event": {"types": "str"},
             "target": {"types": "str"}
         }
@@ -6304,17 +6289,17 @@
     "behavior.swell": {
         "type": "Keymap",
         "keys": {
-            "stop_distance": {"types": "decimal"},
-            "start_distance": {"types": "decimal"},
+            "stop_distance": {"types": "temp/decimal"},
+            "start_distance": {"types": "temp/decimal"},
             "priority": {"types": "int"}
         }
     },
     "behavior.swim_idle": {
         "type": "Keymap",
         "keys": {
-            "idle_time": {"types": "decimal"},
+            "idle_time": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "success_rate": {"types": "decimal"}
+            "success_rate": {"types": "temp/decimal"}
         }
     },
     "behavior.swim_up_for_breath": {
@@ -6326,36 +6311,36 @@
     "behavior.swim_wander": {
         "type": "Keymap",
         "keys": {
-            "interval": {"types": "decimal"},
-            "look_ahead": {"types": "decimal"},
+            "interval": {"types": "temp/decimal"},
+            "look_ahead": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
-            "wander_time": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"},
+            "wander_time": {"types": "temp/decimal"}
         }
     },
     "behavior.swim_with_entity": {
         "type": "Keymap",
         "keys": {
-            "catch_up_multiplier": {"types": "decimal"},
-            "catch_up_threshold": {"types": "decimal"},
-            "chance_to_stop": {"types": "decimal"},
+            "catch_up_multiplier": {"types": "temp/decimal"},
+            "catch_up_threshold": {"types": "temp/decimal"},
+            "chance_to_stop": {"types": "temp/decimal"},
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "match_direction_threshold": {"types": "decimal"},
+            "match_direction_threshold": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "search_range": {"types": "decimal"},
-            "speed_multiplier": {"types": "decimal"},
-            "state_check_interval": {"types": "decimal"},
-            "stop_distance": {"types": "decimal"},
-            "success_rate": {"types": "decimal"}
+            "search_range": {"types": "temp/decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
+            "state_check_interval": {"types": "temp/decimal"},
+            "stop_distance": {"types": "temp/decimal"},
+            "success_rate": {"types": "temp/decimal"}
         }
     },
     "behavior.swoop_attack": {
         "type": "Keymap",
         "keys": {
-            "damage_reach": {"types": "decimal"},
+            "damage_reach": {"types": "temp/decimal"},
             "delay_range": {"types": "range", "structure": "range_group_decimal"},
             "priority": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"}
+            "speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.take_block": {
@@ -6364,7 +6349,7 @@
             "priority": {"types": "int"},
             "xz_range": {"types": "int"},
             "y_range": {"types": "range", "structure": "range_group_decimal"},
-            "chance": {"types": "decimal"},
+            "chance": {"types": "temp/decimal"},
             "blocks": {"types": "list", "structure": "block_list"}
         }
     },
@@ -6379,7 +6364,7 @@
         "type": "Keymap",
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "percent_chance": {"types": "decimal", "structure": null},
+            "percent_chance": {"types": "temp/decimal", "structure": null},
             "priority": {"types": "int", "structure": null}
         }
     },
@@ -6400,18 +6385,18 @@
             "on_tempt_end": {"types": "dict", "structure": "event"},
             "priority": {"types": "int"},
             "sound_interval": {"types": "range", "structure": "range_group_decimal"},
-            "speed_modifier": {"types": "decimal", "tags": ["t/outdated"]},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_modifier": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "speed_multiplier": {"types": "temp/decimal"},
             "tempt_sound": {"types": "str"},
-            "within_radius": {"types": "decimal"}
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.timer_flag": {
         "type": "Keymap",
         "keys": {
             "control_flags": {"types": "list", "structure": "behavior.timer_flag:control_flags"},
-            "cooldown_range": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"},
-            "duration_range": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"},
+            "cooldown_range": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"},
+            "duration_range": {"types": ["temp/decimal", "range"], "structure": "range_decimal_or_decimal"},
             "on_end": {"types": "trigger_type", "structure": "trigger"},
             "on_start": {"types": "trigger_type", "structure": "trigger"},
             "priority": {"types": "int", "tags": ["t/not_in_documentation"]}
@@ -6435,12 +6420,12 @@
     "behavior.trade_intereset": {
         "type": "Keymap",
         "keys": {
-            "carried_item_switch_time": {"types": "decimal"},
-            "cooldown": {"types": "decimal"},
-            "interest_time": {"types": "decimal"},
+            "carried_item_switch_time": {"types": "temp/decimal"},
+            "cooldown": {"types": "temp/decimal"},
+            "interest_time": {"types": "temp/decimal"},
             "priority": {"types": "int"},
-            "remove_item_time": {"types": "decimal"},
-            "within_radius": {"types": "decimal"}
+            "remove_item_time": {"types": "temp/decimal"},
+            "within_radius": {"types": "temp/decimal"}
         }
     },
     "behavior.trade_with_player": {
@@ -6448,7 +6433,7 @@
         "keys": {
             "priority": {"types": "int"},
             "filters": {"types": "dict", "structure": "filter"},
-            "max_distance_from_player": {"types": "decimal"}
+            "max_distance_from_player": {"types": "temp/decimal"}
         }
     },
     "behavior.vex_copy_owner_target": {
@@ -6475,14 +6460,14 @@
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
             "priority": {"types": "int"},
-            "cooldown": {"types": "decimal"},
+            "cooldown": {"types": "temp/decimal"},
             "filters": {"types": "dict", "structure": "filter"},
-            "max_dist": {"types": "decimal"},
+            "max_dist": {"types": "temp/decimal"},
             "must_see": {"types": "bool"},
-            "must_see_forget_duration": {"types": "decimal"},
+            "must_see_forget_duration": {"types": "temp/decimal"},
             "reevaluate_description": {"types": "bool"},
-            "sprint_speed_multiplier": {"types": "decimal"},
-            "walk_speed_multiplier": {"types": "decimal"}
+            "sprint_speed_multiplier": {"types": "temp/decimal"},
+            "walk_speed_multiplier": {"types": "temp/decimal"}
         }
     },
     "behavior.wololo_spell_goal": {
@@ -6504,7 +6489,7 @@
             "on_arrival": {"types": "trigger_type", "structure": "trigger"},
             "sound_delay_max": {"types": "int"},
             "sound_delay_min": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "work_in_rain_tolerance": {"types": "int"},
             "priority": {"types": "int"}
         }
@@ -6524,7 +6509,7 @@
             "priority": {"types": "int"},
             "sound_delay_max": {"types": "int"},
             "sound_delay_min": {"types": "int"},
-            "speed_multiplier": {"types": "decimal"},
+            "speed_multiplier": {"types": "temp/decimal"},
             "use_block_max": {"types": "int"},
             "use_block_min": {"types": "int"},
             "work_in_rain_tolerance": {"types": "int"}

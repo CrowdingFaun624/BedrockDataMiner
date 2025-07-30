@@ -1,90 +1,56 @@
 {
     "group_aliases": {
-        "temp": "structures/misc/template",
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/misc/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "textures"
-        },
-        "this_types": "dict",
-        "structure": "texture_files"
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "textures",
+        "$serializer": "#@minecraft_common!s/media_serializer",
+        "$pack_type": "resource pack",
+        "$structure": "#@texture_data"
     },
     "base_single": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "textures_single"
-        },
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": "texture_data"
-    },
-    "texture_files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "texture",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "key_structure": {
-            "type": "String",
-            "similarity_function": "get_file_stem"
-            // similarity function is big optimization because moves will keep the stem the same.
-        },
-        "min_key_similarity_threshold": 0.4,
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_structure": "texture_data"
+        "inherit": "temp/base_single_file",
+        "$name": "textures_single",
+        "$serializer": "#@minecraft_common!s/media_serializer",
+        "$structure": "#@texture_data"
     },
     "texture_data": {
-        "inherit": "temp/SortedKeymap",
-        "pre_normalized_types": ["file", "dict"],
-        "normalizers": {
-            "function_name": "normalizers/normalizers open_file",
-            "arguments": {
-                "serializer": "minecraft_common!serializers/media_serializer"
-            }
+        "type": "Keymap",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
         },
         "keys": {
             "sha1_hash": {"types": "str", "similarity_weight": 256, "delegate_arguments": {"always_print": true}, "required": true, "tags": ["t/file_hash_tag"]},
-            "metadata": {"types": "dict", "structure": "metadata_dict", "similarity_weight": 0},
-            "unknown": {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "CUR":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "GIF":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "HDR":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "JPEG": {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "M4A":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "MP3":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "MP4":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "OTF":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "PNG":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "PSD":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "SVG":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "TTC":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "TTF":  {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0},
-            "WEBM": {"types": "null", "structure": "cache_dummy_file_type", "similarity_weight": 0}
+            "metadata": {"types": "file", "structure": "metadata_file", "similarity_weight": 0},
+            "unknown": {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "CUR":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "GIF":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "HDR":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "JPEG": {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "M4A":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "MP3":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "MP4":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "OTF":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "PNG":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "PSD":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "SVG":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "TTC":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "TTF":  {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0},
+            "WEBM": {"types": "file", "structure": "cache_dummy_file_type", "similarity_weight": 0}
         }
+    },
+    "metadata_file": {
+        "type": "File",
+        "serializer": "minecraft_common!s/json",
+        "outer_types": "file",
+        "inner_types": "dict",
+        "structure": "metadata_dict"
     },
     "metadata_dict": {
         "type": "Keymap",
-        "pre_normalized_types": ["dict", "file"],
-        "normalizers": {
-            "function_name": "normalizers/normalizers open_file",
-            "arguments": {
-                "serializer": "minecraft_common!serializers/json"
-            }
-        },
         "delegate_arguments": {
             "sort": "sort_by_key"
         },
@@ -138,7 +104,7 @@
             "Compression": {"types": "str"},
             "ConnectionSpaceIlluminant": {"types": "str"},
             "Copyright": {"types": "str"},
-            "Copyright-en-US": {"types": "list", "structure": "lines"},
+            "Copyright-en-US": {"types": ["list", "str"], "structure": "lines"},
             "CopyrightFlag": {"types": "bool"},
             "CopyrightOwner": {"types": "str"},
             "CreateDate": {"types": "str"},
@@ -156,7 +122,7 @@
             "DerivedFromInstanceID": {"types": "str"},
             "DerivedFromOriginalDocumentID": {"types": "str"},
             "Description": {"types": "str"},
-            "Description-en-US": {"types": "list", "structure": "lines"},
+            "Description-en-US": {"types": ["list", "str"], "structure": "lines"},
             "Designer": {"types": "str"},
             "Designer-en-US": {"types": "str"},
             "DesignerURL": {"types": "str"},
@@ -437,7 +403,7 @@
             "TrackUID": {"types": "str"},
             "TrackVolume": {"types": "str"},
             "Trademark": {"types": "str"},
-            "Trademark-en-US": {"types": "list", "structure": "lines"},
+            "Trademark-en-US": {"types": ["list", "str"], "structure": "lines"},
             "Transparency": {"types": ["int", "str"]},
             "TransparentColor": {"types": "int"},
             "URL_List": {"types": "list", "structure": "metadata.url_list"},
@@ -691,28 +657,34 @@
     },
     "cache_dummy_file_type": {
         "type": "Cache",
-        "this_types": "null",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
             "type": "File",
             "serializer": "minecraft_common!s/dummy_serializer",
-            "file_types": "file",
-            "content_types": "null",
-            "structure": null
+            "outer_types": "file",
+            "inner_types": "null",
+            "structure": {
+                "type": "Primitive",
+                "this_types": "null"
+            }
         }
     },
     "lines": {
-        "type": "Sequence",
-        "pre_normalized_types": ["str", "list"],
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": ["str", "list"],
+        "inner_types": "list",
+        "functions": {
             "function_name": "normalizers/normalizers textures_split_lines"
         },
-        "this_types": "list",
-        "delegate": "LongStringDelegate",
-        "value_types": "str",
-        "value_structure": null,
-        "delegate_arguments": {
-            "measure_length": true
+        "structure": {
+            "type": "Sequence",
+            "this_types": "list",
+            "delegate": "LongStringDelegate",
+            "value_types": "str",
+            "value_structure": null,
+            "delegate_arguments": {
+                "measure_length": true
+            }
         }
     }
 }

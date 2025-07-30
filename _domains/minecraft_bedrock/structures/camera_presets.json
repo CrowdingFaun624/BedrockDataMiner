@@ -1,37 +1,15 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "camera_presets"
-        },
-        "this_types": "dict",
-        "structure": "camera_presets"
-    },
-    "camera_presets": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "camera preset"
-        },
-        "value_structure": "behavior_packs"
-    },
-    "behavior_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "behavior pack",
-            "measure_length": true
-        },
-        "value_structure": "cache"
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "camera_presets",
+        "$file_field": "camera preset",
+        "$pack_type": "behavior pack",
+        "$structure": "#@camera"
     },
     "vector_float": {
         "type": "Dict",
@@ -46,18 +24,6 @@
             "print_flat": true
         },
         "value_structure": null
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "camera"
-        }
     },
     "camera": {
         "type": "Keymap",

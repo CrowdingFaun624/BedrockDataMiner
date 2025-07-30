@@ -1,41 +1,30 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "credits_end"
-        },
-        "pre_normalized_types": "file",
-        "this_types": "list",
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "pre_normalized_types": "file",
-        "this_types": "list",
-        "structure": {
-            "type": "File",
-            "serializer": "s/text_serializer",
-            "file_types": "file",
-            "content_types": "list",
-            "structure": "file"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "credits_end",
+        "$serializer": "#@s/text_serializer",
+        "$types": "str",
+        "$structure": "#@file"
     },
     "file": {
-        "type": "Sequence",
-        "pre_normalized_types": "str",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "str",
+        "inner_types": "list",
+        "functions": {
             "function_name": "split_lines"
         },
-        "value_types": "str",
-        "delegate": "LongStringDelegate",
-        "delegate_arguments": {
-            "measure_length": true
-        },
-        "value_structure": {
-            "type": "String"
+        "structure": {
+            "type": "Sequence",
+            "value_types": "str",
+            "delegate": "LongStringDelegate",
+            "delegate_arguments": {
+                "measure_length": true
+            },
+            "value_structure": "temp/string"
         }
     }
 }

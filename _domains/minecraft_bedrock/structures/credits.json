@@ -1,47 +1,35 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "credits"
-        },
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "sections"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "credits",
+        "$types": "list",
+        "$structure": "#@sections"
     },
     "sections": {
-        "type": "Dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "section"
             }
         },
-        "delegate_arguments": {
-            "field": "section",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "key_structure": {
-            "type": "String"
-        },
-        "value_structure": "section"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "section",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "key_structure": "temp/string",
+            "value_structure": "section"
+        }
     },
     "section": {
         "type": "Keymap",
@@ -52,29 +40,33 @@
             "section": {"types": "str", "structure": {
                 "type": "String"
             }, "delegate_arguments": {"always_print": true}},
-            "disciplines": {"types": "dict", "structure": "disciplines"},
-            "titles": {"types": "dict", "structure": "titles"}
+            "disciplines": {"types": "list", "structure": "disciplines"},
+            "titles": {"types": "list", "structure": "titles"}
         }
     },
     "disciplines": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "discipline",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "discipline"
             }
         },
-        "key_structure": {
-            "type": "String"
-        },
-        "value_structure": "discipline"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "discipline",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "key_structure": {
+                "type": "String"
+            },
+            "value_structure": "discipline"
+        }
     },
     "discipline": {
         "type": "Keymap",
@@ -85,28 +77,30 @@
             "discipline": {"types": "str", "structure": {
                 "type": "String"
             }, "delegate_arguments": {"always_print": true}},
-            "titles": {"types": "dict", "structure": "titles"}
+            "titles": {"types": "list", "structure": "titles"}
         }
     },
     "titles": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "title",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "title"
             }
         },
-        "key_structure": {
-            "type": "String"
-        },
-        "value_structure": "title"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "title",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "key_structure": "temp/string",
+            "value_structure": "title"
+        }
     },
     "title": {
         "type": "Keymap",

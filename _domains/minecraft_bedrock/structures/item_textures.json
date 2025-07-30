@@ -11,15 +11,19 @@
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "dict",
+            "inner_types": "fake_file",
+            "functions": {
                 "function_name": "normalizers/normalizers item_textures_normalize"
             },
-            "structure": "items"
+            "structure": {
+                "type": "File",
+                "serializer": null,
+                "outer_types": "fake_file",
+                "inner_types": "dict",
+                "structure": "items"
+            }
         }
     },
     "items": {
@@ -33,17 +37,22 @@
         "value_structure": "resource_packs"
     },
     "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "post_normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "value_structure": "item"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "resource pack",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "item"
+        }
     },
     "item": {
         "type": "Keymap",

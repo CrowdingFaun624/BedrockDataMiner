@@ -1,40 +1,14 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "font_metadata"
-        },
-        "this_types": "dict",
-        "structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "font_metadata"
-        }
+        "inherit": "temp/base_pack_files",
+        "$name": "font_metadata",
+        "$pack_type": "resource pack",
+        "$structure": "#@font_metadata"
     },
     "font_metadata": {
         "type": "Keymap",
@@ -43,26 +17,30 @@
         },
         "keys": {
             "version": {"types": "int"},
-            "font_aliases": {"types": "dict", "structure": "font_aliases"},
-            "fonts": {"types": "dict", "structure": "fonts"}
+            "font_aliases": {"types": "list", "structure": "font_aliases"},
+            "fonts": {"types": "list", "structure": "fonts"}
         }
     },
     "fonts": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "font",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "font_name"
             }
         },
-        "value_structure": "font"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "font",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "font"
+        }
     },
     "font": {
         "type": "Keymap",
@@ -75,21 +53,25 @@
         }
     },
     "font_aliases": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "font alias",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "alias"
             }
         },
-        "value_structure": "font_alias"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "font alias",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "font_alias"
+        }
     },
     "font_alias": {
         "type": "Keymap",
@@ -97,25 +79,29 @@
             "alias": {"types": "str", "delegate_arguments": {"always_print": true}},
             "font_scale_factor": {"types": "int", "tags": ["t/outdated"]},
             "font_scale_factor_override": {"types": "int"},
-            "fonts": {"types": "dict", "structure": "font_references"}
+            "fonts": {"types": "list", "structure": "font_references"}
         }
     },
     "font_references": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "font reference",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "font_reference"
             }
         },
-        "value_structure": "font_reference"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "font reference",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "font_reference"
+        }
     },
     "font_reference": {
         "type": "Keymap",

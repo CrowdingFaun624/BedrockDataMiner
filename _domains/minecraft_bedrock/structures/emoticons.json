@@ -1,38 +1,14 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "emoticons"
-        },
-        "this_types": "dict",
-        "structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "list",
-        "value_structure": "cache",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "resource pack"
-        }
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "list",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "list",
-            "structure": "emoticons"
-        }
+        "inherit": "temp/base_pack_files",
+        "$name": "emoticons",
+        "$pack_type": "resource pack",
+        "$types": "list",
+        "$structure": "#@emoticons"
     },
     "emoticons": {
         "type": "Dict",

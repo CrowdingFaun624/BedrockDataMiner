@@ -1,6 +1,7 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
         "type": "StructureBase",
@@ -14,61 +15,65 @@
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": [
-                {
-                    "function_name": "normalizers/normalizers texture_list_normalize",
-                    "arguments": {
-                        "serializer": "minecraft_bedrock!serializers/lines_serializer"
-                    },
-                    "filter": {"type": "EqFilter", "key": "serializer", "value": "lines_serializer"}
-                },
-                {
-                    "function_name": "normalizers/normalizers texture_list_normalize",
-                    "arguments": {
-                        "serializer": "minecraft_bedrock!serializers/texture_list_serializer"
-                    },
-                    "filter": {"type": "EqFilter", "key": "serializer", "value": "texture_list_serializer"}
-                }
-            ],
-            "structure": "textures"
+            "type": "Condition",
+            "substructures": [
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "serializer", "value": "lines_serializer"}, "structure": "#!textures{serializer=@s/lines_serializer}"},
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "serializer", "value": "texture_list_serializer"}, "structure": "#!textures{serializer=@s/texture_list_serializer}"}
+            ]
         }
     },
     "textures": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "texture",
-            "sort": "sort_by_key",
-            "measure_length": true
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "fake_file",
+        "functions": {
+            "function_name": "normalizers/normalizers texture_list_normalize",
+            "arguments": {
+                "serializer": "#serializer"
+            }
         },
-        "value_types": "list",
-        "key_structure": {
-            "type": "String"
-        },
-        "min_key_similarity_threshold": 0.9,
-        "value_structure": "resource_packs"
+        "structure": "file"
+    },
+    "file": {
+        "type": "File",
+        "serializer": null,
+        "outer_types": "fake_file",
+        "inner_types": "dict",
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "texture",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "list",
+            "key_structure": "temp/string",
+            "min_key_similarity_threshold": 0.9,
+            "value_structure": "resource_packs"
+        }
     },
     "resource_packs": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "show_item_key": false,
-            "measure_length": true,
-            "print_flat": true,
-            "sort": "sort_by_value",
-            "print_all": true
-        },
-        "value_types": "str",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "list",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_pack_names"
         },
-        "value_structure": null
+        "structure": {
+            "type": "Dict",
+            "key_weight": 0,
+            "key_types": "int",
+            "this_types": "list",
+            "delegate_arguments": {
+                "field": "resource pack",
+                "show_item_key": false,
+                "measure_length": true,
+                "print_flat": true,
+                "sort": "sort_by_value",
+                "print_all": true
+            },
+            "value_types": "str",
+            "value_structure": null
+        }
     }
 }

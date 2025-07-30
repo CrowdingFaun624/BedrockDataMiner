@@ -11,18 +11,22 @@
         "structure": "file"
     },
     "file": {
-        "type": "File",
-        "serializer": null,
-        "pre_normalized_types": "dict",
-        "file_types": "fake_file",
-        "content_types": "dict",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "fake_file",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_list2_file",
             "arguments": {
                 "serializer": "minecraft_bedrock!serializers/lines_serializer"
             }
         },
-        "structure": "resource_packs"
+        "structure": {
+            "type": "File",
+            "serializer": null,
+            "outer_types": "fake_file",
+            "inner_types": "dict",
+            "structure": "resource_packs"
+        }
     },
     "resource_packs": {
         "type": "Dict",
@@ -38,13 +42,17 @@
         "this_types": "list",
         "key_types": "int",
         "key_weight": 0,
-        "value_types": "int",
+        "value_types": "str",
         "value_structure": {
-            "type": "Primitive",
-            "pre_normalized_types": "str",
-            "this_types": "int",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "str",
+            "inner_types": "int",
+            "functions": {
                 "function_name": "parse_int"
+            },
+            "structure": {
+                "type": "Primitive",
+                "this_types": "int"
             }
         },
         "delegate_arguments": {

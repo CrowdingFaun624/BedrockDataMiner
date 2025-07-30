@@ -1,6 +1,7 @@
 {
     "group_aliases": {
         "item_modifier": "structures/data/loot_tables/item_modifier",
+        "misc": "structures/misc/misc",
         "temp": "structures/misc/template",
         "t": "structure_tags",
         "pred": "structures/misc/predicate"
@@ -36,7 +37,7 @@
     "entry:all": {
         "type": "Keymap",
         "keys": {
-            "type": {"types": "str", "delegate_arguments": {"always_print": true}}
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0}
         }
     },
     "entry:singleton": {
@@ -63,7 +64,7 @@
         "inherit": "temp/SortedKeymap",
         "imports": ["entry:all", "entry:singleton"],
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}}
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 5}
         }
     },
     "entry.empty": {
@@ -78,14 +79,14 @@
         "inherit": "temp/SortedKeymap",
         "imports": ["entry:all", "entry:singleton"],
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}}
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 5}
         }
     },
     "entry.loot_table": {
         "inherit": "temp/SortedKeymap",
         "imports": ["entry:all", "entry:singleton"],
         "keys": {
-            "name": {"types": "str", "tags": "t/outdated"},
+            "name": {"types": "str", "structure": "misc/string", "tags": "t/outdated", "similarity_weight": 5},
             "luck": {"types": "int", "tags": "t/outdated"},
             "value": {"types": ["str", "dict"], "structure": "structures/data/loot_tables/loot_tables/loot_table_or_id"}
         }
@@ -98,7 +99,7 @@
         "inherit": "temp/SortedKeymap",
         "imports": ["entry:all"],
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 5},
             "expand": {"types": "bool"},
             "conditions": {"types": "list", "structure": "pred/predicate_list"},
             "functions": {"types": "list", "structure": "item_modifier/item_modifier_list"},

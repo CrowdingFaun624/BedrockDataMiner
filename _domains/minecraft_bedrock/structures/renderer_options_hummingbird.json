@@ -1,49 +1,31 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "renderer_options_dragon"
-        },
-        "this_types": "dict",
-        "structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "file"
-        }
+        "inherit": "temp/base_multiple_files",
+        "$name": "renderer_options_hummingbird",
+        "$types": ["dict", "list"],
+        "$structure": "#@file"
     },
     "file": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "pre_normalized_types": ["dict", "list"],
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": ["dict", "list"],
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers renderer_options_normalize_mappings"
         },
-        "keys": {
-            "global_settings": {"types": "dict", "structure": "global_settings"},
-            "shaders": {"types": "list", "structure": "shaders"},
-            "mappings": {"types": "dict", "structure": "mappings"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "global_settings": {"types": "dict", "structure": "global_settings"},
+                "shaders": {"types": "list", "structure": "shaders"},
+                "mappings": {"types": "list", "structure": "mappings"}
+            }
         }
     },
     "global_settings": {
@@ -108,24 +90,26 @@
         }
     },
     "mappings": {
-        "type": "Dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers renderer_options_dragon_normalize"
         },
-        "delegate_arguments": {
-            "field": "mapping",
-            "measure_length": true
-        },
-        "value_types": ["str", "null"],
-        "key_structure": {
-            "type": "String"
-        },
-        "value_structure": {
-            "type": "Union",
-            "substructures": {
-                "str": {"type": "String"},
-                "null": null
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "mapping",
+                "measure_length": true
+            },
+            "value_types": ["str", "null"],
+            "key_structure": "temp/string",
+            "value_structure": {
+                "type": "Union",
+                "substructures": {
+                    "str": "temp/string",
+                    "null": null
+                }
             }
         }
     }

@@ -1,40 +1,13 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "spawn_groups"
-        },
-        "this_types": "dict",
-        "structure": "spawn_groups"
-    },
-    "empty_dict": {
-        "type": "Keymap",
-        "keys": {}
-    },
-    "spawn_groups": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "spawn group",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "spawn_group"
-        }
+        "inherit": "temp/base_multiple_files",
+        "$name": "spawn_groups",
+        "$file_field": "spawn group",
+        "$structure": "#@spawn_group"
     },
     "spawn_group": {
         "type": "Keymap",
@@ -85,7 +58,7 @@
             "minecraft:herd": {"types": "dict", "structure": "component.herd"},
             "minecraft:mob_event_filter": {"types": "dict", "structure": "component.mob_event_filter"},
             "minecraft:permute_type": {"types": "list", "structure": "component.permute_type"},
-            "minecraft:spawns_on_surface": {"types": "dict", "structure": "empty_dict"}
+            "minecraft:spawns_on_surface": {"types": "dict", "structure": "temp/empty"}
         }
     },
     "component.difficulty_filter": {

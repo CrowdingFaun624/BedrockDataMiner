@@ -6,19 +6,24 @@
     "base": {
         "type": "StructureBase",
         "this_types": "dict",
-        "normalizers": {
-            "function_name": "normalizers/normalizers packs_normalizer"
-        },
         "delegate_arguments": {
             "name": "packs"
         },
         "structure": "root"
     },
     "root": {
-        "inherit": "temp/SortedKeymap",
-        "keys": {
-            "packs": {"types": "list", "structure": "#!pack_list{field='pack'}"},
-            "namespaces": {"types": "list", "structure": "#!pack_list{field='namespace'}"}
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "normalizers/normalizers packs_normalizer"
+        },
+        "structure": {
+            "inherit": "temp/SortedKeymap",
+            "keys": {
+                "packs": {"types": "list", "structure": "#!pack_list{field='pack'}"},
+                "namespaces": {"types": "list", "structure": "#!pack_list{field='namespace'}"}
+            }
         }
     },
     "pack_list": {

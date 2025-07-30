@@ -1,25 +1,31 @@
 {
+    "group_aliases": {
+        "temp": "structures/template"
+    },
     "base": {
         "type": "StructureBase",
         "delegate_arguments": {
             "name": "blocks_client"
         },
         "this_types": "dict",
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
-                "function_name": "normalizers/normalizers blocks_client_normalize"
-            },
-            "structure": "block"
+            "type": "Cache",
+            "this_types": "dict",
+            "structure": {
+                "type": "Normalizer",
+                "outer_types": "dict",
+                "inner_types": "fake_file",
+                "functions": {
+                    "function_name": "normalizers/normalizers blocks_client_normalize"
+                },
+                "structure": {
+                    "type": "File",
+                    "serializer": null,
+                    "outer_types": "fake_file",
+                    "inner_types": "dict",
+                    "structure": "block"
+                }
+            }
         }
     },
     "block": {
@@ -40,41 +46,51 @@
         "value_structure": "resource_pack"
     },
     "resource_pack": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "min_value_similarity_threshold": 0.25,
-        "post_normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_dict"
         },
-        "value_structure": "block_properties"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "resource pack",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "min_value_similarity_threshold": 0.25,
+            "value_structure": "block_properties"
+        }
     },
     "block_properties": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order",
-            "field": "property"
-        },
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             // https://bugs.mojang.com/browse/MCPE-76182
-            "function_name": "delete_optional_key",
+            "function_name": "delete_key",
             "arguments": {
                 "key": "sounds"
             }
         },
-        "keys": {
-            "ambient_occlusion_exponent": {"types": "float"},
-            "blockshape": {"types": "str", "similarity_weight": 4},
-            "brightness_gamma": {"types": "float"},
-            "carried_textures": {"types": ["dict", "str"], "structure": "textures_group", "similarity_weight": 4},
-            "defined_in": {"types": "list", "structure": "defined_in", "similarity_weight": 0},
-            "isotropic": {"types": ["bool", "dict"], "structure": "isotropic_group"},
-            "sound": {"types": "str", "similarity_weight": 2},
-            "textures": {"types": ["dict", "str"], "structure": "textures_group", "similarity_weight": 4}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order",
+                "field": "property"
+            },
+            "keys": {
+                "ambient_occlusion_exponent": {"types": "float"},
+                "blockshape": {"types": "str", "similarity_weight": 4},
+                "brightness_gamma": {"types": "float"},
+                "carried_textures": {"types": ["dict", "str"], "structure": "textures_group", "similarity_weight": 4},
+                "defined_in": {"types": "list", "structure": "defined_in", "similarity_weight": 0},
+                "isotropic": {"types": ["bool", "dict"], "structure": "isotropic_group"},
+                "sound": {"types": "str", "similarity_weight": 2},
+                "textures": {"types": ["dict", "str"], "structure": "textures_group", "similarity_weight": 4}
+            }
         }
     },
     "textures_group": {

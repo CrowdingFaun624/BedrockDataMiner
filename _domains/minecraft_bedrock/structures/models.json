@@ -1,7 +1,8 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
         "type": "StructureBase",
@@ -10,10 +11,6 @@
         },
         "this_types": "dict",
         "structure": "cache"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
     },
     "vector_decimal": {
         "type": "Dict",
@@ -26,37 +23,37 @@
             "print_flat": true,
             "print_all": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "number_angle": {
         "type": "Number",
-        "this_types": "decimal",
+        "this_types": "temp/decimal",
         "normal_value": 22.5
     },
     "number_inflate": {
         "type": "Number",
-        "this_types": "decimal",
+        "this_types": "temp/decimal",
         "normal_value": 0.25
     },
     "number_offset": {
         "type": "Number",
-        "this_types": "decimal",
+        "this_types": "temp/decimal",
         "normal_value": 0.25
     },
     "number_origin": {
         "type": "Number",
-        "this_types": "decimal",
+        "this_types": "temp/decimal",
         "normal_value": 8
     },
     "number_pivot": {
         "type": "Number",
-        "this_types": "decimal",
+        "this_types": "temp/decimal",
         "normal_value": 4
     },
     "number_texture_size": {
         "type": "Number",
-        "this_types": "decimal",
+        "this_types": "temp/decimal",
         "normal_value": 16
     },
     "vector_decimal_angle": {
@@ -70,7 +67,7 @@
             "print_flat": true,
             "print_all": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": "number_angle"
     },
     "vector_decimal_offset": {
@@ -84,7 +81,7 @@
             "print_flat": true,
             "print_all": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": "number_offset"
     },
     "vector_decimal_origin": {
@@ -98,7 +95,7 @@
             "print_flat": true,
             "print_all": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": "number_origin"
     },
     "vector_decimal_pivot": {
@@ -112,7 +109,7 @@
             "print_flat": true,
             "print_all": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": "number_pivot"
     },
     "vector_decimal_angle_or_null": {
@@ -152,28 +149,45 @@
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": [
-                {
-                    "function_name": "normalizers/models_model_normalize",
-                    "arguments": {
-                        "serializer": "minecraft_common!serializers/json"
+            "type": "Condition",
+            "substructures": [
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "needs_repair", "value": false, "default": true}, "structure": {
+                    "type": "Normalizer",
+                    "outer_types": "dict",
+                    "inner_types": "fake_file",
+                    "functions": {
+                        "function_name": "normalizers/models_model_normalize",
+                        "arguments": {
+                            "serializer": "minecraft_common!serializers/json"
+                        }
                     },
-                    "filter": {"type": "EqFilter", "key": "needs_repair", "value": false, "default": true}
-                },
-                {
-                    "function_name": "normalizers/models_model_normalize",
-                    "arguments": {
-                        "serializer": "serializers/models_repairable_json"
+                    "structure": {
+                        "type": "File",
+                        "serializer": null,
+                        "outer_types": "fake_file",
+                        "inner_types": "dict",
+                        "structure": "files"
+                    }
+                }},
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "needs_repair", "value": true}, "structure": {
+                    "type": "Normalizer",
+                    "outer_types": "dict",
+                    "inner_types": "fake_file",
+                    "functions": {
+                        "function_name": "normalizers/models_model_normalize",
+                        "arguments": {
+                            "serializer": "serializers/models_repairable_json"
+                        }
                     },
-                    "filter": {"type": "EqFilter", "key": "needs_repair", "value": true}
-                }
-            ],
-            "structure": "files"
+                    "structure": {
+                        "type": "File",
+                        "serializer": null,
+                        "outer_types": "fake_file",
+                        "inner_types": "dict",
+                        "structure": "files"
+                    }
+                }}
+            ]
         }
     },
     "files": {
@@ -193,17 +207,22 @@
         "value_structure": "resource_packs"
     },
     "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "value_structure": "model"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "resource pack",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "model"
+        }
     },
     "model": {
         "type": "Keymap",
@@ -222,7 +241,7 @@
         },
         "keys": {
             "description": {"types": "dict", "structure": "description", "similarity_weight": 5},
-            "bones": {"types": "dict", "structure": "bones"}
+            "bones": {"types": "list", "structure": "bones"}
         }
     },
     "description": {
@@ -246,63 +265,70 @@
             "META_ModelVersion": {"types": "str", "tags": ["t/outdated"]},
             "rigtype": {"types": ["null", "str"], "tags": ["t/outdated"]},
             "rigType": {"types": ["null", "str"], "tags": ["t/outdated"]},
-            "texture_height": {"types": "decimal", "structure": "number_texture_size"},
-            "texture_width": {"types": "decimal", "structure": "number_texture_size"},
-            "textureheight": {"types": "decimal", "structure": "number_texture_size"},
-            "texturewidth": {"types": "decimal", "structure": "number_texture_size"},
-            "visible_bounds_height": {"types": "decimal", "structure": "number_offset"},
+            "texture_height": {"types": "temp/decimal", "structure": "number_texture_size"},
+            "texture_width": {"types": "temp/decimal", "structure": "number_texture_size"},
+            "textureheight": {"types": "temp/decimal", "structure": "number_texture_size"},
+            "texturewidth": {"types": "temp/decimal", "structure": "number_texture_size"},
+            "visible_bounds_height": {"types": "temp/decimal", "structure": "number_offset"},
             "visible_bounds_offset": {"types": "list", "structure": "vector_decimal_offset"},
-            "visible_bounds_width": {"types": "decimal", "structure": "number_offset"}
+            "visible_bounds_width": {"types": "temp/decimal", "structure": "number_offset"}
         }
     },
     "bones": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "bone",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "name"
             }
         },
-        "key_structure": {
-            "type": "String"
-        },
-        "key_weight": 3,
-        "value_weight": 5,
-        "value_structure": "bone"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "bone",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "key_structure": "temp/string",
+            "key_weight": 3,
+            "value_weight": 5,
+            "value_structure": "bone"
+        }
     },
     "bone": {
-        "type": "Keymap",
-        "normalizers": {
-            "function_name": "delete_required_key",
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "delete_key",
             "arguments": {
                 "key": "name"
             }
         },
-        "keys": {
-            "bind_pose_rotation": {"types": "list", "structure": "vector_decimal_angle"},
-            "binding": {"types": "str"},
-            "cubes": {"types": "list", "structure": "cubes"},
-            "inflate": {"types": "decimal", "structure": "number_inflate"},
-            "locators": {"types": "dict", "structure": "locators"},
-            "material": {"types": "str", "tags": ["t/outdated"]},
-            "META_BoneType": {"types": ["null", "str"], "tags": ["t/outdated"]},
-            "mirror": {"types": ["bool", "str"]},
-            "neverRender": {"types": ["bool", "str"]},
-            "parent": {"types": ["null", "str"], "delegate_arguments": {"always_print": true}},
-            "pivot": {"types": "list", "structure": "vector_decimal_pivot"},
-            "poly_mesh": {"types": "dict", "structure": "poly_mesh"},
-            "pos": {"types": "list", "structure": "vector_decimal_pivot", "tags": ["t/outdated"]},
-            "pre_rotation": {"types": "list", "structure": "vector_decimal", "tags": ["t/outdated"]},
-            "reset": {"types": ["bool", "str"]},
-            "rotation": {"types": ["list", "null"], "structure": "vector_decimal_angle_or_null"},
-            "texture_meshes": {"types": "list", "structure": "texture_meshes"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "bind_pose_rotation": {"types": "list", "structure": "vector_decimal_angle"},
+                "binding": {"types": "str"},
+                "cubes": {"types": "list", "structure": "cubes"},
+                "inflate": {"types": "temp/decimal", "structure": "number_inflate"},
+                "locators": {"types": "dict", "structure": "locators"},
+                "material": {"types": "str", "tags": ["t/outdated"]},
+                "META_BoneType": {"types": ["null", "str"], "tags": ["t/outdated"]},
+                "mirror": {"types": ["bool", "str"]},
+                "neverRender": {"types": ["bool", "str"]},
+                "parent": {"types": ["null", "str"], "delegate_arguments": {"always_print": true}},
+                "pivot": {"types": "list", "structure": "vector_decimal_pivot"},
+                "poly_mesh": {"types": "dict", "structure": "poly_mesh"},
+                "pos": {"types": "list", "structure": "vector_decimal_pivot", "tags": ["t/outdated"]},
+                "pre_rotation": {"types": "list", "structure": "vector_decimal", "tags": ["t/outdated"]},
+                "reset": {"types": ["bool", "str"]},
+                "rotation": {"types": ["list", "null"], "structure": "vector_decimal_angle_or_null"},
+                "texture_meshes": {"types": "list", "structure": "texture_meshes"}
+            }
         }
     },
     "cubes": {
@@ -321,7 +347,7 @@
     "cube": {
         "type": "Keymap",
         "keys": {
-            "inflate": {"types": "decimal", "structure": "number_inflate"},
+            "inflate": {"types": "temp/decimal", "structure": "number_inflate"},
             "mirror": {"types": "bool"},
             "origin": {"types": "list", "structure": "vector_decimal_origin"},
             "rotation": {"types": "list", "structure": "vector_decimal_angle"},
@@ -382,7 +408,7 @@
             "print_flat": true,
             "print_all": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": "number_texture_size"
     },
     "locators": {

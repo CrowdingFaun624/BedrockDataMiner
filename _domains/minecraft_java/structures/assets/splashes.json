@@ -14,7 +14,7 @@
     },
     "resource_packs": {
         "type": "Dict",
-        "value_types": "list",
+        "value_types": "file",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
@@ -23,22 +23,26 @@
     },
     "cache": {
         "type": "Cache",
-        "this_types": "list",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
-            "type": "Condition",
-            "pre_normalized_types": "file",
-            "substructures": [
-                {"types": "list", "structure": "#!file{serializer=@s/cp1252_lines_serializer}", "filter": {"type": "EqFilter", "key": "repair_aaa", "value": true}},
-                {"types": "list", "structure": "#!file{serializer=@s/lines_serializer}", "filter": {"type": "EqFilter", "key": "repair_aaa", "value": false, "default": true}}
-            ]
+            "type": "Converging",
+            "within_structure_depth": 1,
+            "end_structure": "splashes",
+            "this_types": "file",
+            "structure": {
+                "type": "Condition",
+                "substructures": [
+                    {"types": "file", "structure": "#!file{serializer=@s/cp1252_lines_serializer}", "filter": {"type": "EqFilter", "key": "repair_aaa", "value": true}},
+                    {"types": "file", "structure": "#!file{serializer=@s/lines_serializer}", "filter": {"type": "EqFilter", "key": "repair_aaa", "value": false, "default": true}}
+                ]
+            }
         }
     },
     "file": {
         "type": "File",
         "serializer": "#serializer",
-        "file_types": "file",
-        "content_types": "list",
+        "outer_types": "file",
+        "inner_types": "list",
         "structure": "splashes"
     },
     "splashes": {

@@ -1,6 +1,7 @@
 {
     "group_aliases": {
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
         "type": "StructureBase",
@@ -9,10 +10,6 @@
         },
         "this_types": "dict",
         "structure": "cache"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["int", "float"]
     },
     "any": {
         "type": "Union",
@@ -71,7 +68,7 @@
         "key_weight": 0,
         "key_types": "int",
         "this_types": "list",
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "delegate_arguments": {
             "field": "item",
             "print_flat": true,
@@ -82,7 +79,7 @@
     "str_or_decimal_or_vector_decimal_or_str": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "list": "vector_decimal_or_str",
             "str": null
         }
@@ -93,7 +90,7 @@
         "key_weight": 0,
         "key_types": "int",
         "this_types": "list",
-        "value_types": ["decimal", "str"],
+        "value_types": ["temp/decimal", "str"],
         "delegate_arguments": {
             "field": "item",
             "print_flat": true,
@@ -168,15 +165,19 @@
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "dict",
+            "inner_types": "fake_file",
+            "functions": {
                 "function_name": "normalizers/ui_normalize"
             },
-            "structure": "namespaces"
+            "structure": {
+                "type": "File",
+                "serializer": null,
+                "outer_types": "fake_file",
+                "inner_types": "dict",
+                "structure": "namespaces"
+            }
         }
     },
     "namespaces": {
@@ -248,33 +249,38 @@
         }
     },
     "animation": {
-        "type": "Keymap",
-        "normalizers": "separate_variables",
-        "keys": {
-            "$variables": {"types": "dict", "structure": "my_variables"},
-            "anim_type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "activated": {"types": ["bool", "str"]},
-            "destroy_at_end": {"types": "str"},
-            "duration": {"types": ["decimal", "str"]},
-            "easing": {"types": "str"},
-            "end_event": {"types": "str"},
-            "fps": {"types": ["decimal", "str"]},
-            "frame_count": {"types": ["int", "str"]},
-            "frame_step": {"types": ["decimal", "str"]},
-            "from": {"types": ["decimal", "list", "str"], "structure": "str_or_decimal_or_vector_decimal_or_str"},
-            "initial_uv": {"types": "list", "structure": "vector_int"},
-            "looping": {"types": ["bool", "str"]},
-            "next": {"types": "str"},
-            "orientation": {"types": "str"},
-            "play_event": {"types": "str"},
-            "reset_event": {"types": "str"},
-            "resettable": {"types": ["bool", "str"]},
-            "reversible": {"types": ["bool", "str"]},
-            "scale_from_starting_alpha": {"types": ["bool", "str"]},
-            "start_event": {"types": "str"},
-            "to": {"types": ["decimal", "list", "str"], "structure": "str_or_decimal_or_vector_decimal_or_str"},
-            "type": {"types": "str"},
-            "wait_until_rendered_to_play": {"types": "bool"}
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": "separate_variables",
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "$variables": {"types": "dict", "structure": "my_variables"},
+                "anim_type": {"types": "str", "delegate_arguments": {"always_print": true}},
+                "activated": {"types": ["bool", "str"]},
+                "destroy_at_end": {"types": "str"},
+                "duration": {"types": ["temp/decimal", "str"]},
+                "easing": {"types": "str"},
+                "end_event": {"types": "str"},
+                "fps": {"types": ["temp/decimal", "str"]},
+                "frame_count": {"types": ["int", "str"]},
+                "frame_step": {"types": ["temp/decimal", "str"]},
+                "from": {"types": ["temp/decimal", "list", "str"], "structure": "str_or_decimal_or_vector_decimal_or_str"},
+                "initial_uv": {"types": "list", "structure": "vector_int"},
+                "looping": {"types": ["bool", "str"]},
+                "next": {"types": "str"},
+                "orientation": {"types": "str"},
+                "play_event": {"types": "str"},
+                "reset_event": {"types": "str"},
+                "resettable": {"types": ["bool", "str"]},
+                "reversible": {"types": ["bool", "str"]},
+                "scale_from_starting_alpha": {"types": ["bool", "str"]},
+                "start_event": {"types": "str"},
+                "to": {"types": ["temp/decimal", "list", "str"], "structure": "str_or_decimal_or_vector_decimal_or_str"},
+                "type": {"types": "str"},
+                "wait_until_rendered_to_play": {"types": "bool"}
+            }
         }
     },
     "animation_list": {
@@ -318,21 +324,26 @@
         }
     },
     "bindings.item": {
-        "type": "Keymap",
-        "normalizers": "separate_variables",
-        "keys": {
-            "$variables": {"types": "dict", "structure": "my_variables"},
-            "binding_collection_name": {"types": "str"},
-            "binding_collection_prefix": {"types": "str"},
-            "binding_condition": {"types": "str"},
-            "binding_name": {"types": "str"},
-            "binding_name_override": {"types": ["bool", "str"]},
-            "binding_type": {"types": "str"},
-            "ignored": {"types": "str"},
-            "resolve_sibling_scope": {"types": ["bool", "str"]},
-            "source_control_name": {"types": "str"},
-            "source_property_name": {"types": "str"},
-            "target_property_name": {"types": "str"}
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": "separate_variables",
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "$variables": {"types": "dict", "structure": "my_variables"},
+                "binding_collection_name": {"types": "str"},
+                "binding_collection_prefix": {"types": "str"},
+                "binding_condition": {"types": "str"},
+                "binding_name": {"types": "str"},
+                "binding_name_override": {"types": ["bool", "str"]},
+                "binding_type": {"types": "str"},
+                "ignored": {"types": "str"},
+                "resolve_sibling_scope": {"types": ["bool", "str"]},
+                "source_control_name": {"types": "str"},
+                "source_property_name": {"types": "str"},
+                "target_property_name": {"types": "str"}
+            }
         }
     },
     "button_mappings": {
@@ -456,17 +467,22 @@
         "substructures": {
             "str": null,
             "dict": {
-                "type": "Keymap",
-                "normalizers": "separate_variables",
-                "keys": {
-                    "$variables": {"types": "dict", "structure": "my_variables"},
-                    "name": {"types": "str"},
-                    "control_ids": {"types": ["dict", "str"], "structure": "control_ids"},
-                    "control_name": {"types": "str", "tags": ["t/outdated"]},
-                    "factory_variables": {"types": ["str", "list"], "structure": "factory.factory_variables"},
-                    "insert_location": {"types": "str", "tags": ["t/outdated"]},
-                    "max_children_size": {"types": ["int", "str"], "tags": ["t/outdated"]},
-                    "max_size": {"types": "int"}
+                "type": "Normalizer",
+                "outer_types": "dict",
+                "inner_types": "dict",
+                "functions": "separate_variables",
+                "structure": {
+                    "type": "Keymap",
+                    "keys": {
+                        "$variables": {"types": "dict", "structure": "my_variables"},
+                        "name": {"types": "str"},
+                        "control_ids": {"types": ["dict", "str"], "structure": "control_ids"},
+                        "control_name": {"types": "str", "tags": ["t/outdated"]},
+                        "factory_variables": {"types": ["str", "list"], "structure": "factory.factory_variables"},
+                        "insert_location": {"types": "str", "tags": ["t/outdated"]},
+                        "max_children_size": {"types": ["int", "str"], "tags": ["t/outdated"]},
+                        "max_size": {"types": "int"}
+                    }
                 }
             }
         }
@@ -593,9 +609,9 @@
     "property_bag.dict": {
         "type": "Keymap",
         "keys": { // we use backslashes here because a string beginning with # normally indicates an Expression.
-            "\\#anchored_offset_value": {"types": ["decimal", "str"]},
-            "\\#anchored_offset_value_x": {"types": ["decimal", "str"]},
-            "\\#anchored_offset_value_y": {"types": ["decimal", "str"]},
+            "\\#anchored_offset_value": {"types": ["temp/decimal", "str"]},
+            "\\#anchored_offset_value_x": {"types": ["temp/decimal", "str"]},
+            "\\#anchored_offset_value_y": {"types": ["temp/decimal", "str"]},
             "\\#banner_colors": {"types": "str"},
             "\\#banner_patterns": {"types": "str"},
             "\\#block_position": {"types": ["list", "str"], "structure": "str_or_vector_int"},
@@ -660,18 +676,18 @@
             "\\#reset_group": {"types": "str"},
             "\\#should_host": {"types": ["bool", "str"]},
             "\\#single_button_visible": {"types": ["bool", "str"]},
-            "\\#size_binding_x": {"types": ["decimal", "str"]},
-            "\\#size_binding_y": {"types": ["decimal", "str"]},
+            "\\#size_binding_x": {"types": ["temp/decimal", "str"]},
+            "\\#size_binding_y": {"types": ["temp/decimal", "str"]},
             "\\#skin_idx": {"types": ["int", "str"]},
             "\\#skin_rotation": {"types": ["bool", "str"]},
-            "\\#slider_steps": {"types": ["decimal", "str"]},
-            "\\#slider_timeout": {"types": ["decimal", "str"]},
-            "\\#slider_value": {"types": ["decimal", "str"]},
+            "\\#slider_steps": {"types": ["temp/decimal", "str"]},
+            "\\#slider_timeout": {"types": ["temp/decimal", "str"]},
+            "\\#slider_value": {"types": ["temp/decimal", "str"]},
             "\\#start_selected": {"types": ["bool", "str"]},
             "\\#sub_command": {"types": "str"},
             "\\#text": {"types": "str"},
-            "\\#timer_duration": {"types": ["decimal", "str"]},
-            "\\#timer_field_count_to_show": {"types": ["decimal", "str"]},
+            "\\#timer_duration": {"types": ["temp/decimal", "str"]},
+            "\\#timer_field_count_to_show": {"types": ["temp/decimal", "str"]},
             "\\#toggle_state": {"types": ["bool", "str"]},
             "\\#top_right_block": {"types": ["list", "str"], "structure": "str_or_vector_int"},
             "\\#tts_dialog_body": {"types": "str"},
@@ -682,7 +698,7 @@
             "\\#using_ellipses": {"types": ["bool", "str"]},
             "\\#visible": {"types": ["bool", "str"]},
             "\\#visible_after_x_ratings": {"types": "str", "tags": ["t/outdated"]},
-            "\\#x_padding": {"types": ["decimal", "str"]},
+            "\\#x_padding": {"types": ["temp/decimal", "str"]},
             "$tab_content": {"types": "str"},
             "classic_radio_button_state": {"types": ["str", "bool"]},
             "control_id": {"types": "str", "tags": ["t/outdated"]},
@@ -717,11 +733,11 @@
         "type": "Keymap",
         "keys": {
             "use_factory": {"types": "bool"},
-            "margin": {"types": "decimal"}
+            "margin": {"types": "temp/decimal"}
         }
     },
     "separate_variables": {
-        "type": "Normalizer",
+        "type": "Function",
         "function_name": "normalizers/normalizers ui_separate_variables"
     },
     "sounds": {
@@ -789,21 +805,26 @@
         }
     },
     "variables.item": {
-        "type": "Keymap",
-        "normalizers": "separate_variables",
-        "keys": {
-            "bindings": {"types": ["list", "str"], "structure": "bindings"},
-            "focus_navigation_mode_left": {"types": "str", "tags": ["t/outdated"]},
-            "focus_container_custom_left": {"types": "str", "tags": ["t/outdated"]},
-            "focus_wrap_enabled": {"types": ["bool", "str"], "tags": ["t/outdated"]},
-            "font_scale_factor": {"types": "decimal", "tags": ["t/outdated"]},
-            "ignored": {"types": "str"},
-            "offset": {"types": "list", "structure": "vector_int", "tags": ["t/outdated"]},
-            "requires": {"types": "str"},
-            "scroll_report": {"types": "list", "structure": "control_list", "tags": ["t/outdated"]},
-            "size": {"types": ["list", "str"], "structure": "str_or_vector_decimal_or_str", "tags": ["t/outdated"]},
-            "visible": {"types": "bool"},
-            "$variables": {"types": "dict", "structure": "my_variables"}
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": "separate_variables",
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "bindings": {"types": ["list", "str"], "structure": "bindings"},
+                "focus_navigation_mode_left": {"types": "str", "tags": ["t/outdated"]},
+                "focus_container_custom_left": {"types": "str", "tags": ["t/outdated"]},
+                "focus_wrap_enabled": {"types": ["bool", "str"], "tags": ["t/outdated"]},
+                "font_scale_factor": {"types": "temp/decimal", "tags": ["t/outdated"]},
+                "ignored": {"types": "str"},
+                "offset": {"types": "list", "structure": "vector_int", "tags": ["t/outdated"]},
+                "requires": {"types": "str"},
+                "scroll_report": {"types": "list", "structure": "control_list", "tags": ["t/outdated"]},
+                "size": {"types": ["list", "str"], "structure": "str_or_vector_decimal_or_str", "tags": ["t/outdated"]},
+                "visible": {"types": "bool"},
+                "$variables": {"types": "dict", "structure": "my_variables"}
+            }
         }
     },
     "common.all": {
@@ -830,7 +851,7 @@
             "hover_color": {"types": "list", "structure": "vector_float"},
             "pressed_alpha": {"types": "float"},
             "pressed_color": {"types": "list", "structure": "vector_float"},
-            "rotate_speed": {"types": "decimal"}
+            "rotate_speed": {"types": "temp/decimal"}
         }
     },
     "common.collection": {
@@ -845,7 +866,7 @@
             "+controls": {"types": ["list", "str"], "structure": "controls"},
             "alignment": {"types": "str", "tags": ["t/outdated"]},
             "allow_clipping": {"types": ["bool", "str"]},
-            "alpha": {"types": ["decimal", "str"]},
+            "alpha": {"types": ["temp/decimal", "str"]},
             "animation_reset_name": {"types": "str"},
             "anims": {"types": ["list", "str"], "structure": "animation_list"},
             "clips_children": {"types": ["bool", "str"]},
@@ -1049,7 +1070,7 @@
             "lock_touch_scrolling": {"types": "str"},
             "scroll_box_and_track_panel": {"types": "str"},
             "scroll_content": {"types": "str"},
-            "scroll_speed": {"types": ["decimal", "str"]},
+            "scroll_speed": {"types": ["temp/decimal", "str"]},
             "scroll_view_port": {"types": "str"},
             "scroll_view_space_to_add_on_focus_change_down": {"types": "str", "tags": ["t/outdated"]},
             "scroll_view_space_to_add_on_focus_change_left": {"types": "str", "tags": ["t/outdated"]},
@@ -1072,10 +1093,10 @@
             "button_name": {"types": "str"},
             "hover_button_name": {"types": "str"},
             "initial_button_slice": {"types": ["int", "str"]},
-            "inner_radius": {"types": ["decimal", "str"]},
+            "inner_radius": {"types": ["temp/decimal", "str"]},
             "iterate_left_button_name": {"types": "str"},
             "iterate_right_button_name": {"types": "str"},
-            "outer_radius": {"types": ["decimal", "str"]},
+            "outer_radius": {"types": ["temp/decimal", "str"]},
             "select_button_name": {"types": "str"},
             "slice_count": {"types": ["int", "str"]},
             "state_controls": {"types": "list", "structure": "control_list"}
@@ -1105,7 +1126,7 @@
             "slider_small_decrease_button": {"types": "str"},
             "slider_small_increase_button": {"types": "str"},
             "slider_steps": {"types": ["int", "str"]},
-            "slider_timeout": {"types": ["decimal", "str"]},
+            "slider_timeout": {"types": ["temp/decimal", "str"]},
             "slider_track_button": {"types": "str"}
         }
     },
@@ -1123,7 +1144,7 @@
         "keys": {
             "sound_name": {"types": "str"},
             "sound_pitch": {"types": ["float", "str"]},
-            "sound_volume": {"types": ["decimal", "str"]},
+            "sound_volume": {"types": ["temp/decimal", "str"]},
             "sounds": {"types": "list", "structure": "sounds"}
         }
     },
@@ -1142,7 +1163,7 @@
             "force_texture_reload": {"types": ["bool", "str"]},
             "grayscale": {"types": ["bool", "str"]},
             "keep_ratio": {"types": ["bool", "str"]},
-            "nineslice_size": {"types": ["decimal", "list", "str"], "structure": "str_or_decimal_or_vector_decimal_or_str"},
+            "nineslice_size": {"types": ["temp/decimal", "list", "str"], "structure": "str_or_decimal_or_vector_decimal_or_str"},
             "pixel_perfect": {"types": "bool"},
             "texture": {"types": "str"},
             "texture_file_system": {"types": "str"},
@@ -1176,11 +1197,11 @@
             "clip": {"types": ["bool", "str"], "tags": ["t/outdated"]},
             "color": {"types": ["list", "str"], "structure": "str_or_vector_decimal"},
             "enable_profanity_filter": {"types": ["bool", "str"]},
-            "font_scale_factor": {"types": ["decimal", "str"]},
+            "font_scale_factor": {"types": ["temp/decimal", "str"]},
             "font_size": {"types": "str"},
             "font_type": {"types": "str"},
             "hide_hyphen": {"types": ["bool", "str"]},
-            "line_padding": {"types": ["decimal", "str"]},
+            "line_padding": {"types": ["temp/decimal", "str"]},
             "localize": {"types": ["bool", "str"]},
             "locked_alpha": {"types": ["float", "str"]},
             "locked_color": {"types": ["list", "str"], "structure": "str_or_vector_float"},
@@ -1282,9 +1303,19 @@
             "reset_on_focus_lost": {"types": "str"}
         }
     },
+    "element:abstract": {
+        "type": "Normalizer",
+        "abstract": true,
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": "separate_variables"
+    },
     "element.button": {
+        "inherit": "element:abstract",
+        "structure": "element.button:dict"
+    },
+    "element.button:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.layout] is not supported by wiki
         "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tts"],
         "keys": {
@@ -1307,44 +1338,65 @@
         }
     },
     "element.carousel_label": {
+        "inherit": "element:abstract",
+        "structure": "element.carousel_label:dict"
+    },
+    "element.carousel_label:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.button] is not supported by wiki
         "imports": ["common.all", "common.carousel_text", "common.control", "common.data_binding", "common.input", "common.layout", "common.text"]
     },
     "element.collection_panel": {
+        "inherit": "element:abstract",
+        "structure": "element.collection_panel:dict"
+    },
+    "element.collection_panel:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.layout"],
         "keys": {
             "factory": {"types": ["dict", "str"], "structure": "factory"}
         }
     },
     "element.custom": {
+        "inherit": "element:abstract",
+        "structure": "element.custom:dict"
+    },
+    "element.custom:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.sprite] is not supported by wiki
         "imports": ["common.all", "common.control", "common.custom_render", "common.data_binding", "common.layout", "common.sprite"]
     },
     "element.dropdown": {
+        "inherit": "element:abstract",
+        "structure": "element.dropdown:dict"
+    },
+    "element.dropdown:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.dropdown", "common.focus", "common.input", "common.layout", "common.sound", "common.toggle"]
     },
     "element.edit_box": {
+        "inherit": "element:abstract",
+        "structure": "element.edit_box:dict"
+    },
+    "element.edit_box:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.text_edit", "common.tts"]
     },
     "element.factory": {
+        "inherit": "element:abstract",
+        "structure": "element.factory:dict"
+    },
+    "element.factory:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.factory] is not supported by wiki
         "imports": ["common.all", "common.control", "common.factory", "common.layout"]
     },
     "element.grid": {
+        "inherit": "element:abstract",
+        "structure": "element.grid:dict"
+    },
+    "element.grid:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.focus] is not supported by wiki
         "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.focus", "common.grid", "common.layout", "common.tts"],
         "keys": {
@@ -1353,18 +1405,27 @@
         }
     },
     "element.grid_item": {
+        "inherit": "element:abstract",
+        "structure": "element.grid_item:dict"
+    },
+    "element.grid_item:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.layout"]
     },
     "element.grid_page_indicator": {
+        "inherit": "element:abstract",
+        "structure": "element.grid_page_indicator:dict"
+    },
+    "element.grid_page_indicator:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.collection", "common.grid", "common.layout"]
     },
     "element.image": {
+        "inherit": "element:abstract",
+        "structure": "element.image:dict"
+    },
+    "element.image:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.tts] is not supported by wiki
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.layout", "common.sprite", "common.tts"],
         "keys": {
@@ -1372,14 +1433,20 @@
         }
     },
     "element.image_cycler": {
+        "inherit": "element:abstract",
+        "structure": "element.image_cycler:dict"
+    },
+    "element.image_cycler:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.layout] is not supported by wiki
         "imports": ["common.all", "common.image_cycler", "common.layout"]
     },
     "element.input_panel": {
+        "inherit": "element:abstract",
+        "structure": "element.input_panel:dict"
+    },
+    "element.input_panel:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tts"],
         "keys": {
             "debug": {"types": "str"},
@@ -1387,19 +1454,28 @@
         }
     },
     "element.label": {
+        "inherit": "element:abstract",
+        "structure": "element.label:dict"
+    },
+    "element.label:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.layout", "common.text", "common.tts"]
     },
     "element.label_cycler": {
+        "inherit": "element:abstract",
+        "structure": "element.label_cycler:dict"
+    },
+    "element.label_cycler:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.control, common.layout, common.text] is not supported by wiki
         "imports": ["common.all", "common.control", "common.label_cycler", "common.layout", "common.text"]
     },
     "element.panel": {
+        "inherit": "element:abstract",
+        "structure": "element.panel:dict"
+    },
+    "element.panel:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.focus, common.input, common.tts] is not supported by wiki
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.tts"],
         "keys": {
@@ -1409,8 +1485,11 @@
         }
     },
     "element.screen": {
+        "inherit": "element:abstract",
+        "structure": "element.screen:dict"
+    },
+    "element.screen:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.input] is not supported by wiki
         "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.screen"],
         "keys": {
@@ -1420,41 +1499,62 @@
         }
     },
     "element.scroll_track": {
+        "inherit": "element:abstract",
+        "structure": "element.scroll_track:dict"
+    },
+    "element.scroll_track:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.layout] is not supported by wiki
         "imports": ["common.all", "common.control", "common.focus", "common.input", "common.layout", "common.tts"]
     },
     "element.scroll_view": {
+        "inherit": "element:abstract",
+        "structure": "element.scroll_view:dict"
+    },
+    "element.scroll_view:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.scroll_view"]
     },
     "element.scrollbar": {
+        "inherit": "element:abstract",
+        "structure": "element.scrollbar:dict"
+    },
+    "element.scrollbar:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.scroll_view, common.sound] is not supported by wiki
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.scroll_view", "common.sound"]
     },
     "element.scrollbar_box": {
+        "inherit": "element:abstract",
+        "structure": "element.scrollbar_box:dict"
+    },
+    "element.scrollbar_box:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.focus, common.sound] is not supported by wiki
         "imports": ["common.all", "common.control", "common.focus", "common.input", "common.layout", "common.sound"]
     },
     "element.scrollbar_track": {
+        "inherit": "element:abstract",
+        "structure": "element.scrollbar_track:dict"
+    },
+    "element.scrollbar_track:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.input", "common.layout"]
     },
     "element.selection_wheel": {
+        "inherit": "element:abstract",
+        "structure": "element.selection_wheel:dict"
+    },
+    "element.selection_wheel:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.selection_wheel", "common.sound", "common.tts"]
     },
     "element.slider": {
+        "inherit": "element:abstract",
+        "structure": "element.slider:dict"
+    },
+    "element.slider:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.button] is not supported by wiki
         "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.slider", "common.sound", "common.tts"],
         "keys": {
@@ -1462,13 +1562,19 @@
         }
     },
     "element.slider_box": {
+        "inherit": "element:abstract",
+        "structure": "element.slider_box:dict"
+    },
+    "element.slider_box:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.input", "common.layout", "common.slider_box"]
     },
     "element.stack_panel": {
+        "inherit": "element:abstract",
+        "structure": "element.stack_panel:dict"
+    },
+    "element.stack_panel:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.focus] is not supported by wiki
         "imports": ["common.all", "common.collection", "common.control", "common.data_binding", "common.focus", "common.layout", "common.stack_panel", "common.tts"],
         "keys": {
@@ -1476,24 +1582,36 @@
         }
     },
     "element.tab": {
+        "inherit": "element:abstract",
+        "structure": "element.tab:dict"
+    },
+    "element.tab:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         // Note: [common.input] is not supported by wiki
         "imports": ["common.all", "common.button", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tab"]
     },
     "element.toggle": {
+        "inherit": "element:abstract",
+        "structure": "element.toggle:dict"
+    },
+    "element.toggle:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.toggle", "common.tts"]
     },
     "element.tooltip_trigger": {
+        "inherit": "element:abstract",
+        "structure": "element.tooltip_trigger:dict"
+    },
+    "element.tooltip_trigger:dict": {
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.tooltip_trigger", "common.tts"]
     },
-    "element.unknown": { // for some reason some elements extend non-existent elements so this has to exist.
+    "element.unknown": {
+        "inherit": "element:abstract",
+        "structure": "element.unknown:dict"
+    },
+    "element.unknown:dict": { // for some reason some elements extend non-existent elements so this has to exist.
         "type": "Keymap",
-        "normalizers": "separate_variables",
         "imports": [
             "common.all",
             "common.button",

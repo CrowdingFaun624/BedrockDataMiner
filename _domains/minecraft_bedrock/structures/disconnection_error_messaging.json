@@ -1,74 +1,53 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "disconnection_error_messaging"
-        },
-        "structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "file"
-        }
+        "inherit": "temp/base_multiple_files",
+        "$name": "disconnection_error_messaging",
+        "$structure": "#@file"
     },
     "file": {
         "type": "Keymap",
         "keys": {
             "FallbackStrings": {"types": "dict", "structure": "error"},
-            "Themes": {"types": "dict", "structure": "themes"}
+            "Themes": {"types": "list", "structure": "themes"}
         }
     },
     "themes": {
-        "type": "Dict",
-        "pre_normalized_types": "list",
-        "delegate_arguments": {
-            "field": "theme",
-            "measure_length": true
-        },
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "ThemeName",
                 "delete": true
             }
         },
-        "value_types": "dict",
-        "value_structure": "theme"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "theme",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "theme"
+        }
     },
     "theme": {
         "type": "Keymap",
         "keys": {
             "DefaultStrings": {"types": "dict", "structure": "error"},
-            "Errors": {"types": "dict", "structure": "errors"}
+            "Errors": {"types": "list", "structure": "errors"}
         }
     },
     "errors": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "error"
-        },
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "turn_to_dict",
             "arguments": {
                 "key_key": "FailReason",
@@ -76,8 +55,14 @@
                 "default": {}
             }
         },
-        "value_types": "dict",
-        "value_structure": "error"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "error"
+            },
+            "value_types": "dict",
+            "value_structure": "error"
+        }
     },
     "error": {
         "type": "Keymap",

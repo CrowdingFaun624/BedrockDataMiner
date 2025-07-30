@@ -11,15 +11,19 @@
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "dict",
+            "inner_types": "fake_file",
+            "functions": {
                 "function_name": "normalizers/normalizers normalize_sound_definitions"
             },
-            "structure": "sound_event"
+            "structure": {
+                "type": "File",
+                "serializer": null,
+                "outer_types": "fake_file",
+                "inner_types": "dict",
+                "structure": "sound_event"
+            }
         }
     },
     "sound_event": {
@@ -38,39 +42,49 @@
         "value_structure": "resource_pack"
     },
     "resource_pack": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_dict"
         },
-        "value_structure": "sound_event_property"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "resource pack",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "sound_event_property"
+        }
     },
     "sound_event_property": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order",
-            "field": "property"
-        },
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             // https://bugs.mojang.com/browse/MCPE-153558
             // https://bugs.mojang.com/browse/MCPE-178265
-            "function_name": "delete_optional_keys",
+            "function_name": "delete_keys",
             "arguments": {
                 "keys": ["pitch", "volume"]
             }
         },
-        "keys": {
-            "category": {"types": "str"},
-            "defined_in": {"types": "list", "structure": "defined_in"},
-            "max_distance": {"types": ["float", "int"]},
-            "min_distance": {"types": "float"},
-            "subtitle": {"types": "str"},
-            "sounds": {"types": "list", "structure": "sounds"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order",
+                "field": "property"
+            },
+            "keys": {
+                "category": {"types": "str"},
+                "defined_in": {"types": "list", "structure": "defined_in"},
+                "max_distance": {"types": ["float", "int"]},
+                "min_distance": {"types": "float"},
+                "subtitle": {"types": "str"},
+                "sounds": {"types": "list", "structure": "sounds"}
+            }
         }
     },
     "sounds": {
@@ -84,41 +98,45 @@
             "print_all": true,
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": ["dict", "str"],
         "min_value_similarity_threshold": 0.3,
         "value_structure": "sound_properties"
     },
     "sound_properties": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order",
-            "field": "property"
-        },
-        "pre_normalized_types": ["str", "dict"],
-        "normalizers": [
+        "type": "Normalizer",
+        "outer_types": ["str", "dict"],
+        "inner_types": "dict",
+        "functions": [
             {
                 "function_name": "normalizers/normalizers sound_definitions_make_strings_to_dict"
             },
             {
                 // https://bugs.mojang.com/browse/MCPE-153561
-                "function_name": "delete_optional_key",
+                "function_name": "delete_key",
                 "arguments": {
                     "key": "pitch:"
                 }
             }
         ],
-        "keys": {
-            "name": {"types": "str", "structure": {
-                "type": "String"
-            }, "similarity_weight": 10, "required": true, "delegate_arguments": {"always_print": true}},
-            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "exclude_from_pocket_platforms": {"types": "bool"},
-            "is3D": {"types": "bool"},
-            "load_on_low_memory": {"types": "bool"},
-            "pitch": {"types": ["float", "int"]},
-            "stream": {"types": "bool"},
-            "volume": {"types": ["float", "int"]},
-            "weight": {"types": "int"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order",
+                "field": "property"
+            },
+            "keys": {
+                "name": {"types": "str", "structure": {
+                    "type": "String"
+                }, "similarity_weight": 10, "required": true, "delegate_arguments": {"always_print": true}},
+                "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+                "exclude_from_pocket_platforms": {"types": "bool"},
+                "is3D": {"types": "bool"},
+                "load_on_low_memory": {"types": "bool"},
+                "pitch": {"types": ["float", "int"]},
+                "stream": {"types": "bool"},
+                "volume": {"types": ["float", "int"]},
+                "weight": {"types": "int"}
+            }
         }
     },
     "defined_in": {

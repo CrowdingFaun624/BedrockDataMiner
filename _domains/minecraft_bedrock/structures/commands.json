@@ -1,36 +1,13 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "commands"
-        },
-        "this_types": "dict",
-        "structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "file"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "file"
-        }
+        "inherit": "temp/base_multiple_files",
+        "$name": "commands",
+        "$structure": "#@file"
     },
     "file": {
         "type": "Dict",
@@ -188,20 +165,24 @@
         "key_weight": 0,
         "key_types": "int",
         "this_types": "list",
-        "value_types": "dict",
+        "value_types": ["dict", "str"],
         "value_structure": "format_string"
     },
     "format_string": {
-        "type": "Keymap",
-        "pre_normalized_types": ["dict", "str"],
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": ["dict", "str"],
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers commands_normalize_format_string"
         },
-        "keys": {
-            "format": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 3},
-            "color": {"types": "str"},
-            "should_show": {"types": "dict", "structure": "should_show"},
-            "params_to_use": {"types": "list", "structure": "parameter_list"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "format": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 3},
+                "color": {"types": "str"},
+                "should_show": {"types": "dict", "structure": "should_show"},
+                "params_to_use": {"types": "list", "structure": "parameter_list"}
+            }
         }
     },
     "should_show": {

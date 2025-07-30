@@ -11,16 +11,19 @@
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "dict",
+            "inner_types": "fake_file",
+            "functions": {
                 "function_name": "normalizers/normalizers music_definitions_normalize"
             },
+            "structure": {
+            "type": "File",
+            "serializer": null,
+            "outer_types": "fake_file",
+            "inner_types": "dict",
             "structure": "environment"
-        }
+        }}
     },
     "environment": {
         "type": "Dict",
@@ -29,22 +32,26 @@
             "sort": "sort_by_key",
             "measure_length": true
         },
-        "pre_normalized_types": "dict",
         "value_types": "dict",
         "value_structure": "resource_pack"
     },
     "resource_pack": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_dict"
         },
-        "value_structure": "music_property"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "resource pack",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "music_property"
+        }
     },
     "music_property": {
         "type": "Keymap",

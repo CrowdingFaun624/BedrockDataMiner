@@ -1,6 +1,7 @@
 {
     "group_aliases": {
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
         "type": "StructureBase",
@@ -10,23 +11,23 @@
         "this_types": "dict",
         "structure": "cache"
     },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
     "cache": {
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "dict",
+            "inner_types": "fake_file",
+            "functions": {
                 "function_name": "normalizers/items_normalize"
             },
-            "structure": "items"
+            "structure": {
+                "type": "File",
+                "serializer": null,
+                "outer_types": "fake_file",
+                "inner_types": "dict",
+                "structure": "items"
+            }
         }
     },
     "items": {
@@ -45,16 +46,21 @@
         "value_structure": "behavior_packs"
     },
     "behavior_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "behavior pack"
-        },
-        "post_normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "value_structure": "item"
+        "structure": {
+            "type": "Dict",
+            "value_types": "dict",
+            "delegate_arguments": {
+                "sort": "sort_by_key",
+                "field": "behavior pack"
+            },
+            "value_structure": "item"
+        }
     },
     "item": {
         "type": "Keymap",
@@ -109,10 +115,7 @@
         "keys": {
             "aliases": {"types": "list", "structure": "aliases"},
             "category": {"types": "str"},
-            "identifier": {"types": "str", "structure": {
-                "type": "String",
-                "similarity_function": "normalizers/normalizers remove_minecraft_prefix"
-            }, "delegate_arguments": {"always_print": true}}
+            "identifier": {"types": "str", "structure": "temp/string_remove_minecraft_prefix", "delegate_arguments": {"always_print": true}}
         }
     },
     "aliases": {
@@ -333,7 +336,7 @@
             "minecraft:map": {"types": "dict", "structure": "component.map", "tags": ["t/outdated"]},
             "minecraft:max_damage": {"types": "int", "tags": ["t/not_in_documentation"]},
             "minecraft:max_stack_size": {"types": "int"},
-            "minecraft:mining_speed": {"types": "decimal", "tags": ["t/outdated"]},
+            "minecraft:mining_speed": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "minecraft:mirrored_art": {"types": "bool", "tags": ["t/outdated"]},
             "minecraft:mob_placer": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
             "minecraft:mob_spawner_placer": {"types": "dict", "structure": "component.mob_spawner_placer", "tags": ["t/outdated"]},
@@ -365,7 +368,7 @@
             "minecraft:tags": {"types": "dict", "structure": "component.tags"},
             "minecraft:throwable": {"types": "dict", "structure": "component.throwable"},
             "minecraft:use_animation": {"types": "str"},
-            "minecraft:use_duration": {"types": "decimal", "tags": ["t/not_in_documentation"]},
+            "minecraft:use_duration": {"types": "temp/decimal", "tags": ["t/not_in_documentation"]},
             "minecraft:use_modifiers": {"types": "dict", "structure": "component.use_modifiers"},
             "minecraft:use_on": {"types": "dict", "structure": "component.use_on", "tags": ["t/outdated"]},
             "minecraft:wearable": {"types": "dict", "structure": "component.wearable"}
@@ -407,7 +410,7 @@
         "type": "Keymap",
         "keys": {
             "category": {"types": "str"},
-            "duration": {"types": "decimal"}
+            "duration": {"types": "temp/decimal"}
         }
     },
     "component.creative_category": {
@@ -552,7 +555,7 @@
             "on_use_action": {"types": "str", "tags": ["t/not_in_documentation"]},
             "on_use_range": {"types": "list", "structure": "vector_int", "tags": ["t/not_in_documentation"]},
             "remove_effects": {"types": "list", "structure": "component.food:remove_effects", "tags": ["t/not_in_documentation"]},
-            "saturation_modifier": {"types": ["decimal", "str"]},
+            "saturation_modifier": {"types": ["temp/decimal", "str"]},
             "using_converts_to": {"types": "str"}
         }
     },
@@ -571,7 +574,7 @@
             "type": "Keymap",
             "keys": {
                 "amplifier": {"types": "int"},
-                "chance": {"types": "decimal"},
+                "chance": {"types": "temp/decimal"},
                 "duration": {"types": "int"},
                 "hide_particles": {"types": "bool", "tags": ["t/outdated"]},
                 "name": {"types": "str", "delegate_arguments": {"always_print": true}}
@@ -594,7 +597,7 @@
     "component.fuel": {
         "type": "Keymap",
         "keys": {
-            "duration": {"types": "decimal"}
+            "duration": {"types": "temp/decimal"}
         }
     },
     "component.hanging_entity": {
@@ -627,7 +630,7 @@
     "component.knockback_resistance": {
         "type": "Keymap",
         "keys": {
-            "protection": {"types": "decimal"}
+            "protection": {"types": "temp/decimal"}
         }
     },
     "component.map": {
@@ -658,7 +661,7 @@
     "component.projectile": {
         "type": "Keymap",
         "keys": {
-            "minimum_critical_power": {"types": "decimal"},
+            "minimum_critical_power": {"types": "temp/decimal"},
             "projectile_entity": {"types": "str"}
         }
     },
@@ -666,7 +669,7 @@
         "type": "Keymap",
         "keys": {
             "comparator_signal": {"types": "int"},
-            "duration": {"types": "decimal"},
+            "duration": {"types": "temp/decimal"},
             "sound_event": {"types": "str"}
         }
     },
@@ -710,7 +713,7 @@
         "keys": {
             "ammunition": {"types": "list", "structure": "component.shooter:ammunition"},
             "charge_on_draw": {"types": "bool"},
-            "max_draw_duration": {"types": "decimal"},
+            "max_draw_duration": {"types": "temp/decimal"},
             "scale_power_by_draw_duration": {"types": "bool"}
         }
     },
@@ -784,21 +787,21 @@
     "component.throwable": {
         "type": "Keymap",
         "keys": {
-            "default_offset_scale": {"types": "decimal"},
+            "default_offset_scale": {"types": "temp/decimal"},
             "do_swing_animation": {"types": "bool"},
-            "inside_block_offset_scale": {"types": "decimal"},
-            "launch_power_scale": {"types": "decimal"},
-            "max_draw_duration": {"types": "decimal"},
-            "max_launch_power": {"types": "decimal"},
-            "min_draw_duration": {"types": "decimal"},
+            "inside_block_offset_scale": {"types": "temp/decimal"},
+            "launch_power_scale": {"types": "temp/decimal"},
+            "max_draw_duration": {"types": "temp/decimal"},
+            "max_launch_power": {"types": "temp/decimal"},
+            "min_draw_duration": {"types": "temp/decimal"},
             "scale_power_by_draw_duration": {"types": "bool"}
         }
     },
     "component.use_modifiers": {
         "type": "Keymap",
         "keys": {
-            "movement_modifier": {"types": "decimal"},
-            "use_duration": {"types": "decimal"}
+            "movement_modifier": {"types": "temp/decimal"},
+            "use_duration": {"types": "temp/decimal"}
         }
     },
     "component.use_on": {

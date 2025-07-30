@@ -1,27 +1,12 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "def_action_test"
-        },
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "def_action_test"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "def_action_test",
+        "$structure": "#@def_action_test"
     },
     "def_action_test": {
         "type": "Keymap",
@@ -52,9 +37,7 @@
         "value_structure": {
             "type": "Union",
             "substructures": {
-                "str": {
-                    "type": "String"
-                },
+                "str": "temp/string",
                 "dict": "action"
             }
         }

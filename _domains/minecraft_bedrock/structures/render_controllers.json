@@ -1,66 +1,30 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "render_controllers"
-        },
-        "this_types": "dict",
-        "structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "file",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "min_key_similarity_threshold": 0.6,
-        "key_structure": {
-            "type": "String",
-            "similarity_function": "get_file_stem"
-        },
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "render_controllers_file"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "render_controllers",
+        "$pack_type": "resource pack",
+        "$structure": "render_controllers_file"
     },
     "render_controllers_file": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers render_controllers_fix_old"
         },
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "keys": {
-            "format_version": {"types": "str"},
-            "render_controllers": {"types": "dict", "structure": "render_controllers"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "format_version": {"types": "str"},
+                "render_controllers": {"types": "dict", "structure": "render_controllers"}
+            }
         }
     },
     "render_controllers": {
@@ -86,28 +50,33 @@
         }
     },
     "render_controller": {
-        "type": "Keymap",
-        "normalizers": {
-            "function_name": "delete_optional_key",
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "delete_key",
             "arguments": {
                 "key": "texures"
             }
         },
-        "keys": {
-            "arrays": {"types": "dict", "structure": "arrays"},
-            "color": {"types": "dict", "structure": "color"},
-            "filter_lighting": {"types": "bool"},
-            "geometry": {"types": "str"},
-            "ignore_lighting": {"types": "bool"},
-            "is_hurt_color": {"types": "dict", "structure": "color"},
-            "light_color_multiplier": {"types": "float"},
-            "materials": {"types": "list", "structure": "materials"},
-            "on_fire_color": {"types": "dict", "structure": "color"},
-            "overlay_color": {"types": "dict", "structure": "color"},
-            "part_visibility": {"types": ["dict", "list"], "structure": "part_visibility.group"},
-            "rebuild_animation_matrices": {"types": "bool"},
-            "textures": {"types": "list", "structure": "textures"},
-            "uv_anim": {"types": "dict", "structure": "uv_anim"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "arrays": {"types": "dict", "structure": "arrays"},
+                "color": {"types": "dict", "structure": "color"},
+                "filter_lighting": {"types": "bool"},
+                "geometry": {"types": "str"},
+                "ignore_lighting": {"types": "bool"},
+                "is_hurt_color": {"types": "dict", "structure": "color"},
+                "light_color_multiplier": {"types": "float"},
+                "materials": {"types": "list", "structure": "materials"},
+                "on_fire_color": {"types": "dict", "structure": "color"},
+                "overlay_color": {"types": "dict", "structure": "color"},
+                "part_visibility": {"types": ["dict", "list"], "structure": "part_visibility.group"},
+                "rebuild_animation_matrices": {"types": "bool"},
+                "textures": {"types": "list", "structure": "textures"},
+                "uv_anim": {"types": "dict", "structure": "uv_anim"}
+            }
         }
     },
     "arrays": {

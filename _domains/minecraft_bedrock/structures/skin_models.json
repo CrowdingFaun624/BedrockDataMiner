@@ -14,27 +14,28 @@
         "type": "Cache",
         "this_types": "dict",
         "structure": {
+            "type": "Condition",
+            "substructures": [
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "needs_repair", "value": false, "default": true}, "structure": "#!file{serializer=@minecraft_common!s/json}"},
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "needs_repair", "value": true}, "structure": "#!file{serializer=@s/skin_geometries_repairable_json}"}
+            ]
+        }
+    },
+    "file": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "fake_file",
+        "functions": {
+            "function_name": "normalizers/models_model_normalize",
+            "arguments": {
+                "serializer": "#serializer"
+            }
+        },
+        "structure": {
             "type": "File",
             "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": [
-                {
-                    "function_name": "normalizers/models_model_normalize",
-                    "arguments": {
-                        "serializer": "minecraft_common!serializers/json"
-                    },
-                    "filter": {"type": "EqFilter", "key": "needs_repair", "value": false, "default": true}
-                },
-                {
-                    "function_name": "normalizers/models_model_normalize",
-                    "arguments": {
-                        "serializer": "serializers/skin_geometries_repairable_json"
-                    },
-                    "filter": {"type": "EqFilter", "key": "needs_repair", "value": true}
-                }
-            ],
+            "outer_types": "fake_file",
+            "inner_types": "dict",
             "structure": "files"
         }
     },

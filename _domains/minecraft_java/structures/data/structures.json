@@ -22,7 +22,7 @@
             "size": {"types": "a/list", "structure": "vector/vector.tag_int"},
             "palette": {"types": "a/list", "structure": "palette"},
             "palettes": {"types": "a/list", "structure": "palettes"},
-            "blocks": {"types": "dict", "structure": "blocks"},
+            "blocks": {"types": "a/list", "structure": "blocks"},
             "entities": {"types": "a/list", "structure": "entities"}
         }
     },
@@ -53,27 +53,30 @@
     },
     "blocks": {
         "type": "Condition",
-        "pre_normalized_types": "a/list",
         "substructures": [
-            {"types": "dict", "filter": {"type": "EqFilter", "key": "old_blocks", "value": false, "default": true}, "structure": "blocks:new"},
-            {"types": "dict", "filter": {"type": "EqFilter", "key": "old_blocks", "value": true}, "structure": "blocks:old"}
+            {"types": "a/list", "filter": {"type": "EqFilter", "key": "old_blocks", "value": false, "default": true}, "structure": "blocks:new"},
+            {"types": "a/list", "filter": {"type": "EqFilter", "key": "old_blocks", "value": true}, "structure": "blocks:old"}
         ]
     },
     "blocks:old": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "a/list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "minecraft_common!normalizers/volume_normalize_nbt volume_normalize_nbt_old"
         },
-        "delegate": "minecraft_common!VolumeDelegate",
-        "delegate_arguments": {
-            "field": "block"
-        },
-        "pre_normalized_types": "a/list",
-        "keys": {
-            "states": {"types": "dict", "structure": "volume_states"},
-            "data": {"types": "dict", "structure": "volume_additional_data"},
-            "palette": {"types": "dict", "structure": "very_old_palette"},
-            "size": {"types": "tuple", "structure": "vector/vector.tuple_int"}
+        "structure": {
+            "type": "Keymap",
+            "delegate": "minecraft_common!VolumeDelegate",
+            "delegate_arguments": {
+                "field": "block"
+            },
+            "keys": {
+                "states": {"types": "dict", "structure": "volume_states"},
+                "data": {"types": "dict", "structure": "volume_additional_data"},
+                "palette": {"types": "dict", "structure": "very_old_palette"},
+                "size": {"types": "tuple", "structure": "vector/vector.tuple_int"}
+            }
         }
     },
     "very_old_palette": {
@@ -91,23 +94,27 @@
         }
     },
     "blocks:new": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "a/list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "minecraft_common!normalizers/volume_normalize_nbt volume_normalize_nbt",
             "arguments": {
                 "position_key": "pos",
                 "state_key": "state"
             }
         },
-        "delegate": "minecraft_common!VolumeDelegate",
-        "delegate_arguments": {
-            "field": "block"
-        },
-        "pre_normalized_types": "a/list",
-        "keys": {
-            "states": {"types": "dict", "structure": "volume_states"},
-            "data": {"types": "dict", "structure": "volume_additional_data"},
-            "size": {"types": "tuple", "structure": "vector/vector.tuple_int"}
+        "structure": {
+            "type": "Keymap",
+            "delegate": "minecraft_common!VolumeDelegate",
+            "delegate_arguments": {
+                "field": "block"
+            },
+            "keys": {
+                "states": {"types": "dict", "structure": "volume_states"},
+                "data": {"types": "dict", "structure": "volume_additional_data"},
+                "size": {"types": "tuple", "structure": "vector/vector.tuple_int"}
+            }
         }
     },
     "volume_states": {

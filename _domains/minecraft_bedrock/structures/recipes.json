@@ -1,38 +1,15 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "recipes"
-        },
-        "this_types": "dict",
-        "structure": "recipes"
-    },
-    "recipes": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "recipe",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "min_key_similarity_threshold": 0.50,
-        "value_structure": "behavior_packs"
-    },
-    "behavior_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "behavior pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "recipes",
+        "$file_field": "recipe",
+        "$files_min_key_similarity_threshold": 0.5,
+        "$pack_type": "behavior pack",
+        "$structure": "#@recipe"
     },
     "description": {
         "type": "Keymap",
@@ -97,36 +74,29 @@
             "str": null
         }
     },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "recipe"
-        }
-    },
     "recipe": {
-        "type": "Keymap",
-        "normalizers":  {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers recipes_fix_old"
         },
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "keys": {
-            "format_version": {"types": "str"},
-            "minecraft:recipe_brewing_container": {"types": "dict", "structure": "recipe.brewing_container"},
-            "minecraft:recipe_brewing_mix": {"types": "dict", "structure": "recipe.brewing_mix"},
-            "minecraft:recipe_furnace": {"types": "dict", "structure": "recipe.furnace"},
-            "minecraft:recipe_material_reduction": {"types": "dict", "structure": "recipe.material_reducer"},
-            "minecraft:recipe_shaped": {"types": "dict", "structure": "recipe.shaped"},
-            "minecraft:recipe_shapeless": {"types": "dict", "structure": "recipe.shapeless"},
-            "minecraft:recipe_smithing_transform": {"types": "dict", "structure": "recipe.smithing_transform"},
-            "minecraft:recipe_smithing_trim": {"types": "dict", "structure": "recipe.smithing_trim"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "format_version": {"types": "str"},
+                "minecraft:recipe_brewing_container": {"types": "dict", "structure": "recipe.brewing_container"},
+                "minecraft:recipe_brewing_mix": {"types": "dict", "structure": "recipe.brewing_mix"},
+                "minecraft:recipe_furnace": {"types": "dict", "structure": "recipe.furnace"},
+                "minecraft:recipe_material_reduction": {"types": "dict", "structure": "recipe.material_reducer"},
+                "minecraft:recipe_shaped": {"types": "dict", "structure": "recipe.shaped"},
+                "minecraft:recipe_shapeless": {"types": "dict", "structure": "recipe.shapeless"},
+                "minecraft:recipe_smithing_transform": {"types": "dict", "structure": "recipe.smithing_transform"},
+                "minecraft:recipe_smithing_trim": {"types": "dict", "structure": "recipe.smithing_trim"}
+            }
         }
     },
     "recipe.brewing_container": {

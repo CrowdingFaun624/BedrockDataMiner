@@ -1,34 +1,14 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/misc/template"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "text_packs"
-        },
-        "structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "list",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "list",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "s/text_serializer",
-            "file_types": "file",
-            "content_types": "list",
-            "structure": "structures/text_file/lines"
-        }
+        "inherit": "temp/base_pack_files",
+        "$name": "text_packs",
+        "$pack_type": "resource pack",
+        "$serializer": "#@s/text_serializer",
+        "$types": "str",
+        "$structure": "structures/text_file/lines"
     }
 }

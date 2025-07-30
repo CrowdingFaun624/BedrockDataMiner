@@ -1,40 +1,31 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/misc/template"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "list",
-        "pre_normalized_types": "file",
-        "delegate_arguments": {
-            "name": "text_packs"
-        },
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "list",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "s/text_serializer",
-            "file_types": "file",
-            "content_types": "list",
-            "structure": "lines"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "text_packs",
+        "$serializer": "#@s/text_serializer",
+        "$types": "str",
+        "$structure": "#@lines"
     },
     "lines": {
-        "type": "Sequence",
-        "max_square_length": 1000000000,
-        "pre_normalized_types": "str",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "str",
+        "inner_types": "list",
+        "functions": {
             "function_name": "split_lines"
         },
-        "value_types": "str",
-        "delegate": "LongStringDelegate",
-        "delegate_arguments": {
-            "measure_length": true
-        },
-        "value_structure": null
+        "structure": {
+            "type": "Sequence",
+            "max_square_length": 1000000000,
+            "value_types": "str",
+            "delegate": "LongStringDelegate",
+            "delegate_arguments": {
+                "measure_length": true
+            },
+            "value_structure": null
+        }
     }
 }

@@ -1,23 +1,15 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "cameras"
-        },
-        "this_types": "dict",
-        "structure": "cameras"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
-    "empty_dict": {
-        "type": "Keymap",
-        "keys": {}
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "cameras",
+        "$file_field": "camera",
+        "$pack_type": "resource pack",
+        "$structure": "#@camera"
     },
     "rotation_decimal": {
         "type": "Dict",
@@ -31,7 +23,7 @@
             "print_flat": true,
             "measure_length": false
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "vector_decimal": {
@@ -46,43 +38,8 @@
             "print_flat": true,
             "measure_length": false
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
-    },
-    "cameras": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "camera",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "camera"
-        }
     },
     "camera": {
         "type": "Keymap",
@@ -95,8 +52,8 @@
             "blend_in_default": {"types": "dict", "structure": "component.camera_blend_in_default"},
             "faces_player_front": {"types": "bool", "tags": ["t/outdated"]},
             "far_clipping_plane": {"types": "float", "tags": ["t/outdated"]},
-            "field_of_view": {"types": "decimal", "tags": ["t/outdated"]},
-            "near_clipping_plane": {"types": "decimal", "tags": ["t/outdated"]},
+            "field_of_view": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "near_clipping_plane": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "player_rotation_offset": {"types": "list", "structure": "vector_decimal", "tags": ["t/outdated"]},
             "priority": {"types": "int", "tags": ["t/outdated"]},
             "render_first_person_objects": {"types": "bool", "tags": ["t/outdated"]},
@@ -135,41 +92,41 @@
             "measure_length": true
         },
         "keys": {
-            "minecraft:allow_inside_block": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:allow_inside_block": {"types": "dict", "structure": "temp/empty"},
             "minecraft:camera": {"types": "dict", "structure": "component.camera"},
             "minecraft:camera_attach_to_player": {"types": "dict", "structure": "component.camera_attach_to_player"},
             "minecraft:camera_avoidance": {"types": "dict", "structure": "component.camera_avoidance"},
             "minecraft:camera_blend_in_default": {"types": "dict", "structure": "component.camera_blend_in_default"},
-            "minecraft:camera_bob": {"types": "dict", "structure": "empty_dict", "tags": ["t/outdated"]},
+            "minecraft:camera_bob": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:camera_direct_look": {"types": "dict", "structure": "component.camera_direct_look"},
-            "minecraft:camera_first_person": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:camera_fixed_boom": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:camera_liquid_offset": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_first_person": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:camera_fixed_boom": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:camera_liquid_offset": {"types": "dict", "structure": "temp/empty"},
             "minecraft:camera_look_at_player": {"types": "dict", "structure": "component.camera_look_at_player", "tags": ["t/outdated"]},
             "minecraft:camera_offset": {"types": "dict", "structure": "component.camera_offset"},
             "minecraft:camera_option_activation": {"types": "dict", "structure": "component.camera_option_activation"},
             "minecraft:camera_orbit": {"types": "dict", "structure": "component.camera_orbit"},
             "minecraft:camera_perspective_option": {"types": "dict", "structure": "component.camera_perspective_option"},
-            "minecraft:camera_player_bob": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:camera_player_sleep_vignette": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:camera_portal_distortion": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:camera_render_first_person_objects": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:camera_render_player_model": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_player_bob": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:camera_player_sleep_vignette": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:camera_portal_distortion": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:camera_render_first_person_objects": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:camera_render_player_model": {"types": "dict", "structure": "temp/empty"},
             "minecraft:camera_shake": {"types": "dict", "structure": "component.camera_shake"},
-            "minecraft:camera_sleep_vignette": {"types": "dict", "structure": "empty_dict", "tags": ["t/outdated"]},
+            "minecraft:camera_sleep_vignette": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:camera_sneak_offset": {"types": "dict", "structure": "component.camera_sneak_offset", "tags": ["t/outdated"]},
-            "minecraft:camera_third_person": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_third_person": {"types": "dict", "structure": "temp/empty"},
             "minecraft:camera_third_person_boom": {"types": "dict", "structure": "component.camera_third_person_boom"},
-            "minecraft:death_camera_component": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:default_input_camera": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:extend_player_rendering": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:gameplay_affects_fov": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:player_state_affects_rendering": {"types": "dict", "structure": "empty_dict"},
-            "minecraft:redirect_camera_input": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:death_camera_component": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:default_input_camera": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:extend_player_rendering": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:gameplay_affects_fov": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:player_state_affects_rendering": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:redirect_camera_input": {"types": "dict", "structure": "temp/empty"},
             "minecraft:stationary_camera": {"types": "dict", "structure": "component.stationary_camera"},
             "minecraft:target": {"types": "dict", "structure": "component.target"},
             "minecraft:update_player_from_camera": {"types": "dict", "structure": "component.update_player_from_camera"},
-            "minecraft:vr_comfort_move": {"types": "dict", "structure": "empty_dict"}
+            "minecraft:vr_comfort_move": {"types": "dict", "structure": "temp/empty"}
         }
     },
     "behaviors": {
@@ -178,15 +135,15 @@
         "keys": {
             "attach": {"types": "dict", "structure": "component.camera_attach_to_player"},
             "avoidance": {"types": "dict", "structure": "component.camera_avoidance"},
-            "bob": {"types": "dict", "structure": "empty_dict"},
-            "comfort_move": {"types": "dict", "structure": "empty_dict"},
+            "bob": {"types": "dict", "structure": "temp/empty"},
+            "comfort_move": {"types": "dict", "structure": "temp/empty"},
             "first_person_look": {"types": "dict", "structure": "component.camera_direct_look"},
             "fly": {"types": "dict", "structure": "component.fly"},
-            "liquid_offset": {"types": "dict", "structure": "empty_dict"},
+            "liquid_offset": {"types": "dict", "structure": "temp/empty"},
             "look_at": {"types": "dict", "structure": "component.camera_look_at_player"},
             "orbit": {"types": "dict", "structure": "component.camera_orbit"},
-            "portal": {"types": "dict", "structure": "empty_dict"},
-            "ride_rotation": {"types": "dict", "structure": "empty_dict"},
+            "portal": {"types": "dict", "structure": "temp/empty"},
+            "ride_rotation": {"types": "dict", "structure": "temp/empty"},
             "shake": {"types": "dict", "structure": "component.camera_shake"},
             "sleep": {"types": "dict", "structure": "component.sleep"},
             "sneak": {"types": "dict", "structure": "component.camera_sneak_offset"}
@@ -219,7 +176,7 @@
         },
         "keys": {
             "avoidance_rays_vertical": {"types": "list", "structure": "component.camera_avoidance:avoidance_rays_vertical"},
-            "relax_distance_smoothing_spring": {"types": "decimal"},
+            "relax_distance_smoothing_spring": {"types": "temp/decimal"},
             "distance_constraint_min": {"types": "float"}
         }
     },

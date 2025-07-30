@@ -1,31 +1,35 @@
 {
     "base": {
         "type": "StructureBase",
-        "pre_normalized_types": "dict",
-        "this_types": "list",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "subdirs"
-        },
-        "normalizers": {
-            "function_name": "normalizers/normalizers subdirs_normalize"
         },
         "structure": "subdirs"
     },
     "subdirs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "subdir",
-            "measure_length": true,
-            "sort": "sort_by_value",
-            "show_item_key": false
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "list",
+        "functions": {
+            "function_name": "normalizers/normalizers subdirs_normalize"
         },
-        "this_types": "list",
-        "allow_key_moves": true,
-        "key_weight": 0,
-        "key_types": "int",
-        "value_types": "str",
-        "value_structure": {
-            "type": "String"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "subdir",
+                "measure_length": true,
+                "sort": "sort_by_value",
+                "show_item_key": false
+            },
+            "this_types": "list",
+            "allow_key_moves": true,
+            "key_weight": 0,
+            "key_types": "int",
+            "value_types": "str",
+            "value_structure": {
+                "type": "String"
+            }
         }
     }
 }

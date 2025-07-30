@@ -5,42 +5,10 @@
         "s": "serializers"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "font_providers"
-        },
-        "structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true
-        },
-        "value_structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "root"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "font_providers",
+        "$pack_type": "resource pack",
+        "$structure": "#@root"
     },
     "root": {
         "inherit": "temp/SortedKeymap",
@@ -163,7 +131,7 @@
             "shift": {"types": "list", "structure": "provider.ttf:shift"},
             "scale": {"types": "int"},
             "oversample": {"types": "int"},
-            "skip": {"types": "list", "structure": "provider.ttf:skip"}
+            "skip": {"types": ["list", "str"], "structure": "provider.ttf:skip"}
         }
     },
     "provider.ttf:shift": {
@@ -180,21 +148,25 @@
         "value_structure": null
     },
     "provider.ttf:skip": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "value_types": "str",
-        "pre_normalized_types": ["list", "str"],
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": ["list", "str"],
+        "inner_types": "list",
+        "functions": {
             "function_name": "normalizers/normalizers font_providers_normalize_skip"
         },
-        "delegate_arguments": {
-            "field": "character",
-            "show_item_key": false,
-            "measure_length": true
-        },
-        "value_structure": null
+        "structure": {
+            "type": "Dict",
+            "key_weight": 0,
+            "key_types": "int",
+            "this_types": "list",
+            "value_types": "str",
+            "delegate_arguments": {
+                "field": "character",
+                "show_item_key": false,
+                "measure_length": true
+            },
+            "value_structure": null
+        }
     },
     "provider.unihex": {
         "inherit": "temp/SortedKeymap",

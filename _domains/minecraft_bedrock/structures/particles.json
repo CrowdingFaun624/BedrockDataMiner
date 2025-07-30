@@ -1,19 +1,15 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "particles"
-        },
-        "this_types": "dict",
-        "structure": "particles"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "particles",
+        "$file_field": "particle",
+        "$pack_type": "resource pack",
+        "$structure": "#@particle"
     },
     "block_list": {
         "type": "Dict",
@@ -46,12 +42,8 @@
             "print_flat": true,
             "print_all": true
         },
-        "value_types": ["decimal", "str"],
+        "value_types": ["temp/decimal", "str"],
         "value_structure": null
-    },
-    "empty_dict": {
-        "type": "Keymap",
-        "keys": {}
     },
     "vector_decimal_molang": {
         "type": "Dict",
@@ -65,78 +57,53 @@
             "print_flat": true,
             "measure_length": false
         },
-        "value_types": ["decimal", "str"],
+        "value_types": ["temp/decimal", "str"],
         "value_structure": null
     },
     "vector_decimal_molang_or_decimal_molang": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "list": "vector_decimal_molang",
             "str": null
         }
     },
-    "particles": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "particle",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "particle"
-        }
-    },
     "particle": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers particles_normalize_old"
         },
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "keys": {
-            "format_version": {"types": "str"},
-            "particle_effect": {"types": "dict", "structure": "particle_effect"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "format_version": {"types": "str"},
+                "particle_effect": {"types": "dict", "structure": "particle_effect"}
+            }
         }
     },
     "particle_effect": {
-        "type": "Keymap",
-        "normalizers": {
-            "function_name": "delete_optional_keys",
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "delete_keys",
             "arguments": {
                 "keys": ["minecraft:particle_appearance_tinting", "minecraft:particle_appearance_lighting"]
             }
         },
-        "keys": {
-            "components": {"types": "dict", "structure": "components"},
-            "curves": {"types": "dict", "structure": "curves"},
-            "description": {"types": "dict", "structure": "description"},
-            "events": {"types": "dict", "structure": "events"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "components": {"types": "dict", "structure": "components"},
+                "curves": {"types": "dict", "structure": "curves"},
+                "description": {"types": "dict", "structure": "description"},
+                "events": {"types": "dict", "structure": "events"}
+            }
         }
     },
     "curves": {
@@ -170,7 +137,7 @@
             "print_all": true,
             "print_flat": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "description": {
@@ -242,10 +209,10 @@
             "minecraft:emitter_shape_point": {"types": "dict", "structure": "component.emitter_shape_point"},
             "minecraft:emitter_shape_sphere": {"types": "dict", "structure": "component.emitter_shape_sphere"},
             "minecraft:particle_appearance_billboard": {"types": "dict", "structure": "component.particle_appearance_billboard"},
-            "minecraft:particle_appearance_lighting": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:particle_appearance_lighting": {"types": "dict", "structure": "temp/empty"},
             "minecraft:particle_appearance_tinting": {"types": "dict", "structure": "component.particle_appearance_tinting"},
             "minecraft:particle_expire_if_not_in_blocks": {"types": "list", "structure": "block_list"},
-            "minecraft:particle_initial_speed": {"types": ["decimal", "list", "str"], "structure": "vector_decimal_molang_or_decimal_molang"},
+            "minecraft:particle_initial_speed": {"types": ["temp/decimal", "list", "str"], "structure": "vector_decimal_molang_or_decimal_molang"},
             "minecraft:particle_initial_spin": {"types": "dict", "structure": "component.particle_initial_spin"},
             "minecraft:particle_initialization": {"types": "dict", "structure": "component.particle_initialization"},
             "minecraft:particle_lifetime_events": {"types": "dict", "structure": "component.particle_lifetime_events"},
@@ -273,13 +240,13 @@
     "component.emitter_lifetime_looping": {
         "type": "Keymap",
         "keys": {
-            "active_time": {"types": ["decimal", "str"]}
+            "active_time": {"types": ["temp/decimal", "str"]}
         }
     },
     "component.emitter_lifetime_once": {
         "type": "Keymap",
         "keys": {
-            "active_time": {"types": ["decimal", "str"]}
+            "active_time": {"types": ["temp/decimal", "str"]}
         }
     },
     "component.emitter_local_space": {
@@ -338,7 +305,7 @@
             "direction": {"types": ["list", "str"], "structure": "component.emitter_shape:direction"},
             "offset": {"types": "list", "structure": "vector_decimal_molang"},
             "plane_normal": {"types": ["list", "str"], "structure": "component.emitter_shape:direction"},
-            "radius": {"types": ["decimal", "str"]},
+            "radius": {"types": ["temp/decimal", "str"]},
             "surface_only": {"types": "bool"}
         }
     },
@@ -361,7 +328,7 @@
         "keys": {
             "direction": {"types": ["list", "str"], "structure": "component.emitter_shape:direction"},
             "offset": {"types": "list", "structure": "vector_decimal_molang"},
-            "radius": {"types": ["decimal", "str"]},
+            "radius": {"types": ["temp/decimal", "str"]},
             "surface_only": {"types": "bool"}
         }
     },
@@ -404,19 +371,23 @@
     "component.particle_appearance_tinting": {
         "type": "Keymap",
         "keys": {
-            "color": {"types": ["dict", "list"], "structure": "component.particle_appearance_tinting:color.group"},
-            "interpolant": {"types": ["decimal", "str"]}
+            "color": {"types": ["dict", "list", "str"], "structure": "component.particle_appearance_tinting:color.group"},
+            "interpolant": {"types": ["temp/decimal", "str"]}
         }
     },
     "component.particle_appearance_tinting:color.group": {
-        "type": "Union",
-        "pre_normalized_types": ["str", "list", "dict"],
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": ["str", "list", "dict"],
+        "inner_types": ["dict", "list"],
+        "functions": {
             "function_name": "normalizers/normalizers particles_normalize_component_particle_appearance_tinting_color"
         },
-        "substructures": {
-            "dict": "component.particle_appearance_tinting:color.dict",
-            "list": "component.particle_appearance_tinting:color.list"
+        "structure": {
+            "type": "Union",
+            "substructures": {
+                "dict": "component.particle_appearance_tinting:color.dict",
+                "list": "component.particle_appearance_tinting:color.list"
+            }
         }
     },
     "component.particle_appearance_tinting:color.dict": {
@@ -482,7 +453,7 @@
             "print_all": true,
             "print_flat": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "component.particle_lifetime_events": {
@@ -504,15 +475,15 @@
     "component.particle_lifetime_expression": {
         "type": "Keymap",
         "keys": {
-            "max_lifetime": {"types": ["decimal", "str"]}
+            "max_lifetime": {"types": ["temp/decimal", "str"]}
         }
     },
     "component.particle_motion_collision": {
         "type": "Keymap",
         "keys": {
-            "coefficient_of_restitution": {"types": "decimal"},
-            "collision_drag": {"types": "decimal"},
-            "collision_radius": {"types": "decimal"},
+            "coefficient_of_restitution": {"types": "temp/decimal"},
+            "collision_drag": {"types": "temp/decimal"},
+            "collision_radius": {"types": "temp/decimal"},
             "enabled": {"types": ["int", "str"]},
             "events": {"types": "list", "structure": "component.particle_motion_collision:events"},
             "expire_on_contact": {"types": "bool"}
@@ -535,17 +506,17 @@
         "type": "Keymap",
         "keys": {
             "event": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
-            "min_speed": {"types": "decimal"}
+            "min_speed": {"types": "temp/decimal"}
         }
     },
     "component.particle_motion_dynamic": {
         "type": "Keymap",
         "keys": {
             "linear_acceleration": {"types": "list", "structure": "vector_decimal_molang"},
-            "linear_drag": {"types": "decimal", "tags": ["t/outdated"]},
-            "linear_drag_coefficient": {"types": ["decimal", "str"]},
-            "rotation_acceleration": {"types": ["decimal", "str"]},
-            "rotation_drag_coefficient": {"types": ["decimal", "str"]}
+            "linear_drag": {"types": "temp/decimal", "tags": ["t/outdated"]},
+            "linear_drag_coefficient": {"types": ["temp/decimal", "str"]},
+            "rotation_acceleration": {"types": ["temp/decimal", "str"]},
+            "rotation_drag_coefficient": {"types": ["temp/decimal", "str"]}
         }
     },
     "component.particle_motion_parametric": {

@@ -1,15 +1,14 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "manifests"
-        },
-        "this_types": "dict",
-        "structure": "packs"
+        "inherit": "temp/base_pack_files",
+        "$name": "manifests",
+        "$function": [], // do not collapse packs
+        "$structure": "#@manifest"
     },
     "version_str": {
         "type": "Union",
@@ -30,27 +29,6 @@
             "field": "item",
             "print_flat": true,
             "print_all": true
-        }
-    },
-    "packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "pack"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "manifest"
         }
     },
     "manifest": {

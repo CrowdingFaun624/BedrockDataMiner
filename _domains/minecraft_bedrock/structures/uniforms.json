@@ -1,27 +1,12 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "uniforms"
-        },
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "uniforms"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "uniforms",
+        "$structure": "#@uniforms"
     },
     "uniforms": {
         "type": "Dict",
@@ -45,18 +30,19 @@
         }
     },
     "constant": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers uniforms_normalize"
         },
-        "keys": {
-            "Name": {"types": "str", "structure": {
-                "type": "String"
-            }, "delegate_arguments": {
-                "always_print": true
-            }, "similarity_weight": 5},
-            "Type": {"types": "str"},
-            "Elements": {"types": "int"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "Name": {"types": "str", "structure": "temp/string", "delegate_arguments": {"always_print": true}, "similarity_weight": 5},
+                "Type": {"types": "str"},
+                "Elements": {"types": "int"}
+            }
         }
     }
 }

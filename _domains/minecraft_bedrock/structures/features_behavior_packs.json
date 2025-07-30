@@ -1,46 +1,13 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "features_behavior_packs"
-        },
-        "this_types": "dict",
-        "structure": "features"
-    },
-    "features": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "feature"
-        },
-        "value_types": "dict",
-        "value_structure": "behavior_packs"
-    },
-    "behavior_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "behavior pack"
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "structures/features/feature"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "features_behavior_packs",
+        "$file_field": "feature",
+        "$pack_type": "behavior pack",
+        "$structure": "#@structures/features/feature"
     }
 }

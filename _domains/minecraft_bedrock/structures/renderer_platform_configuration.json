@@ -1,27 +1,12 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "renderer_platform_configuration"
-        },
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "platforms"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "renderer_platform_configuration",
+        "$structure": "#@platforms"
     },
     "platforms": {
         "type": "Dict",
@@ -34,27 +19,32 @@
         "value_structure": "platform"
     },
     "platform": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers renderer_platform_configurations_normalize_shadow_config"
         },
-        "delegate_arguments": {
-            "sort": "sort_by_key"
-        },
-        "keys": {
-            "presets": {"types": "list", "structure": "presets"},
-            "cloud_config": {"types": "dict", "structure": "file_link"},
-            "deferred_lighting_config": {"types": "dict", "structure": "file_link"},
-            "bloom_config": {"types": "dict", "structure": "file_link"},
-            "point_light_loding_config": {"types": "dict", "structure": "file_link"},
-            "point_light_shadow_config": {"types": "dict", "structure": "file_link"},
-            "reflection_config": {"types": "dict", "structure": "file_link"},
-            "render_distance_config": {"types": "dict", "structure": "file_link"},
-            "resolution_config": {"types": "dict", "structure": "file_link"},
-            "shadow_config": {"types": "dict", "structure": "file_link"},
-            "tiers": {"types": "dict", "structure": "tiers"},
-            "volumetric_fog_config": {"types": "dict", "structure": "file_link"},
-            "upscaling_config": {"types": "dict", "structure": "file_link"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_key"
+            },
+            "keys": {
+                "presets": {"types": "list", "structure": "presets"},
+                "cloud_config": {"types": "dict", "structure": "file_link"},
+                "deferred_lighting_config": {"types": "dict", "structure": "file_link"},
+                "bloom_config": {"types": "dict", "structure": "file_link"},
+                "point_light_loding_config": {"types": "dict", "structure": "file_link"},
+                "point_light_shadow_config": {"types": "dict", "structure": "file_link"},
+                "reflection_config": {"types": "dict", "structure": "file_link"},
+                "render_distance_config": {"types": "dict", "structure": "file_link"},
+                "resolution_config": {"types": "dict", "structure": "file_link"},
+                "shadow_config": {"types": "dict", "structure": "file_link"},
+                "tiers": {"types": "dict", "structure": "tiers"},
+                "volumetric_fog_config": {"types": "dict", "structure": "file_link"},
+                "upscaling_config": {"types": "dict", "structure": "file_link"}
+            }
         }
     },
     "file_link": {

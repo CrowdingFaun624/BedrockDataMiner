@@ -1,30 +1,17 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "pre_normalized_types": "file",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "atmospheric_weather"
-        },
-        "structure": "cache"
+        "inherit": "temp/base_single_file",
+        "$name": "atmospheric_weather",
+        "$structure": "#@atmospheric_weather"
     },
-    "cache": {
-        "type": "Cache",
-        "pre_normalized_types": "file",
-        "this_types": "dict",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "atmopsheric_weather"
-        }
-    },
-    "atmopsheric_weather": {
+    "atmospheric_weather": {
         "type": "Keymap",
+        "key_structure": "temp/string",
+        "allow_key_moves": true,
         "keys": {
             "base_rain_cloud_color": {"types": "list", "structure": "color"},
             "base_thunder_sky_color": {"types": "list", "structure": "color"},
@@ -40,6 +27,7 @@
             "rainy_cloud_color": {"types": "list", "structure": "color"},
             "rainy_cloud_contribution": {"types": "float"},
             "rainy_cloud_color_contribution": {"types": "float"},
+            "rain_cloud_color_contribution": {"types": "float"},
             "thunder_sky_color": {"types": "list", "structure": "color"},
             "thunder_sky_contribution": {"types": "float"},
             "thunder_sky_color_contribution": {"types": "float"},

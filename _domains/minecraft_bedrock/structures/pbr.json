@@ -1,49 +1,14 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "pbr"
-        },
-        "this_types": "dict",
-        "structure": "pbr_files"
-    },
-    "pbr_files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "pbr file",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "pre_normalized_types": "file",
-        "this_types": "dict",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "pbr_file"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "pbr",
+        "$file_field": "pbr file",
+        "$pack_type": "resource pack",
+        "$structure": "#@pbr_file"
     },
     "pbr_file": {
         "type": "Keymap",

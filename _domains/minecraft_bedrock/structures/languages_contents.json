@@ -1,7 +1,8 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
         "type": "StructureBase",
@@ -25,19 +26,22 @@
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "dict",
+            "inner_types": "fake_file",
+            "functions": {
                 "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_dict_file",
                 "arguments": {
-                    "add_defined_in": false,
                     "serializer": "serializers/language_serializer"
                 }
             },
-            "structure": "packs"
+            "structure": {
+                "type": "File",
+                "serializer": null,
+                "outer_types": "fake_file",
+                "inner_types": "dict",
+                "structure": "packs"
+            }
         }
     },
     "packs": {
@@ -52,13 +56,12 @@
     },
     "cache_keys": { // for other structures to use.
         "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
             "type": "File",
             "serializer": "serializers/language_serializer",
-            "file_types": "file",
-            "content_types": "dict",
+            "outer_types": "file",
+            "inner_types": "dict",
             "structure": "keys"
         }
     },

@@ -1,53 +1,35 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "attachables"
-        },
-        "this_types": "dict",
-        "structure": "attachables"
-    },
-    "attachables": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "attachable",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "pre_normalized_types": "file",
-        "this_types": "dict",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "normalizers": {
-                "function_name": "normalizers/normalizers attachables_normalize_old"
-            },
-            "structure": "attachable"
-        }
+        "inherit": "temp/base_multiple_files",
+        "$name": "attachables",
+        "$file_field": "attachable",
+        "$structure": "#@attachable"
     },
     "attachable": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
+        "type": "Normalizer",
+        "functions": {
+            "function_name": "normalizers/normalizers attachables_normalize_old"
         },
-        "keys": {
-            "format_version": {"types": "str"},
-            "minecraft:attachable": {"types": "dict", "similarity_weight": 42, "structure": {
-                "type": "Keymap",
-                "keys": {
-                    "description": {"types": "dict", "structure": "description"}
-                }
-            }}
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "format_version": {"types": "str"},
+                "minecraft:attachable": {"types": "dict", "similarity_weight": 42, "structure": {
+                    "type": "Keymap",
+                    "keys": {
+                        "description": {"types": "dict", "structure": "description"}
+                    }
+                }}
+            }
         }
     },
     "description": {

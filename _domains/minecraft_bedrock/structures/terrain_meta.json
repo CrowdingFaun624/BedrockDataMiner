@@ -1,47 +1,37 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "terrain_meta"
-        },
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "images"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "terrain_meta",
+        "$types": "list",
+        "$structure": "#@images"
     },
     "images": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "image",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "name",
                 "delete": true
             }
         },
-        "min_key_similarity_threshold": 0.5,
-        "key_structure": {"type": "String"},
-        "value_types": "dict",
-        "value_structure": "image"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "image",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "min_key_similarity_threshold": 0.5,
+            "key_structure": {"type": "String"},
+            "value_types": "dict",
+            "value_structure": "image"
+        }
     },
     "image": {
         "type": "Keymap",
@@ -50,7 +40,7 @@
         },
         "keys": {
             "additonal_textures": {"types": "list", "structure": "uvs"},
-            "uv": {"types": "dict", "structure": "uv"},
+            "uv": {"types": "list", "structure": "uv"},
             "uvs": {"types": "list", "structure": "uvs"}
         }
     },
@@ -64,28 +54,32 @@
             "field": "uv",
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": "list",
         "value_structure": "uv"
     },
     "uv": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_tuple",
             "arguments": {
                 "keys": ["x1", "y1", "x2", "y2", "1", "2"]
             }
         },
-        "keys": {
-            "x1": {"types": ["float", "int"]},
-            "y1": {"types": ["float", "int"]},
-            "x2": {"types": ["float", "int"]},
-            "y2": {"types": ["float", "int"]},
-            "1":  {"types": "int"},
-            "2":  {"types": "int"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "x1": {"types": ["float", "int"]},
+                "y1": {"types": ["float", "int"]},
+                "x2": {"types": ["float", "int"]},
+                "y2": {"types": ["float", "int"]},
+                "1":  {"types": "int"},
+                "2":  {"types": "int"}
+            }
         }
     }
 }

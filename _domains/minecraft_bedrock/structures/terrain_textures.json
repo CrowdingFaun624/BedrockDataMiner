@@ -12,21 +12,31 @@
     },
     "collapse_resource_packs": {
         "type": "Normalizer",
-        "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "type": "Function",
+            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
+        },
+        "structure": "#structure"
     },
     "cache": {
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "dict",
+            "inner_types": "fake_file",
+            "functions": {
                 "function_name": "normalizers/normalizers terrain_textures_normalize"
             },
-            "structure": "terrain_textures"
+            "structure": {
+                "type": "File",
+                "serializer": null,
+                "outer_types": "fake_file",
+                "inner_types": "dict",
+                "structure": "terrain_textures"
+            }
         }
     },
     "terrain_textures": {
@@ -35,9 +45,9 @@
             "sort": "sort_by_component_order"
         },
         "keys": {
-            "num_mip_levels": {"types": "dict", "structure": "simple_int_resource_pack_dict"},
-            "padding": {"types": "dict", "structure": "simple_int_resource_pack_dict"},
-            "texture_name": {"types": "dict", "structure": "simple_str_resource_pack_dict"},
+            "num_mip_levels": {"types": "dict", "structure": "#!collapse_resource_packs{structure=@simple_int_resource_pack_dict}"},
+            "padding": {"types": "dict", "structure": "#!collapse_resource_packs{structure=@simple_int_resource_pack_dict}"},
+            "texture_name": {"types": "dict", "structure": "#!collapse_resource_packs{structure=@simple_str_resource_pack_dict}"},
             "texture_data": {"types": "dict", "structure": "texture_data"}
         }
     },
@@ -49,7 +59,6 @@
             "measure_length": true
         },
         "value_types": "int",
-        "normalizers": "collapse_resource_packs",
         "value_structure": null
     },
     "simple_str_resource_pack_dict": {
@@ -60,7 +69,6 @@
             "measure_length": true
         },
         "value_types": "str",
-        "normalizers": "collapse_resource_packs",
         "value_structure": null
     },
     "texture_data": {
@@ -78,18 +86,23 @@
         "value_structure": "resource_packs"
     },
     "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_dict"
         },
-        "min_value_similarity_threshold": 0.4,
-        "value_structure": "terrain"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "resource pack",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "min_value_similarity_threshold": 0.4,
+            "value_structure": "terrain"
+        }
     },
     "terrain": {
         "type": "Keymap",

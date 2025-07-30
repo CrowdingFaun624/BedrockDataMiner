@@ -1,50 +1,39 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "gui_routes"
-        },
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "parent"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "gui_routes",
+        "$structure": "#@parent"
     },
     "parent": {
         "type": "Keymap",
         "keys": {
-            "routes": {"types": "dict", "structure": "routes"}
+            "routes": {"types": "list", "structure": "routes"}
         }
     },
     "routes": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "route",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "fileName"
             }
         },
-        "value_structure": "route"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "route",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "route"
+        }
     },
     "route": {
         "type": "Keymap",
@@ -59,7 +48,7 @@
                 "type": "String"
             }, "delegate_arguments": {"always_print": true}},
             "scope": {"types": "list", "structure": "scope"},
-            "supportedRoutes": {"types": "dict", "structure": "supported_routes"}
+            "supportedRoutes": {"types": "list", "structure": "supported_routes"}
         }
     },
     "scope": {
@@ -77,31 +66,35 @@
         "value_structure": null
     },
     "supported_routes": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "supported route",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "route"
             }
         },
-        "key_structure": {
-            "type": "String"
-        },
-        "value_structure": "supported_route"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "supported route",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "key_structure": {
+                "type": "String"
+            },
+            "value_structure": "supported_route"
+        }
     },
     "supported_route": {
         "type": "Keymap",
         "keys": {
             "knownEntries": {"types": "list", "structure": "known_entries"},
             "modes": {"types": "list", "structure": "modes"},
-            "params": {"types": "dict", "structure": "parameters"},
+            "params": {"types": "list", "structure": "parameters"},
             "regexp": {"types": "str", "structure": {
                 "type": "String"
             }},
@@ -147,21 +140,25 @@
         "value_structure": null
     },
     "parameters": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "parameter",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "name"
             }
         },
-        "value_structure": "parameter"
+        "structure": {
+            "type": "Dict",
+            "delegate_arguments": {
+                "field": "parameter",
+                "sort": "sort_by_key",
+                "measure_length": true
+            },
+            "value_types": "dict",
+            "value_structure": "parameter"
+        }
     },
     "parameter": {
         "type": "Keymap",

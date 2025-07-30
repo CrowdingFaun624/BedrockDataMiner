@@ -1,44 +1,15 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "pieces_lang"
-        },
-        "this_types": "dict",
-        "structure": "pieces"
-    },
-    "pieces": {
-        "type": "Dict",
-        "value_types": "dict",
-        "value_structure": "lang_files",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "piece"
-        }
-    },
-    "lang_files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "value_structure": "cache",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "lang file"
-        }
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "lang"
-        }
+        "inherit": "temp/base_multiple_pack_files_reversed",
+        "$name": "pieces_lang",
+        "$function": [],
+        "$pack_type": "piece",
+        "$file_field": "lang file",
+        "$structure": "#@lang"
     },
     "lang": {
         "type": "Dict",
@@ -57,8 +28,8 @@
             "field": "language"
         },
         "keys": {
-            "en_US": {"types": "str", "structure": {"type": "String"}},
-            "neutral": {"types": "str", "structure": {"type": "String"}}
+            "en_US": {"types": "str", "structure": "temp/string"},
+            "neutral": {"types": "str", "structure": "temp/string"}
         }
     }
 }

@@ -22,7 +22,7 @@
     },
     "files": {
         "type": "Dict",
-        "value_types": "dict",
+        "value_types": "file",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
@@ -31,22 +31,26 @@
     },
     "cache": {
         "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
-            "type": "Condition",
-            "pre_normalized_types": "file",
-            "substructures": [
-                {"types": "dict", "filter": {"type": "EqFilter", "key": "serializer", "value": "json", "default": true}, "structure": "#!file{serializer=@minecraft_common!s/json}"},
-                {"types": "dict", "filter": {"type": "EqFilter", "key": "serializer", "value": "lang"}, "structure": "#!file{serializer=@s/language_serializer}"}
-            ]
+            "type": "Converging",
+            "within_structure_depth": 1,
+            "end_structure": "keys",
+            "this_types": "file",
+            "structure": {
+                "type": "Condition",
+                "substructures": [
+                    {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "json", "default": true}, "structure": "#!file{serializer=@minecraft_common!s/json}"},
+                    {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "lang"}, "structure": "#!file{serializer=@s/language_serializer}"}
+                ]
+            }
         }
     },
     "file": {
         "type": "File",
         "serializer": "#serializer",
-        "file_types": "file",
-        "content_types": "dict",
+        "outer_types": "file",
+        "inner_types": "dict",
         "structure": "keys"
     },
     "keys": {

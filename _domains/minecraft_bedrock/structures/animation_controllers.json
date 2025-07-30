@@ -1,69 +1,34 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "animation_controllers"
-        },
-        "this_types": "dict",
-        "structure": "files"
-    },
-    "empty": {
-        "type": "Keymap",
-        "keys": {}
-    },
-    "files": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true,
-            "sort": "sort_by_key"
-        },
-        "key_weight": 4,
-        "key_structure": {"type": "String", "similarity_function": "normalizers/normalizers remove_file_suffix"},
-        "min_key_similarity_threshold": 0.5,
-        "value_types": "dict",
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true,
-            "sort": "sort_by_key"
-        },
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_types": "dict",
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "normalizers": {
-                "function_name": "normalizers/normalizers animation_controllers_fix_old"
-            },
-            "structure": "animation_controllers_file"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "animation_controllers",
+        "$pack_type": "resource pack",
+        "$files_key_weight": 4,
+        "$files_key_structure": "temp/string_remove_file_suffix",
+        "$files_min_key_similarity_threshold": 0.5,
+        "$structure": "#@animation_controllers_file"
     },
     "animation_controllers_file": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "normalizers/normalizers animation_controllers_fix_old"
         },
-        "keys": {
-            "format_version": {"types": "str"},
-            "animation_controllers": {"types": "dict", "structure": "animation_controllers", "similarity_weight": 14}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "format_version": {"types": "str"},
+                "animation_controllers": {"types": "dict", "structure": "animation_controllers", "similarity_weight": 14}
+            }
         }
     },
     "animation_controllers": {
@@ -146,7 +111,7 @@
         "value_structure": {
             "type": "Union",
             "substructures": {
-                "dict": "empty",
+                "dict": "temp/empty",
                 "list": "animation:list"
             }
         }

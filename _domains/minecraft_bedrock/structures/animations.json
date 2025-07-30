@@ -1,68 +1,33 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "animations"
-        },
-        "this_types": "dict",
-        "structure": "files"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true,
-            "sort": "sort_by_key"
-        },
-        "key_weight": 5,
-        "value_weight": 8,
-        "min_value_similarity_threshold": 0.3,
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true,
-            "sort": "sort_by_key"
-        },
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "normalizers": {
-                "function_name": "normalizers/normalizers animations_fix_old"
-            },
-            "structure": "animations_file"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "animations",
+        "$pack_type": "resource pack",
+        "$key_weight": 5,
+        "$value_weight": 8,
+        "$min_value_similarity_threshold": 0.3,
+        "$structure": "#@animations_file"
     },
     "animations_file": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
+        "type": "Normalizer",
+        "functions": {
+            "function_name": "normalizers/normalizers animations_fix_old"
         },
-        "keys": {
-            "format_version": {"types": "str"},
-            "animations": {"types": "dict", "structure": "animations", "similarity_weight": 20}
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "format_version": {"types": "str"},
+                "animations": {"types": "dict", "structure": "animations", "similarity_weight": 20}
+            }
         }
     },
     "animations": {
@@ -120,7 +85,7 @@
         "key_weight": 0,
         "key_types": "int",
         "this_types": "list",
-        "value_types": ["decimal", "dict", "str"],
+        "value_types": ["temp/decimal", "dict", "str"],
         "delegate_arguments": {
             "field": "vector item",
             "print_all": true,
@@ -130,7 +95,7 @@
         "value_structure": {
             "type": "Union",
             "substructures": {
-                "decimal": null,
+                "temp/decimal": null,
                 "dict": {
                     "type": "Keymap",
                     "delegate_arguments": {
@@ -156,7 +121,7 @@
         },
         "keys": {
             "anim_time_update": {"types": "str"},
-            "animation_length": {"types": "decimal"},
+            "animation_length": {"types": "temp/decimal"},
             "loop": {"types": ["bool", "str"]},
             "override_previous_animation": {"types": "bool"},
             "start_delay": {"types": "str"},
@@ -191,7 +156,7 @@
             "relative_to": {"types": "dict", "structure": "bone.relative_to"},
             "rotation": {"types": ["list", "dict"], "structure": "timestamps_and_vectors_or_vector_or_lerp"},
             "position": {"types": ["list", "dict"], "structure": "timestamps_and_vectors_or_vector_or_lerp"},
-            "scale": {"types": ["decimal", "dict", "list", "str"], "structure": "bone.scale"}
+            "scale": {"types": ["temp/decimal", "dict", "list", "str"], "structure": "bone.scale"}
         }
     },
     "bone.relative_to": {
@@ -203,7 +168,7 @@
     "bone.scale": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "dict": "timestamps_and_vectors_or_lerp",
             "list": "vector_special",
             "str": null

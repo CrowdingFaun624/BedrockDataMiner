@@ -6,46 +6,10 @@
         "t": "structure_tags"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "item_model_definitions"
-        },
-        "structure": "resource_packs"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["int", "float"]
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true
-        },
-        "value_structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "root"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "item_model_definitions",
+        "$pack_type": "resource pack",
+        "$structure": "#@root"
     },
     "root": {
         "inherit": "temp/SortedKeymap",
@@ -151,8 +115,8 @@
         "inherit": "temp/SortedKeymap",
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "temperature": {"types": "decimal"},
-            "downfall": {"types": "decimal"}
+            "temperature": {"types": "misc/decimal"},
+            "downfall": {"types": "misc/decimal"}
         }
     },
     "tint.map_color": {
@@ -343,7 +307,7 @@
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "property": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "scale": {"types": "decimal"},
+            "scale": {"types": "misc/decimal"},
             "entries": {"types": "list", "structure": "model.range_dispatch:entries"},
             "fallback": {"types": "dict", "structure": "model"}
         }
@@ -364,7 +328,7 @@
     "model.range_dispatch:entry": {
         "inherit": "temp/SortedKeymap",
         "keys": {
-            "threshold": {"types": "decimal"},
+            "threshold": {"types": "misc/decimal"},
             "model": {"types": "dict", "structure": "model"}
         }
     },
@@ -421,7 +385,7 @@
         "inherit": "temp/SortedKeymap",
         "imports": ["model.range_dispatch:common"],
         "keys": {
-            "period": {"types": "decimal"}
+            "period": {"types": "misc/decimal"}
         }
     },
     "model.range_dispatch.use_duration": {
@@ -596,7 +560,7 @@
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "texture": {"types": "str", "structure": "misc/string"},
-            "openness": {"types": "decimal"}
+            "openness": {"types": "misc/decimal"}
         }
     },
     "model.special.conduit": {
@@ -625,7 +589,7 @@
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "kind": {"types": "str"},
             "texture": {"types": "str", "structure": "misc/string"},
-            "animation": {"types": "decimal"}
+            "animation": {"types": "misc/decimal"}
         }
     },
     "model.special.player_head": {
@@ -645,7 +609,7 @@
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "texture": {"types": "str", "structure": "misc/string"},
-            "openness": {"types": "decimal"},
+            "openness": {"types": "misc/decimal"},
             "orientation": {"types": "str"}
         }
     },

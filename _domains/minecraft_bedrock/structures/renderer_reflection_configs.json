@@ -1,37 +1,13 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "renderer_reflection_configs"
-        },
-        "this_types": "dict",
-        "structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "file",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "file"
-        }
+        "inherit": "temp/base_multiple_files",
+        "$name": "renderer_reflection_configs",
+        "$structure": "#@file"
     },
     "file": {
         "type": "Keymap",

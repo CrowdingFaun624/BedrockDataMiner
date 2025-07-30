@@ -5,25 +5,10 @@
         "s": "serializers"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "delegate_arguments": {
-            "name": "flight_recorder_config"
-        },
-        "structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "s/xml_serializer",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "configuration"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "flight_recorder_config",
+        "$serializer": "#@s/xml_serializer",
+        "$structure": "#@configuration"
     },
     "configuration": {
         "inherit": "temp/SortedKeymap",

@@ -1,50 +1,15 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "jigsaw_processors"
-        },
-        "structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "key_structure": {"type": "String"},
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "processor",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "behavior_packs"
-    },
-    "behavior_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "behavior pack",
-            "measure_length": true
-        },
-        "normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "file"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "jigsaw_processors",
+        "$files_key_structure": "temp/string",
+        "$file_field": "processor",
+        "$pack_type": "behavior pack",
+        "$structure": "#@file"
     },
     "file": {
         "type": "Keymap",
@@ -89,19 +54,24 @@
         "value_structure": "processor"
     },
     "processor": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_value",
             "arguments": {
                 "key": "processor_type"
             }
         },
-        "delegate_arguments": {
-            "passthrough": true
-        },
-        "keys": {
-            "minecraft:capped": {"types": "dict", "structure": "processor.capped"},
-            "minecraft:rule": {"types": "dict", "structure": "processor.rule"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "passthrough": true
+            },
+            "keys": {
+                "minecraft:capped": {"types": "dict", "structure": "processor.capped"},
+                "minecraft:rule": {"types": "dict", "structure": "processor.rule"}
+            }
         }
     },
     "processor.capped": {
@@ -171,19 +141,24 @@
         }
     },
     "predicate": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "passthrough": true
-        },
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_value",
             "arguments": {
                 "key": "predicate_type"
             }
         },
-        "keys": {
-            "minecraft:block_match": {"types": "dict", "structure": "predicate.block_match"},
-            "minecraft:random_block_match": {"types": "dict", "structure": "predicate.random_block_match"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "passthrough": true
+            },
+            "keys": {
+                "minecraft:block_match": {"types": "dict", "structure": "predicate.block_match"},
+                "minecraft:random_block_match": {"types": "dict", "structure": "predicate.random_block_match"}
+            }
         }
     },
     "predicate.block_match": {
@@ -202,18 +177,23 @@
         }
     },
     "block_entity_modifier": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "passthrough": true
-        },
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_value",
             "arguments": {
                 "key": "type"
             }
         },
-        "keys": {
-            "minecraft:append_loot": {"types": "dict", "structure": "block_entity_modifier.append_loot"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "passthrough": true
+            },
+            "keys": {
+                "minecraft:append_loot": {"types": "dict", "structure": "block_entity_modifier.append_loot"}
+            }
         }
     },
     "block_entity_modifier.append_loot": {

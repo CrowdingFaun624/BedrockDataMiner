@@ -1,50 +1,17 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "structures_nbt"
-        },
-        "this_types": "dict",
-        "structure": "structures"
-    },
-    "structures": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "measure_length": true,
-            "sort": "sort_by_key",
-            "field": "structure"
-        },
-        "value_types": "dict",
-        "value_structure": "behavior_packs"
-    },
-    "behavior_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "behavior pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "TAG_Compound",
-        "normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "TAG_Compound",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/nbt_big",
-            "file_types": "file",
-            "content_types": "TAG_Compound",
-            "structure": "structure"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "structures_nbt",
+        "$file_field": "structure",
+        "$pack_type": "behavior pack",
+        "$serializer": "#@minecraft_common!s/nbt_big",
+        "$types": "TAG_Compound",
+        "$structure": "#@structure"
     },
     "vector_tag_int": {
         "type": "Dict",
@@ -89,36 +56,40 @@
             "size": {"types": "TAG_List", "structure": "vector_tag_int", "delegate_arguments": {"always_print": true}},
             "version": {"types": "TAG_Int"},
             "entities": {"types": "TAG_List", "structure": "entities"},
-            "blocks": {"types": "dict", "structure": "blocks"}
+            "blocks": {"types": "TAG_List", "structure": "blocks"}
         }
     },
     "blocks": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "TAG_List",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "minecraft_common!normalizers/volume_normalize_nbt volume_normalize_nbt",
             "arguments": {
                 "position_key": "pos",
                 "state_key": "state"
             }
         },
-        "delegate": "minecraft_common!VolumeDelegate",
-        "delegate_arguments": {
-            "field": "block"
-        },
-        "pre_normalized_types": "TAG_List",
-        "keys": {
-            "states": {"types": "dict", "structure": "volume_states"},
-            "data": {"types": "dict", "structure": "volume_additional_data"},
-            "size": {"types": "tuple", "structure": {
-                "type": "Dict",
-                "allow_key_moves": false,
-                "key_weight": 0,
-                "key_types": "int",
-                "delegate": null,
-                "this_types": "tuple",
-                "value_types": "int",
-                "value_structure": null
-            }}
+        "structure": {
+            "type": "Keymap",
+            "delegate": "minecraft_common!VolumeDelegate",
+            "delegate_arguments": {
+                "field": "block"
+            },
+            "keys": {
+                "states": {"types": "dict", "structure": "volume_states"},
+                "data": {"types": "dict", "structure": "volume_additional_data"},
+                "size": {"types": "tuple", "structure": {
+                    "type": "Dict",
+                    "allow_key_moves": false,
+                    "key_weight": 0,
+                    "key_types": "int",
+                    "delegate": null,
+                    "this_types": "tuple",
+                    "value_types": "int",
+                    "value_structure": null
+                }}
+            }
         }
     },
     "volume_states": {
@@ -133,13 +104,12 @@
         "type": "Dict",
         "allow_key_moves": false,
         "key_types": "tuple",
-        "value_types": "TAG_Compound",
+        "value_types": "dict",
         "delegate": null,
         "value_structure": "block"
     },
     "block": {
         "type": "Keymap",
-        "this_types": "TAG_Compound",
         "keys": {
             "nbt": {"types": "TAG_Compound", "structure": "block_nbt"}
         }
@@ -287,10 +257,10 @@
             "target": {"types": "TAG_String"},
             "target_cooldown_length": {"types": "TAG_Int", "tags": ["t/outdated"]},
             "target_pool": {"types": "TAG_String"},
-            "Text1": {"types": "dict", "structure": "nbt:text"},
-            "Text2": {"types": "dict", "structure": "nbt:text"},
-            "Text3": {"types": "dict", "structure": "nbt:text"},
-            "Text4": {"types": "dict", "structure": "nbt:text"},
+            "Text1": {"types": "TAG_String", "structure": "nbt:text"},
+            "Text2": {"types": "TAG_String", "structure": "nbt:text"},
+            "Text3": {"types": "TAG_String", "structure": "nbt:text"},
+            "Text4": {"types": "TAG_String", "structure": "nbt:text"},
             "ticks_between_spawn": {"types": "TAG_Int", "tags": ["t/outdated"]},
             "total_mobs": {"types": "TAG_Float", "tags": ["t/outdated"]},
             "total_mobs_added_per_player": {"types": "TAG_Float", "tags": ["t/outdated"]},
@@ -586,13 +556,17 @@
         }
     },
     "nbt:text": {
-        "type": "Keymap",
-        "pre_normalized_types": "TAG_String",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "TAG_String",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "load_json"
         },
-        "keys": {
-            "text": {"types": "str"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "text": {"types": "str"}
+            }
         }
     },
     "entity_nbt": {

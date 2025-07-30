@@ -1,51 +1,34 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "shaders"
-        },
-        "this_types": "dict",
-        "structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "list",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "file"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "list",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "s/text_serializer",
-            "file_types": "file",
-            "content_types": "list",
-            "structure": "lines"
-        }
+        "inherit": "temp/base_multiple_files",
+        "$name": "shaders",
+        "$types": "str",
+        "$serializer": "#@s/text_serializer",
+        "$structure": "#@lines"
     },
     "lines": {
-        "type": "Sequence",
-        "max_square_length": 500000,
-        "pre_normalized_types": "str",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "str",
+        "inner_types": "list",
+        "functions": {
             "function_name": "split_lines"
         },
-        "value_types": "str",
-        "delegate": "LongStringDelegate",
-        "delegate_arguments": {
-            "measure_length": true
-        },
-        "value_structure": {
-            "type": "String",
-            "max_square_length": 100000
+        "structure": {
+            "type": "Sequence",
+            "max_square_length": 500000,
+            "value_types": "str",
+            "delegate": "LongStringDelegate",
+            "delegate_arguments": {
+                "measure_length": true
+            },
+            "value_structure": {
+                "type": "String",
+                "max_square_length": 100000
+            }
         }
     }
 }

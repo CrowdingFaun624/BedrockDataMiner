@@ -1,7 +1,8 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
         "type": "StructureBase",
@@ -10,10 +11,6 @@
         },
         "this_types": "dict",
         "structure": "loot_tables"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
     },
     "loot_tables": {
         "type": "Dict",
@@ -24,27 +21,25 @@
         },
         "value_types": "dict",
         "allow_key_moves": false,
-        "key_structure": {
-            "type": "String",
-            "similarity_function": "normalizers/normalizers remove_file_suffix"
-        },
+        "key_structure": "temp/string_remove_file_suffix",
         "value_structure": "behavior_packs"
     },
     "behavior_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "behavior pack"
-        },
-        "post_normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "value_structure": "cache"
-    },
-    "empty": {
-        "type": "Keymap",
-        "keys": {}
+        "structure": {
+            "type": "Dict",
+            "value_types": "file",
+            "delegate_arguments": {
+                "sort": "sort_by_key",
+                "field": "behavior pack"
+            },
+            "value_structure": "cache"
+        }
     },
     "range_decimal": {
         "type": "Keymap",
@@ -52,14 +47,14 @@
             "print_all": true
         },
         "keys": {
-            "max": {"types": "decimal"},
-            "min": {"types": "decimal"}
+            "max": {"types": "temp/decimal"},
+            "min": {"types": "temp/decimal"}
         }
     },
     "range_decimal_or_decimal": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "dict": "range_decimal"
         }
     },
@@ -103,24 +98,22 @@
     },
     "cache": {
         "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
             "type": "Condition",
-            "pre_normalized_types": "file",
             "substructures": [
-                {"types": "dict", "filter": {"type": "EqFilter", "key": "needs_repair", "value": true}, "structure": {
+                {"types": "file", "filter": {"type": "EqFilter", "key": "needs_repair", "value": true}, "structure": {
                     "type": "File",
                     "serializer": "s/loot_tables_repairable_json",
-                    "file_types": "file",
-                    "content_types": "dict",
+                    "outer_types": "file",
+                    "inner_types": "dict",
                     "structure": "loot_table"
                 }},
-                {"types": "dict", "filter": null, "structure": { // in all other cases.
+                {"types": "file", "filter": null, "structure": { // in all other cases.
                     "type": "File",
                     "serializer": "minecraft_common!s/json",
-                    "file_types": "file",
-                    "content_types": "dict",
+                    "outer_types": "file",
+                    "inner_types": "dict",
                     "structure": "loot_table"
                 }}
             ]
@@ -153,18 +146,18 @@
     "pool": {
         "type": "Keymap",
         "keys": {
-            "bonus_rolls": {"types": "decimal"},
-            "conditions": {"types": "dict", "structure": "conditions"},
+            "bonus_rolls": {"types": "temp/decimal"},
+            "conditions": {"types": "list", "structure": "conditions"},
             "entries": {"types": "list", "structure": "entries"},
-            "functions": {"types": "dict", "structure": "functions"},
-            "rolls": {"types": ["decimal", "dict"], "structure": "range_decimal_or_decimal"},
+            "functions": {"types": "list", "structure": "functions"},
+            "rolls": {"types": ["temp/decimal", "dict"], "structure": "range_decimal_or_decimal"},
             "tiers": {"types": "dict", "structure": "tiers"}
         }
     },
     "tiers": {
         "type": "Keymap",
         "keys": {
-            "bonus_chance": {"types": "decimal"},
+            "bonus_chance": {"types": "temp/decimal"},
             "bonus_rolls": {"types": "int"},
             "initial_range": {"types": "int"}
         }
@@ -187,9 +180,9 @@
         "keys": {
             "aux_val": {"types": "int"},
             "auxVal": {"types": "int"},
-            "conditions": {"types": "dict", "structure": "conditions"},
+            "conditions": {"types": "list", "structure": "conditions"},
             "count": {"types": "int", "delegate_arguments": {"always_print": true}},
-            "functions": {"types": "dict", "structure": "functions"},
+            "functions": {"types": "list", "structure": "functions"},
             "name": {"types": "str", "delegate_arguments": {"always_print": true}},
             "pools": {"types": "list", "structure": "pools"},
             "quality": {"types": "int"},
@@ -198,19 +191,24 @@
         }
     },
     "functions": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "field": "function",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "function",
                 "delete": true
             }
+        },
+        "structure": "functions_dict"
+    },
+    "functions_dict": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "function",
+            "sort": "sort_by_key",
+            "measure_length": true
         },
         "keys": {
             "enchant_book_for_trading": {"types": "dict", "structure": "function.enchant_book_for_trading"},
@@ -226,12 +224,12 @@
             "minecraft:set_count": {"types": "dict", "structure": "function.set_count"},
             "minecraft:set_damage": {"types": "dict", "structure": "function.set_damage"},
             "minecraft:set_data": {"types": "dict", "structure": "function.set_data"},
-            "minecraft:set_data_from_color_index": {"types": "dict", "structure": "empty"},
+            "minecraft:set_data_from_color_index": {"types": "dict", "structure": "temp/empty"},
             "minecraft:set_potion": {"types": "dict", "structure": "function.set_potion"},
             "minecraft:set_stew_effect": {"types": "dict", "structure": "function.set_stew_effect"},
             "random_aux_value": {"types": "dict", "structure": "function.random_aux_value"},
             "random_block_state": {"types": "dict", "structure": "function.random_block_state"},
-            "random_dye": {"types": "dict", "structure": "empty"},
+            "random_dye": {"types": "dict", "structure": "temp/empty"},
             "set_actor_id": {"types": "dict", "structure": "function.set_actor_id"},
             "set_armor_trim": {"types": "dict", "structure": "function.set_armor_trim"},
             "set_banner_details": {"types": "dict", "structure": "function.set_banner_details"},
@@ -244,7 +242,7 @@
             "set_ominous_bottle_amplifier": {"types": "dict", "structure": "function.set_ominous_bottle_amplifier"},
             "set_potion": {"types": "dict", "structure": "function.set_potion"},
             "specific_enchants": {"types": "dict", "structure": "function.specific_enchants"},
-            "trader_material_type": {"types": "dict", "structure": "empty"}
+            "trader_material_type": {"types": "dict", "structure": "temp/empty"}
         }
     },
     "function.enchant_book_for_trading": {
@@ -280,7 +278,7 @@
     "function.enchant_random_gear": {
         "type": "Keymap",
         "keys": {
-            "chance": {"types": "decimal"}
+            "chance": {"types": "temp/decimal"}
         }
     },
     "function.enchant_randomly": {
@@ -292,7 +290,7 @@
     "function.enchant_with_levels": {
         "type": "Keymap",
         "keys": {
-            "levels": {"types": ["decimal", "dict"], "structure": "range_decimal_or_decimal", "delegate_arguments": {"always_print": true}},
+            "levels": {"types": ["temp/decimal", "dict"], "structure": "range_decimal_or_decimal", "delegate_arguments": {"always_print": true}},
             "treasure": {"types": "bool"}
         }
     },
@@ -312,7 +310,7 @@
     "function.furnace_smelt": {
         "type": "Keymap",
         "keys": {
-            "conditions": {"types": "dict", "structure": "conditions"}
+            "conditions": {"types": "list", "structure": "conditions"}
         }
     },
     "function.looting_enchant": {
@@ -379,7 +377,7 @@
         "type": "Keymap",
         "keys": {
             "add": {"types": "bool"},
-            "count": {"types": ["dict", "decimal"], "structure": "range_decimal_or_decimal"}
+            "count": {"types": ["dict", "temp/decimal"], "structure": "range_decimal_or_decimal"}
         }
     },
     "function.set_damage": {
@@ -499,18 +497,23 @@
         }
     },
     "conditions": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "condition"
-        },
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "condition",
                 "delete": true
             }
+        },
+        "structure": "conditions_dict"
+    },
+    "conditions_dict": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "sort": "sort_by_key",
+            "field": "condition"
         },
         "keys": {
             "damaged_by_entity": {"types": "dict", "structure": "condition.damaged_by_entity"},
@@ -519,8 +522,8 @@
             "has_mark_variant": {"types": "dict", "structure": "condition.has_mark_variant"},
             "has_variant": {"types": "dict", "structure": "condition.has_variant"},
             "killed_by_entity": {"types": "dict", "structure": "condition.killed_by_entity"},
-            "killed_by_player": {"types": "dict", "structure": "empty"},
-            "killed_by_player_or_pets": {"types": "dict", "structure": "empty"},
+            "killed_by_player": {"types": "dict", "structure": "temp/empty"},
+            "killed_by_player_or_pets": {"types": "dict", "structure": "temp/empty"},
             "match_tool": {"types": "dict", "structure": "condition.match_tool"},
             "random_chance": {"types": "dict", "structure": "condition.random_chance"},
             "random_chance_with_looting": {"types": "dict", "structure": "condition.random_chance_with_looting"},
@@ -639,35 +642,35 @@
     "condition.random_chance": {
         "type": "Keymap",
         "keys": {
-            "chance": {"types": "decimal"}
+            "chance": {"types": "temp/decimal"}
         }
     },
     "condition.random_chance_with_looting": {
         "type": "Keymap",
         "keys": {
-            "chance": {"types": "decimal"},
-            "looting_multiplier": {"types": "decimal"}
+            "chance": {"types": "temp/decimal"},
+            "looting_multiplier": {"types": "temp/decimal"}
         }
     },
     "condition.random_chance_with_moon_crap": {
         "type": "Keymap",
         "keys": {
-            "chance": {"types": "decimal"}
+            "chance": {"types": "temp/decimal"}
         }
     },
     "condition.random_difficulty_chance": {
         "type": "Keymap",
         "keys": {
-            "default_chance": {"types": "decimal", "delegate_arguments": {"always_print": true}},
-            "easy": {"types": "decimal"},
-            "hard": {"types": "decimal"},
-            "peaceful": {"types": "decimal"}
+            "default_chance": {"types": "temp/decimal", "delegate_arguments": {"always_print": true}},
+            "easy": {"types": "temp/decimal"},
+            "hard": {"types": "temp/decimal"},
+            "peaceful": {"types": "temp/decimal"}
         }
     },
     "condition.random_regional_difficulty_chance": {
         "type": "Keymap",
         "keys": {
-            "max_chance": {"types": "decimal"}
+            "max_chance": {"types": "temp/decimal"}
         }
     }
 }

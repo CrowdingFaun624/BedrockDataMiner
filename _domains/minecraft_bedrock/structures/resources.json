@@ -1,48 +1,19 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "resources"
-        },
-        "this_types": "dict",
-        "structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "s/resources_repairable_json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "file"
-        }
-    },
-    "string": {
-        "type": "String"
+        "inherit": "temp/base_pack_files",
+        "$name": "resources",
+        "$pack_type": "resource pack",
+        "$structure": "#@file"
     },
     "file": {
         "type": "Keymap",
         "imports": "categories",
         "keys": {
-            "pack_id": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "pack_id": {"types": "str", "structure": "temp/string", "delegate_arguments": {"always_print": true}},
             "name": {"types": "str"},
             "description": {"types": "str"},
             "key_art_path": {"types": "str"},
@@ -67,7 +38,7 @@
     "screenshot": {
         "type": "Keymap",
         "keys": {
-            "path": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}}
+            "path": {"types": "str", "structure": "temp/string", "delegate_arguments": {"always_print": true}}
         }
     },
     "categories": {
@@ -89,8 +60,8 @@
             "field": "resource",
             "measure_length": true
         },
-        "value_structure": "string",
-        "key_structure": "string"
+        "value_structure": "temp/string",
+        "key_structure": "temp/string"
     },
     "skins": {
         "type": "Dict",
@@ -99,7 +70,7 @@
             "field": "skin",
             "measure_length": true
         },
-        "value_structure": "string",
-        "key_structure": "string"
+        "value_structure": "temp/string",
+        "key_structure": "temp/string"
     }
 }

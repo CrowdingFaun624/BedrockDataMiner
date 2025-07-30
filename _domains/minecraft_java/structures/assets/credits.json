@@ -6,45 +6,16 @@
         "s": "serializers"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "credits"
-        },
-        "structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "list",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "pre_normalized_types": "file",
-        "this_types": "list",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "list",
-            "structure": "sections"
-        }
+        "inherit": "temp/base_pack_files",
+        "$name": "credits",
+        "$pack_type": "resource pack",
+        "$types": "list",
+        "$structure": "#@sections"
     },
     "sections": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
+        "inherit": "temp/Set",
+        "$field": "section",
         "value_types": "dict",
-        "delegate_arguments": {
-            "field": "section",
-            "show_item_key": false,
-            "measure_length": true
-        },
         "value_structure": "section"
     },
     "section": {
@@ -56,16 +27,9 @@
         }
     },
     "disciplines": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
+        "inherit": "temp/Set",
+        "$field": "discipline",
         "value_types": "dict",
-        "delegate_arguments": {
-            "field": "discipline",
-            "show_item_key": false,
-            "measure_length": true
-        },
         "value_structure": "discipline"
     },
     "discipline": {
@@ -76,16 +40,9 @@
         }
     },
     "titles": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
+        "inherit": "temp/Set",
+        "$field": "title",
         "value_types": "dict",
-        "delegate_arguments": {
-            "field": "title",
-            "show_item_key": false,
-            "measure_length": true
-        },
         "value_structure": "title"
     },
     "title": {

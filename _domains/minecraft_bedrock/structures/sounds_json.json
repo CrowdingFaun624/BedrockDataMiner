@@ -1,6 +1,7 @@
 {
     "group_aliases": {
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
         "type": "StructureBase",
@@ -10,23 +11,23 @@
         "this_types": "dict",
         "structure": "cache"
     },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["int", "float"]
-    },
     "cache": {
         "type": "Cache",
         "this_types": "dict",
         "structure": {
-            "type": "File",
-            "serializer": null,
-            "pre_normalized_types": "dict",
-            "file_types": "fake_file",
-            "content_types": "dict",
-            "normalizers": {
+            "type": "Normalizer",
+            "outer_types": "dict",
+            "inner_types": "fake_file",
+            "functions": {
                 "function_name": "normalizers/sounds_json_normalize"
             },
-            "structure": "categories"
+            "structure": {
+                "type": "File",
+                "serializer": null,
+                "outer_types": "fake_file",
+                "inner_types": "dict",
+                "structure": "categories"
+            }
         }
     },
     "categories": {
@@ -103,11 +104,10 @@
         "value_structure": "interactive_collection"
     },
     "collection": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "normalizers": [
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": [
             {
                 "function_name": "delete_key_if_empty",
                 "arguments": {
@@ -118,19 +118,27 @@
                 "function_name": "normalizers/normalizers delete_variants_if_empty"
             }
         ],
-        "keys": {
-            "base": {"types": "dict", "structure": "packs_base"},
-            "volume": {"types": "dict", "structure": "packs_volume"},
-            "pitch": {"types": "dict", "structure": "packs_pitch"},
-            "events": {"types": "dict", "structure": "events"},
-            "variants": {"types": "dict", "structure": "variants"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "base": {"types": "dict", "structure": "packs_base"},
+                "volume": {"types": "dict", "structure": "packs_volume"},
+                "pitch": {"types": "dict", "structure": "packs_pitch"},
+                "events": {"types": "dict", "structure": "events"},
+                "variants": {"types": "dict", "structure": "variants"}
+            }
         }
     },
     "flat_collection": {
-        "type": "Keymap",
-        "normalizers": [
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": [
             {
-                "function_name": "delete_required_keys",
+                "function_name": "delete_keys",
                 "arguments": {
                     "keys": ["volume", "pitch", "variants"]
                 }
@@ -142,17 +150,19 @@
                 }
             }
         ],
-        "keys": {
-            "base": {"types": "dict", "structure": "packs_base"},
-            "events": {"types": "dict", "structure": "events"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "base": {"types": "dict", "structure": "packs_base"},
+                "events": {"types": "dict", "structure": "events"}
+            }
         }
     },
     "interactive_collection": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "normalizers": [
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": [
             {
                 "function_name": "delete_key_if_empty",
                 "arguments": {
@@ -163,12 +173,18 @@
                 "function_name": "normalizers/normalizers delete_variants_if_empty"
             }
         ],
-        "keys": {
-            "base": {"types": "dict", "structure": "packs_base"},
-            "volume": {"types": "dict", "structure": "packs_volume"},
-            "pitch": {"types": "dict", "structure": "packs_pitch"},
-            "events": {"types": "dict", "structure": "interactive_events"},
-            "variants": {"types": "dict", "structure": "variants"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "base": {"types": "dict", "structure": "packs_base"},
+                "volume": {"types": "dict", "structure": "packs_volume"},
+                "pitch": {"types": "dict", "structure": "packs_pitch"},
+                "events": {"types": "dict", "structure": "interactive_events"},
+                "variants": {"types": "dict", "structure": "variants"}
+            }
         }
     },
     "packs_base": {
@@ -186,7 +202,7 @@
             "field": "resource pack",
             "measure_length": true
         },
-        "value_types": ["decimal", "list"],
+        "value_types": ["temp/decimal", "list"],
         "value_structure": "volume_group"
     },
     "packs_pitch": {
@@ -195,7 +211,7 @@
             "field": "resource pack",
             "measure_length": true
         },
-        "value_types": ["decimal", "list"],
+        "value_types": ["temp/decimal", "list"],
         "value_structure": "pitch_group"
     },
     "events": {
@@ -222,7 +238,7 @@
             "field": "resource pack",
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": ["dict", "str"],
         "value_structure": "event"
     },
     "packs_interactive": {
@@ -240,13 +256,14 @@
             "field": "situation",
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": ["dict", "str"],
         "value_structure": "event"
     },
     "event": {
-        "type": "Keymap",
-        "pre_normalized_types": ["str", "dict"],
-        "normalizers": [
+        "type": "Normalizer",
+        "outer_types": ["str", "dict"],
+        "inner_types": "dict",
+        "functions": [
             {
                 "function_name": "normalizers/normalizers sounds_json_make_strings_to_dict"
             },
@@ -258,20 +275,23 @@
                 }
             },
             {
-                "function_name": "delete_optional_keys",
+                "function_name": "delete_keys",
                 "arguments": {
                     "keys": ["ambient", "hurt", "death", "place"]
                 }
             }
         ],
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "keys": {
-            "sound": {"types": "str", "similarity_weight": 20, "delegate_arguments": {"always_print": true}},
-            "attenuation_distance": {"types": "int", "tags": ["t/outdated"]},
-            "volume": {"types": ["decimal", "list"], "structure": "volume_group"},
-            "pitch": {"types": ["decimal", "list"], "structure": "pitch_group"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "sound": {"types": "str", "similarity_weight": 20, "delegate_arguments": {"always_print": true}},
+                "attenuation_distance": {"types": "int", "tags": ["t/outdated"]},
+                "volume": {"types": ["temp/decimal", "list"], "structure": "volume_group"},
+                "pitch": {"types": ["temp/decimal", "list"], "structure": "pitch_group"}
+            }
         }
     },
     "variants": {
@@ -305,14 +325,14 @@
     "volume_group": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "list": {
                 "type": "Dict",
                 "allow_key_moves": false,
                 "key_weight": 0,
                 "key_types": "int",
                 "this_types": "list",
-                "value_types": "decimal",
+                "value_types": "temp/decimal",
                 "delegate_arguments": {
                     "field": "volume",
                     "print_all": true,
@@ -325,14 +345,14 @@
     "pitch_group": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "list": {
                 "type": "Dict",
                 "allow_key_moves": false,
                 "key_weight": 0,
                 "key_types": "int",
                 "this_types": "list",
-                "value_types": "decimal",
+                "value_types": "temp/decimal",
                 "delegate_arguments": {
                     "field": "pitch",
                     "print_all": true,

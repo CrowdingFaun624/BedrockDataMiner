@@ -1,66 +1,32 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "materials"
-        },
-        "this_types": "dict",
-        "structure": "materials"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
-    "materials": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "material",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "material"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "materials",
+        "$file_field": "material",
+        "$pack_type": "resource pack",
+        "$structure": "#@material"
     },
     "material": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers materials_normalize_material"
         },
-        "delegate_arguments": {
-            "sort": "sort_by_component_order"
-        },
-        "keys": {
-            "version": {"types": "str"},
-            "materials": {"types": "dict", "structure": "material.materials"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order"
+            },
+            "keys": {
+                "version": {"types": "str"},
+                "materials": {"types": "dict", "structure": "material.materials"}
+            }
         }
     },
     "material.materials": {
@@ -92,19 +58,19 @@
             "blendDst": {"types": "str"},
             "blendSrc": {"types": "str"},
             "defines": {"types": "list", "structure": "defines"},
-            "depthBias": {"types": "decimal"},
-            "depthBiasOGL": {"types": "decimal"},
+            "depthBias": {"types": "temp/decimal"},
+            "depthBiasOGL": {"types": "temp/decimal"},
             "depthFunc": {"types": "str"},
             "fragmentShader": {"types": "str"},
             "frontFace": {"types": "dict", "structure": "face"},
             "geometryShader": {"types": "str", "tags": ["t/outdated"]},
             "isAnimatedTexture": {"types": "int"},
             "msaaSupport": {"types": "str"},
-            "polygonOffsetLevel": {"types": "decimal", "tags": ["t/outdated"]},
+            "polygonOffsetLevel": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "primitiveMode": {"types": "str"},
             "samplerStates": {"types": "list", "structure": "sampler_states"},
-            "slopeScaledDepthBias": {"types": "decimal"},
-            "slopeScaledDepthBiasOGL": {"types": "decimal"},
+            "slopeScaledDepthBias": {"types": "temp/decimal"},
+            "slopeScaledDepthBiasOGL": {"types": "temp/decimal"},
             "states": {"types": "list", "structure": "states"},
             "stencilReadMask": {"types": "int"},
             "stencilRef": {"types": "int"},

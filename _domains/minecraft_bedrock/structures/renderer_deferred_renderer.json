@@ -1,32 +1,13 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "renderer_deferred_renderer"
-        },
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": "cache"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "deferred_renderer"
-        }
+        "inherit": "temp/base_single_file",
+        "$name": "renderer_deferred_renderer",
+        "$structure": "#@deferred_renderer"
     },
     "deferred_renderer": {
         "type": "Keymap",
@@ -45,14 +26,14 @@
         },
         "keys": {
             "ambient_light_contribution_multiplier": {"types": "float", "tags": ["t/outdated"]},
-            "block_light_contribution_multiplier": {"types": "decimal", "tags": ["t/outdated"]},
+            "block_light_contribution_multiplier": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "block_light_indirect_contribution_multiplier": {"types": "float"},
             "emissive_brightness_multiplier": {"types": "int"},
             "emissive_desaturation": {"types": "float"},
             "end_ibl_fade_light_level": {"types": "int"},
             "ibl_indirect_contribution_multiplier": {"types": "float"},
             "end_portal_emissive_multiplier": {"types": "float"},
-            "sky_light_contribution_multiplier": {"types": "decimal", "tags": ["t/outdated"]},
+            "sky_light_contribution_multiplier": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "sky_light_indirect_contribution_multiplier": {"types": "float"},
             "start_ibl_fade_light_level": {"types": "int"},
             "volumetric_fog_min_ambient_value": {"types": "float"}

@@ -1,30 +1,12 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "renderer_cloud_configs"
-        },
-        "structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true
-        },
-        "value_structure": "file"
-    },
-    "file": {
-        "type": "File",
-        "file_types": "file",
-        "content_types": "dict",
-        "serializer": "minecraft_common!s/json",
-        "structure": "renderer_cloud_config"
+        "inherit": "temp/base_multiple_files",
+        "$name": "renderer_cloud_configs",
+        "$structure": "#@renderer_cloud_config"
     },
     "renderer_cloud_config": {
         "type": "Keymap",

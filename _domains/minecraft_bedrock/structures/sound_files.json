@@ -18,21 +18,20 @@
             "sort": "sort_by_key",
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": ["dict", "file"],
         "min_value_similarity_threshold": 0.9,
         "value_structure": "cache"
     },
     "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": ["file", "dict"],
-        "normalizers": {
-            "function_name": "normalizers/normalizers open_file",
-            "arguments": {
-                "serializer": "minecraft_bedrock!serializers/sound_files_serializer"
-            }
-        },
-        "structure": "internal_sound_file"
+        "type": "File",
+        "outer_types": ["file", "dict"],
+        "inner_types": "dict",
+        "serializer": "serializers/sound_files_serializer",
+        "structure": {
+            "type": "Cache",
+            "this_types": "dict",
+            "structure": "internal_sound_file"
+        }
     },
     "internal_sound_file": {
         "type": "Dict",
@@ -45,24 +44,29 @@
         "value_structure": "sound_property"
     },
     "sound_property": {
-        "type": "Keymap",
-        "delegate_arguments": {
-            "sort": "sort_by_component_order",
-            "field": "property"
-        },
-        "normalizers": {
-            "function_name": "delete_required_keys",
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
+            "function_name": "delete_keys",
             "arguments": {
                 "keys": ["_obj", "filepath"]
             }
         },
-        "keys": {
-            "sha1_hash": {"types": "str", "similarity_weight": 16, "delegate_arguments": {"always_print": true}, "required": true, "tags": ["t/file_hash_tag"]},
-            "filesize": {"types": "int"},
-            "pictures": {"types": "list", "structure": "pictures"},
-            "tags": {"types": "dict", "structure": "tags"},
-            "_subchunks": {"types": "list", "structure": "subchunks"},
-            "streaminfo": {"types": "dict", "structure": "streaminfo"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order",
+                "field": "property"
+            },
+            "keys": {
+                "sha1_hash": {"types": "str", "similarity_weight": 16, "delegate_arguments": {"always_print": true}, "required": true, "tags": ["t/file_hash_tag"]},
+                "filesize": {"types": "int"},
+                "pictures": {"types": "list", "structure": "pictures"},
+                "tags": {"types": "dict", "structure": "tags"},
+                "_subchunks": {"types": "list", "structure": "subchunks"},
+                "streaminfo": {"types": "dict", "structure": "streaminfo"}
+            }
         }
     },
     "pictures": {

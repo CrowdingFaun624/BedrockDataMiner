@@ -1,22 +1,13 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "delegate_arguments": {
-            "name": "tiers_bin"
-        },
-        "structure": "file"
-    },
-    "file": {
-        "type": "File",
-        "serializer": "s/tiers_bin_serializer",
-        "file_types": "file",
-        "content_types": "dict",
-        "structure": "tiers_bin"
+        "inherit": "temp/base_single_file",
+        "$name": "tiers_bin",
+        "$serializer": "#@s/tiers_bin_serializer",
+        "$structure": "#@tiers_bin"
     },
     "tiers_bin": {
         "type": "Keymap",
@@ -30,7 +21,7 @@
             "type": "String"
         },
         "min_key_similarity_threshold": 0.3,
-        "value_types": "dict",
+        "value_types": ["int", "dict"],
         "value_structure": "gpu",
         "delegate_arguments": {
             "field": "gpu",
@@ -38,14 +29,18 @@
         }
     },
     "gpu": {
-        "type": "Keymap",
-        "pre_normalized_types": ["int", "dict"],
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": ["int", "dict"],
+        "inner_types": "dict",
+        "functions": {
             "function_name": "normalizers/normalizers tiers_bin_normalize_gpu"
         },
-        "keys": {
-            "tier": {"types": "int"},
-            "hash": {"types": "int"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "tier": {"types": "int"},
+                "hash": {"types": "int"}
+            }
         }
     }
 }

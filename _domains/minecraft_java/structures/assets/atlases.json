@@ -5,42 +5,10 @@
         "s": "serializers"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "atlases"
-        },
-        "structure": "resource_packs"
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true
-        },
-        "value_structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "file_types": "file",
-            "content_types": "dict",
-            "serializer": "minecraft_common!s/json",
-            "structure": "root"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "atlases",
+        "$pack_type": "resource pack",
+        "$structure": "#@root"
     },
     "root": {
         "inherit": "temp/SortedKeymap",

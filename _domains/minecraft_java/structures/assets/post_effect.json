@@ -6,46 +6,10 @@
         "t": "structure_tags"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "post_effect"
-        },
-        "structure": "resource_packs"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "measure_length": true
-        },
-        "value_structure": "files"
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "file",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "root"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "post_effect",
+        "$pack_type": "resource pack",
+        "$structure": "#@root"
     },
     "vector_decimal": {
         "type": "Dict",
@@ -53,7 +17,7 @@
         "key_weight": 0,
         "key_types": "int",
         "this_types": "list",
-        "value_types": "decimal",
+        "value_types": "misc/decimal",
         "delegate_arguments": {
             "print_all": true,
             "print_flat": true,
@@ -182,7 +146,7 @@
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
-            "value": {"types": "decimal"},
+            "value": {"types": "misc/decimal"},
             "values": {"types": "list", "structure": "vector_decimal", "tags": "t/outdated"}
         }
     },

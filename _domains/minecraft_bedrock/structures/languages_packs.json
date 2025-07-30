@@ -1,35 +1,22 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "languages"
-        },
-        "this_types": "dict",
-        "structure": "packs"
+        "inherit": "temp/base_pack_files",
+        "$name": "languages_packs",
+        "$types": "list",
+        "$structure": "#@languages"
     },
-    "packs": {
-        "type": "Dict",
-        "value_types": "list",
-        "value_structure": "cache",
-        "delegate_arguments": {
-            "sort": "sort_by_key"
-        },
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        }
-    },
-    "cache": {
+    "cache": { // for other Groups
         "type": "Cache",
-        "this_types": "list",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
             "type": "File",
             "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "list",
+            "outer_types": "file",
+            "inner_types": "list",
             "structure": "languages"
         }
     },

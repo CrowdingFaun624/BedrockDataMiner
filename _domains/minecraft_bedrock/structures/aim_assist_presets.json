@@ -1,39 +1,13 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "this_types": "dict",
-        "delegate_arguments": {
-            "name": "aim_assist_presets"
-        },
-        "structure": "behavior_packs"
-    },
-    "behavior_packs": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "behavior pack",
-            "measure_length": true,
-            "sort": "sort_by_key"
-        },
-        "normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        },
-        "value_types": "dict",
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "preset"
-        }
+        "inherit": "temp/base_pack_files",
+        "$name": "aim_assist_presets",
+        "$pack_type": "behavior pack",
+        "$structure": "#@preset"
     },
     "string_remove_minecraft": {
         "type": "String",

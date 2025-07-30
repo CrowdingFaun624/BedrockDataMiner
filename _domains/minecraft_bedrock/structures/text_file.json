@@ -7,54 +7,55 @@
         "delegate_arguments": {
             "name": "text_file"
         },
-        "this_types": "list",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "this_types": "list",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
             "type": "Condition",
-            "pre_normalized_types": "file",
             "substructures": [
-                {"types": "list", "filter": {"type": "EqFilter", "key": "serializer", "value": "text_serializer"}, "structure": {
+                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "text_serializer"}, "structure": {
                     "type": "File",
                     "serializer": "s/text_serializer",
-                    "file_types": "file",
-                    "content_types": "list",
+                    "outer_types": "file",
+                    "inner_types": "str",
                     "structure": "lines"
                 }},
-                {"types": "list", "filter": {"type": "EqFilter", "key": "serializer", "value": "javascript_serializer"}, "structure": {
+                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "javascript_serializer"}, "structure": {
                     "type": "File",
                     "serializer": "s/javascript_serializer",
-                    "file_types": "file",
-                    "content_types": "list",
+                    "outer_types": "file",
+                    "inner_types": "str",
                     "structure": "lines"
                 }},
-                {"types": "list", "filter": {"type": "EqFilter", "key": "serializer", "value": "css_serializer"}, "structure": {
+                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "css_serializer"}, "structure": {
                     "type": "File",
                     "serializer": "s/css_serializer",
-                    "file_types": "file",
-                    "content_types": "list",
+                    "outer_types": "file",
+                    "inner_types": "str",
                     "structure": "lines"
                 }}
             ]
         }
     },
     "lines": {
-        "type": "Sequence",
-        "max_square_length": 1000000000000,
-        "pre_normalized_types": "str",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "str",
+        "inner_types": "list",
+        "functions": {
             "function_name": "split_lines"
         },
-        "value_types": "str",
-        "delegate": "LongStringDelegate",
-        "delegate_arguments": {
-            "measure_length": true
-        },
-        "value_structure": null
+        "structure": {
+            "type": "Sequence",
+            "max_square_length": 1000000000000,
+            "value_types": "str",
+            "delegate": "LongStringDelegate",
+            "delegate_arguments": {
+                "measure_length": true
+            },
+            "value_structure": null
+        }
     }
 }

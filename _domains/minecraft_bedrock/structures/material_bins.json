@@ -26,7 +26,7 @@
     },
     "files": {
         "type": "Dict",
-        "value_types": "dict",
+        "value_types": "file",
         "delegate_arguments": {
             "sort": "sort_by_key",
             "field": "file"
@@ -35,38 +35,36 @@
     },
     "cache": {
         "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
             "type": "Condition",
-            "pre_normalized_types": "file",
             "substructures": [
-                {"types": "dict", "filter": {"type": "EqFilter", "key": "version", "value": "0.9.1"}, "structure": {
+                {"types": "file", "filter": {"type": "EqFilter", "key": "version", "value": "0.9.1"}, "structure": {
                     "type": "File",
                     "serializer": "s/material_bin_serializer_0_9_1",
-                    "file_types": "file",
-                    "content_types": "dict",
+                    "outer_types": "file",
+                    "inner_types": "file", // fileception
                     "structure": "in_file"
                 }},
-                {"types": "dict", "filter": {"type": "EqFilter", "key": "version", "value": "0.9.0"}, "structure": {
+                {"types": "file", "filter": {"type": "EqFilter", "key": "version", "value": "0.9.0"}, "structure": {
                     "type": "File",
                     "serializer": "s/material_bin_serializer_0_9_0",
-                    "file_types": "file",
-                    "content_types": "dict",
+                    "outer_types": "file",
+                    "inner_types": "file",
                     "structure": "in_file"
                 }},
-                {"types": "dict", "filter": {"type": "EqFilter", "key": "version", "value": "0.8.2"}, "structure": {
+                {"types": "file", "filter": {"type": "EqFilter", "key": "version", "value": "0.8.2"}, "structure": {
                     "type": "File",
                     "serializer": "s/material_bin_serializer_0_8_2",
-                    "file_types": "file",
-                    "content_types": "dict",
+                    "outer_types": "file",
+                    "inner_types": "file",
                     "structure": "in_file"
                 }},
-                {"types": "dict", "filter": {"type": "EqFilter", "key": "version", "value": "0.6.0"}, "structure": {
+                {"types": "file", "filter": {"type": "EqFilter", "key": "version", "value": "0.6.0"}, "structure": {
                     "type": "File",
                     "serializer": "s/material_bin_serializer_0_6_0",
-                    "file_types": "file",
-                    "content_types": "dict",
+                    "outer_types": "file",
+                    "inner_types": "file",
                     "structure": "in_file"
                 }}
             ]
@@ -76,8 +74,8 @@
         // MaterialBinSerializer returns another file containing many many references to other files.
         "type": "File",
         "serializer": "s/custom_json",
-        "file_types": "file",
-        "content_types": "dict",
+        "outer_types": "file",
+        "inner_types": "dict",
         "structure": "file"
     },
     "file": {
@@ -86,19 +84,18 @@
             "sort": "sort_by_component_order"
         },
         "keys": {
-            "data": {"types": "dict", "structure": "cache_main_data_file"},
+            "data": {"types": "file", "structure": "cache_main_data_file"},
             "passes": {"types": "dict", "structure": "passes"}
         }
     },
     "cache_main_data_file": {
         "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
             "type": "File",
             "serializer": "s/custom_json",
-            "file_types": "file",
-            "content_types": "dict",
+            "outer_types": "file",
+            "inner_types": "dict",
             "structure": "main_data_file"
         }
     },
@@ -205,25 +202,24 @@
             "sort": "sort_by_component_order"
         },
         "keys": {
-            "pass_info": {"types": "dict", "structure": "cache_pass_info"},
+            "pass_info": {"types": "file", "structure": "cache_pass_info"},
             "glsl_files": {"types": "dict", "structure": "glsl_files"}
         }
     },
     "cache_pass_info": {
         "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
+        "this_types": "file",
         "structure": {
             "type": "File",
             "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
+            "outer_types": "file",
+            "inner_types": "dict",
             "structure": "pass_info"
         }
     },
     "glsl_files": {
         "type": "Dict",
-        "value_types": "list",
+        "value_types": "file",
         "key_structure": {
             "type": "String"
         },
@@ -232,13 +228,12 @@
         },
         "value_structure": {
             "type": "Cache",
-            "this_types": "list",
-            "pre_normalized_types": "file",
+            "this_types": "file",
             "structure": {
                 "type": "File",
                 "serializer": "s/text_serializer",
-                "file_types": "file",
-                "content_types": "list",
+                "outer_types": "file",
+                "inner_types": "str",
                 "structure": "structures/text_file/lines"
             }
         }
@@ -297,26 +292,30 @@
         "keys": {
             "isSupported": {"types": "bool"},
             "flags": {"types": "dict", "structure": "flag_values"},
-            "flagModeList": {"types": "dict", "structure": "flag_mode_list"},
+            "flagModeList": {"types": "list", "structure": "flag_mode_list"},
             "shaderCodes": {"types": "list", "structure": "shader_codes_list"}
         }
     },
     "flag_mode_list": {
-        "type": "Dict",
-        "value_types": "str",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "turn_to_dict",
             "arguments": {
                 "key_key": "key",
                 "value_key": "value"
             }
         },
-        "delegate_arguments": {
-            "field": "flag mode",
-            "measure_length": true
-        },
-        "value_structure": null
+        "structure": {
+            "type": "Dict",
+            "value_types": "str",
+            "delegate_arguments": {
+                "field": "flag mode",
+                "measure_length": true
+            },
+            "value_structure": null
+        }
     },
     "shader_codes_list": {
         "type": "Dict",
@@ -393,25 +392,29 @@
         "keys": {
             "magic": {"types": "int"},
             "hash": {"types": "int"},
-            "uniforms": {"types": "dict", "structure": "uniforms"},
+            "uniforms": {"types": "list", "structure": "uniforms"},
             "codeFile": {"types": "str"}
         }
     },
     "uniforms": {
-        "type": "Dict",
-        "value_types": "dict",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "name",
                 "delete": true
             }
         },
-        "delegate_arguments": {
-            "field": "uniform"
-        },
-        "value_structure": "uniform"
+        "structure": {
+            "type": "Dict",
+            "value_types": "dict",
+            "delegate_arguments": {
+                "field": "uniform"
+            },
+            "value_structure": "uniform"
+        }
     },
     "uniform": {
         "type": "Keymap",

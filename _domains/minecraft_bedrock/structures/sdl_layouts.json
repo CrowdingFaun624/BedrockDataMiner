@@ -1,40 +1,12 @@
 {
     "group_aliases": {
-        "s": "serializers"
+        "s": "serializers",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "sdl_layouts"
-        },
-        "this_types": "dict",
-        "structure": "files"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["int", "float"]
-    },
-    "files": {
-        "type": "Dict",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "file",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_structure": "cache"
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "persona_profile"
-        }
+        "inherit": "temp/base_multiple_files",
+        "$name": "sdl_layouts",
+        "$structure": "#@persona_profile"
     },
     "persona_profile": {
         "type": "Keymap",
@@ -223,8 +195,8 @@
             "font": {"types": "str"},
             "showBackground": {"types": "bool"},
             "showOutline": {"types": "bool"},
-            "indent": {"types": "decimal"},
-            "buttonWidth": {"types": "decimal"},
+            "indent": {"types": "temp/decimal"},
+            "buttonWidth": {"types": "temp/decimal"},
             "color": {"types": "list", "structure": "color"},
             "offerControlIdType": {"types": "str"}
         }
@@ -235,7 +207,7 @@
         "key_weight": 0,
         "key_types": "int",
         "this_types": "list",
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "delegate_arguments": {
             "print_flat": true,
             "print_all": true,
@@ -244,34 +216,39 @@
         "value_structure": null
     },
     "component": {
-        "type": "Keymap",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "dict",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_in_value",
             "arguments": {
                 "key": "type"
             }
         },
-        "delegate_arguments": {
-            "sort": "sort_by_component_order",
-            "passthrough": true
-        },
-        "keys": {
-            "appearanceInteractionComp": {"types": "dict", "structure": "component.appearance_interaction"},
-            "characterSelectComp": {"types": "dict", "structure": "component.character_select"},
-            "colorPickerComp": {"types": "dict", "structure": "component.color_picker"},
-            "dispPreviewPieceComp": {"types": "dict", "structure": "component.disp_preview_piece"},
-            "expandedSkinPackComp": {"types": "dict", "structure": "component.expanded_skin_pack"},
-            "headerComp": {"types": "dict", "structure": "component.header"},
-            "itemListComp": {"types": "dict", "structure": "component.item_list"},
-            "openColorPickerComp": {"types": "dict", "structure": "component.open_color_picker"},
-            "openExpandedAppearanceViewComp": {"types": "dict", "structure": "component.open_expanded_appearance_view"},
-            "pagedItemListComp": {"types": "dict", "structure": "component.paged_item_list"},
-            "personaArmSizeComp": {"types": "dict", "structure": "component.persona_arm_size"},
-            "personaHeightComp": {"types": "dict", "structure": "structure.persona_height"},
-            "personaOfferInteractionComp": {"types": "dict", "structure": "component.persona_offer_interaction"},
-            "skinPackListComp": {"types": "dict", "structure": "component.skin_pack_list"},
-            "skinPackOfferInteractionComp": {"types": "dict", "structure": "component.skin_pack_offer_interaction"},
-            "textureComp": {"types": "dict", "structure": "component.texture"}
+        "structure": {
+            "type": "Keymap",
+            "delegate_arguments": {
+                "sort": "sort_by_component_order",
+                "passthrough": true
+            },
+            "keys": {
+                "appearanceInteractionComp": {"types": "dict", "structure": "component.appearance_interaction"},
+                "characterSelectComp": {"types": "dict", "structure": "component.character_select"},
+                "colorPickerComp": {"types": "dict", "structure": "component.color_picker"},
+                "dispPreviewPieceComp": {"types": "dict", "structure": "component.disp_preview_piece"},
+                "expandedSkinPackComp": {"types": "dict", "structure": "component.expanded_skin_pack"},
+                "headerComp": {"types": "dict", "structure": "component.header"},
+                "itemListComp": {"types": "dict", "structure": "component.item_list"},
+                "openColorPickerComp": {"types": "dict", "structure": "component.open_color_picker"},
+                "openExpandedAppearanceViewComp": {"types": "dict", "structure": "component.open_expanded_appearance_view"},
+                "pagedItemListComp": {"types": "dict", "structure": "component.paged_item_list"},
+                "personaArmSizeComp": {"types": "dict", "structure": "component.persona_arm_size"},
+                "personaHeightComp": {"types": "dict", "structure": "structure.persona_height"},
+                "personaOfferInteractionComp": {"types": "dict", "structure": "component.persona_offer_interaction"},
+                "skinPackListComp": {"types": "dict", "structure": "component.skin_pack_list"},
+                "skinPackOfferInteractionComp": {"types": "dict", "structure": "component.skin_pack_offer_interaction"},
+                "textureComp": {"types": "dict", "structure": "component.texture"}
+            }
         }
     },
     "component.appearance_interaction": {

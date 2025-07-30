@@ -1,31 +1,12 @@
 {
+    "group_aliases": {
+        "temp": "structures/template"
+    },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "attachables_resource_packs"
-        },
-        "this_types": "dict",
-        "structure": "attachables"
-    },
-    "attachables": {
-        "type": "Dict",
-        "value_types": "dict",
-        "value_structure": "resource_packs",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "attachable"
-        }
-    },
-    "resource_packs": {
-        "type": "Dict",
-        "value_types": "dict",
-        "value_structure": "structures/attachables/cache",
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "resource pack"
-        },
-        "post_normalizers": {
-            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
-        }
+        "inherit": "temp/base_multiple_pack_files",
+        "$name": "attachables_resource_packs",
+        "$pack_type": "resource pack",
+        "$file_field": "attachable",
+        "$structure": "#@structures/attachables/attachable"
     }
 }

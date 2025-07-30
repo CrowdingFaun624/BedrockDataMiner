@@ -1,29 +1,14 @@
 {
     "group_aliases": {
         "s": "serializers",
-        "t": "structure_tags"
+        "t": "structure_tags",
+        "temp": "structures/template"
     },
     "base": {
-        "type": "StructureBase",
-        "delegate_arguments": {
-            "name": "features"
-        },
-        "this_types": "dict",
-        "structure": "features"
-    },
-    "decimal": {
-        "type": "TypeAlias",
-        "types": ["float", "int"]
-    },
-    "features": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "feature",
-            "sort": "sort_by_key",
-            "measure_length": true
-        },
-        "value_types": "dict",
-        "value_structure": "cache"
+        "inherit": "temp/base_multiple_files",
+        "$name": "features",
+        "$file_field": "feature",
+        "$structure": "#@feature"
     },
     "block_list": {
         "type": "Dict",
@@ -43,17 +28,14 @@
         "substructures": {
             "dict": "block_reference.dict",
             "list": "block_list",
-            "str": {"type": "String", "similarity_function": "normalizers/normalizers remove_minecraft_prefix"}
+            "str": "temp/string_remove_minecraft_prefix"
         }
     },
     "block_reference": {
         "type": "Union",
         "substructures": {
             "dict": "block_reference.dict",
-            "str": {
-                "type": "String",
-                "similarity_function": "normalizers/normalizers remove_minecraft_prefix"
-            }
+            "str": "temp/string_remove_minecraft_prefix"
         }
     },
     "block_reference.dict": {
@@ -62,7 +44,7 @@
             "sort": "sort_by_component_order"
         },
         "keys": {
-            "name": {"types": "str", "structure": {"type": "String", "similarity_function": "normalizers/normalizers remove_minecraft_prefix"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 5},
+            "name": {"types": "str", "structure": "temp/string_remove_minecraft_prefix", "delegate_arguments": {"always_print": true}, "similarity_weight": 5},
             "states": {"types": "dict", "structure": "block_reference.states"},
             "tags": {"types": "str"}
         }
@@ -131,7 +113,7 @@
         "type": "Union",
         "substructures": {
             "dict": "fraction",
-            "decimal": null
+            "temp/decimal": null
         }
     },
     "fraction_slope": {
@@ -150,10 +132,10 @@
             "print_all": true
         },
         "keys": {
-            "max": {"types": "decimal"},
-            "min": {"types": "decimal"},
-            "range_max": {"types": "decimal"},
-            "range_min": {"types": "decimal"}
+            "max": {"types": "temp/decimal"},
+            "min": {"types": "temp/decimal"},
+            "range_max": {"types": "temp/decimal"},
+            "range_min": {"types": "temp/decimal"}
         }
     },
     "range_dict_int": {
@@ -186,7 +168,7 @@
     "range_decimal_or_decimal_or_molang": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "dict": "range_dict_decimal",
             "str": null
         }
@@ -203,7 +185,7 @@
             "print_all": true,
             "print_flat": true
         },
-        "value_types": "decimal",
+        "value_types": "temp/decimal",
         "value_structure": null
     },
     "range_list_molang": {
@@ -233,18 +215,6 @@
         },
         "value_types": "int",
         "value_structure": null
-    },
-    "cache": {
-        "type": "Cache",
-        "this_types": "dict",
-        "pre_normalized_types": "file",
-        "structure": {
-            "type": "File",
-            "serializer": "minecraft_common!s/json",
-            "file_types": "file",
-            "content_types": "dict",
-            "structure": "feature"
-        }
     },
     "feature": {
         "type": "Keymap",
@@ -319,7 +289,7 @@
             "horizontal_radius_multiplier": {"types": "list", "structure": "range_list_decimal"},
             "skip_carve_chance": {"types": "int"},
             "vertical_radius_multiplier": {"types": "list", "structure": "range_list_decimal"},
-            "width_modifier": {"types": "decimal"},
+            "width_modifier": {"types": "temp/decimal"},
             "y_scale": {"types": "list", "structure": "range_list_decimal"}
         }
     },
@@ -342,10 +312,10 @@
         "keys": {
             "description": {"types": "dict", "structure": "description"},
             "alternate_inner_layer": {"types": "str"},
-            "base_crack_size": {"types": "decimal"},
-            "crack_point_offset": {"types": "decimal"},
+            "base_crack_size": {"types": "temp/decimal"},
+            "crack_point_offset": {"types": "temp/decimal"},
             "filler": {"types": "str"},
-            "generate_crack_chance": {"types": "decimal"},
+            "generate_crack_chance": {"types": "temp/decimal"},
             "inner_layer": {"types": "str"},
             "inner_placements": {"types": "list", "structure": "block_list"},
             "invalid_blocks_threshold": {"types": "int"},
@@ -358,10 +328,10 @@
             "min_distribution_points": {"types": "int"},
             "min_outer_wall_distance": {"types": "int"},
             "min_point_offset": {"types": "int"},
-            "noise_multiplier": {"types": "decimal"},
+            "noise_multiplier": {"types": "temp/decimal"},
             "placements_require_layer0_alternate": {"types": "bool"},
-            "use_alternate_layer0_chance": {"types": "decimal"},
-            "use_potential_placements_chance": {"types": "decimal"}
+            "use_alternate_layer0_chance": {"types": "temp/decimal"},
+            "use_potential_placements_chance": {"types": "temp/decimal"}
         }
     },
     "feature.growing_plant_feature": {
@@ -389,21 +359,25 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": "list",
         "value_structure": "feature.growing_plant_feature:body_blocks.item"
     },
     "feature.growing_plant_feature:body_blocks.item": {
-        "type": "Keymap",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_tuple",
             "arguments": {
                 "keys": ["plant_body_block", "weight"]
             }
         },
-        "keys": {
-            "plant_body_block": {"types": ["str", "dict"], "structure": "block_reference", "delegate_arguments": {"always_print": true}},
-            "weight": {"types": "decimal"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "plant_body_block": {"types": ["str", "dict"], "structure": "block_reference", "delegate_arguments": {"always_print": true}},
+                "weight": {"types": "temp/decimal"}
+            }
         }
     },
     "feature.growing_plant_feature:head_blocks": {
@@ -416,21 +390,25 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": "list",
         "value_structure": "feature.growing_plant_feature:head_blocks.item"
     },
     "feature.growing_plant_feature:head_blocks.item": {
-        "type": "Keymap",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_tuple",
             "arguments": {
                 "keys": ["plant_head_block", "weight"]
             }
         },
-        "keys": {
-            "plant_head_block": {"types": ["str", "dict"], "structure": "block_reference", "delegate_arguments": {"always_print": true}},
-            "weight": {"types": "decimal"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "plant_head_block": {"types": ["str", "dict"], "structure": "block_reference", "delegate_arguments": {"always_print": true}},
+                "weight": {"types": "temp/decimal"}
+            }
         }
     },
     "feature.growing_plant_feature:height_distribution": {
@@ -443,21 +421,25 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": "list",
         "value_structure": "feature.growing_plant_feature:height_distribution.item"
     },
     "feature.growing_plant_feature:height_distribution.item": {
-        "type": "Keymap",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_tuple",
             "arguments": {
                 "keys": ["height", "weight"]
             }
         },
-        "keys": {
-            "height": {"types": ["decimal", "str", "dict"], "structure": "range_decimal_or_decimal_or_molang", "delegate_arguments": {"always_print": true}},
-            "weight": {"types": "decimal"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "height": {"types": ["temp/decimal", "str", "dict"], "structure": "range_decimal_or_decimal_or_molang", "delegate_arguments": {"always_print": true}},
+                "weight": {"types": "temp/decimal"}
+            }
         }
     },
     "feature.multiface_feature": {
@@ -467,7 +449,7 @@
             "can_place_on_ceiling": {"types": "bool"},
             "can_place_on_floor": {"types": "bool"},
             "can_place_on_wall": {"types": "bool"},
-            "chance_of_spreading": {"types": "decimal"},
+            "chance_of_spreading": {"types": "temp/decimal"},
             "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
             "places_block": {"types": ["dict", "str"], "structure": "block_reference"},
             "search_range": {"types": "int"}
@@ -481,7 +463,7 @@
         "keys": {
             "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
             "fill_with": {"types": "str"},
-            "width_modifier": {"types": "decimal"},
+            "width_modifier": {"types": "temp/decimal"},
             "skip_carve_chance": {"types": "int"},
             "height_limit": {"types": "int"},
             "y_scale": {"types": "list", "structure": "range_list_decimal"},
@@ -498,7 +480,7 @@
         "keys": {
             "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
             "count": {"types": "int"},
-            "discard_chance_on_air_exposure": {"types": "decimal"},
+            "discard_chance_on_air_exposure": {"types": "temp/decimal"},
             "may_replace": {"types": ["list", "dict", "str"], "structure": "block_list_or_block", "tags": ["t/outdated"]},
             "places_block": {"types": ["dict", "str"], "structure": "block_reference", "tags": ["t/outdated"]},
             "replace_rules": {"types": "list", "structure": "feature.ore_feature:replace_rules"}
@@ -532,7 +514,7 @@
         "keys": {
             "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
             "exposed_face": {"types": "str"},
-            "placement_probability_per_valid_position": {"types": "decimal"},
+            "placement_probability_per_valid_position": {"types": "temp/decimal"},
             "placement_radius_around_floor": {"types": "int"},
             "places_block": {"types": ["dict", "str"], "structure": "block_reference"}
         }
@@ -549,7 +531,7 @@
             "iterations": {"types": ["int", "str"], "structure": null},
             "places_feature": {"types": "str"},
             "project_input_to_floor": {"types": "bool"},
-            "scatter_chance": {"types": ["dict", "decimal", "str"], "structure": "feature.scatter_feature:scatter_chance"},
+            "scatter_chance": {"types": ["dict", "temp/decimal", "str"], "structure": "feature.scatter_feature:scatter_chance"},
             "x": {"types": ["dict", "int", "str"], "structure": "feature.scatter_feature:coordinate_group"},
             "y": {"types": ["dict", "int", "str"], "structure": "feature.scatter_feature:coordinate_group"},
             "z": {"types": ["dict", "int", "str"], "structure": "feature.scatter_feature:coordinate_group"}
@@ -586,7 +568,7 @@
         "type": "Union",
         "substructures": {
             "dict": "fraction",
-            "decimal": null,
+            "temp/decimal": null,
             "str": null
         }
     },
@@ -600,12 +582,12 @@
             "can_place_sculk_patch_on": {"types": "list", "structure": "block_list"},
             "cant_place_sculk_vein_on": {"types": "list", "structure": "block_list"},
             "central_block": {"types": "str"},
-            "central_block_placement_chance": {"types": "decimal"},
+            "central_block_placement_chance": {"types": "temp/decimal"},
             "charge_amount": {"types": "int"},
             "cursor_count": {"types": "int"},
             "extra_growth_chance": {"types": ["int", "dict"], "structure": "range_int_or_int"},
             "ground_block": {"types": "str"},
-            "growth_chance": {"types": "decimal"},
+            "growth_chance": {"types": "temp/decimal"},
             "growth_rounds": {"types": "int"},
             "horizontal_radius": {"types": ["int", "dict"], "structure": "range_int_or_int"},
             "replaceable_blocks": {"types": "list", "structure": "block_list"},
@@ -777,7 +759,7 @@
         "type": "Keymap",
         "keys": {
             "branch_canopy": {"types": "dict", "structure": "feature.tree_feature:canopy"},
-            "branch_chance": {"types": ["decimal", "dict"], "structure": "fraction_or_decimal"},
+            "branch_chance": {"types": ["temp/decimal", "dict"], "structure": "fraction_or_decimal"},
             "branch_length": {"types": ["dict", "int"], "structure": "range_int_or_int"},
             "branch_position": {"types": ["dict", "int"], "structure": "range_int_or_int"}
         }
@@ -847,19 +829,19 @@
         "type": "Keymap",
         "keys": {
             "branches": {"types": "dict", "structure": "feature.tree_feature:fancy_trunk.branches"},
-            "foliage_altitude_factor": {"types": "decimal"},
+            "foliage_altitude_factor": {"types": "temp/decimal"},
             "trunk_block": {"types": ["dict", "str"], "structure": "block_reference"},
             "trunk_height": {"types": "dict", "structure": "feature.tree_feature:fancy_trunk.trunk_height"},
             "trunk_width": {"types": "int"},
-            "width_scale": {"types": "decimal"}
+            "width_scale": {"types": "temp/decimal"}
         }
     },
     "feature.tree_feature:fancy_trunk.branches": {
         "type": "Keymap",
         "keys": {
-            "slope": {"types": "decimal"},
-            "density": {"types": "decimal"},
-            "min_altitude_factor": {"types": "decimal"}
+            "slope": {"types": "temp/decimal"},
+            "density": {"types": "temp/decimal"},
+            "min_altitude_factor": {"types": "temp/decimal"}
         }
     },
     "feature.tree_feature:fancy_trunk.trunk_height": {
@@ -867,7 +849,7 @@
         "keys": {
             "base": {"types": "int"},
             "variance": {"types": "int"},
-            "scale": {"types": "decimal"}
+            "scale": {"types": "temp/decimal"}
         }
     },
     "feature.tree_feature:mangrove_trunk": {
@@ -886,7 +868,7 @@
             "branch_canopy": {"types": "dict", "structure": "feature.tree_feature:canopy"},
             "branch_length": {"types": ["int", "dict"], "structure": "range_int_or_int"},
             "branch_steps": {"types": ["int", "dict"], "structure": "range_int_or_int"},
-            "branch_chance": {"types": ["decimal", "dict"], "structure": "fraction_or_decimal"},
+            "branch_chance": {"types": ["temp/decimal", "dict"], "structure": "fraction_or_decimal"},
             "branch_position": {"types": ["int", "dict"], "structure": "range_int_or_int"}
         }
     },
@@ -915,7 +897,7 @@
             "branch_canopy": {"types": "dict", "structure": "feature.tree_feature:canopy"},
             "branch_interval": {"types": ["dict", "int"], "structure": "range_int_or_int"},
             "branch_length": {"types": "int"},
-            "branch_slope": {"types": "decimal"}
+            "branch_slope": {"types": "temp/decimal"}
         }
     },
     "feature.tree_feature:mega_trunk.trunk_height": {
@@ -966,13 +948,13 @@
         "type": "Keymap",
         "keys": {
             "above_root_block": {"types": "str"},
-            "above_root_chance": {"types": ["decimal", "dict"], "structure": "fraction_or_decimal"}
+            "above_root_chance": {"types": ["temp/decimal", "dict"], "structure": "fraction_or_decimal"}
         }
     },
     "feature.tree_feature:decoration": {
         "type": "Keymap",
         "keys": {
-            "decoration_chance": {"types": ["decimal", "dict"], "structure": "fraction_or_decimal"},
+            "decoration_chance": {"types": ["temp/decimal", "dict"], "structure": "fraction_or_decimal"},
             "decoration_block": {"types": "str"},
             "num_steps": {"types": "int"},
             "step_direction": {"types": "str"}
@@ -1001,21 +983,25 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": "list",
         "value_structure": "feature.tree_feature:canopy:leaf_blocks.item"
     },
     "feature.tree_feature:canopy:leaf_blocks.item": {
-        "type": "Keymap",
-        "pre_normalized_types": "list",
-        "normalizers": {
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_tuple",
             "arguments": {
                 "keys": ["leaf_block", "weight"]
             }
         },
-        "keys": {
-            "leaf_block": {"types": ["str", "dict"], "structure": "block_reference"},
-            "weight": {"types": "decimal"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "leaf_block": {"types": ["str", "dict"], "structure": "block_reference"},
+                "weight": {"types": "temp/decimal"}
+            }
         }
     },
     "feature.tree_feature:canopy": {
@@ -1048,7 +1034,7 @@
             "canopy_offset": {"types": ["dict", "int"], "structure": "range_int_or_int"},
             "min_width": {"types": "int"},
             "canopy_slope": {"types": "dict", "structure": "fraction_slope"},
-            "variation_chance": {"types": ["decimal", "dict", "list"], "structure": "feature.tree_feature:canopy.canopy:variation_chance_group"},
+            "variation_chance": {"types": ["temp/decimal", "dict", "list"], "structure": "feature.tree_feature:canopy.canopy:variation_chance_group"},
             "leaf_block": {"types": ["dict", "str"], "structure": "block_reference"},
             "canopy_decoration": {"types": "dict", "structure": "feature.tree_feature:decoration"}
         }
@@ -1056,7 +1042,7 @@
     "feature.tree_feature:canopy.canopy:variation_chance_group": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "dict": "fraction",
             "list": "feature.tree_feature:canopy.canopy:variation_chance"
         }
@@ -1071,13 +1057,13 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_types": ["decimal", "dict"],
+        "value_types": ["temp/decimal", "dict"],
         "value_structure": "feature.tree_feature:canopy.canopy:variation_chance.item"
     },
     "feature.tree_feature:canopy.canopy:variation_chance.item": {
         "type": "Union",
         "substructures": {
-            "decimal": null,
+            "temp/decimal": null,
             "dict": "fraction"
         }
     },
@@ -1088,10 +1074,10 @@
             "height": {"types": "int"},
             "radius": {"types": "int"},
             "trunk_width": {"types": "int"},
-            "wide_bottom_layer_hole_chance": {"types": "decimal"},
-            "corner_hole_chance": {"types": "decimal"},
-            "hanging_leaves_chance": {"types": "decimal"},
-            "hanging_leaves_extension_chance": {"types": "decimal"}
+            "wide_bottom_layer_hole_chance": {"types": "temp/decimal"},
+            "corner_hole_chance": {"types": "temp/decimal"},
+            "hanging_leaves_chance": {"types": "temp/decimal"},
+            "hanging_leaves_extension_chance": {"types": "temp/decimal"}
         }
     },
     "feature.tree_feature:canopy.fancy_canopy": {
@@ -1111,7 +1097,7 @@
             "leaf_blocks": {"types": "list", "structure": "feature.tree_feature:canopy:leaf_blocks"},
             "canopy_decoration": {"types": "dict", "structure": "feature.tree_feature:decoration"},
             "hanging_block": {"types": ["str", "dict"], "structure": "block_reference"},
-            "hanging_block_placement_chance": {"types": ["dict", "decimal"], "structure": "fraction_or_decimal"}
+            "hanging_block_placement_chance": {"types": ["dict", "temp/decimal"], "structure": "fraction_or_decimal"}
         }
     },
     "feature.tree_feature:canopy.mega_canopy": {
@@ -1129,7 +1115,7 @@
         "keys": {
             "canopy_height": {"types": ["dict", "int"], "structure": "range_int_or_int"},
             "base_radius": {"types": "int"},
-            "radius_step_modifier": {"types": "decimal"},
+            "radius_step_modifier": {"types": "temp/decimal"},
             "core_width": {"types": "int"},
             "leaf_block": {"types": ["dict", "str"], "structure": "block_reference"}
         }
@@ -1184,7 +1170,7 @@
             "replace_air_with": {"types": "str"},
             "skip_carve_chance": {"types": "int"},
             "vertical_radius_multiplier": {"types": "list", "structure": "range_list_decimal"},
-            "width_modifier": {"types": "decimal"},
+            "width_modifier": {"types": "temp/decimal"},
             "y_scale": {"types": "list", "structure": "range_list_decimal"}
         }
     },
@@ -1196,13 +1182,13 @@
         "keys": {
             "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
             "depth": {"types": ["int", "dict"], "structure": "range_int_or_int"},
-            "extra_deep_block_chance": {"types": "decimal"},
-            "extra_edge_column_chance": {"types": "decimal"},
+            "extra_deep_block_chance": {"types": "temp/decimal"},
+            "extra_edge_column_chance": {"types": "temp/decimal"},
             "ground_block": {"types": "str"},
             "horizontal_radius": {"types": ["int", "dict"], "structure": "range_int_or_int"},
             "replaceable_blocks": {"types": "list", "structure": "block_list"},
             "surface": {"types": "str"},
-            "vegetation_chance": {"types": "decimal"},
+            "vegetation_chance": {"types": "temp/decimal"},
             "vegetation_feature": {"types": "str"},
             "vertical_range": {"types": "int"},
             "waterlogged": {"types": "bool"}
@@ -1228,21 +1214,25 @@
             "show_item_key": false,
             "measure_length": true
         },
-        "value_types": "dict",
+        "value_types": "list",
         "value_structure": "feature.weighted_random_feature:features.item"
     },
     "feature.weighted_random_feature:features.item": {
-        "type": "Keymap",
-        "pre_normalized_types": "list",
-        "normalizers":{
+        "type": "Normalizer",
+        "outer_types": "list",
+        "inner_types": "dict",
+        "functions": {
             "function_name": "wrap_tuple",
             "arguments": {
                 "keys": ["feature", "weight"]
             }
         },
-        "keys": {
-            "feature": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "weight": {"types": "decimal"}
+        "structure": {
+            "type": "Keymap",
+            "keys": {
+                "feature": {"types": "str", "delegate_arguments": {"always_print": true}},
+                "weight": {"types": "temp/decimal"}
+            }
         }
     }
 }
