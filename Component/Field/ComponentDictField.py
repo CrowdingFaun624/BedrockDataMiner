@@ -59,7 +59,7 @@ class ComponentDictField[a:Component](Field):
             inline_components:list[a] = []
             for key, subcomponent_data in self.subcomponents_data.items():
                 with trace.enter_key(key, subcomponent_data):
-                    subcomponent, inline_usage, inheritance_usage = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.cumulative_path, functions, create_component_function, self.assume_type)
+                    subcomponent, inline_usage, inheritance_usage = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, (*self.cumulative_path, key), functions, create_component_function, self.assume_type)
                     if subcomponent is ...:
                         continue
                     source_component.check_permissions(self, inline_usage, inheritance_usage, trace)

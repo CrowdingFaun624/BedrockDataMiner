@@ -68,8 +68,8 @@ class KeymapStructureComponent(MappingStructureComponent[KeymapStructure]):
         return self.keys
 
     def link_finals(self, trace: Trace) -> None:
-        super().link_finals(trace)
         self.delegate_keys = {key.key: key.delegate_arguments for key in self.keys}
+        super().link_finals(trace)
         self.final.link_keymap_structure(
             allow_key_moves=self.allow_key_moves,
             allow_same_key_optimization=True,

@@ -43,7 +43,7 @@ class TypeListField(AbstractTypeField):
             already_types:set[str] = set()
             subcomponents:list["type|TypeAliasComponent"] = []
             inline_components:list["TypeAliasComponent"] = []
-            for subcomponent_data in self.subcomponent_data:
+            for index, subcomponent_data in enumerate(self.subcomponent_data):
                 with trace.enter_keys(self.trace_path, subcomponent_data):
                     if subcomponent_data in already_types:
                         trace.exception(Exceptions.ComponentDuplicateTypeError(subcomponent_data))
@@ -53,7 +53,7 @@ class TypeListField(AbstractTypeField):
                         subcomponents.append(subcomponent_type)
                     else:
                         subcomponent, inline_usage, inheritance_usage = choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, local_group, global_groups, trace,
-                            self.cumulative_path, functions, create_component_function, None, self.domain.type_stuff.default_types)
+                            (*self.cumulative_path, str(index)), functions, create_component_function, None, self.domain.type_stuff.default_types)
                         if subcomponent is ...:
                             continue
                         subcomponent.check_permissions(self, inline_usage, inheritance_usage, trace)

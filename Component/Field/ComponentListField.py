@@ -16,6 +16,7 @@ class ComponentListField[a:Component](Field):
 
     __slots__ = (
         "assume_type",
+        "is_single",
         "pattern",
         "subcomponents",
         "subcomponents_data",
@@ -38,6 +39,7 @@ class ComponentListField[a:Component](Field):
         :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
         super().__init__(path, cumulative_path)
+        self.is_single = isinstance(subcomponents_data, (str, dict)) # if there is a single item NOT in a list.
         # I wouldn't have to use a cast here if it would get the hint and actually say that it's Sequence[str|ComponentTyping.ComponentTypedDicts] instead of tuple[ComponentTypedDicts|str]|Sequence[ComponentTypedDicts|str]
         self.subcomponents_data:Sequence[str|ComponentTypedDicts] = cast(Any, (subcomponents_data,)) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
         self.subcomponents:list[a]
@@ -58,7 +60,8 @@ class ComponentListField[a:Component](Field):
             inline_components:list[a] = []
             for index, subcomponent_data in enumerate(self.subcomponents_data):
                 with trace.enter_key(index, subcomponent_data):
-                    subcomponent, inline_usage, inheritance_usage = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, self.cumulative_path, functions, create_component_function, self.assume_type)
+                    path = self.cumulative_path if self.is_single else (*self.cumulative_path, str(index))
+                    subcomponent, inline_usage, inheritance_usage = choose_component(subcomponent_data, source_component, self.pattern, local_group, global_groups, trace, path, functions, create_component_function, self.assume_type)
                     if subcomponent is ...:
                         continue
                     subcomponent.check_permissions(self, inline_usage, inheritance_usage, trace)

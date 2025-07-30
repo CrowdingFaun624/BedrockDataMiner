@@ -152,7 +152,7 @@ class Component[a]():
             from Component.Expression.ExpressionParser import scan_for_expressions
             self.data:dict[str,Any]|Any = scan_for_expressions(data, self, self.variables, used_variables, reference_inheritance) # overwrite previous `self.data` with a copy with created/updated Expressions.
 
-            for variable_key in [key for key in data if key.startswith("$")]: # list comprehension to avoid modifying data while iterating.
+            for variable_key in [key for key in data if isinstance(key, str) and key.startswith("$")]: # list comprehension to avoid modifying data while iterating.
                 with trace.enter_key(variable_key, self.data[variable_key]):
                     variable_name = variable_key.removeprefix("$")
                     if variable_name not in self.variables:
@@ -165,12 +165,8 @@ class Component[a]():
                 # an above Variable can be unused when a Component inherits from a Component that has Variables, but overwrites the places where they are used.
                 for variable_name, value in above_variables.items():
                     with trace.enter_key(variable_name, value):
-                        if variable_name not in self.variables:
-                            self.variables[variable_name] = Variable.Variable(variable_name)
-                        variable = value.copy(self)
-                        if variable_name in self.variables and not self.variables[variable_name].undefined:
-                            variable.set_value(self.variables[variable_name].value)
-                        self.variables[variable_name] = variable
+                        # write the Variable no matter if it is already defined or not.
+                        self.variables[variable_name] = value.copy(self)
                         unused_below_variables.discard(variable_name)
                 for variable_name, value in above_variables.items(): # doing this after because some Variables may still be undefined during.
                     with trace.enter_key(variable_name, value):
@@ -218,6 +214,8 @@ class Component[a]():
         new_variables.update(other.variables)
         below_variables = {variable_name: variable.value for variable_name, variable in parent_variables.items() if not variable.undefined}
         output = type(self)(new_data, other.name, other.domain, other.group, other.index, trace, below_variables=below_variables, above_variables=new_variables)
+        if not output.completed_init:
+            return ...
         with trace.enter(output, output.name, ...):
             self.link_components((output,))
             output.inherit_parent = self
@@ -241,6 +239,8 @@ class Component[a]():
         new_data = self.data.copy()
         new_data.update(other.data)
         output = type(self)(new_data, self.name, self.domain, self.group, self.index, trace, above_variables=new_variables, reference_inheritance=True)
+        if not output.completed_init:
+            return ...
         with trace.enter(output, output.name, ...):
             self.reference_inheritance_cache[variables_hash] = output
             self.link_components((output,))
