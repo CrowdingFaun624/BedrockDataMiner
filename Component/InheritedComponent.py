@@ -17,7 +17,7 @@ from Utilities.TypeVerifier import (
 if TYPE_CHECKING:
     from Component.ComponentTyping import CreateComponentFunction
     from Component.Group import Group
-    from Component.ScriptImporter import ScriptSetSetSet
+    from Component.ScriptImporter import ScriptSetSet
     from Domain.Domain import Domain
 
 class InheritanceType(enum.Enum):
@@ -63,7 +63,7 @@ class InheritedComponent(Component):
         memo: set[Component],
         global_groups:Mapping[str,Mapping[str,"Group"]],
         parent_variables:dict[str,Variable],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:"CreateComponentFunction",
         trace: Trace,
     ) -> Component|EllipsisType:

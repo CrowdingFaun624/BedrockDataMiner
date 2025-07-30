@@ -5,8 +5,9 @@ from Component.Component import Component
 from Component.ComponentTyping import AccessorTypeTypedDict
 from Component.Field.ComponentDictField import ComponentDictField
 from Component.Field.Field import Field
-from Component.Field.ScriptedClassField import ScriptedClassField
+from Component.Field.ScriptedObjectField import ScriptedObjectField
 from Component.Pattern import Pattern
+from Downloader.Accessor import Accessor
 from Downloader.AccessorType import AccessorType
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
@@ -36,7 +37,7 @@ class AccessorTypeComponent(Component[AccessorType]):
     def initialize_fields(self, data: AccessorTypeTypedDict) -> Sequence[Field]:
         self.arguments = data.get("arguments", {})
 
-        self.accessor_class_field = ScriptedClassField(data["accessor_class"], lambda script_set_set_set: script_set_set_set.accessor_classes, ("accessor_class",))
+        self.accessor_class_field = ScriptedObjectField(data["accessor_class"], ("accessor_class",), subclass=Accessor)
         self.linked_accessor_types_field = ComponentDictField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ("linked_accessors",), assume_type=self.class_name)
 
         return (self.accessor_class_field, self.linked_accessor_types_field)
@@ -49,9 +50,9 @@ class AccessorTypeComponent(Component[AccessorType]):
         )
 
     def link_finals(self, trace:Trace) -> None:
-        self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.object_class, self.accessor_class_field.object_class.linked_accessor_types, trace)
-        self.accessor_class_field.object_class.class_parameters.verify(self.arguments, trace)
+        self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.object, self.accessor_class_field.object.linked_accessor_types, trace)
+        self.accessor_class_field.object.class_parameters.verify(self.arguments, trace)
         self.final.link_finals(
-            accessor_class=self.accessor_class_field.object_class,
+            accessor_class=self.accessor_class_field.object,
             get_linked_accessor_types=dict(self.linked_accessor_types_field.map(lambda key, component: component.final))
         )

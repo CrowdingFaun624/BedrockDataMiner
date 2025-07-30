@@ -1,8 +1,10 @@
+from Component.ComponentFunctions import register_builtin
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Version.Version import Version
 from Version.VersionProvider.VersionProvider import VersionProvider
 
 
+@register_builtin()
 class LatestVersionProvider(VersionProvider):
 
     __slots__ = ()

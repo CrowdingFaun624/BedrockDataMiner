@@ -144,8 +144,10 @@ def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath|Any]]], set[Data
     if not data.is_at_last_index():
         raise Exceptions.TagSearcherParseError(data, "Tag expression finished before completing")
     return output
+from Component.ComponentFunctions import register_builtin
 
 
+@register_builtin()
 class TagSearcherDataminer(Dataminer):
 
     __slots__ = (

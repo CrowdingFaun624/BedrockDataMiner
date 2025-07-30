@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import Any, Mapping
 
 import Utilities.Exceptions as Exceptions
+from Component.ComponentFunctions import register_builtin
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
@@ -14,6 +15,7 @@ from Utilities.TypeVerifier import (
 )
 
 
+@register_builtin()
 class TagFunctionDataminer(Dataminer):
 
     __slots__ = (
@@ -37,7 +39,7 @@ class TagFunctionDataminer(Dataminer):
         self.none_okay = none_okay
 
     def activate(self, environment:DataminerEnvironment) -> list[DataPath|Any]:
-        function = self.domain.callables.get(self.function_name, self.domain)
+        function = self.domain.script_set_set.get(self.function_name, self.domain, verify_function=callable)
         tags = [self.domain.script_referenceable.get(tag_name, StructureTag) for tag_name in self.tag_names]
 
         dependencies = set(self.dependencies)

@@ -1,6 +1,7 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, BinaryIO, TypedDict
+from typing import TYPE_CHECKING, BinaryIO, TypedDict
 
+from Component.ComponentFunctions import register_builtin
 from Downloader.Accessor import Accessor
 from Downloader.FileAccessor import FileAccessor
 from Utilities.Log import Log
@@ -16,6 +17,7 @@ class ArgumentsTypedDict(TypedDict):
     location: str
     log: str
 
+@register_builtin()
 class DownloadAccessor(FileAccessor):
     
     instance_parameters = TypedDictTypeVerifier(

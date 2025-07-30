@@ -3,6 +3,7 @@ from typing import Container, Mapping, Sequence
 
 from ordered_set import OrderedSet
 
+import Domain.Domain as Domain
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
@@ -28,17 +29,19 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
     __slots__ = (
         "children_has_garbage_collection",
         "children_tags",
+        "domain",
         "full_name",
         "is_inline",
         "name",
         "trace_name",
     )
 
-    def __init__(self, name:str, full_name:str, trace_name:str, is_inline:bool) -> None:
+    def __init__(self, name:str, full_name:str, trace_name:str, is_inline:bool, domain:"Domain.Domain") -> None:
         self.name = name
         self.full_name = full_name
         self.trace_name = trace_name
         self.is_inline = is_inline
+        self.domain = domain
 
     def link_structure(
         self,

@@ -19,17 +19,13 @@
             "minecraft:aim_assist_categories": {"types": "dict", "structure": "aim_assist_categories"}
         }
     },
-    "string_remove_minecraft": {
-        "type": "String",
-        "similarity_function": "normalizers/normalizers remove_minecraft_prefix"
-    },
     "aim_assist_categories": {
         "type": "Keymap",
         "delegate_arguments": {
             "sort": "sort_by_component_order"
         },
         "keys": {
-            "identifier": {"types": "str", "structure": "string_remove_minecraft", "delegate_arguments": {"always_print": true}},
+            "identifier": {"types": "str", "structure": "temp/string_remove_minecraft_prefix", "delegate_arguments": {"always_print": true}},
             "categories": {"types": "list", "structure": "categories", "similarity_weight": 3}
         }
     },
@@ -53,7 +49,7 @@
         },
         "min_value_similarity_threshold": 0.4,
         "keys": {
-            "name": {"types": "str", "structure": "string_remove_minecraft", "similarity_weight": 10, "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": "temp/string_remove_minecraft_prefix", "similarity_weight": 10, "delegate_arguments": {"always_print": true}},
             "entity_default": {"types": "int"},
             "block_default": {"types": "int"},
             "priorities": {"types": "dict", "structure": "priorities"}
@@ -75,7 +71,7 @@
             "measure_length": true,
             "sort": "sort_by_key"
         },
-        "key_structure": "string_remove_minecraft",
+        "key_structure": "temp/string_remove_minecraft_prefix",
         "value_types": "int",
         "value_structure": null
     }

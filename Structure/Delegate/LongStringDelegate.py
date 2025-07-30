@@ -2,6 +2,7 @@ import math
 from types import EllipsisType
 from typing import Sequence
 
+from Component.ComponentFunctions import register_builtin
 from Structure.Container import Con, Don
 from Structure.Delegate.DefaultDelegate import (
     DefaultDelegate,
@@ -15,6 +16,7 @@ from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnviron
 from Utilities.Trace import Trace
 
 
+@register_builtin()
 class LongStringDelegate(DefaultDelegate[int, str, Sequence]):
 
     __slots__ = (

@@ -6,16 +6,15 @@ from Component.ComponentTyping import DataminerSettingsTypedDict
 from Component.Dataminer.AbstractDataminerCollectionComponent import (
     ABSTRACT_DATAMINER_COLLECTION_PATTERN,
 )
-from Component.Field.ComponentField import ComponentField, OptionalComponentField
+from Component.Field.ComponentField import OptionalComponentField
 from Component.Field.ComponentListField import ComponentListField
 from Component.Field.Field import Field
-from Component.Field.FieldListField import FieldListField
-from Component.Field.ScriptedClassField import OptionalScriptedClassField
+from Component.Field.ScriptedObjectField import OptionalScriptedObjectField
 from Component.Pattern import Pattern
 from Component.Permissions import InlinePermissions
 from Component.Version.VersionComponent import VERSION_PATTERN
 from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
-from Dataminer.Dataminer import NullDataminer
+from Dataminer.Dataminer import Dataminer, NullDataminer
 from Dataminer.DataminerSettings import DataminerSettings
 from Structure.StructureInfo import StructureInfo
 from Utilities.Exceptions import DataminerCollectionFileError
@@ -71,7 +70,7 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
         self.new_field = OptionalComponentField(data["new"], VERSION_PATTERN, ("new",))
         self.old_field = OptionalComponentField(data["old"], VERSION_PATTERN, ("old",))
         self.files_field = ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",))
-        self.dataminer_field = OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=NullDataminer)
+        self.dataminer_field = OptionalScriptedObjectField(data["name"], ("name",), default=NullDataminer, subclass=Dataminer)
         self.dependencies_field = ComponentListField(data.get("dependencies", ()), ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("dependencies",))
         self.optional_dependencies_field = ComponentListField(data.get("optional_dependencies", ()), ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("optional_dependencies",))
         return (self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field, self.optional_dependencies_field)
@@ -90,7 +89,7 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
             file_name=parent.file_name,
             name=parent.name,
             structure=parent.structure_field.subcomponent.final,
-            dataminer_class=self.dataminer_field.object_class,
+            dataminer_class=self.dataminer_field.object,
             dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.final)),
             optional_dependencies=list(self.optional_dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.final)),
             start_version=self.old_field.map(lambda subcomponent: subcomponent.final),

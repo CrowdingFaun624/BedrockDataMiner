@@ -4,6 +4,7 @@ from typing import Any, Callable, Iterable
 
 import Domain.Domain as Domain
 from Utilities.Exceptions import ScriptNameCollideError
+from Utilities.TypeVerifier import TypedDictTypeVerifier
 from Utilities.UserInput import input_single
 
 
@@ -37,20 +38,39 @@ def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
 class Script[a]():
 
     __slots__ = (
-        "domain",
-        "file_name",
         "object",
         "object_name",
+        "opens_files",
+        "type_verifier",
     )
 
-    def __init__(self, file_name: str, object_name:str, object:a, domain:"Domain.Domain") -> None:
-        self.file_name:str = file_name
+    def __init__(self, object_name:str, object:a, *, type_verifier:TypedDictTypeVerifier|None=None, opens_files:bool=False) -> None:
         self.object_name:str = object_name
         self.object:a = object
-        self.domain:"Domain.Domain" = domain
+
+        self.type_verifier = type_verifier
+        self.opens_files = opens_files
 
     def __call__(self:"Script[Callable]", *args, **kwargs) -> Any:
         return self.object(*args, **kwargs)
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} {self.object_name}>"
+
+class BuiltInScript[a](Script[a]):
+    pass
+
+class UserScript[a](Script[a]):
+
+    __slots__ = (
+        "domain",
+        "file_name",
+    )
+
+    def __init__(self, file_name: str, object_name: str, object: a, domain: "Domain.Domain", *, type_verifier: TypedDictTypeVerifier | None = None, opens_files: bool = False) -> None:
+        super().__init__(object_name, object, type_verifier=type_verifier, opens_files=opens_files)
+        self.file_name = file_name
+        self.domain = domain
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.domain.name}!{self.file_name} {self.object_name}>"

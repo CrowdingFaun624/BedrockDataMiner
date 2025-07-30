@@ -5,7 +5,7 @@ import Utilities.Exceptions as Exceptions
 from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
 from Component.Pattern import AbstractPattern
 from Component.Permissions import InheritanceUsage, InlineUsage
-from Component.ScriptImporter import ScriptSetSetSet
+from Component.ScriptImporter import ScriptSetSet
 from Utilities.Trace import Trace
 
 if TYPE_CHECKING:
@@ -83,7 +83,7 @@ def refer_to_component[a:"Component"](
         trace:Trace,
         allow_inherited:bool,
         pattern_fail_error:Callable[[], Exceptions.InvalidComponentError],
-        functions:ScriptSetSetSet,
+        functions:ScriptSetSet,
         create_component_function:CreateComponentFunction,
         is_inline:bool,
     ) -> tuple[a|EllipsisType, InlineUsage, InheritanceUsage]:
@@ -129,7 +129,7 @@ def choose_component[a: "Component"](
         global_groups:Mapping[str,Mapping[str,"Group"]],
         trace:Trace,
         keys:tuple[str,...],
-        functions:ScriptSetSetSet,
+        functions:ScriptSetSet,
         create_component_function:CreateComponentFunction,
         assume_type:str|None,
         other_options:Iterable[str]|None=None,
@@ -239,7 +239,7 @@ class Field():
         source_component:"Component",
         local_group:"Group",
         global_groups:Mapping[str,Mapping[str,"Group"]],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["Component"],Sequence["Component"]]:

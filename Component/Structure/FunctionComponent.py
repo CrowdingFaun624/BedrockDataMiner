@@ -2,10 +2,9 @@ from typing import Sequence
 
 from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentFunctions import function_type_verifiers
 from Component.ComponentTyping import FunctionTypedDict
 from Component.Field.Field import Field
-from Component.Field.FunctionField import FunctionField
+from Component.Field.ScriptedObjectField import ScriptedObjectField
 from Component.Pattern import Pattern
 from Structure.Function import Function
 from Utilities.Trace import Trace
@@ -32,7 +31,7 @@ class FunctionComponent(Component[Function]):
     def initialize_fields(self, data: FunctionTypedDict) -> Sequence[Field]:
         self.arguments = data.get("arguments", {})
 
-        self.function_field = FunctionField(data["function_name"], ("function_name",))
+        self.function_field = ScriptedObjectField(data["function_name"], ("function_name",), verify_function=callable)
 
         return (self.function_field,)
 
@@ -41,10 +40,10 @@ class FunctionComponent(Component[Function]):
             name=self.name,
             full_name=self.full_name,
             trace_name=self.trace_name,
-            function=self.function_field.function,
+            function=self.function_field.object,
             arguments=self.arguments,
         )
 
     def check(self, trace: Trace) -> None:
-        if (type_verifier := function_type_verifiers.get(self.function_field.function, None)) is not None:
-            type_verifier.verify(self.arguments, trace)
+        if self.function_field.script.type_verifier is not None:
+            self.function_field.script.type_verifier.verify(self.arguments, trace)

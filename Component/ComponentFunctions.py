@@ -1,10 +1,8 @@
-from typing import Callable
+from typing import Any, Callable
 
 from Domain.Domains import get_domain_from_module
-from Utilities.Scripts import Script
+from Utilities.Scripts import BuiltInScript, UserScript
 from Utilities.TypeVerifier import TypedDictTypeVerifier
-
-function_type_verifiers:dict[Callable, TypedDictTypeVerifier] = {}
 
 EMPTY_TYPE_VERIFIER = TypedDictTypeVerifier()
 
@@ -21,8 +19,17 @@ def component_function[T:Callable](*, type_verifier:TypedDictTypeVerifier|None=N
         domain = get_domain_from_module(func.__module__)
         relative_name:str = func.__module__.replace(".", "/").removeprefix(f"_domains/{domain.name}/scripts/")
         item_name:str = func.__name__
-        if type_verifier is not None:
-            function_type_verifiers[func] = type_verifier
-        domain.scripts.scripts[(relative_name, item_name)] = Script(relative_name, item_name, func, domain)
+        domain.scripts.scripts[(relative_name, item_name)] = UserScript(relative_name, item_name, func, domain, type_verifier=type_verifier)
+        return func
+    return comp_func
+
+BUILT_INS:dict[str,Any] = {}
+
+def register_builtin[T:Callable](*, type_verifier:TypedDictTypeVerifier|None=None, no_arguments:bool=False) -> Callable[[T],T]:
+    if no_arguments:
+        type_verifier = EMPTY_TYPE_VERIFIER
+    def comp_func(func:T) -> T:
+        item_name:str = func.__name__
+        BUILT_INS[item_name] = BuiltInScript(item_name, func, type_verifier=type_verifier)
         return func
     return comp_func

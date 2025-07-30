@@ -4,7 +4,7 @@ from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.Field import choose_component
 from Component.Permissions import InlineUsage
-from Component.ScriptImporter import ScriptSetSetSet
+from Component.ScriptImporter import ScriptSetSet
 from Component.Structure.Field.AbstractTypeField import (
     TYPE_ALIAS_PATTERN,
     AbstractTypeField,
@@ -33,7 +33,7 @@ class TypeField(AbstractTypeField):
         source_component:"Component",
         local_group:"Group",
         global_groups:Mapping[str,Mapping[str,"Group"]],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["TypeAliasComponent"],Sequence["TypeAliasComponent"]]:

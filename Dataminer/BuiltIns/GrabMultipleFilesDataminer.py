@@ -2,6 +2,7 @@ from typing import Any
 
 import Dataminer.FileDataminer as FileDataminer
 import Utilities.Exceptions as Exceptions
+from Component.ComponentFunctions import register_builtin
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Downloader.DirectoryAccessor import DirectoryAccessor
 from Utilities.File import File
@@ -12,6 +13,7 @@ from Utilities.TypeVerifier import (
 )
 
 
+@register_builtin()
 class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
 
     __slots__ = (

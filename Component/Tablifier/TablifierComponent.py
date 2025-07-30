@@ -8,12 +8,13 @@ from Component.Dataminer.AbstractDataminerCollectionComponent import (
 )
 from Component.Field.ComponentField import ComponentField
 from Component.Field.Field import Field
-from Component.Field.ScriptedClassField import ScriptedClassField
+from Component.Field.ScriptedObjectField import ScriptedObjectField
 from Component.Permissions import InheritancePermissions, InlinePermissions
 from Component.Structure.StructureBaseComponent import STRUCTURE_BASE_PATTERN
 from Tablifier.Tablifier import Tablifier
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
+from Version.VersionProvider.VersionProvider import VersionProvider
 
 
 class TablifierComponent(Component[Tablifier]):
@@ -46,7 +47,7 @@ class TablifierComponent(Component[Tablifier]):
 
         self.dataminer_collection_field = ComponentField(data["dataminer_collection"], ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("dataminer_collection",))
         self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",))
-        self.version_provider_field = ScriptedClassField(data["version_provider"], lambda script_set_set_set: script_set_set_set.version_provider_classes, ("version_provider",))
+        self.version_provider_field = ScriptedObjectField(data["version_provider"], ("version_provider",), subclass=VersionProvider)
         return (self.dataminer_collection_field, self.structure_field, self.version_provider_field)
 
     def create_final(self, trace:Trace) -> Tablifier:
@@ -60,5 +61,5 @@ class TablifierComponent(Component[Tablifier]):
         self.final.link_finals(
             structure=self.structure_field.subcomponent.final,
             dataminer_collection=self.dataminer_collection_field.subcomponent.final,
-            version_provider=self.version_provider_field.object_class(self.domain),
+            version_provider=self.version_provider_field.object(self.domain),
         )

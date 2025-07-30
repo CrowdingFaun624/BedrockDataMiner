@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Mapping, MutableSequence, Sequence
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.Field import Field
-from Component.ScriptImporter import ScriptSetSetSet
+from Component.ScriptImporter import ScriptSetSet
 from Utilities.Trace import Trace
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ class FieldContainer[a: Field](Field):
         source_component:"Component",
         local_group:"Group",
         global_groups:Mapping[str,Mapping[str,"Group"]],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["Component"],Sequence["Component"]]:

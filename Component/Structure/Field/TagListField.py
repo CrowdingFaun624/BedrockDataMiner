@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Mapping, Self, Sequence
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.ComponentListField import ComponentListField
-from Component.ScriptImporter import ScriptSetSetSet
+from Component.ScriptImporter import ScriptSetSet
 from Component.Structure.StructureTagComponent import TAG_PATTERN, StructureTagComponent
 from Structure.StructureTag import StructureTag
 from Utilities.Trace import Trace
@@ -35,7 +35,7 @@ class TagListField(ComponentListField["StructureTagComponent"]):
         source_component:"Component",
         local_group:"Group",
         global_groups:Mapping[str,Mapping[str,"Group"]],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["StructureTagComponent"],Sequence["StructureTagComponent"]]:

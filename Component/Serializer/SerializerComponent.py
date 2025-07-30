@@ -5,7 +5,7 @@ from Component.Capabilities import Capabilities
 from Component.Component import Component
 from Component.ComponentTyping import SerializerTypedDict
 from Component.Field.Field import Field
-from Component.Field.ScriptedClassField import ScriptedClassField
+from Component.Field.ScriptedObjectField import ScriptedObjectField
 from Component.Pattern import Pattern
 from Serializer.Serializer import Serializer
 from Utilities.Trace import Trace
@@ -36,14 +36,14 @@ class SerializerComponent(Component[Serializer]):
     def initialize_fields(self, data: SerializerTypedDict) -> Sequence[Field]:
         self.arguments = data.get("arguments", {})
 
-        self.serializer_class_field = ScriptedClassField(data["serializer_class"], lambda script_set_set_set: script_set_set_set.serializer_classes, ("serializer_class",))
+        self.serializer_class_field = ScriptedObjectField(data["serializer_class"], ("serializer_class",), subclass=Serializer)
 
         return (self.serializer_class_field,)
 
     def create_final(self, trace:Trace) -> Serializer|EllipsisType:
-        if self.serializer_class_field.object_class.type_verifier.verify(self.arguments, trace):
+        if self.serializer_class_field.object.type_verifier.verify(self.arguments, trace):
             return ...
-        return self.serializer_class_field.object_class(self.name, self.full_name, self.domain, self.arguments)
+        return self.serializer_class_field.object(self.name, self.full_name, self.domain, self.arguments)
 
     def finalize_component(self, trace:Trace) -> None:
         self.final.finalize()

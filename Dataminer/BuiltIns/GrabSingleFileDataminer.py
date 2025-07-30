@@ -1,5 +1,6 @@
 from typing import Any
 
+from Component.ComponentFunctions import register_builtin
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.FileDataminer import FileDataminer, FileSet
 from Downloader.DirectoryAccessor import DirectoryAccessor
@@ -8,6 +9,7 @@ from Utilities.File import File
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
+@register_builtin()
 class GrabSingleFileDataminer(FileDataminer):
 
     __slots__ = (

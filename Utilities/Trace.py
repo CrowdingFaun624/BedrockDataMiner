@@ -41,7 +41,7 @@ def stringify_trace(trace:list[tuple[object, Callable[[],str], Any|EllipsisType,
                 case TraceType.key:
                     trace_string.append(f"[{position_name}]")
                 case TraceType.key_group:
-                    assert isinstance(thing, tuple)
+                    assert isinstance(thing, tuple), thing
                     trace_string.append("".join(f"[{str(key)}]" for key in thing))
         return "".join(trace_string)
 

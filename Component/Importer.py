@@ -10,7 +10,7 @@ from Component.Component import Component
 from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
 from Component.Group import Group, component_types_dict
 from Component.InheritedComponent import InheritedComponent
-from Component.ScriptImporter import ScriptSetSetSet
+from Component.ScriptImporter import ScriptSetSet
 from Utilities.Trace import Trace, TraceType
 
 
@@ -103,7 +103,7 @@ def create_groups(domains:Sequence["Domain.Domain"], trace:Trace) -> dict["Domai
 def get_imports(domains:Sequence["Domain.Domain"]) -> dict["Domain.Domain",Sequence["Domain.Domain"]]:
     return {domain: domain.dependencies for domain in domains}
 
-def inheritance(all_components:dict["Domain.Domain",list[Group]], primary_domain:"Domain.Domain", functions:dict["Domain.Domain", "ScriptSetSetSet"], trace:Trace) -> None:
+def inheritance(all_components:dict["Domain.Domain",list[Group]], primary_domain:"Domain.Domain", functions:dict["Domain.Domain", ScriptSetSet], trace:Trace) -> None:
     global_groups:dict[str,dict[str,Group]] = {domain.name: {group.name: group for group in groups} for domain, groups in all_components.items()}
     for domain, groups in all_components.items():
         with trace.enter(domain, domain.name, ...):
@@ -117,7 +117,7 @@ def inheritance(all_components:dict["Domain.Domain",list[Group]], primary_domain
                         group.components[component_name] = new_component
     print_exceptions(primary_domain, trace)
 
-def set_components(all_components:dict["Domain.Domain",list[Group]], domain_imports:dict["Domain.Domain",Sequence["Domain.Domain"]], primary_domain:"Domain.Domain", functions:dict["Domain.Domain",ScriptSetSetSet], trace:Trace) -> None:
+def set_components(all_components:dict["Domain.Domain",list[Group]], domain_imports:dict["Domain.Domain",Sequence["Domain.Domain"]], primary_domain:"Domain.Domain", functions:dict["Domain.Domain",ScriptSetSet], trace:Trace) -> None:
     for domain, groups in all_components.items():
         with trace.enter(domain, domain.name, ...):
             create_inline_component = get_inline_component_function(domain, trace)
@@ -216,8 +216,8 @@ def check_for_unused_components(all_components:dict["Domain.Domain",list[Group]]
     for unused_component in unused_components:
         print(f"Warning: Unused component: {unused_component}")
 
-def get_all_functions(domain_imports:dict["Domain.Domain",Sequence["Domain.Domain"]]) -> dict["Domain.Domain",ScriptSetSetSet]:
-    return {domain: ScriptSetSetSet(domain, dependencies) for domain, dependencies in domain_imports.items()}
+def get_all_functions(domain_imports:dict["Domain.Domain",Sequence["Domain.Domain"]]) -> dict["Domain.Domain",ScriptSetSet]:
+    return {domain: ScriptSetSet(domain) for domain, dependencies in domain_imports.items()}
 
 def parse_all_groups(domains:Sequence["Domain.Domain"]) -> dict["Domain.Domain",list[Group]]:
     '''

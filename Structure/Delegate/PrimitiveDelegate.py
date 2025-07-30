@@ -1,6 +1,7 @@
 from types import EllipsisType
 from typing import Any
 
+from Component.ComponentFunctions import register_builtin
 from Structure.Container import Con, Don
 from Structure.Delegate.LineDelegate import LineDelegate, LineType
 from Structure.Difference import Diff
@@ -10,6 +11,7 @@ from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
+@register_builtin()
 class PrimitiveDelegate[DC:Con, DD:Don|Diff[Don]](LineDelegate[DC, DD, PrimitiveStructure|None]):
 
     __slots__ = ()

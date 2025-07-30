@@ -1,6 +1,7 @@
 from types import EllipsisType
 from typing import Any
 
+from Component.ComponentFunctions import register_builtin
 from Structure.Container import Con, Don
 from Structure.Delegate.Delegate import Delegate
 from Structure.Delegate.LineDelegate import LineType
@@ -11,6 +12,7 @@ from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
+@register_builtin()
 class DefaultBaseDelegate[D](Delegate[
     Con[D],
     Don[D]|Diff[Don[D]],

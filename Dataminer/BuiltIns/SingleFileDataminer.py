@@ -1,3 +1,4 @@
+from Component.ComponentFunctions import register_builtin
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.FileDataminer import FileDataminer, FileSet
 from Downloader.FileAccessor import FileAccessor
@@ -5,6 +6,7 @@ from Utilities.File import File
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
+@register_builtin()
 class SingleFileDataminer(FileDataminer):
 
     __slots__ = (

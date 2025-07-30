@@ -1,6 +1,7 @@
 import io
 from typing import Any, BinaryIO, Sequence
 
+from Component.ComponentFunctions import register_builtin
 from Downloader.Accessor import Accessor
 from Downloader.DirectoryAccessor import DirectoryAccessor
 from Utilities.Cache import LinesCache
@@ -19,6 +20,7 @@ class StoredIndex(LinesCache[dict[str,tuple[str,bool]],None]):
     def deserialize(self, data: bytes) -> dict[str,tuple[str,bool]]:
         return {line[43:]: (line[:40], bool(int(line[41]))) for line in data.decode("UTF8").split("\n")}
 
+@register_builtin()
 class StoredAccessor(DirectoryAccessor):
 
     __slots__ = (

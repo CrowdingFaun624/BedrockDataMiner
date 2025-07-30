@@ -1,9 +1,9 @@
-from typing import Any
-
+from Component.ComponentFunctions import register_builtin
 from Serializer.Serializer import Serializer
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
+@register_builtin()
 class LinesSerializer(Serializer[list[str]]):
 
     __slots__ = (

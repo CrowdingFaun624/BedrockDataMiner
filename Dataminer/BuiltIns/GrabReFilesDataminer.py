@@ -2,6 +2,7 @@ import re
 from typing import Any
 
 import Dataminer.FileDataminer as FileDataminer
+from Component.ComponentFunctions import register_builtin
 from Dataminer.BuiltIns.GrabMultipleFilesDataminer import GrabMultipleFilesDataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Downloader.DirectoryAccessor import DirectoryAccessor
@@ -9,6 +10,7 @@ from Utilities.Exceptions import DataminerNothingFoundError
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
+@register_builtin()
 class GrabReFilesDataminer(GrabMultipleFilesDataminer):
 
     __slots__ = (

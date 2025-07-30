@@ -1,5 +1,6 @@
 from typing import Any, NotRequired, Required, TypedDict
 
+from Component.ComponentFunctions import register_builtin
 from Serializer.JsonSerializer import JsonSerializer
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
@@ -314,6 +315,7 @@ class Rule():
     def has_exception_condition(self) -> bool:
         return self.condition.has_exception_condition()
 
+@register_builtin()
 class RepairableJsonSerializer(JsonSerializer):
 
     __slots__ = (

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from Component.Field.Field import Field
     from Component.Group import Group
     from Component.InheritedComponent import InheritedComponent
-    from Component.ScriptImporter import ScriptSetSetSet
+    from Component.ScriptImporter import ScriptSetSet
     from Utilities.TypeVerifier import TypedDictTypeVerifier
 
 INVALID_NAME_CHARS = set(" \t\r\n\f\v!@#$%^&*()=[]{}\\|;'\",<>/?`") # most puncuation characters except "._:"
@@ -224,7 +224,7 @@ class Component[a]():
             return output
         return ...
 
-    def copy_reference(self, other:"InheritedComponent", global_groups:Mapping[str,Mapping[str,"Group"]], functions:"ScriptSetSetSet", create_component_function:"CreateComponentFunction", trace:Trace) -> "Component|EllipsisType":
+    def copy_reference(self, other:"InheritedComponent", global_groups:Mapping[str,Mapping[str,"Group"]], functions:"ScriptSetSet", create_component_function:"CreateComponentFunction", trace:Trace) -> "Component|EllipsisType":
         '''
         Copies this Component, keeping the same name, Domain, Group, but with new Variables only.
         '''
@@ -325,7 +325,7 @@ class Component[a]():
         memo: set["Component"],
         global_groups:Mapping[str,Mapping[str,"Group"]],
         parent_variables:dict[str,Variable.Variable],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:"CreateComponentFunction",
         trace: Trace,
     ) -> "Component|Self|EllipsisType":
@@ -335,7 +335,7 @@ class Component[a]():
     def set_component(
         self,
         global_groups:Mapping[str,Mapping[str,"Group"]],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:"CreateComponentFunction",
         trace:Trace,
     ) -> None:

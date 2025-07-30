@@ -1610,7 +1610,7 @@ class UnrecognizedScriptObjectNameError(ScriptException):
 class WrongScriptError(ScriptException):
     "Attempted to import a Script that exists, but cannot be used in this situation."
 
-    def __init__(self, key:str, script:"Script", type_name:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, key:str, script:"Script", type_name:Optional[str], options:list[str], message:Optional[str]=None) -> None:
         '''
         :key: The key used to access the Script.
         :script: The Script that cannot be used in this situation.
@@ -1626,28 +1626,7 @@ class WrongScriptError(ScriptException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Cannot load {self.script} from \"{self.key}\" in this situation; should be {self.type_name}{message(self.message)}{nearest_message(self.key, self.options)}"
-
-class WrongScriptFileError(ScriptException):
-    "Attempted to import a Script file that exists, but cannot be used in this situation."
-
-    def __init__(self, key:str, file_name:str, type_name:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :key: The key used to access the Script.
-        :file_name: The file name of the Script that cannot be used in this situation.
-        :type_name: A string representing the type the ScriptSet should be referencing.
-        :options: Values this Script could have.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(key, file_name, options, message)
-        self.key = key
-        self.file_name = file_name
-        self.type_name = type_name
-        self.options = options
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Cannot load any Script in \"{self.file_name}\" from \"{self.key}\" in this situation; should be {self.type_name}{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Cannot load {self.script} from \"{self.key}\" in this situation{f"; should be {self.type_name}" if self.type_name is not None else ""}{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class SerializerException(Exception):
     "Abstract Exception class for errors relating to Serializers"

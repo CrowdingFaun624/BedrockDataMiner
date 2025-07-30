@@ -1,6 +1,7 @@
 import zipfile
 from typing import Any, BinaryIO, Sequence, TypedDict
 
+from Component.ComponentFunctions import register_builtin
 from Downloader.DirectoryAccessor import DirectoryAccessor
 from Downloader.FileAccessor import FileAccessor
 
@@ -8,6 +9,7 @@ from Downloader.FileAccessor import FileAccessor
 class LinkedAccessorsTypedDict(TypedDict):
     file: FileAccessor
 
+@register_builtin()
 class ZipAccessor(DirectoryAccessor):
 
     linked_accessor_types = {"file": FileAccessor}

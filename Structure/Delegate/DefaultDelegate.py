@@ -4,6 +4,7 @@ from typing import Any, Callable, Hashable, NotRequired, TypedDict, cast
 
 import Component.BuiltInFunctions as BuiltInFunctions
 import Domain.Domain as Domain
+from Component.ComponentFunctions import register_builtin
 from Structure.Container import Con, Don
 from Structure.Delegate.LineDelegate import LineDelegate, LineType
 from Structure.Difference import Diff
@@ -19,6 +20,7 @@ from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifi
 class DefaultDelegateKeysTypedDict(TypedDict):
     always_print: NotRequired[bool]
 
+@register_builtin()
 class DefaultDelegate[K:Hashable, V, D](LineDelegate[
     ICon[Con[K], Con[V], D],
     IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]],
@@ -83,7 +85,7 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
         if self.sorting_function_name is None:
             self.sorting_function = None
         else:
-            sorting_function_function:BuiltInFunctions.sort_function = domain.callables.get(self.sorting_function_name, domain)
+            sorting_function_function:BuiltInFunctions.sort_function = domain.script_set_set.get(self.sorting_function_name, self.structure.domain, verify_function=callable)
             key_function = cast(Any, self.key_function if self.key_function is not None else lambda a: a)
             self.sorting_function:BuiltInFunctions.sort_inner_function|None = sorting_function_function(key_function, self.keys_order)
 

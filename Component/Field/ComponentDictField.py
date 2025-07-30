@@ -7,7 +7,7 @@ from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFuncti
 from Component.Field.Field import Field, choose_component
 from Component.Pattern import AbstractPattern
 from Component.Permissions import InlineUsage
-from Component.ScriptImporter import ScriptSetSetSet
+from Component.ScriptImporter import ScriptSetSet
 from Utilities.Trace import Trace
 
 if TYPE_CHECKING:
@@ -50,7 +50,7 @@ class ComponentDictField[a:Component](Field):
         source_component:"Component",
         local_group:"Group",
         global_groups:Mapping[str,Mapping[str,"Group"]],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence[a],Sequence[a]]:

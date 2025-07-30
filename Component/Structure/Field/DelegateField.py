@@ -4,7 +4,7 @@ import Domain.Domain as Domain
 from Component.Component import Component
 from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.Field import Field
-from Component.ScriptImporter import ScriptSetSetSet
+from Component.ScriptImporter import ScriptSetSet
 from Structure.Delegate.Delegate import Delegate
 from Structure.Structure import Structure
 from Utilities.Exceptions import InapplicableDelegateError
@@ -74,7 +74,7 @@ class OptionalDelegateField(Field):
         source_component:"Component",
         local_group:"Group",
         global_groups:Mapping[str,Mapping[str,"Group"]],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["Component"],Sequence["Component"]]:
@@ -82,9 +82,11 @@ class OptionalDelegateField(Field):
             if self.delegate_name is None:
                 self.delegate_type = None
             else:
-                delegate_type = functions.delegate_classes.get(self.delegate_name, source_component, trace)
+                delegate_type = functions.get(self.delegate_name, source_component.domain, trace, subclass=Delegate)
                 if delegate_type is not ...:
-                    self.delegate_type = delegate_type
+                    self.delegate_type = delegate_type.object
+                else:
+                    return (), ()
             if self.delegate_type is not None and self.delegate_type.uses_versions:
                 source_component.variable_bools["children_has_version_domains"] = True
             return (), ()

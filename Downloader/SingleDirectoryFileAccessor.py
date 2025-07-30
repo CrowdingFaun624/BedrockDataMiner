@@ -1,5 +1,6 @@
 from typing import Any, BinaryIO, TypedDict
 
+from Component.ComponentFunctions import register_builtin
 from Downloader.DirectoryAccessor import DirectoryAccessor
 from Downloader.FileAccessor import FileAccessor
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
@@ -11,6 +12,7 @@ class LinkedAccessorsTypedDict(TypedDict):
 class InstanceArgumentsTypedDict(TypedDict):
     file_name: str
 
+@register_builtin()
 class SingleDirectoryFileAccessor(FileAccessor):
 
     instance_parameters = TypedDictTypeVerifier(

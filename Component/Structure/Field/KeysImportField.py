@@ -5,7 +5,7 @@ from Component.ComponentTyping import CreateComponentFunction
 from Component.Field.ComponentListField import ComponentListField
 from Component.Field.FieldListField import FieldListField
 from Component.Pattern import Pattern
-from Component.ScriptImporter import ScriptSetSetSet
+from Component.ScriptImporter import ScriptSetSet
 from Component.Structure.Field.KeyField import KeyField
 from Component.Structure.StructureComponent import StructureComponent
 from Utilities.Trace import Trace
@@ -38,7 +38,7 @@ class KeysImportField(ComponentListField["KeymapStructureComponent|SwitchStructu
         source_component:"Component",
         local_group:"Group",
         global_groups:Mapping[str,Mapping[str,"Group"]],
-        functions:"ScriptSetSetSet",
+        functions:"ScriptSetSet",
         create_component_function:CreateComponentFunction,
         trace:Trace,
     ) -> tuple[Sequence["StructureComponent"],Sequence["StructureComponent"]]:
