@@ -53,6 +53,10 @@ class DataminerSettingsPlan(Plan[DataminerSettings]):
         return failed_dataminer_settings
 
     @classmethod
+    def supports_dataminer_collection(cls, dataminer_collection:AbstractDataminerCollection) -> bool:
+        return isinstance(dataminer_collection, DataminerCollection)
+
+    @classmethod
     def get_obj(cls, dataminer_collection: DataminerCollection, version: Version) -> DataminerSettings:
         return dataminer_collection.get_dataminer_settings(version)
 

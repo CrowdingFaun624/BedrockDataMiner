@@ -91,4 +91,4 @@ class StructurePlan(Plan[StructureBase]):
 
     @classmethod
     def get_name(cls, item: StructureBase) -> str:
-        return item.name
+        return item.full_name

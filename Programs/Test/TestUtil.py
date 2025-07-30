@@ -80,6 +80,14 @@ class Plan[a: Hashable]():
         ...
 
     @classmethod
+    def supports_dataminer_collection(cls, dataminer_collection:AbstractDataminerCollection) -> bool:
+        '''
+        Returns False if this AbstractDataminerCollection should be skipped.
+        AbstractDataminerCollections that do not support a particular Version are already skipped.
+        '''
+        return True
+
+    @classmethod
     def get_obj(cls, dataminer_collection:AbstractDataminerCollection, version:Version) -> a:
         '''
         Gets this Plan's object from a DataminerCollection and Version.
@@ -116,7 +124,7 @@ def test[a: Hashable](plan_type:type[Plan[a]], domain:Domain.Domain) -> None:
     for version in versions.values():
         version_objects[version] = set()
         for dataminer_collection in dataminer_collections:
-            if dataminer_collection.supports_version(version):
+            if plan_type.supports_dataminer_collection(dataminer_collection) and dataminer_collection.supports_version(version):
                 object = plan_type.get_obj(dataminer_collection, version)
                 version_objects[version].add(object)
                 all_objects_set.add(object)
@@ -140,7 +148,7 @@ def test[a: Hashable](plan_type:type[Plan[a]], domain:Domain.Domain) -> None:
     }
     all_bits = list(unique_versions.keys())
     bits_needed = get_overlapping_bits(all_bits, len(all_objects))
-    print(f"Created a plan using {len(bits_needed)} Versions.")
+    print(f"Created a plan to test {len(all_objects)} {plan_type.label} using {len(bits_needed)} Versions.")
 
     for index, structure in enumerate(all_objects):
         for bits in bits_needed:
