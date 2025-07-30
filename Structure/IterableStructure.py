@@ -8,7 +8,6 @@ from Structure.DataPath import DataPath
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
 from Structure.IterableContainer import ICon, IDon, icon_from_list, idon_from_list
-from Structure.Normalizer import Normalizer
 from Structure.SimpleContainer import SCon
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
@@ -16,7 +15,6 @@ from Structure.StructureTag import StructureTag
 from Structure.Uses import NonEmptyUse, Region, StructureUse, TypeUse, UsageTracker, Use
 from Utilities.Exceptions import (
     AttributeNoneError,
-    StructureNoManipulationFunctionError,
     StructureRequiredKeyMissingError,
     StructureTypeError,
 )
@@ -38,9 +36,6 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         "delegate",
         "key_function",
         "key_types",
-        "normalizers",
-        "post_normalizers",
-        "pre_normalized_types",
         "required_keys",
         "tags",
         "this_types",
@@ -51,9 +46,6 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         delegate:Delegate[ICon[Con[K], Con[V], D], IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], Self, BO, Any, CO, Any]|None,
         key_function:Callable[[K], str],
         key_types:tuple[type,...],
-        normalizers:Sequence[Normalizer],
-        post_normalizers:Sequence[Normalizer],
-        pre_normalized_types:tuple[type,...],
         required_keys:set[str],
         tags:set[StructureTag],
         this_types:tuple[type,...],
@@ -61,9 +53,6 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         self.delegate = delegate
         self.key_function = key_function # function that turns K into str for access in `required_keys`, etc.
         self.key_types = key_types
-        self.normalizers = normalizers
-        self.post_normalizers = post_normalizers
-        self.pre_normalized_types = pre_normalized_types
         self.required_keys = required_keys
         self.tags = tags
         self.this_types = this_types
@@ -80,18 +69,6 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         '''
         ...
 
-    def get_key_structure_chain_end(self, key:Con[K], value:Con[V], trace:Trace, environment:PrinterEnvironment) -> Structure|None:
-        if (structure := self.get_key_structure(key.data, value.data, trace, environment)) is None:
-            return None
-        else:
-            return structure.get_structure_chain_end(key, trace, environment)
-
-    def get_value_structure_chain_end(self, key:Con[K], value:Con[V], trace:Trace, environment:PrinterEnvironment) -> Structure|None:
-        if (structure := self.get_value_structure(key.data, value.data, trace, environment)) is None:
-            return None
-        else:
-            return structure.get_structure_chain_end(value, trace, environment)
-
     def get_value_types(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> tuple[type,...]:
         '''
         Returns the types that this specific value can be.
@@ -104,68 +81,6 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         Return an empty set or None if there are no associated StructureTags.
         '''
         return None
-
-    def normalize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> D|EllipsisType:
-        with trace.enter(self, self.trace_name, data):
-            if not isinstance(data, self.pre_normalized_types):
-                trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
-                return ...
-
-            data, pre_data_identity_changed = self.normalizer_pass(self.normalizers, data, trace, environment)
-
-            if not isinstance(data, self.this_types):
-                trace.exception(StructureTypeError(self.this_types, type(data), "Data"))
-                return ...
-
-            setitem_function = environment.domain.type_stuff.setitem_table.get(type(data))
-            popitem_function = environment.domain.type_stuff.popitem_table.get(type(data))
-            for key, value in list(environment.domain.type_stuff.iterate_data(data)): # wrapped with list because of modifications to iterator.
-                key: K; value: V
-                with trace.enter_key(key, value):
-                    key_structure = self.get_key_structure(key, value, trace, environment)
-                    value_structure = self.get_value_structure(key, value, trace, environment)
-                    normalized_key = self.normalize_item(key, key_structure, trace, environment)
-                    normalized_value = self.normalize_item(value, value_structure, trace, environment)
-                    self.normalize_set_item(data, key, value, normalized_key, normalized_value, setitem_function, popitem_function, trace)
-
-            data, post_data_identity_changed = self.normalizer_pass(self.post_normalizers, data, trace, environment)
-
-            if not isinstance(data, self.this_types):
-                trace.exception(StructureTypeError(self.this_types, type(data), "Data", "(post-normalized)"))
-                return ...
-
-            return data if pre_data_identity_changed or post_data_identity_changed else ...
-        return ...
-
-    def normalize_item[A](self, item:A, structure:Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None, trace:Trace, environment:PrinterEnvironment) -> A|None:
-        if structure is not None and structure.children_has_normalizer:
-            normalizer_output = structure.normalize(item, trace, environment)
-            if normalizer_output is not ...:
-                return normalizer_output
-        return None
-
-    def normalize_set_item(self, data:D, key:K, value:V, normalized_key:K|None, normalized_value:V|None, setitem_function:Callable[[D, K, V], None]|None, popitem_function:Callable[[D, K], V]|None, trace:Trace) -> None:
-        if normalized_key is None and normalized_value is None:
-            pass
-        elif normalized_key is None and normalized_value is not None:
-            if setitem_function is None:
-                trace.exception(StructureNoManipulationFunctionError("setitem", type(data), "so values cannot be changed"))
-            else:
-                setitem_function(data, key, normalized_value)
-        elif normalized_key is not None and normalized_value is None:
-            if popitem_function is None or setitem_function is None:
-                text = "popitem" if setitem_function is not None else ("setitem" if popitem_function is not None else "setitem or popitem")
-                trace.exception(StructureNoManipulationFunctionError(text, type(data), "so keys cannot be changed"))
-            else:
-                popitem_function(data, key)
-                setitem_function(data, normalized_key, value)
-        elif normalized_key is not None and normalized_value is not None:
-            if popitem_function is None or setitem_function is None:
-                text = "popitem" if setitem_function is not None else ("setitem" if popitem_function is not None else "setitem or popitem")
-                trace.exception(StructureNoManipulationFunctionError(text, type(data), "so keys cannot be changed"))
-            else:
-                popitem_function(data, key)
-                setitem_function(data, normalized_key, normalized_value)
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> ICon[Con[K], Con[V], D]|EllipsisType:
         with trace.enter(self, self.trace_name, data):
@@ -204,8 +119,8 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
             for undiffed_key, undiffed_value in data.items(): # weird names because of lambda expressions.
                 with trace.enter_key(undiffed_key, undiffed_value):
                     current_length += 1
-                    diffed_key = self.diffize_item(undiffed_key, bundle, lambda branch: self.get_key_structure_chain_end(undiffed_key, undiffed_value, trace, environment[branch]), trace, environment)
-                    diffed_value = self.diffize_item(undiffed_value, bundle, lambda branch: self.get_value_structure_chain_end(undiffed_key, undiffed_value, trace, environment[branch]), trace, environment)
+                    diffed_key = self.diffize_item(undiffed_key, bundle, lambda branch: self.get_key_structure(undiffed_key.data, undiffed_value.data, trace, environment[branch]), trace, environment)
+                    diffed_value = self.diffize_item(undiffed_value, bundle, lambda branch: self.get_value_structure(undiffed_key.data, undiffed_value.data, trace, environment[branch]), trace, environment)
                     diffed_items.append(self.combine_key_value(diffed_key, diffed_value, bundle))
             if current_length == 0: # If `data` is an empty ICon, then the above for loop will do nothing, leading eventually to a Diff with no items (bad).
                 return {bundle: idon_from_list([], {branch: data for branch in bundle})}
@@ -404,39 +319,25 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         if key1 == key2:
             return 1.0, True
 
-        structure1 = self.get_key_structure(key1.data, value1.data, trace, (environment1 := environment[branch1]))
+        structure1 = self.get_key_structure(key1.data, value1.data, trace, environment[branch1])
         if structure1 is None:
             return float(is_similar := (key1 == key2)), is_similar
-        structure2 = self.get_key_structure(key2.data, value2.data, trace, (environment2 := environment[branch2]))
+        structure2 = self.get_key_structure(key2.data, value2.data, trace, environment[branch2])
         if structure2 is None:
             return float(is_similar := (key1 == key2)), is_similar
-
-        structure1_chain_end = structure1.get_structure_chain_end(key1, trace, environment1)
-        if structure1_chain_end is None:
-            return float(is_similar := (key1 == key2)), is_similar
-        structure2_chain_end = structure2.get_structure_chain_end(key2, trace, environment2)
-        if structure1_chain_end is not structure2_chain_end:
-            return float(is_similar := (key1 == key2)), is_similar
-        return structure1_chain_end.get_similarity(key1, key2, branch1, branch2, trace, environment)
+        return structure1.get_similarity(key1, key2, branch1, branch2, trace, environment)
 
     def get_value_similarity(self, key1:Con[K], key2:Con[K], value1:Con[V], value2:Con[V], branch1:int, branch2:int, trace:Trace, environment:ComparisonEnvironment) -> tuple[float, bool]:
         if value1 == value2:
             return 1.0, True
 
-        structure1 = self.get_value_structure(key1.data, value1.data, trace, (environment1 := environment[branch1]))
+        structure1 = self.get_value_structure(key1.data, value1.data, trace, environment[branch1])
         if structure1 is None:
             return float(is_similar := (value1 == value2)), is_similar
-        structure2 = self.get_value_structure(key2.data, value2.data, trace, (environment2 := environment[branch2]))
+        structure2 = self.get_value_structure(key2.data, value2.data, trace, environment[branch2])
         if structure2 is None:
             return float(is_similar := (value1 == value2)), is_similar
-
-        structure1_chain_end = structure1.get_structure_chain_end(value1, trace, environment1)
-        if structure1_chain_end is None:
-            return float(is_similar := (value1 == value2)), is_similar
-        structure2_chain_end = structure2.get_structure_chain_end(value2, trace, environment2)
-        if structure1_chain_end is not structure2_chain_end:
-            return float(is_similar := (value1 == value2)), is_similar
-        return structure1_chain_end.get_similarity(value1, value2, branch1, branch2, trace, environment)
+        return structure1.get_similarity(value1, value2, branch1, branch2, trace, environment)
 
     def assemble_output(
         self,

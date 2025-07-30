@@ -99,12 +99,11 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
     def initial_report(self, data:D, version:Version, structure_info:StructureInfo, environment:StructureEnvironment) -> str:
         '''
         Returns a final string of the initial report at the first Version that supports this StructureBase.
-        :data: The un-normalized data from `version`.
+        :data: The data from `version`.
         '''
         printer_environment = PrinterEnvironment(environment, structure_info, self.default_delegate, version, 0)
         trace = Trace()
-        normalized_data = self.ensure_not_ellipsis(self.normalize_from_raw(data, trace, printer_environment), trace, (version,))
-        containerized_data = self.ensure_not_ellipsis(self.containerize(normalized_data, trace, printer_environment), trace, (version,))
+        containerized_data = self.ensure_not_ellipsis(self.containerize(data, trace, printer_environment), trace, (version,))
         self.ensure_not_ellipsis(self.type_check(containerized_data, trace, printer_environment), trace, (version,))
         if self.delegate is None:
             return cast(str, self.ensure_not_ellipsis(self.print_branch(containerized_data, trace, printer_environment), trace, (version,)))
@@ -124,10 +123,8 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
     ) -> tuple[str, bool]:
         comparison_environment = ComparisonEnvironment(environment, self.default_delegate, [(version1, structure_info1), (version2, structure_info2)], [versions_between])
         trace = Trace()
-        normalized_data1 = self.ensure_not_ellipsis(self.normalize_from_raw(data1, trace, comparison_environment[0]), trace, (version1,))
-        normalized_data2 = self.ensure_not_ellipsis(self.normalize_from_raw(data2, trace, comparison_environment[1]), trace, (version2,))
-        containerized_data1 = self.ensure_not_ellipsis(self.containerize(normalized_data1, trace, comparison_environment[0]), trace, (version1,))
-        containerized_data2 = self.ensure_not_ellipsis(self.containerize(normalized_data2, trace, comparison_environment[1]), trace, (version2,))
+        containerized_data1 = self.ensure_not_ellipsis(self.containerize(data1, trace, comparison_environment[0]), trace, (version1,))
+        containerized_data2 = self.ensure_not_ellipsis(self.containerize(data2, trace, comparison_environment[1]), trace, (version2,))
         self.ensure_not_ellipsis(self.type_check(containerized_data1, trace, comparison_environment[0]), trace, (version1,))
         self.ensure_not_ellipsis(self.type_check(containerized_data2, trace, comparison_environment[1]), trace, (version2,))
         comparison, has_changes, _ = self.compare(((0, containerized_data1), (1, containerized_data2)), trace, comparison_environment)
@@ -147,8 +144,7 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
 
     def get_containerized_from_raw(self, data:D, version:Version, environment:PrinterEnvironment) -> Con[D]:
         trace = Trace()
-        normalized_data = self.ensure_not_ellipsis(self.normalize_from_raw(data, trace, environment), trace, (version,))
-        return self.ensure_not_ellipsis(self.containerize(normalized_data, trace, environment), trace, (version,))
+        return self.ensure_not_ellipsis(self.containerize(data, trace, environment), trace, (version,))
 
     def type_check_from_raw(self, data:D, version:Version, environment:PrinterEnvironment) -> None:
         trace = Trace()

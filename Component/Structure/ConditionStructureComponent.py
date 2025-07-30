@@ -43,7 +43,7 @@ class ConditionStructureComponent(PassthroughStructureComponent[ConditionStructu
             (
                 OptionalComponentField(item["filter"], FILTER_PATTERN, ("substructures", str(index), "filter")),
                 (structure_field := OptionalComponentField(item.get("structure"), STRUCTURE_COMPONENT_PATTERN, ("substructures", str(index), "structure"))),
-                TypeListField(item["types"], ("substructures", str(index), "types")).add_to_set(self.my_type).make_default(self.pre_normalized_types_field).verify_with(structure_field),
+                TypeListField(item["types"], ("substructures", str(index), "types")).add_to_set(self.my_type).verify_with(structure_field),
             )
             for index, item in enumerate(data["substructures"])
         ]

@@ -5,7 +5,7 @@ from ordered_set import OrderedSet
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
-from Structure.Normalizer import Normalizer
+from Structure.Function import Function
 from Structure.PassthroughStructure import PassthroughStructure
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import PrinterEnvironment
@@ -33,7 +33,7 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     def link_switch_structure(
         self,
-        switch_function:Normalizer,
+        switch_function:Function,
         structures:dict[str,Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None],
         tags:dict[str,set[StructureTag]],
         types:dict[str,tuple[type,...]],

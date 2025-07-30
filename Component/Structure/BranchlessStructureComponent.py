@@ -34,7 +34,7 @@ class BranchlessStructureComponent[a: BranchlessStructure](PassthroughStructureC
         fields = list(super().initialize_fields(data))
 
         self.structure_field = OptionalComponentField(data["structure"], STRUCTURE_COMPONENT_PATTERN, ("structure",))
-        self.this_types_field = TypeListField(data["this_types"], ("this_types",)).add_to_set(self.my_type).make_default(self.pre_normalized_types_field).verify_with(self.structure_field)
+        self.this_types_field = TypeListField(data["this_types"], ("this_types",)).add_to_set(self.my_type).verify_with(self.structure_field)
 
         fields.extend((self.structure_field, self.this_types_field))
         return fields

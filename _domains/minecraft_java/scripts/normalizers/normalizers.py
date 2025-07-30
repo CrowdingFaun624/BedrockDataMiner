@@ -33,10 +33,10 @@ def block_entity_spawn_data_switch(data:dict[str,Any]) -> str:
 
 @component_function(no_arguments=True)
 def density_function_switch(data:float|dict) -> str:
-    if isinstance(data, float):
+    if isinstance(data, (float, int)):
         return "constant_shorthand"
     else:
-        assert not isinstance(data, int) # ?????? why is this necessary??
+        assert not isinstance(data, int)
         return data["type"]
 
 @component_function(no_arguments=True)
@@ -44,16 +44,11 @@ def data_component_enchantments_switch(data:dict) -> Literal["old", "new"]:
     return "old" if "levels" in data else "new"
 
 @component_function(no_arguments=True)
-def font_providers_normalize_skip(data:str|list[str]) -> list[str]|None:
+def font_providers_normalize_skip(data:str|list[str]) -> list[str]:
     if isinstance(data, str):
         return list(data)
-
-@component_function(type_verifier=TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("serializer", True, str),
-))
-def open_file[A](data:A|File[A], serializer:str) -> A|None:
-    if isinstance(data, File):
-        return data.read(domain.script_referenceable.get(serializer))
+    else:
+        return data
 
 class PacksOutputTypedDict(TypedDict):
     packs: list[str]
@@ -84,6 +79,8 @@ def provider_switch(data:dict[str,Any]|Any, key:str, default:str) -> str:
         return default
 
 @component_function(no_arguments=True)
-def textures_split_lines(data:list[str]|str) -> list[str]|None:
+def textures_split_lines(data:list[str]|str) -> list[str]:
     if isinstance(data, str):
         return data.splitlines()
+    else:
+        return data

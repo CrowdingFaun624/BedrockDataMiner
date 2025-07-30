@@ -9,7 +9,7 @@ ALLOWED_CAPABILITIES = set((
     "is_dataminer_settings",
     "is_filter",
     "is_latest_slot",
-    "is_normalizer",
+    "is_function",
     "is_serializer",
     "is_structure",
     "is_structure_tag",

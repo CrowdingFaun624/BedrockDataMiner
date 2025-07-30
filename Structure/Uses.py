@@ -18,6 +18,8 @@ class Region(Enum):
     this_types = 0
     key_types = 1
     value_types = 2 # grr cannot use `value`
+    outer_types = 3
+    inner_types = 4
 
 class Use(): # pronounced like the noun use, YOOS
 

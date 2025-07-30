@@ -7,10 +7,7 @@ from Component.Field.Field import Field
 from Component.Field.FieldListField import FieldListField
 from Component.Structure.Field.KeyField import KeyField
 from Component.Structure.Field.KeysImportField import KeysImportField
-from Component.Structure.NormalizerComponent import (
-    NORMALIZER_PATTERN,
-    NormalizerComponent,
-)
+from Component.Structure.FunctionComponent import FUNCTION_PATTERN, FunctionComponent
 from Component.Structure.PassthroughStructureComponent import (
     PassthroughStructureComponent,
 )
@@ -45,11 +42,10 @@ class SwitchStructureComponent(PassthroughStructureComponent[SwitchStructure]):
     def initialize_fields(self, data: SwitchStructureTypedDict) -> Sequence[Field]:
         fields = list(super().initialize_fields(data))
 
-        self.switch_function_field = ComponentField(data["switch_function"], NORMALIZER_PATTERN, ("switch_function",), assume_type=NormalizerComponent.class_name)
+        self.switch_function_field = ComponentField(data["switch_function"], FUNCTION_PATTERN, ("switch_function",), assume_type=FunctionComponent.class_name)
         self.subcomponents_field = FieldListField([
             KeyField(key_data, key, self.children_tags, self, (key,), ("substructures", key))
                 .add_tag_fields(self.tags_field)
-                .make_default(self.pre_normalized_types_field)
                 .add_to_type_set(self.my_type)
             for key, key_data in data.get("substructures", {}).items()
         ], ("substructures",))

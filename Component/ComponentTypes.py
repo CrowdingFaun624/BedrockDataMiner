@@ -12,6 +12,9 @@ from Component.Log.LogComponent import LogComponent
 from Component.Serializer.SerializerComponent import SerializerComponent
 from Component.Structure.CacheStructureComponent import CacheStructureComponent
 from Component.Structure.ConditionStructureComponent import ConditionStructureComponent
+from Component.Structure.ConvergingStructureComponent import (
+    ConvergingStructureComponent,
+)
 from Component.Structure.DictStructureComponent import DictStructureComponent
 from Component.Structure.FileStructureComponent import FileStructureComponent
 from Component.Structure.FilterComponent import (
@@ -28,8 +31,11 @@ from Component.Structure.FilterComponent import (
     NorFilterComponent,
     OrFilterComponent,
 )
+from Component.Structure.FunctionComponent import FunctionComponent
 from Component.Structure.KeymapStructureComponent import KeymapStructureComponent
-from Component.Structure.NormalizerComponent import NormalizerComponent
+from Component.Structure.NormalizerStructureComponent import (
+    NormalizerStructureComponent,
+)
 from Component.Structure.NumberStructureComponent import NumberStructureComponent
 from Component.Structure.PrimitiveStructureComponent import PrimitiveStructureComponent
 from Component.Structure.SequenceStructureComponent import SequenceStructureComponent
@@ -55,6 +61,7 @@ component_types:list[type[Component]] = [
     AccessorTypeComponent,
     CacheStructureComponent,
     ConditionStructureComponent,
+    ConvergingStructureComponent,
     CoverageDataminerCollectionComponent,
     DataminerCollectionComponent,
     DataminerSettingsComponent,
@@ -72,10 +79,11 @@ component_types:list[type[Component]] = [
     NeFilterComponent,
     NorFilterComponent,
     OrFilterComponent,
+    FunctionComponent,
     KeymapStructureComponent,
     LatestSlotComponent,
     LogComponent,
-    NormalizerComponent,
+    NormalizerStructureComponent,
     NumberStructureComponent,
     PrimitiveStructureComponent,
     SequenceStructureComponent,

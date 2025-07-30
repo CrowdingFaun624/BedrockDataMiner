@@ -20,9 +20,9 @@ animation_controllers_fix_old_input_typed_dict = dict[str,Any]
 animation_controllers_fix_old_output_typed_dict = TypedDict("animation_controllers_fix_old_output_typed_dict", {"animation_controllers": Any})
 
 @component_function(no_arguments=True)
-def animation_controllers_fix_old(data:animation_controllers_fix_old_input_typed_dict|animation_controllers_fix_old_output_typed_dict) -> animation_controllers_fix_old_output_typed_dict|None:
+def animation_controllers_fix_old(data:animation_controllers_fix_old_input_typed_dict|animation_controllers_fix_old_output_typed_dict) -> animation_controllers_fix_old_output_typed_dict:
     if "animation_controllers" in data:
-        return None
+        return cast(animation_controllers_fix_old_output_typed_dict, data)
     output:animation_controllers_fix_old_output_typed_dict = {"animation_controllers": data}
     return output
 
@@ -30,9 +30,9 @@ animations_fix_old_input_typed_dict = dict[str,Any]
 animations_fix_old_output_typed_dict = TypedDict("animations_fix_old_output_typed_dict", {"animations": Any})
 
 @component_function(no_arguments=True)
-def animations_fix_old(data:animations_fix_old_input_typed_dict|animations_fix_old_output_typed_dict) -> animations_fix_old_output_typed_dict|None:
+def animations_fix_old(data:animations_fix_old_input_typed_dict|animations_fix_old_output_typed_dict) -> animations_fix_old_output_typed_dict:
     if "animations" in data:
-        return None
+        return cast(animations_fix_old_output_typed_dict, data)
     output:animations_fix_old_output_typed_dict = {"animations": data}
     return output
 
@@ -64,9 +64,9 @@ attachables_normalize_old_output_attachable_typed_dict = TypedDict("attachables_
 attachables_normalize_old_output_typed_dict = TypedDict("attachables_normalize_old_output_typed_dict", {"minecraft:attachable": attachables_normalize_old_output_attachable_typed_dict})
 
 @component_function(no_arguments=True)
-def attachables_normalize_old(data:attachables_normalize_old_input_typed_dict|attachables_normalize_old_output_typed_dict) -> attachables_normalize_old_output_typed_dict|None:
+def attachables_normalize_old(data:attachables_normalize_old_input_typed_dict|attachables_normalize_old_output_typed_dict) -> attachables_normalize_old_output_typed_dict:
     if "minecraft:attachable" in data:
-        return None
+        return cast(attachables_normalize_old_output_typed_dict, data)
     attachable_identifier = list(data.keys())[0]
     output:attachables_normalize_old_output_typed_dict = {"minecraft:attachable": {"description": data[attachable_identifier]}} # type: ignore
     output["minecraft:attachable"]["description"]["identifier"] = attachable_identifier
@@ -93,9 +93,9 @@ biomes_normalize_old_output_typed_dict = TypedDict("biomes_normalize_old_output_
 })
 
 @component_function(no_arguments=True)
-def biomes_normalize_old(data:biomes_normalize_old_input_typed_dict|biomes_normalize_old_output_typed_dict) -> biomes_normalize_old_output_typed_dict|None:
+def biomes_normalize_old(data:biomes_normalize_old_input_typed_dict|biomes_normalize_old_output_typed_dict) -> biomes_normalize_old_output_typed_dict:
     if "minecraft:biome" in data:
-        return None
+        return cast(biomes_normalize_old_output_typed_dict, data)
     biome_identifier = list(data.keys())[0]
     output:biomes_normalize_old_output_typed_dict = {
         "format_version": data[biome_identifier]["format_version"],
@@ -137,16 +137,18 @@ class FormatStringTypedDict(TypedDict):
     params_to_use: NotRequired[list[Any]]
 
 @component_function(no_arguments=True)
-def commands_normalize_format_string(data:str|FormatStringTypedDict) -> FormatStringTypedDict|None:
+def commands_normalize_format_string(data:str|FormatStringTypedDict) -> FormatStringTypedDict:
     if isinstance(data, dict):
-        return None
+        return data
     else:
         return {"format": data}
 
 @component_function(no_arguments=True)
-def delete_variants_if_empty(data:dict[str,Any]) -> None:
+def delete_variants_if_empty(data:dict[str,Any]) -> dict[str,Any]:
     if "variants" in data and len(data["variants"]["key"]) == 0 and len(data["variants"]["map"]) == 0:
-        del data["variants"]
+        return {key: value for key, value in data.items() if key != "variants"}
+    else:
+        return data
 
 entities_client_fix_old_input_type = dict[str,Any]
 
@@ -159,9 +161,9 @@ entities_client_fix_old_output_type = TypedDict("entities_client_fix_old_output_
 })
 
 @component_function(no_arguments=True)
-def entities_client_fix_old(data:entities_client_fix_old_input_type|entities_client_fix_old_output_type) -> entities_client_fix_old_output_type|None:
+def entities_client_fix_old(data:entities_client_fix_old_input_type|entities_client_fix_old_output_type) -> entities_client_fix_old_output_type:
     if "minecraft:client_entity" in data:
-        return None
+        return cast(entities_client_fix_old_output_type, data)
     client_entity_identifier = list(data.keys())[0]
     output:entities_client_fix_old_output_type = {
         "minecraft:client_entity": {
@@ -207,15 +209,14 @@ def items_client_offset_normalize(data:dict[str,File[ItemClientOffsetFileTypedDi
 def language_names_normalize(data:list[list[str]]) -> dict[str,str]:
     return dict(data)
 
-materials_normalize_material_input_typed_dict = TypedDict("materials_normalize_material_input_typed_dict", {"version": str, "materials": dict[str,Any]})
-
-materials_normalize_material_output_typed_dict = TypedDict("materials_normalize_material_output_typed_dict", {"materials": dict[str,Any]})
+materials_normalize_material_typed_dict = TypedDict("materials_normalize_material_typed_dict", {"version": NotRequired[str], "materials": dict[str,Any]})
 
 @component_function(no_arguments=True)
-def materials_normalize_material(data:materials_normalize_material_input_typed_dict|dict[str,Any]) -> materials_normalize_material_output_typed_dict|None:
+def materials_normalize_material(data:materials_normalize_material_typed_dict|dict[str,Any]) -> materials_normalize_material_typed_dict:
     if "materials" in data:
-        data["version"] = cast(str, data["materials"]["version"])
-        del data["materials"]["version"]
+        output:materials_normalize_material_typed_dict = {"materials": {key: value for key, value in data["materials"].items() if key != "version"}}
+        output["version"] = cast(str, data["materials"]["version"])
+        return output
     else:
         return {"materials": data}
 
@@ -280,13 +281,6 @@ def normalize_sound_definitions(data:dict[str,File[dict[str,Any]]]) -> FakeFile[
             output[event_name][pack_name] = event_data
     return FakeFile("combined_sound_definitions_file", output, None, hash(tuple(file_hashes)))
 
-@component_function(type_verifier=TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("serializer", True, str),
-))
-def open_file[A](data:A|File[A], serializer:str) -> A|None:
-    if isinstance(data, File):
-        return data.read(domain.script_referenceable.get(serializer))
-
 packs_normalize_pack_typed_dict = TypedDict("packs_normalize_pack_typed_dict", {"path": str, "name": str})
 
 @component_function(no_arguments=True)
@@ -294,9 +288,11 @@ def packs_normalize(data:list[packs_normalize_pack_typed_dict]) -> list[str]:
     return [pack["name"] for pack in data]
 
 @component_function(no_arguments=True)
-def particles_normalize_component_particle_appearance_tinting_color(data:dict|str|list) -> list|dict|None:
+def particles_normalize_component_particle_appearance_tinting_color(data:dict|str|list) -> list|dict:
     if isinstance(data, (str, list)):
         return [data]
+    else:
+        return data
 
 particles_normalize_old_description_typed_dict = TypedDict("particles_normalize_old_description_typed_dict", {
     "basic_render_parameters": dict[str,Any],
@@ -315,9 +311,9 @@ particles_normalize_old_output_type = TypedDict("particles_normalize_old_output_
 particles_normalize_old_input_type = dict[str,Any]
 
 @component_function(no_arguments=True)
-def particles_normalize_old(data:particles_normalize_old_input_type|particles_normalize_old_output_type) -> particles_normalize_old_output_type|None:
+def particles_normalize_old(data:particles_normalize_old_input_type|particles_normalize_old_output_type) -> particles_normalize_old_output_type:
     if "particles" not in data:
-        return
+        return cast(particles_normalize_old_output_type, data)
     particle_identifier = list(data["particles"].keys())[0] # type: ignore
     output:particles_normalize_old_output_type = {
         "format_version": cast(str, data["format_version"]),
@@ -343,9 +339,9 @@ recipes_fix_old_recipe_types = {
 }
 
 @component_function(no_arguments=True)
-def recipes_fix_old(data:dict[str,Any]) -> dict[str,dict[str,Any]]|None:
+def recipes_fix_old(data:dict[str,Any]) -> dict[str,dict[str,Any]]:
     if "type" not in data:
-        return None
+        return data
     new_recipe_type = recipes_fix_old_recipe_types[data["type"]]
     output = {new_recipe_type: data}
     data.pop("defined_in", None)
@@ -368,9 +364,9 @@ def remove_file_suffix(data:SCon[str]) -> str:
         return split_data[0]
 
 @component_function(no_arguments=True)
-def render_controllers_fix_old(data:Any) -> Any|None:
+def render_controllers_fix_old(data:Any) -> Any:
     if "render_controllers" in data:
-        return None
+        return data
     output = {"render_controllers": data}
     return output
 
@@ -379,14 +375,18 @@ def renderer_options_dragon_normalize(data:list[list[str]]) -> dict[str,str]:
     return dict(data) # iterable of iterables with two items each
 
 @component_function(no_arguments=True)
-def renderer_options_normalize_mappings(data:dict[str,list[Any]]|list[Any]) -> dict[str,list[Any]]|None:
+def renderer_options_normalize_mappings(data:dict[str,list[Any]]|list[Any]) -> dict[str,list[Any]]:
     if isinstance(data, list):
         return {"mappings": data}
+    else:
+        return data
 
 @component_function(no_arguments=True)
-def renderer_platform_configurations_normalize_shadow_config(data:Any) -> Any|None:
+def renderer_platform_configurations_normalize_shadow_config(data:Any) -> Any:
     if "file" in data:
         return {"shadow_config": data}
+    else:
+        return data
 
 class SkinsNormalizeInputTypedDict(TypedDict):
     skins: list[dict[str,Any]]
@@ -408,8 +408,9 @@ def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_key
         file_hashes.append(hash(skins_file))
         skins_data = skins_file.read(json_serializer.get())
         for skin in skins_data["skins"]:
-            skin["defined_in"] = pack_name
-            output["skins"].append(skin)
+            output_skin = skin.copy()
+            output_skin["defined_in"] = pack_name
+            output["skins"].append(output_skin)
         for other_key in other_keys:
             output[other_key][pack_name] = skins_data[other_key]
     return FakeFile("combined_skins_file", output, None, hash(tuple(file_hashes)))
@@ -418,6 +419,8 @@ def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_key
 def sound_definitions_make_strings_to_dict(data:Any) -> Any:
     if isinstance(data, str):
         return {"name": data}
+    else:
+        return data
 
 # default is 12
 SPECIAL_WEIGHTS = [
@@ -476,14 +479,18 @@ def sound_events_similarity_weight(data:str) -> list[int]:
     return weights
 
 @component_function(no_arguments=True)
-def sounds_json_make_strings_to_dict(data:Any) -> Any:
+def sounds_json_make_strings_to_dict(data:Any) -> dict[str,Any]:
     if isinstance(data, str):
         return {"sound": data}
+    else:
+        return data
 
 @component_function(no_arguments=True)
-def spawn_rules_normalize_herd(data:dict[str,Any]|list[dict[str,Any]]) -> list[dict[str,Any]]|None:
+def spawn_rules_normalize_herd(data:dict[str,Any]|list[dict[str,Any]]) -> list[dict[str,Any]]:
     if isinstance(data, dict):
         return [data]
+    else:
+        return data
 
 @component_function(no_arguments=True)
 def subdirs_normalize(data:dict[str,File[list[str]]]) -> list[str]:
@@ -529,31 +536,37 @@ def texture_list_normalize(data:dict[str,File[list[str]]], serializer:str) -> Fa
     return FakeFile("combined_texture_list_file", dict(output), None, hash(tuple(file_hashes)))
 
 @component_function(no_arguments=True)
-def textures_split_lines(data:list[str]|str) -> list[str]|None:
+def textures_split_lines(data:list[str]|str) -> list[str]:
     if isinstance(data, str):
         return data.splitlines()
+    else:
+        return data
 
 @component_function(no_arguments=True)
-def tiers_bin_normalize_gpu(data:int|dict) -> dict|None:
+def tiers_bin_normalize_gpu(data:int|dict) -> dict:
     if isinstance(data, int):
         return {"tier": data}
+    else:
+        return data
 
 @component_function(no_arguments=True)
-def ui_separate_variables(data:dict[str,Any]) -> None:
+def ui_separate_variables(data:dict[str,Any]) -> dict[str,Any]:
+    output:dict[str,Any] = {}
     variables:dict[str,Any] = {}
     for parameter_name, parameter_value in data.items():
         if parameter_name.startswith("$"):
             variables[parameter_name] = parameter_value
-    for variable_name in variables.keys():
-        del data[variable_name] # variables are not wanted in the element afterward
-    assert "$variables" not in data
+        else:
+            output[parameter_name] = parameter_value
+    assert "$variables" not in output
     if len(variables) > 0:
-        data["$variables"] = variables
+        output["$variables"] = variables
+    return output
 
 @component_function(no_arguments=True)
-def uniforms_normalize(data:dict[str,str]) -> dict[str,str]|None:
+def uniforms_normalize(data:dict[str,str]) -> dict[str,str]:
     if "Name" in data:
-        return
+        return data
     assert len(data) == 1
     key = list(data.keys())[0]
     value = data[key]

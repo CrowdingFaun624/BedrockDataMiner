@@ -39,11 +39,12 @@ class DataminerCollectionTypedDict(TypedDict):
 
 class DataminerSettingsTypedDict(TypedDict):
     arguments: NotRequired[dict[str,Any]]
-    dependencies: NotRequired[list[str]]
-    files: NotRequired[list[str]]
+    dependencies: NotRequired[str|list[str]]
+    files: NotRequired[str|list[str]]
     name: Required[str|None]
     new: Required[str|None]
     old: Required[str|None]
+    optional_dependencies: NotRequired[str|list[str]]
     structure_info: NotRequired[dict[str,Any]]
     type: NotRequired[Literal["DataminerSettings"]]
 
@@ -64,11 +65,10 @@ class MetaFilterTypedDict(TypedDict):
     subfilters: Required[list["ComponentTypedDicts"]]
     type: NotRequired[str]
 
-class NormalizerTypedDict(TypedDict):
+class FunctionTypedDict(TypedDict):
     arguments: NotRequired[dict[str,Any]]
     function_name: Required[str]
-    type: NotRequired[Literal["Normalizer"]]
-    filter: NotRequired["str|ComponentTypedDicts|None"]
+    type: NotRequired[Literal["Function"]]
 
 class RangeVersionTagAutoAssignerTypedDict(TypedDict):
     newest: Required[str|None]
@@ -143,22 +143,23 @@ class VersionTypedDict(TypedDict):
 class StructureTypedDict(TypedDict):
     pass
 
+class ConvergingStructureTypedDict(StructureTypedDict):
+    end_structure: Required["str|ComponentTypedDicts|None"]
+    structure: Required["str|ComponentTypedDicts"]
+    tags: NotRequired[str|list[str]]
+    this_types: Required[str|list[str]]
+    within_structure_depth: Required[int]
+
 class IterableStructureTypedDict(StructureTypedDict):
     delegate: NotRequired[str|None]
     delegate_arguments: NotRequired[dict[str,Any]]
     key_function: NotRequired[str]
     key_types: NotRequired[str|list[str]]
-    normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
-    post_normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
-    pre_normalized_types: NotRequired[str|list[str]]
     required_keys: NotRequired[list[str]]
     tags: NotRequired[str|list[str]]
-    this_types: Required[str|list[str]]
+    this_types: NotRequired[str|list[str]]
 
 class PassthroughStructureTypedDict(StructureTypedDict):
-    normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
-    post_normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
-    pre_normalized_types: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
 
 class BranchlessStructureTypedDict(PassthroughStructureTypedDict):
@@ -168,8 +169,6 @@ class BranchlessStructureTypedDict(PassthroughStructureTypedDict):
 class PrimitiveStructureTypedDict(StructureTypedDict):
     delegate: NotRequired[str|None]
     delegate_arguments: NotRequired[dict[str,Any]]
-    normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
-    pre_normalized_types: NotRequired[str|list[str]]
     tags: NotRequired[str|list[str]]
     this_types: NotRequired[str|list[str]]
 
@@ -198,12 +197,6 @@ class DictStructureTypedDict(MappingStructureTypedDict):
     value_structure: Required["str|ComponentTypedDicts|None"]
     value_types: Required[str|list[str]]
     value_weight: NotRequired[int]
-
-class FileStructureTypedDict(PassthroughStructureTypedDict):
-    content_types: Required[str|list[str]]
-    file_types: NotRequired[str|list[str]]
-    serializer: Required["str|ComponentTypedDicts"]
-    structure: Required["str|ComponentTypedDicts|None"]
 
 class KeyTypedDict(TypedDict):
     delegate_arguments: NotRequired[dict[str,Any]]
@@ -248,13 +241,24 @@ class StructureBaseTypedDict(BranchlessStructureTypedDict):
     delegate: NotRequired[str|None]
     delegate_arguments: NotRequired[dict[str,Any]]
 
-
 class SwitchStructureTypedDict(PassthroughStructureTypedDict):
     switch_function: Required[str]
     substructures: Required[dict[str, KeyTypedDict]]
 
 class UnionStructureTypedDict(PassthroughStructureTypedDict):
     substructures: Required[dict[str, "str|ComponentTypedDicts|None"]]
+
+class WithinStructureTypedDict(StructureTypedDict):
+    inner_types: Required[str|list[str]]
+    outer_types: Required[str|list[str]]
+    structure: Required["str|ComponentTypedDicts"]
+    tags: Required[str|list[str]]
+
+class FileStructureTypedDict(WithinStructureTypedDict):
+    serializer: Required["str|ComponentTypedDicts"]
+
+class NormalizerStructureTypedDict(WithinStructureTypedDict):
+    functions: Required["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
 
 class InheritedComponentTypedDict(TypedDict):
     inherit: Required[str]
@@ -276,7 +280,7 @@ type ComponentTypedDicts = \
     LatestSlotTypedDict|\
     MappingStructureTypedDict|\
     MetaFilterTypedDict|\
-    NormalizerTypedDict|\
+    FunctionTypedDict|\
     NumberStructureTypedDict|\
     PassthroughStructureTypedDict|\
     PrimitiveStructureTypedDict|\
@@ -297,6 +301,7 @@ type ComponentTypedDicts = \
     VersionTagOrderTypedDict|\
     VersionTagTypedDict|\
     VersionTypedDict|\
+    WithinStructureTypedDict|\
     InheritedComponentTypedDict
 
 type GroupFileType = dict[str,ComponentTypedDicts]

@@ -1,5 +1,5 @@
 from types import EllipsisType
-from typing import Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 from ordered_set import OrderedSet
 
@@ -32,6 +32,9 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
     def iter_structures(self) -> Sequence[Structure]:
         return (self.structure,) if self.structure is not None else ()
 
+    def get_substructure(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> tuple[Con[D], Structure[Any, Con[D], Any, Any, Any, Any] | None]:
+        return data, self.structure
+
     def type_check_extra(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> None:
         if not isinstance(data.data, self.this_types):
             trace.exception(StructureTypeError(self.this_types, type(data.data), "Data"))
@@ -52,9 +55,10 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
         with trace.enter(self, self.trace_name, data):
             output:OrderedSet[Use] = OrderedSet(())
             output.update(super().get_uses(data, usage_tracker, parent_use, trace, environment))
+            structure_use = StructureUse(self, None, parent_use)
             for this_type in self.this_types:
                 if isinstance(data.data, this_type):
-                    output.add(TypeUse(this_type, Region.this_types, StructureUse(self, None, parent_use), usage_tracker))
+                    output.add(TypeUse(this_type, Region.this_types, structure_use, usage_tracker))
                     break
             else: raise StructureTypeError(self.this_types, type(data.data), "Data")
             return output
@@ -87,6 +91,6 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
             elif isinstance(comparison, Diff):
                 return comparison, any_changes, internal_changes
             else:
-                return Diff({tuple(branch for branch, _ in datas): comparison}, internal_changes), any_changes, internal_changes
+                return comparison, any_changes, internal_changes
 
         return ..., False, False

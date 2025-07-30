@@ -137,11 +137,19 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
         return self.value_tags.get(self.key_function(key))
 
     def allow_key_move(self, key1: Con[K], key2: Con[K], value1: Con[V], value2: Con[V], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> bool:
-        if not self.allow_key_moves:
-            return False
-        structure1 = self.get_value_structure_chain_end(key1, value1, trace, environment[branch1])
-        structure2 = self.get_value_structure_chain_end(key2, value2, trace, environment[branch2])
-        return structure1 is structure2
+        # Returns True if the values and keys share a common Structure
+        if not self.allow_key_moves: return False
+        value_structure1 = self.get_value_structure(key1.data, value1.data, trace, environment[branch1])
+        if value_structure1 is None: return False
+        value_structure2 = self.get_value_structure(key2.data, value2.data, trace, environment[branch1])
+        if value_structure2 is not value_structure1: return False
+
+        key_structure1 = self.get_key_structure(key1.data, value1.data, trace, environment[branch1])
+        if key_structure1 is None: return False
+        key_structure2 = self.get_key_structure(key2.data, value2.data, trace, environment[branch1])
+        if key_structure2 is not key_structure1: return False
+
+        return True
 
     def get_similarity_weight(self, key: Con[K], value: Con[V], trace: Trace, environment: ComparisonEnvironment) -> int:
         if (output := self.similarity_weights.get(self.key_function(key.data), ...)) is ...:

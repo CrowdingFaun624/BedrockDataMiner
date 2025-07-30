@@ -40,9 +40,7 @@ class TypeStuff():
         "json_encoders",
         "linked_type_stuffs",
         "mutually_sortable",
-        "popitem_table",
         "requires_subcomponent_types",
-        "setitem_table",
         "sortable_types",
         "string_types",
         "type_names",
@@ -61,8 +59,6 @@ class TypeStuff():
         containment_types:TypeDict[object, TypeSet]|None=None,
         hash_type_table:TypeDict[Any,Callable[[Any, "TypeStuff"],int]]|None=None,
         iterate_table:TypeDict[Any, Callable[[Any], Iterable[tuple[Any, Any]]]]|None=None,
-        setitem_table:TypeDict[Any, Callable[[Any, Any, Any], None]]|None=None,
-        popitem_table:TypeDict[Any, Callable[[Any, Any],Any]]|None=None,
         json_encoders:TypeDict[object, type[Coder]]|None=None,
         json_decoders:dict[str,type[Coder]]|None=None,
     ) -> None:
@@ -78,8 +74,6 @@ class TypeStuff():
         self.containment_types:TypeDict[object, TypeSet] = TypeDict() if containment_types is None else containment_types
         self.hash_type_table:TypeDict[Any,Callable[[Any, TypeStuff],int]] = TypeDict() if hash_type_table is None else hash_type_table
         self.iterate_table:TypeDict[Any,Callable[[Any], Iterable[tuple[Any, Any]]]] = TypeDict() if iterate_table is None else iterate_table
-        self.setitem_table:TypeDict[Any, Callable[[Any, Any, Any], None]] = TypeDict() if setitem_table is None else setitem_table
-        self.popitem_table:TypeDict[Any, Callable[[Any, Any],Any]] = TypeDict() if popitem_table is None else popitem_table
         self.json_encoders:TypeDict[object, type[Coder]] = TypeDict() if json_encoders is None else json_encoders
         self.json_decoders:dict[str,type[Coder]] = {} if json_decoders is None else json_decoders
 
@@ -103,8 +97,6 @@ class TypeStuff():
             containment_types=self.containment_types.copy(),
             hash_type_table=self.hash_type_table.copy(),
             iterate_table=self.iterate_table.copy(),
-            setitem_table=self.setitem_table.copy(),
-            popitem_table=self.popitem_table.copy(),
             json_encoders=self.json_encoders.copy(),
             json_decoders=self.json_decoders.copy(),
         )
@@ -121,8 +113,6 @@ class TypeStuff():
         self.containment_types.update(other.containment_types)
         self.hash_type_table.update(other.hash_type_table)
         self.iterate_table.update(other.iterate_table)
-        self.setitem_table.update(other.setitem_table)
-        self.popitem_table.update(other.popitem_table)
         self.json_encoders.update(other.json_encoders)
         self.json_decoders.update(other.json_decoders)
 
@@ -153,9 +143,6 @@ class TypeStuff():
     def iterate_data(self, data:Any) -> Iterable[tuple[Any, Any]]:
         return self.iterate_table[type(data)](data)
 
-    def setitem_data(self, data:Any, key:Any, value:Any) -> None:
-        return self.setitem_table[type(data)](data, key, value)
-
 primary_type_stuff = TypeStuff(None)
 '''
 TypeStuff for non-Script types.
@@ -166,8 +153,6 @@ def register_decorator[T](
     hashing_method:Callable[[T, TypeStuff],int]|None|EllipsisType,
     *,
     iterate_method:Callable[[T], Iterable[tuple[Any, Any]]]|None=None,
-    setitem_method:Callable[[T, Any, Any], None]|None=None,
-    popitem_method:Callable[[T, Any], Any]|None=None,
     requires_subcomponent:bool=False,
     sortable:str|list[str]|None=None,
     is_file:bool=False,
@@ -185,10 +170,6 @@ def register_decorator[T](
         Use None to inherit from a subclass's hash method and ... to use the `hash` function.
     :iterate_method: The method Structures use to iterate the data.\
         Use None to inherit from a subclass's iterate method and ... to wrap it in a SimpleContainer.
-    :setitem_method: The method Structures use to set items of the data during normalization.\
-        Use None to inherit from a subclass's iterate method.
-    :popitem_method: The method Structures use to pop items of the data during normalization.\
-        Use None to inherit from a subclass's iterate method.
     :requires_subcomponent: If True, Components that use this type must have a subcomponent.
     :sortable: The category/ies of types this type is sortable with.
     :is_file: If this type is File-like.
@@ -202,8 +183,6 @@ def register_decorator[T](
             name,
             hashing_method=hashing_method,
             iterate_method=iterate_method,
-            setitem_method=setitem_method,
-            popitem_method=popitem_method,
             requires_subcomponent=requires_subcomponent,
             sortable=sortable,
             is_file=is_file,
@@ -220,8 +199,6 @@ def register_type[T](
     hashing_method:Callable[[T, TypeStuff],int]|None|EllipsisType,
     *,
     iterate_method:Callable[[T], Iterable[tuple[Any, Any]]]|None=None,
-    setitem_method:Callable[[T, Any, Any], None]|None=None,
-    popitem_method:Callable[[T, Any], Any]|None=None,
     requires_subcomponent:bool|None=None,
     sortable:str|list[str]|None=None,
     is_file:bool=False,
@@ -239,10 +216,6 @@ def register_type[T](
     :hashing_method: The method Structures use to hash the data (even if it is not a primitive).\
         Use None to inherit from a subclass's hash method and ... to use the `hash` function.
     :iterate_method: The method Structures use to iterate over the data.\
-        Use None to inherit from a subclass's iterate method.
-    :setitem_method: The method Structures use to set items of the data during normalization.\
-        Use None to inherit from a subclass's iterate method.
-    :popitem_method: The method Structures use to pop items of the data during normalization.\
         Use None to inherit from a subclass's iterate method.
     :requires_subcomponent: If True, Components that use this type must have a subcomponent.
     :sortable: The category/ies of types this type is sortable with.
@@ -263,10 +236,6 @@ def register_type[T](
             type_stuff.hash_type_table[_type] = (lambda data, type_stuff: hash(data)) if hashing_method is ... else hashing_method
         if iterate_method is not None:
             type_stuff.iterate_table[_type] = iterate_method
-        if setitem_method is not None:
-            type_stuff.setitem_table[_type] = setitem_method
-        if popitem_method is not None:
-            type_stuff.popitem_table[_type] = popitem_method
         if requires_subcomponent is not None:
             # This property only inherits if requires_subcomponent is None
             if requires_subcomponent is True:
@@ -294,11 +263,11 @@ register_type(bool, "bool", ..., sortable="default")
 register_type(bytearray, None, lambda data, type_stuff: hash(tuple(item for item in data)), iterate_method=enumerate)
 register_type(bytes, None, ..., is_string=True)
 register_type(complex, None, ...)
-register_type(dict, "dict", lambda data, type_stuff: hash(tuple((hash(key), type_stuff.hash_data(value)) for key, value in data.items())), iterate_method=lambda data: data.items(), setitem_method=setitem, popitem_method=lambda data, key: data.pop(key), requires_subcomponent=True)
+register_type(dict, "dict", lambda data, type_stuff: hash(tuple((hash(key), type_stuff.hash_data(value)) for key, value in data.items())), iterate_method=lambda data: data.items(), requires_subcomponent=True)
 register_type(float, "float", ..., sortable="default")
 register_type(frozenset, None, ..., iterate_method=enumerate)
 register_type(int, "int", ..., sortable="default")
-register_type(list, "list", lambda data, type_stuff: hash(tuple(type_stuff.hash_data(item) for item in data)), iterate_method=enumerate, setitem_method=setitem, requires_subcomponent=True)
+register_type(list, "list", lambda data, type_stuff: hash(tuple(type_stuff.hash_data(item) for item in data)), iterate_method=enumerate, requires_subcomponent=True)
 register_type(memoryview, None, ...)
 register_type(type(None), "null", ..., sortable="null")
 register_type(range, None, ...)

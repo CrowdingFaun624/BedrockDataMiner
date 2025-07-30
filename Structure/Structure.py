@@ -6,13 +6,11 @@ from ordered_set import OrderedSet
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
-from Structure.Normalizer import Normalizer
 from Structure.SimilarityCache import SimilarityCache
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureInfo import StructureInfo
 from Structure.StructureTag import StructureTag
 from Structure.Uses import UsageTracker, Use
-from Utilities.Exceptions import NormalizerEllipsisError
 from Utilities.Trace import Trace
 
 
@@ -28,7 +26,6 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
 
     __slots__ = (
         "children_has_garbage_collection",
-        "children_has_normalizer",
         "children_tags",
         "full_name",
         "is_inline",
@@ -45,16 +42,21 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
     def link_structure(
         self,
         children_has_garbage_collection:bool,
-        children_has_normalizer:bool,
         children_tags:set[StructureTag],
     ) -> None:
         self.children_has_garbage_collection = children_has_garbage_collection
-        self.children_has_normalizer = children_has_normalizer
         self.children_tags = children_tags
 
     def clear_similarity_cache(self, keep:Container[StructureInfo]) -> None:
         for similarity_cache in self.get_similarity_caches():
             similarity_cache.clear(keep)
+
+    def get_substructure(self, data:B, trace:Trace, environment:PrinterEnvironment) -> tuple[Con,"Structure|None|EllipsisType"]:
+        '''
+        Returns the substructure for this data. Only defined for PassthroughStructure and WithinStructure. Used for `get_common_substructure`.
+        Returns None for the second tuple item if there is a null-Structure; returns ... if the sub-Structure is not a PassthroughStructure or WithinStructure
+        '''
+        return data, ...
 
     def get_similarity_caches(self) -> Sequence["SimilarityCache"]:
         # implemented if the Structure type has a SimilarityCache.
@@ -75,33 +77,6 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
             if structure not in memo:
                 structure.get_descendants(memo)
         return memo
-
-    def get_structure_chain_end(self, data:B, trace:Trace, environment:PrinterEnvironment) -> "Structure|None":
-        '''
-        Returns the Structure at the end of a chain of AbstractPassthroughStructures
-        '''
-        with trace.enter(self, self.trace_name, data):
-            return self
-
-    def normalize(self, data:A, trace:Trace, environment:PrinterEnvironment) -> A|EllipsisType:
-        '''
-        Manipulates the data before type checking and comparing. Returns ... if the super-Structure does not need to
-        deal with changing data.
-        '''
-        ...
-
-    def normalizer_pass(self, normalizers:Sequence[Normalizer], data:A, trace:Trace, environment:PrinterEnvironment) -> tuple[A, bool]:
-        data_identity_changed:bool = False
-        for normalizer in normalizers:
-            if not normalizer.filter_pass(environment.structure_info):
-                continue
-            normalizer_output = normalizer(data)
-            if normalizer_output is ...:
-                raise NormalizerEllipsisError(normalizer)
-            if normalizer_output is not None:
-                data_identity_changed = True
-                data = normalizer_output
-        return data, data_identity_changed
 
     def containerize(self, data:A, trace:Trace, environment:PrinterEnvironment) -> B|EllipsisType:
         '''

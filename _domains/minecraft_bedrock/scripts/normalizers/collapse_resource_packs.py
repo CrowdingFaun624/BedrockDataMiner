@@ -1,6 +1,6 @@
 import enum
 from collections import defaultdict
-from typing import Any, Iterable, Literal, Optional, TypedDict
+from typing import Any, Iterable, Literal, Mapping, Optional, Sequence, TypedDict
 
 from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
@@ -78,7 +78,7 @@ resource_pack_order = {resource_pack["name"]: index for index, resource_pack in 
 resource_pack_dict = {resource_pack_name: resource_pack for resource_pack_name, resource_pack in zip(resource_pack_order, resource_pack_data)}
 resource_pack_tag_strings = get_resource_pack_tag_strings()
 
-def get_resource_packs_by_tag(data:dict[str,Any]) -> Iterable[tuple[str,list[str]]]:
+def get_resource_packs_by_tag(data:Mapping[str,Any]) -> Iterable[tuple[str,list[str]]]:
     resource_packs_by_tag:defaultdict[str,list[str]] = defaultdict(lambda: [])
     for resource_pack in data.keys():
         tag_string = resource_pack_tag_strings.get(resource_pack)
@@ -90,7 +90,7 @@ def get_resource_packs_by_tag(data:dict[str,Any]) -> Iterable[tuple[str,list[str
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("add_defined_in", False, bool),
 ))
-def collapse_resource_packs_dict[a](data:dict[str,dict[str,a]], add_defined_in:bool=True) -> dict[str,dict[str,a]]:
+def collapse_resource_packs_dict[a](data:Mapping[str,Mapping[str,a]], add_defined_in:bool=True) -> dict[str,dict[str,a]]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
     Also adds a "defined_in" tag to each resource pack's properties unless `add_defined_in` is False.'''
     output:defaultdict[str,dict[str,a]] = defaultdict(lambda: {})
@@ -104,15 +104,14 @@ def collapse_resource_packs_dict[a](data:dict[str,dict[str,a]], add_defined_in:b
                     output[tag_string]["defined_in"] = [resource_pack] # type: ignore
                 else:
                     defined_in_key.append(resource_pack) # type: ignore
-    return type(data)(output)
+    return dict(output)
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("add_defined_in", False, bool),
     TypedDictKeyTypeVerifier("serializer", False, str),
 ))
-def collapse_resource_packs_dict_file[a](data:dict[str,AbstractFile[dict[str,a]]], add_defined_in:bool=True, serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,dict[str,a]]]:
-    '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
-    Also adds a "defined_in" tag to each resource pack's properties unless `add_defined_in` is False.'''
+def collapse_resource_packs_dict_file[a](data:Mapping[str,AbstractFile[Mapping[str,a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,dict[str,a]]]:
+    '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.'''
     output:defaultdict[str,dict[str,a]] = defaultdict(lambda: {})
     file_hashes:list[int] = []
     _serializer = domain.script_referenceable.get(serializer, Serializer)
@@ -122,20 +121,13 @@ def collapse_resource_packs_dict_file[a](data:dict[str,AbstractFile[dict[str,a]]
             file = data[resource_pack]
             file_hashes.append(hash(file))
             output[tag_string].update(file.read(_serializer))
-            if add_defined_in:
-                defined_in_key = output[tag_string].get("defined_in")
-                if defined_in_key is None:
-                    output[tag_string]["defined_in"] = [resource_pack] # type: ignore
-                else:
-                    defined_in_key.append(resource_pack) # type: ignore
-    return FakeFile("combined_file", type(data)(output), None, hash(tuple(file_hashes))) # type: ignore
+    return FakeFile("combined_file", dict(output), None, hash(tuple(file_hashes)))
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("serializer", False, str),
 ))
-def collapse_resource_packs_list2_file[a](data:dict[str,AbstractFile[list[a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,list[a]]]:
-    '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
-    Also adds a "defined_in" tag to each resource pack's properties unless `add_defined_in` is False.'''
+def collapse_resource_packs_list2_file[a](data:Mapping[str,AbstractFile[Sequence[a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,list[a]]]:
+    '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.'''
     output:defaultdict[str,list[a]] = defaultdict(lambda: [])
     file_hashes:list[int] = []
     _serializer = domain.script_referenceable.get(serializer, Serializer)
@@ -145,10 +137,10 @@ def collapse_resource_packs_list2_file[a](data:dict[str,AbstractFile[list[a]]], 
             file = data[resource_pack]
             file_hashes.append(hash(file))
             output[tag_string].extend(file.read(_serializer))
-    return FakeFile("combined_file", type(data)(output), None, hash(tuple(file_hashes))) # type: ignore
+    return FakeFile("combined_file", dict(output), None, hash(tuple(file_hashes)))
 
 @component_function(no_arguments=True)
-def collapse_resource_packs_flat[a](data:dict[str,a]) -> dict[str,a]:
+def collapse_resource_packs_flat[a](data:Mapping[str,a]) -> dict[str,a]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.'''
     output:dict[str,a] = {}
     for tag_string, resource_pack_list in get_resource_packs_by_tag(data):
@@ -160,7 +152,7 @@ def collapse_resource_packs_flat[a](data:dict[str,a]) -> dict[str,a]:
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("serializer", False, str),
 ))
-def collapse_resource_packs_list_file[a](data:dict[str,AbstractFile[list[a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,list[a]]]:
+def collapse_resource_packs_list_file[a](data:Mapping[str,AbstractFile[Sequence[a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,list[a]]]:
     '''
     Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
     '''
@@ -176,7 +168,7 @@ def collapse_resource_packs_list_file[a](data:dict[str,AbstractFile[list[a]]], s
     return FakeFile("combined_file", dict(output), None, hash(tuple(file_hashes)))
 
 @component_function(no_arguments=True)
-def collapse_resource_pack_names(data:list[str]) -> list[str]:
+def collapse_resource_pack_names(data:Sequence[str]) -> list[str]:
     output:list[str] = []
     exists_in_output:set[int] = set() # set of IDs because values of resource_pack_tag_strings are always the same.
     for properties_resource_pack in data:

@@ -1,12 +1,4 @@
-from typing import (
-    Any,
-    Literal,
-    MutableMapping,
-    MutableSequence,
-    Optional,
-    TypedDict,
-    cast,
-)
+from typing import Any, Literal, Mapping, Optional, Sequence, TypedDict, cast
 
 from _domains.minecraft_common.scripts.delegates.VolumeDelegate import (
     LAYER_CHARACTERS_DEFAULT,
@@ -58,7 +50,7 @@ class VolumeStructureInvalidKeyError(StructureException):
 
 class OutputTypedDict(TypedDict):
     states: dict[tuple[int,int,int],int]
-    data: dict[tuple[int,int,int],MutableMapping[str,Any]]
+    data: dict[tuple[int,int,int],dict[str,Any]]
     size: tuple[int,int,int]
 
 @component_function(type_verifier=TypedDictTypeVerifier(
@@ -66,10 +58,10 @@ class OutputTypedDict(TypedDict):
     TypedDictKeyTypeVerifier("state_key", True, str),
     TypedDictKeyTypeVerifier("layer_characters_len", False, int),
 ))
-def volume_normalize_nbt(data:MutableSequence[MutableMapping[str,Any]], position_key:str, state_key:str, layer_characters_len:int=LAYER_CHARACTERS_DEFAULT_MAX) -> OutputTypedDict:
+def volume_normalize_nbt(data:Sequence[Mapping[str,Any]], position_key:str, state_key:str, layer_characters_len:int=LAYER_CHARACTERS_DEFAULT_MAX) -> OutputTypedDict:
     max_x, max_y, max_z = 0, 0, 0
     states:dict[tuple[int,int,int],int] = {}
-    additional_data:dict[tuple[int,int,int],MutableMapping[str,Any]] = {}
+    additional_data:dict[tuple[int,int,int],dict[str,Any]] = {}
     for index, block in enumerate(data):
         position_list = block.get(position_key, None)
         state = block.get(state_key, None)
@@ -97,8 +89,7 @@ def volume_normalize_nbt(data:MutableSequence[MutableMapping[str,Any]], position
         max_x, max_y, max_z = max(max_x, position[0]), max(max_y, position[1]), max(max_z, position[2])
         states[position] = int(state)
         if len(block) > 2:
-            additional_data[position] = type(block)()
-            additional_data[position].update((key, value) for key, value in block.items() if key != position_key and key != state_key)
+            additional_data[position] = {key: value for key, value in block.items() if key != position_key and key != state_key}
     return {
         "states": states,
         "data": additional_data,
@@ -111,17 +102,17 @@ class PaletteItem(TypedDict):
 
 class OldOutputTypedDict(TypedDict):
     states: dict[tuple[int,int,int],int]
-    data: dict[tuple[int,int,int],MutableMapping[str,Any]]
+    data: dict[tuple[int,int,int],dict[str,Any]]
     palette: dict[str,PaletteItem]
     size: tuple[int,int,int]
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("layer_characters_len", False, int),
 ))
-def volume_normalize_nbt_old(data:MutableSequence[MutableMapping[str,Any]], layer_characters_len:int=LAYER_CHARACTERS_DEFAULT_MAX) -> OldOutputTypedDict:
+def volume_normalize_nbt_old(data:Sequence[Mapping[str,Any]], layer_characters_len:int=LAYER_CHARACTERS_DEFAULT_MAX) -> OldOutputTypedDict:
     max_x, max_y, max_z = 0, 0, 0
     states:dict[tuple[int,int,int],int] = {}
-    additional_data:dict[tuple[int,int,int],MutableMapping[str,Any]] = {}
+    additional_data:dict[tuple[int,int,int],dict[str,Any]] = {}
     palette:dict[tuple[int,int], int] = {}
     for index, block in enumerate(data):
         position_list = block.get("pos", None)
@@ -155,8 +146,7 @@ def volume_normalize_nbt_old(data:MutableSequence[MutableMapping[str,Any]], laye
         if state_index >= layer_characters_len:
             raise VolumeStructureInvalidKeyError("State", state_index, index, f"is at least {layer_characters_len}, the maximum for this VolumeStructure")
         if len(block) > 2:
-            additional_data[position] = type(block)()
-            additional_data[position].update((key, value) for key, value in block.items() if key not in ("pos", "state"))
+            additional_data[position] = {key: value for key, value in block.items() if key != "pos" and key != "state"}
     return {
         "states": states,
         "data": additional_data,

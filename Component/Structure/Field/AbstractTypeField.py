@@ -21,7 +21,6 @@ class AbstractTypeField(Field):
     __slots__ = (
         "_types",
         "contained_by_field",
-        "default_fields",
         "is_resolved",
         "must_be_fail_message",
         "must_be_types",
@@ -46,7 +45,6 @@ class AbstractTypeField(Field):
         self.must_be_types:TypeSet|None = None
         self.must_be_fail_message:str|None = None
         self.contained_by_field:AbstractTypeField|None = None
-        self.default_fields:list[AbstractTypeField] = []
         self.is_resolved:bool = False
         self.type_set:set[type]|None = None
 
@@ -90,24 +88,17 @@ class AbstractTypeField(Field):
         self.is_resolved = True
         types:set["type|TypeAliasComponent"] = set()
         output:list[type] = []
-        if len(self._types) == 0 and len(self.default_fields) != 0:
-            for default_field in self.default_fields:
-                for subtype in default_field.resolve():
+        for subcomponent in self._types:
+            if subcomponent in types: continue
+            if isinstance(subcomponent, type):
+                output.append(subcomponent)
+                types.add(subcomponent)
+            else: # isinstance(TypeAliasComponent)
+                for subtype in subcomponent.final.resolve():
                     if subtype in types: continue
                     output.append(subtype)
                     types.add(subtype)
-        else:
-            for subcomponent in self._types:
-                if subcomponent in types: continue
-                if isinstance(subcomponent, type):
-                    output.append(subcomponent)
-                    types.add(subcomponent)
-                else: # isinstance(TypeAliasComponent)
-                    for subtype in subcomponent.final.resolve():
-                        if subtype in types: continue
-                        output.append(subtype)
-                        types.add(subtype)
-                    types.add(subcomponent)
+                types.add(subcomponent)
         self.types = tuple(output)
         if self.type_set is not None:
             self.type_set.update(self.types)
@@ -143,18 +134,4 @@ class AbstractTypeField(Field):
         :type_field: The TypeField of types that contain this TypeField's types.
         '''
         self.contained_by_field = type_field
-        return self
-
-    def default_to(self, type_field:"AbstractTypeField") -> Self:
-        '''
-        If this TypeField is empty, returns the types of `type_field` instead.
-        '''
-        self.default_fields.append(type_field)
-        return self
-
-    def make_default(self, type_field:"AbstractTypeField") -> Self:
-        '''
-        Makes `type_field` return this TypeField's types by default.
-        '''
-        type_field.default_to(self)
         return self

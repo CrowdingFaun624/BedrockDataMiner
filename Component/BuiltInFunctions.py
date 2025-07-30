@@ -14,23 +14,14 @@ type key_function = Callable[["SupportsRichComparison"], str]
 type sort_inner_function = Callable[[sort_item],"SupportsRichComparison"]
 type sort_function = Callable[[key_function, dict[str,int]], sort_inner_function]
 
-def delete_required_key(data:dict[str,Any], key:str) -> None:
-    del data[key]
+def delete_key(data:dict[str,Any], key:str) -> dict[str,Any]:
+    return {_key: value for _key, value in data.items() if _key != key}
 
-def delete_optional_key(data:dict[str,Any], key:str) -> None:
-    data.pop(key, None)
+def delete_keys(data:dict[str,Any], keys:list[str]) -> dict[str,Any]:
+    return {_key: value for _key, value in data.items() if _key not in keys}
 
-def delete_required_keys(data:dict[str,Any], keys:list[str]) -> None:
-    for key in keys:
-        del data[key]
-
-def delete_optional_keys(data:dict[str,Any], keys:list[str]) -> None:
-    for key in keys:
-        data.pop(key, None)
-
-def delete_key_if_empty(data:dict[str,Sized], key:str) -> None:
-    if (value := data.get(key)) is not None and len(value) == 0:
-        data.pop(key, None)
+def delete_key_if_empty(data:dict[str,Sized], key:str) -> dict[str,Sized]:
+    return {_key: value for _key, value in data.items() if _key != key or len(value) == 0}
 
 def identity[A](data:A) -> A:
     return data
@@ -81,16 +72,13 @@ def sort_by_value(key_function:key_function, keys_order:dict[str,int]) -> sort_i
     return sort
 
 def wrap_in_dict(data:list[dict[str,Any]], key:str, delete:bool=False) -> dict[str,dict[str,Any]]:
-    output = {item[key]: item for item in data}
     if delete:
-        for value in output.values():
-            del value[key]
-    return output
+        return {item[key]: {_key: _value for _key, _value in item.items() if _key != key} for item in data}
+    else:
+        return {item[key]: item for item in data}
 
-def wrap_in_value(data:dict[str,Any], key:str, delete:bool=False) -> dict[str,dict[str,Any]]:
+def wrap_in_value(data:dict[str,Any], key:str) -> dict[str,dict[str,Any]]:
     value = data[key]
-    if delete:
-        del value[key]
     return {value: data}
 
 def turn_to_dict(data:list[dict[str,Any]], key_key:str, value_key:str, default:Any|EllipsisType=...) -> dict[str,Any]:
@@ -101,15 +89,18 @@ def turn_to_dict(data:list[dict[str,Any]], key_key:str, value_key:str, default:A
     return output
 
 def wrap_tuple(data:list[Any], keys:list[str]) -> dict[str,Any]:
-    assert len(data) == len(keys)
-    return {key: value for key, value in zip(keys, data)}
+    return {key: value for key, value in zip(keys, data, strict=True)}
 
-def move_key(data:dict[str,Any], from_key:str, to_key:str) -> None:
+def move_key(data:dict[str,Any], from_key:str, to_key:str) -> dict[str,Any]:
     if from_key in data:
         if to_key in data:
             raise KeyError(f"Attempted to move \"{from_key}\" to \"{to_key}\", but \"{to_key}\" already exists!")
-        data[to_key] = data[from_key]
-        del data[from_key]
+        output = data.copy()
+        output[to_key] = output[from_key]
+        del output[from_key]
+        return output
+    else:
+        return data
 
 def parse_int(data:str) -> int:
     return int(data)
@@ -130,14 +121,12 @@ def get_file_stem(data:SCon[str]) -> str:
     return data.data.split("/")[-1].split(".", 1)[0]
 
 built_in_functions:dict[str,Callable] = {
+    "delete_key": delete_key,
     "delete_key_if_empty": delete_key_if_empty,
-    "delete_optional_key": delete_optional_key,
-    "delete_optional_keys": delete_optional_keys,
-    "delete_required_key": delete_required_key,
-    "delete_required_keys": delete_required_keys,
+    "delete_keys": delete_keys,
     "get_file_stem": get_file_stem,
-    "get_key": get_key,
     "get_get_key": get_get_key,
+    "get_key": get_key,
     "identity": identity,
     "load_json": load_json,
     "move_key": move_key,

@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, Mapping, cast
 
 from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
@@ -25,24 +25,25 @@ def parse_element_name(raw_element_name:str, namespace:str) -> tuple[str,str|Non
         superclass_namespace, superclass_element_name = None, None
     return element_name, superclass_namespace, superclass_element_name
 
-def get_namespaces_and_extensions(data:dict[str,File[dict[str,dict[str,Any]]]]) -> tuple[dict[str,dict[str,dict[str,Any]]], dict[str,dict[str,tuple[str|None,str|None]]], list[int]]:
-    namespaces:dict[str,dict[str,dict[str,Any]]] = {} # {namespace: {element_name: element_data}}
+def get_namespaces_and_extensions(data:dict[str,File[Mapping[str,Mapping[str,Any]]]]) -> tuple[dict[str,dict[str,Mapping[str,Any]]], dict[str,dict[str,tuple[str|None,str|None]]], list[int]]:
+    namespaces:dict[str,dict[str,Mapping[str,Any]]] = {} # {namespace: {element_name: element_data}}
     extensions:dict[str,dict[str,tuple[str|None,str|None]]] = {} # {namespace: {subelement: (superelements_namespace, superelement)}}
     file_hashes:list[int] = []
     for file_name, file in data.items():
         elements = file.read(json_serializer.get())
         file_hashes.append(hash(file))
-        namespace = cast(str, elements.pop("namespace"))
+        namespace = cast(str, elements["namespace"])
         if namespace not in namespaces:
             namespaces[namespace] = {}
             extensions[namespace] = {}
         for raw_element_name, element_data in elements.items():
+            if raw_element_name == "namespace": continue
             element_name, superclass_namespace, superclass_element_name = parse_element_name(raw_element_name, namespace)
             namespaces[namespace][element_name] = element_data
             extensions[namespace][element_name] = (superclass_namespace, superclass_element_name)
     return namespaces, extensions, file_hashes
 
-def get_element_type(element_name:str, namespace:str, element_data:dict[str,Any], namespaces:dict[str,dict[str,dict[str,Any]]], extensions:dict[str,dict[str,tuple[str|None, str|None]]]) -> str:
+def get_element_type(element_name:str, namespace:str, element_data:Mapping[str,Any], namespaces:dict[str,dict[str,Mapping[str,Any]]], extensions:dict[str,dict[str,tuple[str|None, str|None]]]) -> str:
     current_element_name = element_name
     current_element_namespace = namespace
     current_element_data = element_data
@@ -69,7 +70,7 @@ def get_element_type(element_name:str, namespace:str, element_data:dict[str,Any]
             current_element_namespace = next_element_namespace
             current_element_data = next_element_data
 
-def get_element_types(namespaces:dict[str,dict[str,dict[str,Any]]], extensions:dict[str,dict[str,tuple[str|None, str|None]]]) -> dict[str,dict[str,str]]:
+def get_element_types(namespaces:dict[str,dict[str,Mapping[str,Any]]], extensions:dict[str,dict[str,tuple[str|None, str|None]]]) -> dict[str,dict[str,str]]:
     element_types:dict[str,dict[str,str]] = {}
     for namespace, elements in namespaces.items():
         element_types[namespace] = {}
@@ -79,7 +80,7 @@ def get_element_types(namespaces:dict[str,dict[str,dict[str,Any]]], extensions:d
                 element_types[namespace][element_name] = element_type
     return element_types
 
-def parse_element(element_data:dict[str,list[dict[str,Any]]], element_types:dict[str,dict[str,str]], element_name:str, namespace:str) -> None:
+def parse_element(element_data:Mapping[str,list[dict[str,Any]]], element_types:dict[str,dict[str,str]], element_name:str, namespace:str) -> None:
     for control_key in CONTROLS_KEYS:
         if control_key not in element_data:
             continue
@@ -102,14 +103,14 @@ def parse_element(element_data:dict[str,list[dict[str,Any]]], element_types:dict
                 control[raw_subelement_name] = {subelement_type: subelement_data}
                 parse_element(subelement_data, element_types, element_name, namespace)
 
-def parse_elements(namespaces:dict[str,dict[str,dict[str,Any]]], element_types:dict[str,dict[str,str]]) -> None:
+def parse_elements(namespaces:dict[str,dict[str,Mapping[str,Any]]], element_types:dict[str,dict[str,str]]) -> None:
     for namespace, elements in namespaces.items():
         for element_name, element_data in elements.items():
             parse_element(element_data, element_types, element_name, namespace)
 
 @component_function(no_arguments=True)
-def ui_normalize(data:dict[str,dict[str,File[dict[str,dict[str,Any]]]]]) -> FakeFile[dict[str,dict[str,dict[str,Any]]]]:
-    files:dict[str,File[dict[str,dict[str,Any]]]] = {}
+def ui_normalize(data:Mapping[str,Mapping[str,File[Mapping[str,Mapping[str,Any]]]]]) -> FakeFile[dict[str,dict[str,dict[str,Any]]]]:
+    files:dict[str,File[Mapping[str,Mapping[str,Any]]]] = {}
     for resource_pack, resource_pack_files in data.items():
         if len(common_files := (set(files) & set(resource_pack_files))) > 0:
             continue

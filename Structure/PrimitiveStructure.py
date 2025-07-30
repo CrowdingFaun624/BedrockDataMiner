@@ -7,7 +7,6 @@ from ordered_set import OrderedSet
 from Structure.DataPath import DataPath
 from Structure.Delegate.Delegate import Delegate
 from Structure.Difference import Diff
-from Structure.Normalizer import Normalizer
 from Structure.SimpleContainer import SCon, SDon
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
@@ -21,8 +20,6 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
 
     __slots__ = (
         "delegate",
-        "normalizers",
-        "pre_normalized_types",
         "tags",
         "this_types",
     )
@@ -30,28 +27,12 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
     def link_primitive_structure(
         self,
         delegate:Delegate[SCon[D], Diff[SDon[D]], Self, BO, Any, CO, Any]|None,
-        normalizers:Sequence[Normalizer],
-        pre_normalized_types:tuple[type,...],
         tags:set[StructureTag],
         this_types:tuple[type,...],
     ) -> None:
         self.delegate = delegate
-        self.normalizers = normalizers
-        self.pre_normalized_types = pre_normalized_types
         self.tags = tags
         self.this_types = this_types
-
-    def normalize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> D | EllipsisType:
-        with trace.enter(self, self.trace_name, data):
-            if not isinstance(data, self.pre_normalized_types):
-                trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
-                return ...
-            data, data_identity_changed = self.normalizer_pass(self.normalizers, data, trace, environment)
-            if not isinstance(data, self.this_types):
-                trace.exception(StructureTypeError(self.this_types, type(data), "Data"))
-                return ...
-            return data if data_identity_changed else ...
-        return ...
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> SCon[D] | EllipsisType:
         with trace.enter(self, self.trace_name, data):

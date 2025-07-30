@@ -28,7 +28,6 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         "cache_get_similarity",
         "cache_get_tag_paths",
         "cache_get_uses",
-        "cache_normalize",
         "cache_print_branch",
         "cache_print_comparison",
         "cache_type_check",
@@ -56,7 +55,6 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         self.disabled:bool = False
         self.index:int = 0
         # when adding a new cache, make sure to add it to `all_caches`!
-        self.cache_normalize:dict[int, tuple[D, int]] = {}
         self.cache_containerize:dict[int, tuple[Con[D]|EllipsisType, int]] = {}
         self.cache_diffize:dict[int, tuple[Mapping[tuple[int, ...], Don[D]] | EllipsisType, int]] = {}
         self.cache_type_check:dict[int, tuple[None, int]] = {}
@@ -70,7 +68,6 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
     @property
     def all_caches(self) -> tuple[dict[int,tuple[Any,int]],...]:
         return (
-            self.cache_normalize,
             self.cache_containerize,
             self.cache_diffize,
             self.cache_type_check,
@@ -82,12 +79,9 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             self.cache_print_comparison,
         )
 
-    def get_structure(self, data:D, trace: Trace, environment:PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
-        return self.structure
-
-    def get_structure_chain_end(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> Structure | None:
-        # needs to interrupt chain in order to cache.
-        return self
+    def get_substructure(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> tuple[Con[D], Structure[Any, Con[D], Any, Any, Any, Any] | EllipsisType | None]:
+        # Caching is important! CacheStructures interrupt substructure chains.
+        return data, ...
 
     def iter_structures(self) -> Sequence[Structure]:
         return (self.structure,) if self.structure is not None else ()
@@ -143,13 +137,6 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             return environment.default_delegate.cache_retrieve_comparison(output, bundle, trace, environment)
         else:
             return cast(CO, output)
-
-    def normalize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> D | EllipsisType:
-        with trace.enter(self, self.trace_name, data):
-            hash_function = lambda: environment.domain.type_stuff.hash_data((data, environment))
-            self_super = super()
-            return self.cache_function(self.cache_normalize, hash_function, lambda: self_super.normalize(data, trace, environment), lambda output: (output if output is not ... else data), lambda output: output, environment.structure_environment)
-        return ...
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Con[D] | EllipsisType:
         with trace.enter(self, self.trace_name, data):
