@@ -31,7 +31,6 @@ if TYPE_CHECKING:
     from Serializer.Serializer import Serializer
     from Structure.DataPath import DataPath
     from Structure.Delegate.Delegate import Delegate
-    from Structure.Normalizer import Normalizer
     from Structure.Structure import Structure
     from Structure.StructureInfo import StructureInfo
     from Structure.StructureTag import StructureTag
@@ -977,7 +976,7 @@ class VariableNameError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Variable name {self.variable_name} is invalid{message(self.message)}"
+        return f"Variable name {self.variable_name!r} is invalid{message(self.message)}"
 
 class VariableUnusedError(ComponentException):
     "A declared Variable has no usages in Expresions."
@@ -1760,6 +1759,40 @@ class ConditionStructureFilterError(StructureException):
     def __str__(self) -> str:
         return f"{self.structure} encountered {self.structure_info}, which passes no filter{message(self.message)}"
 
+class ConvergingStructureDepthError(StructureException):
+    "A ConvergingStructure's depth is not the actual depth encountered."
+
+    def __init__(self, expected:int, encountered:int, message:Optional[str]=None) -> None:
+        '''
+        :expected: The depth the ConvergingStructure expects.
+        :encountered: The depth the ConvergingStructure found for a given data.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(expected, encountered, message)
+        self.expected = expected
+        self.encountered = encountered
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Expected to find {self.expected} WithinStructures in the chain, but found {self.encountered} WithinStructures{message(self.message)}"
+
+class ConvergingStructureEndError(StructureException):
+    "A ConvergingStructure's end Structure is not the actual end Structure encountered."
+
+    def __init__(self, expected:"Structure|None", encountered:"Structure|None", message:Optional[str]=None) -> None:
+        '''
+        :expected: The end Structure that the ConvergingStructure expects.
+        :encountered: The end Structure that the ConvergingStructure found for a given data.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(expected, encountered, message)
+        self.expected = expected
+        self.encountered = encountered
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Expected to find end Structure {self.expected}, but found {self.encountered}{message(self.message)}"
+
 class DataPathEmbeddedDataError(StructureException):
     "A DataPath has no embedded data but should."
 
@@ -1813,15 +1846,19 @@ class InvalidFileHashType(StructureException):
         return f"Data {self.data_path.embedded_data} at path {self.data_path} of {self.structure_tag} of {self.version} is not a valid file hash{message(self.message)}"
 
 class NormalizerEllipsisError(StructureException):
-    "A Normalizer returned Ellipsis."
+    "The last Function in a NormalizerStructure returned an Ellipsis."
 
-    def __init__(self, normalizer:"Normalizer", message:Optional[str]=None) -> None:
-        super().__init__(normalizer, message)
-        self.normalizer = normalizer
+    def __init__(self, structure:"Structure", message:Optional[str]=None) -> None:
+        '''
+        :structure: The NormalizerStructure whose last Function returned an Ellipsis.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(structure, message)
+        self.structure = structure
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.normalizer} returned Ellipsis{message(self.message)}"
+        return f"The last Function of {self.structure} returned Ellipsis{message(self.message)}"
 
 class SequenceTooLongError(StructureException):
     "A StringStructure or SequenceStructure cannot compare or get similarity of data because it is too long."
@@ -1884,23 +1921,6 @@ class StructureError(StructureException):
 
     def __str__(self) -> str:
         return f"{self.structure_base} has failed{message(self.message)}"
-
-class StructureNoManipulationFunctionError(StructureException):
-    "In order to normalize a type a certain way, it must have a certain TypeStuff function, but does not."
-
-    def __init__(self, function_name:str, data_type:type, message:Optional[str]=None) -> None:
-        '''
-        :function_name: The name of the function the TypeStuff should have, such as "setitem" or "popitem".
-        :data_type: The type that the TypeStuff does not know about.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(function_name, data_type, message)
-        self.function_name = function_name
-        self.data_type = data_type
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Type {self.data_type} does not have a {self.function_name} method{message(self.message)}"
 
 class StructureRequiredKeyMissingError(StructureException):
     "A required key is missing."

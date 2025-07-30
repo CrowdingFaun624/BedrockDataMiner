@@ -56,6 +56,12 @@ class Trace():
         self._exceptions:list[ErrorTrace] = []
         self.trace:list[tuple[object, Callable[[],str], Any|EllipsisType, TraceType]] = []
 
+    def breakpoint(self, items:list[str]) -> bool:
+        return items == [item[1]() for item in self.trace]
+
+    def get_breakpoint_data(self) -> list[str]:
+        return [item[1]() for item in self.trace]
+
     def enter(self, object:object, position_name:str, position_data:Any|EllipsisType) -> Self:
         '''
         This method must be used at a `with` statement.
@@ -137,6 +143,12 @@ class Trace():
     def exception_count(self) -> int:
         return sum(not isinstance(error_trace.exception, (TypeVerificationFailedError, TypeVerifierException)) for error_trace in self._exceptions)
 
+    def show_data(self, error_trace:"ErrorTrace") -> str:
+        output = repr(error_trace.trace[-1][2])
+        if len(output) > 1000:
+            output = output[:500] + " ... " + output[-500:]
+        return output
+
     def stringify(self) -> Iterator[str]:
         '''
         Turns each stored Exception into a fancy, formatted string.
@@ -150,7 +162,7 @@ class Trace():
                     exception_string = str(exception)
                 case _:
                     exception_string = "".join(traceback.format_exception(error_trace.exception)).rstrip()
-            yield f"{error_trace.exception.__class__.__name__} at {stringify_trace(error_trace.trace)}{f" from data {repr(error_trace.trace[-1][2])}" if len(error_trace.trace) > 0 and error_trace.trace[-1][2] is not ... else ""}:{"\n" if exception_string.count("\n") > 0 else " "}{exception_string}"
+            yield f"{error_trace.exception.__class__.__name__} at {stringify_trace(error_trace.trace)}{f" from data {self.show_data(error_trace)}" if len(error_trace.trace) > 0 and error_trace.trace[-1][2] is not ... else ""}:{"\n" if exception_string.count("\n") > 0 else " "}{exception_string}"
 
 class ErrorTrace():
 
