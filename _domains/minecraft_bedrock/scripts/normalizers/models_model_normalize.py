@@ -46,7 +46,7 @@ domain = get_domain_from_module(__name__)
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("serializer", True, str),
-))
+), opens_files=True)
 def models_model_normalize(data:Mapping[str,Mapping[str,File[model_file_type1|model_file_type2]]], serializer:str) -> FakeFile[dict[str,dict[str,output_typed_dict]]]:
     output:dict[str,dict[str,output_typed_dict]] = defaultdict(lambda: {})
     file_hashes:list[int] = []

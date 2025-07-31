@@ -119,6 +119,7 @@ class Domain():
         "script_referenceable",
         "comparison_file_counts",
         "is_imported",
+        "is_imported_scripts",
         "active_file_hashes",
     )
 
@@ -136,6 +137,7 @@ class Domain():
         self.comparison_file_counts:dict[str, int] = {}
 
         self.is_imported:bool = False
+        self.is_imported_scripts:bool = False
         self.is_library:bool
         self.aliases:Sequence[str]
         self.dependencies_str:Sequence[str]
@@ -208,13 +210,16 @@ class Domain():
         memory_usage.add_domain(self)
 
     def import_scripts(self) -> None:
-        # update TypeStuffs
+        # this Domain may already have its Scripts set by another Domain.
+        if self.is_imported_scripts:
+            return
         self.scripts = Scripts(self)
         self.scripts.import_modules()
         self.json_decoder = CustomJson.get_special_decoder(self)
         self.json_encoder = CustomJson.get_special_encoder(self)
         self.script_set = import_scripted_objects(self, BUILT_INS)
         self.script_set_set = ScriptSetSet(self)
+        self.is_imported_scripts = True
 
     def set_values(self, groups:list[Group]) -> None:
         self.dataminer_collections = get_object_dictionary(groups, AbstractDataminerCollection)

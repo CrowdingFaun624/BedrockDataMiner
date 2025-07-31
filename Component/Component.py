@@ -349,8 +349,17 @@ class Component[a]():
                 self.inline_components.extend(new_inline_components)
             for inline_component in self.inline_components:
                 inline_component.set_component(global_groups, functions, create_component_function, trace)
+            self.pre_propagation(trace)
             # we don't iterate over reference_inheritance_cache here because the cache is still in the process of being built.
             # set_component is handled by copy_reference.
+
+    def pre_propagation(self, trace:Trace) -> None:
+        '''
+        Method overridden by subclasses. Does anything necessary before propagation.
+
+        You do not have to wrap this method in `with trace.enter` or use super().set.
+        '''
+        pass
 
     def create_final_component(self, trace:Trace) -> a|EllipsisType:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''

@@ -35,6 +35,12 @@ class FunctionComponent(Component[Function]):
 
         return (self.function_field,)
 
+    def get_propagated_variables(self) -> tuple[dict[str, bool], dict[str, set]]:
+        return {"children_has_garbage_collection": False}, {}
+
+    def pre_propagation(self, trace: Trace) -> None:
+        self.variable_bools["children_has_garbage_collection"] = self.function_field.script.opens_files
+
     def create_final(self, trace:Trace) -> Function:
         return Function(
             name=self.name,

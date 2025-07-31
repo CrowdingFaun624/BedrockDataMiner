@@ -109,7 +109,7 @@ def collapse_resource_packs_dict[a](data:Mapping[str,Mapping[str,a]], add_define
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("add_defined_in", False, bool),
     TypedDictKeyTypeVerifier("serializer", False, str),
-))
+), opens_files=True)
 def collapse_resource_packs_dict_file[a](data:Mapping[str,AbstractFile[Mapping[str,a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,dict[str,a]]]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.'''
     output:defaultdict[str,dict[str,a]] = defaultdict(lambda: {})
@@ -125,7 +125,7 @@ def collapse_resource_packs_dict_file[a](data:Mapping[str,AbstractFile[Mapping[s
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("serializer", False, str),
-))
+), opens_files=True)
 def collapse_resource_packs_list2_file[a](data:Mapping[str,AbstractFile[Sequence[a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,list[a]]]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.'''
     output:defaultdict[str,list[a]] = defaultdict(lambda: [])
@@ -151,7 +151,7 @@ def collapse_resource_packs_flat[a](data:Mapping[str,a]) -> dict[str,a]:
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("serializer", False, str),
-))
+), opens_files=True)
 def collapse_resource_packs_list_file[a](data:Mapping[str,AbstractFile[Sequence[a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[str,list[a]]]:
     '''
     Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.

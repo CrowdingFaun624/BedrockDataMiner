@@ -108,7 +108,7 @@ def parse_elements(namespaces:dict[str,dict[str,Mapping[str,Any]]], element_type
         for element_name, element_data in elements.items():
             parse_element(element_data, element_types, element_name, namespace)
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def ui_normalize(data:Mapping[str,Mapping[str,File[Mapping[str,Mapping[str,Any]]]]]) -> FakeFile[dict[str,dict[str,dict[str,Any]]]]:
     files:dict[str,File[Mapping[str,Mapping[str,Any]]]] = {}
     for resource_pack, resource_pack_files in data.items():

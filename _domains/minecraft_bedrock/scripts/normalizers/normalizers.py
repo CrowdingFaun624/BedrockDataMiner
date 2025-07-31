@@ -109,7 +109,7 @@ def biomes_normalize_old(data:biomes_normalize_old_input_typed_dict|biomes_norma
     del output["minecraft:biome"]["components"]["format_version"]
     return output
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def blocks_client_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
@@ -174,7 +174,7 @@ def entities_client_fix_old(data:entities_client_fix_old_input_type|entities_cli
 
 item_textures_data_typed_dict = TypedDict("item_textures_data_typed_dict", {"texture_data": dict[str,Any]})
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def item_textures_normalize(data:dict[str,File[item_textures_data_typed_dict]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
@@ -195,7 +195,7 @@ class ItemClientOffsetItemTypedDict(TypedDict):
 class ItemClientOffsetFileTypedDict(TypedDict):
     render_offsets: Required[dict[str,ItemClientOffsetItemTypedDict]]
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def items_client_offset_normalize(data:dict[str,File[ItemClientOffsetFileTypedDict]]) -> FakeFile[dict[str,dict[str,ItemClientOffsetItemTypedDict]]]:
     output:dict[str,dict[str,ItemClientOffsetItemTypedDict]] = {}
     file_hashes:list[int] = []
@@ -251,7 +251,7 @@ def models_file_similarity_weight(data:str) -> Sequence[int]:
         string_index += len(item) + 1
     return output
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def music_definitions_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
@@ -264,7 +264,7 @@ def music_definitions_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[
             output[environment_name][pack_name] = environment_data
     return FakeFile("combined_music_definitions_file", output, None, hash(tuple(file_hashes)))
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def normalize_sound_definitions(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     # resource packs are always the top level.
     # inside resource pack, it's sometimes wrapped in {"sound_definitions": dict_of_sound_events}
@@ -396,7 +396,7 @@ class SkinsNormalizeOutputTypedDict(TypedDict):
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("other_keys", True, ListTypeVerifier(str, list)),
-))
+), opens_files=True)
 def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_keys:list[str]) -> FakeFile[SkinsNormalizeOutputTypedDict]:
     output:SkinsNormalizeOutputTypedDict = {
         "skins": [],
@@ -492,7 +492,7 @@ def spawn_rules_normalize_herd(data:dict[str,Any]|list[dict[str,Any]]) -> list[d
     else:
         return data
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def subdirs_normalize(data:dict[str,File[list[str]]]) -> list[str]:
     output:list[str] = []
     for file_name, file in data.items():
@@ -502,7 +502,7 @@ def subdirs_normalize(data:dict[str,File[list[str]]]) -> list[str]:
             output.append(file_name_stripped + line)
     return output
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     other_keys = {"texture_name": {}, "padding": {}, "num_mip_levels": {}}
     texture_data:dict[str,dict[str,Any]] = {}
@@ -523,7 +523,7 @@ def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[d
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("serializer", True, str),
-))
+), opens_files=True)
 def texture_list_normalize(data:dict[str,File[list[str]]], serializer:str) -> FakeFile[dict[str,list[str]]]:
     _serializer = domain.script_referenceable.get(serializer, Serializer)
     output:defaultdict[str,list[str]] = defaultdict(lambda: [])

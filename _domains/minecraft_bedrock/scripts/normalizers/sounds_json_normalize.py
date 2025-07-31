@@ -126,7 +126,7 @@ def trace_exists(object:Mapping[str,Any], trace:tuple[str,...]) -> bool:
         else: return False
     return True
 
-@component_function(no_arguments=True)
+@component_function(no_arguments=True, opens_files=True)
 def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]]) -> FakeFile[MySoundsJsonTypedDict]:
     output:MySoundsJsonTypedDict = {
         "individual_event_sounds": {
