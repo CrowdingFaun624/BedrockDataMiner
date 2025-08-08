@@ -10,19 +10,6 @@
         "$pack_type": "resource pack",
         "$structure": "#@metadata"
     },
-    "defined_in": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "value_types": "str",
-        "delegate_arguments": {
-            "field": "resource pack",
-            "show_item_key": false,
-            "print_flat": true
-        },
-        "value_structure": null
-    },
     "vector_int": {
         "type": "Dict",
         "allow_key_moves": false,
@@ -69,7 +56,6 @@
     "metadata": {
         "type": "Keymap",
         "keys": {
-            "defined_in": {"types": "list", "structure": "defined_in"},
             "format_version": {"types": "str"},
             "base_size": {"types": "list", "structure": "vector_int"},
             "nineslice_size": {"types": ["int", "list"], "structure": "vector_int_or_int"},
@@ -166,8 +152,15 @@
         "type": "Keymap",
         "keys": {
             "color": {"types": "str"},
-            "metalness_emissive_roughness_subsurface": {"types": "str"},
+            "metalness_emissive_roughness_subsurface": {"types": ["str", "list"], "structure": "component.texture_set:metalness_emissive_roughness_subsurface"},
             "normal": {"types": "str"}
+        }
+    },
+    "component.texture_set:metalness_emissive_roughness_subsurface": {
+        "type": "Union",
+        "substructures": {
+            "str": null,
+            "list": "vector_int"
         }
     }
 }

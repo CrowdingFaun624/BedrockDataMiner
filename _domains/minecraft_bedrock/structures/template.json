@@ -222,6 +222,15 @@
         "type": "Function",
         "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
     },
+    "defined_in": {
+        "type": "Dict",
+        "this_types": "tuple",
+        "key_types": "int",
+        "key_weight": 0,
+        "value_types": "str",
+        "value_structure": "string",
+        "delegate": "DefinedInDelegate"
+    },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
@@ -244,6 +253,20 @@
             "function_name": "normalizers/normalizers remove_minecraft_prefix"
         }
     },
+    "Set": {
+        "type": "Dict",
+        "abstract": true,
+        "$field": "item",
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "$show_item_key": false,
+        "delegate_arguments": {
+            "field": "#field",
+            "measure_length": true,
+            "show_item_key": "#show_item_key"
+        }
+    },
     "SortedDict": {
         "type": "Dict",
         "abstract": true,
@@ -253,5 +276,11 @@
             "measure_length": true,
             "sort": "sort_by_key"
         }
+    },
+    "named_list": {
+        "inherit": "Set",
+        "$field": "#name",
+        "value_types": "str",
+        "value_structure": "string"
     }
 }

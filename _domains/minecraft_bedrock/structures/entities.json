@@ -69,7 +69,7 @@
             "measure_length": true
         },
         "value_types": "dict",
-        "value_structure": "empty"
+        "value_structure": "temp/empty"
     },
     "description": {
         "type": "Keymap",
@@ -171,9 +171,10 @@
                 "sort": "sort_by_component_order"
             },
             "keys": {
-                "trigger": {"types": "str"},
+                "trigger": {"types": ["str", "dict"], "structure": "event_target_or_str"},
                 "weight": {"types": "int"},
                 "add": {"types": "dict", "structure": "component_groups_add_remove"},
+                "drop_item": {"types": "dict", "structure": "event:drop_item"},
                 "emit_particle": {"types": "dict", "structure": "event:emit_particle"},
                 "emit_vibration": {"types": "dict", "structure": "event:emit_vibration"},
                 "execute_event_on_home_block": {"types": "dict", "structure": "event"},
@@ -182,11 +183,11 @@
                 "play_sound": {"types": "dict", "structure": "event:play_sound"},
                 "randomize": {"types": "list", "structure": "event:randomize"},
                 "remove": {"types": "dict", "structure": "component_groups_add_remove"},
-                "reset_target": {"types": "dict", "structure": "empty"},
+                "reset_target": {"types": "dict", "structure": "temp/empty"},
                 "sequence": {"types": "list", "structure": "event:sequence"},
-                "set_home_position": {"types": "dict", "structure": "empty"},
+                "set_home_position": {"types": "dict", "structure": "temp/empty"},
                 "set_property": {"types": "dict", "structure": "event:set_property"},
-                "stop_movement": {"types": "dict", "structure": "empty"}
+                "stop_movement": {"types": "dict", "structure": "temp/empty"}
             }
         }
     },
@@ -241,6 +242,12 @@
         "substructures": {
             "list": "component_list",
             "str": null
+        }
+    },
+    "event:drop_item": {
+        "type": "Keymap",
+        "keys": {
+            "slot": {"types": "str"}
         }
     },
     "event:emit_particle": {
@@ -344,24 +351,24 @@
             "minecraft:addrider": {"types": "dict", "structure": "component.addrider"},
             "minecraft:admire_item": {"types": "dict", "structure": "component.admire_item"},
             "minecraft:ageable": {"types": "dict", "structure": "component.ageable"},
-            "minecraft:agent_command": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "minecraft:agent_command": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:ambient_sound_interval": {"types": "dict", "structure": "component.ambient_sound_interval"},
             "minecraft:anger_level": {"types": "dict", "structure": "component.anger_level"},
             "minecraft:angry": {"types": "dict", "structure": "component.angry"},
             "minecraft:annotation.break_door": {"types": "dict", "structure": "component.annotation.break_door"},
-            "minecraft:annotation.open_door": {"types": "dict", "structure": "empty"},
+            "minecraft:annotation.open_door": {"types": "dict", "structure": "temp/empty"},
             "minecraft:area_attack": {"types": "dict", "structure": "component.area_attack"},
             "minecraft:attack": {"types": "dict", "structure": "component.attack"},
             "minecraft:attack_cooldown": {"types": "dict", "structure": "component.attack_cooldown"},
             "minecraft:attack_damage": {"types": "dict", "structure": "component.attack_damage"},
-            "minecraft:body_rotation_blocked": {"types": "dict", "structure": "empty"},
+            "minecraft:body_rotation_blocked": {"types": "dict", "structure": "temp/empty"},
             "minecraft:balloon": {"types": "dict", "structure": "component.balloon", "tags": ["t/not_in_documentation"]},
             "minecraft:balloonable": {"types": "dict", "structure": "component.balloonable"},
             "minecraft:barter": {"types": "dict", "structure": "component.barter"},
-            "minecraft:block_climber": {"types": "dict", "structure": "empty"},
+            "minecraft:block_climber": {"types": "dict", "structure": "temp/empty"},
             "minecraft:block_sensor": {"types": "dict", "structure": "component.block_sensor"},
-            "minecraft:body_rotation_always_follows_head": {"types": "dict", "structure": "empty"},
-            "minecraft:body_rotation_axis_aligned": {"types": "dict", "structure": "empty"},
+            "minecraft:body_rotation_always_follows_head": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:body_rotation_axis_aligned": {"types": "dict", "structure": "temp/empty"},
             "minecraft:boostable": {"types": "dict", "structure": "component.boostable"},
             "minecraft:boss": {"types": "dict", "structure": "component.boss"},
             "minecraft:break_blocks": {"types": "dict", "structure": "component.break_blocks"},
@@ -369,16 +376,16 @@
             "breathable": {"types": "dict", "structure": "component.breathable", "tags": ["t/outdated"]},
             "minecraft:breedable": {"types": "dict", "structure": "component.breedable"},
             "minecraft:bribeable": {"types": "dict", "structure": "component.bribeable"},
-            "minecraft:bucketable": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "minecraft:bucketable": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:buoyant": {"types": "dict", "structure": "component.buoyant"},
             "minecraft:burns_in_daylight": {"types": ["bool", "dict"], "structure": "component.burns_in_daylight"},
-            "minecraft:can_climb": {"types": "dict", "structure": "empty"},
+            "minecraft:can_climb": {"types": "dict", "structure": "temp/empty"},
             "minecraft:can_fly": {"types": "dict", "structure": "component.can_fly"},
-            "minecraft:can_join_raid": {"types": "dict", "structure": "empty"},
-            "minecraft:can_power_jump": {"types": "dict", "structure": "empty"},
-            "minecraft:can_swim": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
-            "minecraft:cannot_be_attacked": {"types": "dict", "structure": "empty"},
-            "minecraft:caster": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "minecraft:can_join_raid": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:can_power_jump": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:can_swim": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
+            "minecraft:cannot_be_attacked": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:caster": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:celebrate_hunt": {"types": "dict", "structure": "component.celebrate_hunt"},
             "minecraft:collision_box": {"types": "dict", "structure": "component.collision_box", "tags": ["t/not_in_documentation"]},
             "minecraft:color": {"types": "dict", "structure": "component.color"},
@@ -388,10 +395,11 @@
             "minecraft:custom_hit_test": {"types": "dict", "structure": "component.custom_hit_test"},
             "minecraft:damage_over_time": {"types": "dict", "structure": "component.damage_over_time"},
             "minecraft:damage_sensor": {"types": ["dict", "list"], "structure": "component.damage_sensor:group"},
-            "minecraft:dash": {"types": "dict", "structure": "component.dash"},
+            "minecraft:dash_action": {"types": "dict", "structure": "component.dash"},
+            "minecraft:dash": {"types": "dict", "structure": "component.dash", "tags": ["t/outdated"]},
             "minecraft:default_look_angle": {"types": "dict", "structure": "component.default_look_angle"},
             "minecraft:despawn": {"types": "dict", "structure": "component.despawn"},
-            "minecraft:dimension_bound": {"types": "dict", "structure": "empty"},
+            "minecraft:dimension_bound": {"types": "dict", "structure": "temp/empty"},
             "minecraft:drying_out_timer": {"types": "dict", "structure": "component.drying_out_timer"},
             "minecraft:dweller": {"types": "dict", "structure": "component.dweller"},
             "minecraft:economy_trade_table": {"types": "dict", "structure": "component.economy_trade_table"},
@@ -406,10 +414,11 @@
             "minecraft:fall_damage": {"types": "dict", "structure": "component.fall_damage", "tags": ["t/outdated"]},
             "minecraft:fire_immune": {"types": ["bool", "dict"], "structure": "component.fire_immune"},
             "minecraft:float_wander": {"types": "dict", "structure": "component.float_wander", "tags": ["t/outdated"]},
-            "minecraft:floats_in_liquid": {"types": "dict", "structure": "empty"},
+            "minecraft:floats_in_liquid": {"types": "dict", "structure": "temp/empty"},
             "minecraft:flocking": {"types": "dict", "structure": "component.flocking"},
             "minecraft:flying_speed": {"types": "dict", "structure": "component.flying_speed"},
             "minecraft:follow_range": {"types": ["dict", "int"], "structure": "component.follow_range:group"},
+            "minecraft:free_camera_controlled": {"types": "dict", "structure": "component.free_camera_controlled"},
             "minecraft:friction_modifier": {"types": "dict", "structure": "component.friction_modifier"},
             "minecraft:game_event_movement_tracking": {"types": "dict", "structure": "component.game_event_movement_tracking"},
             "minecraft:genetics": {"types": "dict", "structure": "component.genetics"},
@@ -420,56 +429,56 @@
             "minecraft:healable": {"types": "dict", "structure": "component.healable"},
             "minecraft:health": {"types": "dict", "structure": "component.health"},
             "minecraft:heartbeat": {"types": "dict", "structure": "component.heartbeat"},
-            "minecraft:hide": {"types": "dict", "structure": "empty"},
+            "minecraft:hide": {"types": "dict", "structure": "temp/empty"},
             "minecraft:home": {"types": "dict", "structure": "component.home"},
             "minecraft:horse.jump_strength": {"types": "dict", "structure": "component.horse.jump_strength"},
             "minecraft:hurt_on_condition": {"types": "dict", "structure": "component.hurt_on_condition"},
             "minecraft:hurt_when_wet": {"types": "dict", "structure": "component.hurt_when_wet", "tags": ["t/outdated"]},
             "minecraft:identifier": {"types": "dict", "structure": "component.identifier", "tags": ["t/outdated"], "delegate_arguments": {"always_print": true}},
             "minecraft:input_air_controlled": {"types": "dict", "structure": "component.input_air_controlled"},
-            "minecraft:input_ground_controlled": {"types": "dict", "structure": "empty"},
+            "minecraft:input_ground_controlled": {"types": "dict", "structure": "temp/empty"},
             "minecraft:inside_block_notifier": {"types": "dict", "structure": "component.inside_block_notifier"},
             "minecraft:insomnia": {"types": "dict", "structure": "component.insomnia"},
             "minecraft:instant_despawn": {"types": "dict", "structure": "component.instant_despawn"},
             "minecraft:interact": {"types": ["dict", "list"], "structure": "component.interact:group"},
             "minecraft:inventory": {"types": "dict", "structure": "component.inventory"},
-            "minecraft:is_baby": {"types": "dict", "structure": "empty"},
-            "minecraft:is_charged": {"types": "dict", "structure": "empty"},
-            "minecraft:is_chested": {"types": "dict", "structure": "empty"},
-            "minecraft:is_collidable": {"types": "dict", "structure": "empty"},
+            "minecraft:is_baby": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_charged": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_chested": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_collidable": {"types": "dict", "structure": "temp/empty"},
             "minecraft:is_dyeable": {"types": "dict", "structure": "component.is_dyeable"},
-            "minecraft:is_hidden_when_invisible": {"types": "dict", "structure": "empty"},
-            "minecraft:is_ignited": {"types": "dict", "structure": "empty"},
-            "minecraft:is_illager_captain": {"types": "dict", "structure": "empty"},
-            "minecraft:is_pregnant": {"types": "dict", "structure": "empty", "tags": ["t/not_in_documentation"]},
-            "minecraft:is_saddled": {"types": "dict", "structure": "empty"},
-            "minecraft:is_shaking": {"types": "dict", "structure": "empty"},
-            "minecraft:is_sheared": {"types": "dict", "structure": "empty"},
+            "minecraft:is_hidden_when_invisible": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_ignited": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_illager_captain": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_pregnant": {"types": "dict", "structure": "temp/empty", "tags": ["t/not_in_documentation"]},
+            "minecraft:is_saddled": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_shaking": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_sheared": {"types": "dict", "structure": "temp/empty"},
             "minecraft:is_stackable": {"types": "dict", "structure": "component.is_stackable"},
-            "minecraft:is_stunned": {"types": "dict", "structure": "empty"},
-            "minecraft:is_tamed": {"types": "dict", "structure": "empty"},
-            "minecraft:is_trap": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "minecraft:is_stunned": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_tamed": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:is_trap": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:item_command_block": {"types": "dict", "structure": "component.item_command_block", "tags": ["t/outdated"]},
             "minecraft:item_controllable": {"types": "dict", "structure": "component.item_controllable"},
-            "minecraft:item_hopper": {"types": "dict", "structure": "empty"},
-            "minecraft:jump.dynamic": {"types": "dict", "structure": "empty"},
+            "minecraft:item_hopper": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:jump.dynamic": {"types": "dict", "structure": "temp/empty"},
             "minecraft:jump.static": {"types": "dict", "structure": "component.jump.static"},
             "minecraft:knockback_resistance": {"types": "dict", "structure": "component.knockback_resistance"},
             "minecraft:lava_movement": {"types": "dict", "structure": "component.lava_movement"},
             "minecraft:leashable": {"types": "dict", "structure": "component.leashable"},
-            "minecraft:leashable_to": {"types": "dict", "structure": "empty"},
+            "minecraft:leashable_to": {"types": "dict", "structure": "temp/empty"},
             "minecraft:looked_at": {"types": "dict", "structure": "component.looked_at"},
             "minecraft:lookat": {"types": "dict", "structure": "component.lookat"},
             "minecraft:loot": {"types": "dict", "structure": "component.loot"},
-            "minecraft:managed_wandering_trader": {"types": "dict", "structure": "empty"},
+            "minecraft:managed_wandering_trader": {"types": "dict", "structure": "temp/empty"},
             "minecraft:mark_variant": {"types": "dict", "structure": "component.mark_variant"},
             "minecraft:mob_effect": {"types": "dict", "structure": "component.mob_effect"},
             "minecraft:mob_effect_immunity": {"types": "dict", "structure": "component.mob_effect_immunity"},
-            "minecraft:monster": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "minecraft:monster": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:movement": {"types": "dict", "structure": "component.movement"},
             "minecraft:movement.amphibious": {"types": "dict", "structure": "component.movement.amphibious"},
             "minecraft:movement.basic": {"types": "dict", "structure": "component.movement.basic"},
-            "minecraft:movement.dolphin": {"types": "dict", "structure": "empty"},
+            "minecraft:movement.dolphin": {"types": "dict", "structure": "temp/empty"},
             "minecraft:movement.fly": {"types": "dict", "structure": "component.movement.fly"},
             "minecraft:movement.generic": {"types": "dict", "structure": "component.movement.generic"},
             "minecraft:movement.glide": {"types": "dict", "structure": "component.movement.glide"},
@@ -478,7 +487,7 @@
             "minecraft:movement.skip": {"types": "dict", "structure": "component.movement.skip"},
             "minecraft:movement_sound_distance_offset": {"types": "dict", "structure": "component.movement_sound_distance_offset"},
             "minecraft:movement.sway": {"types": "dict", "structure": "component.movement.sway"},
-            "minecraft:movement.vex": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "minecraft:movement.vex": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:nameable": {"types": "dict", "structure": "component.nameable"},
             "minecraft:navigation.climb": {"types": "dict", "structure": "component.navigation"},
             "minecraft:navigation.float": {"types": "dict", "structure": "component.navigation"},
@@ -498,16 +507,16 @@
             "minecraft:on_target_acquired": {"types": "dict", "structure": "event_target_filters", "tags": ["t/not_in_documentation"]},
             "minecraft:on_target_escape": {"types": "dict", "structure": "event_target_filters", "tags": ["t/not_in_documentation"]},
             "minecraft:on_wake_with_owner": {"types": "dict", "structure": "event_target", "tags": ["t/not_in_documentation"]},
-            "minecraft:out_of_control": {"types": "dict", "structure": "empty"},
+            "minecraft:out_of_control": {"types": "dict", "structure": "temp/empty"},
             "minecraft:peek": {"types": "dict", "structure": "component.peek"},
-            "minecraft:persist_sit": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
-            "minecraft:persistent": {"types": "dict", "structure": "empty"},
+            "minecraft:persist_sit": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
+            "minecraft:persistent": {"types": "dict", "structure": "temp/empty"},
             "minecraft:physics": {"types": "dict", "structure": "component.physics"},
             "minecraft:player.exhaustion": {"types": "dict", "structure": "component.player.exhaustion"},
             "minecraft:player.experience": {"types": "dict", "structure": "component.player.experience"},
             "minecraft:player.level": {"types": "dict", "structure": "component.player.level"},
             "minecraft:player.saturation": {"types": "dict", "structure": "component.player.saturation"},
-            "minecraft:player_ride_tamed": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "minecraft:player_ride_tamed": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:preferred_path": {"types": "dict", "structure": "component.preferred_path"},
             "minecraft:projectile": {"types": "dict", "structure": "component.projectile"},
             "minecraft:push_through": {"types": "dict", "structure": "component.push_through"},
@@ -517,10 +526,11 @@
             "minecraft:rail_sensor": {"types": "dict", "structure": "component.rail_sensor"},
             "minecraft:ravager_blocked": {"types": "dict", "structure": "component.ravager_blocked"},
             "minecraft:reflect_projectiles": {"types": "dict", "structure": "component.reflect_projectiles", "tags": ["t/not_in_documentation"]},
-            "minecraft:remove_in_peaceful": {"types": "dict", "structure": "empty"},
-            "minecraft:renders_when_invisible": {"types": "dict", "structure": "empty"},
+            "minecraft:remove_in_peaceful": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:renders_when_invisible": {"types": "dict", "structure": "temp/empty"},
             "minecraft:rideable": {"types": "dict", "structure": "component.rideable"},
-            "minecraft:scaffolding_climber": {"types": "dict", "structure": "empty", "tags": ["t/deprecated"]},
+            "minecraft:rotation_axis_aligned": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:scaffolding_climber": {"types": "dict", "structure": "temp/empty", "tags": ["t/deprecated"]},
             "minecraft:scale": {"types": "dict", "structure": "component.scale"},
             "minecraft:scale_by_age": {"types": "dict", "structure": "component.scale_by_age"},
             "minecraft:scheduler": {"types": ["dict", "list"], "structure": "component.scheduler:group"},
@@ -532,31 +542,32 @@
             "minecraft:spawn_entity": {"types": ["dict", "list"], "structure": "component.spawn_entity:group"},
             "minecraft:spell_effects": {"types": "dict", "structure": "component.spell_effects"},
             "minecraft:strength": {"types": "dict", "structure": "component.strength"},
-            "minecraft:suspect_tracking": {"types": "dict", "structure": "empty", "tags": ["t/not_in_documentation"]},
+            "minecraft:suspect_tracking": {"types": "dict", "structure": "temp/empty", "tags": ["t/not_in_documentation"]},
             "minecraft:tameable": {"types": "dict", "structure": "component.tameable"},
             "minecraft:tamemount": {"types": "dict", "structure": "component.tamemount"},
             "minecraft:target_nearby_sensor": {"types": "dict", "structure": "component.target_nearby_sensor"},
             "minecraft:teleport": {"types": "dict", "structure": "component.teleport"},
             "minecraft:tick_world": {"types": "dict", "structure": "component.tick_world"},
             "minecraft:timer": {"types": "dict", "structure": "component.timer"},
-            "minecraft:trade_resupply": {"types": "dict", "structure": "empty"},
+            "minecraft:trade_resupply": {"types": "dict", "structure": "temp/empty"},
             "minecraft:trade_table": {"types": "dict", "structure": "component.trade_table"},
             "minecraft:trail": {"types": "dict", "structure": "component.trail"},
             "minecraft:transformation": {"types": "dict", "structure": "component.transformation"},
-            "minecraft:transient": {"types": "dict", "structure": "empty"},
-            "minecraft:trust": {"types": "dict", "structure": "empty"},
+            "minecraft:transient": {"types": "dict", "structure": "temp/empty"},
+            "minecraft:trust": {"types": "dict", "structure": "temp/empty"},
             "minecraft:trusting": {"types": "dict", "structure": "component.trusting"},
-            "minecraft:turtle_command": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "minecraft:turtle_command": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "minecraft:type_family": {"types": "dict", "structure": "component.type_family"},
             "minecraft:underwater_movement": {"types": "dict", "structure": "component.underwater_movement"},
             "minecraft:variant": {"types": "dict", "structure": "component.variant"},
             "minecraft:walk_animation_speed": {"types": "dict", "structure": "component.walk_animation_speed"},
-            "minecraft:wants_jockey": {"types": "dict", "structure": "empty"},
+            "minecraft:wants_jockey": {"types": "dict", "structure": "temp/empty"},
             "minecraft:water_movement": {"types": "dict", "structure": "component.water_movement"},
             "minecraft:wind_burst": {"types": "dict", "structure": "component.wind_burst", "tags": ["t/not_in_documentation"]},
             "minecraft:variable_max_auto_step": {"types": "dict", "structure": "component.variable_max_auto_step"},
-            "minecraft:vibration_damper": {"types": "dict", "structure": "empty", "tags": ["t/not_in_documentation"]},
-            "minecraft:vibration_listener": {"types": "dict", "structure": "empty", "tags": ["t/not_in_documentation"]},
+            "minecraft:vertical_movement_action": {"types": "dict", "structure": "component.vertical_movement_action"},
+            "minecraft:vibration_damper": {"types": "dict", "structure": "temp/empty", "tags": ["t/not_in_documentation"]},
+            "minecraft:vibration_listener": {"types": "dict", "structure": "temp/empty", "tags": ["t/not_in_documentation"]},
             "minecraft:wither_target_highest_damage": {"types": "dict", "structure": "component.wither_target_highest_damage", "tags": ["t/outdated"]},
             "minecraft:zombie.spawn_reinforcements": {"types": "dict", "structure": "component.zombie.spawn_reinforcements", "tags": ["t/outdated"]},
             "minecraft:behavior.admire_item": {"types": "dict", "structure": "behavior.admire_item"},
@@ -747,6 +758,7 @@
             "minecraft:behavior.timer_flag_3": {"types": "dict", "structure": "behavior.timer_flag"},
             "minecraft:behavior.trade_interest": {"types": "dict", "structure": "behavior.trade_intereset"},
             "minecraft:behavior.trade_with_player": {"types": "dict", "structure": "behavior.trade_with_player"},
+            "minecraft:behavior.transport_items": {"types": "dict", "structure": "behavior.transport_items"},
             "minecraft:behavior.vex_copy_owner_target": {"types": "dict", "structure": "behavior.vex_copy_owner_target"},
             "minecraft:behavior.vex_random_move": {"types": "dict", "structure": "behavior.vex_random_move"},
             "minecraft:behavior.wither_random_attack_pos_goal": {"types": "dict", "structure": "behavior.wither_random_attack_pos_goal"},
@@ -791,6 +803,15 @@
             "str": null
         }
     },
+    "block_states": {
+        "type": "Dict",
+        "value_types": ["bool", "int", "str"],
+        "delegate_arguments": {
+            "sort": "sort_by_key",
+            "field": "state"
+        },
+        "value_structure": null
+    },
     "damage_source_list": {
         "type": "Dict",
         "key_weight": 0,
@@ -804,10 +825,6 @@
         },
         "value_types": "str",
         "value_structure": {"type": "String"}
-    },
-    "empty": {
-        "type": "Keymap",
-        "keys": {}
     },
     "entity_list": {
         "type": "Dict",
@@ -1652,7 +1669,7 @@
             "field": "property",
             "measure_length": true
         },
-        "value_structure": "empty"
+        "value_structure": "temp/empty"
     },
     "component.bribeable": {
         "type": "Keymap",
@@ -1681,7 +1698,7 @@
         "type": "Union",
         "substructures": {
             "bool": null,
-            "dict": "empty"
+            "dict": "temp/empty"
         }
     },
     "component.can_fly": {
@@ -2117,7 +2134,7 @@
             "max_resistance": {"types": "temp/decimal"},
             "maxResistance": {"types": "temp/decimal", "tags": ["t/outdated"]},
             "negates_fall_damage": {"types": "bool"},
-            "on_activate": {"types": "dict", "structure": "empty", "tags": ["t/outdated"]},
+            "on_activate": {"types": "dict", "structure": "temp/empty", "tags": ["t/outdated"]},
             "particle_effect": {"types": "str"},
             "power": {"types": "temp/decimal", "delegate_arguments": {"always_print": true}},
             "sound_effect": {"types": "str"},
@@ -2134,7 +2151,7 @@
         "type": "Union",
         "substructures": {
             "bool": null,
-            "dict": "empty"
+            "dict": "temp/empty"
         }
     },
     "component.float_wander": {
@@ -2192,6 +2209,13 @@
         "keys": {
             "max": {"types": "temp/decimal"},
             "value": {"types": "temp/decimal"}
+        }
+    },
+    "component.free_camera_controlled": {
+        "type": "Keymap",
+        "keys": {
+            "strafe_speed_modifier": {"types": "temp/decimal"},
+            "backwards_movement_modifier": {"types": "temp/decimal"}
         }
     },
     "component.friction_modifier": {
@@ -2462,17 +2486,8 @@
         "type": "Keymap",
         "keys": {
             "name": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "states": {"types": "dict", "structure": "component.inside_block_notifier:block_list.item.block.states"}
+            "states": {"types": "dict", "structure": "block_states"}
         }
-    },
-    "component.inside_block_notifier:block_list.item.block.states": {
-        "type": "Dict",
-        "value_types": ["bool", "int", "str"],
-        "delegate_arguments": {
-            "sort": "sort_by_key",
-            "field": "state"
-        },
-        "value_structure": null
     },
     "component.insomnia": {
         "type": "Keymap",
@@ -2560,6 +2575,7 @@
     "component.interact:particle_on_start": {
         "type": "Keymap",
         "keys": {
+            "copper_event": {"types": "str"},
             "particle_offset_towards_interactor": {"types": "bool"},
             "particle_type": {"types": "str"},
             "particle_y_offset": {"types": "temp/decimal"}
@@ -3133,13 +3149,13 @@
             "on_fire_time": {"types": "float"},
             "particle_on_hit": {"types": "dict", "structure": "component.projectile:on_hit.particle_on_hit"},
             "potion_effect": {"types": ["dict", "int"], "structure": "component.projectile:on_hit.potion_effect.group"},
-            "remove_on_hit": {"types": "dict", "structure": "empty"},
+            "remove_on_hit": {"types": "dict", "structure": "temp/empty"},
             "spawn_aoe_cloud": {"types": ["bool", "dict"], "structure": "component.projectile:on_hit.spawn_aoe_cloud_group"},
             "spawn_chance": {"types": "dict", "structure": "component.projectile:on_hit.spawn_chance"},
             "stick_in_ground": {"types": "dict", "structure": "component.projectile:on_hit.stick_in_ground"},
             "teleport_owner": {"types": ["bool", "dict"], "structure": "component.projectile:on_hit.teleport_owner"},
-            "thrown_potion_effect": {"types": "dict", "structure": "empty"},
-            "wind_burst_on_hit": {"types": "dict", "structure": "empty"}
+            "thrown_potion_effect": {"types": "dict", "structure": "temp/empty"},
+            "wind_burst_on_hit": {"types": "dict", "structure": "temp/empty"}
         }
     },
     "component.projectile:on_hit:arrow_effect": {
@@ -3185,7 +3201,7 @@
         "type": "Union",
         "substructures": {
             "bool": null,
-            "dict": "empty"
+            "dict": "temp/empty"
         }
     },
     "component.projectile:on_hit.freeze_on_hit": {
@@ -3354,7 +3370,7 @@
         "type": "Union",
         "substructures": {
             "bool": null,
-            "dict": "empty"
+            "dict": "temp/empty"
         }
     },
     "component.push_through": {
@@ -4035,6 +4051,12 @@
             "base_value": {"types": "temp/decimal"},
             "controlled_value": {"types": "temp/decimal"},
             "jump_prevented_value": {"types": "temp/decimal"}
+        }
+    },
+    "component.vertical_movement_action": {
+        "type": "Keymap",
+        "keys": {
+            "vertical_velocity": {"types": "temp/decimal"}
         }
     },
     "component.wither_target_highest_damage": {
@@ -5502,10 +5524,33 @@
     "behavior.place_block": {
         "type": "Keymap",
         "keys": {
+            "affected_by_griefing_rule": {"types": "bool"},
+            "on_place": {"types": "dict", "structure": "event_target"},
             "priority": {"types": "int"},
             "xz_range": {"types": "int"},
-            "y_range": {"types": "range", "structure": "range_group_int"},
-            "chance": {"types": "temp/decimal"}
+            "y_range": {"types": ["int", "range"], "structure": "range_int_or_int"},
+            "chance": {"types": "temp/decimal"},
+            "randomly_placeable_blocks": {"types": "list", "structure": "behavior.place_block:randomly_placeable_blocks"}
+        }
+    },
+    "behavior.place_block:randomly_placeable_blocks": {
+        "inherit": "temp/Set",
+        "$field": "block",
+        "value_types": "dict",
+        "value_structure": "behavior.place_block:randomly_placeable_block"
+    },
+    "behavior.place_block:randomly_placeable_block": {
+        "type": "Keymap",
+        "keys": {
+            "block": {"types": "dict", "structure": "behavior.place_block:block"},
+            "filter": {"types": "dict", "structure": "filter"}
+        }
+    },
+    "behavior.place_block:block": {
+        "type": "Keymap",
+        "keys": {
+            "name": {"types": "str"},
+            "states": {"types": "dict", "structure": "block_states"}
         }
     },
     "behavior.play": {
@@ -6364,8 +6409,8 @@
         "type": "Keymap",
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "percent_chance": {"types": "temp/decimal", "structure": null},
-            "priority": {"types": "int", "structure": null}
+            "percent_chance": {"types": "temp/decimal"},
+            "priority": {"types": "int"}
         }
     },
     "behavior.teleport_to_owner": {
@@ -6436,11 +6481,28 @@
             "max_distance_from_player": {"types": "temp/decimal"}
         }
     },
+    "behavior.transport_items": {
+        "type": "Keymap",
+        "keys": {
+            "priority": {"types": "int"},
+            "source_container_types": {"types": "list", "structure": "#!temp/named_list{name='container'}"},
+            "destination_container_types": {"types": "list", "structure": "#!temp/named_list{name='container'}"},
+            "max_stack_size": {"types": "int"},
+            "interaction_time": {"types": "temp/decimal"},
+            "allow_simultaneous_interaction": {"types": "bool"},
+            "search_strategy": {"types": "str"},
+            "search_distance": {"types": "list", "structure": "range_list_int"},
+            "max_visited_containers": {"types": "int"},
+            "initial_cooldown": {"types": "int"},
+            "idle_cooldown": {"types": "int"},
+            "place_strategy": {"types": "str"}
+        }
+    },
     "behavior.vex_copy_owner_target": {
         "type": "Keymap",
         "keys": {
             "entity_types": {"types": "entity_types_type", "structure": "entity_types"},
-            "priority": {"types": "int", "structure": null}
+            "priority": {"types": "int"}
         }
     },
     "behavior.vex_random_move": {

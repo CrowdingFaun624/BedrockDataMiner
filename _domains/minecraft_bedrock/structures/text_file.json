@@ -16,29 +16,19 @@
         "structure": {
             "type": "Condition",
             "substructures": [
-                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "text_serializer"}, "structure": {
-                    "type": "File",
-                    "serializer": "s/text_serializer",
-                    "outer_types": "file",
-                    "inner_types": "str",
-                    "structure": "lines"
-                }},
-                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "javascript_serializer"}, "structure": {
-                    "type": "File",
-                    "serializer": "s/javascript_serializer",
-                    "outer_types": "file",
-                    "inner_types": "str",
-                    "structure": "lines"
-                }},
-                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "css_serializer"}, "structure": {
-                    "type": "File",
-                    "serializer": "s/css_serializer",
-                    "outer_types": "file",
-                    "inner_types": "str",
-                    "structure": "lines"
-                }}
+                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "text_serializer"}, "structure": "#!file{serializer=@s/text_serializer}"},
+                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "javascript_serializer"}, "structure": "#!file{serializer=@s/javascript_serializer}"},
+                {"types": "file", "filter": {"type": "EqFilter", "key": "serializer", "value": "css_serializer"}, "structure": "#!file{serializer=@s/css_serializer}"}
             ]
         }
+    },
+    "file": {
+        "type": "File",
+        "$serializer": "s/text_serializer",
+        "serializer": "#serializer",
+        "outer_types": "file",
+        "inner_types": "str",
+        "structure": "lines"
     },
     "lines": {
         "type": "Normalizer",
