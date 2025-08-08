@@ -2,45 +2,38 @@ Difference of "text_packs" between "25w15a" (snapshot of "1.21.6") and "25w16a" 
 
 Changed resource pack "minecraft":
 	Changed file "core/entity.vsh":
-		Total line: 40 (+5, -11)
+		Total line: 40 (+2, -8)
 		        '''
 		 1  1   #version 150
 		 2  2   
 		 3  3   #moj_import <minecraft:light.glsl>
 		 4  4   #moj_import <minecraft:fog.glsl>
-		 5    - 
-		 6    - in vec3 Position;
-		 7    - in vec4 Color;
-		 8    - in vec2 UV0;
-		 9    - in ivec2 UV1;
-		10    - in ivec2 UV2;
-		11    - in vec3 Normal;
-		12    - 
 		    5 + #moj_import <minecraft:dynamictransforms.glsl>
 		    6 + #moj_import <minecraft:projection.glsl>
-		13    - uniform sampler2D Sampler1;
-		14    - uniform sampler2D Sampler2;
-		15  7   
-		    8 + in vec3 Position;
-		    9 + in vec4 Color;
-		   10 + in vec2 UV0;
+		 5  7   
+		 6  8   in vec3 Position;
+		 7  9   in vec4 Color;
+		 8 10   in vec2 UV0;
+		 9 11   in ivec2 UV1;
+		        ...
+		11 13   in vec3 Normal;
+		12 14   
+		13 15   uniform sampler2D Sampler1;
+		14 16   uniform sampler2D Sampler2;
+		15 17   
 		16    - uniform mat4 ModelViewMat;
-		   11 + in ivec2 UV1;
-		   12 + in ivec2 UV2;
-		   13 + in vec3 Normal;
 		17    - uniform mat4 ProjMat;
 		18    - uniform mat4 TextureMat;
 		19    - uniform int FogShape;
-		20 14   
-		   15 + uniform sampler2D Sampler1;
-		   16 + uniform sampler2D Sampler2;
+		20    - 
 		21    - uniform vec3 Light0_Direction;
 		22    - uniform vec3 Light1_Direction;
-		23 17   
+		23    - 
 		24 18   out float vertexDistance;
 		25 19   out vec4 vertexColor;
 		26 20   out vec4 lightMapColor;
 		27 21   out vec4 overlayColor;
+		28 22   out vec2 texCoord0;
 		        ...
 		        '''
 	Changed file "core/glint.vsh":
@@ -50,22 +43,21 @@ Changed resource pack "minecraft":
 		 2  2   
 		 3  3   #moj_import <minecraft:fog.glsl>
 		    4 + #moj_import <minecraft:dynamictransforms.glsl>
-		 4    - 
-		 5    - in vec3 Position;
 		    5 + #moj_import <minecraft:projection.glsl>
-		 6    - in vec2 UV0;
-		 7  6   
-		    7 + in vec3 Position;
+		 4  6   
+		 5  7   in vec3 Position;
+		 6  8   in vec2 UV0;
+		 7  9   
 		 8    - uniform mat4 ModelViewMat;
 		 9    - uniform mat4 ProjMat;
 		10    - uniform mat4 TextureMat;
-		    8 + in vec2 UV0;
 		11    - uniform int FogShape;
-		12  9   
+		12    - 
 		13 10   out float vertexDistance;
 		14 11   out vec2 texCoord0;
 		15 12   
 		16 13   void main() {
+		17 14       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 		        ...
 		        '''
 	Changed file "core/gui.vsh":
@@ -88,14 +80,15 @@ Changed resource pack "minecraft":
 		   15 + 
 		 3 16   in vec3 Position;
 		 4 17   in vec4 Color;
-		 5    - 
+		 5 18   
 		 6    - uniform mat4 ModelViewMat;
 		 7    - uniform mat4 ProjMat;
-		 8 18   
+		 8    - 
 		 9 19   out vec4 vertexColor;
 		10 20   
 		11 21   void main() {
 		12 22       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		13 23   
 		        ...
 		        '''
 	Changed file "core/particle.vsh":
@@ -113,15 +106,16 @@ Changed resource pack "minecraft":
 		 8 10   in ivec2 UV2;
 		 9 11   
 		10 12   uniform sampler2D Sampler2;
-		11    - 
+		11 13   
 		12    - uniform mat4 ModelViewMat;
 		13    - uniform mat4 ProjMat;
 		14    - uniform int FogShape;
-		15 13   
+		15    - 
 		16 14   out float vertexDistance;
 		17 15   out vec2 texCoord0;
 		18 16   out vec4 vertexColor;
 		19 17   
+		20 18   void main() {
 		        ...
 		        '''
 	Changed file "core/position.vsh":
@@ -134,11 +128,11 @@ Changed resource pack "minecraft":
 		    5 + #moj_import <minecraft:projection.glsl>
 		 4  6   
 		 5  7   in vec3 Position;
-		 6    - 
+		 6  8   
 		 7    - uniform mat4 ProjMat;
 		 8    - uniform mat4 ModelViewMat;
 		 9    - uniform int FogShape;
-		10  8   
+		10    - 
 		11  9   out float vertexDistance;
 		12 10   
 		13 11   void main() {
@@ -255,14 +249,15 @@ Changed resource pack "minecraft":
 		 3 16   in vec3 Position;
 		 4 17   in vec2 UV0;
 		 5 18   in vec4 Color;
-		 6    - 
+		 6 19   
 		 7    - uniform mat4 ModelViewMat;
 		 8    - uniform mat4 ProjMat;
-		 9 19   
+		 9    - 
 		10 20   out vec2 texCoord0;
 		11 21   out vec4 vertexColor;
 		12 22   
 		13 23   void main() {
+		14 24       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 		        ...
 		        '''
 	Changed file "core/rendertype_beacon_beam.vsh":
@@ -287,7 +282,7 @@ Changed resource pack "minecraft":
 		        ...
 		        '''
 	Changed file "core/rendertype_clouds.vsh":
-		Total line: 88 (+67, -2)
+		Total line: 88 (+76, -11)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -306,12 +301,19 @@ Changed resource pack "minecraft":
 		   15 +     vec3 CloudOffset;
 		   16 +     vec3 CellSize;
 		   17 + };
-		   18 + 
+		 4 18   
 		   19 + uniform isamplerBuffer CloudFaces;
-		   20 + 
+		 5    - in vec3 Position;
+		 6    - in vec4 Color;
+		 7 20   
 		   21 + out float vertexDistance;
 		   22 + out vec4 vertexColor;
-		   23 + 
+		 8    - uniform mat4 ModelViewMat;
+		 9    - uniform mat4 ProjMat;
+		10    - uniform vec3 ModelOffset;
+		11    - uniform int FogShape;
+		12    - uniform vec4 ColorModulator;
+		13 23   
 		   24 + const vec3[] vertices = vec3[](
 		   25 +     // Bottom face
 		   26 +     vec3(1, 0, 0),
@@ -344,6 +346,7 @@ Changed resource pack "minecraft":
 		   53 +     vec3(1, 1, 1),
 		   54 +     vec3(1, 0, 1)
 		   55 + );
+		14    - out float vertexDistance;
 		   56 + 
 		   57 + const vec4[] faceColors = vec4[](
 		   58 +     // Bottom face
@@ -359,13 +362,10 @@ Changed resource pack "minecraft":
 		   68 +     // East face
 		   69 +     vec4(0.9, 0.9, 0.9, 0.8)
 		   70 + );
-		 4    - 
-		 5    - in vec3 Position;
-		 6    - in vec4 Color;
-		 7 71   
-		   72 + void main() {
+		15    - out vec4 vertexColor;
+		16 71   
+		17 72   void main() {
 		   73 +     int index = gl_InstanceID * 3;
-		 8    - uniform mat4 ModelViewMat;
 		   74 +     int cellX = texelFetch(CloudFaces, index).r;
 		   75 +     int cellZ = texelFetch(CloudFaces, index + 1).r;
 		   76 +     int dirAndFlags = texelFetch(CloudFaces, index + 2).r;
@@ -376,15 +376,6 @@ Changed resource pack "minecraft":
 		   81 +     cellZ = (cellZ << 1) | ((dirAndFlags & FLAG_EXTRA_Z) >> 6);
 		   82 +     vec3 faceVertex = vertices[(direction * 4) + (isInsideFace ? 3 - gl_VertexID : gl_VertexID)];
 		   83 +     vec3 pos = (faceVertex * CellSize) + (vec3(cellX, 0, cellZ) * CellSize) + CloudOffset;
-		 9    - uniform mat4 ProjMat;
-		10    - uniform vec3 ModelOffset;
-		11    - uniform int FogShape;
-		12    - uniform vec4 ColorModulator;
-		13    - 
-		14    - out float vertexDistance;
-		15    - out vec4 vertexColor;
-		16    - 
-		17    - void main() {
 		18    -     vec3 pos = Position + ModelOffset;
 		19 84       gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 		20 85   
@@ -427,15 +418,16 @@ Changed resource pack "minecraft":
 		    6 + #moj_import <minecraft:projection.glsl>
 		 5  7   
 		 6  8   in vec3 Position;
-		 7    - 
+		 7  9   
 		 8    - uniform mat4 ModelViewMat;
 		 9    - uniform mat4 ProjMat;
 		10    - uniform int FogShape;
-		11  9   
+		11    - 
 		12 10   out vec4 texProj0;
 		13 11   out float vertexDistance;
 		14 12   
 		15 13   void main() {
+		16 14       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 		        ...
 		        '''
 	Changed file "core/rendertype_entity_alpha.vsh":
@@ -476,23 +468,24 @@ Changed resource pack "minecraft":
 		 7  9   in vec4 Color;
 		 8 10   in vec2 UV0;
 		 9 11   in ivec2 UV1;
-		10 12   in ivec2 UV2;
+		        ...
 		11 13   in vec3 Normal;
 		12 14   
 		13 15   uniform sampler2D Sampler1;
 		14 16   uniform sampler2D Sampler2;
-		15    - 
+		15 17   
 		16    - uniform mat4 ModelViewMat;
 		17    - uniform mat4 ProjMat;
 		18    - uniform int FogShape;
-		19 17   
+		19 18   
 		20    - uniform vec3 Light0_Direction;
 		21    - uniform vec3 Light1_Direction;
-		22 18   
+		22    - 
 		23 19   out float vertexDistance;
 		24 20   out vec4 vertexColor;
 		25 21   out vec4 overlayColor;
 		26 22   out vec2 texCoord0;
+		27 23   
 		        ...
 		        '''
 	Changed file "core/rendertype_entity_shadow.vsh":
@@ -507,15 +500,16 @@ Changed resource pack "minecraft":
 		 5  7   in vec3 Position;
 		 6  8   in vec4 Color;
 		 7  9   in vec2 UV0;
-		 8    - 
+		 8 10   
 		 9    - uniform mat4 ModelViewMat;
 		10    - uniform mat4 ProjMat;
 		11    - uniform int FogShape;
-		12 10   
+		12    - 
 		13 11   out float vertexDistance;
 		14 12   out vec4 vertexColor;
 		15 13   out vec2 texCoord0;
 		16 14   
+		17 15   void main() {
 		        ...
 		        '''
 	Changed file "core/rendertype_item_entity_translucent_cull.vsh":
@@ -536,18 +530,19 @@ Changed resource pack "minecraft":
 		11 13   in vec3 Normal;
 		12 14   
 		13 15   uniform sampler2D Sampler2;
-		14    - 
+		14 16   
 		15    - uniform mat4 ModelViewMat;
 		16    - uniform mat4 ProjMat;
 		17    - uniform int FogShape;
-		18 16   
+		18 17   
 		19    - uniform vec3 Light0_Direction;
 		20    - uniform vec3 Light1_Direction;
-		21 17   
+		21    - 
 		22 18   out float vertexDistance;
 		23 19   out vec4 vertexColor;
 		24 20   out vec2 texCoord0;
 		25 21   out vec2 texCoord1;
+		26 22   out vec2 texCoord2;
 		        ...
 		        '''
 	Changed file "core/rendertype_leash.vsh":
@@ -562,19 +557,19 @@ Changed resource pack "minecraft":
 		 5  7   in vec3 Position;
 		 6  8   in vec4 Color;
 		 7  9   in ivec2 UV2;
-		 8    - 
-		 9    - uniform sampler2D Sampler2;
-		10 10   
+		 8 10   
+		 9 11   uniform sampler2D Sampler2;
+		10 12   
 		11    - uniform mat4 ModelViewMat;
 		12    - uniform mat4 ProjMat;
 		13    - uniform vec4 ColorModulator;
-		   11 + uniform sampler2D Sampler2;
 		14    - uniform int FogShape;
-		15 12   
+		15    - 
 		16 13   out float vertexDistance;
 		17 14   flat out vec4 vertexColor;
 		18 15   
 		19 16   void main() {
+		20 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 		        ...
 		        '''
 	Changed file "core/rendertype_lightning.vsh":
@@ -588,44 +583,43 @@ Changed resource pack "minecraft":
 		 4  6   
 		 5  7   in vec3 Position;
 		 6  8   in vec4 Color;
-		 7    - 
+		 7  9   
 		 8    - uniform mat4 ModelViewMat;
 		 9    - uniform mat4 ProjMat;
 		10    - uniform int FogShape;
-		11  9   
+		11    - 
 		12 10   out float vertexDistance;
 		13 11   out vec4 vertexColor;
 		14 12   
 		15 13   void main() {
+		16 14       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 		        ...
 		        '''
 	Changed file "core/rendertype_lines.vsh":
-		Total line: 45 (+2, -5)
+		Total line: 45 (+3, -6)
 		        '''
 		 1  1   #version 150
 		 2  2   
 		 3  3   #moj_import <minecraft:fog.glsl>
 		    4 + #moj_import <minecraft:globals.glsl>
-		 4    - 
-		 5    - in vec3 Position;
 		    5 + #moj_import <minecraft:dynamictransforms.glsl>
 		    6 + #moj_import <minecraft:projection.glsl>
-		 6    - in vec4 Color;
-		 7    - in vec3 Normal;
-		 8  7   
-		    8 + in vec3 Position;
+		 4  7   
+		 5  8   in vec3 Position;
+		 6  9   in vec4 Color;
+		 7 10   in vec3 Normal;
+		 8 11   
 		 9    - uniform mat4 ModelViewMat;
 		10    - uniform mat4 ProjMat;
 		11    - uniform float LineWidth;
-		    9 + in vec4 Color;
-		   10 + in vec3 Normal;
 		12    - uniform vec2 ScreenSize;
 		13    - uniform int FogShape;
-		14 11   
+		14    - 
 		15 12   out float vertexDistance;
 		16 13   out vec4 vertexColor;
 		17 14   
 		18 15   const float VIEW_SHRINK = 1.0 - (1.0 / 256.0);
+		19 16   const mat4 VIEW_SCALE = mat4(
 		        ...
 		        '''
 	Changed file "core/rendertype_outline.vsh":
@@ -664,15 +658,16 @@ Changed resource pack "minecraft":
 		 8 10   in ivec2 UV2;
 		 9 11   
 		10 12   uniform sampler2D Sampler2;
-		11    - 
+		11 13   
 		12    - uniform mat4 ModelViewMat;
 		13    - uniform mat4 ProjMat;
 		14    - uniform int FogShape;
-		15 13   
+		15    - 
 		16 14   out float vertexDistance;
 		17 15   out vec4 vertexColor;
 		18 16   out vec2 texCoord0;
 		19 17   
+		20 18   void main() {
 		        ...
 		        '''
 	Changed file "core/rendertype_text_background.vsh":
@@ -689,15 +684,16 @@ Changed resource pack "minecraft":
 		 7  9   in ivec2 UV2;
 		 8 10   
 		 9 11   uniform sampler2D Sampler2;
-		10    - 
+		10 12   
 		11    - uniform mat4 ModelViewMat;
 		12    - uniform mat4 ProjMat;
 		13    - uniform int FogShape;
-		14 12   
+		14    - 
 		15 13   out float vertexDistance;
 		16 14   out vec4 vertexColor;
 		17 15   
 		18 16   void main() {
+		19 17       gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 		        ...
 		        '''
 	Changed file "core/rendertype_text_background_see_through.vsh":
@@ -735,15 +731,16 @@ Changed resource pack "minecraft":
 		 8 10   in ivec2 UV2;
 		 9 11   
 		10 12   uniform sampler2D Sampler2;
-		11    - 
+		11 13   
 		12    - uniform mat4 ModelViewMat;
 		13    - uniform mat4 ProjMat;
 		14    - uniform int FogShape;
-		15 13   
+		15    - 
 		16 14   out float vertexDistance;
 		17 15   out vec4 vertexColor;
 		18 16   out vec2 texCoord0;
 		19 17   
+		20 18   void main() {
 		        ...
 		        '''
 	Changed file "core/rendertype_text_intensity_see_through.vsh":
@@ -837,24 +834,24 @@ Changed resource pack "minecraft":
 		 2  2   
 		    3 + #moj_import <minecraft:dynamictransforms.glsl>
 		    4 + #moj_import <minecraft:projection.glsl>
-		 3    - in vec3 Position;
-		 4    - in vec2 UV0;
-		 5  5   
-		    6 + in vec3 Position;
+		    5 + 
+		 3  6   in vec3 Position;
+		 4  7   in vec2 UV0;
+		 5  8   
 		 6    - uniform mat4 TextureMat;
 		 7    - uniform mat4 ModelViewMat;
 		 8    - uniform mat4 ProjMat;
-		    7 + in vec2 UV0;
 		 9    - uniform vec3 ModelOffset;
-		10  8   
+		10    - 
 		11  9   out vec2 texCoord0;
 		12 10   
 		13 11   void main() {
 		14 12       vec3 pos = Position + ModelOffset;
+		15 13       gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 		        ...
 		        '''
 	Changed file "core/terrain.vsh":
-		Total line: 30 (+5, -5)
+		Total line: 30 (+6, -6)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -871,20 +868,18 @@ Changed resource pack "minecraft":
 		11 12   
 		12 13   uniform sampler2D Sampler2;
 		13 14   
-		   15 + out float vertexDistance;
 		14    - uniform mat4 ModelViewMat;
 		15    - uniform mat4 ProjMat;
-		   16 + out vec4 vertexColor;
-		   17 + out vec2 texCoord0;
 		16    - uniform vec3 ModelOffset;
 		17    - uniform int FogShape;
-		18 18   
+		18    - 
+		19 15   out float vertexDistance;
+		20 16   out vec4 vertexColor;
+		21 17   out vec2 texCoord0;
+		   18 + 
 		   19 + vec4 minecraft_sample_lightmap(sampler2D lightMap, ivec2 uv) {
 		   20 +     return texture(lightMap, clamp(uv / 256.0, vec2(0.5 / 16.0), vec2(15.5 / 16.0)));
-		19    - out float vertexDistance;
 		   21 + }
-		20    - out vec4 vertexColor;
-		21    - out vec2 texCoord0;
 		22 22   
 		23 23   void main() {
 		24 24       vec3 pos = Position + ModelOffset;
@@ -893,7 +888,7 @@ Changed resource pack "minecraft":
 		        ...
 		        '''
 	Changed file "post/blit.vsh":
-		Total line: 19 (+5, -1)
+		Total line: 19 (+6, -2)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -904,8 +899,8 @@ Changed resource pack "minecraft":
 		    7 + layout(std140) uniform SamplerInfo {
 		    8 +     vec2 OutSize;
 		    9 +     vec2 InSize;
-		 5    - uniform mat4 ProjMat;
 		   10 + };
+		 5    - uniform mat4 ProjMat;
 		 6    - uniform vec2 OutSize;
 		 7 11   
 		 8 12   out vec2 texCoord;
@@ -915,37 +910,7 @@ Changed resource pack "minecraft":
 		        ...
 		        '''
 	Changed file "post/blur.vsh":
-		Total line: 28 (+9, -2)
-		        '''
-		 1  1   #version 150
-		 2  2   
-		    3 + #moj_import <minecraft:projection.glsl>
-		    4 + 
-		    5 + in vec4 Position;
-		    6 + 
-		    7 + layout(std140) uniform SamplerInfo {
-		    8 +     vec2 OutSize;
-		    9 +     vec2 InSize;
-		   10 + };
-		 3    - in vec4 Position;
-		 4 11   
-		   12 + layout(std140) uniform BlurConfig {
-		   13 +     vec2 BlurDir;
-		 5    - uniform mat4 ProjMat;
-		 6    - uniform vec2 InSize;
-		   14 +     float Radius;
-		   15 + };
-		 7    - uniform vec2 OutSize;
-		 8    - uniform vec2 BlurDir;
-		 9 16   
-		10 17   out vec2 texCoord;
-		11 18   out vec2 sampleStep;
-		12 19   
-		13 20   void main() {
-		        ...
-		        '''
-	Changed file "post/invert.vsh":
-		Total line: 23 (+4, -1)
+		Total line: 28 (+13, -6)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -955,9 +920,44 @@ Changed resource pack "minecraft":
 		 4  6   
 		    7 + layout(std140) uniform SamplerInfo {
 		    8 +     vec2 OutSize;
-		 5    - uniform mat4 ProjMat;
 		    9 +     vec2 InSize;
 		   10 + };
+		 5    - uniform mat4 ProjMat;
+		 6    - uniform vec2 InSize;
+		 7    - uniform vec2 OutSize;
+		 8    - uniform vec2 BlurDir;
+		 9 11   
+		   12 + layout(std140) uniform BlurConfig {
+		   13 +     vec2 BlurDir;
+		   14 +     float Radius;
+		   15 + };
+		10    - out vec2 texCoord;
+		11    - out vec2 sampleStep;
+		12 16   
+		   17 + out vec2 texCoord;
+		   18 + out vec2 sampleStep;
+		   19 + 
+		13 20   void main() {
+		14 21       vec4 outPos = ProjMat * vec4(Position.xy * OutSize, 0.0, 1.0);
+		15 22       gl_Position = vec4(outPos.xy, 0.2, 1.0);
+		16 23   
+		17 24       vec2 oneTexel = 1.0 / InSize;
+		        ...
+		        '''
+	Changed file "post/invert.vsh":
+		Total line: 23 (+6, -3)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:projection.glsl>
+		    4 + 
+		 3  5   in vec4 Position;
+		 4  6   
+		    7 + layout(std140) uniform SamplerInfo {
+		    8 +     vec2 OutSize;
+		    9 +     vec2 InSize;
+		   10 + };
+		 5    - uniform mat4 ProjMat;
 		 6    - uniform vec2 InSize;
 		 7    - uniform vec2 OutSize;
 		 8 11   
@@ -968,7 +968,7 @@ Changed resource pack "minecraft":
 		        ...
 		        '''
 	Changed file "post/rotscale.vsh":
-		Total line: 34 (+7, -2)
+		Total line: 34 (+11, -6)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -978,18 +978,18 @@ Changed resource pack "minecraft":
 		 4  6   
 		    7 + layout(std140) uniform SamplerInfo {
 		    8 +     vec2 OutSize;
-		 5    - uniform mat4 ProjMat;
 		    9 +     vec2 InSize;
 		   10 + };
+		 5    - uniform mat4 ProjMat;
 		 6    - uniform vec2 InSize;
 		 7    - uniform vec2 OutSize;
 		 8 11   
 		   12 + layout(std140) uniform RotScaleConfig {
 		   13 +     vec2 InScale;
 		   14 +     vec2 InOffset;
-		 9    - uniform vec2 InScale;
 		   15 +     float InRotation;
 		   16 + };
+		 9    - uniform vec2 InScale;
 		10    - uniform vec2 InOffset;
 		11    - uniform float InRotation;
 		12 17   
@@ -1000,7 +1000,7 @@ Changed resource pack "minecraft":
 		        ...
 		        '''
 	Changed file "post/screenquad.vsh":
-		Total line: 18 (+5, -1)
+		Total line: 18 (+6, -2)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -1011,8 +1011,8 @@ Changed resource pack "minecraft":
 		    7 + layout(std140) uniform SamplerInfo {
 		    8 +     vec2 OutSize;
 		    9 +     vec2 InSize;
-		 5    - uniform mat4 ProjMat;
 		   10 + };
+		 5    - uniform mat4 ProjMat;
 		 6    - uniform vec2 OutSize;
 		 7 11   
 		 8 12   out vec2 texCoord;
@@ -1022,7 +1022,7 @@ Changed resource pack "minecraft":
 		        ...
 		        '''
 	Changed file "post/sobel.vsh":
-		Total line: 22 (+4, -1)
+		Total line: 22 (+6, -3)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -1032,9 +1032,9 @@ Changed resource pack "minecraft":
 		 4  6   
 		    7 + layout(std140) uniform SamplerInfo {
 		    8 +     vec2 OutSize;
-		 5    - uniform mat4 ProjMat;
 		    9 +     vec2 InSize;
 		   10 + };
+		 5    - uniform mat4 ProjMat;
 		 6    - uniform vec2 InSize;
 		 7    - uniform vec2 OutSize;
 		 8 11   

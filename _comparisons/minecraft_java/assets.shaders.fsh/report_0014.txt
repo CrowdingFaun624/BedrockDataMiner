@@ -107,7 +107,7 @@ Changed resource pack "minecraft":
 		28 30   }
 		        '''
 	Changed file "core/rendertype_entity_cutout_no_cull_z_offset.fsh":
-		Total line: 30 (+12, -3)
+		Total line: 30 (+13, -4)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -183,7 +183,7 @@ Changed resource pack "minecraft":
 		23 28   }
 		        '''
 	Changed file "core/rendertype_entity_no_outline.fsh":
-		Total line: 22 (+6, -7)
+		Total line: 22 (+8, -9)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -208,17 +208,17 @@ Changed resource pack "minecraft":
 		15 17   out vec4 fragColor;
 		16 18   
 		17 19   void main() {
+		   20 +     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		   21 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 		18    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor;
 		19    -     if (color.a < 0.1) {
 		20    -         discard;
-		   20 +     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
-		   21 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 		21    -     }
 		22    -     fragColor = color * ColorModulator;
 		23 22   }
 		        '''
 	Changed file "core/rendertype_entity_shadow.fsh":
-		Total line: 22 (+8, -6)
+		Total line: 22 (+9, -7)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -245,8 +245,8 @@ Changed resource pack "minecraft":
 		17 18   void main() {
 		   19 +     vec4 color = texture(Sampler0, clamp(texCoord0, 0.0, 1.0));
 		   20 +     color *= vertexColor * ColorModulator;
-		18    -     vec4 color = texture(Sampler0, clamp(texCoord0, 0.0, 1.0)) * vertexColor;
 		   21 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		18    -     vec4 color = texture(Sampler0, clamp(texCoord0, 0.0, 1.0)) * vertexColor;
 		19    -     fragColor = color * ColorModulator;
 		20 22   }
 		        '''
@@ -333,19 +333,19 @@ Changed resource pack "minecraft":
 		 1  1   #version 150
 		 2  2   
 		    3 + #moj_import <fog.glsl>
-		    4 + 
-		    5 + uniform vec4 ColorModulator;
+		 3    - in vec4 vertexColor;
+		 4  4   
+		 5  5   uniform vec4 ColorModulator;
 		    6 + uniform float FogStart;
 		    7 + uniform float FogEnd;
 		    8 + uniform vec4 FogColor;
-		    9 + 
+		 6  9   
 		   10 + in float vertexDistance;
-		 3 11   in vec4 vertexColor;
-		 4    - 
-		 5    - uniform vec4 ColorModulator;
-		 6 12   
-		 7 13   out vec4 fragColor;
-		 8 14   
+		   11 + in vec4 vertexColor;
+		 7    - out vec4 fragColor;
+		 8 12   
+		   13 + out vec4 fragColor;
+		   14 + 
 		 9 15   void main() {
 		   16 +     vec4 color = vertexColor * ColorModulator;
 		   17 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);

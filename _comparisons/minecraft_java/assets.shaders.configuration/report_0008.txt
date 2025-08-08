@@ -1,0 +1,93 @@
+Difference of "configuration" between "20w21a" (snapshot of "1.16-231620") and "20w22a" (snapshot of "1.16-231620").
+
+Changed resource pack "minecraft":
+	Total file: 54 (+2, -0)
+	Added file "post/transparency.json":
+		field "targets":
+			target "water"
+			target "translucent"
+			target "itemEntity"
+			target "particles"
+			target "clouds"
+			target "weather"
+			target "final"
+		field "passes":
+			pass 0:
+				field "name": "transparency"
+				field "auxtargets":
+					aux target 0:
+						field "name": "DiffuseDepthSampler"
+						field "id": "minecraft:main:depth"
+					aux target 1:
+						field "name": "TranslucentSampler"
+						field "id": "translucent"
+					aux target 2:
+						field "name": "TranslucentDepthSampler"
+						field "id": "translucent:depth"
+					aux target 3:
+						field "name": "ItemEntitySampler"
+						field "id": "itemEntity"
+					aux target 4:
+						field "name": "ItemEntityDepthSampler"
+						field "id": "itemEntity:depth"
+					aux target 5:
+						field "name": "ParticlesSampler"
+						field "id": "particles"
+					aux target 6:
+						field "name": "ParticlesDepthSampler"
+						field "id": "particles:depth"
+					aux target 7:
+						field "name": "CloudsSampler"
+						field "id": "clouds"
+					aux target 8:
+						field "name": "CloudsDepthSampler"
+						field "id": "clouds:depth"
+					aux target 9:
+						field "name": "WeatherSampler"
+						field "id": "weather"
+					aux target 10:
+						field "name": "WeatherDepthSampler"
+						field "id": "weather:depth"
+				field "intarget": "minecraft:main"
+				field "outtarget": "final"
+			pass 1:
+				field "name": "blit"
+				field "intarget": "final"
+				field "outtarget": "minecraft:main"
+	Added file "program/transparency.json":
+		field "attributes": attribute "Position"
+		field "vertex": "screenquad"
+		field "fragment": "transparency"
+		field "blend":
+			field "func": "add"
+			field "srcrgb": "one"
+			field "dstrgb": "zero"
+		field "samplers":
+			sampler 0: field "name": "DiffuseSampler"
+			sampler 1: field "name": "DiffuseDepthSampler"
+			sampler 2: field "name": "TranslucentSampler"
+			sampler 3: field "name": "TranslucentDepthSampler"
+			sampler 4: field "name": "ItemEntitySampler"
+			sampler 5: field "name": "ItemEntityDepthSampler"
+			sampler 6: field "name": "ParticlesSampler"
+			sampler 7: field "name": "ParticlesDepthSampler"
+			sampler 8: field "name": "CloudsSampler"
+			sampler 9: field "name": "CloudsDepthSampler"
+			sampler 10: field "name": "WeatherSampler"
+			sampler 11: field "name": "WeatherDepthSampler"
+		field "uniforms":
+			uniform 0:
+				field "name": "ProjMat"
+				field "type": "matrix4x4"
+				field "count": 16
+				field "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+			uniform 1:
+				field "name": "InSize"
+				field "type": "float"
+				field "count": 2
+				field "values": [1.0, 1.0]
+			uniform 2:
+				field "name": "OutSize"
+				field "type": "float"
+				field "count": 2
+				field "values": [1.0, 1.0]

@@ -1,0 +1,247 @@
+Difference of "configuration" between "14w04b-1554" (snapshot of "1.8") and "14w05a" (snapshot of "1.8").
+
+Changed resource pack "minecraft":
+	Total file: 50 (+2, -0)
+	Changed file "program/blit.json":
+		Changed field "uniforms":
+			Total uniform: 3 (+1, -0)
+			Added uniform 2:
+				field "name": "ColorModulate"
+				field "type": "float"
+				field "count": 4
+				field "values": [1.0, 1.0, 1.0, 1.0]
+	Moved file from "program/bloom.json" to "program/spider.json".
+	Changed file "program/spider.json":
+		Changed field "vertex" from "sobel" to "rotscale".
+		Changed field "fragment" from "phosphor" to "spiderclip".
+		Changed field "samplers":
+			Changed sampler 1:
+				Changed field "name" from "CycleSampler" to "BlurSampler".
+		Changed field "uniforms":
+			Total uniform: 9 (+6, -0)
+			Added uniform 2:
+				field "name": "InScale"
+				field "type": "float"
+				field "count": 2
+				field "values": [1.0, 1.0]
+			Added uniform 3:
+				field "name": "InOffset"
+				field "type": "float"
+				field "count": 2
+				field "values": [0.0, 0.0]
+			Added uniform 4:
+				field "name": "InRotation"
+				field "type": "float"
+				field "count": 1
+				field "values": [0.0]
+			Added uniform 5:
+				field "name": "Time"
+				field "type": "float"
+				field "count": 1
+				field "values": [0.0]
+			Added uniform 6:
+				field "name": "Scissor"
+				field "type": "float"
+				field "count": 4
+				field "values": [0.0, 0.0, 1.0, 1.0]
+			Added uniform 7:
+				field "name": "Vignette"
+				field "type": "float"
+				field "count": 4
+				field "values": [0.0, 0.0, 1.0, 1.0]
+			Moved uniform from 2 to 8.
+	Added file "post/creeper.json":
+		field "targets": target "swap"
+		field "passes":
+			pass 0:
+				field "name": "color_convolve"
+				field "intarget": "minecraft:main"
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "RedMatrix"
+						field "values": [0.0, 0.0, 0.0]
+					uniform 1:
+						field "name": "GreenMatrix"
+						field "values": [0.3, 0.59, 0.11]
+					uniform 2:
+						field "name": "BlueMatrix"
+						field "values": [0.0, 0.0, 0.0]
+			pass 1:
+				field "name": "bits"
+				field "intarget": "swap"
+				field "outtarget": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "Resolution"
+						field "values": [16.0]
+					uniform 1:
+						field "name": "MosaicSize"
+						field "values": [4.0]
+	Added file "post/spider.json":
+		field "targets":
+			target "largeBlur"
+			target "smallBlur"
+			target "temp"
+			target "swap"
+		field "passes":
+			pass 0:
+				field "name": "blur"
+				field "intarget": "minecraft:main"
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [15.0]
+			pass 1:
+				field "name": "blur"
+				field "intarget": "temp"
+				field "outtarget": "largeBlur"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [15.0]
+			pass 2:
+				field "name": "blur"
+				field "intarget": "minecraft:main"
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [7.0]
+			pass 3:
+				field "name": "blur"
+				field "intarget": "temp"
+				field "outtarget": "smallBlur"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [7.0]
+			pass 4:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "largeBlur"
+				field "intarget": "minecraft:main"
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [1.25, 2.0]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.125, -0.1]
+					uniform 2:
+						field "name": "Scissor"
+						field "values": [0.0, 0.0, 1.0, 1.0]
+					uniform 3:
+						field "name": "Vignette"
+						field "values": [0.1, 0.1, 0.9, 0.9]
+			pass 5:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "temp"
+				field "intarget": "smallBlur"
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 4.2]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-1.1, -1.5]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [-45.0]
+					uniform 3:
+						field "name": "Scissor"
+						field "values": [0.21, 0.0, 0.79, 1.0]
+					uniform 4:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			pass 6:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "swap"
+				field "intarget": "smallBlur"
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 4.2]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [0.45, -4.45]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [45.0]
+					uniform 3:
+						field "name": "Scissor"
+						field "values": [0.21, 0.0, 0.79, 1.0]
+					uniform 4:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			pass 7:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "temp"
+				field "intarget": "smallBlur"
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 2.35]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.385, -1.29]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [0.0]
+					uniform 3:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			pass 8:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "swap"
+				field "intarget": "smallBlur"
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 2.35]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.965, -1.29]
+					uniform 2:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			pass 9:
+				field "name": "blit"
+				field "intarget": "temp"
+				field "outtarget": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "ColorModulate"
+						field "values": [1.0, 0.8, 0.8, 1.0]

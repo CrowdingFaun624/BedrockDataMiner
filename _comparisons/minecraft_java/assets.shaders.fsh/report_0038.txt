@@ -3,7 +3,7 @@ Difference of "text_packs" between "25w16a" (snapshot of "1.21.6") and "25w17a" 
 Changed resource pack "minecraft":
 	Total file: 46 (+2, -0)
 	Changed file "core/position.fsh":
-		Total line: 12 (+0, -7)
+		Total line: 12 (+1, -8)
 		        '''
 		        ...
 		 6  6   in float vertexDistance;
@@ -11,6 +11,7 @@ Changed resource pack "minecraft":
 		 8  8   out vec4 fragColor;
 		 9  9   
 		10 10   void main() {
+		   11 +     fragColor = linear_fog(ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
 		11    - #ifdef FOG_IS_SKY
 		12    -     float fogStart = 0.0;
 		13    -     float fogEnd = FogSkyEnd;
@@ -18,7 +19,6 @@ Changed resource pack "minecraft":
 		15    -     float fogStart = FogStart;
 		16    -     float fogEnd = FogEnd;
 		17    - #endif
-		   11 +     fragColor = linear_fog(ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
 		18    -     fragColor = linear_fog(ColorModulator, vertexDistance, fogStart, fogEnd, FogColor);
 		19 12   }
 		        '''

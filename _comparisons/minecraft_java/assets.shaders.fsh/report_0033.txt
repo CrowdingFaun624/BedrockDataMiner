@@ -99,40 +99,32 @@ Changed resource pack "minecraft":
 		 8  8   uniform vec4 ColorModulator;
 		        ...
 		        '''
-	Moved file from "core/rendertype_breeze_wind.fsh" to "core/terrain.fsh".
-	Changed file "core/terrain.fsh":
-		Total line: 26 (+6, -3)
-		        '''
-		 1  1   #version 150
-		 2  2   
-		    3 + #moj_import <minecraft:fog.glsl>
-		 3    - #moj_import <fog.glsl>
-		 4  4   
-		 5  5   uniform sampler2D Sampler0;
-		 6  6   
-		 7  7   uniform vec4 ColorModulator;
-		 8  8   uniform float FogStart;
-		 9  9   uniform float FogEnd;
-		   10 + uniform vec4 FogColor;
-		10 11   
-		11 12   in float vertexDistance;
-		12 13   in vec4 vertexColor;
-		13 14   in vec2 texCoord0;
-		14 15   
-		15 16   out vec4 fragColor;
-		16 17   
-		17 18   void main() {
-		18 19       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
-		   20 + #ifdef ALPHA_CUTOUT
-		   21 +     if (color.a < ALPHA_CUTOUT) {
-		19    -     if (color.a < 0.1) {
-		20 22           discard;
-		21 23       }
-		   24 + #endif
-		   25 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
-		22    -     fragColor = color * linear_fog_fade(vertexDistance, FogStart, FogEnd);
-		23 26   }
-		        '''
+	Removed file "core/rendertype_breeze_wind.fsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		uniform sampler2D Sampler0;
+		
+		uniform vec4 ColorModulator;
+		uniform float FogStart;
+		uniform float FogEnd;
+		
+		in float vertexDistance;
+		in vec4 vertexColor;
+		in vec2 texCoord0;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		    if (color.a < 0.1) {
+		        discard;
+		    }
+		    fragColor = color * linear_fog_fade(vertexDistance, FogStart, FogEnd);
+		}
+		'''
 	Changed file "core/rendertype_clouds.fsh":
 		Total line: 16 (+1, -1)
 		        '''
@@ -241,38 +233,41 @@ Changed resource pack "minecraft":
 		    fragColor = color * linear_fog_fade(vertexDistance, FogStart, FogEnd);
 		}
 		'''
-	Removed file "core/rendertype_entity_cutout.fsh":
-		'''
-		#version 150
-		
-		#moj_import <fog.glsl>
-		
-		uniform sampler2D Sampler0;
-		
-		uniform vec4 ColorModulator;
-		uniform float FogStart;
-		uniform float FogEnd;
-		uniform vec4 FogColor;
-		
-		in float vertexDistance;
-		in vec4 vertexColor;
-		in vec4 lightMapColor;
-		in vec4 overlayColor;
-		in vec2 texCoord0;
-		
-		out vec4 fragColor;
-		
-		void main() {
-		    vec4 color = texture(Sampler0, texCoord0);
-		    if (color.a < 0.1) {
-		        discard;
-		    }
-		    color *= vertexColor * ColorModulator;
-		    color.rgb = mix(overlayColor.rgb, color.rgb, overlayColor.a);
-		    color *= lightMapColor;
-		    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
-		}
-		'''
+	Moved file from "core/rendertype_entity_cutout.fsh" to "core/entity.fsh".
+	Changed file "core/entity.fsh":
+		Total line: 35 (+8, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:fog.glsl>
+		 3    - #moj_import <fog.glsl>
+		 4  4   
+		 5  5   uniform sampler2D Sampler0;
+		 6  6   
+		 7  7   uniform vec4 ColorModulator;
+		 8  8   uniform float FogStart;
+		        ...
+		17 17   
+		18 18   out vec4 fragColor;
+		19 19   
+		20 20   void main() {
+		21 21       vec4 color = texture(Sampler0, texCoord0);
+		   22 + #ifdef ALPHA_CUTOUT
+		   23 +     if (color.a < ALPHA_CUTOUT) {
+		22    -     if (color.a < 0.1) {
+		23 24           discard;
+		24 25       }
+		   26 + #endif
+		25 27       color *= vertexColor * ColorModulator;
+		   28 + #ifndef NO_OVERLAY
+		26 29       color.rgb = mix(overlayColor.rgb, color.rgb, overlayColor.a);
+		   30 + #endif
+		   31 + #ifndef EMISSIVE
+		27 32       color *= lightMapColor;
+		   33 + #endif
+		28 34       fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		29 35   }
+		        '''
 	Removed file "core/rendertype_entity_cutout_no_cull.fsh":
 		'''
 		#version 150
@@ -592,9 +587,32 @@ Changed resource pack "minecraft":
 		    fragColor = color * linear_fog_fade(vertexDistance, FogStart, FogEnd);
 		}
 		'''
-	Moved file from "core/rendertype_eyes.fsh" to "core/glint.fsh".
+	Removed file "core/rendertype_eyes.fsh":
+		'''
+		#version 150
+		
+		#moj_import <fog.glsl>
+		
+		uniform sampler2D Sampler0;
+		
+		uniform vec4 ColorModulator;
+		uniform float FogStart;
+		uniform float FogEnd;
+		
+		in float vertexDistance;
+		in vec4 vertexColor;
+		in vec2 texCoord0;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+		    fragColor = color * ColorModulator * linear_fog_fade(vertexDistance, FogStart, FogEnd);
+		}
+		'''
+	Moved file from "core/rendertype_glint.fsh" to "core/glint.fsh".
 	Changed file "core/glint.fsh":
-		Total line: 24 (+7, -3)
+		Total line: 24 (+1, -1)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -605,87 +623,7 @@ Changed resource pack "minecraft":
 		 6  6   
 		 7  7   uniform vec4 ColorModulator;
 		 8  8   uniform float FogStart;
-		 9  9   uniform float FogEnd;
-		   10 + uniform float GlintAlpha;
-		10 11   
-		11 12   in float vertexDistance;
-		12    - in vec4 vertexColor;
-		13 13   in vec2 texCoord0;
-		   14 + 
-		   15 + out vec4 fragColor;
-		14 16   
-		   17 + void main() {
-		   18 +     vec4 color = texture(Sampler0, texCoord0) * ColorModulator;
-		   19 +     if (color.a < 0.1) {
-		   20 +         discard;
-		   21 +     }
-		15    - out vec4 fragColor;
-		16    - 
-		17    - void main() {
-		   22 +     float fade = linear_fog_fade(vertexDistance, FogStart, FogEnd) * GlintAlpha;
-		   23 +     fragColor = vec4(color.rgb * fade, color.a);
-		18    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor;
-		19    -     fragColor = color * ColorModulator * linear_fog_fade(vertexDistance, FogStart, FogEnd);
-		20 24   }
-		        '''
-	Moved file from "core/rendertype_glint.fsh" to "core/entity.fsh".
-	Changed file "core/entity.fsh":
-		Total line: 35 (+15, -4)
-		        '''
-		 1  1   #version 150
-		 2  2   
-		    3 + #moj_import <minecraft:fog.glsl>
-		    4 + 
-		    5 + uniform sampler2D Sampler0;
-		    6 + 
-		    7 + uniform vec4 ColorModulator;
-		    8 + uniform float FogStart;
-		    9 + uniform float FogEnd;
-		   10 + uniform vec4 FogColor;
-		   11 + 
-		   12 + in float vertexDistance;
-		   13 + in vec4 vertexColor;
-		   14 + in vec4 lightMapColor;
-		   15 + in vec4 overlayColor;
-		 3    - #moj_import <fog.glsl>
-		 4    - 
-		   16 + in vec2 texCoord0;
-		 5    - uniform sampler2D Sampler0;
-		 6 17   
-		 7    - uniform vec4 ColorModulator;
-		 8    - uniform float FogStart;
-		 9    - uniform float FogEnd;
-		   18 + out vec4 fragColor;
-		10    - uniform float GlintAlpha;
-		11 19   
-		   20 + void main() {
-		   21 +     vec4 color = texture(Sampler0, texCoord0);
-		   22 + #ifdef ALPHA_CUTOUT
-		   23 +     if (color.a < ALPHA_CUTOUT) {
-		   24 +         discard;
-		   25 +     }
-		   26 + #endif
-		   27 +     color *= vertexColor * ColorModulator;
-		   28 + #ifndef NO_OVERLAY
-		   29 +     color.rgb = mix(overlayColor.rgb, color.rgb, overlayColor.a);
-		   30 + #endif
-		   31 + #ifndef EMISSIVE
-		   32 +     color *= lightMapColor;
-		   33 + #endif
-		   34 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
-		12    - in float vertexDistance;
-		13    - in vec2 texCoord0;
-		14    - 
-		15    - out vec4 fragColor;
-		16    - 
-		17    - void main() {
-		18    -     vec4 color = texture(Sampler0, texCoord0) * ColorModulator;
-		19    -     if (color.a < 0.1) {
-		20    -         discard;
-		21    -     }
-		22    -     float fade = linear_fog_fade(vertexDistance, FogStart, FogEnd) * GlintAlpha;
-		23    -     fragColor = vec4(color.rgb * fade, color.a);
-		24 35   }
+		        ...
 		        '''
 	Removed file "core/rendertype_glint_translucent.fsh":
 		'''
@@ -915,33 +853,34 @@ Changed resource pack "minecraft":
 		    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 		}
 		'''
-	Removed file "core/rendertype_tripwire.fsh":
-		'''
-		#version 150
-		
-		#moj_import <fog.glsl>
-		
-		uniform sampler2D Sampler0;
-		
-		uniform vec4 ColorModulator;
-		uniform float FogStart;
-		uniform float FogEnd;
-		uniform vec4 FogColor;
-		
-		in float vertexDistance;
-		in vec4 vertexColor;
-		in vec2 texCoord0;
-		
-		out vec4 fragColor;
-		
-		void main() {
-		    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
-		    if (color.a < 0.1) {
-		        discard;
-		    }
-		    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
-		}
-		'''
+	Moved file from "core/rendertype_tripwire.fsh" to "core/terrain.fsh".
+	Changed file "core/terrain.fsh":
+		Total line: 26 (+4, -2)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + #moj_import <minecraft:fog.glsl>
+		 3    - #moj_import <fog.glsl>
+		 4  4   
+		 5  5   uniform sampler2D Sampler0;
+		 6  6   
+		 7  7   uniform vec4 ColorModulator;
+		 8  8   uniform float FogStart;
+		        ...
+		15 15   
+		16 16   out vec4 fragColor;
+		17 17   
+		18 18   void main() {
+		19 19       vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+		   20 + #ifdef ALPHA_CUTOUT
+		   21 +     if (color.a < ALPHA_CUTOUT) {
+		20    -     if (color.a < 0.1) {
+		21 22           discard;
+		22 23       }
+		   24 + #endif
+		23 25       fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		24 26   }
+		        '''
 	Moved file from "program/bits.fsh" to "post/bits.fsh".
 	Moved file from "program/blit.fsh" to "post/blit.fsh".
 	Moved file from "program/box_blur.fsh" to "post/box_blur.fsh".

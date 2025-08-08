@@ -26,7 +26,7 @@ Changed resource pack "minecraft":
 		29 29   }
 		        '''
 	Changed file "program/bits.fsh":
-		Total line: 27 (+3, -2)
+		Total line: 27 (+10, -9)
 		        '''
 		        ...
 		12 12   uniform float MosaicSize = 8.0;
@@ -39,18 +39,21 @@ Changed resource pack "minecraft":
 		18 18       vec4 baseTexel = texture2D(DiffuseSampler, texCoord - fractPix);
 		   19 + 
 		   20 +     vec3 fractTexel = baseTexel.rgb - fract(baseTexel.rgb * Resolution) / Resolution;
-		19    -     
 		   21 +     float luma = dot(fractTexel, vec3(0.3, 0.59, 0.11));
 		   22 +     vec3 chroma = (fractTexel - luma) * Saturation;
 		   23 +     baseTexel.rgb = luma + chroma;
 		   24 +     baseTexel.a = 1.0;
+		   25 + 
+		   26 +     gl_FragColor = baseTexel;
+		   27 + }
+		19    -     
 		20    -     baseTexel = baseTexel - fract(baseTexel * Resolution) / Resolution;
 		21    -     float luma = dot(baseTexel.rgb, vec3(0.3, 0.59, 0.11));
 		22    -     vec3 chroma = (baseTexel.rgb - luma) * Saturation;
 		23    -     baseTexel = vec4(luma + chroma, baseTexel.a);
-		24 25   
-		25 26       gl_FragColor = baseTexel;
-		26 27   }
+		24    - 
+		25    -     gl_FragColor = baseTexel;
+		26    - }
 		        '''
 	Changed file "program/blit.fsh":
 		Total line: 12 (+2, -1)
@@ -67,7 +70,7 @@ Changed resource pack "minecraft":
 		11 12   }
 		        '''
 	Changed file "program/blobs.fsh":
-		Total line: 43 (+6, -6)
+		Total line: 43 (+5, -5)
 		        '''
 		        ...
 		 8  8   void main(){
@@ -101,10 +104,9 @@ Changed resource pack "minecraft":
 		34 34       vec4 v8 = min(uu, dd);
 		35 35       vec4 v9 = min(ll, rr);
 		36 36       vec4 v10 = min(v8, v9);
-		   37 + 
-		   38 +     vec4 v11 = min(v7, v10);
-		37 39   
-		38    -     vec4 v11 = min(v7, v10);
+		37 37   
+		38 38       vec4 v11 = min(v7, v10);
+		   39 + 
 		39    -     
 		40 40       vec4 c  = texture2D(DiffuseSampler, texCoord);
 		41 41       vec4 color = min(c, v11);

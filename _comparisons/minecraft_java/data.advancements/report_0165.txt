@@ -1,18 +1,23 @@
-Difference of "advancements" between "25w19a" (snapshot of "1.21.6") and "25w20a" (snapshot of "1.21.6").
+Difference of "advancements" between "1.21.6-pre2" (pre-release of "1.21.6") and "1.21.6-pre3" (pre-release of "1.21.6").
 
 Changed data pack "minecraft":
-	Total file: 1520 (+1, -0)
-	Added file "recipes/combat/saddle.json":
-		field "parent": "minecraft:recipes/root"
-		field "criteria":
-			criterion "has_leather":
-				field "trigger": "minecraft:inventory_changed"
-				field "conditions": field "items": item field "items": "minecraft:leather"
-			criterion "has_the_recipe":
-				field "trigger": "minecraft:recipe_unlocked"
-				field "conditions": field "recipe": "minecraft:saddle"
-		field "requirements":
-			requirement:
-				criterion "has_the_recipe"
-				criterion "has_leather"
-		field "rewards": field "recipes": recipe "minecraft:saddle"
+	Changed file "husbandry/remove_wolf_armor.json":
+		Changed field "criteria":
+			Changed criterion "remove_wolf_armor" from:
+				field "trigger": "minecraft:player_interacted_with_entity"
+				field "conditions":
+					field "item": field "items": "minecraft:shears"
+					field "entity":
+						predicate 0:
+							field "entity": "this"
+							field "predicate": field "type": "minecraft:wolf"
+							field "condition": "minecraft:entity_properties"
+			to:
+				field "trigger": "minecraft:player_sheared_equipment"
+				field "conditions":
+					field "entity":
+						predicate 0:
+							field "entity": "this"
+							field "predicate": field "type": "minecraft:wolf"
+							field "condition": "minecraft:entity_properties"
+					field "item": field "items": "minecraft:wolf_armor"

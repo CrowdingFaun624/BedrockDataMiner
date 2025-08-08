@@ -1,0 +1,56 @@
+Addition of "flight_recorder_config" at "13w41a" (snapshot of "1.7.2").
+
+field "tag": "Configuration"
+field "attrib":
+	field "status": "WARN"
+	field "packages": "net.minecraft"
+field "children":
+	child:
+		field "tag": "Appenders"
+		field "children":
+			child:
+				field "tag": "Console"
+				field "attrib":
+					field "name": "SysOut"
+					field "target": "SYSTEM_OUT"
+				field "children":
+					child:
+						field "tag": "PatternLayout"
+						field "attrib": field "pattern": "[%d{HH:mm:ss}] [%t/%level]: %msg%n"
+			child:
+				field "tag": "RollingRandomAccessFile"
+				field "attrib":
+					field "name": "File"
+					field "fileName": "logs/latest.log"
+					field "filePattern": "logs/%d{yyyy-MM-dd}-%i.log.gz"
+				field "children":
+					child:
+						field "tag": "PatternLayout"
+						field "attrib": field "pattern": "[%d{HH:mm:ss}] [%t/%level]: %msg%n"
+					child:
+						field "tag": "Policies"
+						field "children":
+							child field "tag": "TimeBasedTriggeringPolicy"
+							child field "tag": "OnStartupTriggeringPolicy"
+	child:
+		field "tag": "Loggers"
+		field "children":
+			child:
+				field "tag": "Root"
+				field "attrib": field "level": "info"
+				field "children":
+					child:
+						field "tag": "filters"
+						field "children":
+							child:
+								field "tag": "MarkerFilter"
+								field "attrib":
+									field "marker": "NETWORK_PACKETS"
+									field "onMatch": "DENY"
+									field "onMismatch": "NEUTRAL"
+					child:
+						field "tag": "AppenderRef"
+						field "attrib": field "ref": "SysOut"
+					child:
+						field "tag": "AppenderRef"
+						field "attrib": field "ref": "File"

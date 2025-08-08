@@ -2,7 +2,7 @@ Difference of "text_packs" between "20w22a" (snapshot of "1.16-231620") and "1.1
 
 Changed resource pack "minecraft":
 	Changed file "program/transparency.fsh":
-		Total line: 68 (+5, -113)
+		Total line: 68 (+33, -141)
 		          '''
 		  1   1   #version 110
 		  2   2   
@@ -10,21 +10,17 @@ Changed resource pack "minecraft":
 		  4     - //#define DEBUG_ALPHA
 		  5     - //#define DEBUG_COLOR
 		  6     - 
-		  7     - uniform sampler2D DiffuseSampler;
-		  8     - uniform sampler2D DiffuseDepthSampler;
-		  9     - uniform sampler2D TranslucentSampler;
-		 10     - uniform sampler2D TranslucentDepthSampler;
-		 11     - uniform sampler2D ItemEntitySampler;
-		 12     - uniform sampler2D ItemEntityDepthSampler;
-		 13     - uniform sampler2D ParticlesSampler;
-		 14     - uniform sampler2D ParticlesDepthSampler;
-		 15     - uniform sampler2D WeatherSampler;
-		 16     - uniform sampler2D WeatherDepthSampler;
-		 17     - uniform sampler2D CloudsSampler;
-		 18     - uniform sampler2D CloudsDepthSampler;
-		 19     - 
-		 20     - varying vec2 texCoord;
-		 21     - 
+		  7   3   uniform sampler2D DiffuseSampler;
+		  8   4   uniform sampler2D DiffuseDepthSampler;
+		  9   5   uniform sampler2D TranslucentSampler;
+		 10   6   uniform sampler2D TranslucentDepthSampler;
+		 11   7   uniform sampler2D ItemEntitySampler;
+		          ...
+		 17  13   uniform sampler2D CloudsSampler;
+		 18  14   uniform sampler2D CloudsDepthSampler;
+		 19  15   
+		 20  16   varying vec2 texCoord;
+		 21  17   
 		 22     - vec3 blend(vec3 destination, vec4 source) {
 		 23     -     return (destination * (1.0 - source.a)) + source.rgb;
 		 24     - }
@@ -44,11 +40,17 @@ Changed resource pack "minecraft":
 		 38     -     float depth;
 		 39     - };
 		 40     - 
-		 41     - #define NUM_LAYERS 6
-		 42     - 
+		 41  18   #define NUM_LAYERS 6
+		 42  19   
+		     20 + vec4 color_layers[NUM_LAYERS];
+		     21 + float depth_layers[NUM_LAYERS];
+		     22 + int active_layers = 0;
 		 43     - Layer layers[NUM_LAYERS];
 		 44     - int layerIndices[NUM_LAYERS];
-		 45     - 
+		 45  23   
+		     24 + void try_insert( vec4 color, float depth ) {
+		     25 +     if ( color.a == 0.0 ) {
+		     26 +         return;
 		 46     - void init_arrays() {
 		 47     -     layers[0] = Layer(vec4(texture2D(DiffuseSampler, texCoord).rgb, 1.0), texture2D(DiffuseDepthSampler, texCoord).r);
 		 48     -     layers[1] = Layer(texture2D(TranslucentSampler, texCoord), texture2D(TranslucentDepthSampler, texCoord).r);
@@ -59,8 +61,10 @@ Changed resource pack "minecraft":
 		 53     - 
 		 54     -     for (int ii = 0; ii < NUM_LAYERS; ++ii) {
 		 55     -         layerIndices[ii] = ii;
-		 56     -     }
-		 57     - 
+		 56  27       }
+		 57  28   
+		     29 +     color_layers[active_layers] = color;
+		     30 +     depth_layers[active_layers] = depth;
 		 58     -     for (int ii = 0; ii < NUM_LAYERS; ++ii) {
 		 59     -         for (int jj = 0; jj < NUM_LAYERS - ii - 1; ++jj) {
 		 60     -             if (layers[layerIndices[jj]].depth < layers[layerIndices[jj + 1]].depth) {
@@ -71,15 +75,25 @@ Changed resource pack "minecraft":
 		 65     -         }
 		 66     -     }
 		 67     - }
-		 68     - 
+		 68  31   
+		     32 +     int jj = active_layers++;
+		     33 +     int ii = jj - 1;
+		     34 +     while ( jj > 0 && depth_layers[jj] > depth_layers[ii] ) {
+		     35 +         float depthTemp = depth_layers[ii];
+		     36 +         depth_layers[ii] = depth_layers[jj];
+		     37 +         depth_layers[jj] = depthTemp;
 		 69     - void main() {
 		 70     -     init_arrays();
-		 71     - 
+		 71  38   
+		     39 +         vec4 colorTemp = color_layers[ii];
+		     40 +         color_layers[ii] = color_layers[jj];
+		     41 +         color_layers[jj] = colorTemp;
 		 72     -     vec3 OutTexel = vec3(0.0);
-		 73     - 
+		 73  42   
+		     43 +         jj = ii--;
 		 74     -     for (int ii = 0; ii < NUM_LAYERS; ++ii) {
 		 75     -         OutTexel = blend(OutTexel, layers[layerIndices[ii]].color);
-		 76     -     }
+		 76  44       }
 		 77     - 
 		 78     - #ifdef DEBUG_DEPTH
 		 79     -     OutTexel = debugDepth(OutTexel, texCoord);
@@ -92,8 +106,10 @@ Changed resource pack "minecraft":
 		 86     - #endif
 		 87     - 
 		 88     -     gl_FragColor = vec4(OutTexel.rgb, 1.0);
-		 89     - }
-		 90     - 
+		 89  45   }
+		 90  46   
+		     47 + vec3 blend( vec3 dst, vec4 src ) {
+		     48 +     return ( dst * ( 1.0 - src.a ) ) + src.rgb;
 		 91     - #ifdef DEBUG_DEPTH
 		 92     - vec3 debugDepth(vec3 destination, vec2 uv) {
 		 93     -     if (uv.x >= 0.75) {
@@ -106,18 +122,6 @@ Changed resource pack "minecraft":
 		100     -             uv.y -= 0.75;
 		101     -             uv.y *= 4.0;
 		102     -             destination = vec3(pow(texture2D(TranslucentDepthSampler, uv).r, 128.0));
-		      3 + uniform sampler2D DiffuseSampler;
-		      4 + uniform sampler2D DiffuseDepthSampler;
-		      5 + uniform sampler2D TranslucentSampler;
-		      6 + uniform sampler2D TranslucentDepthSampler;
-		      7 + uniform sampler2D ItemEntitySampler;
-		      8 + uniform sampler2D ItemEntityDepthSampler;
-		      9 + uniform sampler2D ParticlesSampler;
-		     10 + uniform sampler2D ParticlesDepthSampler;
-		     11 + uniform sampler2D WeatherSampler;
-		     12 + uniform sampler2D WeatherDepthSampler;
-		     13 + uniform sampler2D CloudsSampler;
-		     14 + uniform sampler2D CloudsDepthSampler;
 		103     -         }
 		104     -     } else if (uv.x <= 0.25) {
 		105     -         uv.x *= 4.0;
@@ -130,36 +134,19 @@ Changed resource pack "minecraft":
 		112     -             destination = vec3(pow(texture2D(ParticlesDepthSampler, uv).r, 128.0));
 		113     -         }
 		114     -     }
-		115  15   
-		     16 + varying vec2 texCoord;
+		115     - 
 		116     -     return destination;
-		117     - }
+		117  49   }
 		118     - #endif
-		119  17   
+		119  50   
+		     51 + void main() {
+		     52 +     color_layers[0] = vec4( texture2D( DiffuseSampler, texCoord ).rgb, 1.0 );
+		     53 +     depth_layers[0] = texture2D( DiffuseDepthSampler, texCoord ).r;
+		     54 +     active_layers = 1;
 		120     - #ifdef DEBUG_ALPHA
 		121     - vec3 debugAlpha(vec3 destination, vec2 uv) {
 		122     -     if (uv.x >= 0.75) {
 		123     -         uv.x -= 0.75;
-		     18 + #define NUM_LAYERS 6
-		     19 + 
-		     20 + vec4 color_layers[NUM_LAYERS];
-		     21 + float depth_layers[NUM_LAYERS];
-		     22 + int active_layers = 0;
-		     23 + 
-		     24 + void try_insert( vec4 color, float depth ) {
-		     25 +     if ( color.a == 0.0 ) {
-		     26 +         return;
-		     27 +     }
-		     28 + 
-		     29 +     color_layers[active_layers] = color;
-		     30 +     depth_layers[active_layers] = depth;
-		     31 + 
-		     32 +     int jj = active_layers++;
-		     33 +     int ii = jj - 1;
-		     34 +     while ( jj > 0 && depth_layers[jj] > depth_layers[ii] ) {
-		     35 +         float depthTemp = depth_layers[ii];
-		     36 +         depth_layers[ii] = depth_layers[jj];
-		     37 +         depth_layers[jj] = depthTemp;
 		124     -         uv.x *= 4.0;
 		125     -         if (uv.y <= 0.25) {
 		126     -             uv.y *= 4.0;
@@ -180,38 +167,21 @@ Changed resource pack "minecraft":
 		141     -             destination = texture2D(ParticlesSampler, uv).aaa;
 		142     -         }
 		143     -     }
-		144  38   
-		     39 +         vec4 colorTemp = color_layers[ii];
-		     40 +         color_layers[ii] = color_layers[jj];
-		145     -     return destination;
-		146     - }
-		     41 +         color_layers[jj] = colorTemp;
-		147     - #endif
-		148  42   
-		     43 +         jj = ii--;
-		149     - #ifdef DEBUG_COLOR
-		150     - vec3 debugColor(vec3 destination, vec2 uv) {
-		     44 +     }
-		     45 + }
-		     46 + 
-		     47 + vec3 blend( vec3 dst, vec4 src ) {
-		     48 +     return ( dst * ( 1.0 - src.a ) ) + src.rgb;
-		     49 + }
-		     50 + 
-		     51 + void main() {
-		     52 +     color_layers[0] = vec4( texture2D( DiffuseSampler, texCoord ).rgb, 1.0 );
-		     53 +     depth_layers[0] = texture2D( DiffuseDepthSampler, texCoord ).r;
-		     54 +     active_layers = 1;
-		     55 + 
+		144  55   
 		     56 +     try_insert( texture2D( TranslucentSampler, texCoord ), texture2D( TranslucentDepthSampler, texCoord ).r );
 		     57 +     try_insert( texture2D( ItemEntitySampler, texCoord ), texture2D( ItemEntityDepthSampler, texCoord ).r );
 		     58 +     try_insert( texture2D( ParticlesSampler, texCoord ), texture2D( ParticlesDepthSampler, texCoord ).r );
 		     59 +     try_insert( texture2D( WeatherSampler, texCoord ), texture2D( WeatherDepthSampler, texCoord ).r );
 		     60 +     try_insert( texture2D( CloudsSampler, texCoord ), texture2D( CloudsDepthSampler, texCoord ).r );
-		     61 + 
+		145     -     return destination;
+		146     - }
+		147     - #endif
+		148  61   
 		     62 +     vec3 texelAccum = color_layers[0].rgb;
 		     63 +     for ( int ii = 1; ii < active_layers; ++ii ) {
 		     64 +         texelAccum = blend( texelAccum, color_layers[ii] );
+		149     - #ifdef DEBUG_COLOR
+		150     - vec3 debugColor(vec3 destination, vec2 uv) {
 		151     -     if (uv.x >= 0.75) {
 		152     -         uv.x -= 0.75;
 		153     -         uv.x *= 4.0;

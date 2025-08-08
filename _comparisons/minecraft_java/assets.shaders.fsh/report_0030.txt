@@ -1,7 +1,7 @@
 Difference of "text_packs" between "24w10a" (snapshot of "1.20.5") and "24w11a" (snapshot of "1.20.5").
 
 Changed resource pack "minecraft":
-	Total file: 67 (+0, -18)
+	Total file: 67 (+2, -20)
 	Removed file "program/antialias.fsh":
 		'''
 		#version 150
@@ -119,60 +119,43 @@ Changed resource pack "minecraft":
 		    fragColor = vec4(maxVal.rgb, 1.0);
 		}
 		'''
-	Moved file from "program/blur.fsh" to "program/box_blur.fsh".
-	Changed file "program/box_blur.fsh":
-		Total line: 24 (+4, -14)
-		        '''
-		 1  1   #version 150
-		 2  2   
-		 3  3   uniform sampler2D DiffuseSampler;
-		 4  4   
-		 5  5   in vec2 texCoord;
-		 6    - in vec2 oneTexel;
-		 7    - 
-		 8    - uniform vec2 InSize;
-		 9    - 
-		10    - uniform vec2 BlurDir;
-		11    - uniform float Radius;
-		12    - uniform float Alpha;
-		13    - 
-		    6 + in vec2 sampleStep;
-		14    - out vec4 fragColor;
-		15  7   
-		16    - void main() {
-		17    -     vec4 blurred = vec4(0.0);
-		18    -     float totalStrength = 0.0;
-		    8 + uniform float Radius;
-		    9 + uniform float RadiusMultiplier;
-		   10 + 
-		   11 + out vec4 fragColor;
-		19    -     float totalAlpha = 0.0;
-		20    -     float totalSamples = 0.0;
-		21    -     for(float r = -Radius; r <= Radius; r += 1.0) {
-		22    -         vec4 sampleValue = texture(DiffuseSampler, texCoord + oneTexel * r * Alpha * BlurDir);
-		23 12   
-		   13 + // This shader relies on GL_LINEAR sampling to reduce the amount of texture samples in half.
-		   14 + // Instead of sampling each pixel position with a step of 1 we sample between pixels with a step of 2.
-		24    - 		// Accumulate average alpha
-		   15 + // In the end we sample the last pixel with a half weight, since the amount of pixels to sample is always odd (actualRadius * 2 + 1).
-		   16 + void main() {
-		25    -         totalAlpha = totalAlpha + sampleValue.a;
-		26    -         totalSamples = totalSamples + 1.0;
-		27    - 
-		   17 +     vec4 blurred = vec4(0.0);
-		   18 +     float actualRadius = round(Radius * RadiusMultiplier);
-		   19 +     for (float a = -actualRadius + 0.5; a <= actualRadius; a += 2.0) {
-		   20 +         blurred += texture(DiffuseSampler, texCoord + sampleStep * a);
-		28    - 		// Accumulate smoothed blur
-		29    -         float strength = 1.0 - abs(r / Radius);
-		30    -         totalStrength = totalStrength + strength;
-		31    -         blurred = blurred + sampleValue;
-		32 21       }
-		   22 +     blurred += texture(DiffuseSampler, texCoord + sampleStep * actualRadius) / 2.0;
-		   23 +     fragColor = blurred / (actualRadius + 0.5);
-		33    -     fragColor = vec4(blurred.rgb / (Radius * 2.0 + 1.0), totalAlpha);
-		34 24   }
-		        '''
+	Removed file "program/blur.fsh":
+		'''
+		#version 150
+		
+		uniform sampler2D DiffuseSampler;
+		
+		in vec2 texCoord;
+		in vec2 oneTexel;
+		
+		uniform vec2 InSize;
+		
+		uniform vec2 BlurDir;
+		uniform float Radius;
+		uniform float Alpha;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 blurred = vec4(0.0);
+		    float totalStrength = 0.0;
+		    float totalAlpha = 0.0;
+		    float totalSamples = 0.0;
+		    for(float r = -Radius; r <= Radius; r += 1.0) {
+		        vec4 sampleValue = texture(DiffuseSampler, texCoord + oneTexel * r * Alpha * BlurDir);
+		
+				// Accumulate average alpha
+		        totalAlpha = totalAlpha + sampleValue.a;
+		        totalSamples = totalSamples + 1.0;
+		
+				// Accumulate smoothed blur
+		        float strength = 1.0 - abs(r / Radius);
+		        totalStrength = totalStrength + strength;
+		        blurred = blurred + sampleValue;
+		    }
+		    fragColor = vec4(blurred.rgb / (Radius * 2.0 + 1.0), totalAlpha);
+		}
+		'''
 	Removed file "program/bumpy.fsh":
 		'''
 		#version 150
@@ -607,69 +590,57 @@ Changed resource pack "minecraft":
 		    fragColor = vec4(diffuseTexel.rgb + diffuseTexel.rgb * outlineTexel.rgb * vec3(0.75), 1.0);
 		}
 		'''
-	Moved file from "program/outline_soft.fsh" to "program/entity_outline_box_blur.fsh".
-	Changed file "program/entity_outline_box_blur.fsh":
-		Total line: 18 (+4, -34)
-		        '''
-		 1  1   #version 150
-		 2  2   
-		 3  3   uniform sampler2D DiffuseSampler;
-		 4  4   
-		 5  5   in vec2 texCoord;
-		 6    - in vec2 oneTexel;
-		 7    - 
-		 8    - uniform float LumaRamp;
-		 9    - uniform float LumaLevel;
-		10    - 
-		11    - out vec4 fragColor;
-		12    - 
-		13    - void main(){
-		14    -     vec4 center = texture(DiffuseSampler, texCoord);
-		15    -     vec4 up     = texture(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y));
-		16    -     vec4 up2    = texture(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y) * 2.0);
-		17    -     vec4 down   = texture(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0));
-		18    -     vec4 down2  = texture(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0) * 2.0);
-		19    -     vec4 left   = texture(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0));
-		20    -     vec4 left2  = texture(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0) * 2.0);
-		21    -     vec4 right  = texture(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y));
-		22    -     vec4 right2 = texture(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y) * 2.0);
-		23    -     vec4 uDiff = abs(center - up);
-		24    -     vec4 dDiff = abs(center - down);
-		25    -     vec4 lDiff = abs(center - left);
-		26    -     vec4 rDiff = abs(center - right);
-		27    -     vec4 u2Diff = abs(center - up2);
-		28    -     vec4 d2Diff = abs(center - down2);
-		29    -     vec4 l2Diff = abs(center - left2);
-		30    -     vec4 r2Diff = abs(center - right2);
-		31    -     vec4 sum = uDiff + dDiff + lDiff + rDiff + u2Diff + d2Diff + l2Diff + r2Diff;
-		32    -     vec4 gray = vec4(0.3, 0.59, 0.11, 0.0);
-		33    -     float sumLuma = 1.0 - dot(clamp(sum, 0.0, 1.0), gray);
-		34    - 
-		35    -     // Get luminance of center pixel and adjust
-		    6 + in vec2 sampleStep;
-		36    -     float centerLuma = dot(center + (center - pow(center, vec4(LumaRamp))), gray);
-		37  7   
-		    8 + out vec4 fragColor;
-		38    -     // Quantize the luma value
-		39    -     centerLuma = centerLuma - fract(centerLuma * LumaLevel) / LumaLevel;
-		40  9   
-		   10 + void main() {
-		   11 +     vec4 blurred = vec4(0.0);
-		   12 +     float radius = 2.0;
-		41    -     // Re-scale to full range
-		   13 +     for (float a = -radius + 0.5; a <= radius; a += 2.0) {
-		42    -     centerLuma = centerLuma * (LumaLevel / (LumaLevel - 1.0));
-		43    - 
-		   14 +         blurred += texture(DiffuseSampler, texCoord + sampleStep * a);
-		   15 +     }
-		   16 +     blurred += texture(DiffuseSampler, texCoord + sampleStep * radius) / 2.0;
-		   17 +     fragColor = vec4((blurred / (radius + 0.5)).rgb, blurred.a);
-		44    -     // Blend with outline
-		45    -     centerLuma = centerLuma * sumLuma;
-		46    - 
-		47    -     fragColor = vec4(centerLuma, centerLuma, centerLuma, 1.0);
-		48 18   }
-		        '''
+	Removed file "program/outline_soft.fsh":
+		'''
+		#version 150
+		
+		uniform sampler2D DiffuseSampler;
+		
+		in vec2 texCoord;
+		in vec2 oneTexel;
+		
+		uniform float LumaRamp;
+		uniform float LumaLevel;
+		
+		out vec4 fragColor;
+		
+		void main(){
+		    vec4 center = texture(DiffuseSampler, texCoord);
+		    vec4 up     = texture(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y));
+		    vec4 up2    = texture(DiffuseSampler, texCoord + vec2(        0.0, -oneTexel.y) * 2.0);
+		    vec4 down   = texture(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0));
+		    vec4 down2  = texture(DiffuseSampler, texCoord + vec2( oneTexel.x,         0.0) * 2.0);
+		    vec4 left   = texture(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0));
+		    vec4 left2  = texture(DiffuseSampler, texCoord + vec2(-oneTexel.x,         0.0) * 2.0);
+		    vec4 right  = texture(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y));
+		    vec4 right2 = texture(DiffuseSampler, texCoord + vec2(        0.0,  oneTexel.y) * 2.0);
+		    vec4 uDiff = abs(center - up);
+		    vec4 dDiff = abs(center - down);
+		    vec4 lDiff = abs(center - left);
+		    vec4 rDiff = abs(center - right);
+		    vec4 u2Diff = abs(center - up2);
+		    vec4 d2Diff = abs(center - down2);
+		    vec4 l2Diff = abs(center - left2);
+		    vec4 r2Diff = abs(center - right2);
+		    vec4 sum = uDiff + dDiff + lDiff + rDiff + u2Diff + d2Diff + l2Diff + r2Diff;
+		    vec4 gray = vec4(0.3, 0.59, 0.11, 0.0);
+		    float sumLuma = 1.0 - dot(clamp(sum, 0.0, 1.0), gray);
+		
+		    // Get luminance of center pixel and adjust
+		    float centerLuma = dot(center + (center - pow(center, vec4(LumaRamp))), gray);
+		
+		    // Quantize the luma value
+		    centerLuma = centerLuma - fract(centerLuma * LumaLevel) / LumaLevel;
+		
+		    // Re-scale to full range
+		    centerLuma = centerLuma * (LumaLevel / (LumaLevel - 1.0));
+		
+		    // Blend with outline
+		    centerLuma = centerLuma * sumLuma;
+		
+		    fragColor = vec4(centerLuma, centerLuma, centerLuma, 1.0);
+		}
+		'''
 	Removed file "program/outline_watercolor.fsh":
 		'''
 		#version 150
@@ -926,5 +897,53 @@ Changed resource pack "minecraft":
 		    vec3 hsv = RGBtoHSV(rgb.rgb);
 		    hsv.x = fract(hsv.x + Time);
 		    fragColor = vec4(HSVtoRGB(hsv), 1.0);
+		}
+		'''
+	Added file "program/box_blur.fsh":
+		'''
+		#version 150
+		
+		uniform sampler2D DiffuseSampler;
+		
+		in vec2 texCoord;
+		in vec2 sampleStep;
+		
+		uniform float Radius;
+		uniform float RadiusMultiplier;
+		
+		out vec4 fragColor;
+		
+		// This shader relies on GL_LINEAR sampling to reduce the amount of texture samples in half.
+		// Instead of sampling each pixel position with a step of 1 we sample between pixels with a step of 2.
+		// In the end we sample the last pixel with a half weight, since the amount of pixels to sample is always odd (actualRadius * 2 + 1).
+		void main() {
+		    vec4 blurred = vec4(0.0);
+		    float actualRadius = round(Radius * RadiusMultiplier);
+		    for (float a = -actualRadius + 0.5; a <= actualRadius; a += 2.0) {
+		        blurred += texture(DiffuseSampler, texCoord + sampleStep * a);
+		    }
+		    blurred += texture(DiffuseSampler, texCoord + sampleStep * actualRadius) / 2.0;
+		    fragColor = blurred / (actualRadius + 0.5);
+		}
+		'''
+	Added file "program/entity_outline_box_blur.fsh":
+		'''
+		#version 150
+		
+		uniform sampler2D DiffuseSampler;
+		
+		in vec2 texCoord;
+		in vec2 sampleStep;
+		
+		out vec4 fragColor;
+		
+		void main() {
+		    vec4 blurred = vec4(0.0);
+		    float radius = 2.0;
+		    for (float a = -radius + 0.5; a <= radius; a += 2.0) {
+		        blurred += texture(DiffuseSampler, texCoord + sampleStep * a);
+		    }
+		    blurred += texture(DiffuseSampler, texCoord + sampleStep * radius) / 2.0;
+		    fragColor = vec4((blurred / (radius + 0.5)).rgb, blurred.a);
 		}
 		'''

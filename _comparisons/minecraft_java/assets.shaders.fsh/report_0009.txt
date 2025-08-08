@@ -26,16 +26,14 @@ Changed resource pack "minecraft":
 		15 15       float totalStrength = 0.0;
 		   16 +     float totalAlpha = 0.0;
 		   17 +     float totalSamples = 0.0;
-		   18 +     for(float r = -Radius; r <= Radius; r += 1.0) {
-		   19 +         vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+		16 18       for(float r = -Radius; r <= Radius; r += 1.0) {
+		17 19           vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
 		   20 + 
 		   21 + 		// Accumulate average alpha
 		   22 +         totalAlpha = totalAlpha + sample.a;
 		   23 +         totalSamples = totalSamples + 1.0;
 		   24 + 
 		   25 + 		// Accumulate smoothed blur
-		16    -     for(float r = -Radius; r <= Radius; r += 1.0) {
-		17    -         vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
 		18 26           float strength = 1.0 - abs(r / Radius);
 		19 27           totalStrength = totalStrength + strength;
 		   28 +         blurred = blurred + sample;

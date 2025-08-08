@@ -40,7 +40,7 @@ Changed resource pack "minecraft":
 		62 66   }
 		        '''
 	Changed file "post/bits.fsh":
-		Total line: 30 (+3, -2)
+		Total line: 30 (+5, -4)
 		        '''
 		        ...
 		 6  6   in vec2 oneTexel;
@@ -50,16 +50,23 @@ Changed resource pack "minecraft":
 		10 10   uniform float Resolution;
 		11    - uniform float Saturation;
 		12 11   uniform float MosaicSize;
-		   12 + 
-		   13 + out vec4 fragColor;
-		13 14   
+		13 12   
+		14 13   out vec4 fragColor;
+		15 14   
 		   15 + const float Saturation = 1.5;
-		14    - out vec4 fragColor;
-		15 16   
-		16 17   void main() {
-		17 18       vec2 mosaicInSize = InSize / MosaicSize;
-		18 19       vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
-		19 20   
+		16    - void main() {
+		17    -     vec2 mosaicInSize = InSize / MosaicSize;
+		18    -     vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		19 16   
+		   17 + void main() {
+		   18 +     vec2 mosaicInSize = InSize / MosaicSize;
+		   19 +     vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		   20 + 
+		20 21       vec4 baseTexel = texture(InSampler, texCoord - fractPix);
+		21 22   
+		22 23       vec3 fractTexel = baseTexel.rgb - fract(baseTexel.rgb * Resolution) / Resolution;
+		23 24       float luma = dot(fractTexel, vec3(0.3, 0.59, 0.11));
+		24 25       vec3 chroma = (fractTexel - luma) * Saturation;
 		        ...
 		        '''
 	Changed file "post/box_blur.fsh":
@@ -90,7 +97,7 @@ Changed resource pack "minecraft":
 		        ...
 		        '''
 	Changed file "post/color_convolve.fsh":
-		Total line: 33 (+2, -7)
+		Total line: 33 (+4, -9)
 		        '''
 		        ...
 		 2  2   
@@ -105,30 +112,32 @@ Changed resource pack "minecraft":
 		11  9   uniform vec3 RedMatrix;
 		12 10   uniform vec3 GreenMatrix;
 		13 11   uniform vec3 BlueMatrix;
-		   12 + 
-		   13 + const vec3 Gray = vec3(0.3, 0.59, 0.11);
 		14    - uniform vec3 Offset;
 		15    - uniform vec3 ColorScale;
-		   14 + const float Saturation = 1.8;
 		16    - uniform float Saturation;
-		17 15   
-		18 16   out vec4 fragColor;
-		19 17   
+		17 12   
+		   13 + const vec3 Gray = vec3(0.3, 0.59, 0.11);
+		   14 + const float Saturation = 1.8;
+		18    - out vec4 fragColor;
+		19 15   
+		   16 + out vec4 fragColor;
+		   17 + 
 		20 18   void main() {
 		21 19       vec4 InTexel = texture(InSampler, texCoord);
-		        ...
+		22 20   
 		23 21       // Color Matrix
 		24 22       float RedValue = dot(InTexel.rgb, RedMatrix);
 		25 23       float GreenValue = dot(InTexel.rgb, GreenMatrix);
 		26 24       float BlueValue = dot(InTexel.rgb, BlueMatrix);
 		27 25       vec3 OutColor = vec3(RedValue, GreenValue, BlueValue);
-		28    - 
+		28 26   
 		29    -     // Offset & Scale
 		30    -     OutColor = (OutColor * ColorScale) + Offset;
-		31 26   
+		31    - 
 		32 27       // Saturation
 		33 28       float Luma = dot(OutColor, Gray);
 		34 29       vec3 Chroma = OutColor - Luma;
 		35 30       OutColor = (Chroma * Saturation) + Luma;
+		36 31   
 		        ...
 		        '''

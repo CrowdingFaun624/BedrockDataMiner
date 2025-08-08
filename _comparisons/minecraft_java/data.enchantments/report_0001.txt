@@ -1,0 +1,108 @@
+Difference of "enchantments" between "24w18a" (snapshot of "1.21") and "24w19a" (snapshot of "1.21").
+
+Changed data pack "minecraft":
+	Changed file "bane_of_arthropods.json":
+		Changed field "effects":
+			Changed effect component "minecraft:post_attack":
+				Changed component:
+					Changed field "requirements" from:
+						field "entity": "this"
+						field "predicate": field "type": "#minecraft:sensitive_to_bane_of_arthropods"
+						field "condition": "minecraft:entity_properties"
+					to:
+						field "terms":
+							predicate 0:
+								field "entity": "this"
+								field "predicate": field "type": "#minecraft:sensitive_to_bane_of_arthropods"
+								field "condition": "minecraft:entity_properties"
+							predicate 1:
+								field "predicate": field "is_direct": true
+								field "condition": "minecraft:damage_source_properties"
+						field "condition": "minecraft:all_of"
+	Changed file "breach.json":
+		Added field "exclusive_set": "#minecraft:exclusive_set/damage".
+	Changed file "density.json":
+		Added field "exclusive_set": "#minecraft:exclusive_set/damage".
+	Changed file "fire_aspect.json":
+		Changed field "supported_items" from "#minecraft:enchantable/sword" to "#minecraft:enchantable/fire_aspect".
+		Added field "primary_items": "#minecraft:enchantable/sword".
+		Changed field "effects":
+			Changed effect component "minecraft:hit_block":
+				Changed component:
+					Changed field "effect":
+						Changed field "effects":
+							Changed entity effect:
+								Added field "trigger_game_event": "minecraft:block_change".
+								Unchanged field "type": "minecraft:set_block_properties".
+						Unchanged field "type": "minecraft:all_of".
+					Changed field "requirements":
+						Changed field "predicate":
+							Changed field "block":
+								Added field "blocks": "#minecraft:fire_aspect_lightable".
+							Added field "fluid": field "fluids": "minecraft:empty".
+			Changed effect component "minecraft:post_attack":
+				Changed component:
+					Added field "requirements":
+						field "predicate": field "is_direct": true
+						field "condition": "minecraft:damage_source_properties"
+	Changed file "frost_walker.json":
+		Changed field "effects":
+			Changed effect component "minecraft:location_changed":
+				Changed component:
+					Changed field "effect":
+						Added field "trigger_game_event": "minecraft:block_place".
+						Changed field "predicate":
+							Changed field "predicates":
+								Total predicate: 3 (+1, -1)
+								Removed predicate:
+									field "fluids": "minecraft:water"
+									field "type": "minecraft:matching_fluids"
+								Added predicate:
+									field "blocks": "minecraft:water"
+									field "type": "minecraft:matching_blocks"
+							Unchanged field "type": "minecraft:all_of".
+						Unchanged field "type": "minecraft:replace_disc".
+	Changed file "quick_charge.json":
+		Changed field "effects":
+			Changed effect component "minecraft:crossbow_charge_time" from:
+				value effect:
+					field "effect":
+						field "value":
+							field "base": -0.25
+							field "per_level_above_first": -0.25
+							field "type": "minecraft:linear"
+						field "type": "minecraft:add"
+			to:
+				field "value":
+					field "base": -0.25
+					field "per_level_above_first": -0.25
+					field "type": "minecraft:linear"
+				field "type": "minecraft:add"
+	Changed file "riptide.json":
+		Changed field "slots":
+			Changed slot from "mainhand" to "hand".
+		Changed field "effects":
+			Changed effect component "minecraft:trident_spin_attack_strength" from:
+				value effect:
+					field "effect":
+						field "value":
+							field "base": 1.5
+							field "per_level_above_first": 0.75
+							field "type": "minecraft:linear"
+						field "type": "minecraft:add"
+			to:
+				field "value":
+					field "base": 1.5
+					field "per_level_above_first": 0.75
+					field "type": "minecraft:linear"
+				field "type": "minecraft:add"
+	Changed file "thorns.json":
+		Changed field "slots":
+			Total slot: 1 (+1, -1)
+			Removed slot "armor".
+			Added slot "any".
+	Changed file "unbreaking.json":
+		Changed field "slots":
+			Total slot: 1 (+1, -1)
+			Removed slot "mainhand".
+			Added slot "any".

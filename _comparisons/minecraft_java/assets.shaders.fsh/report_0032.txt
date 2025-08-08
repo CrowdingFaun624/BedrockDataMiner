@@ -36,7 +36,7 @@ Changed resource pack "minecraft":
 		18 18   }
 		        '''
 	Changed file "core/rendertype_clouds.fsh":
-		Total line: 16 (+0, -8)
+		Total line: 16 (+1, -9)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -56,11 +56,11 @@ Changed resource pack "minecraft":
 		16 12   out vec4 fragColor;
 		17 13   
 		18 14   void main() {
+		   15 +     fragColor = linear_fog(vertexColor, vertexDistance, FogStart, FogEnd, FogColor);
 		19    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
 		20    -     if (color.a < 0.1) {
 		21    -         discard;
 		22    -     }
-		   15 +     fragColor = linear_fog(vertexColor, vertexDistance, FogStart, FogEnd, FogColor);
 		23    -     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 		24 16   }
 		        '''
@@ -189,7 +189,7 @@ Changed resource pack "minecraft":
 		18 18   }
 		        '''
 	Changed file "program/entity_sobel.fsh":
-		Total line: 23 (+3, -3)
+		Total line: 23 (+6, -6)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -204,11 +204,11 @@ Changed resource pack "minecraft":
 		10 10   void main(){
 		   11 +     vec4 center = texture(InSampler, texCoord);
 		   12 +     vec4 left = texture(InSampler, texCoord - vec2(oneTexel.x, 0.0));
-		11    -     vec4 center = texture(DiffuseSampler, texCoord);
-		12    -     vec4 left = texture(DiffuseSampler, texCoord - vec2(oneTexel.x, 0.0));
 		   13 +     vec4 right = texture(InSampler, texCoord + vec2(oneTexel.x, 0.0));
 		   14 +     vec4 up = texture(InSampler, texCoord - vec2(0.0, oneTexel.y));
 		   15 +     vec4 down = texture(InSampler, texCoord + vec2(0.0, oneTexel.y));
+		11    -     vec4 center = texture(DiffuseSampler, texCoord);
+		12    -     vec4 left = texture(DiffuseSampler, texCoord - vec2(oneTexel.x, 0.0));
 		13    -     vec4 right = texture(DiffuseSampler, texCoord + vec2(oneTexel.x, 0.0));
 		14    -     vec4 up = texture(DiffuseSampler, texCoord - vec2(0.0, oneTexel.y));
 		15    -     vec4 down = texture(DiffuseSampler, texCoord + vec2(0.0, oneTexel.y));

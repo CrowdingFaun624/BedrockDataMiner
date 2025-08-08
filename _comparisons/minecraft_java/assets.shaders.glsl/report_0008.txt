@@ -2,7 +2,7 @@ Difference of "text_packs" between "25w18a" (snapshot of "1.21.6") and "25w19a" 
 
 Changed resource pack "minecraft":
 	Changed file "include/fog.glsl":
-		Total line: 40 (+14, -16)
+		Total line: 40 (+24, -26)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -13,9 +13,9 @@ Changed resource pack "minecraft":
 		 7  4       vec4 FogColor;
 		    5 +     float FogEnvironmentalStart;
 		    6 +     float FogEnvironmentalEnd;
-		 8    -     int FogShape;
 		    7 +     float FogRenderDistanceStart;
 		    8 +     float FogRenderDistanceEnd;
+		 8    -     int FogShape;
 		 9    -     float FogStart;
 		10    -     float FogEnd;
 		11  9       float FogSkyEnd;
@@ -33,40 +33,41 @@ Changed resource pack "minecraft":
 		   19 + 
 		   20 +     return (vertexDistance - fogStart) / (fogEnd - fogStart);
 		   21 + }
-		19 22   
+		   22 + 
 		   23 + float total_fog_value(float sphericalVertexDistance, float cylindricalVertexDistance, float environmentalStart, float environmantalEnd, float renderDistanceStart, float renderDistanceEnd) {
 		   24 +     return max(linear_fog_value(sphericalVertexDistance, environmentalStart, environmantalEnd), linear_fog_value(cylindricalVertexDistance, renderDistanceStart, renderDistanceEnd));
-		20    -     float fogValue = vertexDistance < fogEnd ? smoothstep(fogStart, fogEnd, vertexDistance) : 1.0;
-		21    -     return vec4(mix(inColor.rgb, fogColor.rgb, fogValue * fogColor.a), inColor.a);
-		22 25   }
-		23 26   
+		   25 + }
+		19 26   
 		   27 + vec4 apply_fog(vec4 inColor, float sphericalVertexDistance, float cylindricalVertexDistance, float environmentalStart, float environmantalEnd, float renderDistanceStart, float renderDistanceEnd, vec4 fogColor) {
+		   28 +     float fogValue = total_fog_value(sphericalVertexDistance, cylindricalVertexDistance, environmentalStart, environmantalEnd, renderDistanceStart, renderDistanceEnd);
+		20    -     float fogValue = vertexDistance < fogEnd ? smoothstep(fogStart, fogEnd, vertexDistance) : 1.0;
+		21 29       return vec4(mix(inColor.rgb, fogColor.rgb, fogValue * fogColor.a), inColor.a);
+		22 30   }
+		23 31   
+		   32 + float fog_spherical_distance(vec3 pos) {
+		   33 +     return length(pos);
+		   34 + }
 		24    - float linear_fog_fade(float vertexDistance, float fogStart, float fogEnd) {
 		25    -     if (vertexDistance <= fogStart) {
 		26    -         return 1.0;
-		   28 +     float fogValue = total_fog_value(sphericalVertexDistance, cylindricalVertexDistance, environmentalStart, environmantalEnd, renderDistanceStart, renderDistanceEnd);
-		   29 +     return vec4(mix(inColor.rgb, fogColor.rgb, fogValue * fogColor.a), inColor.a);
-		   30 + }
 		27    -     } else if (vertexDistance >= fogEnd) {
 		28    -         return 0.0;
 		29    -     }
-		30 31   
-		   32 + float fog_spherical_distance(vec3 pos) {
-		   33 +     return length(pos);
-		31    -     return smoothstep(fogEnd, fogStart, vertexDistance);
-		32 34   }
-		33 35   
-		34    - float fog_distance(vec3 pos, int shape) {
-		35    -     if (shape == FOG_SHAPE_SPHERE) {
-		36    -         return length(pos);
-		37    -     } else {
+		30 35   
 		   36 + float fog_cylindrical_distance(vec3 pos) {
 		   37 +     float distXZ = length(pos.xz);
 		   38 +     float distY = abs(pos.y);
 		   39 +     return max(distXZ, distY);
+		31    -     return smoothstep(fogEnd, fogStart, vertexDistance);
+		32 40   }
+		33    - 
+		34    - float fog_distance(vec3 pos, int shape) {
+		35    -     if (shape == FOG_SHAPE_SPHERE) {
+		36    -         return length(pos);
+		37    -     } else {
 		38    -         float distXZ = length(pos.xz);
 		39    -         float distY = abs(pos.y);
 		40    -         return max(distXZ, distY);
 		41    -     }
-		42 40   }
+		42    - }
 		        '''

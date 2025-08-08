@@ -2,7 +2,7 @@ Difference of "text_packs" between "1.18.2" and "1.19-exp1" (experimental snapsh
 
 Changed resource pack "minecraft":
 	Changed file "include/fog.glsl":
-		Total line: 26 (+0, -4)
+		Total line: 26 (+4, -8)
 		        '''
 		        ...
 		17 17       }
@@ -10,14 +10,14 @@ Changed resource pack "minecraft":
 		19 19       return smoothstep(fogEnd, fogStart, vertexDistance);
 		20 20   }
 		21 21   
-		22    - float fog_distance(mat4 modelViewMat, vec3 pos, int shape) {
-		23    -     if (shape == 0) {
-		24    -         return length((modelViewMat * vec4(pos, 1.0)).xyz);
-		25    -     } else {
 		   22 + float cylindrical_distance(mat4 modelViewMat, vec3 pos) {
 		   23 +     float distXZ = length((modelViewMat * vec4(pos.x, 0.0, pos.z, 1.0)).xyz);
 		   24 +     float distY = length((modelViewMat * vec4(0.0, pos.y, 0.0, 1.0)).xyz);
 		   25 +     return max(distXZ, distY);
+		22    - float fog_distance(mat4 modelViewMat, vec3 pos, int shape) {
+		23    -     if (shape == 0) {
+		24    -         return length((modelViewMat * vec4(pos, 1.0)).xyz);
+		25    -     } else {
 		26    -         float distXZ = length((modelViewMat * vec4(pos.x, 0.0, pos.z, 1.0)).xyz);
 		27    -         float distY = length((modelViewMat * vec4(0.0, pos.y, 0.0, 1.0)).xyz);
 		28    -         return max(distXZ, distY);

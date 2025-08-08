@@ -1,0 +1,186 @@
+Difference of "text_packs" between "1.21.8" and "25w31a" (release candidate of "1.21.9").
+
+Changed resource pack "minecraft":
+	Changed file "post/bits.fsh":
+		Total line: 35 (+1, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6    - in vec2 oneTexel;
+		 7  6   
+		 8  7   layout(std140) uniform SamplerInfo {
+		 9  8       vec2 OutSize;
+		10  9       vec2 InSize;
+		11 10   };
+		        ...
+		18 17   out vec4 fragColor;
+		19 18   
+		20 19   const float Saturation = 1.5;
+		21 20   
+		22 21   void main() {
+		   22 +     vec2 oneTexel = 1.0 / InSize;
+		23 23       vec2 mosaicInSize = InSize / MosaicSize;
+		24 24       vec2 fractPix = fract(texCoord * mosaicInSize) / mosaicInSize;
+		25 25   
+		26 26       vec4 baseTexel = texture(InSampler, texCoord - fractPix);
+		27 27   
+		        ...
+		        '''
+	Changed file "post/box_blur.fsh":
+		Total line: 35 (+8, -1)
+		        '''
+		        ...
+		 2  2   
+		 3  3   #moj_import <minecraft:globals.glsl>
+		 4  4   
+		 5  5   uniform sampler2D InSampler;
+		 6  6   
+		    7 + layout(std140) uniform SamplerInfo {
+		    8 +     vec2 OutSize;
+		    9 +     vec2 InSize;
+		   10 + };
+		   11 + 
+		 7 12   layout(std140) uniform BlurConfig {
+		 8 13       vec2 BlurDir;
+		 9 14       float Radius;
+		10 15   };
+		11 16   
+		12 17   in vec2 texCoord;
+		13    - in vec2 sampleStep;
+		14 18   
+		15 19   out vec4 fragColor;
+		16 20   
+		17 21   // This shader relies on GL_LINEAR sampling to reduce the amount of texture samples in half.
+		18 22   // Instead of sampling each pixel position with a step of 1 we sample between pixels with a step of 2.
+		19 23   // In the end we sample the last pixel with a half weight, since the amount of pixels to sample is always odd (actualRadius * 2 + 1).
+		20 24   void main() {
+		   25 +     vec2 oneTexel = 1.0 / InSize;
+		   26 +     vec2 sampleStep = oneTexel * BlurDir;
+		   27 + 
+		21 28       vec4 blurred = vec4(0.0);
+		22 29       float actualRadius = Radius >= 0.5 ? round(Radius) : float(MenuBlurRadius);
+		23 30       for (float a = -actualRadius + 0.5; a <= actualRadius; a += 2.0) {
+		24 31           blurred += texture(InSampler, texCoord + sampleStep * a);
+		25 32       }
+		        ...
+		        '''
+	Changed file "post/color_convolve.fsh":
+		Total line: 39 (+1, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6    - in vec2 oneTexel;
+		 7  6   
+		 8  7   layout(std140) uniform SamplerInfo {
+		 9  8       vec2 OutSize;
+		10  9       vec2 InSize;
+		11 10   };
+		        ...
+		20 19   const float Saturation = 1.8;
+		21 20   
+		22 21   out vec4 fragColor;
+		23 22   
+		24 23   void main() {
+		   24 +     vec2 oneTexel = 1.0 / InSize;
+		25 25       vec4 InTexel = texture(InSampler, texCoord);
+		26 26   
+		27 27       // Color Matrix
+		28 28       float RedValue = dot(InTexel.rgb, RedMatrix);
+		29 29       float GreenValue = dot(InTexel.rgb, GreenMatrix);
+		        ...
+		        '''
+	Changed file "post/entity_outline_box_blur.fsh":
+		Total line: 30 (+13, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		    3 + layout(std140) uniform SamplerInfo {
+		    4 +     vec2 OutSize;
+		    5 +     vec2 InSize;
+		    6 + };
+		    7 + 
+		    8 + layout(std140) uniform BlurConfig {
+		    9 +     vec2 BlurDir;
+		   10 +     float Radius;
+		   11 + };
+		   12 + 
+		 3 13   uniform sampler2D InSampler;
+		 4 14   
+		 5 15   in vec2 texCoord;
+		 6    - in vec2 sampleStep;
+		 7 16   
+		 8 17   out vec4 fragColor;
+		 9 18   
+		10 19   void main() {
+		   20 +     vec2 oneTexel = 1.0 / InSize;
+		   21 +     vec2 sampleStep = oneTexel * BlurDir;
+		   22 + 
+		11 23       vec4 blurred = vec4(0.0);
+		12 24       float radius = 2.0;
+		13 25       for (float a = -radius + 0.5; a <= radius; a += 2.0) {
+		14 26           blurred += texture(InSampler, texCoord + sampleStep * a);
+		15 27       }
+		        ...
+		        '''
+	Changed file "post/entity_sobel.fsh":
+		Total line: 29 (+7, -1)
+		        '''
+		 1  1   #version 150
+		 2  2   
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		    5 + layout(std140) uniform SamplerInfo {
+		    6 +     vec2 OutSize;
+		    7 +     vec2 InSize;
+		    8 + };
+		    9 + 
+		 5 10   in vec2 texCoord;
+		 6    - in vec2 oneTexel;
+		 7 11   
+		 8 12   out vec4 fragColor;
+		 9 13   
+		10 14   void main(){
+		   15 +     vec2 oneTexel = 1.0 / InSize;
+		   16 + 
+		11 17       vec4 center = texture(InSampler, texCoord);
+		12 18       vec4 left = texture(InSampler, texCoord - vec2(oneTexel.x, 0.0));
+		13 19       vec4 right = texture(InSampler, texCoord + vec2(oneTexel.x, 0.0));
+		14 20       vec4 up = texture(InSampler, texCoord - vec2(0.0, oneTexel.y));
+		15 21       vec4 down = texture(InSampler, texCoord + vec2(0.0, oneTexel.y));
+		        ...
+		        '''
+	Changed file "post/invert.fsh":
+		Total line: 25 (+7, -0)
+		        '''
+		        ...
+		 2  2   
+		 3  3   uniform sampler2D InSampler;
+		 4  4   
+		 5  5   in vec2 texCoord;
+		 6  6   
+		    7 + layout(std140) uniform SamplerInfo {
+		    8 +     vec2 OutSize;
+		    9 +     vec2 InSize;
+		   10 + };
+		   11 + 
+		 7 12   layout(std140) uniform InvertConfig {
+		 8 13       float InverseAmount;
+		 9 14   };
+		10 15   
+		11 16   out vec4 fragColor;
+		12 17   
+		13 18   void main(){
+		   19 +     vec2 sizeRatio = OutSize / InSize;
+		   20 + 
+		14 21       vec4 diffuseColor = texture(InSampler, texCoord);
+		15 22       vec4 invertColor = 1.0 - diffuseColor;
+		16 23       vec4 outColor = mix(diffuseColor, invertColor, InverseAmount);
+		17 24       fragColor = vec4(outColor.rgb, 1.0);
+		18 25   }
+		        '''

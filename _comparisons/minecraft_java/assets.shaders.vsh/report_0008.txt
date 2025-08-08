@@ -139,7 +139,7 @@ Changed resource pack "minecraft":
 		27 20   }
 		        '''
 	Changed file "core/rendertype_item_entity_translucent_cull.vsh":
-		Total line: 36 (+4, -2)
+		Total line: 36 (+6, -4)
 		        '''
 		        ...
 		 4  4   
@@ -150,13 +150,19 @@ Changed resource pack "minecraft":
 		    9 + in ivec2 UV2;
 		 9    - in vec2 UV2;
 		10 10   in vec3 Normal;
-		   11 + 
+		11 11   
 		   12 + uniform sampler2D Sampler2;
-		11 13   
-		12 14   uniform mat4 ModelViewMat;
-		13 15   uniform mat4 ProjMat;
-		14 16   
+		12    - uniform mat4 ModelViewMat;
+		13    - uniform mat4 ProjMat;
+		14 13   
+		   14 + uniform mat4 ModelViewMat;
+		   15 + uniform mat4 ProjMat;
+		   16 + 
 		15 17   uniform vec3 Light0_Direction;
+		16 18   uniform vec3 Light1_Direction;
+		17 19   
+		18 20   out float vertexDistance;
+		19 21   out vec4 vertexColor;
 		        ...
 		24 26   
 		25 27   void main() {
@@ -191,7 +197,7 @@ Changed resource pack "minecraft":
 		15 17   }
 		        '''
 	Changed file "core/rendertype_lines.vsh":
-		Total line: 45 (+16, -4)
+		Total line: 45 (+22, -10)
 		        '''
 		        ...
 		10 10   uniform vec2 ScreenSize;
@@ -215,24 +221,34 @@ Changed resource pack "minecraft":
 		18 26   
 		19 27       vec3 ndc1 = linePosStart.xyz / linePosStart.w;
 		20 28       vec3 ndc2 = linePosEnd.xyz / linePosEnd.w;
-		   29 + 
-		   30 +     vec2 lineScreenDirection = normalize((ndc2.xy - ndc1.xy) * ScreenSize);
-		   31 +     vec2 lineOffset = vec2(-lineScreenDirection.y, lineScreenDirection.x) * LineWidth / ScreenSize;
-		21 32   
+		21 29   
+		22 30       vec2 lineScreenDirection = normalize((ndc2.xy - ndc1.xy) * ScreenSize);
+		23 31       vec2 lineOffset = vec2(-lineScreenDirection.y, lineScreenDirection.x) * LineWidth / ScreenSize;
+		24 32   
 		   33 +     if (lineOffset.x < 0.0) {
 		   34 +         lineOffset *= -1.0;
-		   35 +     }
-		22    -     vec2 lineScreenDirection = normalize((ndc2.xy - ndc1.xy) * ScreenSize);
-		23    -     vec2 lineOffset = vec2(-lineScreenDirection.y, lineScreenDirection.x) * LineWidth / ScreenSize;
-		24 36   
-		25 37       if (gl_VertexID % 2 == 0) {
-		26 38           gl_Position = vec4((ndc1 + vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
-		27 39       } else {
-		28 40           gl_Position = vec4((ndc1 - vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
-		        ...
+		25    -     if (gl_VertexID % 2 == 0) {
+		26    -         gl_Position = vec4((ndc1 + vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		27    -     } else {
+		28    -         gl_Position = vec4((ndc1 - vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		29 35       }
+		   36 + 
+		   37 +     if (gl_VertexID % 2 == 0) {
+		   38 +         gl_Position = vec4((ndc1 + vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		   39 +     } else {
+		   40 +         gl_Position = vec4((ndc1 - vec3(lineOffset, 0.0)) * linePosStart.w, linePosStart.w);
+		   41 +     }
+		   42 + 
+		   43 +     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		   44 +     vertexColor = Color;
+		   45 + }
+		30    - 
+		31    -     vertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);
+		32    -     vertexColor = Color;
+		33    - }
 		        '''
 	Changed file "core/rendertype_tripwire.vsh":
-		Total line: 29 (+8, -4)
+		Total line: 29 (+11, -7)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -244,13 +260,16 @@ Changed resource pack "minecraft":
 		    8 + in ivec2 UV2;
 		 6    - in vec2 UV2;
 		 7  9   in vec3 Normal;
-		   10 + 
+		 8 10   
 		   11 + uniform sampler2D Sampler2;
-		 8 12   
-		 9 13   uniform mat4 ModelViewMat;
-		10 14   uniform mat4 ProjMat;
-		11 15   uniform vec3 ChunkOffset;
-		12 16   
+		 9    - uniform mat4 ModelViewMat;
+		10    - uniform mat4 ProjMat;
+		11    - uniform vec3 ChunkOffset;
+		12 12   
+		   13 + uniform mat4 ModelViewMat;
+		   14 + uniform mat4 ProjMat;
+		   15 + uniform vec3 ChunkOffset;
+		   16 + 
 		   17 + out float vertexDistance;
 		13 18   out vec4 vertexColor;
 		14 19   out vec2 texCoord0;

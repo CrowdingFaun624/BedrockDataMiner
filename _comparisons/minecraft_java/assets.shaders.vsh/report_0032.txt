@@ -2,7 +2,7 @@ Difference of "text_packs" between "25w21a" (snapshot of "1.21.6") and "1.21.6-p
 
 Changed resource pack "minecraft":
 	Changed file "core/rendertype_clouds.vsh":
-		Total line: 90 (+7, -18)
+		Total line: 90 (+5, -16)
 		          '''
 		          ...
 		 24  24   const vec3[] vertices = vec3[](
@@ -16,37 +16,37 @@ Changed resource pack "minecraft":
 		 32  30       // Top face
 		 33  31       vec3(0, 1, 0),
 		 34  32       vec3(0, 1, 1),
-		 35     -     vec3(1, 1, 1),
-		 36  33       vec3(1, 1, 1),
+		 35  33       vec3(1, 1, 1),
+		 36     -     vec3(1, 1, 1),
 		 37  34       vec3(1, 1, 0),
 		 38     -     vec3(0, 1, 0),
 		 39  35       // North face
 		 40  36       vec3(0, 0, 0),
 		 41  37       vec3(0, 1, 0),
-		 42     -     vec3(1, 1, 0),
-		 43  38       vec3(1, 1, 0),
+		 42  38       vec3(1, 1, 0),
+		 43     -     vec3(1, 1, 0),
 		 44  39       vec3(1, 0, 0),
 		 45     -     vec3(0, 0, 0),
 		 46  40       // South face
 		 47  41       vec3(1, 0, 1),
 		 48  42       vec3(1, 1, 1),
-		 49     -     vec3(0, 1, 1),
-		 50  43       vec3(0, 1, 1),
+		 49  43       vec3(0, 1, 1),
+		 50     -     vec3(0, 1, 1),
 		 51  44       vec3(0, 0, 1),
 		 52     -     vec3(1, 0, 1),
 		 53  45       // West face
 		 54  46       vec3(0, 0, 1),
 		 55  47       vec3(0, 1, 1),
-		 56     -     vec3(0, 1, 0),
-		 57  48       vec3(0, 1, 0),
+		 56  48       vec3(0, 1, 0),
+		 57     -     vec3(0, 1, 0),
 		 58  49       vec3(0, 0, 0),
 		 59     -     vec3(0, 0, 1),
 		 60  50       // East face
 		 61  51       vec3(1, 0, 0),
 		 62  52       vec3(1, 1, 0),
-		 63     -     vec3(1, 1, 1),
-		 64  53       vec3(1, 1, 1),
+		 63  53       vec3(1, 1, 1),
 		     54 +     vec3(1, 0, 1)
+		 64     -     vec3(1, 1, 1),
 		 65     -     vec3(1, 0, 1),
 		 66     -     vec3(1, 0, 0)
 		 67  55   );
@@ -54,30 +54,15 @@ Changed resource pack "minecraft":
 		 69  57   const vec4[] faceColors = vec4[](
 		 70  58       // Bottom face
 		 71  59       vec4(0.7, 0.7, 0.7, 0.8),
-		 72  60       // Top face
-		 73  61       vec4(1.0, 1.0, 1.0, 0.8),
-		 74  62       // North face
-		     63 +     vec4(0.8, 0.8, 0.8, 0.8),
-		     64 +     // South face
-		 75  65       vec4(0.8, 0.8, 0.8, 0.8),
-		     66 +     // West face
-		     67 +     vec4(0.9, 0.9, 0.9, 0.8),
-		     68 +     // East face
-		     69 +     vec4(0.9, 0.9, 0.9, 0.8)
-		     70 + );
-		     71 + 
-		     72 + void main() {
+		          ...
+		 80  68       // East face
+		 81  69       vec4(0.9, 0.9, 0.9, 0.8)
+		 82  70   );
+		 83  71   
+		 84  72   void main() {
 		     73 +     int quadVertex = gl_VertexID % 4;
 		     74 +     int index = (gl_VertexID / 4) * 3;
-		 76     -     // South face
-		 77     -     vec4(0.8, 0.8, 0.8, 0.8),
-		 78     -     // West face
-		 79     -     vec4(0.9, 0.9, 0.9, 0.8),
-		 80     -     // East face
-		 81     -     vec4(0.9, 0.9, 0.9, 0.8)
-		 82     - );
-		 83  75   
-		 84     - void main() {
+		     75 + 
 		 85     -     int quadVertex = gl_VertexID % 6;
 		 86     -     int index = (gl_VertexID / 6) * 3;
 		 87  76       int cellX = texelFetch(CloudFaces, index).r;

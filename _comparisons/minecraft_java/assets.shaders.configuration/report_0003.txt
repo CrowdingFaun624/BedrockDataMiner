@@ -1,0 +1,49 @@
+Difference of "configuration" between "1.7.2" and "13w47a" (snapshot of "1.7.4").
+
+Changed resource pack "minecraft":
+	Total file: 48 (+2, -0)
+	Added file "post/notch.json":
+		field "targets": target "swap"
+		field "passes":
+			pass 0:
+				field "name": "notch"
+				field "auxtargets":
+					aux target 0:
+						field "name": "DitherSampler"
+						field "id": "dither"
+						field "width": 4
+						field "height": 4
+						field "bilinear": false
+				field "intarget": "minecraft:main"
+				field "outtarget": "swap"
+			pass 1:
+				field "name": "blit"
+				field "intarget": "swap"
+				field "outtarget": "minecraft:main"
+	Added file "program/notch.json":
+		field "attributes": attribute "Position"
+		field "vertex": "sobel"
+		field "fragment": "notch"
+		field "blend":
+			field "func": "add"
+			field "srcrgb": "one"
+			field "dstrgb": "zero"
+		field "samplers":
+			sampler 0: field "name": "DiffuseSampler"
+			sampler 1: field "name": "DitherSampler"
+		field "uniforms":
+			uniform 0:
+				field "name": "ProjMat"
+				field "type": "matrix4x4"
+				field "count": 16
+				field "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+			uniform 1:
+				field "name": "InSize"
+				field "type": "float"
+				field "count": 2
+				field "values": [1.0, 1.0]
+			uniform 2:
+				field "name": "OutSize"
+				field "type": "float"
+				field "count": 2
+				field "values": [1.0, 1.0]

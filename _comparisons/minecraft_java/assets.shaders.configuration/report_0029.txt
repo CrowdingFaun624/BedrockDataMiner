@@ -1,0 +1,911 @@
+Difference of "configuration" between "1.21.1" and "24w33a" (snapshot of "1.21.2").
+
+Changed resource pack "minecraft":
+	Total file: 72 (+1, -0)
+	Changed file "core/blit_screen.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "core/rendertype_clouds.json":
+		Changed field "samplers":
+			Total sampler: 0 (+0, -1)
+			Removed sampler 0: field "name": "Sampler0".
+		Changed field "uniforms":
+			Total uniform: 8 (+1, -0)
+			Added uniform 2:
+				field "name": "ModelOffset"
+				field "type": "float"
+				field "count": 3
+				field "values": [0.0, 0.0, 0.0]
+			Moved uniform from 2 to 3.
+			Moved uniform from 3 to 4.
+			Moved uniform from 4 to 5.
+			Moved uniform from 5 to 6.
+			Moved uniform from 6 to 7.
+	Changed file "core/rendertype_cutout.json":
+		Changed field "uniforms":
+			Changed uniform 2:
+				Changed field "name" from "ChunkOffset" to "ModelOffset".
+				Unchanged field "type": "float".
+	Changed file "core/rendertype_cutout_mipped.json":
+		Changed field "uniforms":
+			Changed uniform 2:
+				Changed field "name" from "ChunkOffset" to "ModelOffset".
+				Unchanged field "type": "float".
+	Changed file "core/rendertype_solid.json":
+		Changed field "uniforms":
+			Changed uniform 2:
+				Changed field "name" from "ChunkOffset" to "ModelOffset".
+				Unchanged field "type": "float".
+	Changed file "core/rendertype_translucent.json":
+		Changed field "uniforms":
+			Changed uniform 2:
+				Changed field "name" from "ChunkOffset" to "ModelOffset".
+				Unchanged field "type": "float".
+	Changed file "core/rendertype_tripwire.json":
+		Changed field "uniforms":
+			Changed uniform 2:
+				Changed field "name" from "ChunkOffset" to "ModelOffset".
+				Unchanged field "type": "float".
+	Changed file "post/blur.json":
+		Changed field "targets" from target "swap" to field "swap": empty.
+		Changed field "passes":
+			Total pass: 6 (+6, -6)
+			Added pass 0:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:main"
+						field "bilinear": true
+				field "output": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+			Added pass 1:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "swap"
+						field "bilinear": true
+				field "output": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+			Added pass 2:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:main"
+						field "bilinear": true
+				field "output": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "RadiusMultiplier": 0.5
+						field "values": [1.0, 0.0]
+			Added pass 3:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "swap"
+						field "bilinear": true
+				field "output": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "RadiusMultiplier": 0.5
+						field "values": [0.0, 1.0]
+			Added pass 4:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:main"
+						field "bilinear": true
+				field "output": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "RadiusMultiplier": 0.25
+						field "values": [1.0, 0.0]
+			Added pass 5:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "swap"
+						field "bilinear": true
+				field "output": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "RadiusMultiplier": 0.25
+						field "values": [0.0, 1.0]
+			Removed pass 0:
+				field "name": "box_blur"
+				field "intarget": "minecraft:main"
+				field "use_linear_filter": true
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+			Removed pass 1:
+				field "name": "box_blur"
+				field "intarget": "swap"
+				field "use_linear_filter": true
+				field "outtarget": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+			Removed pass 2:
+				field "name": "box_blur"
+				field "intarget": "minecraft:main"
+				field "use_linear_filter": true
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "RadiusMultiplier": 0.5
+						field "values": [1.0, 0.0]
+			Removed pass 3:
+				field "name": "box_blur"
+				field "intarget": "swap"
+				field "use_linear_filter": true
+				field "outtarget": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "RadiusMultiplier": 0.5
+						field "values": [0.0, 1.0]
+			Removed pass 4:
+				field "name": "box_blur"
+				field "intarget": "minecraft:main"
+				field "use_linear_filter": true
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "RadiusMultiplier": 0.25
+						field "values": [1.0, 0.0]
+			Removed pass 5:
+				field "name": "box_blur"
+				field "intarget": "swap"
+				field "use_linear_filter": true
+				field "outtarget": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "RadiusMultiplier": 0.25
+						field "values": [0.0, 1.0]
+	Changed file "post/creeper.json":
+		Changed field "targets" from target "swap" to field "swap": empty.
+		Changed field "passes":
+			Total pass: 2 (+2, -2)
+			Added pass 0:
+				field "name": "color_convolve"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:main"
+				field "output": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "RedMatrix"
+						field "values": [0.0, 0.0, 0.0]
+					uniform 1:
+						field "name": "GreenMatrix"
+						field "values": [0.3, 0.59, 0.11]
+					uniform 2:
+						field "name": "BlueMatrix"
+						field "values": [0.0, 0.0, 0.0]
+			Added pass 1:
+				field "name": "bits"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "swap"
+				field "output": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "Resolution"
+						field "values": [16.0]
+					uniform 1:
+						field "name": "MosaicSize"
+						field "values": [4.0]
+			Removed pass 0:
+				field "name": "color_convolve"
+				field "intarget": "minecraft:main"
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "RedMatrix"
+						field "values": [0.0, 0.0, 0.0]
+					uniform 1:
+						field "name": "GreenMatrix"
+						field "values": [0.3, 0.59, 0.11]
+					uniform 2:
+						field "name": "BlueMatrix"
+						field "values": [0.0, 0.0, 0.0]
+			Removed pass 1:
+				field "name": "bits"
+				field "intarget": "swap"
+				field "outtarget": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "Resolution"
+						field "values": [16.0]
+					uniform 1:
+						field "name": "MosaicSize"
+						field "values": [4.0]
+	Changed file "post/entity_outline.json":
+		Changed field "targets" to field "swap": empty from:
+			target "swap"
+			target "final"
+		Changed field "passes":
+			Total pass: 4 (+4, -4)
+			Added pass 0:
+				field "name": "entity_outline"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:entity_outline"
+				field "output": "swap"
+			Added pass 1:
+				field "name": "entity_outline_box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "swap"
+						field "bilinear": true
+				field "output": "minecraft:entity_outline"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+			Added pass 2:
+				field "name": "entity_outline_box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:entity_outline"
+						field "bilinear": true
+				field "output": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+			Added pass 3:
+				field "name": "blit"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "swap"
+				field "output": "minecraft:entity_outline"
+			Removed pass 0:
+				field "name": "entity_outline"
+				field "intarget": "final"
+				field "outtarget": "swap"
+			Removed pass 1:
+				field "name": "entity_outline_box_blur"
+				field "intarget": "swap"
+				field "use_linear_filter": true
+				field "outtarget": "final"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+			Removed pass 2:
+				field "name": "entity_outline_box_blur"
+				field "intarget": "final"
+				field "use_linear_filter": true
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+			Removed pass 3:
+				field "name": "blit"
+				field "intarget": "swap"
+				field "outtarget": "final"
+	Changed file "post/invert.json":
+		Changed field "targets" from target "swap" to field "swap": empty.
+		Changed field "passes":
+			Total pass: 2 (+2, -2)
+			Added pass 0:
+				field "name": "invert"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:main"
+				field "output": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "InverseAmount"
+						field "values": [0.8]
+			Added pass 1:
+				field "name": "blit"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "swap"
+				field "output": "minecraft:main"
+			Removed pass 0:
+				field "name": "invert"
+				field "intarget": "minecraft:main"
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "InverseAmount"
+						field "values": [0.8]
+			Removed pass 1:
+				field "name": "blit"
+				field "intarget": "swap"
+				field "outtarget": "minecraft:main"
+	Changed file "post/spider.json":
+		Changed field "targets" from:
+			target "largeBlur"
+			target "smallBlur"
+			target "temp"
+			target "swap"
+		to:
+			field "swap": empty
+			field "large_blur": empty
+			field "small_blur": empty
+			field "temp": empty
+		Changed field "passes":
+			Total pass: 10 (+10, -10)
+			Added pass 0:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:main"
+						field "bilinear": true
+				field "output": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [15.0]
+			Added pass 1:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "temp"
+						field "bilinear": true
+				field "output": "large_blur"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [15.0]
+			Added pass 2:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:main"
+						field "bilinear": true
+				field "output": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [7.0]
+			Added pass 3:
+				field "name": "box_blur"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "temp"
+						field "bilinear": true
+				field "output": "small_blur"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [7.0]
+			Added pass 4:
+				field "name": "spider"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "minecraft:main"
+					input 1:
+						field "sampler_name": "Blur"
+						field "target": "large_blur"
+				field "output": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [1.25, 2.0]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.125, -0.1]
+					uniform 2:
+						field "name": "Scissor"
+						field "values": [0.0, 0.0, 1.0, 1.0]
+					uniform 3:
+						field "name": "Vignette"
+						field "values": [0.1, 0.1, 0.9, 0.9]
+			Added pass 5:
+				field "name": "spider"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "small_blur"
+					input 1:
+						field "sampler_name": "Blur"
+						field "target": "temp"
+				field "output": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 4.2]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-1.1, -1.5]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [-45.0]
+					uniform 3:
+						field "name": "Scissor"
+						field "values": [0.21, 0.0, 0.79, 1.0]
+					uniform 4:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			Added pass 6:
+				field "name": "spider"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "small_blur"
+					input 1:
+						field "sampler_name": "Blur"
+						field "target": "swap"
+				field "output": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 4.2]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [0.45, -4.45]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [45.0]
+					uniform 3:
+						field "name": "Scissor"
+						field "values": [0.21, 0.0, 0.79, 1.0]
+					uniform 4:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			Added pass 7:
+				field "name": "spider"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "small_blur"
+					input 1:
+						field "sampler_name": "Blur"
+						field "target": "temp"
+				field "output": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 2.35]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.385, -1.29]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [0.0]
+					uniform 3:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			Added pass 8:
+				field "name": "spider"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "small_blur"
+					input 1:
+						field "sampler_name": "Blur"
+						field "target": "swap"
+				field "output": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 2.35]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.965, -1.29]
+					uniform 2:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			Added pass 9:
+				field "name": "blit"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "temp"
+				field "output": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "ColorModulate"
+						field "values": [1.0, 0.8, 0.8, 1.0]
+			Removed pass 0:
+				field "name": "box_blur"
+				field "intarget": "minecraft:main"
+				field "use_linear_filter": true
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [15.0]
+			Removed pass 1:
+				field "name": "box_blur"
+				field "intarget": "temp"
+				field "use_linear_filter": true
+				field "outtarget": "largeBlur"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [15.0]
+			Removed pass 2:
+				field "name": "box_blur"
+				field "intarget": "minecraft:main"
+				field "use_linear_filter": true
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [7.0]
+			Removed pass 3:
+				field "name": "box_blur"
+				field "intarget": "temp"
+				field "use_linear_filter": true
+				field "outtarget": "smallBlur"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [7.0]
+			Removed pass 4:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "largeBlur"
+				field "intarget": "minecraft:main"
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [1.25, 2.0]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.125, -0.1]
+					uniform 2:
+						field "name": "Scissor"
+						field "values": [0.0, 0.0, 1.0, 1.0]
+					uniform 3:
+						field "name": "Vignette"
+						field "values": [0.1, 0.1, 0.9, 0.9]
+			Removed pass 5:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "temp"
+				field "intarget": "smallBlur"
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 4.2]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-1.1, -1.5]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [-45.0]
+					uniform 3:
+						field "name": "Scissor"
+						field "values": [0.21, 0.0, 0.79, 1.0]
+					uniform 4:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			Removed pass 6:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "swap"
+				field "intarget": "smallBlur"
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 4.2]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [0.45, -4.45]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [45.0]
+					uniform 3:
+						field "name": "Scissor"
+						field "values": [0.21, 0.0, 0.79, 1.0]
+					uniform 4:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			Removed pass 7:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "temp"
+				field "intarget": "smallBlur"
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 2.35]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.385, -1.29]
+					uniform 2:
+						field "name": "InRotation"
+						field "values": [0.0]
+					uniform 3:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			Removed pass 8:
+				field "name": "spider"
+				field "auxtargets":
+					aux target 0:
+						field "name": "BlurSampler"
+						field "id": "swap"
+				field "intarget": "smallBlur"
+				field "outtarget": "temp"
+				field "uniforms":
+					uniform 0:
+						field "name": "InScale"
+						field "values": [2.35, 2.35]
+					uniform 1:
+						field "name": "InOffset"
+						field "values": [-0.965, -1.29]
+					uniform 2:
+						field "name": "Vignette"
+						field "values": [0.31, 0.1, 0.69, 0.9]
+			Removed pass 9:
+				field "name": "blit"
+				field "intarget": "temp"
+				field "outtarget": "minecraft:main"
+				field "uniforms":
+					uniform 0:
+						field "name": "ColorModulate"
+						field "values": [1.0, 0.8, 0.8, 1.0]
+	Changed file "post/transparency.json":
+		Changed field "targets" to field "final": empty from:
+			target "water"
+			target "translucent"
+			target "itemEntity"
+			target "particles"
+			target "clouds"
+			target "weather"
+			target "final"
+		Changed field "passes":
+			Total pass: 2 (+2, -2)
+			Added pass 0:
+				field "name": "transparency"
+				field "inputs":
+					input 0:
+						field "sampler_name": "Main"
+						field "target": "minecraft:main"
+					input 1:
+						field "sampler_name": "MainDepth"
+						field "target": "minecraft:main"
+						field "use_depth_buffer": true
+					input 2:
+						field "sampler_name": "Translucent"
+						field "target": "minecraft:translucent"
+					input 3:
+						field "sampler_name": "TranslucentDepth"
+						field "target": "minecraft:translucent"
+						field "use_depth_buffer": true
+					input 4:
+						field "sampler_name": "ItemEntity"
+						field "target": "minecraft:item_entity"
+					input 5:
+						field "sampler_name": "ItemEntityDepth"
+						field "target": "minecraft:item_entity"
+						field "use_depth_buffer": true
+					input 6:
+						field "sampler_name": "Particles"
+						field "target": "minecraft:particles"
+					input 7:
+						field "sampler_name": "ParticlesDepth"
+						field "target": "minecraft:particles"
+						field "use_depth_buffer": true
+					input 8:
+						field "sampler_name": "Clouds"
+						field "target": "minecraft:clouds"
+					input 9:
+						field "sampler_name": "CloudsDepth"
+						field "target": "minecraft:clouds"
+						field "use_depth_buffer": true
+					input 10:
+						field "sampler_name": "Weather"
+						field "target": "minecraft:weather"
+					input 11:
+						field "sampler_name": "WeatherDepth"
+						field "target": "minecraft:weather"
+						field "use_depth_buffer": true
+				field "output": "final"
+			Added pass 1:
+				field "name": "blit"
+				field "inputs":
+					input 0:
+						field "sampler_name": "In"
+						field "target": "final"
+				field "output": "minecraft:main"
+			Removed pass 0:
+				field "name": "transparency"
+				field "auxtargets":
+					aux target 0:
+						field "name": "DiffuseDepthSampler"
+						field "id": "minecraft:main:depth"
+					aux target 1:
+						field "name": "TranslucentSampler"
+						field "id": "translucent"
+					aux target 2:
+						field "name": "TranslucentDepthSampler"
+						field "id": "translucent:depth"
+					aux target 3:
+						field "name": "ItemEntitySampler"
+						field "id": "itemEntity"
+					aux target 4:
+						field "name": "ItemEntityDepthSampler"
+						field "id": "itemEntity:depth"
+					aux target 5:
+						field "name": "ParticlesSampler"
+						field "id": "particles"
+					aux target 6:
+						field "name": "ParticlesDepthSampler"
+						field "id": "particles:depth"
+					aux target 7:
+						field "name": "CloudsSampler"
+						field "id": "clouds"
+					aux target 8:
+						field "name": "CloudsDepthSampler"
+						field "id": "clouds:depth"
+					aux target 9:
+						field "name": "WeatherSampler"
+						field "id": "weather"
+					aux target 10:
+						field "name": "WeatherDepthSampler"
+						field "id": "weather:depth"
+				field "intarget": "minecraft:main"
+				field "outtarget": "final"
+			Removed pass 1:
+				field "name": "blit"
+				field "intarget": "final"
+				field "outtarget": "minecraft:main"
+	Changed file "program/bits.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "program/blit.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "program/box_blur.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "program/color_convolve.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "program/entity_outline.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "program/entity_outline_box_blur.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "program/invert.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "program/spider.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "InSampler".
+	Changed file "program/transparency.json":
+		Changed field "samplers":
+			Changed sampler 0:
+				Changed field "name" from "DiffuseSampler" to "MainSampler".
+			Changed sampler 1:
+				Changed field "name" from "DiffuseDepthSampler" to "MainDepthSampler".
+	Added file "core/lightmap.json":
+		field "vertex": "blit_screen"
+		field "fragment": "lightmap"
+		field "samplers": empty
+		field "uniforms":
+			uniform 0:
+				field "name": "AmbientLightFactor"
+				field "type": "float"
+				field "count": 1
+				field "values": [1.0]
+			uniform 1:
+				field "name": "SkyFactor"
+				field "type": "float"
+				field "count": 1
+				field "values": [1.0]
+			uniform 2:
+				field "name": "BlockFactor"
+				field "type": "float"
+				field "count": 1
+				field "values": [1.0]
+			uniform 3:
+				field "name": "UseBrightLightmap"
+				field "type": "int"
+				field "count": 1
+				field "values": [0]
+			uniform 4:
+				field "name": "SkyLightColor"
+				field "type": "float"
+				field "count": 3
+				field "values": [1.0]
+			uniform 5:
+				field "name": "NightVisionFactor"
+				field "type": "float"
+				field "count": 1
+				field "values": [0.0]
+			uniform 6:
+				field "name": "DarknessScale"
+				field "type": "float"
+				field "count": 1
+				field "values": [0.0]
+			uniform 7:
+				field "name": "DarkenWorldFactor"
+				field "type": "float"
+				field "count": 1
+				field "values": [0.0]
+			uniform 8:
+				field "name": "BrightnessFactor"
+				field "type": "float"
+				field "count": 1
+				field "values": [1.0]

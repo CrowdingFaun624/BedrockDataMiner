@@ -2,7 +2,7 @@ Difference of "text_packs" between "21w11a" (snapshot of "1.17") and "21w13a" (s
 
 Changed resource pack "minecraft":
 	Changed file "core/rendertype_beacon_beam.fsh":
-		Total line: 22 (+8, -4)
+		Total line: 22 (+9, -5)
 		        '''
 		 1  1   #version 150
 		 2  2   
@@ -27,8 +27,8 @@ Changed resource pack "minecraft":
 		15 18   void main() {
 		   19 +     vec4 color = texture(Sampler0, texCoord0);
 		   20 +     color *= vertexColor * ColorModulator;
-		16    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor;
 		   21 +     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+		16    -     vec4 color = texture(Sampler0, texCoord0) * vertexColor;
 		17    -     fragColor = color * ColorModulator;
 		18 22   }
 		        '''
@@ -160,18 +160,18 @@ Changed resource pack "minecraft":
 		 1  1   #version 150
 		 2  2   
 		    3 + #moj_import <fog.glsl>
-		    4 + 
-		    5 + uniform vec4 ColorModulator;
+		 3    - in vec4 vertexColor;
+		 4  4   
+		 5  5   uniform vec4 ColorModulator;
 		    6 + uniform float FogStart;
 		    7 + uniform float FogEnd;
-		    8 + 
+		 6  8   
 		    9 + in float vertexDistance;
-		 3 10   in vec4 vertexColor;
-		 4    - 
-		 5    - uniform vec4 ColorModulator;
-		 6 11   
-		 7 12   out vec4 fragColor;
-		 8 13   
+		   10 + in vec4 vertexColor;
+		 7    - out vec4 fragColor;
+		 8 11   
+		   12 + out vec4 fragColor;
+		   13 + 
 		 9 14   void main() {
 		   15 +     fragColor = vertexColor * ColorModulator * linear_fog_fade(vertexDistance, FogStart, FogEnd);
 		10    -     fragColor = vertexColor * ColorModulator;

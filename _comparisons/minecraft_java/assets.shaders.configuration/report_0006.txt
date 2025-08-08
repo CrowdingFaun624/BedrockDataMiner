@@ -1,0 +1,85 @@
+Difference of "configuration" between "14w05b" (snapshot of "1.8") and "14w06a" (snapshot of "1.8").
+
+Changed resource pack "minecraft":
+	Total file: 52 (+2, -0)
+	Changed file "post/outline.json":
+		Changed field "targets":
+			Total target: 2 (+1, -0)
+			Added target "final".
+		Changed field "passes":
+			Changed pass 0:
+				Unchanged field "name": "outline".
+				Changed field "intarget" from "minecraft:main" to "final".
+			Changed pass 1:
+				Unchanged field "name": "blit".
+				Changed field "outtarget" from "minecraft:main" to "final".
+	Changed file "program/blit.json":
+		Changed field "blend":
+			Unchanged field "func": "add".
+			Changed field "srcrgb" from "one" to "srcalpha".
+			Changed field "dstrgb" from "zero" to "1-srcalpha".
+	Changed file "program/blur.json":
+		Changed field "blend":
+			Unchanged field "func": "add".
+			Changed field "srcrgb" from "one" to "srcalpha".
+			Changed field "dstrgb" from "zero" to "1-srcalpha".
+	Added file "post/entity_outline.json":
+		field "targets":
+			target "swap"
+			target "final"
+		field "passes":
+			pass 0:
+				field "name": "entity_outline"
+				field "intarget": "final"
+				field "outtarget": "swap"
+			pass 1:
+				field "name": "blur"
+				field "intarget": "swap"
+				field "outtarget": "final"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [1.0, 0.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [2.0]
+			pass 2:
+				field "name": "blur"
+				field "intarget": "final"
+				field "outtarget": "swap"
+				field "uniforms":
+					uniform 0:
+						field "name": "BlurDir"
+						field "values": [0.0, 1.0]
+					uniform 1:
+						field "name": "Radius"
+						field "values": [2.0]
+			pass 3:
+				field "name": "blit"
+				field "intarget": "swap"
+				field "outtarget": "final"
+	Added file "program/entity_outline.json":
+		field "attributes": attribute "Position"
+		field "vertex": "sobel"
+		field "fragment": "entity_sobel"
+		field "blend":
+			field "func": "add"
+			field "srcrgb": "srcalpha"
+			field "dstrgb": "1-srcalpha"
+		field "samplers": sampler 0: field "name": "DiffuseSampler"
+		field "uniforms":
+			uniform 0:
+				field "name": "ProjMat"
+				field "type": "matrix4x4"
+				field "count": 16
+				field "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+			uniform 1:
+				field "name": "InSize"
+				field "type": "float"
+				field "count": 2
+				field "values": [1.0, 1.0]
+			uniform 2:
+				field "name": "OutSize"
+				field "type": "float"
+				field "count": 2
+				field "values": [1.0, 1.0]

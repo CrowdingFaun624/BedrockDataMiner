@@ -56,69 +56,54 @@ Changed resource pack "minecraft":
 		    normal = ModelViewProjMat * vec4(Normal, 0.0);
 		}
 		'''
-	Removed file "core/position_tex_color_normal.vsh":
+	Moved file from "core/position_tex_color_normal.vsh" to "core/rendertype_clouds.vsh".
+	Changed file "core/rendertype_clouds.vsh":
+		Total line: 25 (+3, -4)
+		        '''
+		        ...
+		12 12   uniform int FogShape;
+		13 13   
+		14 14   out vec2 texCoord0;
+		15 15   out float vertexDistance;
+		16 16   out vec4 vertexColor;
+		17    - out vec4 normal;
+		18 17   
+		19 18   void main() {
+		   19 +     vec4 pos = ModelViewMat * vec4(Position, 1.0);
+		   20 +     gl_Position = ProjMat * pos;
+		20    -     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
+		21 21   
+		22 22       texCoord0 = UV0;
+		   23 +     vertexDistance = fog_distance(pos.xyz, FogShape);
+		23    -     vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		24 24       vertexColor = Color;
+		25    -     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
+		26 25   }
+		        '''
+	Removed file "core/position_tex_lightmap_color.vsh":
 		'''
 		#version 150
 		
-		#moj_import <fog.glsl>
-		
 		in vec3 Position;
 		in vec2 UV0;
+		in vec2 UV2;
 		in vec4 Color;
-		in vec3 Normal;
 		
 		uniform mat4 ModelViewMat;
 		uniform mat4 ProjMat;
-		uniform int FogShape;
 		
 		out vec2 texCoord0;
-		out float vertexDistance;
+		out vec2 texCoord2;
 		out vec4 vertexColor;
-		out vec4 normal;
 		
 		void main() {
 		    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 		
 		    texCoord0 = UV0;
-		    vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
+		    texCoord2 = UV2;
 		    vertexColor = Color;
-		    normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);
 		}
 		'''
-	Moved file from "core/position_tex_lightmap_color.vsh" to "core/rendertype_clouds.vsh".
-	Changed file "core/rendertype_clouds.vsh":
-		Total line: 25 (+8, -4)
-		        '''
-		 1  1   #version 150
-		 2  2   
-		    3 + #moj_import <fog.glsl>
-		    4 + 
-		 3  5   in vec3 Position;
-		 4  6   in vec2 UV0;
-		 5    - in vec2 UV2;
-		 6  7   in vec4 Color;
-		    8 + in vec3 Normal;
-		 7  9   
-		 8 10   uniform mat4 ModelViewMat;
-		 9 11   uniform mat4 ProjMat;
-		   12 + uniform int FogShape;
-		10 13   
-		11 14   out vec2 texCoord0;
-		   15 + out float vertexDistance;
-		12    - out vec2 texCoord2;
-		13 16   out vec4 vertexColor;
-		14 17   
-		15 18   void main() {
-		   19 +     vec4 pos = ModelViewMat * vec4(Position, 1.0);
-		   20 +     gl_Position = ProjMat * pos;
-		16    -     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
-		17 21   
-		18 22       texCoord0 = UV0;
-		   23 +     vertexDistance = fog_distance(pos.xyz, FogShape);
-		19    -     texCoord2 = UV2;
-		20 24       vertexColor = Color;
-		21 25   }
-		        '''
 	Changed file "core/rendertype_armor_cutout_no_cull.vsh":
 		Total line: 34 (+1, -3)
 		        '''

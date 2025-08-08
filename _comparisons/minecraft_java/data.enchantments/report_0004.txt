@@ -1,0 +1,44 @@
+Difference of "enchantments" between "24w21b" (snapshot of "1.21") and "1.21-pre1" (pre-release of "1.21").
+
+Changed data pack "minecraft":
+	Changed file "fire_aspect.json":
+		Changed field "effects":
+			Removed effect component "minecraft:hit_block":
+				component:
+					field "effect":
+						field "effects":
+							entity effect:
+								field "properties": property "lit": "true"
+								field "trigger_game_event": "minecraft:block_change"
+								field "type": "minecraft:set_block_properties"
+							entity effect:
+								field "amount": 1.0
+								field "type": "minecraft:damage_item"
+						field "type": "minecraft:all_of"
+					field "requirements":
+						field "predicate":
+							field "block":
+								field "blocks": "#minecraft:fire_aspect_lightable"
+								field "state": state "lit": "false"
+							field "fluid": field "fluids": "minecraft:empty"
+						field "condition": "minecraft:location_check"
+	Changed file "wind_burst.json":
+		Changed field "effects":
+			Changed effect component "minecraft:post_attack":
+				Changed component:
+					Changed field "effect":
+						Changed field "knockback_multiplier" from:
+							field "base": 0.5
+							field "per_level_above_first": 0.25
+							field "type": "minecraft:linear"
+						to:
+							field "values":
+								value 0: 1.2
+								value 1: 1.75
+								value 2: 2.2
+							field "fallback":
+								field "base": 1.5
+								field "per_level_above_first": 0.35
+								field "type": "minecraft:linear"
+							field "type": "minecraft:lookup"
+						Unchanged field "type": "minecraft:explode".
