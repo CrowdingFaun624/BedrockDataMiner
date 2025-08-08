@@ -1,0 +1,142 @@
+{
+    "group_aliases": {
+        "misc": "structures/misc/misc",
+        "temp": "structures/misc/template",
+        "s": "serializers"
+    },
+    "base": {
+        "inherit": "temp/base_single_file",
+        "$name": "flight_recorder_config",
+        "$serializer": "#@s/xml_serializer",
+        "$structure": "#@configuration"
+    },
+    "element": {
+        "inherit": "temp/SortedKeymap",
+        "$attributes": {},
+        "$children": {
+            "": {"types": "dict", "structure": "misc/empty_dict"} // this is necessary to ensure that the SwitchStructure knows what types it has.
+        },
+        "keys": {
+            "tag": {"types": "str"},
+            "attrib": {"types": "dict", "structure": {
+                "inherit": "temp/SortedKeymap",
+                "keys": "#attributes"
+            }},
+            "text": {"types": "str"},
+            "children": {"types": "list", "structure": {
+                "inherit": "temp/Set",
+                "$field": "child",
+                "value_types": "dict",
+                "value_structure": {
+                    "type": "Switch",
+                    "switch_function": {
+                        "function_name": "get_key",
+                        "arguments": {
+                            "key": "tag"
+                        }
+                    },
+                    "substructures": "#children"
+                }
+            }}
+        }
+    },
+    "configuration": {
+        "inherit": "element",
+        "$attributes": {
+            "status": {"types": "str"},
+            "packages": {"types": "str"}
+        },
+        "$children": {
+            "Appenders": {"types": "dict", "structure": "appenders"},
+            "Loggers": {"types": "dict", "structure": "loggers"}
+        }
+    },
+    "appenders": {
+        "inherit": "element",
+        "$children": {
+            "Console": {"types": "dict", "structure": "console"},
+            "RollingRandomAccessFile": {"types": "dict", "structure": "random_rolling_access_file"},
+            "Queue": {"types": "dict", "structure": "queue"}
+        }
+    },
+    "console": {
+        "inherit": "element",
+        "$attributes": {
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "target": {"types": "str"}
+        },
+        "$children": {
+            "PatternLayout": {"types": "dict", "structure": "pattern_layout"}
+        }
+    },
+    "pattern_layout": {
+        "inherit": "element",
+        "$attributes": {
+            "pattern": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "random_rolling_access_file": {
+        "inherit": "element",
+        "$attributes": {
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "fileName": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "filePattern": {"types": "str", "structure": "misc/string"}
+        },
+        "$children": {
+            "PatternLayout": {"types": "dict", "structure": "pattern_layout"},
+            "Policies": {"types": "dict", "structure": "policies"}
+        }
+    },
+    "policies": {
+        "inherit": "element",
+        "$children": {
+            "TimeBasedTriggeringPolicy": {"types": "dict", "structure": "element"},
+            "OnStartupTriggeringPolicy": {"types": "dict", "structure": "element"}
+        }
+    },
+    "queue": {
+        "inherit": "element",
+        "$attributes": {
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}}
+        },
+        "$children": {
+            "PatternLayout": {"types": "dict", "structure": "pattern_layout"}
+        }
+    },
+    "loggers": {
+        "inherit": "element",
+        "$children": {
+            "Root": {"types": "dict", "structure": "root"}
+        }
+    },
+    "root": {
+        "inherit": "element",
+        "$attributes": {
+            "level": {"types": "str", "delegate_arguments": {"always_print": true}}
+        },
+        "$children": {
+            "filters": {"types": "dict", "structure": "filters"},
+            "AppenderRef": {"types": "dict", "structure": "appender_ref"}
+        }
+    },
+    "filters": {
+        "inherit": "element",
+        "$children": {
+            "MarkerFilter": {"types": "dict", "structure": "marker_filter"}
+        }
+    },
+    "marker_filter": {
+        "inherit": "element",
+        "$attributes": {
+            "marker": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "onMatch": {"types": "str"},
+            "onMismatch": {"types": "str"}
+        }
+    },
+    "appender_ref": {
+        "inherit": "element",
+        "$attributes": {
+            "ref": {"types": "str"}
+        }
+    }
+}

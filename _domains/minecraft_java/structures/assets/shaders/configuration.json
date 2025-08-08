@@ -27,12 +27,81 @@
     "root": {
         "inherit": "temp/SortedKeymap",
         "keys": {
+            "attributes": {"types": "list", "structure": "#!misc/named_list{name='attribute'}"},
+            "targets": {"types": ["dict", "list"], "structure": "targets"},
+            "passes": {"types": "list", "structure": "passes"},
             "vertex": {"types": "str", "structure": "misc/string"},
             "fragment": {"types": "str", "structure": "misc/string"},
             "blend": {"types": "dict", "structure": "blend"},
             "defines": {"types": "dict", "structure": "defines"},
             "samplers": {"types": "list", "structure": "samplers"},
             "uniforms": {"types": "list", "structure": "uniforms"}
+        }
+    },
+    "targets": {
+        "type": "Union",
+        "substructures": {
+            "list": "#!misc/named_list{name='target'}",
+            "dict": {
+                "inherit": "temp/SortedKeymap",
+                "keys": {
+                    "swap": {"types": "dict", "structure": "misc/empty_dict"},
+                    "large_blur": {"types": "dict", "structure": "misc/empty_dict"},
+                    "small_blur": {"types": "dict", "structure": "misc/empty_dict"},
+                    "temp": {"types": "dict", "structure": "misc/empty_dict"},
+                    "final": {"types": "dict", "structure": "misc/empty_dict"}
+                }
+            }
+        }
+    },
+    "passes": {
+        "inherit": "temp/Sequence",
+        "$field": "pass",
+        "value_types": "dict",
+        "value_structure": "pass"
+    },
+    "pass": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "auxtargets": {"types": "list", "structure": "aux_targets"},
+            "inputs": {"types": "list", "structure": "inputs"},
+            "intarget": {"types": "str"},
+            "use_linear_filter": {"types": "bool"},
+            "output": {"types": "str"},
+            "outtarget": {"types": "str"},
+            "uniforms": {"types": "list", "structure": "uniforms"}
+        }
+    },
+    "aux_targets": {
+        "inherit": "temp/Sequence",
+        "$field": "aux target",
+        "value_types": "dict",
+        "value_structure": "aux_target"
+    },
+    "aux_target": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "id": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "width": {"types": "int"},
+            "height": {"types": "int"},
+            "bilinear": {"types": "bool"}
+        }
+    },
+    "inputs": {
+        "inherit": "temp/Sequence",
+        "$field": "input",
+        "value_types": "dict",
+        "value_structure": "input"
+    },
+    "input": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "sampler_name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
+            "target": {"types": "str"},
+            "bilinear": {"types": "bool"},
+            "use_depth_buffer": {"types": "bool"}
         }
     },
     "blend": {
@@ -51,39 +120,22 @@
         }
     },
     "values": {
-        "type": "Dict",
+        "inherit": "temp/Dict",
+        "$field": "value",
         "value_types": "str",
-        "delegate_arguments": {
-            "field": "value",
-            "measure_length": true
-        },
         "key_structure": "misc/string",
         "value_structure": "misc/string"
     },
     "flags": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
+        "inherit": "temp/Set",
+        "$field": "flag",
         "value_types": "str",
-        "delegate_arguments": {
-            "field": "flag",
-            "show_item_key": false,
-            "measure_length": true
-        },
         "value_structure": "misc/string"
     },
     "samplers": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
+        "inherit": "temp/Sequence",
+        "$field": "sampler",
         "value_types": "dict",
-        "delegate_arguments": {
-            "field": "sampler",
-            "show_item_key": false,
-            "measure_length": true
-        },
         "value_structure": "sampler"
     },
     "sampler": {
@@ -93,16 +145,9 @@
         }
     },
     "uniforms": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
+        "inherit": "temp/Sequence",
+        "$field": "uniform",
         "value_types": "dict",
-        "delegate_arguments": {
-            "field": "uniform",
-            "show_item_key": false,
-            "measure_length": true
-        },
         "value_structure": "uniform"
     },
     "uniform": {
@@ -111,6 +156,7 @@
             "name": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}},
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "count": {"types": "int"},
+            "RadiusMultiplier": {"types": "float"},
             "values": {"types": "list", "structure": "vector_decimal"}
         }
     }

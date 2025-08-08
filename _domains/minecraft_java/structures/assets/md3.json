@@ -1,0 +1,183 @@
+{
+    "group_aliases": {
+        "s": "serializers",
+        "temp": "structures/misc/template",
+        "vector": "structures/misc/vector"
+    },
+    "base": {
+        "inherit": "temp/base_multiple_files",
+        "$name": "md3",
+        "$serializer": "#@s/md3_serializer",
+        "$structure": "root"
+    },
+    "root": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "header": {"types": "dict", "structure": "header"},
+            "frames": {"types": "list", "structure": "frames"},
+            "tags": {"types": "list", "structure": "tags"},
+            "surfaces": {"types": "list", "structure": "surfaces"}
+        }
+    },
+    "header": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "MD3_START": {"types": "int"},
+            "IDENT": {"types": "int"},
+            "VERSION": {"types": "int"},
+            "NAME": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "FLAGS": {"types": "int"},
+            "NUM_FRAMES": {"types": "int"},
+            "NUM_TAGS": {"types": "int"},
+            "NUM_SKINS": {"types": "int"},
+            "NUM_SURFACES": {"types": "int"},
+            "OFS_FRAMES": {"types": "int"},
+            "OFS_TAGS": {"types": "int"},
+            "OFS_SURFACES": {"types": "int"},
+            "OFS_EOF": {"types": "int"}
+        }
+    },
+    "frames": {
+        "inherit": "temp/Set",
+        "$field": "frame",
+        "value_types": "dict",
+        "value_structure": "frame"
+    },
+    "frame": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "MIN_BOUNDS": {"types": "tuple", "structure": "vector/vector.tuple_float"},
+            "MAX_BOUNDS": {"types": "tuple", "structure": "vector/vector.tuple_float"},
+            "LOCAL_ORIGIN": {"types": "tuple", "structure": "vector/vector.tuple_float"},
+            "RADIUS": {"types": "float"},
+            "NAME": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "tags": {
+        "inherit": "temp/Set",
+        "$field": "tag",
+        "value_types": "dict",
+        "value_structure": "tag"
+    },
+    "tag": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "NAME": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "ORIGIN": {"types": "tuple", "structure": "vector/vector.tuple_float"},
+            "AXIS": {"types": "tuple", "structure": "tag:axis"}
+        }
+    },
+    "tag:axis": {
+        "inherit": "temp/List",
+        "$field": "axis",
+        "$print_all": true,
+        "$print_flat": true,
+        "this_types": "tuple",
+        "value_types": "tuple",
+        "value_structure": "vector/vector.tuple_float"
+    },
+    "surfaces": {
+        "inherit": "temp/Set",
+        "$field": "surface",
+        "value_types": "dict",
+        "value_structure": "surface"
+    },
+    "surface": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "header": {"types": "dict", "structure": "surface:header"},
+            "shaders": {"types": "list", "structure": "shaders"},
+            "triangles": {"types": "list", "structure": "triangles"},
+            "tex_coords": {"types": "list", "structure": "tex_coords"},
+            "vertices": {"types": "list", "structure": "vertices"}
+        }
+    },
+    "surface:header": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "SURFACE_START": {"types": "int"},
+            "IDENT": {"types": "int"},
+            "NAME": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "FLAGS": {"types": "int"},
+            "NUM_FRAMES": {"types": "int"},
+            "NUM_SHADERS": {"types": "int"},
+            "NUM_VERTS": {"types": "int"},
+            "NUM_TRIANGLES": {"types": "int"},
+            "OFS_TRIANGLES": {"types": "int"},
+            "OFS_SHADERS": {"types": "int"},
+            "OFS_ST": {"types": "int"},
+            "OFS_XYZNORMAL": {"types": "int"},
+            "OFS_END": {"types": "int"}
+        }
+    },
+    "shaders": {
+        "inherit": "temp/Set",
+        "$field": "shader",
+        "value_types": "dict",
+        "value_structure": "shader"
+    },
+    "shader": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "NAME": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "SHADER_INDEX": {"types": "int"}
+        }
+    },
+    "triangles": {
+        "inherit": "temp/Set",
+        "$field": "triangle",
+        "value_types": "dict",
+        "value_structure": "triangle"
+    },
+    "triangle": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "INDEXES": {"types": "tuple", "structure": "triangle:indexes"}
+        }
+    },
+    "triangle:indexes": {
+        "inherit": "temp/List",
+        "$field": "index",
+        "$print_all": true,
+        "$print_flat": true,
+        "this_types": "tuple",
+        "value_types": "int",
+        "value_structure": null
+    },
+    "tex_coords": {
+        "inherit": "temp/Set",
+        "$field": "tex coord",
+        "value_types": "dict",
+        "value_structure": "tex_coord"
+    },
+    "tex_coord": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "ST": {"types": "tuple", "structure": "tex_coord:st"}
+        }
+    },
+    "tex_coord:st": {
+        "inherit": "temp/List",
+        "$field": "coordinate",
+        "$print_all": true,
+        "$print_flat": true,
+        "this_types": "tuple",
+        "value_types": "float",
+        "value_structure": null
+    },
+    "vertices": {
+        "inherit": "temp/Set",
+        "$field": "vertex",
+        "value_types": "dict",
+        "value_structure": "vertex"
+    },
+    "vertex": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "X": {"types": "int"},
+            "Y": {"types": "int"},
+            "Z": {"types": "int"},
+            "NORMAL": {"types": "int"}
+        }
+    }
+}

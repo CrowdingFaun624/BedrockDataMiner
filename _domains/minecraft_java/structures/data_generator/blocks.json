@@ -1,0 +1,581 @@
+{
+    "group_aliases": {
+        "a": "structures/misc/types",
+        "ip": "structures/misc/provider/int_provider",
+        "misc": "structures/misc/misc",
+        "particle": "structures/data/particles/particles",
+        "t": "structure_tags",
+        "temp": "structures/misc/template"
+    },
+    "base": {
+        "inherit": "temp/base_single_file",
+        "$name": "blocks",
+        "$structure": "#@blocks"
+    },
+    "blocks": {
+        "inherit": "temp/Dict",
+        "$field": "block",
+        "value_types": "dict",
+        "value_structure": "block"
+    },
+    "block": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "definition": {"types": "dict", "structure": "definition"},
+            "properties": {"types": "dict", "structure": "properties"},
+            "states": {"types": "list", "structure": "states"}
+        }
+    },
+    "properties": {
+        "inherit": "temp/Dict",
+        "$field": "property",
+        "value_types": "list",
+        "value_structure": "#!misc/named_list{name='value'}"
+    },
+    "states": {
+        "inherit": "temp/Set",
+        "$field": "state",
+        "value_types": "dict",
+        "value_structure": "state"
+    },
+    "state": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "id": {"types": "int", "delegate_arguments": {"always_print": true}},
+            "default": {"types": "bool"},
+            "properties": {"types": "dict", "structure": "state:properties"}
+        }
+    },
+    "state:properties": {
+        "inherit": "temp/Dict",
+        "$field": "property",
+        "value_types": "str",
+        "value_structure": null
+    },
+    "definition": {
+        "type": "Switch",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "substructures": {
+            "minecraft:air": {"types": "dict", "structure": "definition:block"},
+            "minecraft:amethyst": {"types": "dict", "structure": "definition:block"},
+            "minecraft:amethyst_cluster": {"types": "dict", "structure": "#!definition:block{imports=[@definition.amethyst_cluster]}"},
+            "minecraft:anvil": {"types": "dict", "structure": "definition:block"},
+            "minecraft:attached_stem": {"types": "dict", "structure": "#!definition:block{imports=[@definition.abstract_stem, @definition.attached_stem]}"},
+            "minecraft:azalea": {"types": "dict", "structure": "definition:block"},
+            "minecraft:bamboo_sapling": {"types": "dict", "structure": "definition:block"},
+            "minecraft:bamboo_stalk": {"types": "dict", "structure": "definition:block"},
+            "minecraft:banner": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored]}"},
+            "minecraft:barrel": {"types": "dict", "structure": "definition:block"},
+            "minecraft:barrier": {"types": "dict", "structure": "definition:block"},
+            "minecraft:base_coral_fan": {"types": "dict", "structure": "definition:block"},
+            "minecraft:base_coral_plant": {"types": "dict", "structure": "definition:block"},
+            "minecraft:base_coral_wall_fan": {"types": "dict", "structure": "definition:block"},
+            "minecraft:beacon": {"types": "dict", "structure": "definition:block"},
+            "minecraft:bed": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored]}"},
+            "minecraft:beehive": {"types": "dict", "structure": "definition:block"},
+            "minecraft:beetroot": {"types": "dict", "structure": "definition:block"},
+            "minecraft:bell": {"types": "dict", "structure": "definition:block"},
+            "minecraft:blast_furnace": {"types": "dict", "structure": "definition:block"},
+            "minecraft:big_dripleaf": {"types": "dict", "structure": "definition:block"},
+            "minecraft:big_dripleaf_stem": {"types": "dict", "structure": "definition:block"},
+            "minecraft:block": {"types": "dict", "structure": "definition:block"},
+            "minecraft:bonemealable_feature_placer": {"types": "dict", "structure": "#!definition:block{imports=[@definition.feature_placer]}"},
+            "minecraft:brewing_stand": {"types": "dict", "structure": "definition:block"},
+            "minecraft:brushable": {"types": "dict", "structure": "#!definition:block{imports=[@definition.brushable]}"},
+            "minecraft:bubble_column": {"types": "dict", "structure": "definition:block"},
+            "minecraft:budding_amethyst": {"types": "dict", "structure": "definition:block"},
+            "minecraft:bush": {"types": "dict", "structure": "definition:block"},
+            "minecraft:button": {"types": "dict", "structure": "#!definition:block{imports=[@definition.block_set_type, @definition.button]}"},
+            "minecraft:cactus": {"types": "dict", "structure": "definition:block"},
+            "minecraft:cactus_flower": {"types": "dict", "structure": "definition:block"},
+            "minecraft:cake": {"types": "dict", "structure": "definition:block"},
+            "minecraft:calibrated_sculk_sensor": {"types": "dict", "structure": "definition:block"},
+            "minecraft:campfire": {"types": "dict", "structure": "#!definition:block{imports=[@definition.campfire]}"},
+            "minecraft:candle": {"types": "dict", "structure": "definition:block"},
+            "minecraft:candle_cake": {"types": "dict", "structure": "#!definition:block{imports=[@definition.candle_cake]}"},
+            "minecraft:carpet": {"types": "dict", "structure": "definition:block"},
+            "minecraft:carrot": {"types": "dict", "structure": "definition:block"},
+            "minecraft:cartography_table": {"types": "dict", "structure": "definition:block"},
+            "minecraft:carved_pumpkin": {"types": "dict", "structure": "definition:block"},
+            "minecraft:cauldron": {"types": "dict", "structure": "definition:block"},
+            "minecraft:cave_vines": {"types": "dict", "structure": "definition:block"},
+            "minecraft:cave_vines_plant": {"types": "dict", "structure": "definition:block"},
+            "minecraft:ceiling_hanging_sign": {"types": "dict", "structure": "#!definition:block{imports=[@definition.wood_type]}"},
+            "minecraft:chain": {"types": "dict", "structure": "definition:block"},
+            "minecraft:cherry_leaves": {"types": "dict", "structure": "definition:block"},
+            "minecraft:chest": {"types": "dict", "structure": "definition:block"},
+            "minecraft:chiseled_book_shelf": {"types": "dict", "structure": "definition:block"},
+            "minecraft:chorus_flower": {"types": "dict", "structure": "#!definition:block{imports=[@definition.chorus_flower]}"},
+            "minecraft:chorus_plant": {"types": "dict", "structure": "definition:block"},
+            "minecraft:cocoa": {"types": "dict", "structure": "definition:block"},
+            "minecraft:colored_falling": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored_falling]}"},
+            "minecraft:command": {"types": "dict", "structure": "#!definition:block{imports=[@definition.command]}"},
+            "minecraft:comparator": {"types": "dict", "structure": "definition:block"},
+            "minecraft:composter": {"types": "dict", "structure": "definition:block"},
+            "minecraft:concrete_powder": {"types": "dict", "structure": "#!definition:block{imports=[@definition.concrete_powder]}"},
+            "minecraft:conduit": {"types": "dict", "structure": "definition:block"},
+            "minecraft:copper_bulb_block": {"types": "dict", "structure": "definition:block"},
+            "minecraft:coral": {"types": "dict", "structure": "#!definition:block{imports=[@definition.coral]}"},
+            "minecraft:coral_fan": {"types": "dict", "structure": "#!definition:block{imports=[@definition.coral]}"},
+            "minecraft:coral_plant": {"types": "dict", "structure": "#!definition:block{imports=[@definition.coral]}"},
+            "minecraft:coral_wall_fan": {"types": "dict", "structure": "#!definition:block{imports=[@definition.coral]}"},
+            "minecraft:crafter": {"types": "dict", "structure": "definition:block"},
+            "minecraft:crafting_table": {"types": "dict", "structure": "definition:block"},
+            "minecraft:creaking_heart": {"types": "dict", "structure": "definition:block"},
+            "minecraft:crop": {"types": "dict", "structure": "definition:block"},
+            "minecraft:crying_obsidian": {"types": "dict", "structure": "definition:block"},
+            "minecraft:daylight_detector": {"types": "dict", "structure": "definition:block"},
+            "minecraft:dead_bush": {"types": "dict", "structure": "definition:block"},
+            "minecraft:decorated_pot": {"types": "dict", "structure": "definition:block"},
+            "minecraft:detector_rail": {"types": "dict", "structure": "definition:block"},
+            "minecraft:dirt_path": {"types": "dict", "structure": "definition:block"},
+            "minecraft:dispenser": {"types": "dict", "structure": "definition:block"},
+            "minecraft:door": {"types": "dict", "structure": "#!definition:block{imports=[@definition.block_set_type]}"},
+            "minecraft:double_plant": {"types": "dict", "structure": "definition:block"},
+            "minecraft:dragon_egg": {"types": "dict", "structure": "definition:block"},
+            "minecraft:dried_ghast": {"types": "dict", "structure": "definition:block"},
+            "minecraft:drop_experience": {"types": "dict", "structure": "#!definition:block{imports=[@definition.drop_experience]}"},
+            "minecraft:dry_vegetation": {"types": "dict", "structure": "definition:block"},
+            "minecraft:dropper": {"types": "dict", "structure": "definition:block"},
+            "minecraft:enchantment_table": {"types": "dict", "structure": "definition:block"}, // enchantment table. WHY
+            "minecraft:end_gateway": {"types": "dict", "structure": "definition:block"},
+            "minecraft:end_portal": {"types": "dict", "structure": "definition:block"},
+            "minecraft:end_portal_frame": {"types": "dict", "structure": "definition:block"},
+            "minecraft:end_rod": {"types": "dict", "structure": "definition:block"},
+            "minecraft:ender_chest": {"types": "dict", "structure": "definition:block"},
+            "minecraft:eyeblossom": {"types": "dict", "structure": "#!definition:block{imports=[@definition.eyeblossom]}"},
+            "minecraft:farm": {"types": "dict", "structure": "definition:block"},
+            "minecraft:fence": {"types": "dict", "structure": "definition:block"},
+            "minecraft:fence_gate": {"types": "dict", "structure": "#!definition:block{imports=[@definition.wood_type]}"},
+            "minecraft:fire": {"types": "dict", "structure": "definition:block"},
+            "minecraft:firefly_bush": {"types": "dict", "structure": "definition:block"},
+            "minecraft:fletching_table": {"types": "dict", "structure": "definition:block"},
+            "minecraft:flower": {"types": "dict", "structure": "#!definition:block{imports=[@definition.flower]}"},
+            "minecraft:flower_bed": {"types": "dict", "structure": "definition:block"},
+            "minecraft:flower_pot": {"types": "dict", "structure": "#!definition:block{imports=[@definition.flower_pot]}"},
+            "minecraft:frogspawn": {"types": "dict", "structure": "definition:block"},
+            "minecraft:frosted_ice": {"types": "dict", "structure": "definition:block"},
+            "minecraft:fungus": {"types": "dict", "structure": "#!definition:block{imports=[@definition.feature_placer, @definition.fungus]}"},
+            "minecraft:furnace": {"types": "dict", "structure": "definition:block"},
+            "minecraft:glazed_terracotta": {"types": "dict", "structure": "definition:block"},
+            "minecraft:glow_lichen": {"types": "dict", "structure": "definition:block"},
+            "minecraft:grass": {"types": "dict", "structure": "definition:block"},
+            "minecraft:grindstone": {"types": "dict", "structure": "definition:block"},
+            "minecraft:half_transparent": {"types": "dict", "structure": "definition:block"},
+            "minecraft:huge_mushroom": {"types": "dict", "structure": "definition:block"},
+            "minecraft:hanging_moss": {"types": "dict", "structure": "definition:block"},
+            "minecraft:hanging_roots": {"types": "dict", "structure": "definition:block"},
+            "minecraft:hay": {"types": "dict", "structure": "definition:block"},
+            "minecraft:heavy_core": {"types": "dict", "structure": "definition:block"},
+            "minecraft:honey": {"types": "dict", "structure": "definition:block"},
+            "minecraft:hopper": {"types": "dict", "structure": "definition:block"},
+            "minecraft:ice": {"types": "dict", "structure": "definition:block"},
+            "minecraft:infested": {"types": "dict", "structure": "#!definition:block{imports=[@definition.infested]}"},
+            "minecraft:infested_rotated_pillar": {"types": "dict", "structure": "#!definition:block{imports=[@definition.infested]}"},
+            "minecraft:iron_bars": {"types": "dict", "structure": "definition:block"},
+            "minecraft:jack_o_lantern": {"types": "dict", "structure": "definition:block"},
+            "minecraft:jigsaw": {"types": "dict", "structure": "definition:block"},
+            "minecraft:jukebox": {"types": "dict", "structure": "definition:block"},
+            "minecraft:kelp": {"types": "dict", "structure": "definition:block"},
+            "minecraft:kelp_plant": {"types": "dict", "structure": "definition:block"},
+            "minecraft:ladder": {"types": "dict", "structure": "definition:block"},
+            "minecraft:lantern": {"types": "dict", "structure": "definition:block"},
+            "minecraft:lava_cauldron": {"types": "dict", "structure": "definition:block"},
+            "minecraft:layered_cauldron": {"types": "dict", "structure": "#!definition:block{imports=[@definition.layered_cauldron]}"},
+            "minecraft:leaf_litter": {"types": "dict", "structure": "definition:block"},
+            "minecraft:leaves": {"types": "dict", "structure": "#!definition:block{imports=[@definition.particle_leaves, @definition.leaf_particle]}"},
+            "minecraft:lectern": {"types": "dict", "structure": "definition:block"},
+            "minecraft:lever": {"types": "dict", "structure": "definition:block"},
+            "minecraft:light": {"types": "dict", "structure": "definition:block"},
+            "minecraft:lightning_rod": {"types": "dict", "structure": "definition:block"},
+            "minecraft:liquid": {"types": "dict", "structure": "#!definition:block{imports=[@definition.liquid]}"},
+            "minecraft:loom": {"types": "dict", "structure": "definition:block"},
+            "minecraft:magma": {"types": "dict", "structure": "definition:block"},
+            "minecraft:mangrove_leaves": {"types": "dict", "structure": "#!definition:block{imports=[@definition.particle_leaves, @definition.leaf_particle]}"},
+            "minecraft:mangrove_propagule": {"types": "dict", "structure": "#!definition:block{imports=[@definition.sapling]}"},
+            "minecraft:mangrove_roots": {"types": "dict", "structure": "definition:block"},
+            "minecraft:moss": {"types": "dict", "structure": "definition:block"},
+            "minecraft:mossy_carpet": {"types": "dict", "structure": "definition:block"},
+            "minecraft:moving_piston": {"types": "dict", "structure": "definition:block"},
+            "minecraft:mud": {"types": "dict", "structure": "definition:block"},
+            "minecraft:multiface": {"types": "dict", "structure": "definition:block"},
+            "minecraft:mushroom": {"types": "dict", "structure": "#!definition:block{imports=[@definition.feature_placer]}"},
+            "minecraft:mycelium": {"types": "dict", "structure": "definition:block"},
+            "minecraft:nether_portal": {"types": "dict", "structure": "definition:block"},
+            "minecraft:nether_sprouts": {"types": "dict", "structure": "definition:block"},
+            "minecraft:nether_wart": {"types": "dict", "structure": "definition:block"},
+            "minecraft:netherrack": {"types": "dict", "structure": "definition:block"},
+            "minecraft:note": {"types": "dict", "structure": "definition:block"},
+            "minecraft:nylium": {"types": "dict", "structure": "definition:block"},
+            "minecraft:observer": {"types": "dict", "structure": "definition:block"},
+            "minecraft:particle_leaves": {"types": "dict", "structure": "#!definition:block{imports=[@definition.particle_leaves, @definition.leaf_particle]}"},
+            "minecraft:piglinwallskull": {"types": "dict", "structure": "definition:block"},
+            "minecraft:pink_petals": {"types": "dict", "structure": "definition:block"},
+            "minecraft:piston_base": {"types": "dict", "structure": "#!definition:block{imports=[@definition.piston_base]}"},
+            "minecraft:piston_head": {"types": "dict", "structure": "definition:block"},
+            "minecraft:pitcher_crop": {"types": "dict", "structure": "definition:block"},
+            "minecraft:player_head": {"types": "dict", "structure": "definition:block"},
+            "minecraft:player_wall_head": {"types": "dict", "structure": "definition:block"},
+            "minecraft:pointed_dripstone": {"types": "dict", "structure": "definition:block"},
+            "minecraft:potato": {"types": "dict", "structure": "definition:block"},
+            "minecraft:powder_snow": {"types": "dict", "structure": "definition:block"},
+            "minecraft:powered": {"types": "dict", "structure": "definition:block"},
+            "minecraft:powered_rail": {"types": "dict", "structure": "definition:block"},
+            "minecraft:pressure_plate": {"types": "dict", "structure": "#!definition:block{imports=[@definition.block_set_type]}"},
+            "minecraft:pumpkin": {"types": "dict", "structure": "definition:block"},
+            "minecraft:rail": {"types": "dict", "structure": "definition:block"},
+            "minecraft:redstone_lamp": {"types": "dict", "structure": "definition:block"},
+            "minecraft:redstone_ore": {"types": "dict", "structure": "definition:block"},
+            "minecraft:redstone_torch": {"types": "dict", "structure": "definition:block"},
+            "minecraft:redstone_wall_torch": {"types": "dict", "structure": "definition:block"},
+            "minecraft:redstone_wire": {"types": "dict", "structure": "definition:block"},
+            "minecraft:repeater": {"types": "dict", "structure": "definition:block"},
+            "minecraft:respawn_anchor": {"types": "dict", "structure": "definition:block"},
+            "minecraft:rooted_dirt": {"types": "dict", "structure": "definition:block"},
+            "minecraft:roots": {"types": "dict", "structure": "definition:block"},
+            "minecraft:rotated_pillar": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sand": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored_falling]}"},
+            "minecraft:sapling": {"types": "dict", "structure": "#!definition:block{imports=[@definition.sapling]}"},
+            "minecraft:scaffolding": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sculk": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sculk_catalyst": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sculk_sensor": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sculk_shrieker": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sculk_vein": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sea_pickle": {"types": "dict", "structure": "definition:block"},
+            "minecraft:seagrass": {"types": "dict", "structure": "definition:block"},
+            "minecraft:short_dry_grass": {"types": "dict", "structure": "definition:block"},
+            "minecraft:shulker_box": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored]}"},
+            "minecraft:skull": {"types": "dict", "structure": "#!definition:block{imports=[@definition.skull]}"},
+            "minecraft:slab": {"types": "dict", "structure": "definition:block"},
+            "minecraft:slime": {"types": "dict", "structure": "definition:block"},
+            "minecraft:small_dripleaf": {"types": "dict", "structure": "definition:block"},
+            "minecraft:smithing_table": {"types": "dict", "structure": "definition:block"},
+            "minecraft:smoker": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sniffer_egg": {"types": "dict", "structure": "definition:block"},
+            "minecraft:snow_layer": {"types": "dict", "structure": "definition:block"},
+            "minecraft:snowy_dirt": {"types": "dict", "structure": "definition:block"},
+            "minecraft:soul_fire": {"types": "dict", "structure": "definition:block"},
+            "minecraft:soul_sand": {"types": "dict", "structure": "definition:block"},
+            "minecraft:spawner": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sponge": {"types": "dict", "structure": "definition:block"},
+            "minecraft:spore_blossom": {"types": "dict", "structure": "definition:block"},
+            "minecraft:stained_glass": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored]}"},
+            "minecraft:stained_glass_pane": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored]}"},
+            "minecraft:stair": {"types": "dict", "structure": "#!definition:block{imports=[@definition.stair]}"},
+            "minecraft:standing_sign": {"types": "dict", "structure": "#!definition:block{imports=[@definition.wood_type]}"},
+            "minecraft:stem": {"types": "dict", "structure": "#!definition:block{imports=[@definition.stem, @definition.abstract_stem]}"},
+            "minecraft:stonecutter": {"types": "dict", "structure": "definition:block"},
+            "minecraft:structure": {"types": "dict", "structure": "definition:block"},
+            "minecraft:structure_void": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sugar_cane": {"types": "dict", "structure": "definition:block"},
+            "minecraft:sweet_berry_bush": {"types": "dict", "structure": "definition:block"},
+            "minecraft:tall_dry_grass": {"types": "dict", "structure": "definition:block"},
+            "minecraft:tall_flower": {"types": "dict", "structure": "definition:block"},
+            "minecraft:tall_grass": {"types": "dict", "structure": "definition:block"},
+            "minecraft:tall_seagrass": {"types": "dict", "structure": "definition:block"},
+            "minecraft:target": {"types": "dict", "structure": "definition:block"},
+            "minecraft:terracotta": {"types": "dict", "structure": "definition:block"},
+            "minecraft:test": {"types": "dict", "structure": "definition:block"},
+            "minecraft:test_instance": {"types": "dict", "structure": "definition:block"},
+            "minecraft:tinted_glass": {"types": "dict", "structure": "definition:block"},
+            "minecraft:tinted_leaves": {"types": "dict", "structure": "#!definition:block{imports=[@definition.particle_leaves]}"},
+            "minecraft:tinted_particle_leaves": {"types": "dict", "structure": "#!definition:block{imports=[@definition.particle_leaves]}"},
+            "minecraft:tnt": {"types": "dict", "structure": "definition:block"},
+            "minecraft:torch": {"types": "dict", "structure": "#!definition:block{imports=[@definition.torch]}"},
+            "minecraft:torchflower_crop": {"types": "dict", "structure": "definition:block"},
+            "minecraft:transparent": {"types": "dict", "structure": "definition:block"},
+            "minecraft:trapdoor": {"types": "dict", "structure": "#!definition:block{imports=[@definition.block_set_type]}"},
+            "minecraft:trapped_chest": {"types": "dict", "structure": "definition:block"},
+            "minecraft:trial_spawner": {"types": "dict", "structure": "definition:block"},
+            "minecraft:trip_wire_hook": {"types": "dict", "structure": "definition:block"},
+            "minecraft:tripwire": {"types": "dict", "structure": "#!definition:block{imports=[@definition.tripwire]}"},
+            "minecraft:turtle_egg": {"types": "dict", "structure": "definition:block"},
+            "minecraft:twisting_vines": {"types": "dict", "structure": "definition:block"},
+            "minecraft:twisting_vines_plant": {"types": "dict", "structure": "definition:block"},
+            "minecraft:untinted_particle_leaves": {"types": "dict", "structure": "#!definition:block{imports=[@definition.particle_leaves, @definition.leaf_particle]}"},
+            "minecraft:vault": {"types": "dict", "structure": "definition:block"},
+            "minecraft:vine": {"types": "dict", "structure": "definition:block"},
+            "minecraft:wall": {"types": "dict", "structure": "definition:block"},
+            "minecraft:wall_banner": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored]}"},
+            "minecraft:wall_hanging_sign": {"types": "dict", "structure": "#!definition:block{imports=[@definition.wood_type]}"},
+            "minecraft:wall_sign": {"types": "dict", "structure": "#!definition:block{imports=[@definition.wood_type]}"},
+            "minecraft:wall_skull": {"types": "dict", "structure": "#!definition:block{imports=[@definition.skull]}"},
+            "minecraft:wall_torch": {"types": "dict", "structure": "#!definition:block{imports=[@definition.torch]}"},
+            "minecraft:waterlily": {"types": "dict", "structure": "definition:block"},
+            "minecraft:waterlogged_transparent": {"types": "dict", "structure": "definition:block"},
+            "minecraft:weathering_copper_bulb": {"types": "dict", "structure": "#!definition:block{imports=[@definition.weathering]}"},
+            "minecraft:weathering_copper_door": {"types": "dict", "structure": "#!definition:block{imports=[@definition.block_set_type, @definition.weathering]}"},
+            "minecraft:weathering_copper_full": {"types": "dict", "structure": "#!definition:block{imports=[@definition.weathering]}"},
+            "minecraft:weathering_copper_grate": {"types": "dict", "structure": "#!definition:block{imports=[@definition.weathering]}"},
+            "minecraft:weathering_copper_slab": {"types": "dict", "structure": "#!definition:block{imports=[@definition.weathering]}"},
+            "minecraft:weathering_copper_stair": {"types": "dict", "structure": "#!definition:block{imports=[@definition.stair, @definition.weathering]}"},
+            "minecraft:weathering_copper_trap_door": {"types": "dict", "structure": "#!definition:block{imports=[@definition.block_set_type, @definition.weathering]}"},
+            "minecraft:web": {"types": "dict", "structure": "definition:block"},
+            "minecraft:weeping_vines": {"types": "dict", "structure": "definition:block"},
+            "minecraft:weeping_vines_plant": {"types": "dict", "structure": "definition:block"},
+            "minecraft:weighted_pressure_plate": {"types": "dict", "structure": "#!definition:block{imports=[@definition.block_set_type, @definition.weighted_pressure_plate]}"},
+            "minecraft:wet_sponge": {"types": "dict", "structure": "definition:block"},
+            "minecraft:wither_rose": {"types": "dict", "structure": "#!definition:block{imports=[@definition.flower]}"},
+            "minecraft:wither_skull": {"types": "dict", "structure": "definition:block"},
+            "minecraft:wither_wall_skull": {"types": "dict", "structure": "definition:block"},
+            "minecraft:wool_carpet": {"types": "dict", "structure": "#!definition:block{imports=[@definition.colored]}"}
+        }
+    },
+    "definition:block": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
+        "$imports": [],
+        "imports": "#imports",
+        "keys": {
+            "type": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "properties": {"types": "dict", "structure": "misc/empty_dict"}
+        }
+    },
+    "definition.abstract_stem": {
+        "type": "Keymap",
+        "keys": {
+            "fruit": {"types": "str"},
+            "seed": {"types": "str"}
+        }
+    },
+    "definition.amethyst_cluster": {
+        "type": "Keymap",
+        "keys": {
+            "aabb_offset": {"types": "float"},
+            "height": {"types": "float"},
+            "width": {"types": "float"}
+        }
+    },
+    "definition.attached_stem": {
+        "type": "Keymap",
+        "keys": {
+            "stem": {"types": "str"}
+        }
+    },
+    "definition.block_set_type": {
+        "type": "Keymap",
+        "keys": {
+            "block_set_type": {"types": "str"}
+        }
+    },
+    "definition.brushable": {
+        "type": "Keymap",
+        "keys": {
+            "brush_comleted_sound": {"types": "str", "tags": "t/outdated"}, // https://bugs.mojang.com/browse/MC/issues/MC-265703
+            "brush_completed_sound": {"types": "str"},
+            "brush_sound": {"types": "str"},
+            "turns_into": {"types": "str"}
+        }
+    },
+    "definition.button": {
+        "type": "Keymap",
+        "keys": {
+            "ticks_to_stay_pressed": {"types": "int"}
+        }
+    },
+    "definition.campfire": {
+        "type": "Keymap",
+        "keys": {
+            "fire_damage": {"types": "int"},
+            "spawn_particles": {"types": "bool"}
+        }
+    },
+    "definition.candle_cake": {
+        "type": "Keymap",
+        "keys": {
+            "candle": {"types": "str"}
+        }
+    },
+    "definition.chorus_flower": {
+        "type": "Keymap",
+        "keys": {
+            "plant": {"types": "str"}
+        }
+    },
+    "definition.colored": {
+        "type": "Keymap",
+        "keys": {
+            "color": {"types": "str"}
+        }
+    },
+    "definition.colored_falling": {
+        "type": "Keymap",
+        "keys": {
+            "falling_dust_color": {"types": "str"}
+        }
+    },
+    "definition.command": {
+        "type": "Keymap",
+        "keys": {
+            "automatic": {"types": "bool"}
+        }
+    },
+    "definition.concrete_powder": {
+        "type": "Keymap",
+        "keys": {
+            "concrete": {"types": "str"}
+        }
+    },
+    "definition.coral": {
+        "type": "Keymap",
+        "keys": {
+            "dead": {"types": "str"}
+        }
+    },
+    "definition.drop_experience": {
+        "type": "Keymap",
+        "keys": {
+            "experience": {"types": ["int", "dict"], "structure": "ip/int_provider"}
+        }
+    },
+    "definition.eyeblossom": {
+        "type": "Keymap",
+        "keys": {
+            "open": {"types": "bool"}
+        }
+    },
+    "definition.feature_placer": {
+        "type": "Keymap",
+        "keys": {
+            "feature": {"types": "str"}
+        }
+    },
+    "definition.flower": {
+        "type": "Keymap",
+        "keys": {
+            "suspicious_stew_effects": {"types": "list", "structure": "definition.flower:suspicious_stew_effects"}
+        }
+    },
+    "definition.flower:suspicious_stew_effects": {
+        "inherit": "temp/Set",
+        "$field": "effect",
+        "value_types": "dict",
+        "value_structure": "definition.flower:suspcious_stew_effect"
+    },
+    "definition.flower:suspcious_stew_effect": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "duration": {"types": "int"},
+            "id": {"types": "str", "structure": "misc/string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "definition.flower_pot": {
+        "type": "Keymap",
+        "keys": {
+            "potted": {"types": "str"}
+        }
+    },
+    "definition.fungus": {
+        "type": "Keymap",
+        "keys": {
+            "grows_on": {"types": "str"}
+        }
+    },
+    "definition.infested": {
+        "type": "Keymap",
+        "keys": {
+            "host": {"types": "str"}
+        }
+    },
+    "definition.layered_cauldron": {
+        "type": "Keymap",
+        "keys": {
+            "interactions": {"types": "str"},
+            "precipitation": {"types": "str"}
+        }
+    },
+    "definition.leaf_particle": {
+        "type": "Keymap",
+        "keys": {
+            "leaf_particle": {"types": "a/compound", "structure": "particle/particle"},
+            "particle": {"types": "a/compound", "structure": "particle/particle", "tags": "t/outdated"}
+        }
+    },
+    "definition.liquid": {
+        "type": "Keymap",
+        "keys": {
+            "fluid": {"types": "str"}
+        }
+    },
+    "definition.particle_leaves": {
+        "type": "Keymap",
+        "keys": {
+            "chance": {"types": "int", "tags": "t/outdated"},
+            "leaf_particle_chance": {"types": "float"}
+        }
+    },
+    "definition.piston_base": {
+        "type": "Keymap",
+        "keys": {
+            "sticky": {"types": "bool"}
+        }
+    },
+    "definition.sapling": {
+        "type": "Keymap",
+        "keys": {
+            "tree": {"types": "str"}
+        }
+    },
+    "definition.skull": {
+        "type": "Keymap",
+        "keys": {
+            "kind": {"types": "str"}
+        }
+    },
+    "definition.stair": {
+        "type": "Keymap",
+        "keys": {
+            "base_state": {"types": "dict", "structure": "definition.stair:base_state"}
+        }
+    },
+    "definition.stair:base_state": {
+        "inherit": "temp/SortedKeymap",
+        "keys": {
+            "Name": {"types": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "definition.stem": {
+        "type": "Keymap",
+        "keys": {
+            "attached_stem": {"types": "str"}
+        }
+    },
+    "definition.torch": {
+        "type": "Keymap",
+        "keys": {
+            "particle_options": {"types": "str"}
+        }
+    },
+    "definition.tripwire": {
+        "type": "Keymap",
+        "keys": {
+            "hook": {"types": "str"}
+        }
+    },
+    "definition.weathering": {
+        "type": "Keymap",
+        "keys": {
+            "weathering_state": {"types": "str"}
+        }
+    },
+    "definition.weighted_pressure_plate": {
+        "type": "Keymap",
+        "keys": {
+            "max_weight": {"types": "int"}
+        }
+    },
+    "definition.wood_type": {
+        "type": "Keymap",
+        "keys": {
+            "wood_type": {"types": "str"}
+        }
+    }
+}

@@ -28,7 +28,7 @@
             "minecraft:armor_effectiveness": {"types": "list", "structure": "#!component_list{structure=@component.value_effect}"},
             "minecraft:attributes": {"types": "list", "structure": "component.attributes"},
             "minecraft:block_experience": {"types": "list", "structure": "#!component_list{structure=@component.value_effect}"},
-            "minecraft:crossbow_charge_time": {"types": "dict", "structure": "effect.value"},
+            "minecraft:crossbow_charge_time": {"types": ["dict", "list"], "structure": "value_effect_list_or_value_effect"},
             "minecraft:crossbow_charging_sounds": {"types": "list", "structure": "component.crossbow_charging_sounds"},
             "minecraft:damage": {"types": "list", "structure": "#!component_list{structure=@component.value_effect}"},
             "minecraft:damage_immunity": {"types": "list", "structure": "#!component_list{structure=@component.damage_immunity}"},
@@ -141,12 +141,14 @@
     "effect.value": {
         "type": "Switch",
         "switch_function": {
-            "function_name": "get_key",
+            "function_name": "get_get_key",
             "arguments": {
-                "key": "type"
+                "key": "type",
+                "default": "effect"
             }
         },
         "substructures": {
+            "effect": {"types": "dict", "structure": {"type": "Keymap", "keys": {"effect": {"types": "dict", "structure": "effect.value"}}}},
             "minecraft:set": {"types": "dict", "structure": "effect.value.set"},
             "minecraft:add": {"types": "dict", "structure": "effect.value.add"},
             "minecraft:multiply": {"types": "dict", "structure": "effect.value.multiply"},
