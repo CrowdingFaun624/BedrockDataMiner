@@ -9,7 +9,7 @@ from Structure.Difference import Diff
 from Structure.IterableContainer import ICon, IDon, idon_from_list
 from Structure.IterableStructure import IterableStructure
 from Structure.SimilarityCache import SimilarityCache
-from Structure.Structure import Structure
+from Structure.Structure import Structure, convert_types_to_tuple, types_type
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.Uses import NonEmptyUse, Region, StructureUse, TypeUse, Use
 from Utilities.Exceptions import SequenceTooLongError
@@ -40,6 +40,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         "similarity_cache",
         "substitution_cost",
         "value_structure",
+        "value_type_list",
         "value_types",
         "value_weight",
     )
@@ -53,7 +54,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         max_square_length:int,
         substitution_cost:float,
         value_structure:Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None,
-        value_types:tuple[type,...],
+        value_types:types_type,
         value_weight:int,
     ) -> None:
         self.addition_cost = addition_cost
@@ -63,10 +64,14 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         self.max_square_length = max_square_length
         self.substitution_cost = substitution_cost
         self.value_structure = value_structure
-        self.value_types = value_types
+        self.value_type_list = value_types
         self.value_weight = value_weight
 
         self.similarity_cache:SimilarityCache[Con[D]] = SimilarityCache()
+
+    def finalize_sequence_structure(self) -> None:
+        self.value_types = convert_types_to_tuple(self.value_type_list)
+        del self.value_type_list
 
     def get_similarity_caches(self) -> Sequence[SimilarityCache]:
         return (self.similarity_cache,)

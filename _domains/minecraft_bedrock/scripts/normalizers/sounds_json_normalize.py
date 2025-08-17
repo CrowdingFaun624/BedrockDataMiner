@@ -3,16 +3,11 @@
 from typing import Any, Mapping, NotRequired, TypedDict
 
 from Component.ComponentFunctions import component_function
-from Domain.Domains import get_domain_from_module
-from Serializer.Serializer import Serializer
+from Serializer.Serializer import SerializerCreator
 from Utilities.File import FakeFile, File
-
-domain = get_domain_from_module(__name__)
-json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
-
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 # input
-
 
 class SoundTypedDict(TypedDict):
     sound: NotRequired[str]
@@ -126,8 +121,10 @@ def trace_exists(object:Mapping[str,Any], trace:tuple[str,...]) -> bool:
         else: return False
     return True
 
-@component_function(no_arguments=True, opens_files=True)
-def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]]) -> FakeFile[MySoundsJsonTypedDict]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]], serializer:SerializerCreator) -> FakeFile[MySoundsJsonTypedDict]:
     output:MySoundsJsonTypedDict = {
         "individual_event_sounds": {
             "base": {},
@@ -173,7 +170,7 @@ def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]]) -> FakeFile[
     file_hashes:list[int] = []
     for pack_name, sounds_json_file in data.items():
         file_hashes.append(hash(sounds_json_file))
-        sounds_json = sounds_json_file.read(json_serializer.get())
+        sounds_json = sounds_json_file.read(serializer.serializer)
         if trace_exists(sounds_json, ("individual_event_sounds",)):
             merge_collection(pack_name, output["individual_event_sounds"], sounds_json["individual_event_sounds"])
         if trace_exists(sounds_json, ("block_sounds",)):

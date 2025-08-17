@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
 import Domain.Domain as Domain
 
@@ -20,7 +20,7 @@ class StructureInfo():
         "parent_name",
     )
 
-    def __init__(self, data:dict[str,Any], domain:"Domain.Domain", parent_name:str) -> None:
+    def __init__(self, data:Mapping[str,Any], domain:"Domain.Domain", parent_name:str) -> None:
         self.data = data
         self.domain = domain
         self.parent_name = parent_name

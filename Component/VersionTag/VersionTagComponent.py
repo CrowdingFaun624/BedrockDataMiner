@@ -1,98 +1,56 @@
-from typing import Sequence
+from typing import NotRequired, Sequence, TypedDict
 
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentTyping import VersionTagTypedDict
-from Component.Field.ComponentField import OptionalComponentField
-from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field
-from Component.Pattern import Pattern
-from Component.Permissions import InheritancePermissions, InlinePermissions
-from Component.VersionTag.LatestSlotComponent import LATEST_SLOT_PATTERN
-from Component.VersionTag.VersionTagAutoAssignerComponent import (
-    VERSION_TAG_AUTO_ASSIGNER_PATTERN,
-)
-from Utilities.Exceptions import VersionTagExclusivePropertyError
-from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
+    UnionTypeVerifier,
 )
+from Version.VersionTag.LatestSlot import LatestSlot
 from Version.VersionTag.VersionTag import VersionTag
+from Version.VersionTag.VersionTagAutoAssigner import VersionTagAutoAssigner
 
-VERSION_TAG_PATTERN:Pattern["VersionTagComponent"] = Pattern("is_version_tag")
 
-class VersionTagComponent(Component[VersionTag]):
+class VersionTagTypedDict(TypedDict):
+    auto_assign: NotRequired[VersionTagAutoAssigner | Sequence[VersionTagAutoAssigner]]
+    development_name: NotRequired[str]
+    is_development_tag: NotRequired[bool]
+    is_fork_tag: NotRequired[bool]
+    is_major_tag: NotRequired[bool]
+    is_order_tag: NotRequired[bool]
+    is_unreleased_tag: NotRequired[bool]
+    latest_slot: NotRequired[LatestSlot | None]
 
-    class_name = "VersionTag"
-    my_capabilities = Capabilities(is_version_tag=True)
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("auto_assign", False, ListTypeVerifier(dict, list)),
+def convert_version_tag_auto_assigners_to_sequence(sequence: VersionTagAutoAssigner | Sequence[VersionTagAutoAssigner]) -> Sequence[VersionTagAutoAssigner]:
+    return (sequence,) if isinstance(sequence, VersionTagAutoAssigner) else sequence
+
+class VersionTagComponent(Component[VersionTag, VersionTagTypedDict]):
+
+    type_name = "VersionTag"
+    object_type = VersionTag
+    abstract = False
+
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("auto_assign", False, UnionTypeVerifier(VersionTagAutoAssigner, ListTypeVerifier(VersionTagAutoAssigner, list))),
         TypedDictKeyTypeVerifier("development_name", False, str),
         TypedDictKeyTypeVerifier("is_development_tag", False, bool),
         TypedDictKeyTypeVerifier("is_fork_tag", False, bool),
         TypedDictKeyTypeVerifier("is_major_tag", False, bool),
         TypedDictKeyTypeVerifier("is_order_tag", False, bool),
         TypedDictKeyTypeVerifier("is_unreleased_tag", False, bool),
-        TypedDictKeyTypeVerifier("latest_slot", False, str),
-    )
-    inline_permissions = InlinePermissions.reference
-    inheritance_permissions = InheritancePermissions.normal
+        TypedDictKeyTypeVerifier("latest_slot", False, (LatestSlot, type(None))),
+    ))
 
-    @property
-    def assume_used(self) -> bool:
-        return len(self.auto_assigner_field) > 0 or self.is_unreleased_tag
-
-    __slots__ = (
-        "auto_assigner_field",
-        "development_name",
-        "is_development_tag",
-        "is_fork_tag",
-        "is_major_tag",
-        "is_order_tag",
-        "is_unreleased_tag",
-        "latest_slot_field",
-    )
-
-    def initialize_fields(self, data: VersionTagTypedDict) -> Sequence[Field]:
-        self.is_development_tag = data.get("is_development_tag", False)
-        self.development_name = data.get("development_name", "dev")
-        self.is_fork_tag = data.get("is_fork_tag", False)
-        self.is_order_tag = data.get("is_order_tag", False)
-        self.is_major_tag = data.get("is_major_tag", False)
-        self.is_unreleased_tag = data.get("is_unreleased_tag", False)
-
-        self.auto_assigner_field = ComponentListField(data.get("auto_assign", ()), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ("auto_assign",))
-        self.latest_slot_field = OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",))
-        return (self.auto_assigner_field, self.latest_slot_field)
-
-    def create_final(self, trace:Trace) -> VersionTag:
-        return VersionTag(
-            name=self.name,
-            full_name=self.full_name,
-            development_name=self.development_name,
-            is_development_tag=self.is_development_tag,
-            is_fork_tag=self.is_fork_tag,
-            is_order_tag=self.is_order_tag,
-            is_major_tag=self.is_major_tag,
-            is_unreleased_tag=self.is_unreleased_tag
+    def link_final(self, fields: VersionTagTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_version_tag(
+            auto_assign=convert_version_tag_auto_assigners_to_sequence(fields.get("auto_assign", ())),
+            development_name=fields.get("development_name", "dev"),
+            is_development_tag=fields.get("is_development_tag", False),
+            is_fork_tag=fields.get("is_fork_tag", False),
+            is_major_tag=fields.get("is_major_tag", False),
+            is_order_tag=fields.get("is_order_tag", False),
+            is_unreleased_tag=fields.get("is_unreleased_tag", False),
+            latest_slot=fields.get("latest_slot", None)
         )
-
-    def link_finals(self, trace:Trace) -> None:
-        latest_slot_component = self.latest_slot_field.subcomponent
-        self.final.link_finals(
-            latest_slot=latest_slot_component.final if latest_slot_component is not None else None,
-            auto_assign=list(self.auto_assigner_field.map(lambda component: component.final)),
-        )
-
-    def check(self, trace:Trace) -> None:
-        if not self.is_order_tag:
-            if self.latest_slot_field.subcomponent is not None:
-                trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "latest_slot"))
-            if self.is_major_tag:
-                trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_major_tag"))
-            if self.is_fork_tag:
-                trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_fork_tag"))
-            if self.is_development_tag:
-                trace.exception(VersionTagExclusivePropertyError("!is_order_tag", "is_development_tag"))

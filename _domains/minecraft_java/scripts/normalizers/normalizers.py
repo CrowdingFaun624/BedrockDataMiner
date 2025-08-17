@@ -20,6 +20,14 @@ def advancements_display_icon_switch(data:dict[str,Any]|str) -> str:
         return "new"
 
 @component_function(no_arguments=True)
+def all_files_normalize(data:dict[str,str]) -> dict[str,str]: # remove all .class files
+    return {key: value for key, value in data.items() if not key.endswith(".class")}
+
+@component_function(no_arguments=True)
+def all_files_data_generator_normalize(data:dict[str,str]) -> dict[str,str]: # remove all cache files
+    return {key: value for key, value in data.items() if not key.startswith(".cache")}
+
+@component_function(no_arguments=True)
 def block_entity_guess_id(data:dict[str,Any]) -> str|None:
     # 24w34a trial_chambers/spawner/small_melee/slime.nbt and other files
     if (output := data.get("id")) is not None:

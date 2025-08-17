@@ -6,7 +6,7 @@ from ordered_set import OrderedSet
 from Structure.BranchlessStructure import BranchlessStructure
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
-from Structure.Delegate.Delegate import Delegate
+from Structure.Delegate.Delegate import Delegate, DelegateCreator
 from Structure.Difference import Diff
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import (
@@ -34,6 +34,7 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         "cache_versions_for_delegates",
         "default_removal_threshold",
         "delegate",
+        "delegate_creator",
         "disabled",
         "index",
         "removal_threshold",
@@ -43,12 +44,10 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
 
     def link_cache_structure(
         self,
-        cache_versions_for_delegates:bool,
-        delegate:Delegate[Con[D], Don[D]|Diff[Don[D]], Self, BO, BC, CO, CC]|None,
+        delegate:DelegateCreator[Delegate[Con[D], Don[D]|Diff[Don[D]], Self, BO, BC, CO, CC]]|None,
         removal_threshold:int,
     ) -> None:
-        self.cache_versions_for_delegates = cache_versions_for_delegates
-        self.delegate = delegate
+        self.delegate_creator = delegate
         self.default_removal_threshold = removal_threshold
         self.removal_threshold = removal_threshold
 
@@ -64,6 +63,12 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         self.cache_get_similarity:dict[int, tuple[tuple[float, bool], int]] = {}
         self.cache_print_branch:dict[int, tuple[Any, int]] = {}
         self.cache_print_comparison:dict[int, tuple[Any, int]] = {}
+
+    def finalize_cache_structure(self, cache_versions_for_delegates:bool, trace:Trace) -> bool:
+        self.cache_versions_for_delegates:bool = cache_versions_for_delegates
+        self.delegate = None if self.delegate_creator is None else self.delegate_creator.create_delegate(self)
+        del self.delegate_creator
+        return False if self.delegate is None else self.delegate.finalize(self.domain, trace)
 
     @property
     def all_caches(self) -> tuple[dict[int,tuple[Any,int]],...]:
@@ -109,32 +114,24 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
     def delegate_store_branch(self, output:BO, trace:Trace, environment:PrinterEnvironment) -> BC:
         if self.delegate is not None:
             return self.delegate.cache_store_branch(output, trace, environment)
-        elif environment.default_delegate is not None:
-            return environment.default_delegate.cache_store_branch(output, trace, environment)
         else:
             return cast(BC, output)
 
     def delegate_retrieve_branch(self, output:BC, trace:Trace, environment:PrinterEnvironment) -> BO:
         if self.delegate is not None:
             return self.delegate.cache_retrieve_branch(output, trace, environment)
-        elif environment.default_delegate is not None:
-            return environment.default_delegate.cache_retrieve_branch(output, trace, environment)
         else:
             return cast(BO, output)
 
     def delegate_store_comparison(self, output:CO, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CC:
         if self.delegate is not None:
             return self.delegate.cache_store_comparison(output, bundle, trace, environment)
-        elif environment.default_delegate is not None:
-            return environment.default_delegate.cache_store_comparison(output, bundle, trace, environment)
         else:
             return cast(CC, output)
 
     def delegate_retrieve_comparison(self, output:CC, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CO:
         if self.delegate is not None:
             return self.delegate.cache_retrieve_comparison(output, bundle, trace, environment)
-        elif environment.default_delegate is not None:
-            return environment.default_delegate.cache_retrieve_comparison(output, bundle, trace, environment)
         else:
             return cast(CO, output)
 

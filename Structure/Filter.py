@@ -1,5 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
+from Component.ComponentObject import ComponentObject
 from Structure.StructureInfo import StructureInfo
 
 if TYPE_CHECKING:
@@ -10,24 +11,16 @@ if TYPE_CHECKING:
         SupportsDunderLT,
     )
 
-class Filter():
+class Filter(ComponentObject):
     '''Object for changing flow based on StructureInfo content.'''
 
-    __slots__ = (
-        "name",
-    )
+    __slots__ = ()
 
-    def __init__(self, name:str) -> None:
-        self.name = name
-
-    def link_subcomponents(self) -> None:
+    def link_filter(self) -> None:
         pass
 
     def filter(self, structure_info:StructureInfo) -> bool:
         ...
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.name}>"
 
 class ValueFilter[A](Filter):
 
@@ -37,8 +30,7 @@ class ValueFilter[A](Filter):
         "value",
     )
 
-    def __init__(self, name:str, key: str, value:A, default:bool) -> None:
-        super().__init__(name)
+    def link_value_filter(self, key:str, value:A, default:bool) -> None:
         self.key = key
         self.value = value
         self.default = default
@@ -58,8 +50,7 @@ class MetaFilter(Filter):
         "subfilters",
     )
 
-    def link_subcomponents(self, subfilters:list[Filter]) -> None:
-        super().link_subcomponents()
+    def link_meta_filter(self, subfilters:Sequence[Filter]) -> None:
         self.subfilters = subfilters
 
 class KeyFilter(Filter):
@@ -68,10 +59,8 @@ class KeyFilter(Filter):
         "key",
     )
 
-    def __init__(self, name: str, key:str) -> None:
-        super().__init__(name)
+    def link_key_filter(self, key:str) -> None:
         self.key = key
-
 
 class KeyPresentFilter(KeyFilter):
 

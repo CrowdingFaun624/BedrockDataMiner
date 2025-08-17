@@ -14,7 +14,12 @@ from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnviron
 from Structure.StructureTypes.KeymapStructure import KeymapStructure
 from Utilities.Exceptions import StructureCannotPrintFlatError
 from Utilities.Trace import Trace
-from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
+from Utilities.TypeVerifier import (
+    ScriptTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+    UnionTypeVerifier,
+)
 
 
 class DefaultDelegateKeysTypedDict(TypedDict):
@@ -39,7 +44,7 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
         TypedDictKeyTypeVerifier("print_flat", False, bool),
         TypedDictKeyTypeVerifier("show_item_key", False, bool),
         TypedDictKeyTypeVerifier("enquote_strings", False, bool),
-        TypedDictKeyTypeVerifier("sort", False, (str, type(None))),
+        TypedDictKeyTypeVerifier("sort", False, UnionTypeVerifier(type(None), ScriptTypeVerifier(object, lambda data: (callable(data), "must be callable")))),
     )
 
     key_type_verifier = TypedDictTypeVerifier(
@@ -55,7 +60,7 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
         "print_flat",
         "show_item_key",
         "sorting_function",
-        "sorting_function_name",
+        "sorting_function_outer",
     )
 
     def __init__(
@@ -69,25 +74,22 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
         print_flat:bool=False,
         show_item_key:bool=True,
         enquote_strings:bool=True,
-        sort:str|None=None,
+        sort:BuiltInFunctions.sort_function|None=None,
     ) -> None:
         super().__init__(structure, keys, field, enquote_strings, passthrough)
         self.measure_length = measure_length
         self.print_all = print_all
         self.print_flat = print_flat
         self.show_item_key = show_item_key
-        self.sorting_function_name = sort
+        self.sorting_function_outer = sort
         self.always_print_keys = {key for key, value in keys.items() if value.get("always_print", False)}
         self.keys_order = {key: index for index, key in enumerate(keys.keys())}
 
-    def finalize(self, domain:"Domain.Domain", trace:Trace) -> None:
+    def finalize(self, domain:"Domain.Domain", trace:Trace) -> bool:
         self.key_function = self.structure.key_function if isinstance(self.structure, KeymapStructure) else None
-        if self.sorting_function_name is None:
-            self.sorting_function = None
-        else:
-            sorting_function_function:BuiltInFunctions.sort_function = domain.script_set_set.get(self.sorting_function_name, self.structure.domain, verify_function=callable)
-            key_function = cast(Any, self.key_function if self.key_function is not None else lambda a: a)
-            self.sorting_function:BuiltInFunctions.sort_inner_function|None = sorting_function_function(key_function, self.keys_order)
+        key_function = cast(Any, self.key_function if self.key_function is not None else lambda a: a)
+        self.sorting_function = None if self.sorting_function_outer is None else self.sorting_function_outer(key_function, self.keys_order)
+        return False
 
     def get_item_key(self, index:K) -> str:
         return " " + self.stringify(index) if self.show_item_key else ""

@@ -1,15 +1,21 @@
 from types import EllipsisType
-from typing import Any, Callable, Hashable, Mapping, Self, Sequence
+from typing import AbstractSet, Any, Callable, Hashable, Mapping, Self, Sequence
 
 from ordered_set import OrderedSet
 
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
-from Structure.Delegate.Delegate import Delegate
+from Structure.Delegate.Delegate import Delegate, DelegateCreator
 from Structure.Difference import Diff
 from Structure.IterableContainer import ICon, IDon, icon_from_list, idon_from_list
 from Structure.SimpleContainer import SCon
-from Structure.Structure import Structure
+from Structure.Structure import (
+    Structure,
+    convert_tags_to_set,
+    convert_types_to_tuple,
+    tags_type,
+    types_type,
+)
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
 from Structure.Uses import NonEmptyUse, Region, StructureUse, TypeUse, UsageTracker, Use
@@ -34,28 +40,45 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
 
     __slots__ = (
         "delegate",
+        "delegate_creator",
+        "delegate_keys",
         "key_function",
+        "key_type_list",
         "key_types",
         "required_keys",
+        "tag_list",
         "tags",
+        "this_type_list",
         "this_types",
     )
 
     def link_iterable_structure(
         self,
-        delegate:Delegate[ICon[Con[K], Con[V], D], IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], Self, BO, Any, CO, Any]|None,
+        delegate:DelegateCreator[Delegate[ICon[Con[K], Con[V], D], IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], Self, BO, Any, CO, Any]]|None,
         key_function:Callable[[K], str],
-        key_types:tuple[type,...],
+        key_types:types_type,
         required_keys:set[str],
-        tags:set[StructureTag],
-        this_types:tuple[type,...],
+        tags:tags_type,
+        this_types:types_type,
     ) -> None:
-        self.delegate = delegate
+        self.delegate_creator = delegate
         self.key_function = key_function # function that turns K into str for access in `required_keys`, etc.
-        self.key_types = key_types
+        self.key_type_list = key_types
         self.required_keys = required_keys
-        self.tags = tags
-        self.this_types = this_types
+        self.tag_list = tags
+        self.this_type_list = this_types
+        self.delegate_keys:Mapping[str,Any]|None = None # subclasses may override this
+
+    def finalize_iterable_structure(self, trace:Trace) -> bool:
+        self.key_types = convert_types_to_tuple(self.key_type_list)
+        del self.key_type_list
+        self.tags = convert_tags_to_set(self.tag_list)
+        del self.tag_list
+        self.this_types = convert_types_to_tuple(self.this_type_list)
+        del self.this_type_list
+        self.delegate = None if self.delegate_creator is None else self.delegate_creator.create_delegate(self, self.delegate_keys)
+        del self.delegate_creator
+        return False if self.delegate is None else self.delegate.finalize(self.domain, trace)
 
     def get_key_structure(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None:
         '''
@@ -75,7 +98,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         '''
         ...
 
-    def get_value_tags(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> set[StructureTag]|None:
+    def get_value_tags(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> AbstractSet[StructureTag]|None:
         '''
         Returns the StructureTags associated with the given value.
         Return an empty set or None if there are no associated StructureTags.

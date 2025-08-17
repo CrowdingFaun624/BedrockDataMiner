@@ -12,6 +12,7 @@ from Dataminer.DataminerSettings import DataminerSettings
 from Utilities.Trace import Trace
 from Version.Version import Version
 from Version.VersionFileType import VersionFileType
+from Version.VersionTag.LatestSlot import LatestSlot
 from Version.VersionTag.VersionTag import VersionTag
 from Version.VersionTag.VersionTagOrder import VersionTagOrder
 
@@ -25,14 +26,14 @@ def finalize_versions_domain(groups:list[Group], domain:"Domain.Domain", trace:T
     version_tags:list[VersionTag] = []
     versions:dict[str,Version] = {}
     for group in groups:
-        for component_name, component in group.components.items():
-            match component.final:
+        for field_name, final in group.finals.items():
+            match final:
                 case VersionTag():
-                    version_tags.append(component.final)
+                    version_tags.append(final)
                 case Version():
-                    versions[component_name] = component.final
+                    versions[field_name] = final
 
-    latest_tags:defaultdict[str,set[VersionTag]] = defaultdict(lambda: set())
+    latest_tags:defaultdict[LatestSlot,set[VersionTag]] = defaultdict(lambda: set())
     for version_tag in version_tags:
         if version_tag.latest_slot is not None:
             latest_tags[version_tag.latest_slot].add(version_tag)
@@ -53,7 +54,7 @@ def finalize_versions_domain(groups:list[Group], domain:"Domain.Domain", trace:T
                 try:
                     version_directory.rmdir()
                 except OSError:
-                    print(f"Version directory \"{version_directory_name}\" does not exists in versions.json and contains files!")
+                    print(f"Version directory \"{version_directory_name}\" contains files, but there is no Version with that name!")
     else:
         versions_without_directory:list[bool] = [True] * len(versions)
     if len(versions) > 0:
@@ -73,16 +74,16 @@ def check_versions_domain(groups:list[Group], domain:"Domain.Domain", trace:Trac
     version_tag_orders:list[VersionTagOrder] = []
     version_file_types:list[VersionFileType] = []
     for group in groups:
-        for component_name, component in group.components.items():
-            match component.final:
+        for component_name, final in group.finals.items():
+            match final:
                 case VersionTag():
-                    version_tags.append(component.final)
+                    version_tags.append(final)
                 case Version():
-                    versions[component_name] = component.final
+                    versions[component_name] = final
                 case VersionTagOrder():
-                    version_tag_orders.append(component.final)
+                    version_tag_orders.append(final)
                 case VersionFileType():
-                    version_file_types.append(component.final)
+                    version_file_types.append(final)
     if len(version_tag_orders) == 0:
         return
     elif len(version_tag_orders) > 1:
@@ -236,11 +237,11 @@ def check_for_duplicate_file_names(dataminers:Sequence[AbstractDataminerCollecti
 
 def check_dataminer_collections(all_components:dict["Domain.Domain", list[Group]], trace:Trace) -> None:
     dataminer_collections:Sequence[AbstractDataminerCollection] = [
-        component.final
+        component
         for groups in all_components.values()
         for group in groups
-        for component in group.components.values()
-        if isinstance(component.final, AbstractDataminerCollection)
+        for component in group.finals.values()
+        if isinstance(component, AbstractDataminerCollection)
     ]
     used_versions:set[Version] = set()
     for dataminer_collection in dataminer_collections:
@@ -264,12 +265,12 @@ def check_version_tag_order_domain(groups:list[Group], domain:"Domain.Domain", t
     version_tags:list[VersionTag] = []
     version_tag_orders:list[VersionTagOrder] = []
     for group in groups:
-        for component_name, component in group.components.items():
-            match component.final:
+        for component_name, component in group.finals.items():
+            match component:
                 case VersionTag():
-                    version_tags.append(component.final)
+                    version_tags.append(component)
                 case VersionTagOrder():
-                    version_tag_orders.append(component.final)
+                    version_tag_orders.append(component)
     if len(version_tag_orders) == 0:
         return
     elif len(version_tag_orders) > 1:
@@ -321,8 +322,7 @@ finalizers:Sequence[Callable[[dict["Domain.Domain",list[Group]],Trace],None]] = 
     check_version_tag_order,
 ]
 
-def finalize_all(all_components:dict["Domain.Domain",list[Group]], primary_domain:"Domain.Domain", print_exceptions:Callable[["Domain.Domain", Trace],None]) -> None:
+def finalize_all(all_components:dict["Domain.Domain",list[Group]]) -> None:
     trace = Trace()
     for finalizer in finalizers:
         finalizer(all_components, trace)
-    print_exceptions(primary_domain, trace)

@@ -1,47 +1,39 @@
-from typing import Sequence
+from typing import AbstractSet, Any, Mapping, Required, Sequence
 
-from Component.ComponentTyping import BranchlessStructureTypedDict
-from Component.Field.ComponentField import OptionalComponentField
-from Component.Field.Field import Field
-from Component.Structure.Field.TypeListField import TypeListField
 from Component.Structure.PassthroughStructureComponent import (
     PassthroughStructureComponent,
+    PassthroughStructureTypedDict,
 )
-from Component.Structure.StructureComponent import STRUCTURE_COMPONENT_PATTERN
+from Component.Structure.StructureComponent import types_type_verifier
 from Structure.BranchlessStructure import BranchlessStructure
+from Structure.Structure import Structure
 from Utilities.Trace import Trace
-from Utilities.TypeVerifier import (
-    ListTypeVerifier,
-    TypedDictKeyTypeVerifier,
-    TypedDictTypeVerifier,
-    UnionTypeVerifier,
-)
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class BranchlessStructureComponent[a: BranchlessStructure](PassthroughStructureComponent[a]):
+class BranchlessStructureTypedDict(PassthroughStructureTypedDict):
+    structure: Required[Structure | None]
+    this_types: Required[type | Sequence[type]]
 
-    __slots__ = (
-        "structure_field",
-        "this_types_field",
-    )
+
+class BranchlessStructureComponent[R: BranchlessStructure, P: BranchlessStructureTypedDict](PassthroughStructureComponent[R, P]):
+
+    type_name = "Branchless"
+    object_type = BranchlessStructure
+    abstract = True
 
     type_verifier = PassthroughStructureComponent.type_verifier.extend(TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("structure", True, (str, dict, type(None))),
-        TypedDictKeyTypeVerifier("this_types", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("structure", True, (Structure, type(None))),
+        TypedDictKeyTypeVerifier("this_types", True, types_type_verifier),
     ))
 
-    def initialize_fields(self, data: BranchlessStructureTypedDict) -> Sequence[Field]:
-        fields = list(super().initialize_fields(data))
-
-        self.structure_field = OptionalComponentField(data["structure"], STRUCTURE_COMPONENT_PATTERN, ("structure",))
-        self.this_types_field = TypeListField(data["this_types"], ("this_types",)).add_to_set(self.my_type).verify_with(self.structure_field)
-
-        fields.extend((self.structure_field, self.this_types_field))
-        return fields
-
-    def link_finals(self, trace: Trace) -> None:
-        super().link_finals(trace)
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
         self.final.link_branchless_structure(
-            this_types=self.this_types_field.types,
-            structure=self.structure_field.map(lambda subcomponent: subcomponent.final),
+            structure=fields["structure"],
+            this_types=fields["this_types"],
         )
+
+    def finalize(self, propagating_booleans: Mapping[str, bool], propagating_sets: Mapping[str, AbstractSet[Any]], trace: Trace) -> bool:
+        self.final.finalize_branchless_structure()
+        return super().finalize(propagating_booleans, propagating_sets, trace)

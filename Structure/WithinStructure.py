@@ -7,7 +7,13 @@ from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
 from Structure.SimilarityCache import SimilarityCache
-from Structure.Structure import Structure
+from Structure.Structure import (
+    Structure,
+    convert_tags_to_set,
+    convert_types_to_tuple,
+    tags_type,
+    types_type,
+)
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
 from Structure.Uses import Region, StructureUse, TypeUse, UsageTracker, Use
@@ -22,26 +28,37 @@ class WithinStructure[A, B, BO, CO](Structure[A, WCon[A, Con[B]], WDon[A, Don[B]
     '''
 
     __slots__ = (
+        "inner_type_list",
         "inner_types",
+        "outer_type_list",
         "outer_types",
         "similarity_cache",
         "structure",
+        "tag_list",
         "tags",
     )
 
     def link_within_structure(
         self,
-        inner_types:tuple[type,...],
-        outer_types:tuple[type,...],
+        inner_types:types_type,
+        outer_types:types_type,
         structure:Structure[B, Con[B], Don[B], Don[B]|Diff[Don[B]], BO, CO],
-        tags:set[StructureTag],
+        tags:tags_type,
     ) -> None:
-        self.inner_types = inner_types
-        self.outer_types = outer_types
+        self.inner_type_list = inner_types
+        self.outer_type_list = outer_types
         self.structure = structure
-        self.tags = tags
+        self.tag_list = tags
 
         self.similarity_cache:SimilarityCache[Con[A]] = SimilarityCache()
+
+    def finalize_within_structure(self) -> None:
+        self.inner_types = convert_types_to_tuple(self.inner_type_list)
+        del self.inner_type_list
+        self.outer_types = convert_types_to_tuple(self.outer_type_list)
+        del self.outer_type_list
+        self.tags = convert_tags_to_set(self.tag_list)
+        del self.tag_list
 
     def get_similarity_caches(self) -> Sequence[SimilarityCache]:
         return (self.similarity_cache,)
@@ -86,6 +103,7 @@ class WithinStructure[A, B, BO, CO](Structure[A, WCon[A, Con[B]], WDon[A, Don[B]
         with trace.enter(self, self.trace_name, data):
             if not isinstance(data.data, self.outer_types):
                 trace.exception(StructureTypeError(self.outer_types, type(data.data), "Outer data"))
+        with trace.enter(self, self.trace_name, data.insides):
             if not isinstance(data.insides.data, self.inner_types):
                 trace.exception(StructureTypeError(self.inner_types, type(data.insides.data), "Inner data"))
             self.structure.type_check(data.insides, trace, environment)
@@ -164,8 +182,6 @@ class WithinStructure[A, B, BO, CO](Structure[A, WCon[A, Con[B]], WDon[A, Don[B]
             printer:Callable[[Con[B], Trace, PrinterEnvironment]]
             if self.structure is not None:
                 printer = self.structure.print_branch
-            elif environment.default_delegate is not None:
-                printer = environment.default_delegate.print_branch
             else:
                 raise InvalidStateError(self)
             return printer(data.insides, trace, environment)
@@ -186,6 +202,4 @@ class WithinStructure[A, B, BO, CO](Structure[A, WCon[A, Con[B]], WDon[A, Don[B]
             return self.structure.print_comparison
         if isinstance(data, Diff) and data.length == 1:
             return self.structure.print_comparison
-        if environment.default_delegate is not None:
-            return environment.default_delegate.print_comparison
         raise InvalidStateError(self)

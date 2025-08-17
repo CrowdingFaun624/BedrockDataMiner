@@ -1,15 +1,7 @@
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import Required, Sequence, TypedDict
 
-from Component.Accessor.AccessorComponent import ACCESSOR_PATTERN, AccessorComponent
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentTyping import VersionFileTypedDict
-from Component.Field.ComponentField import ComponentField
-from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field
-from Component.Pattern import Pattern
-from Component.Permissions import InheritancePermissions, InlinePermissions
-from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
+from Downloader.AccessorType import AccessorCreator
 from Utilities.Exceptions import VersionFileInvalidAccessorError
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
@@ -17,52 +9,38 @@ from Utilities.TypeVerifier import (
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
 )
-from Version.VersionFile import VersionFile
+from Version.VersionFile import VersionFileCreator
+from Version.VersionFileType import VersionFileType
 
-if TYPE_CHECKING:
-    from Component.Version.VersionComponent import VersionComponent
 
-VERSION_FILE_PATTERN:Pattern["VersionFileComponent"] = Pattern("is_version_file")
+class VersionFileTypedDict(TypedDict):
+    accessors: Required[Sequence[AccessorCreator]]
+    version_file_type: Required[VersionFileType]
 
-class VersionFileComponent(Component[VersionFile]):
+class VersionFileComponent(Component[VersionFileCreator, VersionFileTypedDict]):
 
-    class_name = "VersionFile"
-    my_capabilities = Capabilities(is_version_file=True)
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("accessors", True, ListTypeVerifier(dict, list)),
-        TypedDictKeyTypeVerifier("type", False, str),
-        TypedDictKeyTypeVerifier("version_file_type", True, str),
-    )
-    inline_permissions = InlinePermissions.inline
-    inheritance_permissions = InheritancePermissions.normal
+    type_name = "VersionFile"
+    object_type = VersionFileCreator
+    abstract = False
 
-    __slots__ = (
-        "accessors_field",
-        "version_file_type_field",
-    )
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("accessors", True, ListTypeVerifier(AccessorCreator, list)),
+        TypedDictKeyTypeVerifier("version_file_type", True, VersionFileType),
+    ))
 
-    def initialize_fields(self, data: VersionFileTypedDict) -> Sequence[Field]:
-        self.version_file_type_field = ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ("version_file_type",))
-        self.accessors_field = ComponentListField(data["accessors"], ACCESSOR_PATTERN, ("accessors",), assume_type=AccessorComponent.class_name)
-        return (self.version_file_type_field, self.accessors_field)
-
-    def create_final(self, trace:Trace) -> VersionFile:
-        return VersionFile(
-            full_name=self.full_name,
+    def link_final(self, fields: VersionFileTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_version_file_creator(
+            accessors=fields["accessors"],
+            version_file_type=fields["version_file_type"],
         )
 
-    def link_finals(self, trace:Trace) -> None:
-        version = cast("VersionComponent", self.get_inline_parent()).final
-        self.final.link_finals(
-            version=version,
-            version_file_type=self.version_file_type_field.subcomponent.final,
-            accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.final)),
-        )
-
-    def check(self, trace:Trace) -> None:
-        allowed_accessors = set(self.version_file_type_field.subcomponent.allowed_accessor_types_field.subcomponents)
-        trace.exceptions(
-            VersionFileInvalidAccessorError(self.final, accessor.name)
-            for accessor in self.accessors_field.subcomponents
-            if accessor.accessor_type_field.subcomponent not in allowed_accessors
-        )
+    def post_check(self, fields: VersionFileTypedDict, trace: Trace) -> bool:
+        if super().post_check(fields, trace):
+            return True
+        has_error:bool = False
+        allowed_accessors = fields["version_file_type"].allowed_accessor_types
+        for accessor_creator in fields["accessors"]:
+            if accessor_creator.accessor_type not in allowed_accessors:
+                trace.exception(VersionFileInvalidAccessorError(self.final, accessor_creator.name))
+        return has_error

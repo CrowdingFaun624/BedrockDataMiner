@@ -1,13 +1,14 @@
-from Component.Capabilities import Capabilities
+from typing import TypedDict
+
 from Component.Component import Component
-from Component.Pattern import Pattern
 from Version.VersionTag.VersionTagAutoAssigner import VersionTagAutoAssigner
 
-VERSION_TAG_AUTO_ASSIGNER_PATTERN:Pattern["VersionTagAutoAssignerComponent"] = Pattern("is_version_tag_auto_assigner")
 
-class VersionTagAutoAssignerComponent[T:VersionTagAutoAssigner=VersionTagAutoAssigner](Component[T]):
+class VersionTagAutoAssignerTypedDict(TypedDict):
+    pass # empty
 
-    class_name = "VersionTagAutoAssigner"
-    my_capabilities = Capabilities(is_version_tag_auto_assigner=True)
+class VersionTagAutoAssignerComponent[R: VersionTagAutoAssigner, P: VersionTagAutoAssignerTypedDict](Component[R, P]):
 
-    __slots__ = ()
+    type_name = "VersionTagAutoAssigner"
+    object_type = VersionTagAutoAssigner
+    abstract = True

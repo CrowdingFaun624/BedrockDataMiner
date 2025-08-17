@@ -1,7 +1,8 @@
 from types import EllipsisType
-from typing import Any, cast
+from typing import Any, Mapping, cast
 
 import Domain.Domain as Domain
+from Component.ComponentObject import ComponentObject
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
 from Structure.Structure import Structure
@@ -9,6 +10,33 @@ from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnviron
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypeVerifier
 
+
+class DelegateCreator[D: "Delegate"](ComponentObject):
+
+    __slots__ = (
+        "arguments",
+        "created_delegates",
+        "delegate_class",
+    )
+
+    def link_delegate_creator(self, arguments:Mapping[Any, Any], delegate_class:type[D]) -> None:
+        self.arguments = arguments
+        self.delegate_class = delegate_class
+        self.created_delegates:list[D] = []
+
+    def create_delegate(self, structure:Structure, keys:Mapping[str,Any]|None=None) -> D:
+        """
+        Creates a Delegate for this Structure.
+
+        :param structure: The Structure to create this Delegate with.
+        :param keys: Optional key arguments a Structure can give to this Delegate.
+        """
+        output = self.delegate_class(structure, {} if keys is None else keys, **self.arguments)
+        self.created_delegates.append(output)
+        return output
+
+    def finalize_delegate_creator(self, trace:Trace) -> bool:
+        return any([delegate.finalize(self.domain, trace) for delegate in self.created_delegates])
 
 class Delegate[DC:Con, DD:Don|Diff, S:Structure|None, BO, BC, CO, CC]():
     '''
@@ -37,7 +65,7 @@ class Delegate[DC:Con, DD:Don|Diff, S:Structure|None, BO, BC, CO, CC]():
 
     uses_versions:bool = False
     '''
-    True if this Delegate uses the Versions in any environments. Used for caching
+    True if this Delegate uses the Versions in any environments. Used for caching.
     '''
 
     applies_to:tuple[type[Structure]|type[None],...] = (Structure, type(None))
@@ -46,18 +74,18 @@ class Delegate[DC:Con, DD:Don|Diff, S:Structure|None, BO, BC, CO, CC]():
         "structure",
     )
 
-    def __init__(self, structure:S, keys:dict[str,Any]) -> None:
+    def __init__(self, structure:S, keys:Mapping[str,Any]) -> None:
         '''
         :structure: The Structure that this Delegate belongs to. Can only be None if it is used as the default delegate of a StructureBase.
         :keys: Dictionary containing arguments from each key of a Keymap. If it's not a Keymap, the values of the keys dictionary will be empty.
         '''
         self.structure = structure
 
-    def finalize(self, domain:"Domain.Domain", trace:Trace) -> None:
+    def finalize(self, domain:"Domain.Domain", trace:Trace) -> bool:
         '''
         Runs during the finalize Component import phase.
         '''
-        pass
+        return False
 
     def __repr__(self) -> str:
         if self.structure is None:

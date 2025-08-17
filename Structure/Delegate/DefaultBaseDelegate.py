@@ -74,9 +74,6 @@ class DefaultBaseDelegate[D](Delegate[
         if self.structure.structure is not None:
             if isinstance(data, Diff) and data.length == 1:
                 lines = self.structure.structure.print_comparison(data[0], bundle, trace, environment)
-            elif isinstance(data, Diff) and data.length != 1:
-                assert environment.default_delegate is not None
-                lines = environment.default_delegate.print_comparison(data, bundle, trace, environment)
             else:
                 lines = self.structure.structure.print_comparison(data, bundle, trace, environment)
             if lines is ...:

@@ -1,13 +1,10 @@
 from collections import defaultdict
-from operator import setitem
 from types import EllipsisType
 from typing import Any, Callable, Iterable
 
 import Domain.Domain as Domain
-import Utilities.Scripts as Scripts
 from Domain.Domains import domains, get_domain_name_from_module
 from Utilities.CustomJson import Coder
-from Utilities.Exceptions import ImportOrderError
 from Utilities.TypeUtilities import TypeDict, TypeSet
 
 
@@ -225,8 +222,6 @@ def register_type[T](
     :json_coder: Coder used to convert the type to JSON and vice versa.
     '''
     domain_name = get_domain_name_from_module(_type.__module__)
-    if domain_name is None and Scripts.has_imported_scripts.has_imported_scripts:
-        raise ImportOrderError(_type.__module__)
     type_stuff = primary_type_stuff if domain_name is None else domains[domain_name].type_stuff
     type_stuffs = type_stuff.get_cascading_dependencies(set())
     for type_stuff in type_stuffs:

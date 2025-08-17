@@ -1,11 +1,10 @@
 from types import EllipsisType
 from typing import Any, Container, Self, Sequence, cast
 
-import Domain.Domain as Domain
 from Structure.BranchlessStructure import BranchlessStructure
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
-from Structure.Delegate.Delegate import Delegate
+from Structure.Delegate.Delegate import Delegate, DelegateCreator
 from Structure.Difference import Diff
 from Structure.StructureEnvironment import (
     ComparisonEnvironment,
@@ -23,25 +22,29 @@ from Version.Version import Version
 class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
 
     __slots__ = (
-        "cache_substructures",
+        "_cache_substructures",
         "delegate",
-        "default_delegate",
-        "domain",
+        "delegate_creator",
     )
 
     def link_structure_base(
         self,
-        default_delegate:Delegate|None,
-        delegate:Delegate[Con[D], Don[D]|Diff[Don[D]], Self, str, Any, str, Any]|None,
-        domain:"Domain.Domain",
+        delegate:DelegateCreator[Delegate[Con[D], Don[D]|Diff[Don[D]], Self, str, Any, str, Any]]|None,
     ) -> None:
         self.trace_name = self.full_name
-        self.default_delegate = default_delegate
-        self.delegate = delegate
-        self.domain = domain
+        self.delegate_creator = delegate
+        self._cache_substructures:Sequence[CacheStructure]|None = None
 
-    def finalize(self) -> None:
-        self.cache_substructures = [structure for structure in self.get_descendants(set()) if isinstance(structure, CacheStructure)]
+    def finalize_structure_base(self, trace:Trace) -> bool:
+        self.delegate = None if self.delegate_creator is None else self.delegate_creator.create_delegate(self)
+        del self.delegate_creator
+        return False if self.delegate is None else self.delegate.finalize(self.domain, trace)
+
+    @property
+    def cache_substructures(self) -> Sequence[CacheStructure]:
+        if self._cache_substructures is None:
+            self._cache_substructures = [structure for structure in self.get_descendants(set()) if isinstance(structure, CacheStructure)]
+        return self._cache_substructures
 
     def clear_old_caches(self, structure_infos:Container[tuple[Version, StructureInfo]]) -> None:
         for cache_structure in self.cache_substructures:
@@ -61,17 +64,19 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
     def has_tags(self, tags:list[StructureTag]) -> bool:
         return any(self.has_tag(tag) for tag in tags)
 
-    def print_exception_list(self, trace:Trace, versions:Sequence["Version"]) -> bool:
+    def print_exception_list(self, trace:Trace, versions:Sequence["Version"], raise_exception:bool=False) -> bool:
         '''
         Prints all exceptions and traces in list and raises an exception at the end if the list has any items.
         '''
         texts:list[str] = list(trace.stringify())
-        if trace.has_exceptions > 0:
+        if trace.has_exceptions:
             if (log := self.domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
                 log.write(f"-------- {trace.exception_count} EXCEPTIONS IN {self.full_name} ON {", ".join(version.name for version in versions)} --------\n\n")
                 log.write("\n".join(texts))
             for text in texts:
                 print(text)
+            if raise_exception:
+                raise StructureError(self)
         return len(trace._exceptions) > 0
 
     def ensure_not_ellipsis[a](self, data:a|EllipsisType, trace:Trace, versions:Sequence["Version"]) -> a:
@@ -101,7 +106,7 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         Returns a final string of the initial report at the first Version that supports this StructureBase.
         :data: The data from `version`.
         '''
-        printer_environment = PrinterEnvironment(environment, structure_info, self.default_delegate, version, 0)
+        printer_environment = PrinterEnvironment(environment, structure_info, version, 0)
         trace = Trace()
         containerized_data = self.ensure_not_ellipsis(self.containerize(data, trace, printer_environment), trace, (version,))
         self.ensure_not_ellipsis(self.type_check(containerized_data, trace, printer_environment), trace, (version,))
@@ -121,7 +126,7 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         versions_between:list[Version],
         environment:StructureEnvironment,
     ) -> tuple[str, bool]:
-        comparison_environment = ComparisonEnvironment(environment, self.default_delegate, [(version1, structure_info1), (version2, structure_info2)], [versions_between])
+        comparison_environment = ComparisonEnvironment(environment, [(version1, structure_info1), (version2, structure_info2)], [versions_between])
         trace = Trace()
         containerized_data1 = self.ensure_not_ellipsis(self.containerize(data1, trace, comparison_environment[0]), trace, (version1,))
         containerized_data2 = self.ensure_not_ellipsis(self.containerize(data2, trace, comparison_environment[1]), trace, (version2,))
@@ -147,7 +152,7 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         trace = Trace()
         containerized_data = self.get_containerized_from_raw(data, version, environment)
         self.type_check(containerized_data, trace, environment)
-        self.print_exception_list(trace, (version,))
+        self.print_exception_list(trace, (version,), raise_exception=True)
 
     def get_tag_paths_from_raw(
         self,

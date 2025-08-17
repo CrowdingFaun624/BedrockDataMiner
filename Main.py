@@ -24,7 +24,7 @@ import Domain.Domains as Domains
 #     Domains.domains["minecraft_bedrock"].import_components()
 # profile.dump_stats("./time_report.txt")
 
-PROGRAM_NAMES = ("AllVersions", "Cleaner", "CompareAll", "CompareSome", "Dataminers", "FileStorage", "GarbageCollector", "Scripts", "SimilarityTester", "StructureUsage", "Tablifiers", "Tests")
+PROGRAM_NAMES = ("AllVersions", "Cleaner", "CompareAll", "CompareSome", "Dataminers", "FileStorage", "GarbageCollector", "StructureUsage", "Tablifiers", "Tests")
 
 lock1 = threading.Lock() # domain input
 lock2 = threading.Lock() # program input
@@ -50,13 +50,11 @@ import Programs.AllVersions as AllVersions
 import Programs.Cleaner as Cleaner
 import Programs.CompareAll as CompareAll
 import Programs.GarbageCollector as GarbageCollector
-import Programs.SimilarityTester as SimilarityTester
 import Programs.StructureUsage as StructureUsage
 import Programs.Test.Tests as Tests
 import Tablifier.Tablifiers as Tablifiers
 import Utilities.FileManager as FileManager
 import Utilities.FileStorage as FileStorage
-import Utilities.Scripts as Scripts
 
 PROGRAM_FUNCTIONS:dict[str,Callable[[Domain.Domain],None]] = {
     "AllVersions": AllVersions.main,
@@ -66,8 +64,6 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[Domain.Domain],None]] = {
     "Dataminers": Dataminers.user_interface,
     "FileStorage": FileStorage.main,
     "GarbageCollector": GarbageCollector.main,
-    "Scripts": Scripts.main,
-    "SimilarityTester": SimilarityTester.main,
     "StructureUsage": StructureUsage.main,
     "Tablifiers": Tablifiers.main,
     "Tests": Tests.main,
@@ -77,10 +73,10 @@ def main() -> None:
     with lock1:
         domain:"Domain.Domain" = user_input[0]
     if domain is not None:
-        domain.import_components()
-        with lock2:
-            if user_input[1] is not None:
-                PROGRAM_FUNCTIONS[user_input[1]](domain)
+        if not domain.import_components():
+            with lock2:
+                if user_input[1] is not None:
+                    PROGRAM_FUNCTIONS[user_input[1]](domain)
     for domain in Domains.domains.values():
         if domain.is_imported:
             domain.close()

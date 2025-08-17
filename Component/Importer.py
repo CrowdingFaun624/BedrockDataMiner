@@ -1,239 +1,198 @@
-from collections import deque
-from itertools import chain
+import importlib
+from collections import Counter
+from datetime import datetime
 from pathlib import Path
-from types import EllipsisType
-from typing import Any, Iterable, Sequence
+from typing import Callable, Final, Mapping
 
 import Domain.Domain as Domain
-import Utilities.Exceptions as Exceptions
-from Component.Component import Component
-from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
-from Component.Group import Group, component_types_dict
-from Component.InheritedComponent import InheritedComponent
-from Component.ScriptImporter import ScriptSetSet
-from Utilities.Trace import Trace, TraceType
+from Component.ComponentObject import ComponentObject
+from Component.Field.Errors import Errors
+from Component.Group import (
+    ComponentFile,
+    Group,
+    GroupDirectory,
+    GroupFile,
+    GroupObject,
+    ScriptFile,
+)
+from Component.ImporterFinalize import finalize_all
+from Component.Parser import parse_file
+from Component.Reader import Reader
+from Component.Scope import EMPTY_SCOPE
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+from Serializer.Serializer import SerializerCreator
+from Structure.StructureTag import StructureTag
+from Tablifier.Tablifier import Tablifier
+from Utilities.Log import Log
+from Utilities.MemoryUsage import memory_usage
+from Utilities.Trace import Trace
+from Version.Version import Version
+from Version.VersionTag.VersionTag import VersionTag
 
+DEBUG:Final[bool] = False
 
-def print_exceptions(domain:"Domain.Domain", trace:Trace) -> None:
-    texts:list[str] = list(trace.stringify())
-    failed_groups:set[str] = {name() for (object, name, data, trace_type) in trace.objects if trace_type is TraceType.object and isinstance(object, Group)}
-    if len(texts) > 0:
-        with open(domain.component_log_file, "wb") as f:
-            f.write("\n".join(texts).encode())
-        for text in texts:
-            print(text)
-        raise Exceptions.ComponentParseError(sorted(failed_groups), len(texts))
+def parse_groups(domain:"Domain.Domain", path:Path, parent:GroupObject|None) -> GroupObject|None:
+    path_name = f"{domain.name}!{path.relative_to(domain.assets_directory).as_posix()}"
+    if path.is_file():
+        if path.suffix.lower() == ".cmp":
+            output = ComponentFile(path, path_name, parent, domain)
+            return output
+        elif path.suffix.lower() == ".py":
+            relative_name = path.relative_to(domain.assets_directory).as_posix()
+            module_name = f"_domains.{domain.name}.{relative_name.replace("/", ".").removesuffix(".py")}"
+            return ScriptFile(path, path_name, parent, domain, module_name)
+    elif path.is_dir():
+        children:dict[str,GroupObject] = {}
+        output = GroupDirectory(path, path_name, parent, children)
+        for subpath in path.iterdir():
+            subgroup = parse_groups(domain, subpath, output)
+            if subgroup is None: continue
+            children[subpath.name.rsplit(".")[0]] = subgroup # the rsplit removes the suffix
+        return output
+    else:
+        return None
 
-def get_inline_component_function(domain:"Domain.Domain", trace:Trace) -> CreateComponentFunction:
-    # This function does not resolve inherited Components; it is resolved in Field.refer_to_component
-    def create_inline_component(component_data:ComponentTypedDicts, parent_component:Component, default_type:str|None, path:tuple[str,...]) -> Component|EllipsisType:
-        component_name = parent_component.get_inline_component_name(path)
-        if "inherit" in component_data:
-            component = InheritedComponent(component_data, component_name, domain, parent_component.group, None, trace)
-            component.inline_parent = parent_component
-            return component
-        component_type_str = component_data.get("type", default_type)
-        if component_type_str is None:
-            trace.exception(Exceptions.ComponentTypeMissingError(component_name, parent_component.group))
-            return ...
-        component_type = component_types_dict.get(component_type_str)
-        if component_type is None:
-            if "#" in component_type_str:
-                message = "(Expressions are not allowed in the \"type\" field.)"
-            else: message = None
-            trace.exception(Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{domain.name}!{parent_component.group.name}/{component_name}>", list(component_types_dict.keys()), message))
-            return ...
-        component = component_type(component_data, component_name, domain, parent_component.group, None, trace)
-        component.inline_parent = parent_component
-        if not component.abstract and component.init(trace): # verifies types and initializes Fields.
-            return ...
-        return component
-    return create_inline_component
+def get_object_dictionary[T: ComponentObject, F=T](all_objects:list[object], object_type:type[T], transform:Callable[[T],F]=lambda item: item) -> Mapping[str,F]:
+    """
+    Constructs a dictionary of ComponentObjects of a specific type.
 
-def get_all_component_files(domain:"Domain.Domain") -> Sequence[Path]:
-    output:list[Path] = []
-    for path in domain.assets_directory.iterdir():
-        if path.name in ("data", "lib", "log", "domain.json"): continue
-        if path.is_dir():
-            output.extend(path.rglob("*.json"))
-        elif path.is_file() and path.suffix == ".json":
-            output.append(path)
-    return output
+    :param all_objects: A list of every Component Field's final.
+    :param object_type: The type of object to filter.
+    """
+    final_names:dict[tuple[str,str],F] = {}
+    primary_names:Counter[str] = Counter()
+    for final in all_objects:
+        if isinstance(final, object_type):
+            final_names[final.name, final.full_name] = transform(final)
+            primary_names[final.name] += 1
+    return {(secondary_name if primary_names[primary_name] > 1 else primary_name): object for (primary_name, secondary_name), object in final_names.items()}
 
-def propagate_variables(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
-    all_components_flat:list[Component] = []
-    all_components_flat_memo:set[Component] = set()
-    for domain, groups in all_components.items():
-        with trace.enter(domain, domain.name, ...):
-            for group in groups:
-                with trace.enter(group, group.name, ...):
-                    all_components_flat.extend(chain.from_iterable(component.get_all_descendants(all_components_flat_memo, trace) for component in group.components.values()))
-    print_exceptions(domain, trace)
-    components_queue = deque(all_components_flat) # components_queue and unvisited_components should mirror each other
-    unvisited_components = all_components_flat_memo # the set of Components that need to be updated or re-updated.
-    while len(components_queue) > 0:
-        component = components_queue.popleft()
-        unvisited_components.remove(component)
-        component_has_changed = component.propagate_variables(trace)
-        if component_has_changed:
-            for parent_component in component.parents:
-                if parent_component not in unvisited_components:
-                    unvisited_components.add(parent_component)
-                    components_queue.append(parent_component)
-    print_exceptions(domain, trace)
+def import_all(primary_domain:"Domain.Domain") -> bool:
+    """
+    :param primary_domain: The Domain (and its dependencies) to modify.
+    :returns: A bool that if True, means that there is an error.
+    """
+    all_domains = primary_domain.get_cascading_dependencies(set())
+    all_group_files:Mapping["Domain.Domain", list[GroupFile]] = {domain: [] for domain in all_domains}
+    all_bases:dict["Domain.Domain", GroupDirectory] = {}
+    for domain in all_domains:
+        base_group_file = parse_groups(domain, domain.assets_directory, None)
+        assert isinstance(base_group_file, GroupDirectory)
+        all_bases[domain] = base_group_file
+        all_group_files[domain].extend(base_group_file.get_all_children())
+        domain.add_file_tree(base_group_file)
 
-def create_groups(domains:Sequence["Domain.Domain"], trace:Trace) -> dict["Domain.Domain",list[Group]]:
-    output:dict["Domain.Domain",list[Group]] = {}
-    for domain in domains:
-        with trace.enter(domain, domain.name, ...):
-            output[domain] = []
-            for file_path in get_all_component_files(domain):
-                with trace.enter(file_path, file_path.relative_to(domain.assets_directory).as_posix().removesuffix(file_path.suffix), ...):
-                    output[domain].append(Group(domain, file_path, trace))
-    print_exceptions(domains[-1], trace)
-    for domain, groups in output.items():
-        with trace.enter(domain, domain.name, ...):
-            group_names = {group.name: group for group in groups}
-            for group in groups:
-                with trace.enter(group, group.name, ...):
-                    group.verify_group_aliases(group_names, trace)
-    print_exceptions(domains[-1], trace)
-    return output
+    for domain in all_domains:
+        domain.import_scripts()
 
-def get_imports(domains:Sequence["Domain.Domain"]) -> dict["Domain.Domain",Sequence["Domain.Domain"]]:
-    return {domain: domain.dependencies for domain in domains}
+    error = Errors.fine # used to determine if anything should be returned
+    all_groups:dict["Domain.Domain", list[Group]] = {domain: [] for domain in all_domains}
+    for domain, group_files in all_group_files.items():
+        for group_file in group_files:
+            if DEBUG:
+                print("parsing", group_file)
+            if isinstance(group_file, ComponentFile):
+                with open(group_file.path, "rt", encoding="utf-8") as f:
+                    reader = Reader(f.read(), domain.name + "!" + group_file.path.relative_to(domain.assets_directory).as_posix().removesuffix(".cmp"), group_file.path)
+                group = group_file.group = parse_file(reader, domain, group_file.path)
+                group.group_file = group_file
+                all_groups[domain].append(group)
+            elif isinstance(group_file, ScriptFile):
+                importlib.import_module(group_file.module_name)
 
-def inheritance(all_components:dict["Domain.Domain",list[Group]], primary_domain:"Domain.Domain", functions:dict["Domain.Domain", ScriptSetSet], trace:Trace) -> None:
-    global_groups:dict[str,dict[str,Group]] = {domain.name: {group.name: group for group in groups} for domain, groups in all_components.items()}
-    for domain, groups in all_components.items():
-        with trace.enter(domain, domain.name, ...):
-            create_inline_component = get_inline_component_function(domain, trace)
-            for group in groups:
-                with trace.enter(group, group.name, ...):
-                    for component_name, component in group.components.items():
-                        new_component = component.inheritance(set(), global_groups, {}, functions[domain], create_inline_component, trace)
-                        if new_component is ...: # an error occurred.
-                            continue
-                        group.components[component_name] = new_component
-    print_exceptions(primary_domain, trace)
-
-def set_components(all_components:dict["Domain.Domain",list[Group]], domain_imports:dict["Domain.Domain",Sequence["Domain.Domain"]], primary_domain:"Domain.Domain", functions:dict["Domain.Domain",ScriptSetSet], trace:Trace) -> None:
-    for domain, groups in all_components.items():
-        with trace.enter(domain, domain.name, ...):
-            create_inline_component = get_inline_component_function(domain, trace)
-            script_set_set_set = functions[domain]
-            imported_set = set(domain_imports[domain])
-            imported_set.add(domain)
-            imports = {domain.name: {group.name: group for group in groups} for domain, groups in all_components.items() if domain in imported_set}
-            for group in groups:
-                with trace.enter(group, group.name, ...):
-                    for component in group.components.values():
-                        component.set_component(imports, script_set_set_set, create_inline_component, trace)
-    print_exceptions(primary_domain, trace)
-
-def create_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
-    for domain, groups in all_components.items():
-        with trace.enter(domain, domain.name, ...):
-            for group in groups:
-                with trace.enter(group, group.name, ...):
-                    for component in group.components.values():
-                        component_output = component.create_final_component(trace)
-                        if component_output is ...: # happens if create_final_component has an error or component is abstract
-                            continue
-                        component.final = component_output
-    print_exceptions(domain, trace)
-
-def link_finals(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
-    for domain, groups in all_components.items():
-        with trace.enter(domain, domain.name, ...):
-            for group in groups:
-                with trace.enter(group, group.name, ...):
-                    for component in group.components.values():
-                        component.link_final_component(trace)
-    print_exceptions(domain, trace)
-
-def check_components(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
-    for domain, groups in all_components.items():
-        with trace.enter(domain, domain.name, ...):
-            for group in groups:
-                with trace.enter(group, group.name, ...):
-                    for component in group.components.values():
-                        component.check_component(trace)
-    print_exceptions(domain, trace)
-
-def finalize_components(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
-    for domain, groups in all_components.items():
-        with trace.enter(domain, domain.name, ...):
-            for group in groups:
-                remove_components:list[str] = []
-                with trace.enter(group, group.name, ...):
-                    for component in group.components.values():
-                        component.finalize_component(trace)
-                        if component.abstract:
-                            remove_components.append(component.name)
-                    for remove_component in remove_components:
-                        del group.components[remove_component]
-    print_exceptions(domain, trace)
-
-def get_script_referenceable(
-    all_components:dict["Domain.Domain",list[Group]],
-    primary_domain:"Domain.Domain"
-) -> None:
-    objects:dict[str,dict[str,dict[str,Any|EllipsisType]]] = {}
-    for domain, groups in all_components.items():
-        objects[domain.name] = {}
-        for group in groups:
-            objects[domain.name][group.name] = {}
-            for component in group.components.values():
-                if not component.abstract:
-                    objects[domain.name][group.name][component.name] = component.final if component.script_referenceable else ...
-    primary_domain.script_referenceable.update_objects(objects)
-
-def check_for_unused_components(all_components:dict["Domain.Domain",list[Group]], domain:"Domain.Domain", trace:Trace) -> None:
-    visited_nodes:set[Component] = set()
-    unvisited_nodes:list[Component] = []
-    for domain, groups in all_components.items():
-        for group in groups:
-            unvisited_nodes.extend(component for component in group.components.values() if component.assume_used)
-    while len(unvisited_nodes) > 0:
-        unvisited_node = unvisited_nodes.pop()
-        if unvisited_node in visited_nodes: continue
-        unvisited_nodes.extend(
-            neighbor
-            for neighbor in unvisited_node.links_to_other_components
-            if neighbor not in visited_nodes
-        )
-        visited_nodes.add(unvisited_node)
-        if unvisited_node.inherit_parent is not None:
-            visited_nodes.add(unvisited_node.inherit_parent)
-    unused_components:Iterable[Component] = (
-        component
-        for groups in all_components.values()
-        for group in groups
-        for component in group.components.values()
-        if component not in visited_nodes
-    )
-    for unused_component in unused_components:
-        print(f"Warning: Unused component: {unused_component}")
-
-def get_all_functions(domain_imports:dict["Domain.Domain",Sequence["Domain.Domain"]]) -> dict["Domain.Domain",ScriptSetSet]:
-    return {domain: ScriptSetSet(domain) for domain, dependencies in domain_imports.items()}
-
-def parse_all_groups(domains:Sequence["Domain.Domain"]) -> dict["Domain.Domain",list[Group]]:
-    '''
-    :domain: A Domain and its dependencies. The primary Domain goes last.
-    '''
     trace = Trace()
-    groups = create_groups(domains, trace)
-    domain_imports = get_imports(domains)
-    functions = get_all_functions(domain_imports)
-    inheritance(groups, domains[-1], functions, trace)
-    set_components(groups, domain_imports, domains[-1], functions, trace)
-    propagate_variables(groups, domains[-1], trace)
-    create_finals(groups, domains[-1], trace)
-    get_script_referenceable(groups, domains[-1])
-    link_finals(groups, domains[-1], trace)
-    check_components(groups, domains[-1], trace)
-    finalize_components(groups, domains[-1], trace)
-    check_for_unused_components(groups, domains[-1], trace)
-    return groups
+    for domain, groups in all_groups.items():
+        with trace.enter(domain, domain.name, ...):
+            for group in groups:
+                if DEBUG:
+                    print("set_field", group)
+                with trace.enter(group, group.name, ...):
+                    group.settings.set_field(domain, group, trace)
+                    for index, (field_name, field) in enumerate(group.fields.items()):
+                        # do even if abstract
+                        field.set_field(group, field_name, field_name, index, trace, is_inline=False)
+
+    for domain, groups in all_groups.items():
+        with trace.enter(domain, domain.name, ...):
+            for group in groups:
+                if DEBUG:
+                    print("create_field", group)
+                with trace.enter(group, group.name, ...):
+                    for field_name, field_factory in group.fields.items():
+                        if not field_factory.abstract:
+                            field_factory.create_field(EMPTY_SCOPE, set(), trace)
+
+    for domain, groups in all_groups.items():
+        with trace.enter(domain, domain.name, ...):
+            domain.remove_file_tree()
+            for group in groups:
+                if DEBUG:
+                    print("create_final", group)
+                with trace.enter(group, group.name, ...):
+                    for field_name, field in group.fields.items():
+                        if not field.abstract:
+                            field.create_final(EMPTY_SCOPE, trace)
+
+    for domain, groups in all_groups.items():
+        with trace.enter(domain, domain.name, ...):
+            for group in groups:
+                if DEBUG:
+                    print("link_final", group)
+                with trace.enter(group, group.name, ...):
+                    finals:dict[str,object] = {}
+                    group.finals = finals
+                    for field_name, field in group.fields.items():
+                        if not field.abstract:
+                            finals[field_name], _ = field.link_final(EMPTY_SCOPE, trace)
+
+    for domain, groups in all_groups.items():
+        with trace.enter(domain, domain.name, ...):
+            for group in groups:
+                if DEBUG:
+                    print("finalize", group)
+                with trace.enter(group, group.name, ...):
+                    for field_name, field in group.fields.items():
+                        if not field.abstract:
+                            error = error.narrow(field.finalize(EMPTY_SCOPE, trace))
+
+    if error > Errors.finalize:
+        for domain in all_domains:
+            domain_finals = [final for group in all_groups[domain] for final in group.finals.values()]
+            domain.set_values(
+                dataminer_collections=get_object_dictionary(domain_finals, AbstractDataminerCollection),
+                logs=get_object_dictionary(domain_finals, Log),
+                serializers=get_object_dictionary(domain_finals, SerializerCreator, lambda serializer: serializer.serializer),
+                structure_tags=get_object_dictionary(domain_finals, StructureTag),
+                tablifiers=get_object_dictionary(domain_finals, Tablifier),
+                version_tags=get_object_dictionary(domain_finals, VersionTag),
+                versions=get_object_dictionary(domain_finals, Version),
+            )
+            memory_usage.add_domain(domain)
+
+        finalize_all(all_groups)
+
+    if trace.has_exceptions or any(group.reader.has_exceptions for groups in all_groups.values() for group in groups):
+        exception_count:int = 0
+        with open(primary_domain.component_log_file, "wt") as f:
+            f.write(f"{datetime.now().isoformat()}\n\n") # clear
+        for groups in all_groups.values():
+            for group in groups:
+                if group.reader.has_exceptions:
+                    for exception in group.reader.stringify_exceptions():
+                        print(exception)
+                        with open(primary_domain.component_log_file, "at", encoding="utf-8") as f:
+                            f.write(exception + "\n\n")
+                        exception_count += 1
+        for exception in trace.stringify():
+            print(exception)
+            with open(primary_domain.component_log_file, "at", encoding="utf-8") as f:
+                f.write(exception + "\n\n")
+            exception_count += 1
+        print(f"{exception_count} total exceptions")
+
+    if error < Errors.fine:
+        print(f"Failed to import ({error.name})")
+    elif DEBUG:
+        print("Successfully imported.")
+
+    return error < Errors.fine

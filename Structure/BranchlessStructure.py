@@ -6,7 +6,7 @@ from ordered_set import OrderedSet
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
 from Structure.PassthroughStructure import PassthroughStructure
-from Structure.Structure import Structure
+from Structure.Structure import Structure, convert_types_to_tuple, types_type
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.Uses import Region, StructureUse, TypeUse, UsageTracker, Use
 from Utilities.Exceptions import StructureTypeError
@@ -19,15 +19,20 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
     __slots__ = (
         "structure",
         "this_types",
+        "this_types_list",
     )
 
     def link_branchless_structure(
         self,
         structure:Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None,
-        this_types:tuple[type,...],
+        this_types:types_type,
     ) -> None:
         self.structure = structure
-        self.this_types = this_types
+        self.this_types_list = this_types
+
+    def finalize_branchless_structure(self) -> None:
+        self.this_types = convert_types_to_tuple(self.this_types_list)
+        del self.this_types_list
 
     def iter_structures(self) -> Sequence[Structure]:
         return (self.structure,) if self.structure is not None else ()

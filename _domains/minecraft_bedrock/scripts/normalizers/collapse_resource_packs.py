@@ -4,7 +4,7 @@ from typing import Iterable, Literal, Mapping, Optional, Sequence, TypedDict
 
 from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
-from Serializer.Serializer import Serializer
+from Serializer.Serializer import SerializerCreator
 from Utilities.Exceptions import StructureException, message
 from Utilities.File import AbstractFile, FakeFile
 from Utilities.TypeVerifier import (
@@ -14,7 +14,6 @@ from Utilities.TypeVerifier import (
     TypedDictTypeVerifier,
 )
 
-domain = get_domain_from_module(__name__)
 
 class UnrecognizedPackError(StructureException):
     "The behavior pack/resource pack is not recognized."
@@ -119,20 +118,19 @@ def collapse_resource_packs_dict[a](data:Mapping[str,Mapping[str,a]]) -> dict[tu
     return output
 
 @component_function(type_verifier=TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("serializer", False, str),
-), opens_files=True)
-def collapse_resource_packs_dict_file[a](data:Mapping[str,AbstractFile[Mapping[str,a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[tuple[str,...],dict[str,a]]]:
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def collapse_resource_packs_dict_file[a](data:Mapping[str,AbstractFile[Mapping[str,a]]], serializer:SerializerCreator) -> FakeFile[dict[tuple[str,...],dict[str,a]]]:
     '''Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.'''
     output:dict[tuple[str,...],dict[str,a]] = {}
     file_hashes:list[int] = []
-    _serializer = domain.script_referenceable.get(serializer, Serializer)
     for resource_pack_list in get_grouped_resource_packs(data):
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
         combined_data:dict[str,a] = {}
         for resource_pack in resource_pack_list:
             file = data[resource_pack]
             file_hashes.append(hash(file))
-            combined_data.update(file.read(_serializer))
+            combined_data.update(file.read(serializer.serializer))
         output[tuple(resource_pack_list)] = combined_data
     return FakeFile("combined_file", output, None, hash(tuple(file_hashes)))
 
@@ -147,20 +145,19 @@ def collapse_resource_packs_flat[a](data:Mapping[str,a]) -> dict[str,a]:
     return output
 
 @component_function(type_verifier=TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("serializer", False, str),
-), opens_files=True)
-def collapse_resource_packs_list_file[a](data:Mapping[str,AbstractFile[Sequence[a]]], serializer:str="minecraft_common!serializers/json") -> FakeFile[dict[tuple[str,...],list[a]]]:
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def collapse_resource_packs_list_file[a](data:Mapping[str,AbstractFile[Sequence[a]]], serializer:SerializerCreator) -> FakeFile[dict[tuple[str,...],list[a]]]:
     '''Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.'''
     output:dict[tuple[str,...],list[a]] = {}
     file_hashes:list[int] = []
-    _serializer = domain.script_referenceable.get(serializer, Serializer)
     for resource_pack_list in get_grouped_resource_packs(data):
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
         combined_data:list[a] = []
         for resource_pack in resource_pack_list:
             file = data[resource_pack]
             file_hashes.append(hash(file))
-            combined_data.extend(file.read(_serializer))
+            combined_data.extend(file.read(serializer.serializer))
         output[tuple(resource_pack_list)] = combined_data
     return FakeFile("combined_file", output, None, hash(tuple(file_hashes)))
 

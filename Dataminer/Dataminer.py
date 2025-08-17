@@ -15,7 +15,6 @@ class Dataminer():
         "dependencies",
         "domain",
         "files",
-        "file_name",
         "files_str",
         "name",
         "optional_dependencies",
@@ -30,13 +29,12 @@ class Dataminer():
         self.version = version
         self.settings = settings
         self.domain = self.settings.domain
-        self.file_name = self.settings.file_name
         self.name = self.settings.name
         self.files = set(self.settings.version_file_types)
         self.files_str = {version_file_type.name for version_file_type in self.files}
         self.dependencies = self.settings.dependencies
         self.optional_dependencies = self.settings.optional_dependencies
-        if not isinstance(self, NullDataminer) and self.version not in self.settings.version_range:
+        if self.version not in self.settings.version_range:
             raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, f"in Dataminer {self}")
 
         self.initialize(**settings.arguments)
@@ -75,15 +73,3 @@ class Dataminer():
 
     def export_file(self, file_bytes:bytes, file_name:str) -> File:
         return new_file(file_bytes, file_name, self.domain)
-
-class NullDataminer(Dataminer):
-    '''Returned when a dataminer collection has no dataminer for a data type.'''
-
-    def initialize(self, **kwargs) -> None:
-        raise Exceptions.NullDataminerMethodError(self, self.initialize)
-
-    def activate(self, environment:DataminerEnvironment) -> NoReturn:
-        raise Exceptions.NullDataminerMethodError(self, self.activate)
-
-    def get_accessor(self, file_type:str) -> NoReturn:
-        raise Exceptions.NullDataminerMethodError(self, self.get_accessor)

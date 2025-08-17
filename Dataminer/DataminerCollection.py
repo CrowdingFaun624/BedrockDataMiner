@@ -1,10 +1,9 @@
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
-from Dataminer.Dataminer import Dataminer, NullDataminer
+from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.DataminerSettings import DataminerSettings
-from Structure.StructureBase import StructureBase
 from Structure.StructureInfo import StructureInfo
 from Utilities.Exceptions import InvalidStateError
 from Version.Version import Version
@@ -16,9 +15,8 @@ class DataminerCollection(AbstractDataminerCollection):
         "dataminer_settings",
     )
 
-    def link_subcomponents(self, structure:StructureBase, dataminer_settings:list["DataminerSettings"]) -> None:
-        super().link_subcomponents(structure)
-        self.dataminer_settings:list["DataminerSettings"] = dataminer_settings
+    def link_dataminer_collection(self, dataminer_settings:Sequence["DataminerSettings"]) -> None:
+        self.dataminer_settings:Sequence["DataminerSettings"] = dataminer_settings
 
     def get_structure_info(self, version: Version) -> StructureInfo:
         return self.get_dataminer_settings(version).structure_info
@@ -42,16 +40,22 @@ class DataminerCollection(AbstractDataminerCollection):
     def get_dataminer_class(self, version:Version) -> type[Dataminer]:
         '''Returns a type of Dataminer such that `version` is in the dataminer's VersionRange.'''
         dataminer_settings = self.get_dataminer_settings(version)
-        return dataminer_settings.get_dataminer_class()
+        dataminer_class = dataminer_settings.get_dataminer_class()
+        if dataminer_class is None:
+            raise InvalidStateError(self, version, dataminer_class)
+        return dataminer_class
 
     def get_dataminer(self, version:Version) -> Dataminer:
         '''Returns a Dataminer such that `version` is in the dataminer's VersionRange.'''
         dataminer_settings = self.get_dataminer_settings(version)
-        return dataminer_settings.get_dataminer_class()(version, dataminer_settings)
+        dataminer_class = dataminer_settings.get_dataminer_class()
+        if dataminer_class is None:
+            raise InvalidStateError(self, version, dataminer_class)
+        return dataminer_class(version, dataminer_settings)
 
     def supports_version(self, version:Version) -> bool:
         dataminer_settings = self.get_dataminer_settings(version)
-        if dataminer_settings.dataminer_class is NullDataminer:
+        if dataminer_settings.dataminer_class is None:
             return False
         version_files = set(version_file.version_file_type for version_file in version.version_files if version_file.has_accessors())
         return all(

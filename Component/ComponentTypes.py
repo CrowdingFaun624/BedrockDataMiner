@@ -1,104 +1,115 @@
-from Component.Accessor.AccessorComponent import AccessorComponent
-from Component.Accessor.AccessorTypeComponent import AccessorTypeComponent
-from Component.Component import Component
-from Component.Dataminer.CoverageDataminerCollectionComponent import (
-    CoverageDataminerCollectionComponent,
-)
-from Component.Dataminer.DataminerCollectionComponent import (
-    DataminerCollectionComponent,
-)
-from Component.Dataminer.DataminerSettingsComponent import DataminerSettingsComponent
-from Component.Log.LogComponent import LogComponent
-from Component.Serializer.SerializerComponent import SerializerComponent
-from Component.Structure.CacheStructureComponent import CacheStructureComponent
-from Component.Structure.ConditionStructureComponent import ConditionStructureComponent
-from Component.Structure.ConvergingStructureComponent import (
-    ConvergingStructureComponent,
-)
-from Component.Structure.DictStructureComponent import DictStructureComponent
-from Component.Structure.FileStructureComponent import FileStructureComponent
-from Component.Structure.FilterComponent import (
-    AndFilterComponent,
-    EqFilterComponent,
-    GeFilterComponent,
-    GtFilterComponent,
-    KeyNotPresentFilterComponent,
-    KeyPresentFilterComponent,
-    LeFilterComponent,
-    LtFilterComponent,
-    NandFilterComponent,
-    NeFilterComponent,
-    NorFilterComponent,
-    OrFilterComponent,
-)
-from Component.Structure.FunctionComponent import FunctionComponent
-from Component.Structure.KeymapStructureComponent import KeymapStructureComponent
-from Component.Structure.NormalizerStructureComponent import (
-    NormalizerStructureComponent,
-)
-from Component.Structure.NumberStructureComponent import NumberStructureComponent
-from Component.Structure.PrimitiveStructureComponent import PrimitiveStructureComponent
-from Component.Structure.SequenceStructureComponent import SequenceStructureComponent
-from Component.Structure.StringStructureComponent import StringStructureComponent
-from Component.Structure.StructureBaseComponent import StructureBaseComponent
-from Component.Structure.StructureTagComponent import StructureTagComponent
-from Component.Structure.SwitchStructureComponent import SwitchStructureComponent
-from Component.Structure.TypeAliasComponent import TypeAliasComponent
-from Component.Structure.UnionStructureComponent import UnionStructureComponent
-from Component.Tablifier.TablifierComponent import TablifierComponent
-from Component.Version.VersionComponent import VersionComponent
-from Component.Version.VersionFileComponent import VersionFileComponent
-from Component.Version.VersionFileTypeComponent import VersionFileTypeComponent
-from Component.VersionTag.LatestSlotComponent import LatestSlotComponent
-from Component.VersionTag.RangeVersionTagAutoAssignerComponent import (
-    RangeVersionTagAutoAssignerComponent,
-)
-from Component.VersionTag.VersionTagComponent import VersionTagComponent
-from Component.VersionTag.VersionTagOrderComponent import VersionTagOrderComponent
+from typing import Any, Mapping
 
-component_types:list[type[Component]] = [
-    AccessorComponent,
-    AccessorTypeComponent,
-    CacheStructureComponent,
-    ConditionStructureComponent,
-    ConvergingStructureComponent,
+from Component.Accessor import AccessorComponent, AccessorTypeComponent
+from Component.Component import Component
+from Component.Dataminer import (
+    AbstractDataminerCollectionComponent,
     CoverageDataminerCollectionComponent,
     DataminerCollectionComponent,
     DataminerSettingsComponent,
+)
+from Component.Log import LogComponent
+from Component.Serializer import SerializerComponent
+from Component.Structure import (
+    BranchlessStructureComponent,
+    CacheStructureComponent,
+    ConditionStructureComponent,
+    ConvergingStructureComponent,
+    DelegateComponent,
     DictStructureComponent,
     FileStructureComponent,
-    AndFilterComponent,
-    EqFilterComponent,
-    GeFilterComponent,
-    GtFilterComponent,
-    KeyNotPresentFilterComponent,
-    KeyPresentFilterComponent,
-    LeFilterComponent,
-    LtFilterComponent,
-    NandFilterComponent,
-    NeFilterComponent,
-    NorFilterComponent,
-    OrFilterComponent,
+    FilterComponent,
     FunctionComponent,
+    IterableStructureComponent,
+    KeyComponent,
     KeymapStructureComponent,
-    LatestSlotComponent,
-    LogComponent,
+    MappingStructureComponent,
     NormalizerStructureComponent,
     NumberStructureComponent,
+    PassthroughStructureComponent,
     PrimitiveStructureComponent,
     SequenceStructureComponent,
-    SerializerComponent,
     StringStructureComponent,
-    RangeVersionTagAutoAssignerComponent,
     StructureBaseComponent,
+    StructureComponent,
     StructureTagComponent,
     SwitchStructureComponent,
-    TablifierComponent,
-    TypeAliasComponent,
     UnionStructureComponent,
+    WithinStructureComponent,
+)
+from Component.Tablifier import TablifierComponent
+from Component.Version import (
     VersionComponent,
     VersionFileComponent,
     VersionFileTypeComponent,
+    VersionProviderComponent,
+)
+from Component.VersionTag import (
+    LatestSlotComponent,
+    RangeVersionTagAutoAssignerComponent,
+    VersionTagAutoAssignerComponent,
     VersionTagComponent,
     VersionTagOrderComponent,
-]
+)
+
+component_types_dict:Mapping[str,type["Component[Any, Any]"]] = {component_type.type_name: component_type for component_type in (
+    AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent,
+    AccessorComponent.AccessorComponent,
+    AccessorTypeComponent.AccessorTypeComponent,
+    VersionTagOrderComponent.AllowedChildrenComponent,
+    FilterComponent.AndFilterComponent,
+    BranchlessStructureComponent.BranchlessStructureComponent,
+    CacheStructureComponent.CacheStructureComponent,
+    ConditionStructureComponent.ConditionStructureComponent,
+    ConvergingStructureComponent.ConvergingStructureComponent,
+    CoverageDataminerCollectionComponent.CoverageDataminerCollectionComponent,
+    DataminerCollectionComponent.DataminerCollectionComponent,
+    DataminerSettingsComponent.DataminerSettingsComponent,
+    DelegateComponent.DelegateComponent,
+    DictStructureComponent.DictStructureComponent,
+    FilterComponent.EqFilterComponent,
+    FileStructureComponent.FileStructureComponent,
+    FilterComponent.FilterComponent,
+    FunctionComponent.FunctionComponent,
+    FilterComponent.GeFilterComponent,
+    FilterComponent.GtFilterComponent,
+    IterableStructureComponent.IterableStructureComponent,
+    KeyComponent.KeyComponent,
+    FilterComponent.KeyFilterComponent,
+    KeymapStructureComponent.KeymapStructureComponent,
+    FilterComponent.KeyNotPresentFilterComponent,
+    FilterComponent.KeyPresentFilterComponent,
+    LatestSlotComponent.LatestSlotComponent,
+    FilterComponent.LeFilterComponent,
+    FilterComponent.LtFilterComponent,
+    LogComponent.LogComponent,
+    MappingStructureComponent.MappingStructureComponent,
+    FilterComponent.MetaFilterComponent,
+    FilterComponent.NeFilterComponent,
+    NormalizerStructureComponent.NormalizerStructureComponent,
+    NumberStructureComponent.NumberStructureComponent,
+    FilterComponent.OrFilterComponent,
+    FilterComponent.NandFilterComponent,
+    FilterComponent.NorFilterComponent,
+    PassthroughStructureComponent.PassthroughStructureComponent,
+    PrimitiveStructureComponent.PrimitiveStructureComponent,
+    RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
+    SequenceStructureComponent.SequenceStructureComponent,
+    SerializerComponent.SerializerComponent,
+    StringStructureComponent.StringStructureComponent,
+    StructureComponent.StructureComponent,
+    StructureBaseComponent.StructureBaseComponent,
+    StructureTagComponent.StructureTagComponent,
+    SwitchStructureComponent.SwitchStructureComponent,
+    TablifierComponent.TablifierComponent,
+    UnionStructureComponent.UnionStructureComponent,
+    FilterComponent.ValueFilterComponent,
+    VersionComponent.VersionComponent,
+    VersionFileComponent.VersionFileComponent,
+    VersionFileTypeComponent.VersionFileTypeComponent,
+    VersionProviderComponent.VersionProviderComponent,
+    VersionTagComponent.VersionTagComponent,
+    VersionTagAutoAssignerComponent.VersionTagAutoAssignerComponent,
+    VersionTagOrderComponent.VersionTagOrderComponent,
+    WithinStructureComponent.WithinStructureComponent,
+)}

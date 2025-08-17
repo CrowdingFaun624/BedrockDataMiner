@@ -1,10 +1,11 @@
-from typing import Hashable, Sequence
+from typing import AbstractSet, Any, Hashable, Mapping, Sequence
 
 from ordered_set import OrderedSet
 
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
 from Structure.IterableContainer import ICon
+from Structure.Key import Key
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
@@ -33,11 +34,13 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
         "allow_key_moves",
         "key_structure",
         "key_weight",
+        "keys",
         "similarity_weights",
         "value_structure_origins",
         "value_structures",
         "value_tags",
         "value_types",
+        "value_weight",
         "value_weights",
     )
 
@@ -47,24 +50,27 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
         allow_same_key_optimization:bool,
         key_structure:Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None,
         key_weight:int,
-        similarity_weights:dict[str,int],
-        value_structure_origins:dict[str,"KeymapStructure"],
-        value_structures:dict[str,Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None],
-        value_tags:dict[str,set[StructureTag]],
-        value_types:dict[str,tuple[type,...]],
-        value_weights:dict[str,int],
+        keys:Mapping[str,Key[V]],
+        value_weight:int,
     ) -> None:
         self.allow_key_moves = allow_key_moves
         self.allow_same_key_optimization = allow_same_key_optimization
         self.key_moves_ever_allowed = allow_key_moves
         self.key_structure = key_structure
         self.key_weight = key_weight
-        self.similarity_weights = similarity_weights
-        self.value_structure_origins = value_structure_origins
-        self.value_structures = value_structures
-        self.value_tags = value_tags
-        self.value_types = value_types
-        self.value_weights = value_weights
+        self.keys = keys
+        self.value_weight = value_weight
+
+    def finalize_keymap_structure(self) -> None:
+        for key in self.keys.values():
+            key.finalize_key()
+        self.delegate_keys:Mapping[str,Any] = {key: value.delegate_arguments for key, value in self.keys.items() if value.delegate_arguments is not None}
+        self.similarity_weights:Mapping[str,int] = {key: value.similarity_weight for key, value in self.keys.items()}
+        self.value_structures:Mapping[str,Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None] = {key: value.structure for key, value in self.keys.items()}
+        self.value_types:Mapping[str,tuple[type,...]] = {key: value.types for key, value in self.keys.items()}
+        self.value_tags:Mapping[str,AbstractSet[StructureTag]] = {key: value.tags for key, value in self.keys.items() if len(value.tags) > 0}
+        self.value_weights:Mapping[str,int] = {key: (value.value_weight if value.value_weight is not None else self.value_weight) for key, value in self.keys.items()}
+        del self.keys
 
     def get_key_structure(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None:
         return self.key_structure
@@ -133,7 +139,7 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
             return (object,) # catches everything. Ensures that additional, unnecessary errors don't occur.
         return output
 
-    def get_value_tags(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> set[StructureTag]|None:
+    def get_value_tags(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> AbstractSet[StructureTag]|None:
         return self.value_tags.get(self.key_function(key))
 
     def allow_key_move(self, key1: Con[K], key2: Con[K], value1: Con[V], value2: Con[V], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> bool:

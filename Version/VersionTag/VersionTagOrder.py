@@ -1,42 +1,52 @@
-from typing import Self
+from typing import AbstractSet, Mapping, Sequence
 
+from Component.ComponentObject import ComponentObject
 from Version.VersionTag.VersionTag import VersionTag
 
 
-class VersionTagOrder():
+class AllowedChildren(ComponentObject):
+
+    __slots__ = (
+        "tag",
+        "children",
+    )
+
+    def link_allowed_children(
+        self,
+        children: Sequence[VersionTag],
+        tag: VersionTag,
+    ) -> None:
+        self.children = children
+        self.tag = tag
+
+class VersionTagOrder(ComponentObject):
 
     __slots__ = (
         "allowed_children",
-        "full_name",
-        "initialized",
+        "allowed_children_list",
         "order",
+        "order_list",
         "tags_after_top_level_tag",
         "tags_before_top_level_tag",
         "top_level_tag",
     )
 
-    def __init__(self, full_name:str) -> None:
-        self.full_name = full_name
-        self.initialized:bool = False
-
-    def link_finals(
+    def link_version_tag_order(
         self,
-        order:list[set[VersionTag]],
-        allowed_children:dict[VersionTag,list[VersionTag]],
+        allowed_children:Sequence[AllowedChildren],
+        order:Sequence[Sequence[VersionTag]],
+        tags_after_top_level_tag:Sequence[VersionTag],
+        tags_before_top_level_tag:Sequence[VersionTag],
         top_level_tag:VersionTag|None,
-        tags_before_top_level_tag:list[VersionTag],
-        tags_after_top_level_tag:list[VersionTag],
-    ) -> Self:
-        self.initialized = True
-        self.order = order
-        self.allowed_children = allowed_children
+    ) -> None:
+        self.order_list = order
+        self.allowed_children_list = allowed_children
         self.top_level_tag = top_level_tag
         self.tags_before_top_level_tag = tags_before_top_level_tag
         self.tags_after_top_level_tag = tags_after_top_level_tag
-        return self
 
-    def __repr__(self) -> str:
-        if not self.initialized:
-            return f"<{self.__class__.__name__} {self.full_name}, uninitialized>"
-        else:
-            return f"<{self.__class__.__name__} {self.full_name}>"
+    def finalize_version_tag_order(self) -> None:
+        self.allowed_children = {allowed_children.tag: allowed_children.children for allowed_children in self.allowed_children_list}
+        del self.allowed_children_list
+        self.order:Sequence[AbstractSet[VersionTag]] = [set(item) for item in self.order_list]
+        del self.order_list

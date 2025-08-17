@@ -1,19 +1,13 @@
 import json
-from collections import Counter
 from itertools import chain
 from pathlib import Path
-from typing import Callable, Mapping, NotRequired, Sequence, TypedDict
+from typing import Mapping, NotRequired, Sequence, TypedDict
 
+import Component.Scripts as Scripts
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
-from Component.Component import Component
-from Component.ComponentFunctions import BUILT_INS
-from Component.Group import Group
-from Component.Importer import parse_all_groups
-from Component.Importer import print_exceptions as importer_print_exceptions
-from Component.ImporterFinalize import finalize_all as importer_finalize_all
-from Component.ScriptImporter import ScriptSetSet, import_scripted_objects
-from Component.ScriptReferenceable import ScriptReferenceable
+from Component.Group import GroupDirectory, ScriptFile
+from Component.Importer import import_all
 from Component.Types import TypeStuff, primary_type_stuff
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Domain.LibFiles import LibFiles
@@ -22,9 +16,6 @@ from Structure.StructureTag import StructureTag
 from Tablifier.Tablifier import Tablifier
 from Utilities.DataFile import DataFile
 from Utilities.Log import Log
-from Utilities.MemoryUsage import memory_usage
-from Utilities.Scripts import Scripts
-from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
@@ -68,59 +59,41 @@ class DomainManifestTypedDict(TypedDict):
     dependencies: NotRequired[list[str]]
     is_library: NotRequired[bool]
 
-def get_object_dictionary[T](
-    groups:list[Group],
-    object_type:type[T],
-    primary_name_func:Callable[["Component[T]", Group],str]=lambda component, group: component.name,
-    secondary_name_func:Callable[["Component[T]", Group],str]=lambda component, group: f"{group.name}/{component.name}",
-) -> Mapping[str,T]:
-    final_names:dict[tuple[str,str],T] = {}
-    primary_names:Counter[str] = Counter()
-    for group in groups:
-        for component in group.components.values():
-            if isinstance(component.final, object_type):
-                primary_name, secondary_name = primary_name_func(component, group), secondary_name_func(component, group)
-                final_names[primary_name, secondary_name] = component.final
-                primary_names[primary_name] += 1
-    return {(secondary_name if primary_names[primary_name] > 1 else primary_name): object for (primary_name, secondary_name), object in final_names.items()}
-
 class Domain():
 
     __slots__ = (
+        "active_file_hashes",
+        "aliases",
+        "assets_directory",
+        "comparison_file_counts",
+        "comparisons_directory",
         "component_log_file",
+        "data_directory",
+        "data_files",
         "dataminer_collections",
+        "dependencies",
+        "dependencies_str",
+        "domain_file",
+        "file_tree",
+        "is_imported",
+        "is_imported_scripts",
+        "is_library",
+        "json_decoder",
+        "json_encoder",
+        "lib_directory",
+        "lib_files",
+        "log_directory",
         "logs",
+        "name",
+        "scripts",
+        "scripts_directory",
         "serializers",
         "structure_tags",
         "tablifiers",
+        "type_stuff",
         "version_tags",
         "versions",
-        "name",
-        "assets_directory",
-        "data_directory",
-        "lib_directory",
-        "log_directory",
-        "scripts_directory",
-        "domain_file",
         "versions_directory",
-        "comparisons_directory",
-        "data_files",
-        "json_decoder",
-        "json_encoder",
-        "scripts",
-        "script_set",
-        "script_set_set",
-        "lib_files",
-        "type_stuff",
-        "is_library",
-        "aliases",
-        "dependencies_str",
-        "dependencies",
-        "script_referenceable",
-        "comparison_file_counts",
-        "is_imported",
-        "is_imported_scripts",
-        "active_file_hashes",
     )
 
     def __init__(self, name:str) -> None:
@@ -138,33 +111,8 @@ class Domain():
 
         self.is_imported:bool = False
         self.is_imported_scripts:bool = False
-        self.is_library:bool
-        self.aliases:Sequence[str]
-        self.dependencies_str:Sequence[str]
-        self.dependencies:list[Domain]
-        self.read_manifest()
-
-        self.dataminer_collections:Mapping[str,"AbstractDataminerCollection"]
-        self.logs:Mapping[str,"Log"]
-        self.serializers:Mapping[str,"Serializer"]
-        self.structure_tags:Mapping[str,"StructureTag"]
-        self.tablifiers:Mapping[str,"Tablifier"]
-        self.version_tags:Mapping[str,"VersionTag"]
-        self.versions:Mapping[str,"Version"]
-
-        self.data_files = self._get_data_files()
-        '''
-        dictionary of files in the `./_assets/data` directory without the final suffix.
-        '''
-        self.json_decoder:             type[json.JSONDecoder]
-        self.json_encoder:             type[json.JSONEncoder]
-        self.scripts:                  Scripts
-
-        self.lib_files = LibFiles(self)
         self.type_stuff = TypeStuff(self)
         self.type_stuff.extend(primary_type_stuff)
-        self.script_referenceable:ScriptReferenceable = ScriptReferenceable(self)
-        self.active_file_hashes:set[int] = set()
 
     def get_cascading_dependencies(self, memo:set["Domain"]) -> Sequence["Domain"]:
         if self not in memo:
@@ -183,58 +131,87 @@ class Domain():
             TypedDictKeyTypeVerifier("is_library", False, bool),
             TypedDictKeyTypeVerifier("dependencies", False, ListTypeVerifier(str, list)),
         ).verify_throw(file, (self,))
-        self.is_library = file.get("is_library", False)
-        self.aliases = file.get("aliases", ())
-        self.dependencies_str = file.get("dependencies", ())
+        self.is_library:bool = file.get("is_library", False)
+        self.aliases:Sequence[str] = file.get("aliases", ())
+        self.dependencies_str:Sequence[str] = file.get("dependencies", ())
 
     def link_domains(self, domains:dict[str,"Domain"]) -> None:
-        self.dependencies = [domains[domain_name] for domain_name in self.dependencies_str]
+        self.dependencies:Sequence[Domain] = [domains[domain_name] for domain_name in self.dependencies_str]
         # link type stuff
         for dependency in self.dependencies:
             self.type_stuff.link(dependency.type_stuff)
 
-    def import_components(self) -> None:
+    def import_components(self) -> bool:
         if self.is_imported:
-            return
-        all_domains = self.get_cascading_dependencies(set())
-        for domain in all_domains:
-            domain.import_scripts()
-        all_groups = parse_all_groups(all_domains)
-        trace = Trace()
-        for domain in all_domains:
-            with trace.enter(domain, domain.name, ...):
-                domain.set_values(all_groups[domain])
-        importer_print_exceptions(self, trace)
-        importer_finalize_all(all_groups, self, importer_print_exceptions)
-        self.is_imported = True
-        memory_usage.add_domain(self)
+            return False
+        result = import_all(self)
+        self.is_imported = not result
+        return result
+
+    def add_file_tree(self, file_tree:GroupDirectory) -> None:
+        # file_tree is used by UserScript.__init__
+        self.file_tree:GroupDirectory = file_tree
+
+    def get_script_file(self, file_name:str) -> ScriptFile:
+        """
+        May be called while the `file_tree` attribute exists.
+
+        :param file_name: The file name of the Script's file, with forward slashes, relative to the Domain's directory, and without the ".py" suffix.
+        """
+        current_group_object = self.file_tree
+        for item in file_name.split("/"):
+            assert isinstance(current_group_object, GroupDirectory)
+            current_group_object = current_group_object.children[item]
+        assert isinstance(current_group_object, ScriptFile)
+        return current_group_object
+
+    def remove_file_tree(self) -> None:
+        # remove the attribute so it may be garbage collected after importing is done
+        del self.file_tree
 
     def import_scripts(self) -> None:
         # this Domain may already have its Scripts set by another Domain.
         if self.is_imported_scripts:
             return
-        self.scripts = Scripts(self)
-        self.scripts.import_modules()
-        self.json_decoder = CustomJson.get_special_decoder(self)
-        self.json_encoder = CustomJson.get_special_encoder(self)
-        self.script_set = import_scripted_objects(self, BUILT_INS)
-        self.script_set_set = ScriptSetSet(self)
         self.is_imported_scripts = True
+        self.scripts = Scripts.scripts
+        self.json_decoder:type[json.JSONDecoder] = CustomJson.get_special_decoder(self)
+        self.json_encoder:type[json.JSONEncoder] = CustomJson.get_special_encoder(self)
+        self.lib_files = LibFiles(self)
+        self.active_file_hashes:set[int] = set()
 
-    def set_values(self, groups:list[Group]) -> None:
-        self.dataminer_collections = get_object_dictionary(groups, AbstractDataminerCollection)
-        self.logs = get_object_dictionary(groups, Log)
-        self.serializers = get_object_dictionary(groups, Serializer)
-        self.structure_tags = get_object_dictionary(groups, StructureTag)
-        self.tablifiers = get_object_dictionary(groups, Tablifier)
-        self.version_tags = get_object_dictionary(groups, VersionTag)
-        self.versions = get_object_dictionary(groups, Version)
+    def set_values(
+        self,
+        dataminer_collections:Mapping[str,"AbstractDataminerCollection"],
+        logs:Mapping[str,"Log"],
+        serializers:Mapping[str,"Serializer"],
+        structure_tags:Mapping[str,"StructureTag"],
+        tablifiers:Mapping[str,"Tablifier"],
+        version_tags:Mapping[str,"VersionTag"],
+        versions:Mapping[str,"Version"],
+    ) -> None:
+        if self.is_imported:
+            return # may be triggered by a Domain using this one as a library being imported
+        self.dataminer_collections = dataminer_collections
+        self.logs = logs
+        self.serializers = serializers
+        self.structure_tags = structure_tags
+        self.tablifiers = tablifiers
+        self.version_tags = version_tags
+        self.versions = versions
 
-    def _get_data_files(self) -> dict[str,DataFile]:
-        if self.data_directory.exists():
-            return {path.stem: DataFile(path) for path in self.data_directory.iterdir()}
-        else:
-            return {}
+    def import_data_files(self) -> None:
+        self.data_files:Mapping[str,DataFile]
+        '''
+        dictionary of files in the `./_assets/data` directory without the final suffix.
+        '''
+        if not self.data_directory.exists():
+            self.data_files = {}
+            return
+        self.data_files = {
+            (path_name := path.relative_to(self.data_directory).as_posix().removesuffix(path.suffix)): DataFile(path, path_name)
+            for path in self.data_directory.rglob("*")
+        }
 
     def get_comparison_file_path(self, name:str, number:int) -> Path:
         comparison_subdirectory = self.comparisons_directory.joinpath(name)
@@ -242,8 +219,9 @@ class Domain():
         return comparison_subdirectory.joinpath(f"report_{str(number).zfill(4)}.txt")
 
     def close(self) -> None:
-        for version in self.versions.values():
-            version.close_accessors()
+        if self.is_imported:
+            for version in self.versions.values():
+                version.close_accessors()
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.name}>"

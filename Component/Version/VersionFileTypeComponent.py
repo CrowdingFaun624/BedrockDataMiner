@@ -1,54 +1,46 @@
-from typing import Sequence
+from typing import NotRequired, Required, Sequence, TypedDict
 
-from Component.Accessor.AccessorTypeComponent import ACCESSOR_TYPE_PATTERN
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentTyping import VersionFileTypeTypedDict
-from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field
-from Component.Pattern import Pattern
-from Utilities.Trace import Trace
+from Downloader.AccessorType import AccessorType
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
+    UnionTypeVerifier,
 )
 from Version.VersionFileType import VersionFileType
 
-VERSION_FILE_TYPE_PATTERN:Pattern["VersionFileTypeComponent"] = Pattern("is_version_file_type")
 
-class VersionFileTypeComponent(Component[VersionFileType]):
+class VersionFileTypeTypedDict(TypedDict):
+    allowed_accessor_types: Required[AccessorType | Sequence[AccessorType]]
+    dependencies: NotRequired[VersionFileType | Sequence[VersionFileType]]
+    available_when_unreleased: Required[bool]
+    must_exist: Required[bool]
 
-    class_name = "VersionFileType"
-    my_capabilities = Capabilities(is_version_file_type=True)
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("allowed_accessor_types", True, ListTypeVerifier(str, list)),
+def convert_accessor_types_to_sequence(sequence: AccessorType | Sequence[AccessorType]) -> Sequence[AccessorType]:
+    return [sequence] if isinstance(sequence, AccessorType) else sequence
+
+def convert_version_file_types_to_sequence(sequence: VersionFileType | Sequence[VersionFileType]) -> Sequence[VersionFileType]:
+    return [sequence] if isinstance(sequence, VersionFileType) else sequence
+
+class VersionFileTypeComponent(Component[VersionFileType, VersionFileTypeTypedDict]):
+
+    type_name = "VersionFileType"
+    object_type = VersionFileType
+    abstract = False
+
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("allowed_accessor_types", True, UnionTypeVerifier(AccessorType, ListTypeVerifier(AccessorType, list))),
+        TypedDictKeyTypeVerifier("dependencies", False, UnionTypeVerifier(VersionFileType, ListTypeVerifier(VersionFileType, list))),
         TypedDictKeyTypeVerifier("available_when_unreleased", True, bool),
         TypedDictKeyTypeVerifier("must_exist", True, bool),
-    )
+    ))
 
-    __slots__ = (
-        "allowed_accessor_types_field",
-        "available_when_unreleased",
-        "must_exist",
-    )
-
-    def initialize_fields(self, data: VersionFileTypeTypedDict) -> Sequence[Field]:
-        self.must_exist = data["must_exist"]
-        self.available_when_unreleased = data["available_when_unreleased"]
-
-        self.allowed_accessor_types_field = ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ("allowed_accessor_types",))
-        return (self.allowed_accessor_types_field,)
-
-    def create_final(self, trace:Trace) -> VersionFileType:
-        return VersionFileType(
-            name=self.name,
-            full_name=self.full_name,
-            must_exist=self.must_exist,
-            available_when_unreleased=self.available_when_unreleased,
-        )
-
-    def link_finals(self, trace:Trace) -> None:
-        self.final.link_finals(
-            allowed_accessor_types=list(self.allowed_accessor_types_field.map(lambda accessor_type_component: accessor_type_component.final)),
+    def link_final(self, fields: VersionFileTypeTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_version_file_type(
+            allowed_accessor_types=convert_accessor_types_to_sequence(fields["allowed_accessor_types"]),
+            available_when_unreleased=fields["available_when_unreleased"],
+            dependencies=convert_version_file_types_to_sequence(fields.get("dependencies", ())),
+            must_exist=fields["must_exist"],
         )

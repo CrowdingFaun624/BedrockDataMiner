@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 from typing import Any, TypeGuard, cast
 
+from Component.ComponentObject import ComponentObject
 from Utilities.Exceptions import LogWriteTypeError
 
 
@@ -15,28 +16,25 @@ ALLOWED_TYPES:dict[LogType, tuple[type,...]] = {
     LogType.json_lines: (dict, list, str, int, float, bool, type(None))
 }
 
-class Log[T]():
+class Log[T](ComponentObject):
 
     __slots__ = (
         "file",
-        "full_name",
         "log_type",
-        "name",
         "reset_on_reload",
     )
 
-    def __init__(self, name:str, file:Path, full_name:str, log_type:LogType, reset_on_reload:bool) -> None:
-        self.name:str = name
+    def link_log(self, file:Path, log_type:LogType, reset_on_reload:bool) -> None:
         self.file:Path = file
-        self.full_name = full_name
         self.log_type = log_type
         self.reset_on_reload:bool = reset_on_reload
+        for parent in file.parents:
+            if parent == self.domain.assets_directory:
+                break
+            parent.mkdir(exist_ok=True)
         self.file.touch()
         if reset_on_reload:
             self.file.write_text("")
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.full_name} {self.log_type.value}>"
 
     def supports_type[A](self, log:"Log[Any]", _type:type[A]) -> TypeGuard["Log[A]"]:
         return any(issubclass(_type, allowed_type) for allowed_type in ALLOWED_TYPES[self.log_type])

@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 import Domain.Domain as Domain
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
-from Dataminer.Dataminer import NullDataminer
 from Dataminer.DataminerCollection import DataminerCollection
 from Dataminer.Dataminers import run as dataminers_run
 from Dataminer.DataminerSettings import DataminerSettings
@@ -35,7 +34,7 @@ class DataminerSettingsPlan(Plan[DataminerSettings]):
             if not isinstance(dataminer_collection, DataminerCollection):
                 continue
             dataminer_settings = dataminer_collection.get_dataminer_settings(version)
-            if dataminer_settings.get_dataminer_class() is not NullDataminer:
+            if dataminer_settings.get_dataminer_class() is not None:
                 self.dataminer_settings[dataminer_settings] = dataminer_collection
 
     def test(self) -> list[DataminerSettings]:

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Mapping
 
 import Domain.Domain as Domain
 from Utilities.TypeVerifier import TypedDictTypeVerifier, TypeVerifier
@@ -39,7 +39,7 @@ class Accessor():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.full_name}>"
 
-    def prepare_for_install(self, instance_arguments:dict[str,Any], class_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
+    def prepare_for_install(self, instance_arguments:Mapping[Any,Any], class_arguments:Mapping[Any,Any], linked_accessors:dict[str,"Accessor"]) -> None:
         '''Any actions that can take place before grabbing files can happen.'''
         ...
 

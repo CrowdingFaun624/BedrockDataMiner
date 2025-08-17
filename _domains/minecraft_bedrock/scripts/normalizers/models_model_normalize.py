@@ -3,7 +3,7 @@ from typing import Any, Mapping, NotRequired, TypedDict, cast
 
 from Component.ComponentFunctions import component_function
 from Domain.Domains import get_domain_from_module
-from Serializer.Serializer import Serializer
+from Serializer.Serializer import SerializerCreator
 from Utilities.File import FakeFile, File
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
@@ -45,16 +45,15 @@ output_typed_dict = TypedDict("output_typed_dict", {"minecraft:geometry": geomet
 domain = get_domain_from_module(__name__)
 
 @component_function(type_verifier=TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("serializer", True, str),
-), opens_files=True)
-def models_model_normalize(data:Mapping[str,Mapping[str,File[model_file_type1|model_file_type2]]], serializer:str) -> FakeFile[dict[str,dict[str,output_typed_dict]]]:
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def models_model_normalize(data:Mapping[str,Mapping[str,File[model_file_type1|model_file_type2]]], serializer:SerializerCreator) -> FakeFile[dict[str,dict[str,output_typed_dict]]]:
     output:dict[str,dict[str,output_typed_dict]] = defaultdict(lambda: {})
     file_hashes:list[int] = []
-    _serializer = domain.script_referenceable.get(serializer, Serializer)
     for model_file_name, resource_packs in data.items():
         for resource_pack_name, model_file in resource_packs.items():
             file_hashes.append(hash(model_file))
-            model_file_data = model_file.read(_serializer)
+            model_file_data = model_file.read(serializer.serializer)
             if "minecraft:geometry" in model_file_data:
                 model_file_data = cast(model_file_type1, model_file_data)
                 format_version = model_file_data["format_version"]

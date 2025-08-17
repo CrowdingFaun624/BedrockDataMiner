@@ -1,9 +1,6 @@
-from typing import Sequence
+from typing import Literal, Required, TypedDict
 
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentTyping import LogTypedDict
-from Component.Field.Field import Field
 from Utilities.Exceptions import LogInvalidFileError
 from Utilities.Log import Log, LogType
 from Utilities.Trace import Trace
@@ -14,46 +11,40 @@ from Utilities.TypeVerifier import (
 )
 
 
-class LogComponent(Component[Log]):
+class LogTypedDict(TypedDict):
+    file_name: Required[str]
+    log_type: Required[Literal["lines", "json_lines"]]
+    reset_on_reload: Required[bool]
 
-    class_name = "Log"
-    my_capabilities = Capabilities()
-    script_referenceable = True
-    type_verifier = TypedDictTypeVerifier(
+class LogComponent(Component[Log, LogTypedDict]):
+
+    type_name = "Log"
+    object_type = Log
+    abstract = False
+
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("file_name", True, str),
         TypedDictKeyTypeVerifier("log_type", True, EnumTypeVerifier({log_type.value for log_type in LogType})),
         TypedDictKeyTypeVerifier("reset_on_reload", True, bool),
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
+    ))
 
-    @property
-    def assume_used(self) -> bool:
-        return True
+    def check(self, fields: LogTypedDict, trace: Trace) -> bool:
+        if super().check(fields, trace):
+            return True
+        try:
+            file = self.group.domain.log_directory.joinpath(fields["file_name"])
+        except Exception as e:
+            trace.exception(e)
+            return True
+        if self.group.domain.log_directory not in file.parents:
+            trace.exception(LogInvalidFileError(self.final, file))
+            return True
+        return False
 
-    __slots__ = (
-        "file",
-        "file_name",
-        "log_type",
-        "reset_on_reload",
-    )
-
-    def initialize_fields(self, data: LogTypedDict) -> Sequence[Field]:
-        self.file_name = data["file_name"]
-        self.log_type = LogType[data["log_type"]]
-        self.reset_on_reload = data["reset_on_reload"]
-        self.domain.log_directory.mkdir(exist_ok=True)
-        self.file = self.domain.log_directory.joinpath(self.file_name)
-        return ()
-
-    def create_final(self, trace:Trace) -> Log:
-        return Log(
-            name=self.name,
-            file=self.file,
-            full_name=self.full_name,
-            log_type=self.log_type,
-            reset_on_reload=self.reset_on_reload,
+    def link_final(self, fields: LogTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_log(
+            file=self.group.domain.log_directory.joinpath(fields["file_name"]),
+            log_type=LogType[fields["log_type"]],
+            reset_on_reload=fields["reset_on_reload"],
         )
-
-    def check(self, trace:Trace) -> None:
-        if self.domain.log_directory not in self.file.parents:
-            trace.exception(LogInvalidFileError(self.final, self.file))

@@ -1,70 +1,60 @@
-from typing import Any, Sequence
+from typing import AbstractSet, Any, Mapping, NotRequired, Sequence
 
-from Component.ComponentTyping import IterableStructureTypedDict
-from Component.Field.ComponentField import OptionalComponentField
-from Component.Field.Field import Field
-from Component.Structure.Field.DelegateField import OptionalDelegateField
-from Component.Structure.Field.TagListField import TagListField
-from Component.Structure.Field.TypeListField import TypeListField
-from Component.Structure.FunctionComponent import FUNCTION_PATTERN
-from Component.Structure.StructureComponent import StructureComponent
+from Component.Structure.StructureComponent import (
+    StructureComponent,
+    StructureTypedDict,
+    tags_type_verifier,
+    types_type_verifier,
+)
+from Structure.Delegate.Delegate import DelegateCreator
+from Structure.Function import Function
 from Structure.IterableStructure import IterableStructure
+from Structure.StructureTag import StructureTag
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
-    UnionTypeVerifier,
 )
 
 
-class IterableStructureComponent[a: IterableStructure](StructureComponent[a]):
+class IterableStructureTypedDict(StructureTypedDict):
+    delegate: NotRequired[DelegateCreator | None]
+    key_function: NotRequired[Function]
+    key_types: NotRequired[type | Sequence[type]]
+    required_keys: NotRequired[Sequence[str]]
+    tags: NotRequired[StructureTag | Sequence[StructureTag]]
+    this_types: NotRequired[type | Sequence[type]]
 
-    __slots__ = (
-        "delegate_field",
-        "delegate_keys",
-        "key_function_field",
-        "key_types_field",
-        "required_keys",
-        "tags_field",
-        "this_types_field",
-    )
+class IterableStructureComponent[R: IterableStructure, P: IterableStructureTypedDict](StructureComponent[R, P]):
 
-    default_this_types_name:str # default of `this_types` field.
-    default_key_types_name:str # default of `key_types` field.
+    type_name = "Iterable"
+    object_type = IterableStructure
+    abstract = True
+
+    default_this_types:tuple[type,...] = ()
+    default_key_types:tuple[type,...] = ()
     type_verifier = StructureComponent.type_verifier.extend(TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("delegate", False, (str, type(None))),
-        TypedDictKeyTypeVerifier("delegate_arguments", False, dict),
-        TypedDictKeyTypeVerifier("key_function", False, (str, dict, type(None))),
-        TypedDictKeyTypeVerifier("key_types", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("delegate", False, (DelegateCreator, type(None))),
+        TypedDictKeyTypeVerifier("key_function", False, Function),
+        TypedDictKeyTypeVerifier("key_types", False, types_type_verifier),
         TypedDictKeyTypeVerifier("required_keys", False, ListTypeVerifier(str, list)),
-        TypedDictKeyTypeVerifier("tags", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        TypedDictKeyTypeVerifier("this_types", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("tags", False, tags_type_verifier),
+        TypedDictKeyTypeVerifier("this_types", False, types_type_verifier),
     ))
 
-    def initialize_fields(self, data: IterableStructureTypedDict) -> Sequence[Field]:
-        fields = list(super().initialize_fields(data))
-
-        self.required_keys:Sequence[str] = data.get("required_keys", ())
-        self.delegate_keys:dict[str,Any]|None = None
-
-        self.delegate_field = OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
-        self.key_function_field = OptionalComponentField(data.get("key_function"), FUNCTION_PATTERN, ("key_function",), assume_type="Function")
-        self.key_types_field = TypeListField(data.get("key_types", self.default_key_types_name), ("key_types",))
-        self.tags_field = TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
-        self.this_types_field = TypeListField(data.get("this_types", self.default_this_types_name), ("this_types",)).add_to_set(self.my_type)
-        fields.extend((self.delegate_field, self.key_function_field, self.key_types_field, self.tags_field, self.this_types_field))
-        return fields
-
-    def link_finals(self, trace: Trace) -> None:
-        super().link_finals(trace)
-        key_function = self.key_function_field.map(lambda subcomponent: subcomponent.final)
-        if key_function is None: key_function = lambda data: data
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
         self.final.link_iterable_structure(
-            delegate=self.delegate_field.create_delegate(self.final, trace, self.delegate_keys),
-            key_function=key_function,
-            key_types=self.key_types_field.types,
-            required_keys=set(self.required_keys),
-            tags=self.tags_field.finals,
-            this_types=self.this_types_field.types,
+            delegate=fields.get("delegate", None),
+            key_function=fields.get("key_function", lambda data: data),
+            key_types=fields.get("key_types", self.default_key_types),
+            required_keys=set(fields.get("required_keys", ())),
+            tags=fields.get("tags", ()),
+            this_types=fields.get("this_types", self.default_this_types),
         )
+
+    def finalize(self, propagating_booleans: Mapping[str, bool], propagating_sets: Mapping[str, AbstractSet[Any]], trace: Trace) -> bool:
+        if super().finalize(propagating_booleans, propagating_sets, trace):
+            return True
+        return self.final.finalize_iterable_structure(trace)

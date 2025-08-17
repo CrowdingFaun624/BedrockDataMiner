@@ -54,7 +54,7 @@ class StructurePlan(Plan[StructureBase]):
         structure_environment = StructureEnvironment(EnvironmentType.checking_types, self.domain)
         failed_structures:list[StructureBase] = []
         for dataminer_collection in dataminer_collections:
-            printer_environment = PrinterEnvironment(structure_environment, dataminer_collection.get_structure_info(version), None, version, 0)
+            printer_environment = PrinterEnvironment(structure_environment, dataminer_collection.get_structure_info(version), version, 0)
             structure = dataminer_collection.structure
             try:
                 data_file = dataminer_collection.get_data_file(version, non_exist_ok=True)

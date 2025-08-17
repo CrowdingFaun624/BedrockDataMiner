@@ -1,90 +1,62 @@
-import re
-from typing import Sequence
+from typing import AbstractSet, Any, Mapping, NotRequired, Required, Sequence
 
-from Component.Capabilities import Capabilities
-from Component.ComponentTyping import CoverageDataminerCollectionTypedDict
 from Component.Dataminer.AbstractDataminerCollectionComponent import (
-    ABSTRACT_DATAMINER_COLLECTION_PATTERN,
     AbstractDataminerCollectionComponent,
+    AbstractDataminerCollectionTypedDict,
 )
-from Component.Field.ComponentField import ComponentField
-from Component.Field.Field import Field
-from Component.Structure.StructureBaseComponent import STRUCTURE_BASE_PATTERN
-from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Dataminer.CoverageDataminer import CoverageDataminer
 from Structure.StructureInfo import StructureInfo
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
+    DictTypeVerifier,
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
+    UnionTypeVerifier,
 )
+from Version.VersionFileType import VersionFileType
 
 
-class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[CoverageDataminer]):
+class CoverageDataminerCollectionComponentTypedDict(AbstractDataminerCollectionTypedDict):
+    file: Required[VersionFileType]
+    file_list_dataminer: Required[AbstractDataminerCollection]
+    remove_files: NotRequired[str | Sequence[str]]
+    remove_prefixes: NotRequired[str | Sequence[str]]
+    remove_regex: NotRequired[str | Sequence[str]]
+    remove_suffixes: NotRequired[str | Sequence[str]]
+    structure_info: NotRequired[Mapping[str, Any]]
 
-    class_name = "CoverageDataminerCollection"
-    my_capabilities = Capabilities(is_dataminer_collection=True)
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
-        TypedDictKeyTypeVerifier("disabled", False, bool),
-        TypedDictKeyTypeVerifier("file", True, str),
-        TypedDictKeyTypeVerifier("file_list_dataminer", True, str),
-        TypedDictKeyTypeVerifier("file_name", True, str),
-        TypedDictKeyTypeVerifier("remove_files", False, ListTypeVerifier(str, list)),
-        TypedDictKeyTypeVerifier("remove_regex", False, ListTypeVerifier(str, list)),
-        TypedDictKeyTypeVerifier("remove_prefixes", False, ListTypeVerifier(str, list)),
-        TypedDictKeyTypeVerifier("remove_suffixes", False, ListTypeVerifier(str, list)),
-        TypedDictKeyTypeVerifier("structure", True, (str, dict)),
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
+class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[CoverageDataminer, CoverageDataminerCollectionComponentTypedDict]):
 
-    __slots__ = (
-        "comparing_disabled",
-        "disabled",
-        "file_field",
-        "file_list_dataminer_field",
-        "file_name",
-        "remove_files",
-        "remove_prefixes",
-        "remove_regex",
-        "remove_suffixes",
-        "structure_field",
-        "structure_info",
-    )
+    type_name = "CoverageDataminerCollection"
+    object_type = CoverageDataminer
+    abstract = False
 
-    def initialize_fields(self, data: CoverageDataminerCollectionTypedDict) -> Sequence[Field]:
-        self.file_name = data["file_name"]
-        self.comparing_disabled = data.get("comparing_disabled", False)
-        self.disabled = data.get("disabled", False)
-        self.remove_files = set(data.get("remove_files", ()))
-        self.remove_regex = [re.compile(pattern) for pattern in data.get("remove_regex", ())]
-        self.remove_prefixes = data.get("remove_prefixes", [])
-        self.remove_suffixes = data.get("remove_suffixes", [])
-        self.structure_info = data.get("structure_info", {})
+    type_verifier = AbstractDataminerCollectionComponent.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("file", True, VersionFileType),
+        TypedDictKeyTypeVerifier("file_list_dataminer", True, AbstractDataminerCollection),
+        TypedDictKeyTypeVerifier("remove_files",    False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("remove_prefixes", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("remove_regex",    False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("remove_suffixes", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("structure_info", False, DictTypeVerifier(dict, str, object))
+    ))
 
-        self.file_field = ComponentField(data["file"], VERSION_FILE_TYPE_PATTERN, ("files",))
-        self.file_list_dataminer_field = ComponentField(data["file_list_dataminer"], ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("file_list_dataminer",))
-        self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",))
-        return (self.file_field, self.file_list_dataminer_field, self.structure_field)
-
-    def create_final(self, trace:Trace) -> CoverageDataminer:
-        return CoverageDataminer(
-            file_name=self.file_name,
-            name=self.name,
-            full_name=self.full_name,
-            domain=self.domain,
-            comparing_disabled=self.comparing_disabled,
-            remove_files=self.remove_files,
-            remove_regex=self.remove_regex,
-            remove_prefixes=self.remove_prefixes,
-            remove_suffixes=self.remove_suffixes,
+    def link_final(self, fields: CoverageDataminerCollectionComponentTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_coverage_dataminer_collection(
+            file=fields["file"],
+            file_list_dataminer=fields["file_list_dataminer"],
+            remove_files=fields.get("remove_files", []),
+            remove_prefixes=fields.get("remove_prefixes", []),
+            remove_regex=fields.get("remove_regex", []),
+            remove_suffixes=fields.get("remove_suffixes", []),
+            structure_info=StructureInfo(fields.get("structure_info", {}), self.group.domain, self.full_name),
         )
 
-    def link_finals(self, trace:Trace) -> None:
-        self.final.link_subcomponents(
-            file=self.file_field.subcomponent.final,
-            file_list_dataminer=self.file_list_dataminer_field.subcomponent.final,
-            structure=self.structure_field.subcomponent.final,
-            structure_info=StructureInfo(self.structure_info, self.domain, repr(self))
-        )
+    def finalize(self, propagating_booleans: Mapping[str, bool], propagating_sets: Mapping[str, AbstractSet[Any]], trace: Trace) -> bool:
+        if super().finalize(propagating_booleans, propagating_sets, trace):
+            return True
+        self.final.finalize_coverage_dataminer()
+        return False

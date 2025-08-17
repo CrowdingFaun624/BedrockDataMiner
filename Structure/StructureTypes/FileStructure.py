@@ -13,10 +13,7 @@ class FileStructure[D, BO, CO](WithinStructure[AbstractFile[D], D, BO, CO]):
         "serializer",
     )
 
-    def link_file_structure(
-        self,
-        serializer:Serializer|None,
-    ) -> None:
+    def finalize_file_structure(self, serializer:Serializer|None) -> None:
         self.serializer = serializer
 
     def get_insides(self, data: AbstractFile[D], trace: Trace, environment: PrinterEnvironment) -> D|EllipsisType:

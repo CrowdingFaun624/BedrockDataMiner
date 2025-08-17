@@ -1,38 +1,35 @@
-from typing import Sequence
+from typing import AbstractSet, Any, Mapping, Required
 
-from Component.ComponentTyping import FileStructureTypedDict
-from Component.Field.ComponentField import OptionalComponentField
-from Component.Field.Field import Field
-from Component.Serializer.SerializerComponent import SERIALIZER_PATTERN
-from Component.Structure.WithinStructureComponent import WithinStructureComponent
+from Component.Structure.WithinStructureComponent import (
+    WithinStructureComponent,
+    WithinStructureTypedDict,
+)
+from Serializer.Serializer import SerializerCreator
 from Structure.StructureTypes.FileStructure import FileStructure
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class FileStructureComponent(WithinStructureComponent[FileStructure]):
+class FileStructureTypedDict(WithinStructureTypedDict):
+    serializer: Required[SerializerCreator | None]
 
-    __slots__ = (
-        "serializer_field",
-    )
+class FileStructureComponent(WithinStructureComponent[FileStructure, FileStructureTypedDict]):
 
-    class_name = "File"
-    structure_type = FileStructure
+    type_name = "File"
+    object_type = FileStructure
+    abstract = False
+
     type_verifier = WithinStructureComponent.type_verifier.extend(TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("serializer", True, (str, dict, type(None))),
+        TypedDictKeyTypeVerifier("serializer", True, (SerializerCreator, type(None))),
     ))
 
-    def initialize_fields(self, data: FileStructureTypedDict) -> Sequence[Field]:
-        fields = list(super().initialize_fields(data))
-
-        self.serializer_field = OptionalComponentField(data["serializer"], SERIALIZER_PATTERN, ("serializer",))
-
-        self.variable_bools["children_has_garbage_collection"] = True
-        fields.append(self.serializer_field)
-        return fields
-
-    def link_finals(self, trace: Trace) -> None:
-        super().link_finals(trace)
-        self.final.link_file_structure(
-            serializer=self.serializer_field.map(lambda subcomponent: subcomponent.final),
+    def finalize(self, propagating_booleans: Mapping[str, bool], propagating_sets: Mapping[str, AbstractSet[Any]], trace: Trace) -> bool:
+        if super().finalize(propagating_booleans, propagating_sets, trace):
+            return True
+        serializer_creator = self.fields["serializer"]
+        if serializer_creator is not None:
+            serializer_creator.finalize_serializer_creator()
+        self.final.finalize_file_structure(
+            serializer=None if serializer_creator is None else serializer_creator.serializer
         )
+        return False

@@ -1,15 +1,18 @@
 import enum
 import traceback
-from types import EllipsisType, NoneType, TracebackType
-from typing import Any, Callable, Iterable, Iterator, Self
+from types import EllipsisType, TracebackType
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Self
 
 from Utilities.Exceptions import TypeVerificationFailedError, TypeVerifierException
 
+if TYPE_CHECKING:
+    from Component.Field.Field import Field
 
 class TraceType(enum.Enum):
     object = 0
     key = 1
     key_group = 2
+    field = 3
 
 def simplify_trace(trace:list[tuple[object, Callable[[],str], Any|EllipsisType, TraceType]]) -> list[tuple[object, Callable[[],str], Any, TraceType]]:
     last_id:int|None = None
@@ -30,19 +33,30 @@ def stringify_trace(trace:list[tuple[object, Callable[[],str], Any|EllipsisType,
         return "empty"
     else:
         trace_string:list[str] = []
+        previous_field:"Field|None" = None
         for index, (thing, position_name_function, position_data, trace_type) in enumerate(simplify_trace(trace)):
-            position_name = position_name_function()
             match trace_type:
                 case TraceType.object:
                     if index == 0:
-                        trace_string.append(position_name)
+                        trace_string.append(position_name_function())
                     else:
-                        trace_string.append(f" → {position_name}")
+                        trace_string.append(f" → {position_name_function()}")
                 case TraceType.key:
-                    trace_string.append(f"[{position_name}]")
+                    trace_string.append(f"[{position_name_function()}]")
                 case TraceType.key_group:
                     assert isinstance(thing, tuple), thing
                     trace_string.append("".join(f"[{str(key)}]" for key in thing))
+                case TraceType.field:
+                    assert not TYPE_CHECKING or isinstance(thing, Field)
+                    if thing.factory.is_inline:
+                        trace_string.append(f"[{thing.factory.key}]")
+                    elif previous_field is None or previous_field.factory.group.domain != thing.factory.group.domain:
+                        trace_string.append(f"{"" if index == 0 else " → "}{thing.factory.group.domain.name}!{thing.factory.group.name}{thing.factory.key}")
+                    elif previous_field.factory.group != thing.factory.group:
+                        trace_string.append(f"{"" if index == 0 else " → "}{thing.factory.group.name}{thing.factory.key}")
+                    else:
+                        trace_string.append(f"{"" if index == 0 else " → "}{thing.factory.key}")
+                    previous_field = thing
         return "".join(trace_string)
 
 class Trace():
@@ -91,6 +105,16 @@ class Trace():
         self.trace.append((keys, lambda: "", position_data, TraceType.key_group))
         return self
 
+    def enter_field(self, field:"Field", position_data:Any|EllipsisType) -> Self:
+        """
+        This method must be used at a `with` statement.
+
+        :param field: The Field of the context.
+        :param position_data: The value that the context is now looking at.
+        """
+        self.trace.append((field, lambda: field.name, position_data, TraceType.field))
+        return self
+
     def include(self, trace:"Trace") -> None:
         '''
         Combines this Trace with another Trace.
@@ -107,15 +131,12 @@ class Trace():
     def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, exc_type:type[BaseException]|None, exc_value:BaseException, traceback:TracebackType) -> bool:
-        match exc_value:
-            case NoneType():
-                output = False
-            case Exception() | ExceptionGroup():
-                self.exception(exc_value)
-                output = True # suppress further raising
-            case BaseException():
-                output = False # do not suppress BaseException, like ctrl+C.
+    def __exit__[E:BaseException|None](self, exc_type:type[E], exc_value:E, traceback:TracebackType) -> bool:
+        if isinstance(exc_value, RecursionError):
+            # Python freaks out when there's a RecursionError, so we will freak out right back at it.
+            return False
+        if (output := (isinstance(exc_value, Exception))):
+            self.exception(exc_value)
         self.trace.pop()
         return output
 
@@ -137,11 +158,11 @@ class Trace():
 
     @property
     def has_exceptions(self) -> bool:
-        return any(not isinstance(error_trace.exception, (TypeVerificationFailedError, TypeVerifierException)) for error_trace in self._exceptions)
+        return len(self._exceptions) > 0
 
     @property
     def exception_count(self) -> int:
-        return sum(not isinstance(error_trace.exception, (TypeVerificationFailedError, TypeVerifierException)) for error_trace in self._exceptions)
+        return len(self._exceptions)
 
     def show_data(self, error_trace:"ErrorTrace") -> str:
         output = repr(error_trace.trace[-1][2])

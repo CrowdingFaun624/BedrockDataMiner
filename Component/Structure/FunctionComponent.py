@@ -1,55 +1,45 @@
-from typing import Sequence
+from typing import Any, Callable, Mapping, NotRequired, Required, TypedDict
 
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentTyping import FunctionTypedDict
-from Component.Field.Field import Field
-from Component.Field.ScriptedObjectField import ScriptedObjectField
-from Component.Pattern import Pattern
+from Component.Scripts import Script
 from Structure.Function import Function
 from Utilities.Trace import Trace
-from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
+from Utilities.TypeVerifier import (
+    DictTypeVerifier,
+    ScriptTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
-FUNCTION_PATTERN:Pattern["FunctionComponent"] = Pattern("is_function")
 
-class FunctionComponent(Component[Function]):
+class FunctionTypedDict(TypedDict):
+    arguments: NotRequired[Mapping[str, Any]]
+    function: Required[Script[Callable[..., Any]]]
 
-    class_name = "Function"
-    my_capabilities = Capabilities(is_function=True)
+class FunctionComponent(Component[Function, FunctionTypedDict]):
 
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("arguments", False, dict),
-        TypedDictKeyTypeVerifier("function_name", True, str),
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
+    type_name = "Function"
+    object_type = Function
+    abstract = False
 
-    __slots__ = (
-        "arguments",
-        "function_field",
-    )
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("arguments", False, DictTypeVerifier(dict, str, object)),
+        TypedDictKeyTypeVerifier("function", True, ScriptTypeVerifier(object, lambda data: (callable(data), "must be callable"))),
+    ))
 
-    def initialize_fields(self, data: FunctionTypedDict) -> Sequence[Field]:
-        self.arguments = data.get("arguments", {})
+    def check(self, fields: FunctionTypedDict, trace: Trace) -> bool:
+        if super().check(fields, trace):
+            return True
+        if fields["function"].type_verifier is not None:
+            return fields["function"].type_verifier.verify(fields.get("arguments", {}), trace)
+        return False
 
-        self.function_field = ScriptedObjectField(data["function_name"], ("function_name",), verify_function=callable)
+    def get_propagating_variables(self) -> tuple[dict[str, bool], dict[str, set[object]]]:
+        return {"children_has_garbage_collection": False, "cache_versions_for_delegates": False}, {"children_tags": set()}
 
-        return (self.function_field,)
-
-    def get_propagated_variables(self) -> tuple[dict[str, bool], dict[str, set]]:
-        return {"children_has_garbage_collection": False}, {}
-
-    def pre_propagation(self, trace: Trace) -> None:
-        self.variable_bools["children_has_garbage_collection"] = self.function_field.script.opens_files
-
-    def create_final(self, trace:Trace) -> Function:
-        return Function(
-            name=self.name,
-            full_name=self.full_name,
-            trace_name=self.trace_name,
-            function=self.function_field.object,
-            arguments=self.arguments,
+    def link_final(self, fields: FunctionTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_function(
+            arguments=fields.get("arguments", {}),
+            function=fields["function"],
         )
-
-    def check(self, trace: Trace) -> None:
-        if self.function_field.script.type_verifier is not None:
-            self.function_field.script.type_verifier.verify(self.arguments, trace)

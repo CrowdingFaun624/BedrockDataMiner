@@ -1,175 +1,175 @@
-from typing import Sequence
+from typing import NotRequired, Required, Sequence, TypedDict
 
-import Component.ComponentTyping as ComponentTyping
-import Structure.Filter as Filter
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field
-from Component.Pattern import Pattern
-from Utilities.Trace import Trace
+from Structure.Filter import (
+    AndFilter,
+    EqFilter,
+    Filter,
+    GeFilter,
+    GtFilter,
+    KeyFilter,
+    KeyNotPresentFilter,
+    KeyPresentFilter,
+    LeFilter,
+    LtFilter,
+    MetaFilter,
+    NandFilter,
+    NeFilter,
+    NorFilter,
+    OrFilter,
+    ValueFilter,
+)
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
 )
 
-FILTER_PATTERN:Pattern["FilterComponent"] = Pattern("is_filter")
 
-class FilterComponent[A: Filter.Filter](Component[A]):
+class FilterTypedDict(TypedDict):
+    pass # empty
 
-    my_capabilities = Capabilities(is_filter=True)
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
-    filter_class:type[A]
+class FilterComponent[R: Filter, P: FilterTypedDict=FilterTypedDict](Component[R, P]):
 
-    __slots__ = ()
+    type_name = "Filter"
+    object_type = Filter
+    abstract = True
 
-class ValueFilterComponent[A: Filter.ValueFilter](FilterComponent[A]):
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
+        self.final.link_filter()
 
-    type_verifier = TypedDictTypeVerifier(
+class ValueFilterTypedDict(FilterTypedDict):
+    default: NotRequired[bool]
+    key: Required[str]
+    value: Required[object]
+
+class ValueFilterComponent[R: ValueFilter, P: ValueFilterTypedDict=ValueFilterTypedDict](FilterComponent[R, P]):
+
+    type_name = "ValueFilter"
+    object_type = ValueFilter
+    abstract = True
+
+    type_verifier = FilterComponent.type_verifier.extend(TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("default", False, bool),
+        TypedDictKeyTypeVerifier("key", False, str),
+        TypedDictKeyTypeVerifier("value", False, object),
+    ))
+
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
+        self.final.link_value_filter(
+            default=fields.get("default", False),
+            key=fields["key"],
+            value=fields["value"],
+        )
+
+class KeyFilterTypedDict(FilterTypedDict):
+    key: Required[str]
+
+class KeyFilterComponent[R: KeyFilter, P: KeyFilterTypedDict=KeyFilterTypedDict](FilterComponent[R, P]):
+
+    type_name = "KeyFilter"
+    object_type = KeyFilter
+    abstract = True
+
+    type_verifier = FilterComponent.type_verifier.extend(TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("key", True, str),
-        TypedDictKeyTypeVerifier("value", True, object),
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
+    ))
 
-    __slots__ = (
-        "default",
-        "key",
-        "value",
-    )
-
-    def initialize_fields(self, data: ComponentTyping.ValueFilterTypedDict) -> Sequence[Field]:
-        self.default = data.get("default", False)
-        self.key = data["key"]
-        self.value = data["value"]
-        return ()
-
-    def create_final(self, trace:Trace) -> Filter.ValueFilter:
-        return self.filter_class(
-            name=self.name,
-            key=self.key,
-            value=self.value,
-            default=self.default,
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
+        self.final.link_key_filter(
+            key=fields["key"],
         )
 
-class KeyFilterComponent[A: Filter.KeyFilter](FilterComponent[A]):
+class MetaFilterTypedDict(FilterTypedDict):
+    subfilters: Sequence[Filter]
 
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("key", True, str),
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
+class MetaFilterComponent[R: MetaFilter, P: MetaFilterTypedDict=MetaFilterTypedDict](FilterComponent[R, P]):
 
-    __slots__ = (
-        "key",
-    )
+    type_name = "MetaFilter"
+    object_type = MetaFilter
+    abstract = True
 
-    def initialize_fields(self, data: ComponentTyping.KeyFilterTypedDict) -> Sequence[Field]:
-        self.key = data["key"]
-        return ()
+    type_verifier = FilterComponent.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("subfilters", True, ListTypeVerifier(Filter, list)),
+    ))
 
-    def create_final(self, trace:Trace) -> A:
-        return self.filter_class(
-            name=self.name,
-            key=self.key,
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
+        self.final.link_meta_filter(
+            subfilters=fields["subfilters"],
         )
 
-class MetaFilterComponent[A: Filter.MetaFilter](FilterComponent[A]):
+class KeyPresentFilterComponent(KeyFilterComponent[KeyPresentFilter]):
 
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("subfilters", True, ListTypeVerifier((dict, str), list)),
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
+    type_name = "KeyPresentFilter"
+    object_type = KeyPresentFilter
+    abstract = False
 
-    __slots__ = (
-        "subfilters_field",
-    )
+class KeyNotPresentFilterComponent(KeyFilterComponent[KeyNotPresentFilter]):
 
-    def initialize_fields(self, data: ComponentTyping.MetaFilterTypedDict) -> Sequence[Field]:
-        self.subfilters_field = ComponentListField(data["subfilters"], FILTER_PATTERN, ("subfilters",))
-        return (self.subfilters_field,)
+    type_name = "KeyNotPresentFilter"
+    object_type = KeyNotPresentFilter
+    abstract = False
 
-    def create_final(self, trace:Trace) -> A:
-        return self.filter_class(
-            name=self.name,
-        )
+class AndFilterComponent(MetaFilterComponent[AndFilter]):
 
-    def link_finals(self, trace:Trace) -> None:
-        super().link_finals(trace)
-        self.final.link_subcomponents(
-            subfilters=list(self.subfilters_field.map(lambda subcomponent: subcomponent.final)),
-        )
+    type_name = "AndFilter"
+    object_type = AndFilter
+    abstract = False
 
-class KeyPresentFilterComponent(KeyFilterComponent[Filter.KeyPresentFilter]):
+class OrFilterComponent(MetaFilterComponent[OrFilter]):
 
-    class_name = "KeyPresentFilter"
-    filter_class = Filter.KeyPresentFilter
-    __slots__ = ()
+    type_name = "OrFilter"
+    object_type = OrFilter
+    abstract = False
 
-class KeyNotPresentFilterComponent(KeyFilterComponent[Filter.KeyNotPresentFilter]):
+class NandFilterComponent(MetaFilterComponent[NandFilter]):
 
-    class_name = "KeyNotPresentFilter"
-    filter_class = Filter.KeyNotPresentFilter
-    __slots__ = ()
+    type_name = "NandFilter"
+    object_type = NandFilter
+    abstract = False
 
-class AndFilterComponent(MetaFilterComponent[Filter.AndFilter]):
+class NorFilterComponent(MetaFilterComponent[NorFilter]):
 
-    class_name = "AndFilter"
-    filter_class = Filter.AndFilter
-    __slots__ = ()
+    type_name = "NorFilter"
+    object_type = NorFilter
+    abstract = False
 
-class OrFilterComponent(MetaFilterComponent[Filter.OrFilter]):
+class EqFilterComponent(ValueFilterComponent[EqFilter]):
 
-    class_name = "OrFilter"
-    filter_class = Filter.OrFilter
-    __slots__ = ()
+    type_name = "EqFilter"
+    object_type = EqFilter
+    abstract = False
 
-class NandFilterComponent(MetaFilterComponent[Filter.NandFilter]):
+class NeFilterComponent(ValueFilterComponent[NeFilter]):
 
-    class_name = "NandFilter"
-    filter_class = Filter.NandFilter
-    __slots__ = ()
+    type_name = "NeFilter"
+    object_type = NeFilter
+    abstract = False
 
-class NorFilterComponent(MetaFilterComponent[Filter.NorFilter]):
+class GtFilterComponent(ValueFilterComponent[GtFilter]):
 
-    class_name = "NorFilter"
-    filter_class = Filter.NorFilter
-    __slots__ = ()
+    type_name = "GtFilter"
+    object_type = GtFilter
+    abstract = False
 
-class EqFilterComponent(ValueFilterComponent[Filter.EqFilter]):
+class LtFilterComponent(ValueFilterComponent[LtFilter]):
 
-    class_name = "EqFilter"
-    filter_class = Filter.EqFilter
-    __slots__ = ()
+    type_name = "LtFilter"
+    object_type = LtFilter
+    abstract = False
 
-class NeFilterComponent(ValueFilterComponent[Filter.NeFilter]):
+class GeFilterComponent(ValueFilterComponent[GeFilter]):
 
-    class_name = "NeFilter"
-    filter_class = Filter.NeFilter
-    __slots__ = ()
+    type_name = "GeFilter"
+    object_type = GeFilter
+    abstract = False
 
-class GtFilterComponent(ValueFilterComponent[Filter.GtFilter]):
+class LeFilterComponent(ValueFilterComponent[LeFilter]):
 
-    class_name = "GtFilter"
-    filter_class = Filter.GtFilter
-    __slots__ = ()
-
-class LtFilterComponent(ValueFilterComponent[Filter.LtFilter]):
-
-    class_name = "LtFilter"
-    filter_class = Filter.LtFilter
-    __slots__ = ()
-
-class GeFilterComponent(ValueFilterComponent[Filter.GeFilter]):
-
-    class_name = "GeFilter"
-    filter_class = Filter.GeFilter
-    __slots__ = ()
-
-class LeFilterComponent(ValueFilterComponent[Filter.LeFilter]):
-
-    class_name = "LeFilter"
-    filter_class = Filter.LeFilter
-    __slots__ = ()
+    type_name = "LeFilter"
+    object_type = LeFilter
+    abstract = False

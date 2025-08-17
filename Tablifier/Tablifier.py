@@ -4,6 +4,7 @@ from types import EllipsisType
 from typing import Any, Callable, Sequence
 
 import Domain.Domain as Domain
+from Component.ComponentObject import ComponentObject
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Structure.Difference import Diff
 from Structure.IterableContainer import IDon, icon_from_list, idon_from_list
@@ -18,7 +19,7 @@ from Utilities.Exceptions import TablifierError
 from Utilities.FileManager import OUTPUT_DIRECTORY
 from Utilities.Trace import Trace
 from Version.Version import Version
-from Version.VersionProvider.VersionProvider import VersionProvider
+from Version.VersionProvider.VersionProvider import VersionProviderCreator
 
 
 class TablifierTest[a]():
@@ -252,35 +253,27 @@ def get_tests(domain:"Domain.Domain") -> dict[str,TablifierTest]:
         # ),
     }
 
-class Tablifier():
+class Tablifier(ComponentObject):
 
     __slots__ = (
         "dataminer_collection",
         "file_name",
-        "full_name",
-        "name",
         "path",
         "structure",
         "version_provider",
     )
 
-    def __init__(self, name:str, file_name:str, full_name:str) -> None:
-        self.name = name
-        self.file_name = file_name
-        self.full_name = full_name
-        self.path = OUTPUT_DIRECTORY.joinpath(self.file_name)
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.full_name}>"
-
-    def link_finals(
+    def link_tablifier(
         self,
-        structure:StructureBase,
         dataminer_collection:AbstractDataminerCollection,
-        version_provider:VersionProvider,
+        file_name:str,
+        structure:StructureBase,
+        version_provider:VersionProviderCreator,
     ) -> None:
-        self.structure = structure
         self.dataminer_collection = dataminer_collection
+        self.file_name = file_name
+        self.path = OUTPUT_DIRECTORY.joinpath(self.file_name)
+        self.structure = structure
         self.version_provider = version_provider
 
     def _get_versions_between(self, all_versions:list[Version], versions:list[Version]) -> list[list[Version]]:
@@ -318,7 +311,7 @@ class Tablifier():
             return data
 
     def tablify(self, all_versions:list[Version], domain:"Domain.Domain") -> None:
-        versions = self.version_provider.get_versions(all_versions, supports_dataminer_collection=self.dataminer_collection)
+        versions = self.version_provider.version_provider.get_versions(all_versions, supports_dataminer_collection=self.dataminer_collection)
         versions_structure_infos = [(version, self.dataminer_collection.get_structure_info(version)) for version in versions]
         structure_environment = StructureEnvironment(EnvironmentType.comparing, domain)
         between_versions = self._get_versions_between(all_versions, versions)
@@ -326,11 +319,11 @@ class Tablifier():
         data_files:tuple[tuple[int, Any], ...]
         if self.name in tests:
             test = tests[self.name]
-            comparison_environment = ComparisonEnvironment(structure_environment, None, list(repeat(versions_structure_infos[0], len(test.data))), between_versions)
+            comparison_environment = ComparisonEnvironment(structure_environment, list(repeat(versions_structure_infos[0], len(test.data))), between_versions)
             data_files = tuple(enumerate(test.data))
         else:
             test = None
-            comparison_environment = ComparisonEnvironment(structure_environment, None, versions_structure_infos, between_versions)
+            comparison_environment = ComparisonEnvironment(structure_environment, versions_structure_infos, between_versions)
             data_files = tuple((branch, self.structure.get_containerized_from_raw(self.dataminer_collection.get_data_file(version), version, comparison_environment[branch])) for branch, version in enumerate(versions))
         trace = Trace()
         comparison, _, _ = self.structure.compare(tuple(data_files), trace, comparison_environment)

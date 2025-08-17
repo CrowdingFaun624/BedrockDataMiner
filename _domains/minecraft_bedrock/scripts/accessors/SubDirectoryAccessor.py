@@ -1,11 +1,17 @@
-from typing import Any, BinaryIO, Sequence, TypedDict
+from typing import Any, BinaryIO, Required, Sequence, TypedDict
 
 from Component.ComponentFunctions import component_function
 from Downloader.DirectoryAccessor import DirectoryAccessor
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
+from Version.VersionTag.VersionTag import VersionTag
 
 
 class LinkedAccessorsTypedDict(TypedDict):
     superdirectory: DirectoryAccessor
+
+class ClassArgumentsTypedDict(TypedDict):
+    ipa_tag: Required[VersionTag]
+    double_assets_tag: Required[VersionTag]
 
 @component_function()
 class SubDirectoryAccessor(DirectoryAccessor):
@@ -19,12 +25,20 @@ class SubDirectoryAccessor(DirectoryAccessor):
         "superdirectory_accessor",
     )
 
-    def prepare_for_install(self, instance_arguments: dict[str, Any], class_arguments: dict[str, Any], linked_accessors: LinkedAccessorsTypedDict) -> None:
+    class_parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("ipa_tag", True, VersionTag),
+        TypedDictKeyTypeVerifier("double_assets_tag", True, VersionTag),
+    )
+
+    def prepare_for_install(self, instance_arguments: dict[str, Any], class_arguments: ClassArgumentsTypedDict, linked_accessors: LinkedAccessorsTypedDict) -> None:
         self.superdirectory_accessor = linked_accessors["superdirectory"]
+        ipa_tag = class_arguments["ipa_tag"]
+        double_assets_tag = class_arguments["double_assets_tag"]
         self.file_prepension:str
-        if "ipa" in self.version.tags_dict:
+        self.version.tags
+        if ipa_tag in self.version.tags:
             self.file_prepension = "Payload/minecraftpe.app/data/"
-        elif "double_assets" in self.version.tags_dict:
+        elif double_assets_tag in self.version.tags:
             self.file_prepension = "assets/assets/"
         else:
             self.file_prepension = "assets/"

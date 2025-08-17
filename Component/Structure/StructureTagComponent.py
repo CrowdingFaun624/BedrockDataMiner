@@ -1,44 +1,28 @@
-from typing import Sequence
+from typing import NotRequired, TypedDict
 
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentTyping import StructureTagTypedDict
-from Component.Field.Field import Field
-from Component.Pattern import Pattern
-from Component.Permissions import InheritancePermissions, InlinePermissions
 from Structure.StructureTag import StructureTag
-from Utilities.Trace import Trace
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-TAG_PATTERN:Pattern["StructureTagComponent"] = Pattern("is_structure_tag")
 
-class StructureTagComponent(Component[StructureTag]):
+class StructureTagTypedDict(TypedDict):
+    is_file: NotRequired[bool]
 
-    class_name = "StructureTag"
-    script_referenceable = True
-    my_capabilities = Capabilities(is_structure_tag=True)
-    type_verifier = TypedDictTypeVerifier(
+class StructureTagComponent(Component[StructureTag, StructureTagTypedDict]):
+
+    type_name = "StructureTag"
+    object_type = StructureTag
+    abstract = False
+
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("is_file", False, bool),
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
-    inline_permissions = InlinePermissions.reference
-    inheritance_permissions = InheritancePermissions.normal
+    ))
 
-    @property
-    def assume_used(self) -> bool:
-        return True
+    def get_propagating_variables(self) -> tuple[dict[str, bool], dict[str, set[object]]]:
+        return {}, {"children_tags": {self.final}}
 
-    __slots__ = (
-        "is_file",
-    )
-
-    def initialize_fields(self, data: StructureTagTypedDict) -> Sequence[Field]:
-        self.is_file = data.get("is_file", False)
-        return ()
-
-    def create_final(self, trace:Trace) -> StructureTag:
-        return StructureTag(
-            name=self.name,
-            full_name=self.full_name,
-            is_file=self.is_file,
+    def link_final(self, fields: StructureTagTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_structure_tag(
+            is_file=fields.get("is_file", False)
         )

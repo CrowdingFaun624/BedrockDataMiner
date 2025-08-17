@@ -1,13 +1,16 @@
-from typing import Sequence
+from typing import AbstractSet, Sequence
 
 from ordered_set import OrderedSet
 
 from Structure.Container import Con, Don
+from Structure.DataPath import DataPath
 from Structure.Difference import Diff
 from Structure.Filter import Filter
+from Structure.Key import Key
 from Structure.PassthroughStructure import PassthroughStructure
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import PrinterEnvironment
+from Structure.StructureTag import StructureTag
 from Structure.Uses import (
     ConditionStructureUse,
     Region,
@@ -23,18 +26,25 @@ from Utilities.Trace import Trace
 class ConditionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     __slots__ = (
+        "branch_tags",
         "branch_types",
+        "keys",
         "filters",
         "structures",
     )
 
     def link_condition_structure(
         self,
-        substructures:Sequence[tuple[tuple[type,...], Filter|None, Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None]],
+        keys:Sequence[Key],
     ) -> None:
-        self.branch_types:list[tuple[type,...]] = [substructure[0] for substructure in substructures]
-        self.filters:list[Filter|None] = [substructure[1] for substructure in substructures]
-        self.structures:list[Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None] = [substructure[2] for substructure in substructures]
+        self.keys = keys
+
+    def finalize_condition_structure(self) -> None:
+        self.branch_tags:Sequence[AbstractSet[StructureTag]] = [key.tags for key in self.keys]
+        self.branch_types:Sequence[tuple[type,...]] = [key.types for key in self.keys]
+        self.filters:Sequence[Filter|None] = [key.filter for key in self.keys]
+        self.structures:Sequence[Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None] = [key.structure for key in self.keys]
+        del self.keys
 
     def type_check_extra(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> None:
         branch = environment.structure_info.evaluate(self, self.filters)
@@ -43,6 +53,16 @@ class ConditionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
             return
         if not isinstance(data.data, self.branch_types[branch]):
             trace.exception(StructureTypeError(self.branch_types[branch], type(data.data), "Data"))
+
+    def get_tag_paths_extra(self, data: Con[D], tag: StructureTag, data_path: DataPath, trace: Trace, environment: PrinterEnvironment) -> Sequence[DataPath]:
+        branch = environment.structure_info.evaluate(self, self.filters)
+        if branch is None:
+            trace.exception(ConditionStructureFilterError(self, environment.structure_info))
+            return ()
+        tags = self.branch_tags[branch]
+        if tag in tags:
+            return (data_path.copy(...).embed(data.data),)
+        return ()
 
     def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D] | Diff[Don[D]], BO, CO] | None:
         branch = environment.structure_info.evaluate(self, self.filters)

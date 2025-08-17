@@ -1,58 +1,63 @@
-from typing import Sequence
+from typing import Any, Mapping, NotRequired, Required, TypedDict
 
-from Component.Capabilities import Capabilities
+import Utilities.Exceptions as Exceptions
 from Component.Component import Component
-from Component.ComponentTyping import AccessorTypeTypedDict
-from Component.Field.ComponentDictField import ComponentDictField
-from Component.Field.Field import Field
-from Component.Field.ScriptedObjectField import ScriptedObjectField
-from Component.Pattern import Pattern
+from Component.Scripts import Script
 from Downloader.Accessor import Accessor
 from Downloader.AccessorType import AccessorType
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
     DictTypeVerifier,
+    ScriptTypeVerifier,
+    SubclassTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
 )
 
-ACCESSOR_TYPE_PATTERN:Pattern["AccessorTypeComponent"] = Pattern("is_accessor_type")
 
-class AccessorTypeComponent(Component[AccessorType]):
+class AccessorTypeTypedDict(TypedDict):
+    accessor_class: Required[Script[type[Accessor]]]
+    arguments: NotRequired[Mapping[Any, Any]]
+    linked_accessors: NotRequired[Mapping[str, AccessorType]]
 
-    class_name = "AccessorType"
-    my_capabilities = Capabilities(is_accessor_type=True)
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("accessor_class", True, str),
+class AccessorTypeComponent(Component[AccessorType, AccessorTypeTypedDict]):
+
+    type_name = "AccessorType"
+    object_type = AccessorType
+    abstract = False
+
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("accessor_class", True, ScriptTypeVerifier(SubclassTypeVerifier(Accessor))),
         TypedDictKeyTypeVerifier("arguments", False, dict),
-        TypedDictKeyTypeVerifier("linked_accessors", False, DictTypeVerifier(dict, str, (str, dict))),
-    )
+        TypedDictKeyTypeVerifier("linked_accessors", False, DictTypeVerifier(dict, str, AccessorType))
+    ))
 
-    __slots__ = (
-        "accessor_class_field",
-        "arguments",
-        "linked_accessor_types_field",
-    )
-
-    def initialize_fields(self, data: AccessorTypeTypedDict) -> Sequence[Field]:
-        self.arguments = data.get("arguments", {})
-
-        self.accessor_class_field = ScriptedObjectField(data["accessor_class"], ("accessor_class",), subclass=Accessor)
-        self.linked_accessor_types_field = ComponentDictField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ("linked_accessors",), assume_type=self.class_name)
-
-        return (self.accessor_class_field, self.linked_accessor_types_field)
-
-    def create_final(self, trace:Trace) -> AccessorType:
-        return AccessorType(
-            name=self.name,
-            full_name=self.full_name,
-            arguments=self.arguments,
+    def link_final(self, fields: AccessorTypeTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_accessor_type(
+            accessor_class=fields["accessor_class"].object,
+            arguments=fields.get("arguments", {}),
+            linked_accessor_types=fields.get("linked_accessors", {}),
         )
 
-    def link_finals(self, trace:Trace) -> None:
-        self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.object, self.accessor_class_field.object.linked_accessor_types, trace)
-        self.accessor_class_field.object.class_parameters.verify(self.arguments, trace)
-        self.final.link_finals(
-            accessor_class=self.accessor_class_field.object,
-            get_linked_accessor_types=dict(self.linked_accessor_types_field.map(lambda key, component: component.final))
-        )
+    def post_check(self, fields: AccessorTypeTypedDict, trace: Trace) -> bool:
+        if super().post_check(fields, trace):
+            return True
+        linked_accessors = fields.get("linked_accessors", {})
+        linked_accessor_types = fields["accessor_class"].object.linked_accessor_types
+        has_error:bool = False
+        for key, accessor_class in linked_accessor_types.items():
+            with trace.enter_key(key, accessor_class):
+                if key not in linked_accessors:
+                    trace.exception(Exceptions.LinkedComponentMissingError(key, accessor_class))
+                    has_error = True
+        for key, accessor in linked_accessors.items():
+            with trace.enter_key(key, accessor):
+                if key not in linked_accessor_types:
+                    trace.exception(Exceptions.LinkedComponentExtraError(key, accessor, [key for key in linked_accessors if key not in linked_accessor_types]))
+                    has_error = True
+                required_type = linked_accessor_types.get(key)
+                if required_type is not None and not issubclass(accessor.accessor_class, required_type):
+                    trace.exception(Exceptions.LinkedComponentTypeError(key, required_type, accessor.accessor_class))
+                    has_error = True
+        return has_error

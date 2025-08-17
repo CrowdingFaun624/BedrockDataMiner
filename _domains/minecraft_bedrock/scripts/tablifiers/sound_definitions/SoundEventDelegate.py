@@ -17,7 +17,6 @@ from Utilities.TypeVerifier import TypedDictTypeVerifier
 class SoundEventTypedDict(TypedDict):
     name: Required[str]
     category: NotRequired[str]
-    defined_in: NotRequired[list[str]]
     max_distance: NotRequired[float]
     min_distance: NotRequired[float]
     sounds: Required[dict[str,Any]]
@@ -25,7 +24,6 @@ class SoundEventTypedDict(TypedDict):
 class SoundEventDiffTypedDict(TypedDict):
     name: Required[Diff[Don[str]]]
     category: NotRequired[Diff[Don[str]]]
-    defined_in: NotRequired[Diff[IDon[Diff[SDon[int]], Diff[SDon[str]], list[str], SCon[int], SCon[str]]]]
     max_distance: NotRequired[Diff[SDon[float]]]
     min_distance: NotRequired[Diff[SDon[float]]]
     sounds: Required[Diff[IDon[Diff[SDon[str]], Diff[Don[Any]], dict[str,Any], SCon[str], Any]]]
@@ -62,7 +60,7 @@ class SoundEventDelegate(Delegate[
         other_comparisons:dict[str,str] = {}
         for key, value_obj in data_dict.items():
             value:Diff[Don[Any]] = cast(Any, value_obj) # stupid type inferer can't tell it's a Diff.
-            if key in {"name", "category", "sounds", "defined_in"}: continue
+            if key in {"name", "category", "sounds"}: continue
             if key not in {"max_distance", "min_distance"}:
                 trace.exception(StructureUnrecognizedKeyError(key))
             structure = self.structure.get_value_structure(key, value.last_value.last_value, trace, environment[value.branch_count - 1])

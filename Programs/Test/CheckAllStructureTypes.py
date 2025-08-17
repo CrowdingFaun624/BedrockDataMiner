@@ -15,7 +15,7 @@ from Version.Version import Version
 def check_types(version:Version, dataminers:list[AbstractDataminerCollection], domain:"Domain.Domain") -> None:
     structure_environment = StructureEnvironment(EnvironmentType.checking_all_types, domain)
     for dataminer_collection in dataminers:
-        environment = PrinterEnvironment(structure_environment, dataminer_collection.get_structure_info(version), None, version, 0)
+        environment = PrinterEnvironment(structure_environment, dataminer_collection.get_structure_info(version), version, 0)
         try:
             dataminer_collection.check_types(version, environment)
         except Exception as e:

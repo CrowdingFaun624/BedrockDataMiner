@@ -13,18 +13,14 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-    from Component.Capabilities import Capabilities
     from Component.Component import Component
-    from Component.Expression.Expression import Reader
-    from Component.Expression.Variable import Variable
     from Component.Field.Field import Field
     from Component.Group import Group
-    from Component.Pattern import AbstractPattern
-    from Component.Permissions import InheritanceUsage, InlineUsage
+    from Component.Scripts import Script
     from Component.Version.VersionComponent import VersionComponent
     from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
     from Dataminer.BuiltIns.TagSearcherDataminer import DataReader
-    from Dataminer.Dataminer import Dataminer, NullDataminer
+    from Dataminer.Dataminer import Dataminer
     from Dataminer.DataminerEnvironment import DataminerDependencies
     from Dataminer.DataminerSettings import DataminerSettings
     from Downloader.Accessor import Accessor
@@ -39,11 +35,10 @@ if TYPE_CHECKING:
     from Utilities.DataFile import DataFile
     from Utilities.File import AbstractFile, File
     from Utilities.Log import Log
-    from Utilities.Scripts import Script
     from Utilities.TypeUtilities import TypeSet
     from Utilities.TypeVerifier import TypedDictTypeVerifier, TypeVerifier
     from Version.Version import Version
-    from Version.VersionFile import VersionFile
+    from Version.VersionFile import VersionFile, VersionFileCreator
     from Version.VersionFileType import VersionFileType
     from Version.VersionRange import VersionRange
     from Version.VersionTag.VersionTag import VersionTag
@@ -492,7 +487,7 @@ class ComponentTypeInheritError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component} of data {self.component.data} cannot have both the type and inherit keys!"
+        return f"{self.component} cannot have both the type and inherit keys!"
 
 class ComponentTypeInvalidTypeError(ComponentException):
     "A Component has a value in a TypeField that is not allowed."
@@ -560,59 +555,6 @@ class ComponentUnrecognizedTypeError(ComponentException):
     def __str__(self) -> str:
         return f"Type \"{self.type_str}\" is unrecognized{message(self.message)}"
 
-class ExpressionParseError(ComponentException):
-    "An Expression cannot be parsed due to syntax errors."
-
-    def __init__(self, reader:"Reader", message:Optional[str]=None) -> None:
-        '''
-        :reader: The Expression or string Expression with syntax errors.
-        :expression_type: The type of Expression attempting to parse.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(reader, message)
-        self.reader = reader
-        self.index = reader.index
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Cannot parse \"{repr(self.reader.source)}\" at {self.index}{message(self.message)}"
-
-class ExpressionTrailingDataError(ComponentException):
-    "An Expression string has trailing characters."
-
-    def __init__(self, data:str, source_component:"Component", index:int, message:Optional[str]=None) -> None:
-        '''
-        :data: The Expression string with trailing characters.
-        :source_component: The Component that the Expression comes from.
-        :index: The index in `data` that the trailing characters start at.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(data, source_component, index, message)
-        self.data = data
-        self.source_component = source_component
-        self.index = index
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Expression \"{self.data}\" from {self.source_component} has trailing characters starting at index {self.index}{message(self.message)}"
-
-class GroupAliasDomainError(ComponentException):
-    "Attempted to create a Group alias with a target in another Domain."
-
-    def __init__(self, alias:str, target:str, message:Optional[str]=None) -> None:
-        '''
-        :alias: The alias name.
-        :target: The invalid target name.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(alias, target, message)
-        self.alias = alias
-        self.target = target
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Cannot create Group alias \"{self.alias}\": \"{self.target}\" to another Domain{message(self.message)}"
-
 class InheritanceLoopError(ComponentException):
     "Component inheritance points in a loop!"
 
@@ -627,29 +569,6 @@ class InheritanceLoopError(ComponentException):
 
     def __str__(self) -> str:
         return f"There is a Component inheritance loop involving {{{", ".join(component.full_name for component in self.involved_components)}}}{message(self.message)}"
-
-class InvalidComponentError(ComponentException):
-    "The referenced Component has the wrong properties."
-
-    def __init__(self, component:"Component", key:str|None, required_properties:"AbstractPattern", actual_capabilities:"Capabilities", options:list[str]|None, message:Optional[str]=None) -> None:
-        '''
-        :component: The Component that is being referenced.
-        :key: The key used to reference the Component.
-        :required_properties: The Pattern that the Component is expected to have.
-        :actual_capabilities: The Capabilities that the Component actually has.
-        :options: Values the Component reference could be.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(component, key, required_properties, actual_capabilities, options, message)
-        self.component = component
-        self.key = key
-        self.required_properties = required_properties
-        self.actual_capabilities = actual_capabilities
-        self.options = options
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.component} is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}{nearest_message(self.key, self.options, show_original=True) if self.key is not None and self.options is not None else None}"
 
 class InvalidComponentFinalTypeError(ComponentException):
     "The referenced Component's final is the wrong type."
@@ -746,79 +665,6 @@ class MalformedComponentReferenceError(ComponentException):
 
     def __str__(self) -> str:
         return f"Component reference \"{self.key}\" is malformed{message(self.message)}{nearest_message(self.key, self.options)}"
-
-class NotExpressionError(ComponentException):
-    "What must be an Expression is not an Expression"
-
-    def __init__(self, data:str, message:Optional[str]=None) -> None:
-        '''
-        :data: The Expression string that does not give an Expression.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(data, message)
-        self.source = data
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"\"{self.source} from is not an expression{message(self.message)}"
-
-class PermissionInlineError(ComponentException):
-    "A Component's usage conflicts with its InlinePermissions"
-
-    def __init__(self, component:"Component", field:"Field", required_usage:tuple["InlineUsage",...], actual_usage:"InlineUsage", message:Optional[str]=None) -> None:
-        '''
-        :component: The sub-Component whose permissions were broken.
-        :field: The Field with the disallowed inline subcomponent.
-        :required_usage: How the Component should be referenced.
-        :actual_usage: How the Component was actually referenced.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(component, field, message)
-        self.component = component
-        self.field = field
-        self.required_usage = required_usage
-        self.actual_usage = actual_usage
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.field} attempted to {self.actual_usage.name} {self.component}, but only {format_list(self.required_usage, lambda item: item.value)} is allowed{message(self.message)}"
-
-class PermissionInheritanceError(ComponentException):
-    "A Component's usage conflicts with its InheritancePermissions"
-
-    def __init__(self, component:"Component", field:"Field", required_usage:tuple["InheritanceUsage",...], actual_usage:"InheritanceUsage", message:Optional[str]=None) -> None:
-        '''
-        :component: The sub-Component whose permissions were broken.
-        :field: The Field with the disallowed inline subcomponent.
-        :required_usage: How the Component should be referenced.
-        :actual_usage: How the Component was actually referenced.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(component, field, message)
-        self.component = component
-        self.field = field
-        self.required_usage = required_usage
-        self.actual_usage = actual_usage
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.field} attempted to {self.actual_usage.name} {self.component}, but only {format_list(self.required_usage, lambda item: item.value)} is allowed{message(self.message)}"
-
-class ReaderSourceEndError(ComponentException):
-    "Cannot parse an Expression because the end of the source was reached."
-
-    def __init__(self, reader:"Reader", message:Optional[str]=None) -> None:
-        '''
-        :reader: The Reader that reached the end of the source.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(reader, message)
-        self.reader = reader
-        self.index = reader.index
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"\"{self.reader.source}\" at {self.index} reached the end of the source{message(self.message)}"
 
 class ReferenceInheritanceDataError(ComponentException):
     "Attempted to write new data onto a Component using reference inheritance."
@@ -947,21 +793,6 @@ class UnrecognizedComponentTypeError(ComponentException):
 
     def __str__(self) -> str:
         return f"Component type \"{self.component_type}\", as referenced by {self.source}, is unrecognized{message(self.message)}{nearest_message(self.component_type, self.options)}"
-
-class VariableDereferenceError(ComponentException):
-    "An Expression references an undefined Variable."
-
-    def __init__(self, variable:"Variable", message:Optional[str]=None) -> None:
-        '''
-        :expression: The Variable being dereferenced.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(variable, message)
-        self.variable = variable
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Attempted to dereference an undefined variable {self.variable}{message(self.message)}"
 
 class VariableNameError(ComponentException):
     "A Variable has an invalid name."
@@ -1328,23 +1159,6 @@ class MissingDataFileError(DataminerException):
 
     def __str__(self) -> str:
         return f"File {self.file_name} of {self.dataminer}{message(self.version, "", " of Version \"%s\"", lambda version: version.name)} is missing{message(self.message)}"
-
-class NullDataminerMethodError(DataminerException):
-    "An invalid exception has been called on a NullDataminer."
-
-    def __init__(self, dataminer:"NullDataminer", method:Callable, message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The NullDataminer that an invalid method was called on.
-        :method: The method that was called on the NullDataminer.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer, method, message)
-        self.dataminer = dataminer
-        self.method = method
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Attemtped to call method \"{self.method.__name__}\" on {self.dataminer}{message(self.message)}"
 
 class TagSearcherDependencyError(DataminerException):
     "A tag exists in a Dataminer that is not a dependency of this one."
@@ -2070,6 +1884,16 @@ class TypeVerificationMissingKeyError(TypeVerificationTypeException):
     def __str__(self) -> str:
         return f"Required key \"{self.key}\" is missing!"
 
+class TypeVerificationSubclassError(TypeVerificationTypeException):
+
+    def __init__(self, expected_type:str, observed_type:type) -> None:
+        super().__init__(expected_type, observed_type)
+        self.expected_type = expected_type
+        self.observed_type = observed_type
+
+    def __str__(self) -> str:
+        return f"The data is not a subclass of {self.expected_type}, but instead {self.observed_type.__name__}"
+
 class TypeVerificationTypeError(TypeVerificationTypeException):
 
     def __init__(self, expected_type:str, observed_type:type) -> None:
@@ -2110,7 +1934,7 @@ class DuplicateVersionTagOrderError(VersionException):
     def __init__(self, tag:"VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
         '''
         :tag: The VersionTag that is dulicated.
-        :key: The key(s) in version_tags_order.json that has the duplicate VersionTag.
+        :key: The key(s) that has the duplicate VersionTag.
         :message: Additional text to place after the main message.
         '''
         super().__init__(tag, key, message)
@@ -2180,7 +2004,7 @@ class NotAllOrderTagsUsedError(VersionException):
     def __init__(self, tag:"VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
         '''
         :tag: The VersionTag that is missing.
-        :key: Which key(s) in version_tags_order.json has a missing VersionTag.
+        :key: Which key(s) has a missing VersionTag.
         :message: Additional text to place after the main message.
         '''
         super().__init__(tag, key, message)
@@ -2460,10 +2284,27 @@ class RequiredVersionFileTypeMissingError(VersionFileException):
     def __str__(self) -> str:
         return f"Required {self.file_type} is missing in {self.version}{message(self.message)}"
 
+class VersionFileDependencyError(VersionFileException):
+    "A VersionFile depends on another VersionFile that does not exist for this Version."
+
+    def __init__(self, version_file:"VersionFile", dependency:"VersionFileType", message:Optional[str]=None) -> None:
+        '''
+        :version_file: The VersionFile missing its dependency.
+        :dependency: The missing VersionFileType.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(version_file, dependency, message)
+        self.version_file = version_file
+        self.dependency = dependency
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.version_file} depends on {self.dependency}, but it is not present{message(self.message)}"
+
 class VersionFileInvalidAccessorError(VersionFileException):
     "The VersionFile has an invalid Accessor."
 
-    def __init__(self, version_file:"VersionFile", accessor_str:str, message:Optional[str]=None) -> None:
+    def __init__(self, version_file:"VersionFileCreator", accessor_str:str, message:Optional[str]=None) -> None:
         '''
         :version_file: The VersionFile with an invalid Accessor.
         :accessor_str: The name of the Accessor.

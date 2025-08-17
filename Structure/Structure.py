@@ -1,9 +1,10 @@
+from itertools import chain
 from types import EllipsisType
-from typing import Container, Mapping, Sequence
+from typing import AbstractSet, Container, Mapping, Sequence
 
 from ordered_set import OrderedSet
 
-import Domain.Domain as Domain
+from Component.ComponentObject import ComponentObject
 from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
@@ -15,8 +16,18 @@ from Structure.Uses import UsageTracker, Use
 from Utilities.Trace import Trace
 from Version.Version import Version
 
+type types_type = type | Sequence[types_type]
+type tags_type = StructureTag | Sequence[StructureTag]
 
-class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
+def convert_tags_to_set(data:tags_type) -> AbstractSet[StructureTag]:
+    return {data} if isinstance(data, StructureTag) else set(chain.from_iterable(convert_tags_to_set(item) for item in data))
+
+def convert_types_to_tuple(data:types_type) -> tuple[type,...]:
+    if not isinstance(data, type) and len(data) == 0:
+        raise RuntimeError("types is empty")
+    return (data,) if isinstance(data, type) else tuple(chain.from_iterable(convert_types_to_tuple(item) for item in data))
+
+class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO](ComponentObject):
     '''
     Modular piece that compares and provides structured access to data.
     '''
@@ -29,25 +40,11 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
     __slots__ = (
         "children_has_garbage_collection",
         "children_tags",
-        "domain",
-        "full_name",
-        "is_inline",
-        "name",
         "trace_name",
     )
 
-    def __init__(self, name:str, full_name:str, trace_name:str, is_inline:bool, domain:"Domain.Domain") -> None:
-        self.name = name
-        self.full_name = full_name
-        self.trace_name = trace_name
-        self.is_inline = is_inline
-        self.domain = domain
-
-    def link_structure(
-        self,
-        children_has_garbage_collection:bool,
-        children_tags:set[StructureTag],
-    ) -> None:
+    def finalize_structure(self, children_has_garbage_collection:bool, children_tags:AbstractSet[StructureTag]) -> None:
+        self.trace_name = self.name
         self.children_has_garbage_collection = children_has_garbage_collection
         self.children_tags = children_tags
 
@@ -65,12 +62,6 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
     def get_similarity_caches(self) -> Sequence["SimilarityCache"]:
         # implemented if the Structure type has a SimilarityCache.
         return ()
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.full_name}>"
-
-    def __hash__(self) -> int:
-        return id(self)
 
     def iter_structures(self) -> Sequence["Structure"]:
         return ()

@@ -1,23 +1,32 @@
-from Component.Capabilities import Capabilities
+from typing import NotRequired, Required, TypedDict
+
 from Component.Component import Component
-from Component.Pattern import Pattern
-from Component.Permissions import InheritancePermissions, InlinePermissions
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+from Structure.StructureBase import StructureBase
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-ABSTRACT_DATAMINER_COLLECTION_PATTERN:Pattern["AbstractDataminerCollectionComponent"] = Pattern("is_dataminer_collection")
 
-class AbstractDataminerCollectionComponent[a: AbstractDataminerCollection](Component[a]):
+class AbstractDataminerCollectionTypedDict(TypedDict):
+    comparing_disabled: NotRequired[bool]
+    file_name: Required[str]
+    structure: Required[StructureBase]
 
-    class_name = "AbstractDataminerCollection"
-    my_capabilities = Capabilities(is_dataminer_collection=True)
-    restrict_to_file_names = True
-    inline_permissions = InlinePermissions.reference
-    inheritance_permissions = InheritancePermissions.normal
+class AbstractDataminerCollectionComponent[R: AbstractDataminerCollection, P: AbstractDataminerCollectionTypedDict](Component[R, P]):
 
-    @property
-    def assume_used(self) -> bool:
-        return True
+    type_name = "AbstractDataminerCollection"
+    object_type = AbstractDataminerCollection
+    abstract = True
 
-    disabled:bool = False
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
+        TypedDictKeyTypeVerifier("file_name", True, str),
+        TypedDictKeyTypeVerifier("structure", True, StructureBase),
+    ))
 
-    __slots__ = ()
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
+        self.final.link_abstract_dataminer_collection(
+            comparing_disabled=fields.get("comparing_disabled", False),
+            file_name=fields["file_name"],
+            structure=fields["structure"]
+        )

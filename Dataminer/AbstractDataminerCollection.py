@@ -5,8 +5,8 @@ from typing import Any, Container, Iterable, Mapping, Sequence
 
 from ordered_set import OrderedSet
 
-import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
+from Component.ComponentObject import ComponentObject
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Structure.Container import Con
 from Structure.DataPath import DataPath
@@ -25,26 +25,18 @@ from Utilities.Trace import Trace
 from Version.Version import Version
 
 
-class AbstractDataminerCollection():
+class AbstractDataminerCollection(ComponentObject):
 
     __slots__ = (
         "comparing_disabled",
-        "domain",
         "file_name",
-        "full_name",
-        "name",
         "structure",
     )
 
-    def __init__(self, file_name:str, name:str, full_name:str, domain:"Domain.Domain", comparing_disabled:bool) -> None:
-        self.name = name
-        self.file_name = file_name
-        self.full_name = full_name
-        self.domain = domain
+    def link_abstract_dataminer_collection(self, comparing_disabled:bool, file_name:str, structure:StructureBase) -> None:
         self.comparing_disabled = comparing_disabled
-
-    def link_subcomponents(self, structure:StructureBase) -> None:
-        self.structure:StructureBase = structure
+        self.file_name = file_name
+        self.structure = structure
 
     def datamine(self, version:Version, environment:DataminerEnvironment) -> Any: ...
 
@@ -150,12 +142,6 @@ class AbstractDataminerCollection():
         data = self.get_data_file(version)
         self.structure.type_check_from_raw(data, version, environment)
 
-    def __hash__(self) -> int:
-        return hash(self.full_name)
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.full_name}>"
-
     def clear_all_caches(self) -> None:
         '''Clears all caches of this DataminerCollection's Structure.'''
         self.structure.clear_all_caches()
@@ -176,7 +162,7 @@ class AbstractDataminerCollection():
             return OrderedSet(())
         structure_info = self.get_structure_info(version)
         structure_environment = StructureEnvironment(EnvironmentType.uses, self.domain)
-        environment = PrinterEnvironment(structure_environment, structure_info, None, version, 0)
+        environment = PrinterEnvironment(structure_environment, structure_info, version, 0)
         containerized_data = self.structure.get_containerized_from_raw(data_file, version, environment)
         trace = Trace()
         output = self.structure.get_uses(containerized_data, usage_tracker, None, trace, environment)
@@ -197,7 +183,7 @@ class AbstractDataminerCollection():
             return
 
         structure_info = self.get_structure_info(version)
-        environment = PrinterEnvironment(structure_environment, structure_info, None, version, 0)
+        environment = PrinterEnvironment(structure_environment, structure_info, version, 0)
         trace = Trace()
 
         if structure.children_has_garbage_collection:

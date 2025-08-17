@@ -1,12 +1,9 @@
 from typing import Any, Mapping, cast
 
 from Component.ComponentFunctions import component_function
-from Domain.Domains import get_domain_from_module
-from Serializer.Serializer import Serializer
+from Serializer.Serializer import Serializer, SerializerCreator
 from Utilities.File import FakeFile, File
-
-domain = get_domain_from_module(__name__)
-json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 CONTROLS_KEYS = ("controls", "+controls")
 '''Keys of items that contain nested elements.'''
@@ -25,12 +22,12 @@ def parse_element_name(raw_element_name:str, namespace:str) -> tuple[str,str|Non
         superclass_namespace, superclass_element_name = None, None
     return element_name, superclass_namespace, superclass_element_name
 
-def get_namespaces_and_extensions(data:dict[str,File[Mapping[str,Mapping[str,Any]]]]) -> tuple[dict[str,dict[str,Mapping[str,Any]]], dict[str,dict[str,tuple[str|None,str|None]]], list[int]]:
+def get_namespaces_and_extensions(data:dict[str,File[Mapping[str,Mapping[str,Any]]]], serializer:Serializer) -> tuple[dict[str,dict[str,Mapping[str,Any]]], dict[str,dict[str,tuple[str|None,str|None]]], list[int]]:
     namespaces:dict[str,dict[str,Mapping[str,Any]]] = {} # {namespace: {element_name: element_data}}
     extensions:dict[str,dict[str,tuple[str|None,str|None]]] = {} # {namespace: {subelement: (superelements_namespace, superelement)}}
     file_hashes:list[int] = []
     for file_name, file in data.items():
-        elements = file.read(json_serializer.get())
+        elements = file.read(serializer)
         file_hashes.append(hash(file))
         namespace = cast(str, elements["namespace"])
         if namespace not in namespaces:
@@ -108,15 +105,17 @@ def parse_elements(namespaces:dict[str,dict[str,Mapping[str,Any]]], element_type
         for element_name, element_data in elements.items():
             parse_element(element_data, element_types, element_name, namespace)
 
-@component_function(no_arguments=True, opens_files=True)
-def ui_normalize(data:Mapping[str,Mapping[str,File[Mapping[str,Mapping[str,Any]]]]]) -> FakeFile[dict[str,dict[str,dict[str,Any]]]]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def ui_normalize(data:Mapping[str,Mapping[str,File[Mapping[str,Mapping[str,Any]]]]], serializer:SerializerCreator) -> FakeFile[dict[str,dict[str,dict[str,Any]]]]:
     files:dict[str,File[Mapping[str,Mapping[str,Any]]]] = {}
     for resource_pack, resource_pack_files in data.items():
         if len(common_files := (set(files) & set(resource_pack_files))) > 0:
             continue
             # raise RuntimeError(f"Duplicate files [{", ".join(common_files)}]")
         files.update(resource_pack_files)
-    namespaces, extensions, file_hashes = get_namespaces_and_extensions(files)
+    namespaces, extensions, file_hashes = get_namespaces_and_extensions(files, serializer.serializer)
     element_types = get_element_types(namespaces, extensions)
     parse_elements(namespaces, element_types)
 

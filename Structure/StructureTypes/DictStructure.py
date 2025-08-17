@@ -4,7 +4,7 @@ from ordered_set import OrderedSet
 
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
-from Structure.Structure import Structure
+from Structure.Structure import Structure, convert_types_to_tuple, types_type
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTypes.MappingStructure import MappingStructure
 from Structure.Uses import NonEmptyUse, Region, StructureUse, TypeUse, Use
@@ -24,6 +24,7 @@ class DictStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStructu
         "key_weight",
         "value_structure",
         "value_types",
+        "value_type_list",
         "value_weight",
     )
 
@@ -34,7 +35,7 @@ class DictStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStructu
         key_structure:Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None,
         key_weight:int,
         value_structure:Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None,
-        value_types:tuple[type, ...],
+        value_types:types_type,
         value_weight:int,
     ) -> None:
         self.allow_key_moves = allow_key_moves
@@ -43,8 +44,12 @@ class DictStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStructu
         self.key_structure = key_structure
         self.key_weight = key_weight
         self.value_structure = value_structure
-        self.value_types = value_types
+        self.value_type_list = value_types
         self.value_weight = value_weight
+
+    def finalize_dict_structure(self) -> None:
+        self.value_types = convert_types_to_tuple(self.value_type_list)
+        del self.value_type_list
 
     def get_key_structure(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None:
         return self.key_structure

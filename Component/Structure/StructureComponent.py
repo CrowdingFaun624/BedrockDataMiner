@@ -1,51 +1,45 @@
-from typing import Sequence
+from typing import AbstractSet, Any, Mapping, TypedDict
 
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentTyping import StructureTypedDict
-from Component.Field.Field import Field
-from Component.Pattern import Pattern
-from Component.Structure.StructureTagComponent import StructureTagComponent
 from Structure.Structure import Structure
+from Structure.StructureTag import StructureTag
 from Utilities.Trace import Trace
-from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
+from Utilities.TypeVerifier import ListTypeVerifier, UnionTypeVerifier
 
-STRUCTURE_COMPONENT_PATTERN:Pattern["StructureComponent[Structure]"] = Pattern("is_structure")
 
-class StructureComponent[a: Structure](Component[a]):
+class StructureTypedDict(TypedDict):
+    pass # empty, but must exist for subclassing.
 
-    class_name = "StructureComponent"
-    my_capabilities = Capabilities(is_structure=True)
-    structure_type:type[a]
-    type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
-    script_referenceable = True
+def verify_types(data:Any) -> tuple[bool,str]:
+    return _verify_types(data), "items must be types or lists"
 
-    __slots__ = (
-        "children_tags",
-        "my_type",
-    )
+def _verify_types(data:Any) -> bool:
+    if isinstance(data, type): return True
+    elif isinstance(data, list): return all(_verify_types(item) for item in data)
+    else: return False
 
-    def initialize_fields(self, data: StructureTypedDict) -> Sequence[Field]:
-        self.my_type:set[type] = set()
-        return super().initialize_fields(data)
+def verify_tags(data:Any) -> tuple[bool, str]:
+    return _verify_tags(data), "items must be StructureTags or lists"
 
-    def create_final(self, trace:Trace) -> a:
-        return self.structure_type(
-            name=self.name,
-            full_name=self.full_name,
-            is_inline=self.index is None,
-            trace_name=self.trace_name,
-            domain=self.domain,
-        )
+def _verify_tags(data:Any) -> bool:
+    if isinstance(data, StructureTag): return True
+    elif isinstance(data, list): return all(_verify_types(item) for item in data)
+    else: return False
 
-    def link_finals(self, trace: Trace) -> None:
-        self.final.link_structure(
-            children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
-            children_tags={tag.final for tag in self.children_tags},
-        )
+tags_type_verifier = UnionTypeVerifier(StructureTag, ListTypeVerifier(object, list, item_function=lambda item: verify_tags(item)))
+types_type_verifier = UnionTypeVerifier(type, ListTypeVerifier(object, list, item_function=lambda item: verify_types(item)))
 
-    def get_propagated_variables(self) -> tuple[dict[str, bool], dict[str, set]]:
-        self.children_tags:set[StructureTagComponent] = set()
-        return {"children_has_garbage_collection": False, "children_has_version_domains": False}, {"children_tags": self.children_tags}
+class StructureComponent[R: Structure, P: StructureTypedDict](Component[R, P]):
+
+    type_name = "Structure"
+    object_type = Structure
+    abstract = True
+
+    def get_propagating_variables(self) -> tuple[dict[str, bool], dict[str, set[object]]]:
+        return {"children_has_garbage_collection": False, "cache_versions_for_delegates": False}, {"children_tags": set()}
+
+    def finalize(self, propagating_booleans: Mapping[str, bool], propagating_sets: Mapping[str, AbstractSet[Any]], trace: Trace) -> bool:
+        if super().finalize(propagating_booleans, propagating_sets, trace):
+            return True
+        self.final.finalize_structure(propagating_booleans["children_has_garbage_collection"], propagating_sets["children_tags"])
+        return False

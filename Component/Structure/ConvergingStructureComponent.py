@@ -1,54 +1,44 @@
-from typing import Sequence
+from typing import NotRequired, Required, Sequence
 
-from Component.ComponentTyping import ConvergingStructureTypedDict
-from Component.Field.ComponentField import ComponentField, OptionalComponentField
-from Component.Field.Field import Field
-from Component.Structure.Field.TagListField import TagListField
-from Component.Structure.Field.TypeListField import TypeListField
 from Component.Structure.StructureComponent import (
-    STRUCTURE_COMPONENT_PATTERN,
     StructureComponent,
+    StructureTypedDict,
+    tags_type_verifier,
+    types_type_verifier,
 )
 from Structure.ConvergingStructure import ConvergingStructure
-from Utilities.Trace import Trace
-from Utilities.TypeVerifier import (
-    ListTypeVerifier,
-    TypedDictKeyTypeVerifier,
-    TypedDictTypeVerifier,
-    UnionTypeVerifier,
-)
+from Structure.Structure import Structure
+from Structure.StructureTag import StructureTag
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class ConvergingStructureComponent(StructureComponent[ConvergingStructure]):
+class ConvergingStructureTypedDict(StructureTypedDict):
+    end_structure: Required[Structure | None]
+    structure: Required[Structure]
+    tags: NotRequired[StructureTag | Sequence[StructureTag]]
+    this_types: Required[type | Sequence[type]]
+    within_structure_depth: Required[int]
 
-    class_name = "Converging"
-    structure_type = ConvergingStructure
+class ConvergingStructureComponent(StructureComponent[ConvergingStructure, ConvergingStructureTypedDict]):
+
+    type_name = "Converging"
+    object_type = ConvergingStructure
+    abstract = False
+
     type_verifier = StructureComponent.type_verifier.extend(TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("end_structure", True, (str, dict, type(None))),
-        TypedDictKeyTypeVerifier("structure", True, (str, dict)),
-        TypedDictKeyTypeVerifier("tags", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        TypedDictKeyTypeVerifier("this_types", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        TypedDictKeyTypeVerifier("within_structure_depth", True, int)
+        TypedDictKeyTypeVerifier("end_structure", True, (Structure, type(None))),
+        TypedDictKeyTypeVerifier("structure", True, Structure),
+        TypedDictKeyTypeVerifier("tags", False, tags_type_verifier),
+        TypedDictKeyTypeVerifier("this_types", True, types_type_verifier),
+        TypedDictKeyTypeVerifier("within_structure_depth", True, int),
     ))
 
-    def initialize_fields(self, data: ConvergingStructureTypedDict) -> Sequence[Field]:
-        fields = list(super().initialize_fields(data))
-
-        self.within_structure_depth = data["within_structure_depth"]
-
-        self.end_structure_field = OptionalComponentField(data.get("end_structure"), STRUCTURE_COMPONENT_PATTERN, ("end_structure",))
-        self.structure_field = ComponentField(data.get("structure"), STRUCTURE_COMPONENT_PATTERN, ("structure",))
-        self.tags_field = TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
-        self.this_types_field = TypeListField(data["this_types"], ("this_types",)).add_to_set(self.my_type).verify_with(self.structure_field)
-
-        fields.extend((self.end_structure_field, self.structure_field, self.tags_field, self.this_types_field))
-        return fields
-
-    def link_finals(self, trace: Trace) -> None:
+    def link_final(self, fields: ConvergingStructureTypedDict) -> None:
+        super().link_final(fields)
         self.final.link_converging_structure(
-            end_structure=self.end_structure_field.map(lambda subcomponent: subcomponent.final),
-            structure=self.structure_field.subcomponent.final,
-            tags=self.tags_field.finals,
-            this_types=self.this_types_field.types,
-            within_structure_depth=self.within_structure_depth,
+            end_structure=fields["end_structure"],
+            structure=fields["structure"],
+            tags=fields.get("tags", []),
+            this_types=fields["this_types"],
+            within_structure_depth=fields["within_structure_depth"],
         )

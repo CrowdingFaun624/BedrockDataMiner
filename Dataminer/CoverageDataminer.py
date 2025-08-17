@@ -1,59 +1,61 @@
 import re
-from typing import Iterable
+from typing import AbstractSet, Iterable, Sequence
 
-import Domain.Domain as Domain
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerCollection import DataminerCollection
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.FileDataminer import FileDataminer, FileSet
-from Structure.StructureBase import StructureBase
 from Structure.StructureInfo import StructureInfo
 from Version.Version import Version
 from Version.VersionFileType import VersionFileType
 
+
+def convert_to_set(data:str|Sequence[str]) -> AbstractSet[str]:
+    return {data} if isinstance(data, str) else set(data)
+
+def convert_to_sequence(data:str|Sequence[str]) -> Sequence[re.Pattern]:
+    return (re.compile(data),) if isinstance(data, str) else [re.compile(pattern) for pattern in data]
 
 class CoverageDataminer(AbstractDataminerCollection):
 
     __slots__ = (
         "file",
         "file_list_dataminer",
+        "remove_files_list",
         "remove_files",
+        "remove_prefixes_list",
         "remove_prefixes",
+        "remove_regex_list",
         "remove_regex",
+        "remove_suffixes_list",
         "remove_suffixes",
         "structure_info",
     )
 
-    def __init__(
-        self,
-        file_name:str,
-        name:str,
-        full_name:str,
-        domain:"Domain.Domain",
-        comparing_disabled:bool,
-        remove_files:set[str],
-        remove_regex:list[re.Pattern[str]],
-        remove_prefixes:list[str],
-        remove_suffixes:list[str],
-    ) -> None:
-        super().__init__(file_name, name, full_name, domain, comparing_disabled)
-        self.remove_files = remove_files
-        self.remove_regex = remove_regex
-        self.remove_prefixes = remove_prefixes
-        self.remove_suffixes = remove_suffixes
-
-    def link_subcomponents(
+    def link_coverage_dataminer_collection(
         self,
         file:VersionFileType,
         file_list_dataminer:AbstractDataminerCollection,
-        structure: StructureBase,
+        remove_files:Sequence[str],
+        remove_regex:Sequence[str],
+        remove_prefixes:Sequence[str],
+        remove_suffixes:Sequence[str],
         structure_info:StructureInfo,
     ) -> None:
-        super().link_subcomponents(structure)
         self.file = file
         self.file_list_dataminer = file_list_dataminer
+        self.remove_files_list = remove_files
+        self.remove_regex_list = remove_regex
+        self.remove_prefixes_list = remove_prefixes
+        self.remove_suffixes_list = remove_suffixes
         self.structure_info = structure_info
+
+    def finalize_coverage_dataminer(self) -> None:
+        self.remove_files = convert_to_set(self.remove_files_list)
+        self.remove_regex = convert_to_sequence(self.remove_regex_list)
+        self.remove_prefixes = convert_to_set(self.remove_prefixes_list)
+        self.remove_suffixes = convert_to_set(self.remove_suffixes_list)
 
     def get_structure_info(self, version: Version) -> StructureInfo:
         return self.structure_info

@@ -9,7 +9,13 @@ from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
 from Structure.SimilarityCache import SimilarityCache
-from Structure.Structure import Structure
+from Structure.Structure import (
+    Structure,
+    convert_tags_to_set,
+    convert_types_to_tuple,
+    tags_type,
+    types_type,
+)
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
 from Structure.Uses import Region, StructureUse, TypeUse, UsageTracker, Use
@@ -32,7 +38,9 @@ class ConvergingStructure[A, B, BO, CO](Structure[A, Con[A], Don[A], Don[A]|Diff
         "end_structure",
         "similarity_cache",
         "structure",
+        "tag_list",
         "tags",
+        "this_type_list",
         "this_types",
         "within_structure_depth",
     )
@@ -41,17 +49,23 @@ class ConvergingStructure[A, B, BO, CO](Structure[A, Con[A], Don[A], Don[A]|Diff
         self,
         end_structure:Structure[B, Con[B], Don[B], Don[B]|Diff[Don[B]], BO, CO]|None,
         structure:Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], BO, CO],
-        tags:set[StructureTag],
-        this_types:tuple[type,...],
+        tags:tags_type,
+        this_types:types_type,
         within_structure_depth:int, # how many WithinStructures are in the chain until `end_structure`.
     ) -> None:
         self.end_structure = end_structure
         self.structure = structure
-        self.tags = tags
-        self.this_types = this_types
+        self.tag_list = tags
+        self.this_type_list = this_types
         self.within_structure_depth = within_structure_depth
 
         self.similarity_cache:SimilarityCache[Con[A]] = SimilarityCache()
+
+    def finalize_converging_structure(self) -> None:
+        self.tags = convert_tags_to_set(self.tag_list)
+        del self.tag_list
+        self.this_types = convert_types_to_tuple(self.this_type_list)
+        del self.this_type_list
 
     def get_similarity_caches(self) -> Sequence[SimilarityCache]:
         return (self.similarity_cache,)
@@ -199,22 +213,13 @@ class ConvergingStructure[A, B, BO, CO](Structure[A, Con[A], Don[A], Don[A]|Diff
 
     def print_branch(self, data: Con[A], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.trace_name, data):
-            printer:Callable[[Con[A], Trace, PrinterEnvironment]]
-            if self.structure is not None:
-                printer = self.structure.print_branch
-            elif environment.default_delegate is not None:
-                printer = environment.default_delegate.print_branch
-            else:
-                raise InvalidStateError(self)
-            return printer(data, trace, environment)
+            return self.structure.print_branch(data, trace, environment)
         return ...
 
     def print_comparison(self, data: Don[A]|Diff[Don[A]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
         with trace.enter(self, self.trace_name, data):
             data_insides = self.insides_comparison(data)
-            if self.end_structure is None and environment.default_delegate is not None:
-                return environment.default_delegate.print_comparison(data_insides, bundle, trace, environment)
-            elif self.end_structure is None: # no printer is available
+            if self.end_structure is None: # no printer is available
                 raise InvalidStateError(self)
             return self.end_structure.print_comparison(data_insides, bundle, trace, environment)
         return ...

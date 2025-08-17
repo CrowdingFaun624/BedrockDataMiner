@@ -2,6 +2,7 @@ import enum
 from typing import Any, Callable, Container, Hashable, Mapping, Sequence
 
 import Utilities.Exceptions as Exceptions
+from Component.Scripts import Script
 from Utilities.Trace import Trace
 
 
@@ -66,14 +67,14 @@ class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
     )
 
     def __init__(
-            self,
-            data_type:type[Mapping]|tuple[type[Mapping],...],
-            key_type:type[K]|tuple[type[K],...]|TypeVerifier[K],
-            value_type:type[V]|tuple[type[V],...]|TypeVerifier[V],
-            key_function:Callable[[K, V],tuple[bool,str|None]]|None=None,
-            value_function:Callable[[K, V],tuple[bool,str|None]]|None=None,
-            additional_function:Callable[[Mapping[K, V]],tuple[bool,str|None]]|None=None,
-        ) -> None:
+        self,
+        data_type:type[Mapping]|tuple[type[Mapping],...],
+        key_type:type[K]|tuple[type[K],...]|TypeVerifier[K],
+        value_type:type[V]|tuple[type[V],...]|TypeVerifier[V],
+        key_function:Callable[[K, V],tuple[bool,str|None]]|None=None,
+        value_function:Callable[[K, V],tuple[bool,str|None]]|None=None,
+        additional_function:Callable[[Mapping[K, V]],tuple[bool,str|None]]|None=None,
+    ) -> None:
         self.key_type = key_type
         self.value_type = value_type
         self.data_type = data_type
@@ -143,12 +144,12 @@ class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
     )
 
     def __init__(
-            self,
-            key:K,
-            required:bool,
-            value_type:type[V]|tuple[type[V],...]|TypeVerifier[V],
-            function:Callable[[K, V],tuple[bool,str|None]]|None=None,
-        ) -> None:
+        self,
+        key:K,
+        required:bool,
+        value_type:type[V]|tuple[type[V],...]|TypeVerifier[V],
+        function:Callable[[K, V],tuple[bool,str|None]]|None=None,
+    ) -> None:
         self.key = key
         self.value_type = value_type
         self.required = required
@@ -187,12 +188,12 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
     )
 
     def __init__(
-            self,
-            *keys:TypedDictKeyTypeVerifier,
-            data_type:type[Mapping]|tuple[type[Mapping],...]=dict,
-            function:Callable[[Mapping[K, V]],tuple[bool,str|None]]|Any|None=None,
-            loose:bool=False,
-        ) -> None:
+        self,
+        *keys:TypedDictKeyTypeVerifier,
+        data_type:type[Mapping]|tuple[type[Mapping],...]=dict,
+        function:Callable[[Mapping[K, V]],tuple[bool,str|None]]|Any|None=None,
+        loose:bool=False,
+    ) -> None:
         self.keys_dict = {key.key: key for key in keys}
         self.data_type = data_type
         self.function = function
@@ -279,12 +280,12 @@ class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
     )
 
     def __init__(
-            self,
-            item_type:type[I]|tuple[type[I],...]|TypeVerifier[I],
-            data_type:type[Sequence]|tuple[type[Sequence],...],
-            item_function:Callable[[I],tuple[bool,str|None]]|None=None,
-            additional_function:Callable[[Sequence[I]],tuple[bool,str|None]]|None=None,
-        ) -> None:
+        self,
+        item_type:type[I]|tuple[type[I],...]|TypeVerifier[I],
+        data_type:type[Sequence]|tuple[type[Sequence],...],
+        item_function:Callable[[I],tuple[bool,str|None]]|None=None,
+        additional_function:Callable[[Sequence[I]],tuple[bool,str|None]]|None=None,
+    ) -> None:
         self.item_type = item_type
         self.data_type = data_type
         self.item_function = item_function
@@ -406,3 +407,61 @@ class UnionTypeVerifier[I](TypeVerifier[I]):
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} id {id(self)}>"
+
+class SubclassTypeVerifier[V](TypeVerifier[type[V]]):
+
+    __slots__ = (
+        "types",
+    )
+
+    def __init__(self, types:type[V]|tuple[type[V],...]) -> None:
+        super().__init__()
+        self.types = types
+
+    def get_data_type(self) -> type | tuple[type, ...]:
+        return type
+
+    def verify(self, data: type[V], trace: Trace) -> bool:
+        if not isinstance(data, type):
+            trace.exception(Exceptions.TypeVerificationTypeError(self.get_type_str(self.types), type(data)))
+            return True
+        elif not issubclass(data, self.types):
+            trace.exception(Exceptions.TypeVerificationSubclassError(self.get_type_str(self.types), data))
+            return True
+        return False
+
+class ScriptTypeVerifier[V](TypeVerifier[Script[V]]):
+
+    __slots__ = (
+        "object_function",
+        "object_type",
+    )
+
+    def __init__(
+        self,
+        object_type:type[V]|tuple[type[V],...]|TypeVerifier,
+        object_function:Callable[[V],tuple[bool,str|None]]|None=None,
+    ) -> None:
+        self.object_type = object_type
+        self.object_function = object_function
+
+    def get_data_type(self) -> type | tuple[type, ...]:
+        return Script
+
+    def verify(self, data: Script[V], trace: Trace) -> bool:
+        if not isinstance(data, Script):
+            trace.exception(Exceptions.TypeVerificationTypeError(self.get_type_str(Script), type(data)))
+            return True
+        if isinstance(self.object_type, TypeVerifier):
+            if self.object_type.verify(data.object, trace):
+                return True
+        elif not isinstance(data, self.object_type):
+            trace.exception(Exceptions.TypeVerificationTypeError(self.get_type_str(self.object_type), type(data)))
+            return True
+
+        if self.object_function is not None:
+            item_function_success, item_function_message = self.object_function(data.object)
+            if not item_function_success:
+                trace.exception(Exceptions.TypeVerificationFunctionError(item_function_message))
+                return True
+        return False

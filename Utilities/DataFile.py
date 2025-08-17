@@ -15,8 +15,8 @@ class DataFile():
         "has_read_contents",
     )
 
-    def __init__(self, path:Path) -> None:
-        self.file_name = path.stem
+    def __init__(self, path:Path, file_name:str) -> None:
+        self.file_name = file_name
         self.file_path = path
         self.has_read_contents = False
         self._contents:Any|None = None

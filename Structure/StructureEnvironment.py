@@ -7,7 +7,6 @@ from Structure.StructureInfo import StructureInfo
 from Utilities.Exceptions import AttributeNoneError
 
 if TYPE_CHECKING:
-    from Structure.Delegate.Delegate import Delegate
     from Version.Version import Version
 
 class EnvironmentType(enum.Enum):
@@ -46,7 +45,6 @@ class PrinterEnvironment():
         "domain",
         "structure_environment",
         "structure_info",
-        "default_delegate",
         "version",
         "branch",
     )
@@ -55,14 +53,12 @@ class PrinterEnvironment():
         self,
         structure_environment:StructureEnvironment,
         structure_info:StructureInfo,
-        default_delegate:"Delegate|None",
         version:"Version",
         branch:int,
     ) -> None:
         self.structure_environment = structure_environment
         self.structure_info = structure_info
         self.domain = self.structure_environment.domain
-        self.default_delegate = default_delegate
         self.version = version
         self.branch = branch
 
@@ -77,12 +73,11 @@ class PrinterEnvironment():
 
     def __hash__(self) -> int:
         # self.version is excluded
-        return hash((self.structure_environment, self.structure_info, id(self.default_delegate), self.branch))
+        return hash((self.structure_environment, self.structure_info, self.branch))
 
 class ComparisonEnvironment():
 
     __slots__ = (
-        "default_delegate",
         "domain",
         "is_multi_diff",
         "printer_environments",
@@ -95,17 +90,15 @@ class ComparisonEnvironment():
     def __init__(
         self,
         structure_environment:StructureEnvironment,
-        default_delegate:"Delegate|None",
         versions:list[tuple["Version",StructureInfo]],
         versions_between:list[list["Version"]], # has a length of len(versions) - 1
     ) -> None:
         self.structure_environment = structure_environment
         self.domain = self.structure_environment.domain
-        self.default_delegate = default_delegate
         self.versions = tuple(version[0] for version in versions)
         self.structure_infos = tuple(version[1] for version in versions)
         self.versions_between = versions_between
-        self.printer_environments = [PrinterEnvironment(structure_environment, structure_info, default_delegate, version, branch) for branch, (version, structure_info) in enumerate(versions)]
+        self.printer_environments = [PrinterEnvironment(structure_environment, structure_info, version, branch) for branch, (version, structure_info) in enumerate(versions)]
 
     def __getitem__(self, branch:int) -> "PrinterEnvironment":
         return self.printer_environments[branch]
@@ -121,4 +114,4 @@ class ComparisonEnvironment():
 
     def __hash__(self) -> int:
         # versions are excluded
-        return hash((self.structure_environment, self.structure_infos, id(self.default_delegate)))
+        return hash((self.structure_environment, self.structure_infos))

@@ -1,6 +1,7 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Mapping
 
 import Domain.Domain as Domain
+from Component.ComponentObject import ComponentObject
 from Downloader.Accessor import Accessor
 from Utilities.Trace import Trace
 from Version.VersionFileType import VersionFileType
@@ -8,33 +9,23 @@ from Version.VersionFileType import VersionFileType
 if TYPE_CHECKING:
     from Version.Version import Version
 
-class AccessorType():
+class AccessorType(ComponentObject):
 
     __slots__ = (
         "accessor_class",
         "arguments",
-        "full_name",
         "linked_accessor_types",
-        "name",
     )
 
-    def __init__(self, name:str, full_name:str, arguments:dict[str,Any]) -> None:
-        self.name = name
-        self.full_name = full_name
-        self.arguments = arguments
-        self.accessor_class:type[Accessor]
-        self.linked_accessor_types:dict[str,AccessorType]
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.full_name}>"
-
-    def link_finals(
+    def link_accessor_type(
         self,
         accessor_class:type[Accessor],
-        get_linked_accessor_types:dict[str,"AccessorType"],
+        arguments:Mapping[Any,Any],
+        linked_accessor_types:Mapping[str,"AccessorType"],
     ) -> None:
         self.accessor_class = accessor_class
-        self.linked_accessor_types = get_linked_accessor_types
+        self.arguments = arguments
+        self.linked_accessor_types = linked_accessor_types
 
     def create_accessor(
         self,
@@ -43,7 +34,7 @@ class AccessorType():
         version:"Version",
         domain:"Domain.Domain",
         file_type:VersionFileType,
-        instance_arguments:dict[str,Any],
+        instance_arguments:Mapping[Any,Any],
     ) -> Accessor|None:
         with trace.enter(self, self.name, ...):
             linked_accessors:dict[str,Accessor] = {}
@@ -62,3 +53,20 @@ class AccessorType():
                 return None
 
             return accessor_type(full_name, version, domain, local_instance_arguments, self.arguments, linked_accessors)
+
+class AccessorCreator(ComponentObject):
+    """
+    Object that creates Accessors. This is necessary because Accessors must know what their Version is.
+    """
+
+    __slots__ = (
+        "accessor_type",
+        "instance_arguments",
+    )
+
+    def link_accessor_creator(self, accessor_type:AccessorType, arguments:Mapping[Any, Any]={}) -> None:
+        self.accessor_type = accessor_type
+        self.instance_arguments = arguments
+
+    def create_accessor(self, version:"Version", domain:"Domain.Domain", file_type:VersionFileType, trace:Trace) -> Accessor|None:
+        return self.accessor_type.create_accessor(self.full_name, trace, version, domain, file_type, self.instance_arguments)

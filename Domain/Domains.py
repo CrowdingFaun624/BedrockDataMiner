@@ -22,4 +22,7 @@ from Utilities.FileManager import DOMAINS_DIRECTORY
 
 domains.update((directory.name, Domain.Domain(directory.name)) for directory in DOMAINS_DIRECTORY.iterdir() if directory.joinpath("domain.json").exists())
 for domain in domains.values():
+    domain.read_manifest()
+    domain.import_data_files()
+for domain in domains.values():
     domain.link_domains(domains)

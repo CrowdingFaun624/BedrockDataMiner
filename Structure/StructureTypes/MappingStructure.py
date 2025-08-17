@@ -195,7 +195,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                             perfect_matches.add(index1)
                 for generator in generators_to_remove:
                     del active_generators[generator]
-            del perfect_matches; del generators_to_remove; del active_generators
+            del perfect_matches; del active_generators
 
             similarities.sort(key=(lambda item: (3 - item[3] * 2 - item[4], 1 - item[0], item[2])) if self.allow_same_key_optimization else (lambda item: (1 - item[0], 3 - item[3] * 2 - item[4], item[2])))
             used_indices1:set[int] = set()

@@ -2,8 +2,7 @@ from collections import defaultdict
 from typing import Any, NotRequired, Required, Sequence, TypedDict, cast
 
 from Component.ComponentFunctions import component_function
-from Domain.Domains import get_domain_from_module
-from Serializer.Serializer import Serializer
+from Serializer.Serializer import SerializerCreator
 from Structure.SimpleContainer import SCon
 from Utilities.File import FakeFile, File
 from Utilities.TypeVerifier import (
@@ -11,10 +10,6 @@ from Utilities.TypeVerifier import (
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
 )
-
-domain = get_domain_from_module(__name__)
-json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
-lines_serializer = domain.script_referenceable.get_future("minecraft_bedrock!serializers/lines_serializer", Serializer)
 
 animation_controllers_fix_old_input_typed_dict = dict[str,Any]
 animation_controllers_fix_old_output_typed_dict = TypedDict("animation_controllers_fix_old_output_typed_dict", {"animation_controllers": Any})
@@ -109,13 +104,15 @@ def biomes_normalize_old(data:biomes_normalize_old_input_typed_dict|biomes_norma
     del output["minecraft:biome"]["components"]["format_version"]
     return output
 
-@component_function(no_arguments=True, opens_files=True)
-def blocks_client_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def blocks_client_normalize(data:dict[str,File[dict[str,Any]]], serializer:SerializerCreator) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
     for pack_name, blocks in data.items():
         file_hashes.append(blocks.hash)
-        for block_name, block_data in blocks.read(json_serializer.get()).items():
+        for block_name, block_data in blocks.read(serializer.serializer).items():
             if block_name == "format_version": continue
             if block_name not in output:
                 output[block_name] = {}
@@ -174,13 +171,15 @@ def entities_client_fix_old(data:entities_client_fix_old_input_type|entities_cli
 
 item_textures_data_typed_dict = TypedDict("item_textures_data_typed_dict", {"texture_data": dict[str,Any]})
 
-@component_function(no_arguments=True, opens_files=True)
-def item_textures_normalize(data:dict[str,File[item_textures_data_typed_dict]]) -> FakeFile[dict[str,dict[str,Any]]]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def item_textures_normalize(data:dict[str,File[item_textures_data_typed_dict]], serializer:SerializerCreator) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
     for resource_pack_name, item_textures_file in data.items():
         file_hashes.append(hash(item_textures_file))
-        item_textures_data = item_textures_file.read(json_serializer.get())
+        item_textures_data = item_textures_file.read(serializer.serializer)
         for item, item_data in item_textures_data["texture_data"].items():
             if item not in output:
                 output[item] = {}
@@ -195,12 +194,14 @@ class ItemClientOffsetItemTypedDict(TypedDict):
 class ItemClientOffsetFileTypedDict(TypedDict):
     render_offsets: Required[dict[str,ItemClientOffsetItemTypedDict]]
 
-@component_function(no_arguments=True, opens_files=True)
-def items_client_offset_normalize(data:dict[str,File[ItemClientOffsetFileTypedDict]]) -> FakeFile[dict[str,dict[str,ItemClientOffsetItemTypedDict]]]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def items_client_offset_normalize(data:dict[str,File[ItemClientOffsetFileTypedDict]], serializer:SerializerCreator) -> FakeFile[dict[str,dict[str,ItemClientOffsetItemTypedDict]]]:
     output:dict[str,dict[str,ItemClientOffsetItemTypedDict]] = {}
     file_hashes:list[int] = []
     for resource_pack_name, file in data.items():
-        file_data = file.read(json_serializer.get())
+        file_data = file.read(serializer.serializer)
         file_hashes.append(hash(file))
         output[resource_pack_name] = file_data["render_offsets"]
     return FakeFile("combined_items_client_offset_file", output, None, hash(tuple(file_hashes)))
@@ -251,12 +252,14 @@ def models_file_similarity_weight(data:str) -> Sequence[int]:
         string_index += len(item) + 1
     return output
 
-@component_function(no_arguments=True, opens_files=True)
-def music_definitions_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def music_definitions_normalize(data:dict[str,File[dict[str,Any]]], serializer:SerializerCreator) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
     for pack_name, music_definitions_file in data.items():
-        music_definitions = music_definitions_file.read(json_serializer.get())
+        music_definitions = music_definitions_file.read(serializer.serializer)
         file_hashes.append(hash(music_definitions_file))
         for environment_name, environment_data in music_definitions.items():
             if environment_name not in output:
@@ -264,15 +267,17 @@ def music_definitions_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[
             output[environment_name][pack_name] = environment_data
     return FakeFile("combined_music_definitions_file", output, None, hash(tuple(file_hashes)))
 
-@component_function(no_arguments=True, opens_files=True)
-def normalize_sound_definitions(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def normalize_sound_definitions(data:dict[str,File[dict[str,Any]]], serializer:SerializerCreator) -> FakeFile[dict[str,dict[str,Any]]]:
     # resource packs are always the top level.
     # inside resource pack, it's sometimes wrapped in {"sound_definitions": dict_of_sound_events}
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
     for pack_name, sound_definitions_file in data.items():
         file_hashes.append(hash(sound_definitions_file))
-        sound_definitions = sound_definitions_file.read(json_serializer.get())
+        sound_definitions = sound_definitions_file.read(serializer.serializer)
         if "sound_definitions" in sound_definitions:
             sound_definitions:dict[str,Any] = sound_definitions["sound_definitions"]
         for event_name, event_data in sound_definitions.items():
@@ -396,8 +401,9 @@ class SkinsNormalizeOutputTypedDict(TypedDict):
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("other_keys", True, ListTypeVerifier(str, list)),
-), opens_files=True)
-def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_keys:list[str]) -> FakeFile[SkinsNormalizeOutputTypedDict]:
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_keys:list[str], serializer:SerializerCreator) -> FakeFile[SkinsNormalizeOutputTypedDict]:
     output:SkinsNormalizeOutputTypedDict = {
         "skins": [],
     }
@@ -406,7 +412,7 @@ def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_key
     file_hashes:list[int] = []
     for pack_name, skins_file in data.items():
         file_hashes.append(hash(skins_file))
-        skins_data = skins_file.read(json_serializer.get())
+        skins_data = skins_file.read(serializer.serializer)
         for skin in skins_data["skins"]:
             output_skin = skin.copy()
             output_skin["defined_in"] = pack_name
@@ -492,23 +498,27 @@ def spawn_rules_normalize_herd(data:dict[str,Any]|list[dict[str,Any]]) -> list[d
     else:
         return data
 
-@component_function(no_arguments=True, opens_files=True)
-def subdirs_normalize(data:dict[str,File[list[str]]]) -> list[str]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def subdirs_normalize(data:dict[str,File[list[str]]], serializer:SerializerCreator) -> list[str]:
     output:list[str] = []
     for file_name, file in data.items():
-        file_contents = file.read(lines_serializer.get())
+        file_contents = file.read(serializer.serializer)
         file_name_stripped = file_name.rsplit("/", 1)[0] + "/"
         for line in file_contents:
             output.append(file_name_stripped + line)
     return output
 
-@component_function(no_arguments=True, opens_files=True)
-def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
+@component_function(type_verifier=TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]], serializer:SerializerCreator) -> FakeFile[dict[str,dict[str,Any]]]:
     other_keys = {"texture_name": {}, "padding": {}, "num_mip_levels": {}}
     texture_data:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
     for resource_pack_name, terrain_textures_file in data.items():
-        terrain_textures_data = terrain_textures_file.read(json_serializer.get())
+        terrain_textures_data = terrain_textures_file.read(serializer.serializer)
         file_hashes.append(hash(terrain_textures_file))
         for other_key_key, other_key_values in other_keys.items():
             if other_key_key in terrain_textures_data:
@@ -522,14 +532,13 @@ def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[d
     return FakeFile("combined_terrain_textures_file", output, None, hash(tuple(file_hashes)))
 
 @component_function(type_verifier=TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("serializer", True, str),
-), opens_files=True)
-def texture_list_normalize(data:dict[str,File[list[str]]], serializer:str) -> FakeFile[dict[str,list[str]]]:
-    _serializer = domain.script_referenceable.get(serializer, Serializer)
+    TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
+))
+def texture_list_normalize(data:dict[str,File[list[str]]], serializer:SerializerCreator) -> FakeFile[dict[str,list[str]]]:
     output:defaultdict[str,list[str]] = defaultdict(lambda: [])
     file_hashes:list[int] = []
     for resource_pack, textures_file in data.items():
-        textures = textures_file.read(_serializer)
+        textures = textures_file.read(serializer.serializer)
         file_hashes.append(hash(textures_file))
         for texture in textures:
             output[texture].append(resource_pack)

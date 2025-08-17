@@ -15,18 +15,18 @@ class InstanceArgumentsTypedDict(TypedDict):
 
 class ArgumentsTypedDict(TypedDict):
     location: str
-    log: str
+    log: Log | None
 
 @register_builtin()
 class DownloadAccessor(FileAccessor):
-    
+
     instance_parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("url", True, str),
     )
 
     class_parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("location", True, str),
-        TypedDictKeyTypeVerifier("log", False, (str, type(None))),
+        TypedDictKeyTypeVerifier("log", False, (Log, type(None))),
     )
 
     __slots__ = (
@@ -43,7 +43,7 @@ class DownloadAccessor(FileAccessor):
         self.location = location
         self._installed:bool|None = None
         self.file_handle:BinaryIO|None = None
-        self.log = self.domain.script_referenceable.get(class_arguments["log"], Log) if "log" in class_arguments else None
+        self.log = class_arguments.get("log", None)
 
         self.url = instance_arguments["url"]
 

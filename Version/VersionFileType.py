@@ -1,38 +1,27 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
+
+from Component.ComponentObject import ComponentObject
 
 if TYPE_CHECKING:
     from Downloader.AccessorType import AccessorType
 
-class VersionFileType():
+class VersionFileType(ComponentObject):
 
     __slots__ = (
         "allowed_accessor_types",
         "available_when_unreleased",
-        "full_name",
+        "dependencies",
         "must_exist",
-        "name",
     )
 
-    def __init__(
+    def link_version_file_type(
         self,
-        name:str,
-        full_name:str,
-        must_exist:bool,
+        allowed_accessor_types:Sequence["AccessorType"],
         available_when_unreleased:bool,
-    ) -> None:
-        self.name = name
-        self.full_name = full_name
-        self.must_exist = must_exist
-        self.available_when_unreleased = available_when_unreleased
-
-    def link_finals(
-        self,
-        allowed_accessor_types:list["AccessorType"],
+        dependencies:Sequence["VersionFileType"],
+        must_exist:bool,
     ) -> None:
         self.allowed_accessor_types = allowed_accessor_types
-
-    def __hash__(self) -> int:
-        return hash(self.full_name)
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.full_name}>"
+        self.available_when_unreleased = available_when_unreleased
+        self.dependencies = dependencies
+        self.must_exist = must_exist

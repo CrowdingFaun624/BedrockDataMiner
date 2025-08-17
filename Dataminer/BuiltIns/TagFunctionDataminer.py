@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Mapping
+from typing import Any, Sequence
 
 import Utilities.Exceptions as Exceptions
 from Component.ComponentFunctions import register_builtin
@@ -7,6 +7,7 @@ from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Structure.DataPath import DataPath
+from Structure.Function import Function
 from Structure.StructureTag import StructureTag
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
@@ -19,33 +20,27 @@ from Utilities.TypeVerifier import (
 class TagFunctionDataminer(Dataminer):
 
     __slots__ = (
-        "arguments",
-        "function_name",
+        "function",
         "none_okay",
-        "tag_names",
+        "tags",
     )
 
     parameters = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("arguments", False, dict),
-        TypedDictKeyTypeVerifier("function_name", True, str),
-        TypedDictKeyTypeVerifier("tag_names", True, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("function", True, Function),
+        TypedDictKeyTypeVerifier("tags", True, ListTypeVerifier(StructureTag, list)),
         TypedDictKeyTypeVerifier("none_okay", False, bool),
     )
 
-    def initialize(self, function_name:str, tag_names:list[str], arguments:dict[str,Any]={}, none_okay:bool=True) -> None:
-        self.arguments:Mapping[str,Any] = arguments
-        self.function_name = function_name
-        self.tag_names = tag_names
+    def initialize(self, function:Function, tags:Sequence[StructureTag], none_okay:bool=True) -> None:
+        self.function = function
+        self.tags = tags
         self.none_okay = none_okay
 
     def activate(self, environment:DataminerEnvironment) -> list[DataPath|Any]:
-        function = self.domain.script_set_set.get(self.function_name, self.domain, verify_function=callable)
-        tags = [self.domain.script_referenceable.get(tag_name, StructureTag) for tag_name in self.tag_names]
-
         dependencies = set(self.dependencies)
         printer_environment = environment.get_printer_environment(self.version, self.settings.structure_info)
         tag_dataminer_collections:defaultdict[AbstractDataminerCollection,list[StructureTag]] = defaultdict(lambda: [])
-        for tag in tags:
+        for tag in self.tags:
             for dataminer_collection in self.domain.dataminer_collections.values():
                 if dataminer_collection.has_tag(tag) and dataminer_collection.supports_version(self.version):
                     if dataminer_collection not in dependencies:
@@ -57,7 +52,7 @@ class TagFunctionDataminer(Dataminer):
             for tag, paths in dataminer_collection.get_tag_paths_from_raw(dataminer_collection.get_data_file(self.version), self.version, tags, printer_environment).items():
                 mentioned_tags[tag].update(paths)
 
-        output = function(mentioned_tags, **self.arguments)
+        output = self.function(mentioned_tags)
         if not self.none_okay and len(output) == 0:
             raise Exceptions.DataminerNothingFoundError(self)
         return output

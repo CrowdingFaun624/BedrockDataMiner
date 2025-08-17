@@ -1,107 +1,72 @@
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import Any, Mapping, NotRequired, Required, Sequence, TypedDict
 
-from Component.Capabilities import Capabilities
 from Component.Component import Component
-from Component.ComponentTyping import DataminerSettingsTypedDict
-from Component.Dataminer.AbstractDataminerCollectionComponent import (
-    ABSTRACT_DATAMINER_COLLECTION_PATTERN,
-)
-from Component.Field.ComponentField import OptionalComponentField
-from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field
-from Component.Field.ScriptedObjectField import OptionalScriptedObjectField
-from Component.Pattern import Pattern
-from Component.Permissions import InlinePermissions
-from Component.Version.VersionComponent import VERSION_PATTERN
-from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
-from Dataminer.Dataminer import Dataminer, NullDataminer
+from Component.Scripts import Script
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerSettings import DataminerSettings
 from Structure.StructureInfo import StructureInfo
-from Utilities.Exceptions import DataminerCollectionFileError
 from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
+    DictTypeVerifier,
     ListTypeVerifier,
+    ScriptTypeVerifier,
+    SubclassTypeVerifier,
     TypedDictKeyTypeVerifier,
     TypedDictTypeVerifier,
     UnionTypeVerifier,
 )
+from Version.Version import Version
+from Version.VersionFileType import VersionFileType
+from Version.VersionRange import VersionRange
 
-if TYPE_CHECKING:
-    from Component.Dataminer.DataminerCollectionComponent import (
-        DataminerCollectionComponent,
-    )
 
-DATAMINER_SETTINGS_PATTERN:Pattern["DataminerSettingsComponent"] = Pattern("is_dataminer_settings")
+class DataminerSettingsTypedDict(TypedDict):
+    arguments: NotRequired[Mapping[str,Any]]
+    dependencies: NotRequired[AbstractDataminerCollection | Sequence[AbstractDataminerCollection]]
+    files: NotRequired[VersionFileType | Sequence[VersionFileType]]
+    name: Required[Script[type[Dataminer]] | None]
+    new: Required[Version | None]
+    old: Required[Version | None]
+    optional_dependencies: NotRequired[AbstractDataminerCollection | Sequence[AbstractDataminerCollection]]
+    structure_info: NotRequired[Mapping[str, Any]]
 
-class DataminerSettingsComponent(Component[DataminerSettings]):
+def convert_to_sequence[T](data:T|Sequence[T], item_type:type[T]) -> Sequence[T]:
+    return [data] if isinstance(data, item_type) else data # type: ignore
 
-    class_name = "DataminerSettings"
-    my_capabilities = Capabilities(is_dataminer_settings=True)
-    type_verifier = TypedDictTypeVerifier(
+class DataminerSettingsComponent(Component[DataminerSettings, DataminerSettingsTypedDict]):
+
+    type_name = "DataminerSettings"
+    object_type = DataminerSettings
+    abstract = False
+
+    type_verifier = Component.type_verifier.extend(TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("arguments", False, dict),
-        TypedDictKeyTypeVerifier("dependencies", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        TypedDictKeyTypeVerifier("files", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        TypedDictKeyTypeVerifier("name", True, (str, type(None))),
-        TypedDictKeyTypeVerifier("new", True, (str, type(None))),
-        TypedDictKeyTypeVerifier("old", True, (str, type(None))),
-        TypedDictKeyTypeVerifier("optional_dependencies", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        TypedDictKeyTypeVerifier("structure_info", False, dict),
-        TypedDictKeyTypeVerifier("type", False, str),
-    )
-    inline_permissions = InlinePermissions.inline
+        TypedDictKeyTypeVerifier("dependencies", False, UnionTypeVerifier(AbstractDataminerCollection, ListTypeVerifier(AbstractDataminerCollection, list))),
+        TypedDictKeyTypeVerifier("files", False, UnionTypeVerifier(VersionFileType, ListTypeVerifier(VersionFileType, list))),
+        TypedDictKeyTypeVerifier("name", True, UnionTypeVerifier(type(None), ScriptTypeVerifier(SubclassTypeVerifier(Dataminer)))),
+        TypedDictKeyTypeVerifier("new", True, (type(None), Version)),
+        TypedDictKeyTypeVerifier("old", True, (type(None), Version)),
+        TypedDictKeyTypeVerifier("optional_dependencies", False, UnionTypeVerifier(AbstractDataminerCollection, ListTypeVerifier(AbstractDataminerCollection, list))),
+        TypedDictKeyTypeVerifier("structure_info", False, DictTypeVerifier(dict, str, object)),
+    ))
 
-    __slots__ = (
-        "arguments",
-        "dataminer_field",
-        "dependencies_field",
-        "files_field",
-        "files_field_exists",
-        "new_field",
-        "old_field",
-        "optional_dependencies_field",
-        "structure_info",
-    )
-
-    def initialize_fields(self, data: DataminerSettingsTypedDict) -> Sequence[Field]:
-        self.files_field_exists = "files" in data
-        self.arguments = data.get("arguments", {})
-        self.structure_info = data.get("structure_info", {})
-
-        self.new_field = OptionalComponentField(data["new"], VERSION_PATTERN, ("new",))
-        self.old_field = OptionalComponentField(data["old"], VERSION_PATTERN, ("old",))
-        self.files_field = ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",))
-        self.dataminer_field = OptionalScriptedObjectField(data["name"], ("name",), default=NullDataminer, subclass=Dataminer)
-        self.dependencies_field = ComponentListField(data.get("dependencies", ()), ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("dependencies",))
-        self.optional_dependencies_field = ComponentListField(data.get("optional_dependencies", ()), ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("optional_dependencies",))
-        return (self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field, self.optional_dependencies_field)
-
-    def create_final(self, trace:Trace) -> DataminerSettings:
-        return DataminerSettings(
-            full_name=self.full_name,
-            kwargs=self.arguments,
-            domain=self.domain
-        )
-
-    def link_finals(self, trace:Trace) -> None:
-        parent = cast("DataminerCollectionComponent", self.get_inline_parent())
-        self.final.link_subcomponents(
-            trace,
-            file_name=parent.file_name,
-            name=parent.name,
-            structure=parent.structure_field.subcomponent.final,
-            dataminer_class=self.dataminer_field.object,
-            dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.final)),
-            optional_dependencies=list(self.optional_dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.final)),
-            start_version=self.old_field.map(lambda subcomponent: subcomponent.final),
-            end_version=self.new_field.map(lambda subcomponent: subcomponent.final),
-            structure_info=StructureInfo(self.structure_info, self.domain, repr(self)),
-            version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.final))
-        )
-
-    def check(self, trace:Trace) -> None:
-        if self.dataminer_field.exists:
-            if not self.files_field_exists:
-                trace.exception(DataminerCollectionFileError(False, "when \"name\" is not null"))
+    def check(self, fields: DataminerSettingsTypedDict, trace: Trace) -> bool:
+        if super().check(fields, trace):
+            return True
+        if (dataminer_class := fields["name"]) is not None and dataminer_class.object.parameters is not None:
+            return dataminer_class.object.parameters.verify(fields.get("arguments", {}), trace)
         else:
-            if self.files_field_exists:
-                trace.exception(DataminerCollectionFileError(True, "when \"name\" is null"))
+            return False
+
+    def link_final(self, fields: DataminerSettingsTypedDict) -> None:
+        super().link_final(fields)
+        self.final.link_dataminer_settings(
+            arguments=fields.get("arguments", {}),
+            dataminer_class=None if (dataminer_script := fields["name"]) is None else dataminer_script.object,
+            dependencies=convert_to_sequence(fields.get("dependencies", []), AbstractDataminerCollection),
+            optional_dependencies=convert_to_sequence(fields.get("optional_dependencies", []), AbstractDataminerCollection),
+            structure_info=StructureInfo(fields.get("structure_info", {}), self.group.domain, self.full_name),
+            version_file_types=convert_to_sequence(fields.get("files", []), VersionFileType),
+            version_range=VersionRange(fields["old"], fields["new"]),
+        )

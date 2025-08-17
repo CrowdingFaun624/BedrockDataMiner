@@ -1,39 +1,37 @@
-from typing import Sequence
+from typing import AbstractSet, Any, Mapping, NotRequired, Sequence
 
-from Component.ComponentTyping import PassthroughStructureTypedDict
-from Component.Field.Field import Field
-from Component.Structure.Field.TagListField import TagListField
-from Component.Structure.StructureComponent import StructureComponent
-from Structure.PassthroughStructure import PassthroughStructure
-from Utilities.Trace import Trace
-from Utilities.TypeVerifier import (
-    ListTypeVerifier,
-    TypedDictKeyTypeVerifier,
-    TypedDictTypeVerifier,
-    UnionTypeVerifier,
+from Component.Structure.StructureComponent import (
+    StructureComponent,
+    StructureTypedDict,
+    tags_type_verifier,
 )
+from Structure.PassthroughStructure import PassthroughStructure
+from Structure.StructureTag import StructureTag
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class PassthroughStructureComponent[a: PassthroughStructure](StructureComponent[a]):
+class PassthroughStructureTypedDict(StructureTypedDict):
+    tags: NotRequired[StructureTag | Sequence[StructureTag]]
 
-    __slots__ = (
-        "tags_field",
-    )
+class PassthroughStructureComponent[R: PassthroughStructure, P: PassthroughStructureTypedDict](StructureComponent[R, P]):
+
+    type_name = "Passthrough"
+    object_type = PassthroughStructure
+    abstract = True
 
     type_verifier = StructureComponent.type_verifier.extend(TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("tags", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("tags", False, tags_type_verifier),
     ))
 
-    def initialize_fields(self, data: PassthroughStructureTypedDict) -> Sequence[Field]:
-        fields = list(super().initialize_fields(data))
-
-        self.tags_field = TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
-
-        fields.append(self.tags_field)
-        return fields
-
-    def link_finals(self, trace: Trace) -> None:
-        super().link_finals(trace)
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
         self.final.link_passthrough_structure(
-            tags=self.tags_field.finals,
+            tags=fields.get("tags", []),
         )
+
+    def finalize(self, propagating_booleans: Mapping[str, bool], propagating_sets: Mapping[str, AbstractSet[Any]], trace: Trace) -> bool:
+        if super().finalize(propagating_booleans, propagating_sets, trace):
+            return True
+        self.final.finalize_passthrough_structure()
+        return False

@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import AbstractSet, Mapping, Sequence
 
 from ordered_set import OrderedSet
 
@@ -6,6 +6,7 @@ from Structure.Container import Con, Don
 from Structure.DataPath import DataPath
 from Structure.Difference import Diff
 from Structure.Function import Function
+from Structure.Key import Key
 from Structure.PassthroughStructure import PassthroughStructure
 from Structure.Structure import Structure
 from Structure.StructureEnvironment import PrinterEnvironment
@@ -25,6 +26,7 @@ from Utilities.Trace import Trace
 class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     __slots__ = (
+        "keys",
         "switch_function",
         "switch_tags",
         "switches",
@@ -33,15 +35,19 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     def link_switch_structure(
         self,
+        keys:Mapping[str,Key[D]],
         switch_function:Function,
-        structures:dict[str,Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None],
-        tags:dict[str,set[StructureTag]],
-        types:dict[str,tuple[type,...]],
     ) -> None:
         self.switch_function = switch_function
-        self.switches = structures
-        self.types = types
-        self.switch_tags = tags
+        self.keys = keys
+
+    def finalize_switch_structure(self) -> None:
+        for key in self.keys.values():
+            key.finalize_key()
+        self.switches:Mapping[str, Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None] = {key: value.structure for key, value in self.keys.items()}
+        self.switch_tags:Mapping[str,AbstractSet[StructureTag]] = {key: value.tags for key, value in self.keys.items() if len(value.tags) > 0}
+        self.types:Mapping[str,tuple[type,...]] = {key: value.types for key, value in self.keys.items()}
+        del self.keys
 
     def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
         switch_key:str = self.switch_function(data)
@@ -65,8 +71,8 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     def get_tag_paths_extra(self, data: Con[D], tag: StructureTag, data_path: DataPath, trace: Trace, environment: PrinterEnvironment) -> Sequence[DataPath]:
         switch_key:str = self.switch_function(data)
-        tags = self.switch_tags.get(switch_key, set()) # may not exist
-        if tag in tags:
+        tags = self.switch_tags.get(switch_key, None) # may not exist
+        if tags is not None and tag in tags:
             return (data_path.copy(...).embed(data.data),)
         return ()
 

@@ -1,129 +1,180 @@
+from itertools import chain
 from pathlib import Path
-from typing import cast
-
-from pyjson5 import Json5Exception, decode_io
+from types import EllipsisType
+from typing import TYPE_CHECKING, Iterable, Mapping
 
 import Domain.Domain as Domain
-from Component.Component import Component
-from Component.ComponentTypes import component_types
-from Component.ComponentTyping import GroupFileType
-from Component.InheritedComponent import InheritedComponent
-from Utilities.Exceptions import (
-    ComponentFileError,
-    ComponentTypeMissingError,
-    GroupAliasDomainError,
-    UnrecognizedComponentTypeError,
-    UnrecognizedGroupAliasError,
-)
+from Component.Field.Errors import Errors
 from Utilities.Trace import Trace
-from Utilities.TypeVerifier import (
-    DictTypeVerifier,
-    EnumTypeVerifier,
-    TypedDictKeyTypeVerifier,
-    TypedDictTypeVerifier,
-)
 
-component_types_dict:dict[str,type[Component]] = {component_type.class_name: component_type for component_type in component_types}
+if TYPE_CHECKING:
+    from Component.Field.DomainField import DomainField
+    from Component.Field.FieldFactory import FieldFactory
+    from Component.Field.GroupField import GroupField
+    from Component.Reader import Reader
+
+class Aliases():
+
+    __slots__ = (
+        "domain_aliases",
+        "error",
+        "group_aliases",
+    )
+
+    def __init__(self, domain_aliases:Mapping[str,"FieldFactory[DomainField]"], group_aliases:Mapping[str,"FieldFactory[GroupField]"], error:Errors) -> None:
+        self.domain_aliases: Mapping[str,"FieldFactory[DomainField]"] = domain_aliases
+        self.group_aliases: Mapping[str,"FieldFactory[GroupField]"] = group_aliases
+        self.error = error
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} {len(self.domain_aliases)} {len(self.group_aliases)}>"
+
+class GroupSettings():
+
+    __slots__ = (
+        "aliases",
+        "error",
+    )
+
+    def __init__(self, aliases:Aliases, error:Errors) -> None:
+        self.aliases = aliases
+        self.error = error.narrow(self.aliases.error)
+
+    def set_field(self, domain:"Domain.Domain", group:"Group", trace:Trace) -> None:
+        for index, (field_name, field) in enumerate(self.aliases.domain_aliases.items()):
+            if not field.abstract:
+                field.set_field(group, field_name, f"{domain.name}!{group.name}<settings><aliases>{field_name}", index, trace, is_inline=False)
+        for index, (field_name, field) in enumerate(self.aliases.group_aliases.items()):
+            if not field.abstract:
+                field.set_field(group, field_name, f"{domain.name}!{group.name}<settings><aliases>{field_name}", index, trace, is_inline=False)
+
+class GroupObject():
+    '''
+    Object representing a directory or file.
+    '''
+
+    __slots__ = (
+        "parent",
+        "path",
+        "path_name",
+    )
+
+    name:str
+    """
+    Name for error messages. Should be like ".cmp file" or "directory".
+    """
+
+    def __init__(self, path:Path, path_name:str, parent:"GroupObject|None") -> None:
+        self.path = path
+        self.path_name = path_name
+        self.parent = parent
+
+    def get_parent(self, trace:Trace) -> tuple["GroupObject|EllipsisType", Errors]:
+        if self.parent is None:
+            trace.exception(RuntimeError(f"{self} does not have a parent"))
+            return ..., Errors.create_field
+        return self.parent, Errors.fine
+
+    def get_all_children(self) -> Iterable["GroupFile"]:
+        """
+        Recursively gets all subfiles from itself.
+        """
+        ...
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} {self.path_name}>"
+
+class GroupDirectory(GroupObject):
+
+    __slots__ = (
+        "children",
+    )
+
+    name = "directory"
+
+    def __init__(self, path: Path, path_name:str, parent: GroupObject | None, children: Mapping[str, GroupObject]) -> None:
+        super().__init__(path, path_name, parent)
+        self.children = children
+
+    def get_child(self, child_name:str, trace:Trace) -> tuple["GroupObject|EllipsisType", Errors]:
+        if self.children is None or (output := self.children.get(child_name)) is None:
+            trace.exception(RuntimeError(f"{self} has no child named {child_name}"))
+            return ..., Errors.create_field
+        return output, Errors.fine
+
+    def get_all_children(self) -> Iterable["GroupFile"]:
+        yield from chain.from_iterable(child.get_all_children() for child in self.children.values())
+
+class GroupFile(GroupObject):
+
+    __slots__ = (
+        "domain"
+    )
+
+    def __init__(self, path: Path, path_name:str, parent: GroupObject | None, domain:"Domain.Domain") -> None:
+        super().__init__(path, path_name, parent)
+        self.domain = domain
+
+    def get_all_children(self) -> Iterable["GroupFile"]:
+        yield self
+
+class ComponentFile(GroupFile):
+    """
+    .cmp file
+    """
+
+    __slots__ = (
+        "group",
+    )
+
+    name = ".cmp file"
+
+    def __init__(self, path:Path, path_name:str, parent: GroupObject|None, domain:"Domain.Domain") -> None:
+        super().__init__(path, path_name, parent, domain)
+        self.group:Group # set by Importer
+
+class ScriptFile(GroupFile):
+    """
+    .py file
+    """
+
+    __slots__ = (
+        "module_name",
+    )
+
+    name = ".py file"
+
+    def __init__(self, path:Path, path_name:str, parent: GroupObject | None, domain:"Domain.Domain", module_name:str) -> None:
+        super().__init__(path, path_name, parent, domain)
+        self.module_name = module_name
 
 class Group():
     '''
-    Basically a file of Components.
+    Basically a file of Fields.
     '''
 
-    component_type_verifier = TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("type", False, str),
-        TypedDictKeyTypeVerifier("inherit", False, str),
-        loose=True,
-    )
-    group_type_verifier = DictTypeVerifier(dict, str, component_type_verifier)
-    default_type_type_verifier = EnumTypeVerifier({component_type.class_name for component_type in component_types} | {None})
-    group_aliases_type_verifier = DictTypeVerifier(dict, str, str)
-
     __slots__ = (
-        "components",
-        "default_type",
         "domain",
-        "group_aliases",
-        "is_single_component",
+        "error",
+        "fields",
+        "finals",
+        "group_file",
         "name",
         "path",
+        "reader",
+        "settings",
     )
 
-    def __init__(self, domain:"Domain.Domain", file_path:Path, trace:Trace) -> None:
+    def __init__(self, domain:"Domain.Domain", file_path:Path, settings:GroupSettings, fields:Mapping[str,"FieldFactory"], reader:"Reader", error:Errors) -> None:
         self.domain:"Domain.Domain" = domain
         self.path:Path = file_path
-        self.name:str = file_path.relative_to(domain.assets_directory).as_posix().removesuffix(file_path.suffix)
-
-        self.is_single_component:bool
-        self.default_type:str|None
-        self.group_aliases:dict[str,str]
-        self.components:dict[str,Component] = self._get_components(trace)
-
-    def create_components(self, contents:GroupFileType, trace:Trace) -> dict[str,Component]:
-        '''Returns a dict of all Components in the Group.'''
-        components:dict[str,Component] = {}
-        for index, (component_name, component_data) in enumerate(contents.items()):
-            with trace.enter(component_name, component_name, component_data): # substitute actual Component for its name, since it's not created yet.
-                if "inherit" in component_data:
-                    components[component_name] = InheritedComponent(component_data, component_name, self.domain, self, index, trace)
-                    # InheritedComponents do not have their arguments verified nor their Fields initialized.
-                    continue
-                component_type_str = component_data.get("type", self.default_type)
-                if component_type_str is None:
-                    trace.exception(ComponentTypeMissingError(component_name, self))
-                    continue
-                component_type = component_types_dict.get(component_type_str)
-                if component_type is None:
-                    if "#" in component_type_str:
-                        message = "(Expressions are not allowed in the \"type\" field.)"
-                    else: message = None
-                    trace.exception(UnrecognizedComponentTypeError(component_type_str, f"{self.domain.name}!{self.name}/{component_name}>", list(component_types_dict.keys()), message))
-                    continue
-                component = component_type(component_data, component_name, self.domain, self, index, trace)
-                if component.completed_init and (component.abstract or not component.init(trace)):
-                    components[component_name] = component
-        return components
-
-    def _get_components(self, trace:Trace) -> dict[str,Component]:
-        try:
-            with open(self.path, "rt") as f:
-                contents:GroupFileType = decode_io(f)
-        except Json5Exception as e:
-            with open(self.path, "rb") as f:
-                byte_contents = f.read()
-            raise ComponentFileError(self.path, byte_contents)
-        self.default_type = cast(str, contents.pop("default_type", None)) if isinstance(contents, dict) else None
-        self.group_aliases = cast(dict[str,str], contents.pop("group_aliases", {}))
-        # use any instead of or to make sure it reports errors for both.
-        if any([self.default_type_type_verifier.verify(self.default_type, trace), self.group_aliases_type_verifier.verify(self.group_aliases, trace)]):
-            return {}
-        self.is_single_component = "type" in contents or "inherit" in contents
-        if self.is_single_component:
-            contents = {"": contents} # type: ignore
-        if self.is_single_component and self.component_type_verifier.verify(contents, trace):
-            return {}
-        elif not self.is_single_component and self.group_type_verifier.verify(contents, trace):
-            return {}
-
-        return self.create_components(contents, trace)
-
-    def verify_group_aliases(self, all_groups:dict[str,"Group"], trace:Trace) -> None:
-        with trace.enter_key("group_aliases", self.group_aliases):
-            for alias, target in self.group_aliases.items():
-                with trace.enter_key(alias, target):
-                    if "!" in alias:
-                        trace.exception(GroupAliasDomainError(alias, target))
-                        continue
-                    if target not in all_groups:
-                        if alias == target:
-                            message = "(The alias and target are the same)"
-                        elif alias in all_groups:
-                            message = f"(while \"{alias}\" is a recognized group, so you have your key and value backwards)"
-                        elif "#" in target or "$" in target or "#" in alias or "$" in alias:
-                            message = "(Group aliases do not support Variables or Expressions)"
-                        else: message = None
-                        trace.exception(UnrecognizedGroupAliasError(target, alias, list(all_groups.keys()), message))
-                        continue
+        self.name:str = file_path.relative_to(domain.assets_directory).as_posix().removesuffix(file_path.suffix) + "/"
+        self.settings:GroupSettings = settings
+        self.fields = fields
+        self.reader = reader
+        self.error = error
+        self.group_file:GroupObject
+        self.finals:Mapping[str,object]
 
     @property
     def full_name(self) -> str:

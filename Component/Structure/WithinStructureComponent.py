@@ -1,56 +1,48 @@
-from typing import Sequence
+from typing import AbstractSet, Any, Mapping, NotRequired, Required, Sequence
 
-from Component.ComponentTyping import WithinStructureTypedDict
-from Component.Field.ComponentField import ComponentField
-from Component.Field.Field import Field
-from Component.Structure.Field.TagListField import TagListField
-from Component.Structure.Field.TypeListField import TypeListField
 from Component.Structure.StructureComponent import (
-    STRUCTURE_COMPONENT_PATTERN,
     StructureComponent,
+    StructureTypedDict,
+    tags_type_verifier,
+    types_type_verifier,
 )
+from Structure.Structure import Structure
+from Structure.StructureTag import StructureTag
 from Structure.WithinStructure import WithinStructure
 from Utilities.Trace import Trace
-from Utilities.TypeVerifier import (
-    ListTypeVerifier,
-    TypedDictKeyTypeVerifier,
-    TypedDictTypeVerifier,
-    UnionTypeVerifier,
-)
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class WithinStructureComponent[a:WithinStructure](StructureComponent[a]):
+class WithinStructureTypedDict(StructureTypedDict):
+    inner_types: Required[type | Sequence[type]]
+    outer_types: Required[type | Sequence[type]]
+    structure: Required[Structure]
+    tags: NotRequired[StructureTag | Sequence[StructureTag]]
 
-    __slots__ = (
-        "inner_types_field",
-        "outer_types_field",
-        "structure_field",
-        "tags_field",
-    )
+class WithinStructureComponent[R: WithinStructure, P: WithinStructureTypedDict](StructureComponent[R, P]):
+
+    type_name = "Within"
+    object_type = WithinStructure
+    abstract = True
 
     type_verifier = StructureComponent.type_verifier.extend(TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("inner_types", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        TypedDictKeyTypeVerifier("outer_types", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
-        TypedDictKeyTypeVerifier("structure", True, (str, dict)), # non-optional; NoneType is not allowed
-        TypedDictKeyTypeVerifier("tags", False, UnionTypeVerifier(str, ListTypeVerifier(str, list)))
+        TypedDictKeyTypeVerifier("inner_types", True, types_type_verifier),
+        TypedDictKeyTypeVerifier("outer_types", True, types_type_verifier),
+        TypedDictKeyTypeVerifier("structure", True, Structure),
+        TypedDictKeyTypeVerifier("tags", False, tags_type_verifier)
     ))
 
-    def initialize_fields(self, data: WithinStructureTypedDict) -> Sequence[Field]:
-        fields = list(super().initialize_fields(data))
-
-        self.structure_field = ComponentField(data["structure"], STRUCTURE_COMPONENT_PATTERN, ("structure",))
-        self.inner_types_field = TypeListField(data["inner_types"], ("inner_types",)).verify_with(self.structure_field)
-        self.outer_types_field = TypeListField(data["outer_types"], ("outer_types",)).add_to_set(self.my_type)
-        self.tags_field = TagListField(data.get("tags", []), ("tags",)).add_to_tag_set(self.children_tags)
-
-        fields.extend((self.inner_types_field, self.outer_types_field, self.structure_field, self.tags_field))
-        return fields
-
-    def link_finals(self, trace: Trace) -> None:
-        super().link_finals(trace)
+    def link_final(self, fields: P) -> None:
+        super().link_final(fields)
         self.final.link_within_structure(
-            inner_types=self.inner_types_field.types,
-            outer_types=self.outer_types_field.types,
-            structure=self.structure_field.subcomponent.final,
-            tags=self.tags_field.finals,
+            inner_types=fields["inner_types"],
+            outer_types=fields["outer_types"],
+            structure=fields["structure"],
+            tags=fields.get("tags", ()),
         )
+
+    def finalize(self, propagating_booleans: Mapping[str, bool], propagating_sets: Mapping[str, AbstractSet[Any]], trace: Trace) -> bool:
+        if super().finalize(propagating_booleans, propagating_sets, trace):
+            return True
+        self.final.finalize_within_structure()
+        return False

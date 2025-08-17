@@ -63,14 +63,17 @@ class VolumeDelegate(LineDelegate[
         self.layer_characters = layer_characters
         self.print_additional_data = print_additional_data
 
-    def finalize(self, domain:"Domain.Domain", trace:Trace) -> None:
-        super().finalize(domain, trace)
+    def finalize(self, domain:"Domain.Domain", trace:Trace) -> bool:
+        if super().finalize(domain, trace):
+            return True
         structure = cast(DictStructure[Any, Any, Any, Any, Any, Any, Any, list[LineType], list[LineType]], self.structure.value_structures["data"])
         self.palette_substructure = cast(DictStructure[Any, Any, Any, Any, Any, Any, Any, list[LineType], list[LineType]], self.structure.value_structures.get("palette"))
         substructure = structure.value_structure
         if substructure is None or not isinstance(substructure, MappingStructure):
-            raise TypeError(f"Substructure of {self} is not an AbstractMappingStructure, but instead {substructure}!")
+            trace.exception(TypeError(f"Substructure of {self} is not an AbstractMappingStructure, but instead {substructure}!"))
+            return True
         self.substructure = substructure
+        return False
 
     def print_layer(
         self,

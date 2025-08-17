@@ -1,6 +1,6 @@
 from itertools import pairwise
 from types import EllipsisType
-from typing import Any, Callable, Mapping, Sequence
+from typing import AbstractSet, Any, Callable, Mapping, Sequence
 
 from ordered_set import OrderedSet
 
@@ -9,7 +9,7 @@ from Structure.DataPath import DataPath
 from Structure.Difference import Diff
 from Structure.SimilarityCache import SimilarityCache
 from Structure.SimpleContainer import SCon
-from Structure.Structure import Structure
+from Structure.Structure import Structure, convert_tags_to_set, tags_type
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
 from Structure.Uses import StructureUse, UsageTracker, Use
@@ -24,16 +24,21 @@ class PassthroughStructure[D, BO, CO](Structure[D, Con[D], Don[D], Don[D]|Diff[D
 
     __slots__ = (
         "similarity_cache",
+        "tag_list",
         "tags",
     )
 
     def link_passthrough_structure(
         self,
-        tags:set[StructureTag],
+        tags:tags_type,
     ) -> None:
-        self.tags = tags
+        self.tag_list = tags
 
         self.similarity_cache:SimilarityCache[Con[D]] = SimilarityCache()
+
+    def finalize_passthrough_structure(self) -> None:
+        self.tags = convert_tags_to_set(self.tag_list)
+        del self.tag_list
 
     def get_similarity_caches(self) -> Sequence[SimilarityCache]:
         return (self.similarity_cache,)
@@ -223,8 +228,6 @@ class PassthroughStructure[D, BO, CO](Structure[D, Con[D], Don[D], Don[D]|Diff[D
             printer:Callable[[Con[D], Trace, PrinterEnvironment]]
             if structure is not None:
                 printer = structure.print_branch
-            elif environment.default_delegate is not None:
-                printer = environment.default_delegate.print_branch
             else:
                 raise InvalidStateError(self)
             return printer(data, trace, environment)
@@ -256,6 +259,4 @@ class PassthroughStructure[D, BO, CO](Structure[D, Con[D], Don[D], Don[D]|Diff[D
             len(set((structures := [self.get_structure(data[branch].get_con(branch).data, trace, environment[branch]) for branch in range(data.branch_count)]))) == 1 and structures[0] is not None:
             # if all structures are the same and not None.
             return structures[0].print_comparison
-        if environment.default_delegate is not None:
-            return environment.default_delegate.print_comparison
         raise InvalidStateError(self)

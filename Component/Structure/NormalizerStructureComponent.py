@@ -1,12 +1,11 @@
-from typing import Sequence
+from typing import Required, Sequence
 
-from Component.ComponentTyping import NormalizerStructureTypedDict
-from Component.Field.ComponentListField import ComponentListField
-from Component.Field.Field import Field
-from Component.Structure.FunctionComponent import FUNCTION_PATTERN
-from Component.Structure.WithinStructureComponent import WithinStructureComponent
+from Component.Structure.WithinStructureComponent import (
+    WithinStructureComponent,
+    WithinStructureTypedDict,
+)
+from Structure.Function import Function
 from Structure.StructureTypes.NormalizerStructure import NormalizerStructure
-from Utilities.Trace import Trace
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
     TypedDictKeyTypeVerifier,
@@ -15,29 +14,24 @@ from Utilities.TypeVerifier import (
 )
 
 
-class NormalizerStructureComponent(WithinStructureComponent[NormalizerStructure]):
+class NormalizerStructureTypedDict(WithinStructureTypedDict):
+    functions: Required[Function | Sequence[Function]]
 
-    __slots__ = (
-        "functions_field",
-    )
+def convert_functions_to_sequence(sequence:Function | Sequence[Function]) -> Sequence[Function]:
+    return [sequence] if isinstance(sequence, Function) else sequence
 
-    class_name = "Normalizer"
-    structure_type = NormalizerStructure
+class NormalizerStructureComponent(WithinStructureComponent[NormalizerStructure, NormalizerStructureTypedDict]):
+
+    type_name = "Normalizer"
+    object_type = NormalizerStructure
+    abstract = False
+
     type_verifier = WithinStructureComponent.type_verifier.extend(TypedDictTypeVerifier(
-        TypedDictKeyTypeVerifier("functions", True, UnionTypeVerifier(str, dict, ListTypeVerifier((str, dict), list))),
+        TypedDictKeyTypeVerifier("functions", True, UnionTypeVerifier(Function, ListTypeVerifier(Function, list))),
     ))
 
-    def initialize_fields(self, data: NormalizerStructureTypedDict) -> Sequence[Field]:
-        fields = list(super().initialize_fields(data))
-
-        self.functions_field = ComponentListField(data.get("functions"), FUNCTION_PATTERN, ("functions",), assume_type="Function")
-
-        fields.append(self.functions_field)
-        return fields
-
-
-    def link_finals(self, trace: Trace) -> None:
-        super().link_finals(trace)
+    def link_final(self, fields: NormalizerStructureTypedDict) -> None:
+        super().link_final(fields)
         self.final.link_normalizer_structure(
-            functions=tuple(self.functions_field.map(lambda subcomponent: subcomponent.final)),
+            functions=convert_functions_to_sequence(fields["functions"]),
         )

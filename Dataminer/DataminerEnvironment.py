@@ -76,4 +76,4 @@ class DataminerEnvironment():
         return f"<{self.__class__.__name__} {self.dependency_data} {self.structure_environment}>"
 
     def get_printer_environment(self, version:"Version", structure_info:StructureInfo) -> PrinterEnvironment:
-        return PrinterEnvironment(self.structure_environment, structure_info, None, version, 0)
+        return PrinterEnvironment(self.structure_environment, structure_info, version, 0)

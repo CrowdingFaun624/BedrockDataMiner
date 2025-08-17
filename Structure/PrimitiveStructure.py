@@ -5,10 +5,16 @@ from typing import Any, Callable, Mapping, Self, Sequence
 from ordered_set import OrderedSet
 
 from Structure.DataPath import DataPath
-from Structure.Delegate.Delegate import Delegate
+from Structure.Delegate.Delegate import Delegate, DelegateCreator
 from Structure.Difference import Diff
 from Structure.SimpleContainer import SCon, SDon
-from Structure.Structure import Structure
+from Structure.Structure import (
+    Structure,
+    convert_tags_to_set,
+    convert_types_to_tuple,
+    tags_type,
+    types_type,
+)
 from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
 from Structure.StructureTag import StructureTag
 from Structure.Uses import Region, StructureUse, TypeUse, UsageTracker, Use
@@ -20,19 +26,31 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
 
     __slots__ = (
         "delegate",
+        "delegate_creator",
+        "tag_list",
         "tags",
+        "this_type_list",
         "this_types",
     )
 
     def link_primitive_structure(
         self,
-        delegate:Delegate[SCon[D], Diff[SDon[D]], Self, BO, Any, CO, Any]|None,
-        tags:set[StructureTag],
-        this_types:tuple[type,...],
+        delegate:DelegateCreator[Delegate[SCon[D], Diff[SDon[D]], Self, BO, Any, CO, Any]]|None,
+        tags:tags_type,
+        this_types:types_type,
     ) -> None:
-        self.delegate = delegate
-        self.tags = tags
-        self.this_types = this_types
+        self.delegate_creator = delegate
+        self.tag_list = tags
+        self.this_type_list = this_types
+
+    def finalize_primitive_structure(self, trace:Trace) -> bool:
+        self.tags = convert_tags_to_set(self.tag_list)
+        del self.tag_list
+        self.this_types = convert_types_to_tuple(self.this_type_list)
+        del self.this_type_list
+        self.delegate = None if self.delegate_creator is None else self.delegate_creator.create_delegate(self)
+        del self.delegate_creator
+        return False if self.delegate is None else self.delegate.finalize(self.domain, trace)
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> SCon[D] | EllipsisType:
         with trace.enter(self, self.trace_name, data):
@@ -107,8 +125,6 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
             printer:Callable[[SCon[D], Trace, PrinterEnvironment], Any]
             if self.delegate is not None:
                 printer = self.delegate.print_branch
-            elif environment.default_delegate is not None:
-                printer = environment.default_delegate.print_branch
             else:
                 raise InvalidStateError(self)
             return printer(data, trace, environment)
@@ -119,8 +135,6 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
             printer:Callable[[Diff[SDon[D]], tuple[int,...], Trace, ComparisonEnvironment], Any]
             if self.delegate is not None:
                 printer = self.delegate.print_comparison
-            elif environment.default_delegate is not None:
-                printer = environment.default_delegate.print_comparison
             else:
                 raise InvalidStateError(self)
             return printer(data, bundle, trace, environment)
