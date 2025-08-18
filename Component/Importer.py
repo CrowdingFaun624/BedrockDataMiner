@@ -160,7 +160,6 @@ def import_all(primary_domain:"Domain.Domain") -> bool:
             domain_finals = [final for group in all_groups[domain] for final in group.finals.values()]
             domain.set_values(
                 dataminer_collections=get_object_dictionary(domain_finals, AbstractDataminerCollection),
-                logs=get_object_dictionary(domain_finals, Log),
                 serializers=get_object_dictionary(domain_finals, SerializerCreator, lambda serializer: serializer.serializer),
                 structure_tags=get_object_dictionary(domain_finals, StructureTag),
                 tablifiers=get_object_dictionary(domain_finals, Tablifier),
