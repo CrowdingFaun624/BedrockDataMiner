@@ -166,7 +166,8 @@ def check_versions_domain(groups:list[Group], domain:"Domain.Domain", trace:Trac
             else:
                 version_with_timezone = (version, version.time)
     if version_with_timezone is not None:
-        error = error.narrow(Errors.returning)
+        if len(versions_without_timezone) > 0:
+            error = error.narrow(Errors.returning)
         trace.exceptions(Exceptions.VersionTimezoneError(version, time, version_with_timezone[0], version_with_timezone[1]) for version, time in versions_without_timezone.items())
     else:
         for version in versions:

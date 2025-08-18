@@ -78,7 +78,7 @@ class Version(ComponentObject):
             self._tags = tags
         return self._tags
 
-    def get_accessor[a: Accessor](self, file_type:str, required_type:type[a]) -> a|None:
+    def get_accessor[a: "Accessor"](self, file_type:str, required_type:type[a]) -> a|None:
         return self.version_files_dict[file_type].get_accessor(required_type, True)
 
     def close_accessors(self) -> None:

@@ -137,7 +137,7 @@ class FieldFactory[F: "Field"]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.field_type.__name__} {self.full_name}>"
 
-class FieldSlot[F:Field=Field]():
+class FieldSlot[F:"Field"="Field"]():
     """
     An object unique to a single Field. It stores a Field in itself when
     `create_field` is called. It is used for ContainerField.
