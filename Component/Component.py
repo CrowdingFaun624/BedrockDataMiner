@@ -12,11 +12,12 @@ class Component[R: ComponentObject, P:Mapping[Any, Any] = Mapping[Any, Any]]():
     """
     An object that creates and manages objects created by Components.
     When creating a new Component type, the following must be implemented:
-    - `name`
+    - `type_name`
     - `object_type`
     - `abstract`
     - `link_final`
 
+    :param name: The name of this Component and the object it creates.
     :param field: The Field that created this Component.
     :param group: The Group that the Field was evaluated in.
     :param index: The index of this Field (or its root parent) in its Group.
@@ -49,8 +50,8 @@ class Component[R: ComponentObject, P:Mapping[Any, Any] = Mapping[Any, Any]]():
         "propagating_sets",
     )
 
-    def __init__(self, field:Field, group:Group, index:int, is_inline:bool) -> None:
-        self.name = field.factory.name
+    def __init__(self, name:str, field:Field, group:Group, index:int, is_inline:bool) -> None:
+        self.name = name
         self.group = group
         self.index = index
         self.is_inline = is_inline

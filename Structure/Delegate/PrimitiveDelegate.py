@@ -1,5 +1,4 @@
 from types import EllipsisType
-from typing import Any
 
 from Component.ComponentFunctions import register_builtin
 from Structure.Container import Con, Don
@@ -22,9 +21,6 @@ class PrimitiveDelegate[DC:Con, DD:Don|Diff[Don]](LineDelegate[DC, DD, Primitive
         TypedDictKeyTypeVerifier("field", False, str),
         TypedDictKeyTypeVerifier("enquote_strings", False, bool),
     )
-
-    def __init__(self, structure: PrimitiveStructure|None, keys: dict[str, Any], field:str="field", enquote_strings:bool=True) -> None:
-        super().__init__(structure, keys, field, enquote_strings, False)
 
     def print_branch(self, data: DC, trace: Trace, environment: PrinterEnvironment) -> list[LineType] | EllipsisType:
         return [(0, self.stringify(data.data))]

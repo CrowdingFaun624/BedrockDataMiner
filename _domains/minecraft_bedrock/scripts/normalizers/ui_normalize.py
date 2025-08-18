@@ -1,4 +1,4 @@
-from typing import Any, Mapping, cast
+from typing import Any, Mapping, Sequence, cast
 
 from Component.ComponentFunctions import component_function
 from Serializer.Serializer import Serializer, SerializerCreator
@@ -81,33 +81,55 @@ def get_element_types(namespaces:dict[str,dict[str,Mapping[str,Any]]], extension
                 element_types[namespace][element_name] = element_type
     return element_types
 
-def parse_element(element_data:Mapping[str,list[dict[str,Any]]], element_types:dict[str,dict[str,str]], element_name:str, namespace:str) -> None:
-    for control_key in CONTROLS_KEYS:
-        if control_key not in element_data:
+def parse_element(element_data:Mapping[str,Any], element_types:dict[str,dict[str,str]], element_name:str, namespace:str) -> dict[str,Any]:
+    output:dict[str,Any] = {}
+    for key, value in element_data.items():
+        if key not in CONTROLS_KEYS:
+            output[key] = value
             continue
-        for control in element_data[control_key]:
+        value: Sequence[Mapping[str,Mapping[str,Any]]]
+        output_controls:list[Mapping[str,Mapping[str,Any]]] = []
+        for control in value:
+            output_control:dict[str,Mapping[str,Any]] = {}
             if not isinstance(control, dict): continue
             for raw_subelement_name, subelement_data in control.items():
                 subelement_name, subelement_superclass_namespace, subelement_superclass_name = parse_element_name(raw_subelement_name, namespace)
                 if "$" in raw_subelement_name:
-                    subelement_type = "unknown"
+                    new_element = subelement_data
                 elif "type" in subelement_data:
-                    subelement_type = subelement_data["type"]
+                    new_element = subelement_data
                 elif "anim_type" in subelement_data:
-                    subelement_type = subelement_data["anim_type"]
+                    new_element = {key: value for key, value in subelement_data.items()}
+                    new_element["type"] = new_element.pop("anim_type")
                 else:
                     assert subelement_superclass_name is not None and subelement_superclass_namespace is not None
                     try:
                         subelement_type = element_types[subelement_superclass_namespace][subelement_superclass_name]
                     except KeyError:
-                        subelement_type = "unknown"
-                control[raw_subelement_name] = {subelement_type: subelement_data}
-                parse_element(subelement_data, element_types, element_name, namespace)
+                        subelement_type = None
+                        new_element = subelement_data
+                    else:
+                        if subelement_type is not None:
+                            new_element = {key: value for key, value in subelement_data.items()}
+                            new_element["type"] = subelement_type
+                output_control[raw_subelement_name] = parse_element(new_element, element_types, element_name, namespace)
+            output_controls.append(output_control)
+        output[key] = output_controls
+    return output
 
-def parse_elements(namespaces:dict[str,dict[str,Mapping[str,Any]]], element_types:dict[str,dict[str,str]]) -> None:
+def parse_elements(namespaces:dict[str,dict[str,Mapping[str,Any]]], element_types:dict[str,dict[str,str]]) -> dict[str,dict[str,dict[str,Any]]]:
+    output:dict[str,dict[str,dict[str,Any]]] = {}
     for namespace, elements in namespaces.items():
+        output[namespace] = {}
         for element_name, element_data in elements.items():
-            parse_element(element_data, element_types, element_name, namespace)
+            output[namespace][element_name] = parse_element(element_data, element_types, element_name, namespace)
+    return output
+
+@component_function(no_arguments=True)
+def choose_ui_type(data:Mapping[str,str]) -> str:
+    if (output := data.get("type")) is not None: return output
+    elif (output := data.get("anim_type")) is not None: return output
+    return "unknown"
 
 @component_function(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
@@ -121,10 +143,10 @@ def ui_normalize(data:Mapping[str,Mapping[str,File[Mapping[str,Mapping[str,Any]]
         files.update(resource_pack_files)
     namespaces, extensions, file_hashes = get_namespaces_and_extensions(files, serializer.serializer)
     element_types = get_element_types(namespaces, extensions)
-    parse_elements(namespaces, element_types)
+    parsed_elements = parse_elements(namespaces, element_types)
 
     output:dict[str,dict[str,dict[str,Any]]] = {}
-    for namespace, elements in namespaces.items():
+    for namespace, elements in parsed_elements.items():
         output[namespace] = {}
         for element_name, element_data in elements.items():
             superclass_namespace, superclass_element_name = extensions[namespace][element_name]
@@ -133,5 +155,6 @@ def ui_normalize(data:Mapping[str,Mapping[str,File[Mapping[str,Mapping[str,Any]]
             else:
                 raw_element_name = f"{element_name}@{superclass_namespace}.{superclass_element_name}"
             element_type = element_types[namespace][element_name]
-            output[namespace][raw_element_name] = {element_type: element_data}
+            element_data["type"] = element_type
+            output[namespace][raw_element_name] = element_data
     return FakeFile("combined_ui_file", output, None, hash(tuple(file_hashes)))

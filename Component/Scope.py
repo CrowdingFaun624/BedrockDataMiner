@@ -1,3 +1,4 @@
+from types import EllipsisType
 from typing import TYPE_CHECKING, Final, Mapping
 
 from Utilities.Trace import Trace
@@ -11,7 +12,9 @@ class Scope():
     """
     Immutable object that handles the passing and overlaying of Variables and Fields.
 
-    :param variables: Variables from above Fields.
+    :param name: The name Components created by this Scope will have.
+    :param variable_declarations: Variables declarations from above Fields.
+    :param variable_definitions: Variable definitions from above Fields.
     :param override_variables: Variables to place on top of `variables` and the Variables of the next Field.
     :param override_fields: Fields to place on top of the sub-Fields of the next Field.
     """
@@ -20,6 +23,7 @@ class Scope():
         "_sub",
         "_without_variables",
         "hash",
+        "name",
         "override_fields",
         "override_variables",
         "variable_declarations",
@@ -28,16 +32,19 @@ class Scope():
 
     def __init__(
         self,
+        name:str|None,
         variable_declarations:Mapping[str,"Variable"],
         variable_definitions:Mapping[str,"Variable"],
         override_variables:Mapping[str,"Variable"]={},
         override_fields:Mapping[str,"Field"]={}
     ) -> None:
+        self.name:Final = name
         self.variable_declarations:Final = variable_declarations
         self.variable_definitions:Final = variable_definitions
         self.override_variables:Final = override_variables # top of the sandwich is first
         self.override_fields:Final = override_fields
         self.hash:Final = hash((
+            self.name,
             frozenset(tuple(self.variable_declarations.items())),
             frozenset(tuple(self.variable_definitions.items())),
             frozenset(tuple(self.override_variables.items())),
@@ -60,7 +67,7 @@ class Scope():
         return isinstance(value, Scope) and self.hash == value.hash
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {len(self.variable_declarations)}, {len(self.variable_definitions)}, {len(self.override_variables)}, {len(self.override_fields)}>"
+        return f"<{self.__class__.__name__} {self.name} {len(self.variable_declarations)}, {len(self.variable_definitions)}, {len(self.override_variables)}, {len(self.override_fields)}>"
 
     def assert_no_overriding(self, trace:Trace) -> None:
         """
@@ -97,13 +104,16 @@ class Scope():
         """
         return self.override_fields
 
-    def sub(self) -> "Scope":
+    def sub(self, field_name:str) -> "Scope":
         """
+        :param field_name: The name of the Field this Scope is entering.
         :returns: A VariableEnvironment suited for use on sub-Fields.
         """
         if self._sub is None:
-            if len(self.override_variables) == 0 and len(self.override_fields) == 0:
+            if self.name is None and len(self.override_variables) == 0 and len(self.override_fields) == 0:
                 self._sub = self
+            elif self.name is not None and len(self.override_variables) == 0 and len(self.override_fields) == 0:
+                self._sub = Scope(f"{self.name}({field_name})", self.variable_declarations, self.variable_definitions)
             else:
                 # Why this works: Only setting the value from above will be able to
                 # work, since any defined Variable resets the stored declared Variable.
@@ -119,11 +129,12 @@ class Scope():
                         new_variable_definitions[variable_name] = variable
                     if variable.is_declaration: # must go after variable.is_defined block
                         new_variable_declarations[variable_name] = variable
-                self._sub = Scope(new_variable_declarations, new_variable_definitions)
+                self._sub = Scope(None if self.name is None else f"{self.name}({field_name})", new_variable_declarations, new_variable_definitions)
         return self._sub
 
     def override(
         self,
+        name:str|None|EllipsisType,
         override_variables:Mapping[str,"Variable"],
         override_fields:Mapping[str,"Field"],
         *,
@@ -132,6 +143,7 @@ class Scope():
         """
         Overrides sub-Fields to use different Variables and Fields.
 
+        :param name: The new name to override the current of this Scope with. Use ... to not change it.
         :param override_variables: Variables to place on top of Variables of the sub-Field.
         :param override_fields: Fields to place on top of the Fields of the sub-Field.
         :param forget_above_variables: If True, Variables from above are forgotten.
@@ -150,6 +162,7 @@ class Scope():
         new_fields.update(override_fields)
         new_fields.update(self.override_fields) # simply override everything
         output = Scope(
+            self.name if name is ... else name,
             variable_declarations={} if forget_above_variables else self.variable_declarations,
             variable_definitions={} if forget_above_variables else self.variable_definitions,
             override_variables=new_variables,
@@ -157,4 +170,4 @@ class Scope():
         )
         return output
 
-EMPTY_SCOPE = Scope({}, {})
+EMPTY_SCOPE = Scope(None, {}, {})

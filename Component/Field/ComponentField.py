@@ -56,7 +56,7 @@ class ComponentField[R: ComponentObject](ContainerField[R]):
             self.component_type = component_type
             # using self.index here does not uphold scopiness correctly.
             # significant index will be removed soon.
-            component = self.component_type(self, self.factory.group, self.factory.index, self.factory.is_inline)
+            component = self.component_type(self.factory.name if self.scope.name is None else self.scope.name, self, self.factory.group, self.factory.index, self.factory.is_inline)
             component.create_final()
             component.propagating_booleans, component.propagating_sets = propagating_booleans, propagating_sets = component.get_propagating_variables()
             self.propagating_variables = PropagatingVariables(propagating_booleans, propagating_sets, [], suggestible=False)

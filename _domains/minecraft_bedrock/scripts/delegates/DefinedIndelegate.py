@@ -17,7 +17,7 @@ class DefinedInDelegate(LineDelegate[ICon[SCon[int], SCon[str], tuple[str,...]],
     applies_to = (IterableStructure,)
 
     def __init__(self, structure: IterableStructure, keys: dict[str, Any]) -> None:
-        super().__init__(structure, keys, "", True, False)
+        super().__init__(structure, keys, "", True)
 
     def print_data(self, data:Iterable[str]) -> str:
         return f"({", ".join(data)})"

@@ -16,18 +16,16 @@ class LineDelegate[DC:Con, DD:Don|Diff, S:Structure|None](Delegate[DC, DD, S, li
     __slots__ = (
         "enquote_strings",
         "field",
-        "passthrough",
     )
 
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("enquote_strings", False, bool),
     )
 
-    def __init__(self, structure: S, keys: dict[str, Any], field:str, enquote_strings:bool=True, passthrough:bool=False) -> NoneType:
+    def __init__(self, structure: S, keys: dict[str, Any], field:str, enquote_strings:bool=True) -> NoneType:
         super().__init__(structure, keys)
         self.enquote_strings = enquote_strings
         self.field = field
-        self.passthrough = passthrough
 
     def get_item_output[A](
         self,
@@ -72,10 +70,7 @@ class LineDelegate[DC:Con, DD:Don|Diff, S:Structure|None](Delegate[DC, DD, S, li
         """
         Adds text from a single-type Diff (i.e. an addition or removal).
         """
-        if self.passthrough:
-            # ignore key_output
-            output.extend(value_output)
-        elif key_output is None and len(value_output) == 0:
+        if   key_output is None and len(value_output) == 0:
             output.append((0, f"{message}empty {self.field}{post_message}{"." if add_punctuation else ""}"))
         elif key_output is None and len(value_output) == 1 and allow_single_line:
             output.append((0, f"{message}{self.field}{post_message} {value_output[0][1]}{"." if add_punctuation else ""}"))
@@ -132,9 +127,6 @@ class LineDelegate[DC:Con, DD:Don|Diff, S:Structure|None](Delegate[DC, DD, S, li
         :param environment: The ComparisonEnvironment to use.
         :param post_message: A string to put after the field.
         """
-        if self.passthrough:
-            output.extend(value_output1)
-            output.extend(value_output2)
         if key_output is None:
             key_output = []
         elif len(key_output) == 0:

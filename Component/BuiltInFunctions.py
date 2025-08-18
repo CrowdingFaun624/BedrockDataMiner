@@ -119,13 +119,6 @@ def wrap_in_dict(data:list[dict[str,Any]], key:str, delete:bool=False) -> dict[s
         return {item[key]: item for item in data}
 
 @register_builtin(type_verifier=TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("key", True, str),
-))
-def wrap_in_value(data:dict[str,Any], key:str) -> dict[str,dict[str,Any]]:
-    value = data[key]
-    return {value: data}
-
-@register_builtin(type_verifier=TypedDictTypeVerifier(
     TypedDictKeyTypeVerifier("key_key", True, str),
     TypedDictKeyTypeVerifier("value_key", True, str),
     TypedDictKeyTypeVerifier("default", False, object),

@@ -40,22 +40,14 @@ processors inherit temp/Dict {
         arguments = {"field" = "processor", "show_item_key" = false, "measure_length" = true}
     }
 }
-processor :Normalizer {
-    outer_types = #dict
-    inner_types = #dict
-    functions = :Function {
-        function = %wrap_in_value
+processor :Switch {
+    switch_function = :Function {
+        function = %get_key
         arguments = {"key" = "processor_type"}
     }
-    structure = inherit temp/SortedKeymap {
-        keys = {
-            "minecraft:capped" = :Key {types = #dict, structure = @processor.capped}
-            "minecraft:rule" = :Key {types = #dict, structure = @processor.rule}
-        }
-        delegate = :Delegate {
-            delegate_class = %DefaultDelegate
-            arguments = {"passthrough" = true}
-        }
+    substructures = {
+        "minecraft:capped" = :Key {types = #dict, structure = @processor.capped}
+        "minecraft:rule" = :Key {types = #dict, structure = @processor.rule}
     }
 }
 processor.capped inherit temp/SortedKeymap {
@@ -104,22 +96,14 @@ block_states inherit temp/SortedKeymap {
         arguments = {"field" = "state", "sort" = %sort_by_key, "measure_length" = true}
     }
 }
-predicate :Normalizer {
-    outer_types = #dict
-    inner_types = #dict
-    functions = :Function {
-        function = %wrap_in_value
+predicate :Switch {
+    switch_function = :Function {
+        function = %get_key
         arguments = {"key" = "predicate_type"}
     }
-    structure = inherit temp/SortedKeymap {
-        keys = {
-            "minecraft:block_match" = :Key {types = #dict, structure = @predicate.block_match}
-            "minecraft:random_block_match" = :Key {types = #dict, structure = @predicate.random_block_match}
-        }
-        delegate = :Delegate {
-            delegate_class = %DefaultDelegate
-            arguments = {"passthrough" = true}
-        }
+    substructures = {
+        "minecraft:block_match" = :Key {types = #dict, structure = @predicate.block_match}
+        "minecraft:random_block_match" = :Key {types = #dict, structure = @predicate.random_block_match}
     }
 }
 predicate.block_match inherit temp/SortedKeymap {
@@ -135,21 +119,13 @@ predicate.random_block_match inherit temp/SortedKeymap {
         "probability" = :Key {types = #float}
     }
 }
-block_entity_modifier :Normalizer {
-    outer_types = #dict
-    inner_types = #dict
-    functions = :Function {
-        function = %wrap_in_value
+block_entity_modifier :Switch {
+    switch_function = :Function {
+        function = %get_key
         arguments = {"key" = "type"}
     }
-    structure = inherit temp/SortedKeymap {
-        keys = {
-            "minecraft:append_loot" = :Key {types = #dict, structure = @block_entity_modifier.append_loot}
-        }
-        delegate = :Delegate {
-            delegate_class = %DefaultDelegate
-            arguments = {"passthrough" = true}
-        }
+    substructures = {
+        "minecraft:append_loot" = :Key {types = #dict, structure = @block_entity_modifier.append_loot}
     }
 }
 block_entity_modifier.append_loot inherit temp/SortedKeymap {

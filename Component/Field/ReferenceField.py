@@ -88,12 +88,18 @@ class ReferenceField[R](ContainerField[R]):
         """
         if self.is_forgetful:
             return self.scope.override(
+                None,
                 {key: variable.field for key, variable in self.variable_slots},
                 {key: field.field for key, field in self.field_slots},
                 forget_above_variables=True,
             )
         else:
-            return self.subscope
+            return self.scope.override(
+                self.factory.name if self.scope.name is None else self.scope.name,
+                {key: variable.field for key, variable in self.variable_slots},
+                {key: field.field for key, field in self.field_slots},
+                forget_above_variables=True,
+            )
 
     def create_field(self, memo: set[FieldFactory], trace: Trace) -> Errors:
         with trace.enter_field(self, ...):

@@ -46,21 +46,13 @@ structure inherit temp/SortedKeymap {
         "weight" = :Key {types = #int}
     }
 }
-placement :Normalizer {
-    outer_types = #dict
-    inner_types = #dict
-    functions = :Function {
-        function = %wrap_in_value
+placement :Switch {
+    switch_function = :Function {
+        function = %get_key
         arguments = {"key" = "type"}
     }
-    structure = inherit temp/SortedKeymap {
-        keys = {
-            "minecraft:random_spread" = :Key {types = #dict, structure = @placement.random_spread}
-        }
-        delegate = :Delegate {
-            delegate_class = %DefaultDelegate
-            arguments = {"passthrough" = true}
-        }
+    substructures = {
+        "minecraft:random_spread" = :Key {types = #dict, structure = @placement.random_spread}
     }
 }
 placement.random_spread inherit temp/SortedKeymap {

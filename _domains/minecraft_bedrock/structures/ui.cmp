@@ -151,7 +151,7 @@ cache :Cache {
         outer_types = #dict
         inner_types = #fake_file
         functions = :Function {
-            function = %scripts/normalizers/ui_normalize/
+            function = %scripts/normalizers/ui_normalize/ui_normalize
             arguments = {"serializer" = @minecraft_common!serializers/json}
         }
         structure = :File {
@@ -178,10 +178,11 @@ elements inherit temp/Dict {
         arguments = {"field" = "element", "sort" = %sort_by_key, "measure_length" = true}
     }
 }
-element inherit temp/SortedKeymap {
-    // ui_normalize wraps each element with a dict of the element's type.
-    // the type is only needed to choose which branch, so it is ignored.
-    keys = {
+element :Switch {
+    switch_function = :Function {
+        function = %choose_ui_type
+    }
+    substructures = {
         "alpha" = :Key {types = #dict, structure = @animation}
         "aseprite_flip_book" = :Key {types = #dict, structure = @animation}
         "button" = :Key {types = #dict, structure = @element.button}
@@ -221,10 +222,6 @@ element inherit temp/SortedKeymap {
         "unknown" = :Key {types = #dict, structure = @element.unknown}
         "uv" = :Key {types = #dict, structure = @animation}
         "wait" = :Key {types = #dict, structure = @animation}
-    }
-    delegate = :Delegate {
-        delegate_class = %DefaultDelegate
-        arguments = {"passthrough" = true}
     }
 }
 animation :Normalizer {

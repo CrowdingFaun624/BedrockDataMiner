@@ -9,29 +9,22 @@ base inherit temp/base_single_file {
     $ name = "categories"
     $ structure = @file
 }
-file :Normalizer {
-    outer_types = #dict
-    inner_types = #dict
-    functions = :Function {
-        function = %scripts/normalizers/normalizers/categories_normalize
-    }
-    structure = inherit temp/Dict {
-        value_types = #dict
-        value_structure = @element
-        delegate = :Delegate {
-            delegate_class = %DefaultDelegate
-            arguments = {"field" = "element", "sort" = %sort_by_key, "measure_length" = true}
-        }
-    }
-}
-element inherit temp/SortedKeymap {
-    keys = {
-        "category" = :Key {types = #dict, structure = @element.category}
-        "worlds" = :Key {types = #dict, structure = @element.worlds}
-    }
+file inherit temp/Dict {
+    value_types = #dict
+    value_structure = @element
     delegate = :Delegate {
         delegate_class = %DefaultDelegate
-        arguments = {"passthrough" = true}
+        arguments = {"field" = "element", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+element :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "category" = :Key {types = #dict, structure = @element.category}
+        "worlds" = :Key {types = #dict, structure = @element.worlds}
     }
 }
 element.category inherit temp/SortedKeymap {

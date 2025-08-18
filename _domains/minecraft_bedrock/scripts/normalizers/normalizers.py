@@ -120,13 +120,6 @@ def blocks_client_normalize(data:dict[str,File[dict[str,Any]]], serializer:Seria
     combined_hash = hash(tuple(file_hashes))
     return FakeFile("combined_blocks_file", output, None, combined_hash)
 
-@component_function(no_arguments=True)
-def categories_normalize(data:dict[str,dict[str,str]]) -> dict[str,dict[str,dict[str,str]]]:
-    output:dict[str,dict[str,dict[str,str]]] = {}
-    for element_name, element in data.items():
-        output[element_name] = {element["type"]: element}
-    return output
-
 class FormatStringTypedDict(TypedDict):
     format: Required[str]
     color: NotRequired[str]

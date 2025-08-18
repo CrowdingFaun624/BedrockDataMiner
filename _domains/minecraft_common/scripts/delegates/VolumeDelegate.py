@@ -59,7 +59,7 @@ class VolumeDelegate(LineDelegate[
         layer_characters:str=LAYER_CHARACTERS_DEFAULT,
         print_additional_data:bool=True,
     ) -> None:
-        super().__init__(structure, keys, field, passthrough=False)
+        super().__init__(structure, keys, field)
         self.layer_characters = layer_characters
         self.print_additional_data = print_additional_data
 

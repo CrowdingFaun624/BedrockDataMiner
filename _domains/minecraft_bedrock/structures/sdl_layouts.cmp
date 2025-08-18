@@ -166,36 +166,28 @@ color inherit temp/Dict {
         arguments = {"print_flat" = true, "print_all" = true, "field" = "channel"}
     }
 }
-component :Normalizer {
-    outer_types = #dict
-    inner_types = #dict
-    functions = :Function {
-        function = %wrap_in_value
+component :Switch {
+    switch_function = :Function {
+        function = %get_key
         arguments = {"key" = "type"}
     }
-    structure = inherit temp/SortedKeymap {
-        keys = {
-            "appearanceInteractionComp" = :Key {types = #dict, structure = @component.appearance_interaction}
-            "characterSelectComp" = :Key {types = #dict, structure = @component.character_select}
-            "colorPickerComp" = :Key {types = #dict, structure = @component.color_picker}
-            "dispPreviewPieceComp" = :Key {types = #dict, structure = @component.disp_preview_piece}
-            "expandedSkinPackComp" = :Key {types = #dict, structure = @component.expanded_skin_pack}
-            "headerComp" = :Key {types = #dict, structure = @component.header}
-            "itemListComp" = :Key {types = #dict, structure = @component.item_list}
-            "openColorPickerComp" = :Key {types = #dict, structure = @component.open_color_picker}
-            "openExpandedAppearanceViewComp" = :Key {types = #dict, structure = @component.open_expanded_appearance_view}
-            "pagedItemListComp" = :Key {types = #dict, structure = @component.paged_item_list}
-            "personaArmSizeComp" = :Key {types = #dict, structure = @component.persona_arm_size}
-            "personaHeightComp" = :Key {types = #dict, structure = @structure.persona_height}
-            "personaOfferInteractionComp" = :Key {types = #dict, structure = @component.persona_offer_interaction}
-            "skinPackListComp" = :Key {types = #dict, structure = @component.skin_pack_list}
-            "skinPackOfferInteractionComp" = :Key {types = #dict, structure = @component.skin_pack_offer_interaction}
-            "textureComp" = :Key {types = #dict, structure = @component.texture}
-        }
-        delegate = :Delegate {
-            delegate_class = %DefaultDelegate
-            arguments = {"sort" = %sort_by_component_order, "passthrough" = true}
-        }
+    substructures = {
+        "appearanceInteractionComp" = :Key {types = #dict, structure = @component.appearance_interaction}
+        "characterSelectComp" = :Key {types = #dict, structure = @component.character_select}
+        "colorPickerComp" = :Key {types = #dict, structure = @component.color_picker}
+        "dispPreviewPieceComp" = :Key {types = #dict, structure = @component.disp_preview_piece}
+        "expandedSkinPackComp" = :Key {types = #dict, structure = @component.expanded_skin_pack}
+        "headerComp" = :Key {types = #dict, structure = @component.header}
+        "itemListComp" = :Key {types = #dict, structure = @component.item_list}
+        "openColorPickerComp" = :Key {types = #dict, structure = @component.open_color_picker}
+        "openExpandedAppearanceViewComp" = :Key {types = #dict, structure = @component.open_expanded_appearance_view}
+        "pagedItemListComp" = :Key {types = #dict, structure = @component.paged_item_list}
+        "personaArmSizeComp" = :Key {types = #dict, structure = @component.persona_arm_size}
+        "personaHeightComp" = :Key {types = #dict, structure = @structure.persona_height}
+        "personaOfferInteractionComp" = :Key {types = #dict, structure = @component.persona_offer_interaction}
+        "skinPackListComp" = :Key {types = #dict, structure = @component.skin_pack_list}
+        "skinPackOfferInteractionComp" = :Key {types = #dict, structure = @component.skin_pack_offer_interaction}
+        "textureComp" = :Key {types = #dict, structure = @component.texture}
     }
 }
 component.appearance_interaction inherit temp/SortedKeymap {

@@ -39,7 +39,6 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("field", False, str),
         TypedDictKeyTypeVerifier("measure_length", False, bool),
-        TypedDictKeyTypeVerifier("passthrough", False, bool),
         TypedDictKeyTypeVerifier("print_all", False, bool),
         TypedDictKeyTypeVerifier("print_flat", False, bool),
         TypedDictKeyTypeVerifier("show_item_key", False, bool),
@@ -69,14 +68,13 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
         keys:dict[str,DefaultDelegateKeysTypedDict],
         field:str="field",
         measure_length:bool=False,
-        passthrough:bool=False,
         print_all:bool=False,
         print_flat:bool=False,
         show_item_key:bool=True,
         enquote_strings:bool=True,
         sort:BuiltInFunctions.sort_function|None=None,
     ) -> None:
-        super().__init__(structure, keys, field, enquote_strings, passthrough)
+        super().__init__(structure, keys, field, enquote_strings)
         self.measure_length = measure_length
         self.print_all = print_all
         self.print_flat = print_flat

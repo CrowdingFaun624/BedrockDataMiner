@@ -45,21 +45,13 @@ elements.item inherit temp/SortedKeymap {
         "element" = :Key {types = #dict, structure = @element, delegate_arguments = {"always_print" = true}}
     }
 }
-element :Normalizer {
-    outer_types = #dict
-    inner_types = #dict
-    functions = :Function {
-        function = %wrap_in_value
+element :Switch {
+    switch_function = :Function {
+        function = %get_key
         arguments = {"key" = "element_type"}
     }
-    structure = inherit temp/SortedKeymap {
-        keys = {
-            "minecraft:single_pool_element" = :Key {types = #dict, structure = @element.single_pool_element}
-        }
-        delegate = :Delegate {
-            delegate_class = %DefaultDelegate
-            arguments = {"passthrough" = true}
-        }
+    substructures = {
+        "minecraft:single_pool_element" = :Key {types = #dict, structure = @element.single_pool_element}
     }
 }
 element.single_pool_element inherit temp/SortedKeymap {

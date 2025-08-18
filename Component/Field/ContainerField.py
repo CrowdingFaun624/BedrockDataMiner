@@ -41,7 +41,7 @@ class ContainerField[R](Field[R]):
             override_fields:dict[str,Field] = {}
             scope = self.scope
             for field_name, subfield_factory in self.subfield_factories:
-                subfield, new_error = subfield_factory.create_field(scope.sub(), trace)
+                subfield, new_error = subfield_factory.create_field(scope.sub(field_name), trace)
                 self.narrow(new_error)
                 if new_error <= Errors.create_field:
                     # if sub-Field is a Variable and it failed, then any Fields
@@ -53,7 +53,7 @@ class ContainerField[R](Field[R]):
                     override_variables[field_name] = subfield
                 else:
                     override_fields[field_name] = subfield
-                scope = self.scope.override(override_variables, override_fields)
+                scope = self.scope.override(..., override_variables, override_fields)
             self.subfields = subfields
             self.subscope = scope
 
