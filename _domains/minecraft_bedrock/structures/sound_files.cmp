@@ -1,0 +1,144 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @sound_file
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "sound_files"}
+    }
+}
+sound_file inherit temp/Dict {
+    value_types = [#dict, #file]
+    min_value_similarity_threshold = 0.9
+    value_structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sound file", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+cache :File {
+    outer_types = [#file, #dict]
+    inner_types = #dict
+    serializer = @serializers/sound_files_serializer
+    structure = :Cache {
+        this_types = #dict
+        structure = @internal_sound_file
+    }
+}
+internal_sound_file inherit temp/Dict {
+    value_types = #dict
+    value_structure = @sound_property
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "internal sound file", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+sound_property :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %delete_keys
+        arguments = {"keys" = ["_obj", "filepath"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "sha1_hash" = :Key {types = #str, similarity_weight = 16, delegate_arguments = {"always_print" = true}, required = true, tags = [@t/file_hash_tag]}
+            "filesize" = :Key {types = #int}
+            "pictures" = :Key {types = #list, structure = @pictures}
+            "tags" = :Key {types = #dict, structure = @tags}
+            "_subchunks" = :Key {types = #list, structure = @subchunks}
+            "streaminfo" = :Key {types = #dict, structure = @streaminfo}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order, "field" = "property"}
+        }
+    }
+}
+pictures inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "picture", "show_item_key" = false, "measure_length" = true}
+    }
+}
+tags inherit temp/SortedKeymap {
+    keys = {
+        "comment" = :Key {types = #list, structure = @tag}
+        "encoder" = :Key {types = #list, structure = @tag}
+        "title" = :Key {types = #list, structure = @tag}
+        "tracknumber" = :Key {types = #list, structure = @tag}
+        "mj_e" = :Key {types = #list, structure = @tag}
+        "mj_s" = :Key {types = #list, structure = @tag}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "tag type"}
+    }
+}
+tag inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_value, "show_item_key" = false, "field" = "tag"}
+    }
+}
+subchunks inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+streaminfo inherit temp/SortedKeymap {
+    keys = {
+        "_start" = :Key {types = #int}
+        "_size" = :Key {types = #int}
+        "_version" = :Key {types = #list, structure = @version}
+        "_extension_data" = :Key {types = #null}
+        "audio_format" = :Key {types = #str}
+        "bit_depth" = :Key {types = #int}
+        "bitrate" = :Key {types = [#float, #int]}
+        "channels" = :Key {types = #int}
+        "duration" = :Key {types = #float}
+        "max_bitrate" = :Key {types = #int}
+        "min_bitrate" = :Key {types = #int}
+        "nominal_bitrate" = :Key {types = #int}
+        "sample_rate" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "property"}
+    }
+}
+version inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "version number", "print_flat" = true}
+    }
+}

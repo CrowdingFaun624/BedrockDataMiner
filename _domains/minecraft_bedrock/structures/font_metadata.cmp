@@ -1,0 +1,114 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "font_metadata"
+    $ pack_type = "resource pack"
+    $ structure = @font_metadata
+}
+font_metadata inherit temp/SortedKeymap {
+    keys = {
+        "version" = :Key {types = #int}
+        "font_aliases" = :Key {types = #list, structure = @font_aliases}
+        "fonts" = :Key {types = #list, structure = @fonts}
+    }
+}
+fonts :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "font_name"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @font
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "font", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+font inherit temp/SortedKeymap {
+    keys = {
+        "font_file" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "font_format" = :Key {types = #str}
+        "font_name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "lowPerformanceCompatible" = :Key {types = #bool}
+        "version" = :Key {types = #int}
+    }
+}
+font_aliases :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "alias"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @font_alias
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "font alias", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+font_alias inherit temp/SortedKeymap {
+    keys = {
+        "alias" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "font_scale_factor" = :Key {types = #int, tags = [@t/outdated]}
+        "font_scale_factor_override" = :Key {types = #int}
+        "fonts" = :Key {types = #list, structure = @font_references}
+    }
+}
+font_references :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "font_reference"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @font_reference
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "font reference", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+font_reference inherit temp/SortedKeymap {
+    keys = {
+        "font_reference" = :Key {types = #str}
+        "font_scale" = :Key {types = #float}
+        "font_ranges" = :Key {types = #list, structure = @font_ranges}
+    }
+}
+font_ranges inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @font_range
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range", "measure_length" = true}
+    }
+}
+font_range inherit temp/SortedKeymap {
+    keys = {
+        "first" = :Key {types = #int}
+        "last" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "print_all" = true}
+    }
+}

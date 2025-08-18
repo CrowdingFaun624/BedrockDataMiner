@@ -1,0 +1,51 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "splashes"
+    $ pack_type = "resource pack"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "splashes" = :Key {types = #list, structure = @splash_list}
+        "conditional" = :Key {types = #list, structure = @conditionals}
+    }
+}
+conditionals inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @conditional
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "conditional set", "show_item_key" = false, "measure_length" = true}
+    }
+}
+conditional inherit temp/SortedKeymap {
+    keys = {
+        "requires" = :Key {types = #dict, structure = @conditional.requires}
+        "splashes" = :Key {types = #list, structure = @splash_list}
+    }
+}
+conditional.requires inherit temp/SortedKeymap {
+    keys = {
+        "trialMode" = :Key {types = #bool}
+    }
+}
+splash_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "splash", "sort" = %sort_by_value, "show_item_key" = false, "measure_length" = true}
+    }
+}

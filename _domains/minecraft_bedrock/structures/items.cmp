@@ -1,0 +1,704 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "items"}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/items_normalize/
+            arguments = {"serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @items
+        }
+    }
+}
+items inherit temp/Dict {
+    value_types = #dict
+    key_structure = @temp/string
+    min_value_similarity_threshold = 0.8
+    min_key_similarity_threshold = 0.4
+    value_structure = @behavior_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+behavior_packs :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_flat
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @item
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_key, "field" = "behavior pack"}
+        }
+    }
+}
+item inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:item" = :Key {types = #dict, similarity_weight = 20, structure = inherit temp/SortedKeymap {
+            keys = {
+                "description" = :Key {types = #dict, structure = @description}
+                "events" = :Key {types = [#dict, #null], structure = @events, tags = [@t/outdated]}
+                "components" = :Key {types = #dict, structure = @components, similarity_weight = 2}
+            }
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"sort" = %sort_by_component_order}
+            }
+        }}
+    } + @minecraft:item.old
+}
+minecraft:item.old {
+    "block" = :Key {types = #str, similarity_weight = 2}
+    "camera" = :Key {types = #dict, structure = @component.camera}
+    "category" = :Key {types = #str}
+    "foil" = :Key {types = #bool}
+    "food" = :Key {types = #dict, structure = @component.food}
+    "hand_equipped" = :Key {types = #bool}
+    "hover_text_color" = :Key {types = #str}
+    "icon" = :Key {types = #str, similarity_weight = 2, structure = @temp/string}
+    "icon_atlas" = :Key {types = #str, similarity_weight = 2, structure = @temp/string}
+    "id" = :Key {types = #int, similarity_weight = 2}
+    "max_damage" = :Key {types = #int}
+    "max_stack_size" = :Key {types = #int}
+    "render_offsets" = :Key {types = #str}
+    "seed" = :Key {types = #dict, structure = @component.seed}
+    "stack_by_data" = :Key {types = #bool}
+    "stacked_by_data" = :Key {types = #bool}
+    "use_animation" = :Key {types = #str}
+    "use_duration" = :Key {types = #int}
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "aliases" = :Key {types = #list, structure = @aliases}
+        "category" = :Key {types = #str}
+        "identifier" = :Key {types = #str, structure = @temp/string_remove_minecraft_prefix, delegate_arguments = {"always_print" = true}}
+    }
+}
+aliases inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "alias", "show_item_key" = false, "measure_length" = true}
+    }
+}
+block_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#str, #dict]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #str, structure = @temp/string},
+            :Key {types = #dict, structure = @block},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "show_item_key" = false, "measure_length" = true}
+    }
+}
+block inherit temp/SortedKeymap {
+    keys = {
+        "tags" = :Key {types = #str, structure = @temp/string}
+    }
+}
+block_list_or_block :Union {
+    substructures = [
+        :Key {types = #list, structure = @block_list},
+        :Key {types = #str},
+    ]
+}
+empty inherit temp/SortedKeymap {
+    keys = {}
+}
+item_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+tag_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "tag", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true}
+    }
+}
+event inherit temp/SortedKeymap {
+    keys = {
+        "event" = :Key {types = #str}
+        "target" = :Key {types = #str}
+    }
+}
+events :Union {
+    substructures = [
+        :Key {types = #dict, structure = inherit temp/Dict {
+            value_types = #dict
+            value_structure = @event_definition
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "event", "measure_length" = true}
+            }
+        }},
+        :Key {types = #null},
+    ]
+}
+event_definition inherit temp/SortedKeymap {
+    keys = {
+        "add_mob_effect" = :Key {types = #dict, structure = @event.add_mob_effect}
+        "randomize" = :Key {types = #list, structure = @event.randomize}
+        "sequence" = :Key {types = #list, structure = @event.sequence}
+        "teleport" = :Key {types = #dict, structure = @event.teleport}
+        "weight" = :Key {types = #int} // in sub-events
+    }
+}
+event.add_mob_effect inherit temp/SortedKeymap {
+    keys = {
+        "effect" = :Key {types = #str}
+        "duration" = :Key {types = #int}
+        "amplifier" = :Key {types = #int}
+        "target" = :Key {types = #str}
+    }
+}
+event.randomize inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @event_definition
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "event", "show_item_key" = false, "measure_length" = true}
+    }
+}
+event.sequence :Sequence {
+    value_types = #dict
+    value_structure = @event_definition
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "event", "measure_length" = true}
+    }
+}
+event.teleport inherit temp/SortedKeymap {
+    keys = {
+        "max_range" = :Key {types = #list, structure = @vector_int}
+        "target" = :Key {types = #str}
+    }
+}
+components inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:allow_off_hand" = :Key {types = #bool}
+        "minecraft:animates_in_toolbar" = :Key {types = #bool, tags = [@t/outdated]}
+        "minecraft:armor" = :Key {types = #dict, structure = @component.armor, tags = [@t/outdated]}
+        "minecraft:bed" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:block" = :Key {types = #str, tags = [@t/not_in_documentation]}
+        "minecraft:block_placer" = :Key {types = #dict, structure = @component.block_placer}
+        "minecraft:bottle" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:bucket" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:bundle_interaction" = :Key {types = #dict, structure = @component.bundle_interaction}
+        "minecraft:camera" = :Key {types = #dict, structure = @component.camera, tags = [@t/not_in_documentation]}
+        "minecraft:can_destroy_in_creative" = :Key {types = #bool}
+        "minecraft:carrot_on_a_stick" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:coal" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:cooldown" = :Key {types = #dict, structure = @component.cooldown}
+        "minecraft:creative_category" = :Key {types = #dict, structure = @component.creative_category, tags = [@t/outdated]}
+        "minecraft:damage" = :Key {types = #int}
+        "minecraft:damageable" = :Key {types = #dict, structure = @component.damageable, tags = [@t/outdated]}
+        "minecraft:digger" = :Key {types = #dict, structure = @component.digger}
+        "minecraft:display_name" = :Key {types = #dict, structure = @component.display_name}
+        "minecraft:door" = :Key {types = #dict, structure = @component.door, tags = [@t/outdated]}
+        "minecraft:durability" = :Key {types = #dict, structure = @component.durability}
+        "minecraft:dye_powder" = :Key {types = #dict, structure = @component.dye_powder, tags = [@t/outdated]}
+        "minecraft:dyeable" = :Key {types = #dict, structure = @component.dyeable, tags = [@t/outdated]}
+        "minecraft:enchantable" = :Key {types = #dict, structure = @component.enchantable}
+        "minecraft:entity_placer" = :Key {types = #dict, structure = @component.entity_placer}
+        "minecraft:explodable" = :Key {types = #bool, tags = [@t/outdated]}
+        "minecraft:fertilizer" = :Key {types = #dict, structure = @component.fertilizer}
+        "minecraft:fire_charge" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:fishing_rod" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:flint_and_steel" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:foil" = :Key {types = #bool, tags = [@t/not_in_documentation]}
+        "minecraft:food" = :Key {types = #dict, structure = @component.food}
+        "minecraft:frame_count" = :Key {types = #int, tags = [@t/outdated]}
+        "minecraft:fuel" = :Key {types = #dict, structure = @component.fuel}
+        "minecraft:hand_equipped" = :Key {types = #bool}
+        "minecraft:hanging_entity" = :Key {types = #dict, structure = @component.hanging_entity, tags = [@t/outdated]}
+        "minecraft:hover_text_color" = :Key {types = #str}
+        "minecraft:icon" = :Key {types = [#dict, #str], structure = @component.icon}
+        "minecraft:ignores_permission" = :Key {types = #bool, tags = [@t/outdated]}
+        "minecraft:knockback_resistance" = :Key {types = #dict, structure = @component.knockback_resistance, tags = [@t/outdated]}
+        "minecraft:lead" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:liquid_clipped" = :Key {types = #bool}
+        "minecraft:map" = :Key {types = #dict, structure = @component.map, tags = [@t/outdated]}
+        "minecraft:max_damage" = :Key {types = #int, tags = [@t/not_in_documentation]}
+        "minecraft:max_stack_size" = :Key {types = #int}
+        "minecraft:mining_speed" = :Key {types = @temp/decimal, tags = [@t/outdated]}
+        "minecraft:mirrored_art" = :Key {types = #bool, tags = [@t/outdated]}
+        "minecraft:mob_placer" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:mob_spawner_placer" = :Key {types = #dict, structure = @component.mob_spawner_placer, tags = [@t/outdated]}
+        "minecraft:name_tag" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:on_use" = :Key {types = #dict, structure = @component.on_use, tags = [@t/outdated]}
+        "minecraft:portfolio" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:potion" = :Key {types = #dict, structure = @component.potion, tags = [@t/outdated]}
+        "minecraft:projectile" = :Key {types = #dict, structure = @component.projectile}
+        "minecraft:rarity" = :Key {types = #str}
+        "minecraft:record" = :Key {types = #dict, structure = @component.record}
+        "minecraft:render_offsets" = :Key {types = #str}
+        "minecraft:repairable" = :Key {types = #dict, structure = @component.repairable}
+        "minecraft:requires_interact" = :Key {types = #bool, tags = [@t/outdated]}
+        "saddle" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:seed" = :Key {types = #dict, structure = @component.seed, tags = [@t/not_in_documentation]}
+        "minecraft:shears" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:shooter" = :Key {types = #dict, structure = @component.shooter}
+        "minecraft:should_despawn" = :Key {types = #bool}
+        "minecraft:sign" = :Key {types = #dict, structure = @component.sign}
+        "minecraft:skull" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:stacked_by_data" = :Key {types = #bool}
+        "minecraft:storage_item" = :Key {types = #dict, structure = @component.storage_item}
+        "minecraft:storage_weight_limit" = :Key {types = #dict, structure = @component.storage_weight_limit}
+        "minecraft:storage_weight_modifier" = :Key {types = #dict, structure = @component.storage_weight_modifier}
+        "tag:minecraft:is_axe" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "tag:minecraft:is_food" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "tag:minecraft:is_hoe" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "tag:minecraft:is_shovel" = :Key {types = #dict, structure = @empty, tags = [@t/outdated]}
+        "minecraft:tags" = :Key {types = #dict, structure = @component.tags}
+        "minecraft:throwable" = :Key {types = #dict, structure = @component.throwable}
+        "minecraft:use_animation" = :Key {types = #str}
+        "minecraft:use_duration" = :Key {types = @temp/decimal, tags = [@t/not_in_documentation]}
+        "minecraft:use_modifiers" = :Key {types = #dict, structure = @component.use_modifiers}
+        "minecraft:use_on" = :Key {types = #dict, structure = @component.use_on, tags = [@t/outdated]}
+        "minecraft:wearable" = :Key {types = #dict, structure = @component.wearable}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "component"}
+    }
+}
+component.armor inherit temp/SortedKeymap {
+    keys = {
+        "protection" = :Key {types = #int}
+        "texture_type" = :Key {types = #str}
+    }
+}
+component.block_placer inherit temp/SortedKeymap {
+    keys = {
+        "block" = :Key {types = #str}
+        "use_on" = :Key {types = #list, structure = @block_list}
+        "use_block_description" = :Key {types = #bool}
+    }
+}
+component.bundle_interaction inherit temp/SortedKeymap {
+    keys = {
+        "num_viewable_slots" = :Key {types = #int}
+    }
+}
+component.camera inherit temp/SortedKeymap {
+    keys = {
+        "black_bars_duration" = :Key {types = #float}
+        "black_bars_screen_ratio" = :Key {types = #float}
+        "picture_duration" = :Key {types = #float}
+        "shutter_duration" = :Key {types = #float}
+        "shutter_screen_ratio" = :Key {types = #float, tags = [@t/outdated]}
+        "slide_away_duration" = :Key {types = #float}
+    }
+}
+component.cooldown inherit temp/SortedKeymap {
+    keys = {
+        "category" = :Key {types = #str}
+        "duration" = :Key {types = @temp/decimal}
+    }
+}
+component.creative_category inherit temp/SortedKeymap {
+    keys = {
+        "parent" = :Key {types = #str}
+    }
+}
+component.damageable inherit temp/SortedKeymap {
+    keys = {
+        "damage_chance" = :Key {types = #dict, structure = @component.damageable:damage_chance}
+        "max_damage" = :Key {types = #int}
+        "repair_items" = :Key {types = #list, structure = @item_list}
+    }
+}
+component.damageable:damage_chance inherit temp/SortedKeymap {
+    keys = {
+        "min" = :Key {types = #int}
+        "max" = :Key {types = #int}
+    }
+}
+component.digger inherit temp/SortedKeymap {
+    keys = {
+        "destroy_speeds" = :Key {types = #list, structure = @component.digger:destroy_speeds}
+        "use_efficiency" = :Key {types = #bool}
+    }
+}
+component.digger:destroy_speeds inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @component.digger:destroy_speeds.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.digger:destroy_speeds.item inherit temp/SortedKeymap {
+    keys = {
+        "block" = :Key {types = [#str, #dict], structure = @component.digger:destroy_speeds.item.block, delegate_arguments = {"always_print" = true}, similarity_weight = 4}
+        "speed" = :Key {types = #int}
+    }
+}
+component.digger:destroy_speeds.item.block :Union {
+    substructures = [
+        :Key {types = #str, structure = @temp/string},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "any_tag" = :Key {types = #list, structure = @tag_list}
+                "tags" = :Key {types = #str}
+            }
+        }},
+    ]
+}
+component.display_name inherit temp/SortedKeymap {
+    keys = {
+        "value" = :Key {types = #str}
+    }
+}
+component.door inherit temp/SortedKeymap {
+    keys = {
+        "material" = :Key {types = #str}
+        "type" = :Key {types = #str}
+    }
+}
+component.durability inherit temp/SortedKeymap {
+    keys = {
+        "damage_chance" = :Key {types = #dict, structure = @component.durability:damage_chance}
+        "max_damage" = :Key {types = #int, delegate_arguments = {"always_print" = true}, tags = [@t/outdated]}
+        "repair_items" = :Key {types = #list, structure = @block_list}
+    }
+}
+component.durability:damage_chance inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+    }
+}
+component.dye_powder inherit temp/SortedKeymap {
+    keys = {
+        "color" = :Key {types = #str}
+    }
+}
+component.dyeable inherit temp/SortedKeymap {
+    keys = {
+        "default_color" = :Key {types = #str}
+    }
+}
+component.enchantable inherit temp/SortedKeymap {
+    keys = {
+        "slot" = :Key {types = #str}
+        "value" = :Key {types = #int}
+    }
+}
+component.entity_placer inherit temp/SortedKeymap {
+    keys = {
+        "allowed_blocks" = :Key {types = #list, structure = @block_list, tags = [@t/outdated]}
+        "dispense_on" = :Key {types = #list, structure = @block_list}
+        "entity" = :Key {types = #str}
+        "use_on" = :Key {types = #list, structure = @block_list}
+        "variant" = :Key {types = #int}
+    }
+}
+component.fertilizer inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+    }
+}
+component.food inherit temp/SortedKeymap {
+    keys = {
+        "can_always_eat" = :Key {types = #bool}
+        "cooldown_time" = :Key {types = #int, tags = [@t/not_in_documentation]}
+        "cooldown_type" = :Key {types = #str, tags = [@t/not_in_documentation]}
+        "eat_sound" = :Key {types = #str, tags = [@t/outdated]}
+        "effects" = :Key {types = #list, structure = @component.food:effects, tags = [@t/not_in_documentation]}
+        "enchanted_effects" = :Key {types = #list, structure = @component.food:effects, tags = [@t/outdated]}
+        "is_meat" = :Key {types = #bool, tags = [@t/not_in_documentation]}
+        "nutrition" = :Key {types = #int}
+        "on_consume" = :Key {types = #dict, structure = @event, tags = [@t/outdated]}
+        "on_use_action" = :Key {types = #str, tags = [@t/not_in_documentation]}
+        "on_use_range" = :Key {types = #list, structure = @vector_int, tags = [@t/not_in_documentation]}
+        "remove_effects" = :Key {types = #list, structure = @component.food:remove_effects, tags = [@t/not_in_documentation]}
+        "saturation_modifier" = :Key {types = [@temp/decimal, #str]}
+        "using_converts_to" = :Key {types = #str}
+    }
+}
+component.food:effects inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = inherit temp/SortedKeymap {
+        keys = {
+            "amplifier" = :Key {types = #int}
+            "chance" = :Key {types = @temp/decimal}
+            "duration" = :Key {types = #int}
+            "hide_particles" = :Key {types = #bool, tags = [@t/outdated]}
+            "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "effect", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.food:remove_effects inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "effect", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.fuel inherit temp/SortedKeymap {
+    keys = {
+        "duration" = :Key {types = @temp/decimal}
+    }
+}
+component.hanging_entity inherit temp/SortedKeymap {
+    keys = {
+        "actor_type" = :Key {types = #int}
+    }
+}
+component.icon :Union {
+    substructures = [
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "frame_index" = :Key {types = #int}
+                "texture" = :Key {types = #str}
+                "textures" = :Key {types = #dict, structure = inherit temp/SortedKeymap {
+                    keys = {
+                        "default" = :Key {types = #str}
+                        "bundle_open_back" = :Key {types = #str}
+                        "bundle_open_front" = :Key {types = #str}
+                    }
+                }}
+            }
+        }},
+        :Key {types = #str},
+    ]
+}
+component.knockback_resistance inherit temp/SortedKeymap {
+    keys = {
+        "protection" = :Key {types = @temp/decimal}
+    }
+}
+component.map inherit temp/SortedKeymap {
+    keys = {
+        "empty" = :Key {types = #bool}
+    }
+}
+component.mob_spawner_placer inherit temp/SortedKeymap {
+    keys = {
+        "entity" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "block" = :Key {types = #dict, structure = @block}
+    }
+}
+component.on_use inherit temp/SortedKeymap {
+    keys = {
+        "on_use" = :Key {types = #dict, structure = @event}
+    }
+}
+component.potion inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+    }
+}
+component.projectile inherit temp/SortedKeymap {
+    keys = {
+        "minimum_critical_power" = :Key {types = @temp/decimal}
+        "projectile_entity" = :Key {types = #str}
+    }
+}
+component.record inherit temp/SortedKeymap {
+    keys = {
+        "comparator_signal" = :Key {types = #int}
+        "duration" = :Key {types = @temp/decimal}
+        "sound_event" = :Key {types = #str}
+    }
+}
+component.repairable inherit temp/SortedKeymap {
+    keys = {
+        "repair_items" = :Key {types = #list, structure = @component.repairable:repair_items}
+    }
+}
+component.repairable:repair_items inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @component.repairable:repair_items.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.repairable:repair_items.item inherit temp/SortedKeymap {
+    keys = {
+        "items" = :Key {types = #list, structure = @item_list}
+        "repair_amount" = :Key {types = #str}
+    }
+}
+component.seed inherit temp/SortedKeymap {
+    keys = {
+        "crop_result" = :Key {types = #str}
+        "plant_at" = :Key {types = [#list, #str], structure = @block_list_or_block}
+        "plant_at_any_solid_surface" = :Key {types = #bool}
+        "plant_at_face" = :Key {types = #str}
+    }
+}
+component.shooter inherit temp/SortedKeymap {
+    keys = {
+        "ammunition" = :Key {types = #list, structure = @component.shooter:ammunition}
+        "charge_on_draw" = :Key {types = #bool}
+        "max_draw_duration" = :Key {types = @temp/decimal}
+        "scale_power_by_draw_duration" = :Key {types = #bool}
+    }
+}
+component.shooter:ammunition inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = inherit temp/SortedKeymap {
+        keys = {
+            "item" = :Key {types = #str}
+            "use_offhand" = :Key {types = #bool}
+            "search_inventory" = :Key {types = #bool}
+            "use_in_creative" = :Key {types = #bool}
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "ammunition", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.sign inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+    }
+}
+component.storage_item inherit temp/SortedKeymap {
+    keys = {
+        "allow_nested_storage_items" = :Key {types = #bool}
+        "banned_items" = :Key {types = #list, structure = @item_list}
+        "max_slots" = :Key {types = #int}
+        "max_weight_limit" = :Key {types = #int}
+        "weight_in_storage_item" = :Key {types = #int}
+    }
+}
+component.storage_weight_limit inherit temp/SortedKeymap {
+    keys = {
+        "max_weight_limit" = :Key {types = #int}
+    }
+}
+component.storage_weight_modifier inherit temp/SortedKeymap {
+    keys = {
+        "weight_in_storage_item" = :Key {types = #int}
+    }
+}
+component.tags inherit temp/SortedKeymap {
+    keys = {
+        "tags" = :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #str
+            value_structure = null
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"measure_length" = true, "show_item_key" = false, "field" = "tag"}
+            }
+        }}
+    }
+}
+component.throwable inherit temp/SortedKeymap {
+    keys = {
+        "default_offset_scale" = :Key {types = @temp/decimal}
+        "do_swing_animation" = :Key {types = #bool}
+        "inside_block_offset_scale" = :Key {types = @temp/decimal}
+        "launch_power_scale" = :Key {types = @temp/decimal}
+        "max_draw_duration" = :Key {types = @temp/decimal}
+        "max_launch_power" = :Key {types = @temp/decimal}
+        "min_draw_duration" = :Key {types = @temp/decimal}
+        "scale_power_by_draw_duration" = :Key {types = #bool}
+    }
+}
+component.use_modifiers inherit temp/SortedKeymap {
+    keys = {
+        "movement_modifier" = :Key {types = @temp/decimal}
+        "use_duration" = :Key {types = @temp/decimal}
+    }
+}
+component.use_on inherit temp/SortedKeymap {
+    keys = {
+        "blocks" = :Key {types = #list, structure = @block_list}
+    }
+}
+component.wearable inherit temp/SortedKeymap {
+    keys = {
+        "slot" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}

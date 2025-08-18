@@ -1,0 +1,85 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+int_provider :Switch {
+    switch_function = :Function {
+        function = %scripts/normalizers/normalizers/provider_switch
+        arguments = {"key" = "type", "default" = "minecraft:constant_int"}
+    }
+    substructures = {
+        "minecraft:constant_int" = :Key {types = #int} // not a real type
+        "minecraft:constant" = :Key {types = #dict, structure = @int_provider.constant}
+        "minecraft:uniform" = :Key {types = #dict, structure = @int_provider.uniform}
+        "minecraft:biased_to_bottom" = :Key {types = #dict, structure = @int_provider.biased_to_bottom}
+        "minecraft:clamped" = :Key {types = #dict, structure = @int_provider.clamped}
+        "minecraft:clamped_normal" = :Key {types = #dict, structure = @int_provider.clamped_normal}
+        "minecraft:weighted_list" = :Key {types = #dict, structure = @int_provider.weighted_list}
+    }
+}
+int_provider:all  {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+int_provider:value abstract {
+    $ (dict) imports
+    "value" = :Key {types = #dict, structure = @value{$imports=imports}, tags = @t/outdated}
+}
+value abstract inherit temp/SortedKeymap {
+    $ (dict) imports
+    keys = imports
+}
+int_provider:clamped {
+    "min_inclusive" = :Key {types = #int}
+    "max_inclusive" = :Key {types = #int}
+}
+int_provider:clamped_source {
+    "source" = :Key {types = [#int, #dict], structure = @int_provider}
+}
+int_provider:distribution {
+    "distribution" = :Key {types = #list, structure = @int_provider.weighted_list:distribution}
+}
+int_provider:normal {
+    "mean" = :Key {types = @misc/decimal}
+    "deviation" = :Key {types = @misc/decimal}
+}
+int_provider.constant inherit temp/SortedKeymap {
+    keys = @int_provider:all + {
+        "value" = :Key {types = #int}
+    }
+}
+int_provider.uniform inherit temp/SortedKeymap {
+    keys = @int_provider:all + @int_provider:clamped + @int_provider:value{$imports=@int_provider:clamped}
+}
+int_provider.biased_to_bottom inherit temp/SortedKeymap {
+    keys = @int_provider:all + @int_provider:clamped + @int_provider:value{$imports=@int_provider:clamped}
+}
+int_provider.clamped inherit temp/SortedKeymap {
+    keys = @int_provider:all + @int_provider:clamped + @int_provider:clamped_source + @int_provider:value{$imports=@int_provider:clamped + @int_provider:clamped_source}
+}
+int_provider.clamped_normal inherit temp/SortedKeymap {
+    keys = @int_provider:all + @int_provider:clamped + @int_provider:normal + @int_provider:value{$imports=@int_provider:clamped + @int_provider:normal}
+}
+int_provider.weighted_list inherit temp/SortedKeymap {
+    keys = @int_provider:all + @int_provider:distribution + @int_provider:value{$imports=@int_provider:distribution}
+}
+int_provider.weighted_list:distribution inherit temp/Set {
+    $ field = "entry"
+    value_types = #dict
+    value_structure = @int_provider.weighted_list:distribution.entry
+}
+int_provider.weighted_list:distribution.entry inherit temp/SortedKeymap {
+    keys = {
+        "data" = :Key {types = [#int, #dict], structure = @int_provider}
+        "weight" = :Key {types = #int}
+    }
+}
+int_provider:forced_uniform :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = @int_provider.uniform},
+    ]
+}

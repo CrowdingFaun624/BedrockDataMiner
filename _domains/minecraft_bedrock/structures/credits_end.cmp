@@ -1,0 +1,28 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "credits_end"
+    $ serializer = @s/text_serializer
+    $ types = #str
+    $ structure = @file
+}
+file :Normalizer {
+    outer_types = #str
+    inner_types = #list
+    functions = :Function {
+        function = %split_lines
+    }
+    structure = :Sequence {
+        value_types = #str
+        value_structure = @temp/string
+        delegate = :Delegate {
+            delegate_class = %LongStringDelegate
+            arguments = {"measure_length" = true}
+        }
+    }
+}

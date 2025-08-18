@@ -1,0 +1,437 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        attribute = @structures/misc/attribute/
+        data_components = @structures/misc/data_components/
+        conditions = @structures/data/advancements/conditions/
+        entry = @structures/data/loot_tables/entry/
+        lm = @structures/data/loot_tables/list_modifier/
+        misc = @structures/misc/misc/
+        np = @structures/misc/provider/number_provider/
+        pred = @structures/misc/predicate/
+        source = @structures/data/loot_tables/source/
+        t = @structure_tags/
+        tc = @structures/misc/text_component/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ pack_type = "data pack"
+    $ name = "loot_tables"
+    $ types = [#list, #dict]
+    $ structure = @item_modifier_list_or_item_modifier
+}
+item_modifier_list_or_item_modifier :Union {
+    substructures = [
+        :Key {types = #list, structure = @item_modifier_list},
+        :Key {types = #dict, structure = @item_modifier},
+    ]
+}
+item_modifier_list inherit temp/Sequence {
+    $ field = "item modifier"
+    value_types = #dict
+    value_structure = @item_modifier
+}
+item_modifier :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "function"}
+    }
+    substructures = {
+        "minecraft:apply_bonus" = :Key {types = #dict, structure = @item_modifier.apply_bonus}
+        "minecraft:copy_components" = :Key {types = #dict, structure = @item_modifier.copy_components}
+        "minecraft:copy_nbt" = :Key {types = #dict, structure = @item_modifier.copy_custom_data, tags = @t/outdated}
+        "minecraft:copy_custom_data" = :Key {types = #dict, structure = @item_modifier.copy_custom_data}
+        "minecraft:copy_name" = :Key {types = #dict, structure = @item_modifier.copy_name}
+        "minecraft:copy_state" = :Key {types = #dict, structure = @item_modifier.copy_state}
+        "enchant_randomly" = :Key {types = #dict, structure = @item_modifier.enchant_randomly, tags = @t/outdated}
+        "minecraft:enchant_randomly" = :Key {types = #dict, structure = @item_modifier.enchant_randomly}
+        "enchant_with_levels" = :Key {types = #dict, structure = @item_modifier.enchant_with_levels, tags = @t/outdated}
+        "minecraft:enchant_with_levels" = :Key {types = #dict, structure = @item_modifier.enchant_with_levels}
+        "minecraft:enchanted_count_increase" = :Key {types = #dict, structure = @item_modifier.enchanted_count_increase}
+        "minecraft:exploration_map" = :Key {types = #dict, structure = @item_modifier.exploration_map}
+        "minecraft:explosion_decay" = :Key {types = #dict, structure = @item_modifier.explosion_decay}
+        "minecraft:fill_player_head" = :Key {types = #dict, structure = @item_modifier.fill_player_head}
+        "minecraft:filtered" = :Key {types = #dict, structure = @item_modifier.filtered}
+        "furnace_smelt" = :Key {types = #dict, structure = @item_modifier.furnace_smelt, tags = @t/outdated}
+        "minecraft:furnace_smelt" = :Key {types = #dict, structure = @item_modifier.furnace_smelt}
+        "minecraft:limit_count" = :Key {types = #dict, structure = @item_modifier.limit_count}
+        "looting_enchant" = :Key {types = #dict, structure = @item_modifier.looting_enchant, tags = @t/outdated}
+        "minecraft:looting_enchant" = :Key {types = #dict, structure = @item_modifier.looting_enchant, tags = @t/outdated}
+        "minecraft:modify_contents" = :Key {types = #dict, structure = @item_modifier.modify_contents}
+        "minecraft:reference" = :Key {types = #dict, structure = @item_modifier.reference}
+        "minecraft:sequence" = :Key {types = #dict, structure = @item_modifier.sequence}
+        "minecraft:set_attributes" = :Key {types = #dict, structure = @item_modifier.set_attributes}
+        "minecraft:set_banner_pattern" = :Key {types = #dict, structure = @item_modifier.set_banner_pattern}
+        "minecraft:set_book_cover" = :Key {types = #dict, structure = @item_modifier.set_book_cover}
+        "minecraft:set_components" = :Key {types = #dict, structure = @item_modifier.set_components}
+        "minecraft:set_contents" = :Key {types = #dict, structure = @item_modifier.set_contents}
+        "set_count" = :Key {types = #dict, structure = @item_modifier.set_count, tags = @t/outdated}
+        "minecraft:set_count" = :Key {types = #dict, structure = @item_modifier.set_count}
+        "minecraft:set_custom_data" = :Key {types = #dict, structure = @item_modifier.set_custom_data}
+        "minecraft:set_custom_model_data" = :Key {types = #dict, structure = @item_modifier.set_custom_model_data}
+        "set_damage" = :Key {types = #dict, structure = @item_modifier.set_damage, tags = @t/outdated}
+        "minecraft:set_damage" = :Key {types = #dict, structure = @item_modifier.set_damage}
+        "set_data" = :Key {types = #dict, structure = @item_modifier.set_data, tags = @t/outdated}
+        "minecraft:set_data" = :Key {types = #dict, structure = @item_modifier.set_data, tags = @t/outdated}
+        "minecraft:set_enchantments" = :Key {types = #dict, structure = @item_modifier.set_enchantments}
+        "minecraft:set_fireworks" = :Key {types = #dict, structure = @item_modifier.set_fireworks}
+        "minecraft:set_firework_explosion" = :Key {types = #dict, structure = @item_modifer.set_firework_explosion}
+        "minecraft:set_goat_horn_sound" = :Key {types = #dict, structure = @item_modifier.set_instrument, tags = @t/outdated}
+        "minecraft:set_instrument" = :Key {types = #dict, structure = @item_modifier.set_instrument}
+        "minecraft:set_item" = :Key {types = #dict, structure = @item_modifier.set_item}
+        "minecraft:set_loot_table" = :Key {types = #dict, structure = @item_modifier.set_loot_table}
+        "minecraft:set_lore" = :Key {types = #dict, structure = @lm/list_modifier{$values=@tc/lines, $values_key="lore", $value_types=@a/list}}
+        "minecraft:set_name" = :Key {types = #dict, structure = @item_modifier.set_name}
+        "set_nbt" = :Key {types = #dict, structure = @item_modifier.set_nbt, tags = @t/outdated}
+        "minecraft:set_nbt" = :Key {types = #dict, structure = @item_modifier.set_nbt, tags = @t/outdated}
+        "minecraft:set_ominous_bottle_amplifier" = :Key {types = #dict, structure = @item_modifier.set_ominous_bottle_amplifier}
+        "minecraft:set_potion" = :Key {types = #dict, structure = @item_modifier.set_potion}
+        "minecraft:set_stew_effect" = :Key {types = #dict, structure = @item_modifier.set_stew_effect}
+        "minecraft:set_writable_book_pages" = :Key {types = #dict, structure = @lm/list_modifier{$values=@misc/filterable_lines{$field="page"}, $values_key="pages"}}
+        "minecraft:set_written_book_pages" = :Key {types = #dict, structure = @lm/list_modifier{$values=@misc/filterable_lines{$field="page", $types=@tc/root_type, $structure=@tc/root}, $values_key="pages"}}
+        "minecraft:toggle_tooltips" = :Key {types = #dict, structure = @item_modifier.toggle_tooltips}
+    }
+}
+item_modifier:all {
+    "function" = :Key {types = #str, similarity_weight = 0}
+    "conditions" = :Key {types = #list, structure = @pred/predicate_list}
+}
+item_modifier.apply_bonus :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "formula"}
+    }
+    substructures = {
+        "minecraft:binomial_with_bonus_count" = :Key {types = #dict, structure = @item_modifier.apply_bonus:keymap{$parameters=@item_modifier.apply_bonus:parameters.binomial_with_bonus_count}}
+        "minecraft:uniform_bonus_count" = :Key {types = #dict, structure = @item_modifier.apply_bonus:keymap{$parameters=@item_modifier.apply_bonus:parameters.uniform_bonus_count}}
+        "minecraft:ore_drops" = :Key {types = #dict, structure = @item_modifier.apply_bonus:keymap{$parameters=@misc/empty_dict}}
+    }
+}
+item_modifier.apply_bonus:keymap abstract inherit temp/SortedKeymap {
+    $ (:Structure) parameters
+    keys = @item_modifier:all + {
+        "enchantment" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "formula" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "parameters" = :Key {types = #dict, structure = parameters}
+    }
+}
+item_modifier.apply_bonus:parameters.binomial_with_bonus_count inherit temp/SortedKeymap {
+    keys = {
+        "extra" = :Key {types = #int}
+        "probability" = :Key {types = #float}
+    }
+}
+item_modifier.apply_bonus:parameters.uniform_bonus_count inherit temp/SortedKeymap {
+    keys = {
+        "bonusMultiplier" = :Key {types = #int}
+    }
+}
+item_modifier.copy_components inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "source" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "components" = :Key {types = #list, structure = @misc/named_list{$name="component"}, tags = @t/outdated}
+        "include" = :Key {types = #list, structure = @misc/named_list{$name="component"}}
+        "exclude" = :Key {types = #list, structure = @misc/named_list{$name="component"}}
+    }
+}
+item_modifier.copy_custom_data inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "source" = :Key {types = [#str, #dict], structure = @source/source}
+        "ops" = :Key {types = #list, structure = @item_modifier.copy_custom_data:ops}
+    }
+}
+item_modifier.copy_custom_data:ops inherit temp/List {
+    $ field = "copy operation"
+    value_types = #dict
+    value_structure = @item_modifier.copy_custom_data:op
+}
+item_modifier.copy_custom_data:op inherit temp/SortedKeymap {
+    keys = {
+        "source" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "target" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "op" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+item_modifier.copy_name inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "source" = :Key {types = #str}
+    }
+}
+item_modifier.copy_state inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "block" = :Key {types = #str}
+        "properties" = :Key {types = #list, structure = @misc/named_list{$name="property"}}
+    }
+}
+item_modifier.enchant_randomly inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "enchantments" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="enchantment"}, tags = @t/outdated}
+        "options" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="enchantment"}}
+        "only_compatible" = :Key {types = #bool}
+    }
+}
+item_modifier.enchant_with_levels inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "treasure" = :Key {types = #bool, tags = @t/outdated}
+        "options" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="enchantment"}}
+        "levels" = :Key {types = [@misc/decimal, #dict], structure = @np/number_provider{$types=@misc/decimal}}
+    }
+}
+item_modifier.enchanted_count_increase inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "count" = :Key {types = [#float, #dict], structure = @np/number_provider{$types=#float}}
+        "limit" = :Key {types = #int}
+        "enchantment" = :Key {types = #str}
+    }
+}
+item_modifier.exploration_map inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "destination" = :Key {types = #str}
+        "decoration" = :Key {types = #str}
+        "zoom" = :Key {types = #int}
+        "search_radius" = :Key {types = #int}
+        "skip_existing_chunks" = :Key {types = #bool}
+    }
+}
+item_modifier.explosion_decay inherit temp/SortedKeymap {
+    keys = @item_modifier:all
+}
+item_modifier.fill_player_head inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "entity" = :Key {types = #str}
+    }
+}
+item_modifier.filtered inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "item_filter" = :Key {types = @a/compound, structure = @conditions/condition.item}
+        "modifier" = :Key {types = #list, structure = @item_modifier_list}
+    }
+}
+item_modifier.furnace_smelt inherit temp/SortedKeymap {
+    keys = @item_modifier:all
+}
+item_modifier.limit_count inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "limit" = :Key {types = [#int, #dict], structure = :Union {
+            substructures = [
+                :Key {types = #int},
+                :Key {types = #dict, structure = inherit temp/SortedKeymap {
+                    keys = {
+                        "min" = :Key {types = [@misc/decimal, #dict], structure = @np/number_provider{$types=@misc/decimal}}
+                        "max" = :Key {types = [@misc/decimal, #dict], structure = @np/number_provider{$types=@misc/decimal}}
+                    }
+                }},
+            ]
+        }}
+    }
+}
+item_modifier.looting_enchant inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "count" = :Key {types = [@misc/decimal, #dict], structure = @np/number_provider{$types=@misc/decimal}}
+        "limit" = :Key {types = #int}
+    }
+}
+item_modifier.modify_contents inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "component" = :Key {types = #str}
+        "modifier" = :Key {types = [#dict, #list], structure = @item_modifier_list_or_item_modifier}
+    }
+}
+item_modifier.reference inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "name" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="function"}}
+    }
+}
+item_modifier.sequence inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "functions" = :Key {types = #list, structure = @item_modifier_list}
+    }
+}
+item_modifier.set_attributes inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "modifiers" = :Key {types = #list, structure = @attribute/attribute_modifier_list}
+        "replace" = :Key {types = #bool}
+    }
+}
+item_modifier.set_banner_pattern inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "patterns" = :Key {types = @a/list, structure = @misc/banner_pattern_list}
+        "append" = :Key {types = #bool}
+    }
+}
+item_modifier.set_book_cover inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "author" = :Key {types = #str}
+        "generation" = :Key {types = #int}
+        "title" = :Key {types = @tc/root_type, structure = @tc/root}
+    }
+}
+item_modifier.set_components inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "components" = :Key {types = @a/compound, structure = @data_components/data_component_modification}
+    }
+}
+item_modifier.set_contents inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "type" = :Key {types = #str, tags = @t/outdated, delegate_arguments = {"always_print" = true}}
+        "entries" = :Key {types = #list, structure = @entry/entry_list}
+        "component" = :Key {types = #str}
+    }
+}
+item_modifier.set_count inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "count" = :Key {types = [@misc/decimal, #dict], structure = @np/number_provider{$types=@misc/decimal}}
+        "add" = :Key {types = #bool}
+    }
+}
+item_modifier.set_custom_data inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "tag" = :Key {types = [#str, #dict], structure = :Union {
+            substructures = [
+                :Key {types = #str},
+                :Key {types = #dict, structure = @misc/any.dict},
+            ]
+        }}
+    }
+}
+item_modifier.set_custom_model_data inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "floats" = :Key {types = #dict, structure = @lm/list_modifier{$values=@item_modifier.set_custom_model_data:values.floats}}
+        "flags" = :Key {types = #dict, structure = @lm/list_modifier{$values=@item_modifier.set_custom_model_data:values.flags}}
+        "strings" = :Key {types = #dict, structure = @lm/list_modifier{$values=@item_modifier.set_custom_model_data:values.strings}}
+        "colors" = :Key {types = #dict, structure = @lm/list_modifier{$values=@item_modifier.set_custom_model_data:values.colors}}
+    }
+}
+item_modifier.set_custom_model_data:values.floats inherit temp/List {
+    $ field = "float"
+    value_types = [#float, #dict]
+    value_structure = @np/number_provider{$types=#float}
+}
+item_modifier.set_custom_model_data:values.flags inherit temp/List {
+    $ field = "flag"
+    value_types = #bool
+    value_structure = null
+}
+item_modifier.set_custom_model_data:values.strings inherit temp/List {
+    $ field = "string"
+    value_types = #str
+    value_structure = @misc/string
+}
+item_modifier.set_custom_model_data:values.colors inherit temp/List {
+    $ field = "color"
+    value_types = [#int, #dict, @a/list]
+    value_structure = @item_modifier.set_custom_model_data:values.colors.item
+}
+item_modifier.set_custom_model_data:values.colors.item :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = @np/number_provider_types{$types=#float}},
+        :Key {types = @a/list, structure = @misc/color_list},
+    ]
+}
+item_modifier.set_damage inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "damage" = :Key {types = [@misc/decimal, #dict], structure = @np/number_provider{$types=@misc/decimal}}
+        "add" = :Key {types = #bool}
+    }
+}
+item_modifier.set_data inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "data" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+    }
+}
+item_modifier.set_enchantments inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "enchantments" = :Key {types = #dict, structure = @item_modifier.set_enchantments:enchantments}
+        "add" = :Key {types = #bool}
+    }
+}
+item_modifier.set_enchantments:enchantments inherit temp/Dict {
+    $ field = "enchantment"
+    value_types = [#float, #dict]
+    value_structure = @np/number_provider{$types=#float}
+}
+item_modifier.set_fireworks inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "explosions" = :Key {types = #dict, structure = @lm/list_modifier{$values=@misc/firework_explosion_list, $value_types=@a/list}}
+        "flight_duration" = :Key {types = #int}
+    }
+}
+item_modifer.set_firework_explosion inherit temp/SortedKeymap {
+    keys = @item_modifier:all + @misc/firework_explosion:keys
+}
+item_modifier.set_instrument inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "options" = :Key {types = #str}
+    }
+}
+item_modifier.set_item inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "item" = :Key {types = #str}
+    }
+}
+item_modifier.set_loot_table inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "seed" = :Key {types = #int}
+        "type" = :Key {types = #str}
+    }
+}
+item_modifier.set_name inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "name" = :Key {types = @tc/root_type, structure = @tc/root}
+        "entity" = :Key {types = #str}
+        "target" = :Key {types = #str}
+    }
+}
+item_modifier.set_nbt inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "tag" = :Key {types = #str}
+    }
+}
+item_modifier.set_ominous_bottle_amplifier inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "amplifier" = :Key {types = [#float, #dict], structure = @np/number_provider{$types=#float}}
+    }
+}
+item_modifier.set_potion inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "id" = :Key {types = #str}
+    }
+}
+item_modifier.set_stew_effect inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "effects" = :Key {types = #list, structure = @item_modifier.set_stew_effect:effects}
+    }
+}
+item_modifier.set_stew_effect:effects inherit temp/Set {
+    $ field = "effect"
+    value_types = #dict
+    value_structure = @item_modifier.set_stew_effect:effect
+}
+item_modifier.set_stew_effect:effect inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 6}
+        "duration" = :Key {types = [#float, #dict], structure = @np/number_provider{$types=#float}}
+    }
+}
+item_modifier.toggle_tooltips inherit temp/SortedKeymap {
+    keys = @item_modifier:all + {
+        "toggles" = :Key {types = #dict, structure = @item_modifier.toggle_tooltips:toggles}
+    }
+}
+item_modifier.toggle_tooltips:toggles inherit temp/SortedKeymap {
+    $ keymap_field = "tooltip"
+    keys = {
+        "attribute_modifiers" = :Key {types = #bool}
+        "can_break" = :Key {types = #bool}
+        "can_place_on" = :Key {types = #bool}
+        "dyed_colors" = :Key {types = #bool}
+        "enchantments" = :Key {types = #bool}
+        "stored_enchantments" = :Key {types = #bool}
+        "trim" = :Key {types = #bool}
+        "unbreakable" = :Key {types = #bool}
+    }
+}

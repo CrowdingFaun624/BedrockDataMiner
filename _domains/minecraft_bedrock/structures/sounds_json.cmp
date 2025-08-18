@@ -1,0 +1,319 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "sounds_json"}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/sounds_json_normalize/
+            arguments = {"serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @categories
+        }
+    }
+}
+categories inherit temp/SortedKeymap {
+    keys = {
+        "individual_event_sounds" = :Key {types = #dict, structure = @flat_collection}
+        "block_sounds" = :Key {types = #dict, structure = @blocks_collections}
+        "entity_sounds" = :Key {types = #dict, structure = @entity_sounds}
+        "interactive_sounds" = :Key {types = #dict, structure = @interactive_sounds}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "category"}
+    }
+}
+interactive_sounds inherit temp/SortedKeymap {
+    keys = {
+        "block_sounds" = :Key {types = #dict, structure = @blocks_collections}
+        "entity_sounds" = :Key {types = #dict, structure = @interactive_entity_sounds}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "category"}
+    }
+}
+entity_sounds inherit temp/SortedKeymap {
+    keys = {
+        "defaults" = :Key {types = #dict, structure = @collection}
+        "entities" = :Key {types = #dict, structure = @entities_collections}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "category"}
+    }
+}
+interactive_entity_sounds inherit temp/SortedKeymap {
+    keys = {
+        "defaults" = :Key {types = #dict, structure = @interactive_collection}
+        "entities" = :Key {types = #dict, structure = @entities_interactive_collections}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "category"}
+    }
+}
+blocks_collections inherit temp/Dict {
+    value_types = #dict
+    value_structure = @collection
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "measure_length" = true}
+    }
+}
+entities_collections inherit temp/Dict {
+    value_types = #dict
+    value_structure = @collection
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "entity", "measure_length" = true}
+    }
+}
+entities_interactive_collections inherit temp/Dict {
+    value_types = #dict
+    value_structure = @interactive_collection
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "entity", "measure_length" = true}
+    }
+}
+collection :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = [
+        :Function {
+            function = %delete_key_if_empty
+            arguments = {"key" = "base"}
+        },
+        :Function {
+            function = %scripts/normalizers/normalizers/delete_variants_if_empty
+        },
+    ]
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "base" = :Key {types = #dict, structure = @packs_base}
+            "volume" = :Key {types = #dict, structure = @packs_volume}
+            "pitch" = :Key {types = #dict, structure = @packs_pitch}
+            "events" = :Key {types = #dict, structure = @events}
+            "variants" = :Key {types = #dict, structure = @variants}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+flat_collection :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = [
+        :Function {
+            function = %delete_keys
+            arguments = {"keys" = ["volume", "pitch", "variants"]}
+        },
+        :Function {
+            function = %delete_key_if_empty
+            arguments = {"key" = "base"}
+        },
+    ]
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "base" = :Key {types = #dict, structure = @packs_base}
+            "events" = :Key {types = #dict, structure = @events}
+        }
+    }
+}
+interactive_collection :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = [
+        :Function {
+            function = %delete_key_if_empty
+            arguments = {"key" = "base"}
+        },
+        :Function {
+            function = %scripts/normalizers/normalizers/delete_variants_if_empty
+        },
+    ]
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "base" = :Key {types = #dict, structure = @packs_base}
+            "volume" = :Key {types = #dict, structure = @packs_volume}
+            "pitch" = :Key {types = #dict, structure = @packs_pitch}
+            "events" = :Key {types = #dict, structure = @interactive_events}
+            "variants" = :Key {types = #dict, structure = @variants}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+packs_base inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+packs_volume inherit temp/Dict {
+    value_types = [@temp/decimal, #list]
+    value_structure = @volume_group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+packs_pitch inherit temp/Dict {
+    value_types = [@temp/decimal, #list]
+    value_structure = @pitch_group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+events inherit temp/Dict {
+    value_types = #dict
+    value_structure = @packs
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "event", "measure_length" = true}
+    }
+}
+interactive_events inherit temp/Dict {
+    value_types = #dict
+    value_structure = @packs_interactive
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "event", "measure_length" = true}
+    }
+}
+packs inherit temp/Dict {
+    value_types = [#dict, #str]
+    value_structure = @event
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+packs_interactive inherit temp/Dict {
+    value_types = #dict
+    value_structure = @situations
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+situations inherit temp/Dict {
+    value_types = [#dict, #str]
+    value_structure = @event
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "situation", "measure_length" = true}
+    }
+}
+event :Normalizer {
+    outer_types = [#str, #dict]
+    inner_types = #dict
+    functions = [
+        :Function {
+            function = %scripts/normalizers/normalizers/sounds_json_make_strings_to_dict
+        },
+        :Function {
+            function = %move_key
+            arguments = {"from_key" = "sounds", "to_key" = "sound"}
+        },
+        :Function {
+            function = %delete_keys
+            arguments = {"keys" = ["ambient", "hurt", "death", "place"]}
+        },
+    ]
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "sound" = :Key {types = #str, similarity_weight = 20, delegate_arguments = {"always_print" = true}}
+            "attenuation_distance" = :Key {types = #int, tags = [@t/outdated]}
+            "volume" = :Key {types = [@temp/decimal, #list], structure = @volume_group}
+            "pitch" = :Key {types = [@temp/decimal, #list], structure = @pitch_group}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+variants inherit temp/SortedKeymap {
+    keys = {
+        "key" = :Key {types = #dict, structure = @packs_variants_key, delegate_arguments = {"always_print" = true}}
+        "map" = :Key {types = #dict, structure = @variants_map}
+    }
+}
+packs_variants_key inherit temp/Dict {
+    value_types = #str
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+variants_map inherit temp/Dict {
+    value_types = #dict
+    value_structure = @collection
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "variant", "measure_length" = true}
+    }
+}
+volume_group :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #list, structure = inherit temp/Dict {
+            allow_key_moves = false
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = @temp/decimal
+            value_structure = null
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "volume", "print_all" = true, "print_flat" = true}
+            }
+        }},
+    ]
+}
+pitch_group :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #list, structure = inherit temp/Dict {
+            allow_key_moves = false
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = @temp/decimal
+            value_structure = null
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "pitch", "print_all" = true, "print_flat" = true}
+            }
+        }},
+    ]
+}

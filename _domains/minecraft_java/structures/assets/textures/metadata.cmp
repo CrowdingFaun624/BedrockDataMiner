@@ -1,0 +1,128 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/misc/template/
+        misc = @structures/misc/misc/
+        s = @serializers/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "metadata"
+    $ pack_type = "resource pack"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "animation" = :Key {types = #dict, structure = @animation}
+        "gui" = :Key {types = #dict, structure = @gui}
+        "texture" = :Key {types = #dict, structure = @texture}
+        "villager" = :Key {types = #dict, structure = @villager}
+    }
+}
+animation inherit temp/SortedKeymap {
+    keys = {
+        "interpolate" = :Key {types = #bool}
+        "width" = :Key {types = #int}
+        "height" = :Key {types = #int}
+        "frametime" = :Key {types = #int}
+        "frames" = :Key {types = #list, structure = @animation:frames}
+    }
+}
+animation:frames inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    key_weight = 1
+    value_weight = 1
+    value_types = [#int, #dict]
+    value_structure = @animation:frame
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "frame", "measure_length" = true, "show_item_key" = true}
+    }
+}
+animation:frame :Union {
+    substructures = [
+        :Key {types = #int, structure = @animation:index},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "index" = :Key {types = #int, structure = @animation:index, delegate_arguments = {"always_print" = true}}
+                "time" = :Key {types = #int}
+            }
+        }},
+    ]
+}
+animation:index @misc/number {
+    normal_value = 1.5
+}
+gui inherit temp/SortedKeymap {
+    keys = {
+        "scaling" = :Key {types = #dict, structure = @gui:scaling}
+    }
+}
+gui:scaling :Switch {
+    switch_function = :Function {
+        function = %get_get_key
+        arguments = {"key" = "type", "default" = "stretch"}
+    }
+    substructures = {
+        "nine_slice" = :Key {types = #dict, structure = @gui:scaling.nine_slice}
+        "stretch" = :Key {types = #dict, structure = @gui:scaling.stretch}
+        "tile" = :Key {types = #dict, structure = @gui:scaling.tile}
+    }
+}
+gui:scaling.nine_slice inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "width" = :Key {types = #int}
+        "height" = :Key {types = #int}
+        "stretch_inner" = :Key {types = #bool}
+        "border" = :Key {types = [#int, #dict], structure = @gui:scaling.nine_slice:border}
+    }
+}
+gui:scaling.nine_slice:border :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "left" = :Key {types = #int}
+                "top" = :Key {types = #int}
+                "right" = :Key {types = #int}
+                "bottom" = :Key {types = #int}
+            }
+        }},
+    ]
+}
+gui:scaling.stretch inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+gui:scaling.tile inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "width" = :Key {types = #int}
+        "height" = :Key {types = #int}
+    }
+}
+texture inherit temp/SortedKeymap {
+    keys = {
+        "blur" = :Key {types = #bool}
+        "clamp" = :Key {types = #bool}
+        "mipmaps" = :Key {types = #list, structure = @texture:mipmaps}
+    }
+}
+texture:mipmaps inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "mipmap", "measure_length" = true, "print_flat" = true, "print_all" = true}
+    }
+}
+villager inherit temp/SortedKeymap {
+    keys = {
+        "hat" = :Key {types = #str}
+    }
+}

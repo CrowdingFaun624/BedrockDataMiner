@@ -1,0 +1,60 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        t = @structure_tags/
+        s = @serializers/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "credits"
+    $ pack_type = "resource pack"
+    $ types = #list
+    $ structure = @sections
+}
+sections inherit temp/Set {
+    $ field = "section"
+    value_types = #dict
+    value_structure = @section
+}
+section inherit temp/SortedKeymap {
+    keys = {
+        "section" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}, similarity_weight = 2}
+        "disciplines" = :Key {types = #list, structure = @disciplines}
+        "titles" = :Key {types = #list, structure = @titles, tags = @t/outdated}
+    }
+}
+disciplines inherit temp/Set {
+    $ field = "discipline"
+    value_types = #dict
+    value_structure = @discipline
+}
+discipline inherit temp/SortedKeymap {
+    keys = {
+        "discipline" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}, similarity_weight = 2}
+        "titles" = :Key {types = #list, structure = @titles}
+    }
+}
+titles inherit temp/Set {
+    $ field = "title"
+    value_types = #dict
+    value_structure = @title
+}
+title inherit temp/SortedKeymap {
+    keys = {
+        "title" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}, similarity_weight = 2}
+        "names" = :Key {types = #list, structure = @names}
+    }
+}
+names inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @misc/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "name", "show_item_key" = false, "measure_length" = true}
+    }
+}

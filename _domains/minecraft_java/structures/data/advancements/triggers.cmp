@@ -1,0 +1,260 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        conditions = @structures/data/advancements/conditions/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        pred = @structures/misc/predicate/
+        t = @structure_tags/
+    }
+}
+list_of_entity_condition_or_predicate_list inherit temp/Set {
+    $ field = "entity"
+    $ (str) subfield = "predicate"
+    value_types = [#list, #dict]
+    value_structure = @entity_condition_or_predicate_list{$field=subfield}
+}
+entity_condition_or_predicate_list :Union {
+    $ (str) field = "predicate"
+    substructures = [
+        :Key {types = #list, structure = @pred/predicate_list{$field=field}},
+        :Key {types = #dict, structure = @conditions/condition.entity},
+    ]
+}
+criterion :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "trigger"}
+    }
+    substructures = {
+        "minecraft:allay_drop_item_on_block" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.location+@trigger.item{$tags=@t/outdated}}}
+        "minecraft:any_block_use" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.location}}
+        "minecraft:arbitrary_player_tick" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/outdated]}
+        "minecraft:avoid_vibration" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}}
+        "minecraft:bee_nest_destroyed" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.block_id+@trigger.item+@trigger.bee_nest}}
+        "bred_animals" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.bred_animals}, tags = @t/outdated}
+        "minecraft:bred_animals" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.bred_animals}}
+        "minecraft:brewed_potion" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.potion_id}}
+        "minecraft:bring_home_corruption" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:changed_dimension" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.changed_dimension}}
+        "minecraft:channeled_lightning" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.victims}}
+        "minecraft:compost_staff" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:construct_beacon" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.construct_beacon}}
+        "consume_item" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item}, tags = @t/outdated}
+        "minecraft:consume_item" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item}}
+        "minecraft:crafter_recipe_crafted" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.recipe_crafted}}
+        "minecraft:cured_zombie_villager" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.villager+@trigger.zombie}}
+        "minecraft:default_block_use" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.location}}
+        "minecraft:eat_armor" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:effects_changed" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.effects+@trigger.source}}
+        "minecraft:enchanted_item" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item+@trigger.levels}}
+        "minecraft:enter_block" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.block_id+@trigger.block_state}}
+        "minecraft:entity_hurt_player" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.damage}}
+        "minecraft:entity_killed_player" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.entity+@trigger.killing_blow}}
+        "minecraft:fall_after_explosion" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.start_position+@trigger.distance+@trigger.cause}}
+        "minecraft:fall_from_height" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.start_position+@trigger.distance}}
+        "minecraft:filled_bucket" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item}}
+        "minecraft:fishing_rod_hooked" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.entity+@trigger.item+@trigger.rod}}
+        "minecraft:get_peeled" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:hero_of_the_village" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}}
+        "minecraft:impossible" = :Key {types = #dict, structure = @trigger} // empty
+        "minecraft:inventory_changed" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.items+@trigger.slots}}
+        "minecraft:item_delivered_to_player" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/outdated]}
+        "minecraft:item_durability_changed" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item_durability_changed+@trigger.item}}
+        "minecraft:item_used_on_block" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.location+@trigger.item{$tags=@t/outdated}}}
+        "minecraft:kill_mob_near_sculk_catalyst" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.entity+@trigger.killing_blow}}
+        "minecraft:killed_by_arrow" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.fired_from_weapon+@trigger.unique_entity_types+@trigger.victims}}
+        "minecraft:killed_by_crossbow" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.fired_from_weapon+@trigger.unique_entity_types+@trigger.victims}}
+        // heehee I discovered this one ^ (wasn't on MCW before)
+        "minecraft:levitation" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.distance+@trigger.duration}}
+        "minecraft:lightning_strike" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.lightning_strike}}
+        "minecraft:location" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.location{$tags=@t/outdated}+@conditions/condition.location{$tags=@t/outdated}}}
+        "minecraft:nether_travel" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.start_position+@trigger.distance}}
+        "minecraft:peel_block" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:peel_potato_armor" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:peel_potato_sheep" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:placed_block" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.location+@trigger.block_id{$tags=@t/outdated}}}
+        "minecraft:player_damaged" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.damage}, tags = [@t/outdated]}
+        "minecraft:player_generates_container_loot" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.loot_table}}
+        "minecraft:player_hurt_entity" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.damage+@trigger.entity}}
+        "minecraft:player_interacted_with_entity" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item+@trigger.entity}}
+        "minecraft:player_killed_entity" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.entity+@trigger.killing_blow}}
+        "minecraft:player_sheared_equipment" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.entity+@trigger.item}}
+        "minecraft:potato_refined" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.potato_refined}, tags = [@t/april_fools]}
+        "minecraft:recipe_crafted" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.recipe_crafted}}
+        "minecraft:recipe_unlocked" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.recipe_id}}
+        "minecraft:ride_entity_in_lava" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.start_position+@trigger.distance}}
+        "minecraft:rumble_plant" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:safely_harvest_honey" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.block_or_tag+@trigger.item}, tags = [@t/outdated]}
+        "minecraft:said_potato" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+        "minecraft:shot_crossbow" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item}}
+        "minecraft:slept_in_bed" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}}
+        "minecraft:slide_down_block" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.block_id+@trigger.block_state}}
+        "minecraft:started_riding" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}}
+        "minecraft:summoned_entity" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.entity}}
+        "minecraft:tame_animal" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.entity}}
+        "minecraft:target_hit" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.target_hit}}
+        "minecraft:throw_lubricated" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.min_lubrication}, tags = [@t/april_fools]}
+        "minecraft:thrown_item_picked_up_by_entity" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item+@trigger.entity}}
+        "minecraft:thrown_item_picked_up_by_player" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item+@trigger.entity}}
+        "minecraft:tick" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}}
+        "minecraft:used_ender_eye" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.used_ender_eye}}
+        "minecraft:used_totem" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item}}
+        "minecraft:using_item" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item}}
+        "minecraft:villager_trade" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player+@trigger.item+@trigger.villager}}
+        "minecraft:voluntary_exile" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}}
+        "minecraft:voted" = :Key {types = #dict, structure = @trigger{$imports=@trigger.player}, tags = [@t/april_fools]}
+    }
+}
+trigger inherit temp/SortedKeymap {
+    $ (dict) imports = {}
+    keys = {
+        "trigger" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "conditions" = :Key {types = #dict, structure = @conditions{$imports=imports}}
+    }
+}
+conditions abstract inherit temp/SortedKeymap {
+    $ (dict) imports
+    keys = imports
+}
+// some of these Component names are arbitrary and not based on game names.
+trigger.bee_nest {
+    "num_bees_inside" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+}
+trigger.block_id {
+    $ (:StructureTag | list) tags = []
+    "block" = :Key {types = #str, tags = tags}
+}
+
+trigger.block_or_tag { // used exclusively in minecraft:safely_harvest_honey, a removed trigger. most likely an outdated version of trigger.block_id above.s
+    "block" = :Key {types = #dict, structure = inherit temp/SortedKeymap {
+        keys = {
+            "block" = :Key {types = #str}
+            "tag" = :Key {types = #str}
+        }
+    }}
+}
+trigger.block_state {
+    "state" = :Key {types = #dict, structure = @conditions/condition.block_state}
+}
+trigger.bred_animals {
+    "child" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+    "parent" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+    "partner" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+}
+trigger.cause {
+    "cause" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+}
+trigger.changed_dimension {
+    "from" = :Key {types = #str}
+    "to" = :Key {types = #str}
+}
+trigger.construct_beacon {
+    "level" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+}
+trigger.damage {
+    "damage" = :Key {types = #dict, structure = @conditions/condition.damage}
+}
+trigger.distance {
+    "distance" = :Key {types = #dict, structure = @conditions/condition.distance}
+}
+trigger.duration {
+    "duration" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+}
+trigger.effects {
+    "effects" = :Key {types = #dict, structure = @conditions/condition.effects}
+}
+trigger.entity {
+    "entity" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+}
+trigger.fired_from_weapon {
+    "fired_from_weapon" = :Key {types = @a/compound, structure = @conditions/condition.item}
+}
+trigger.item {
+    $ (:StructureTag | list) tags = []
+    "item" = :Key {types = @a/compound, structure = @conditions/condition.item, tags = tags}
+}
+trigger.item_durability_changed {
+    "delta" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+    "durability" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+}
+trigger.items {
+    "items" = :Key {types = #list, structure = @conditions/condition.items}
+}
+trigger.killing_blow {
+    "killing_blow" = :Key {types = #dict, structure = @conditions/condition.damage_type}
+}
+trigger.levels {
+    "levels" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+}
+trigger.lightning_strike {
+    "lightning" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+    "bystander" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+}
+trigger.location {
+    $ (:StructureTag | list) tags = []
+    "location" = :Key {types = [#list, #dict], structure = @trigger.location:location, tags = tags}
+}
+trigger.location:location :Union {
+    substructures = [
+        :Key {types = #list, structure = @pred/predicate_list},
+        :Key {types = #dict, structure = @conditions/condition.location},
+    ]
+}
+trigger.loot_table {
+    "loot_table" = :Key {types = #str}
+}
+
+trigger.min_lubrication { // exclusive to April Fools
+    "min_lubrication" = :Key {types = #int}
+}
+trigger.player {
+    "player" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+}
+
+trigger.potato_refined { // exclusive to April Fools
+    "result_predicate" = :Key {types = #dict, structure = @conditions/condition.potato_refined}
+}
+trigger.potion_id {
+    "potion" = :Key {types = #str}
+}
+trigger.recipe_crafted {
+    "recipe_id" = :Key {types = #str}
+    "ingredients" = :Key {types = #list, structure = @conditions/condition.items}
+}
+trigger.recipe_id {
+    "recipe" = :Key {types = #str}
+}
+trigger.rod {
+    "rod" = :Key {types = @a/compound, structure = @conditions/condition.item}
+}
+trigger.slots {
+    "slots" = :Key {types = #dict, structure = @conditions/condition.slots_filled}
+}
+trigger.source {
+    "source" = :Key {types = [#list, #dict], structure = @entity_condition_or_predicate_list}
+}
+trigger.start_position {
+    "start_position" = :Key {types = #dict, structure = @conditions/condition.location}
+}
+trigger.target_hit {
+    "signalStrength" = :Key {types = #int, tags = @t/outdated}
+    "signal_strength" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+    "projectile" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+}
+trigger.unique_entity_types {
+    "unique_entity_types" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+}
+trigger.used_ender_eye {
+    "distance" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+}
+trigger.victims {
+    "victims" = :Key {types = #list, structure = @list_of_entity_condition_or_predicate_list}
+}
+trigger.villager {
+    "villager" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+}
+trigger.zombie {
+    "zombie" = :Key {types = [#dict, #list], structure = @entity_condition_or_predicate_list}
+}

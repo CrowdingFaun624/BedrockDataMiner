@@ -1,0 +1,28 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "language_names"
+    $ types = #list
+    $ structure = @language_names
+}
+language_names :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/language_names_normalize
+    }
+    structure = inherit temp/Dict {
+        value_types = #str
+        value_structure = @temp/string
+        key_structure = @temp/string
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_key, "field" = "language"}
+        }
+    }
+}

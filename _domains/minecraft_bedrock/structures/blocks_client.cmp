@@ -1,0 +1,125 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = :Cache {
+        this_types = #dict
+        structure = :Normalizer {
+            outer_types = #dict
+            inner_types = #fake_file
+            functions = :Function {
+                function = %scripts/normalizers/normalizers/blocks_client_normalize,
+                arguments = {
+                    "serializer" = @minecraft_common!serializers/json
+                }
+            }
+            structure = :File {
+                serializer = null
+                outer_types = #fake_file
+                inner_types = #dict
+                structure = @block
+            }
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "blocks_client"}
+    }
+}
+block inherit temp/Dict {
+    value_types = #dict
+    min_key_similarity_threshold = 0.2
+    min_value_similarity_threshold = 0.4
+    key_weight = 1
+    value_weight = 1
+    key_structure = @temp/string
+    value_structure = @resource_pack
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+resource_pack :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_dict
+    }
+    structure = inherit temp/Dict {
+        key_types = #tuple
+        key_structure = @temp/defined_in
+        value_types = #dict
+        min_value_similarity_threshold = 0.25
+        value_structure = @block_properties
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+block_properties :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        // https://bugs.mojang.com/browse/MCPE-76182
+        function = %delete_key
+        arguments = {"key" = "sounds"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "ambient_occlusion_exponent" = :Key {types = #float}
+            "blockshape" = :Key {types = #str, similarity_weight = 4}
+            "brightness_gamma" = :Key {types = #float}
+            "carried_textures" = :Key {types = [#dict, #str], structure = @textures_group, similarity_weight = 4}
+            "isotropic" = :Key {types = [#bool, #dict], structure = @isotropic_group}
+            "sound" = :Key {types = #str, similarity_weight = 2}
+            "textures" = :Key {types = [#dict, #str], structure = @textures_group, similarity_weight = 4}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order, "field" = "property"}
+        }
+    }
+}
+textures_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @textures},
+        :Key {types = #str, structure = @texture},
+    ]
+}
+isotropic_group :Union {
+    substructures = [
+        :Key {types = #bool},
+        :Key {types = #dict, structure = @isotropic},
+    ]
+}
+textures inherit temp/SortedKeymap {
+    keys = {
+        "down" = :Key {types = #str, structure = @texture}
+        "east" = :Key {types = #str, structure = @texture}
+        "north" = :Key {types = #str, structure = @texture}
+        "side" = :Key {types = #str, structure = @texture}
+        "south" = :Key {types = #str, structure = @texture}
+        "up" = :Key {types = #str, structure = @texture}
+        "west" = :Key {types = #str, structure = @texture}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "direction", "sort" = %sort_by_component_order, "print_all" = true}
+    }
+}
+texture @temp/string
+isotropic inherit temp/SortedKeymap {
+    keys = {
+        "down" = :Key {types = #bool}
+        "up" = :Key {types = #bool}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "direction", "sort" = %sort_by_component_order, "print_all" = true}
+    }
+}

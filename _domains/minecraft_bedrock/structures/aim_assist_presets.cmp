@@ -1,0 +1,49 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "aim_assist_presets"
+    $ pack_type = "behavior pack"
+    $ structure = @preset
+}
+preset inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str, similarity_weight = 0}
+        "minecraft:aim_assist_preset" = :Key {types = #dict, structure = @aim_assist_preset}
+    }
+}
+aim_assist_preset inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string_remove_minecraft_prefix}
+        "categories" = :Key {types = #str}
+        "item_settings" = :Key {types = #dict, structure = @item_settings}
+        "default_item_settings" = :Key {types = #str}
+        "hand_settings" = :Key {types = #str}
+        "exclusion_list" = :Key {types = #list, structure = @item_list}
+        "liquid_targeting_list" = :Key {types = #list, structure = @item_list}
+    }
+}
+item_settings inherit temp/Dict {
+    key_structure = @temp/string_remove_minecraft_prefix
+    value_types = #str
+    value_structure = @temp/string_remove_minecraft_prefix
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "measure_length" = true, "sort" = %sort_by_key}
+    }
+}
+item_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    value_types = #str
+    this_types = #list
+    value_structure = @temp/string_remove_minecraft_prefix
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true, "sort" = %sort_by_value}
+    }
+}

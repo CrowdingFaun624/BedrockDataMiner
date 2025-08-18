@@ -1,0 +1,51 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "gui_atlas"
+    $ types = #list
+    $ structure = @gui_atlas
+}
+gui_atlas inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    value_types = #dict
+    min_value_similarity_threshold = 0.25
+    value_structure = @atlas_file
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "atlas file", "show_item_key" = false, "measure_length" = true}
+    }
+}
+atlas_file inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 3}
+        "width" = :Key {types = #int}
+        "height" = :Key {types = #int}
+        "size" = :Key {types = #int}
+        "coordinates" = :Key {types = #dict, structure = @coordinates}
+    }
+}
+coordinates inherit temp/Dict {
+    key_structure = @temp/string
+    value_types = #dict
+    value_structure = @coordinate
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "coordinate", "measure_length" = true}
+    }
+}
+coordinate inherit temp/SortedKeymap {
+    keys = {
+        "x" = :Key {types = #int, structure = @coordinate_number}
+        "y" = :Key {types = #int, structure = @coordinate_number}
+        "width" = :Key {types = #int}
+        "height" = :Key {types = #int}
+    }
+}
+coordinate_number @temp/number{normal_value=8}

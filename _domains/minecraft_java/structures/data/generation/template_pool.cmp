@@ -1,0 +1,86 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        pl = @structures/data/generation/processor_list/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "template_pool"
+    $ pack_type = "data pack"
+    $ structure = @template_pool
+}
+template_pool_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @template_pool},
+    ]
+}
+template_pool inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}, tags = @t/outdated}
+        "fallback" = :Key {types = #str}
+        "elements" = :Key {types = #list, structure = @weighted_element_list}
+    }
+}
+element_list inherit temp/Set {
+    $ field = "element"
+    value_types = #dict
+    value_structure = @element
+}
+weighted_element_list inherit temp/Set {
+    $ field = "element"
+    value_types = #dict
+    value_structure = @weighted_element
+}
+weighted_element inherit temp/SortedKeymap {
+    keys = {
+        "weight" = :Key {types = #int}
+        "element" = :Key {types = #dict, structure = @element, delegate_arguments = {"always_print" = true}}
+    }
+}
+element :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "element_type"}
+    }
+    substructures = {
+        "minecraft:empty_pool_element" = :Key {types = #dict, structure = @element.empty}
+        "minecraft:feature_pool_element" = :Key {types = #dict, structure = @element.feature}
+        "minecraft:legacy_single_pool_element" = :Key {types = #dict, structure = @element.legacy_single}
+        "minecraft:list_pool_element" = :Key {types = #dict, structure = @element.list}
+        "minecraft:single_pool_element" = :Key {types = #dict, structure = @element.single}
+    }
+}
+element:all {
+    "element_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "projection" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+element.empty inherit temp/SortedKeymap {
+    keys = @element:all
+}
+element.feature inherit temp/SortedKeymap {
+    keys = @element:all + {
+        "feature" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+element.legacy_single inherit temp/SortedKeymap {
+    keys = @element:all + {
+        "location" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "processors" = :Key {types = [#str, #dict, #list], structure = @pl/processor_list_or_id}
+    }
+}
+element.list inherit temp/SortedKeymap {
+    keys = @element:all + {
+        "elements" = :Key {types = #list, structure = @element_list}
+    }
+}
+element.single inherit temp/SortedKeymap {
+    keys = @element:all + {
+        "location" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "processors" = :Key {types = [#str, #dict, #list], structure = @pl/processor_list_or_id}
+        "override_liquid_settings" = :Key {types = #str}
+    }
+}

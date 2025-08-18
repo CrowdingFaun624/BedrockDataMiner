@@ -1,0 +1,33 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "renderer_material_index"
+    $ structure = @material_index
+}
+material_index inherit temp/SortedKeymap {
+    keys = {
+        "materials" = :Key {types = #list, structure = @materials}
+    }
+}
+materials inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @material
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "material", "show_item_key" = false, "measure_length" = true}
+    }
+}
+material inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "path" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}

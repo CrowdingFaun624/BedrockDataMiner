@@ -1,0 +1,79 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        bsp = @structures/misc/provider/block_state_provider/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+decorator_list inherit temp/Set {
+    $ field = "decorator"
+    value_types = #dict
+    value_structure = @decorator
+}
+decorator :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:alter_ground" = :Key {types = #dict, structure = @decorator.alter_ground}
+        "minecraft:attached_to_leaves" = :Key {types = #dict, structure = @decorator.attached_to_leaves}
+        "minecraft:attached_to_logs" = :Key {types = #dict, structure = @decorator.attached_to_logs}
+        "minecraft:beehive" = :Key {types = #dict, structure = @decorator.probability}
+        "minecraft:cocoa" = :Key {types = #dict, structure = @decorator.probability}
+        "minecraft:creaking_heart" = :Key {types = #dict, structure = @decorator.probability}
+        "minecraft:leave_vine" = :Key {types = #dict, structure = @decorator.probability}
+        "minecraft:pale_moss" = :Key {types = #dict, structure = @decorator.pale_moss}
+        "minecraft:place_on_ground" = :Key {types = #dict, structure = @decorator.place_on_ground}
+        "minecraft:trunk_vine" = :Key {types = #dict, structure = @decorator.trunk_vine}
+    }
+}
+decorator:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+decorator.alter_ground inherit temp/SortedKeymap {
+    keys = @decorator:all + {
+        "provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    }
+}
+decorator.attached_to_leaves inherit temp/SortedKeymap {
+    keys = @decorator:all + {
+        "probability" = :Key {types = #float}
+        "exclusion_radius_xz" = :Key {types = #int}
+        "exclusion_radius_y" = :Key {types = #int}
+        "required_empty_blocks" = :Key {types = #int}
+        "block_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "directions" = :Key {types = #list, structure = @misc/named_list{$name="direction"}}
+    }
+}
+decorator.attached_to_logs inherit temp/SortedKeymap {
+    keys = @decorator:all + {
+        "probability" = :Key {types = #float}
+        "block_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "directions" = :Key {types = #list, structure = @misc/named_list{$name="direction"}}
+    }
+}
+decorator.pale_moss inherit temp/SortedKeymap {
+    keys = @decorator:all + {
+        "leaves_probability" = :Key {types = #float}
+        "trunk_probability" = :Key {types = #float}
+        "ground_probability" = :Key {types = #float}
+    }
+}
+decorator.place_on_ground inherit temp/SortedKeymap {
+    keys = @decorator:all + {
+        "tries" = :Key {types = #int}
+        "radius" = :Key {types = #int}
+        "height" = :Key {types = #int}
+        "block_state_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    }
+}
+decorator.probability inherit temp/SortedKeymap {
+    keys = @decorator:all + {
+        "probability" = :Key {types = #float}
+    }
+}
+decorator.trunk_vine inherit temp/SortedKeymap {
+    keys = @decorator:all
+}

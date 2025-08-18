@@ -1,0 +1,98 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        tc = @structures/misc/text_component/
+        s = @serializers/
+        vector = @structures/misc/vector/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "pack_mcmeta"
+    $ pack_type = "data pack"
+    $ serializer = @s/pack_mcmeta_serializer
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "pack" = :Key {types = #dict, structure = @pack}
+        "features" = :Key {types = #dict, structure = @features}
+        "filter" = :Key {types = #dict, structure = @filter}
+        "overlays" = :Key {types = #dict, structure = @overlays}
+        "language" = :Key {types = #dict, structure = @languages}
+    }
+}
+pack inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = @tc/root_type, structure = @tc/root}
+        "pack_format" = :Key {types = #int}
+        "supported_formats" = :Key {types = [#int, #list, #dict], structure = @supported_formats}
+        "max_format" = :Key {types = #int}
+        "min_format" = :Key {types = #int}
+    }
+}
+supported_formats :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #list, structure = @vector/vector.int},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "min_inclusive" = :Key {types = #int}
+                "max_inclusive" = :Key {types = #int}
+            }
+        }},
+    ]
+}
+features inherit temp/SortedKeymap {
+    keys = {
+        "enabled" = :Key {types = #list, structure = @misc/named_list{$name="feature flag"}}
+    }
+}
+filter inherit temp/SortedKeymap {
+    keys = {
+        "block" = :Key {types = #list, structure = @filter.patterns}
+    }
+}
+filter.patterns inherit temp/Set {
+    $ field = "pattern"
+    value_types = #dict
+    value_structure = @filter.pattern
+}
+filter.pattern inherit temp/SortedKeymap {
+    keys = {
+        "namespace" = :Key {types = #str}
+        "path" = :Key {types = #str}
+    }
+}
+overlays inherit temp/SortedKeymap {
+    keys = {
+        "entries" = :Key {types = #list, structure = @overlays.entries}
+    }
+}
+overlays.entries inherit temp/Set {
+    $ field = "entry"
+    $ show_item_key = true
+    key_weight = 1
+    value_weight = 6
+    value_types = #dict
+    value_structure = @overlays.entry
+}
+overlays.entry inherit temp/SortedKeymap {
+    keys = {
+        "formats" = :Key {types = [#int, #list, #dict], structure = @supported_formats}
+        "directory" = :Key {types = #str}
+    }
+}
+languages inherit temp/Dict {
+    $ field = "language"
+    value_types = #dict
+    value_structure = @language
+}
+language inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "region" = :Key {types = #str}
+        "bidirectional" = :Key {types = #bool}
+    }
+}

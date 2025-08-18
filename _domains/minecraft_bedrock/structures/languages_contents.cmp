@@ -1,0 +1,71 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @languages
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "languages_contents"}
+    }
+}
+languages inherit temp/Dict {
+    value_types = #dict
+    value_structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "language", "measure_length" = true}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_dict_file
+            arguments = {"serializer" = @s/language_serializer}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @packs
+        }
+    }
+}
+packs inherit temp/Dict {
+    key_types = #tuple
+    key_structure = @temp/defined_in
+    value_types = #dict
+    value_structure = @keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "pack", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+cache_keys :Cache { // for other structures to use.
+    this_types = #file
+    structure = :File {
+        serializer = @serializers/language_serializer
+        outer_types = #file
+        inner_types = #dict
+        structure = @keys
+    }
+}
+keys inherit temp/Dict {
+    min_key_similarity_threshold = 0.0
+    min_value_similarity_threshold = 0.0
+    value_types = #str
+    tags = @t/language_key
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "key", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}

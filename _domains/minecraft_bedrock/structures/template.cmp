@@ -1,0 +1,290 @@
+/* Converted by CmpMigrator 0.1.9 */
+base_multiple_files abstract :StructureBase {
+    this_types = #dict
+    $ (str) file_field = "file"
+    $ (type | list) types = #dict
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (:Structure | null) key_structure = null
+    $ (int) key_weight = 2
+    $ (int) value_weight = 8
+    $ (float) min_key_similarity_threshold = 0.0
+    $ (float) min_value_similarity_threshold = 0.5
+    $ (str) name
+    $ (:Structure) structure
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = inherit SortedDict {
+        $ field = file_field
+        value_types = #file
+        key_structure = key_structure
+        key_weight = key_weight
+        value_weight = value_weight
+        min_key_similarity_threshold = min_key_similarity_threshold
+        min_value_similarity_threshold = min_value_similarity_threshold
+        value_structure = :Cache {
+            this_types = #file
+            structure = :File {
+                serializer = serializer
+                outer_types = #file
+                inner_types = types
+                structure = structure
+            }
+        }
+    }
+}
+base_multiple_pack_files abstract :StructureBase {
+    this_types = #dict
+    $ (callable | list) function = @collapse_resource_packs_flat
+    $ (str) pack_type = "pack"
+    $ (str) file_field = "file"
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (type | list) types = #dict
+    $ (:Structure | null) packs_key_structure = null
+    $ (int) packs_key_weight = 2
+    $ (int) packs_value_weight = 8
+    $ (float) packs_min_key_similarity_threshold = 0.0
+    $ (bool) allow_file_moves = true
+    $ (float) packs_min_value_similarity_threshold = 0.5
+    $ (:Structure | null) files_key_structure = null
+    $ (int) files_key_weight = 2
+    $ (int) files_value_weight = 8
+    $ (float) files_min_key_similarity_threshold = 0.0
+    $ (float) files_min_value_similarity_threshold = 0.5
+    $ (:Structure) structure
+    $ (str) name
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = inherit SortedDict {
+        $ field = file_field
+        value_types = #dict
+        key_structure = files_key_structure
+        allow_key_moves = allow_file_moves
+        key_weight = files_key_weight
+        value_weight = files_value_weight
+        min_key_similarity_threshold = files_min_key_similarity_threshold
+        min_value_similarity_threshold = files_min_value_similarity_threshold
+        value_structure = :Normalizer {
+            functions = function
+            outer_types = #dict
+            inner_types = #dict
+            structure = inherit SortedDict {
+                $ field = pack_type
+                value_types = #file
+                key_structure = packs_key_structure
+                key_weight = packs_key_weight
+                value_weight = packs_value_weight
+                min_key_similarity_threshold = packs_min_key_similarity_threshold
+                min_value_similarity_threshold = packs_min_value_similarity_threshold
+                value_structure = :Cache {
+                    this_types = #file
+                    structure = :File {
+                        serializer = serializer
+                        outer_types = #file
+                        inner_types = types
+                        structure = structure
+                    }
+                }
+            }
+        }
+    }
+}
+base_multiple_pack_files_reversed abstract :StructureBase {
+    this_types = #dict
+    $ (callable | list) function = @collapse_resource_packs_flat
+    $ (type | list) types = #dict
+    $ (str) pack_type = "pack"
+    $ (str) file_field = "file"
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (:Structure | null) packs_key_structure = null
+    $ (int) packs_key_weight = 2
+    $ (int) packs_value_weight = 8
+    $ (float) packs_min_key_similarity_threshold = 0.0
+    $ (float) packs_min_value_similarity_threshold = 0.5
+    $ (:Structure | null) files_key_structure = null
+    $ (int) files_key_weight = 2
+    $ (int) files_value_weight = 8
+    $ (float) files_min_key_similarity_threshold = 0.0
+    $ (float) files_min_value_similarity_threshold = 0.5
+    $ (:Structure) structure
+    $ (str) name
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = :Normalizer {
+        functions = function
+        outer_types = #dict
+        inner_types = #dict
+        structure = inherit SortedDict {
+            $ field = pack_type
+            value_types = #dict
+            key_structure = packs_key_structure
+            key_weight = packs_key_weight
+            value_weight = packs_value_weight
+            min_key_similarity_threshold = packs_min_key_similarity_threshold
+            min_value_similarity_threshold = packs_min_value_similarity_threshold
+            value_structure = inherit SortedDict {
+                $ field = file_field
+                value_types = #file
+                key_structure = files_key_structure
+                key_weight = files_key_weight
+                value_weight = files_value_weight
+                min_key_similarity_threshold = files_min_key_similarity_threshold
+                min_value_similarity_threshold = files_min_value_similarity_threshold
+                value_structure = :Cache {
+                    this_types = #file
+                    structure = :File {
+                        serializer = serializer
+                        outer_types = #file
+                        inner_types = types
+                        structure = structure
+                    }
+                }
+            }
+        }
+    }
+}
+base_pack_files abstract :StructureBase {
+    this_types = #dict
+    $ (callable | list) function = @collapse_resource_packs_flat
+    $ (str) pack_type = "pack"
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (:Structure | null) packs_key_structure = null
+    $ (type | list) types = #dict
+    $ (int) key_weight = 2
+    $ (int) value_weight = 8
+    $ (float) min_key_similarity_threshold = 0.0
+    $ (float) min_value_similarity_threshold = 0.5
+    $ (:Structure) structure
+    $ (str) name
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = :Normalizer {
+        functions = function
+        outer_types = #dict
+        inner_types = #dict
+        structure = inherit SortedDict {
+            $ field = pack_type
+            value_types = #file
+            key_structure = packs_key_structure
+            key_weight = key_weight
+            value_weight = value_weight
+            min_key_similarity_threshold = min_key_similarity_threshold
+            min_value_similarity_threshold = min_value_similarity_threshold
+            value_structure = :Cache {
+                this_types = #file
+                structure = :File {
+                    serializer = serializer
+                    outer_types = #file
+                    inner_types = types
+                    structure = structure
+                }
+            }
+        }
+    }
+}
+base_single_file abstract :StructureBase {
+    this_types = #file
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (type | list) types = #dict
+    $ (:Structure) structure
+    $ (str) name
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = :Cache {
+        this_types = #file
+        structure = :File {
+            serializer = serializer
+            outer_types = #file
+            inner_types = types
+            structure = structure
+        }
+    }
+}
+collapse_resource_packs_flat :Function {
+    function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_flat
+}
+defined_in inherit Dict {
+    this_types = #tuple
+    key_types = #int
+    key_weight = 0
+    value_types = #str
+    value_structure = @string
+    delegate = :Delegate {
+        delegate_class = %DefinedInDelegate
+        arguments = {}
+    }
+}
+decimal [#float, #int]
+empty inherit SortedKeymap {}
+number abstract :Number {
+    this_types = @decimal
+    delegate = :Delegate {
+        delegate_class = %@PrimitiveDelegate
+    }
+}
+string :String {
+    delegate = :Delegate {
+        delegate_class = %@PrimitiveDelegate
+    }
+}
+string.nbt inherit string {
+    this_types = #TAG_String
+}
+string_remove_file_suffix inherit string {
+    similarity_function = :Function {
+        function = %scripts/normalizers/normalizers/remove_file_suffix
+    }
+}
+string_remove_minecraft_prefix inherit string {
+    similarity_function = :Function {
+        function = %scripts/normalizers/normalizers/remove_minecraft_prefix
+    }
+}
+Set abstract :Dict {
+    $ (str) field = "item"
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    $ (bool) show_item_key = false
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = field, "measure_length" = true, "show_item_key" = show_item_key}
+    }
+}
+Dict abstract :Dict {
+    $ (str) field = "field"
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = field, "measure_length" = true, "show_item_key" = true}
+    }
+}
+SortedDict abstract :Dict {
+    $ (str) field = "field"
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = field, "measure_length" = true, "sort" = %sort_by_key}
+    }
+}
+SortedKeymap abstract :Keymap {
+    $ (str) keymap_field = "field"
+    $ (bool) measure_length = false
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = keymap_field, "sort" = %sort_by_component_order, "measure_length" = measure_length}
+    }
+}
+named_list abstract inherit Set {
+    $ (str) name
+    $ field = name
+    value_types = #str
+    value_structure = @string
+}

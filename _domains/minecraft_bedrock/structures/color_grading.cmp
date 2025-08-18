@@ -1,0 +1,70 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "color_grading"
+    $ file_field = "color grading file"
+    $ pack_type = "resource pack"
+    $ structure = @color_grading_file
+}
+color_grading_file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:color_grading_settings" = :Key {types = #dict, structure = @color_grading_settings, similarity_weight = 15}
+    }
+}
+color_grading_settings inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "color_grading" = :Key {types = #dict, structure = @color_grading}
+        "tone_mapping" = :Key {types = #dict, structure = @tone_mapping}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+color_grading inherit temp/SortedKeymap {
+    keys = {
+        "midtones" = :Key {types = #dict, structure = @color_grading.midtones}
+        "temperature" = :Key {types = #dict, structure = @color_grading.temperature}
+    }
+}
+color_grading.midtones inherit temp/SortedKeymap {
+    keys = {
+        "contrast" = :Key {types = #list, structure = @vector_float}
+        "gain" = :Key {types = #list, structure = @vector_float}
+        "gamma" = :Key {types = #list, structure = @vector_float}
+        "offset" = :Key {types = #list, structure = @vector_float}
+        "saturation" = :Key {types = #list, structure = @vector_float}
+    }
+}
+color_grading.temperature inherit temp/SortedKeymap {
+    keys = {
+        "enabled" = :Key {types = #bool}
+        "temperature" = :Key {types = #int}
+        "type" = :Key {types = #str}
+    }
+}
+tone_mapping inherit temp/SortedKeymap {
+    keys = {
+        "operator" = :Key {types = #str}
+    }
+}
+vector_float inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true}
+    }
+}

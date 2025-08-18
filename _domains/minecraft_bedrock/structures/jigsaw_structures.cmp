@@ -1,0 +1,64 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "jigsaw_structures"
+    $ files_key_structure = @temp/string
+    $ pack_type = "behavior pack"
+    $ structure = @structure
+}
+structure inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str, similarity_weight = 0}
+        "minecraft:jigsaw" = :Key {types = #dict, structure = @jigsaw}
+    }
+}
+jigsaw inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "biome_filters" = :Key {types = [#dict, #list], structure = @structures/entities/filter_or_filter_list}
+        "step" = :Key {types = #str}
+        "terrain_adaptation" = :Key {types = #str}
+        "start_pool" = :Key {types = #str}
+        "max_depth" = :Key {types = #int}
+        "max_distance_from_center" = :Key {types = [#int, #dict], structure = @max_distance_from_center}
+        "start_height" = :Key {types = [#int, #dict], structure = @start_height}
+        "heightmap_projection" = :Key {types = #str}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+start_height :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "type" = :Key {types = #str}
+                "value" = :Key {types = #dict, structure = @start_height.value}
+            }
+        }},
+    ]
+}
+start_height.value inherit temp/SortedKeymap {
+    keys = {
+        "absolute" = :Key {types = #int}
+    }
+}
+max_distance_from_center :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "horizontal" = :Key {types = #int}
+                "vertical" = :Key {types = #int}
+            }
+        }},
+    ]
+}

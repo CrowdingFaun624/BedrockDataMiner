@@ -1,0 +1,49 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "jar_manifest"
+    $ serializer = @s/manifest_serializer
+    $ structure = @manifest
+}
+manifest inherit temp/SortedKeymap {
+    keys = {
+        // MOJANGCS.SF
+        "Signature-Version" = :Key {types = #str}
+        "Created-By" = :Key {types = #str}
+        "Ant-Version" = :Key {types = #str}
+        "Class-Path" = :Key {types = #str}
+        "SHA1-Digest-Manifest" = :Key {types = #str}
+        "SHA1-Digest-Manifest-Main-Attributes" = :Key {types = #str}
+        "SHA-256-Digest-Manifest" = :Key {types = #str}
+        "SHA-256-Digest-Manifest-Main-Attributes" = :Key {types = #str}
+        "SHA-384-Digest-Manifest" = :Key {types = #str}
+        "SHA-384-Digest-Manifest-Main-Attributes" = :Key {types = #str}
+        // MANIFEST.MF
+        "Manifest-Version" = :Key {types = #str}
+        "Main-Class" = :Key {types = #str}
+        // generic
+        "files" = :Key {types = #dict, structure = @files}
+    }
+}
+files inherit temp/Dict {
+    value_types = #dict
+    key_structure = @misc/string
+    value_structure = @attributes
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "sort" = %sort_by_key, "field" = "file"}
+    }
+}
+attributes inherit temp/SortedKeymap {
+    keys = {
+        "SHA1-Digest" = :Key {types = #str}
+        "SHA-256-Digest" = :Key {types = #str}
+        "SHA-384-Digest" = :Key {types = #str}
+    }
+}

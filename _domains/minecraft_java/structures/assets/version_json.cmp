@@ -1,0 +1,44 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/misc/template/
+        t = @structure_tags/
+        s = @serializers/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "version_json"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "world_version" = :Key {types = #int}
+        "series_id" = :Key {types = #str}
+        "release_target" = :Key {types = #str, tags = @t/outdated}
+        "protocol_version" = :Key {types = #int}
+        "pack_version" = :Key {types = [#int, #dict], structure = @pack_version}
+        "build_time" = :Key {types = #str}
+        "java_component" = :Key {types = #str}
+        "java_version" = :Key {types = #int}
+        "stable" = :Key {types = #bool}
+        "use_editor" = :Key {types = #bool}
+    }
+}
+pack_version :Union {
+    substructures = [
+        :Key {types = #int, tags = @t/outdated},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            $ keymap_field = "version"
+            keys = {
+                "resource" = :Key {types = #int, tags = @t/outdated}
+                "resource_major" = :Key {types = #int}
+                "resource_minor" = :Key {types = #int}
+                "data" = :Key {types = #int, tags = @t/outdated}
+                "data_major" = :Key {types = #int}
+                "data_minor" = :Key {types = #int}
+            }
+        }},
+    ]
+}

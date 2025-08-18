@@ -1,0 +1,55 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        bs = @structures/misc/block_state/
+        temp = @structures/misc/template/
+    }
+}
+rule_test :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "predicate_type"}
+    }
+    substructures = {
+        "minecraft:always_true" = :Key {types = #dict, structure = @rule_test.always_true}
+        "minecraft:block_match" = :Key {types = #dict, structure = @rule_test.block_match}
+        "minecraft:blockstate_match" = :Key {types = #dict, structure = @rule_test.blockstate_match}
+        "minecraft:random_block_match" = :Key {types = #dict, structure = @rule_test.random_block_match}
+        "minecraft:random_blockstate_match" = :Key {types = #dict, structure = @rule_test.random_blockstate_match}
+        "minecraft:tag_match" = :Key {types = #dict, structure = @rule_test.tag_match}
+    }
+}
+rule_test:all {
+    "predicate_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+rule_test.always_true inherit temp/SortedKeymap {
+    keys = @rule_test:all
+}
+rule_test.block_match inherit temp/SortedKeymap {
+    keys = @rule_test:all + {
+        "block" = :Key {types = #str}
+    }
+}
+rule_test.blockstate_match inherit temp/SortedKeymap {
+    keys = @rule_test:all + {
+        "block_state" = :Key {types = @a/compound, structure = @bs/block_state}
+    }
+}
+rule_test.random_block_match inherit temp/SortedKeymap {
+    keys = @rule_test:all + {
+        "block" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "probability" = :Key {types = #float}
+    }
+}
+rule_test.random_blockstate_match inherit temp/SortedKeymap {
+    keys = @rule_test:all + {
+        "block" = :Key {types = @a/compound, structure = @bs/block_state, delegate_arguments = {"always_print" = true}}
+        "probability" = :Key {types = #float}
+    }
+}
+rule_test.tag_match inherit temp/SortedKeymap {
+    keys = @rule_test:all + {
+        "tag" = :Key {types = #str}
+    }
+}

@@ -1,0 +1,29 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_bloom_configs"
+    $ structure = @bloom_config
+}
+bloom_config inherit temp/SortedKeymap {
+    keys = {
+        "file" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "depth_scaling_factor" = :Key {types = #int}
+        "enable_depth_scaling" = :Key {types = #bool}
+        "intensity" = :Key {types = #float}
+        "maximum_depth_range" = :Key {types = #float}
+        "minimum_depth_multiplier" = :Key {types = #int}
+        "minimum_depth_range" = :Key {types = #float}
+        "threshold" = :Key {types = #float, tags = [@t/outdated]}
+        "toggle_default" = :Key {types = #bool}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}

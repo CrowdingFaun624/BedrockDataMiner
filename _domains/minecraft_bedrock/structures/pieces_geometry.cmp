@@ -1,0 +1,30 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files_reversed {
+    $ name = "pieces_geometry"
+    $ function = []
+    $ pack_type = "piece"
+    $ file_field = "geometry file"
+    $ structure = @geometries
+}
+geometries :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %delete_key
+        arguments = {"key" = "format_version"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @structures/models/geometry
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_key, "measure_length" = true, "field" = "geometry"}
+        }
+    }
+}

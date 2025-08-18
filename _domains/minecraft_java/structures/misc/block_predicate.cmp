@@ -1,0 +1,83 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        bs = @structures/misc/block_state/
+        vector = @structures/misc/vector/
+    }
+}
+block_predicate_list inherit temp/Set {
+    $ field = "predicate"
+    value_types = #dict
+    value_structure = @block_predicate
+}
+block_predicate :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:true" = :Key {types = #dict, structure = @block_predicate.predicate_list}
+        "minecraft:all_of" = :Key {types = #dict, structure = @block_predicate.predicate_list}
+        "minecraft:any_of" = :Key {types = #dict, structure = @block_predicate.predicate_list}
+        "minecraft:has_sturdy_face" = :Key {types = #dict, structure = @block_predicate.has_sturdy_face}
+        "minecraft:inside_world_bounds" = :Key {types = #dict, structure = @block_predicate.offset}
+        "minecraft:matching_block_tag" = :Key {types = #dict, structure = @block_predicate.matching_block_tag}
+        "minecraft:matching_blocks" = :Key {types = #dict, structure = @block_predicate.matching_blocks}
+        "minecraft:matching_fluids" = :Key {types = #dict, structure = @block_predicate.matching_fluids}
+        "minecraft:not" = :Key {types = #dict, structure = @block_predicate.not}
+        "minecraft:replaceable" = :Key {types = #dict, structure = @block_predicate.offset}
+        "minecraft:solid" = :Key {types = #dict, structure = @block_predicate.offset}
+        "minecraft:unobstructed" = :Key {types = #dict, structure = @block_predicate.unobstructed}
+        "minecraft:would_survive" = :Key {types = #dict, structure = @block_predicate.would_survive}
+    }
+}
+block_predicate:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+block_predicate:offset {
+    "offset" = :Key {types = #list, structure = @vector/vector.int}
+}
+block_predicate.has_sturdy_face inherit temp/SortedKeymap {
+    keys = @block_predicate:all + @block_predicate:offset + {
+        "direction" = :Key {types = #str}
+    }
+}
+block_predicate.matching_block_tag inherit temp/SortedKeymap {
+    keys = @block_predicate:all + @block_predicate:offset + {
+        "tag" = :Key {types = #str}
+    }
+}
+block_predicate.matching_blocks inherit temp/SortedKeymap {
+    keys = @block_predicate:all + @block_predicate:offset + {
+        "blocks" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+    }
+}
+block_predicate.matching_fluids inherit temp/SortedKeymap {
+    keys = @block_predicate:all + @block_predicate:offset + {
+        "fluids" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="fluid"}}
+    }
+}
+block_predicate.not inherit temp/SortedKeymap {
+    keys = @block_predicate:all + {
+        "predicate" = :Key {types = #dict, structure = @block_predicate}
+    }
+}
+block_predicate.offset inherit temp/SortedKeymap {
+    keys = @block_predicate:all + @block_predicate:offset
+}
+block_predicate.predicate_list inherit temp/SortedKeymap {
+    keys = @block_predicate:all + {
+        "predicates" = :Key {types = #list, structure = @block_predicate_list}
+    }
+}
+block_predicate.unobstructed inherit temp/SortedKeymap {
+    keys = @block_predicate:all + @block_predicate:offset
+}
+block_predicate.would_survive inherit temp/SortedKeymap {
+    keys = @block_predicate:all + @block_predicate:offset + {
+        "state" = :Key {types = @a/compound, structure = @bs/block_state}
+    }
+}

@@ -1,0 +1,80 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @material_groups
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "material_groups"}
+    }
+}
+material_groups inherit temp/Dict {
+    value_types = #dict
+    value_structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "material group", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_list_file
+            arguments = {"serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @resource_packs
+        }
+    }
+}
+resource_packs inherit temp/Dict {
+    key_types = #tuple
+    key_structure = @temp/defined_in
+    value_types = #list
+    value_structure = @material_group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+material_group inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @material
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "material", "show_item_key" = false, "measure_length" = true}
+    }
+}
+material inherit temp/SortedKeymap {
+    keys = {
+        "path" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "tag" = :Key {types = #str, tags = [@t/outdated]}
+        "defines" = :Key {types = #list, structure = @defines, tags = [@t/outdated]}
+        "+defines" = :Key {types = #list, structure = @defines}
+    }
+}
+defines inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "definition", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}

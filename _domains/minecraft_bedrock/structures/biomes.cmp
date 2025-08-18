@@ -1,0 +1,538 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "biomes"
+    $ file_field = "biome"
+    $ key_structure = @temp/string
+    $ min_key_similarity_threshold = 0.25
+    $ min_value_similarity_threshold = 0.5
+    $ structure = @biome
+}
+biome :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/biomes_normalize_old
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "format_version" = :Key {types = #str}
+            "minecraft:biome" = :Key {types = #dict, similarity_weight = 20, structure = inherit temp/SortedKeymap {
+                keys = {
+                    "description" = :Key {types = #dict, structure = @description}
+                    "components" = :Key {types = #dict, structure = @components, similarity_weight = 3}
+                }
+                delegate = :Delegate {
+                    delegate_class = %DefaultDelegate
+                    arguments = {"sort" = %sort_by_component_order}
+                }
+            }}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+block :Union {
+    substructures = [
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+                "states" = :Key {types = #dict, structure = @block.states}
+            }
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"sort" = %sort_by_component_order}
+            }
+        }},
+        :Key {types = #str},
+    ]
+}
+block.states inherit temp/SortedKeymap {
+    keys = {
+        "dirt_type" = :Key {types = #str}
+        "sand_type" = :Key {types = #str}
+    }
+}
+block_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+range_float inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#float, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range item", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+range_molang inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range item", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+range_decimal inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#float, #int, #str] // str for infinity
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range item", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+components inherit temp/SortedKeymap {
+    tags = [@t/biome_component]
+    keys = {
+        "minecraft:capped_surface" = :Key {types = #dict, structure = @component.capped_surface}
+        "minecraft:climate" = :Key {types = #dict, structure = @component.climate}
+        "minecraft:creature_spawn_probability" = :Key {types = #dict, structure = @component.creature_spawn_probability}
+        "minecraft:frozen_ocean_surface" = :Key {types = #dict, structure = @component.surface_parameters}
+        "minecraft:humidity" = :Key {types = #dict, structure = @component.humidity}
+        "minecraft:map_tints" = :Key {types = #dict, structure = @component.map_tints}
+        "minecraft:mesa_surface" = :Key {types = #dict, structure = @component.mesa_surface}
+        "minecraft:mountain_parameters" = :Key {types = #dict, structure = @component.mountain_parameters}
+        "minecraft:multinoise_generation_rules" = :Key {types = #dict, structure = @component.multinoise_generation_rules}
+        "minecraft:nether_generation_rules" = :Key {types = #dict, structure = @component.nether_generation_rules, tags = [@t/outdated]}
+        "minecraft:nether_surface" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:overworld_generation_rules" = :Key {types = #dict, structure = @component.overworld_generation_rules}
+        "minecraft:overworld_height" = :Key {types = #dict, structure = @component.overworld_height}
+        "minecraft:overworld_surface" = :Key {types = #dict, structure = @component.surface_parameters, tags = [@t/outdated]}
+        "minecraft:partially_frozen" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:surface_builder" = :Key {types = #dict, structure = @component.surface_builder}
+        "minecraft:surface_material_adjustments" = :Key {types = #dict, structure = @component.surface_material_adjustments}
+        "minecraft:surface_parameters" = :Key {types = #dict, structure = @component.surface_parameters}
+        "minecraft:swamp_surface" = :Key {types = #dict, structure = @component.surface_parameters}
+        "minecraft:tags" = :Key {types = #dict, structure = @component.tags}
+        "minecraft:the_end_surface" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:world_generation_rules" = :Key {types = #dict, structure = @component.world_generation_rules, tags = [@t/outdated]}
+    } + @old_components
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "component", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+old_components {
+    "animal" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "bamboo" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "basalt_deltas" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "beach" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "bee_habitat" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "birch" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "caves" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "cherry_grove" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "cold" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "crimson_forest" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "deep" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "deep_dark" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "desert" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "dripstone" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "dripstone_caves" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "edge" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "extreme_hills" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "flower_forest" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "forest" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "forest_generation" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "frozen" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "frozen_peaks" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "grove" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "hills" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "ice" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "ice_plains" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "jagged_peaks" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "jungle" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "lukewarm" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "lush_caves" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mangrove_swamp" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "meadow" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mega" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mesa" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "monster" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mooshroom_island" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mountain" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mountain_grove" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mountain_meadow" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mountains" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "mutated" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "nether" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "nether_wastes" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "netherwart_forest" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "no_legacy_worldgen" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "ocean" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "overworld" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "overworld_generation" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "plains" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "plateau" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "rare" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "river" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "roofed" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "savanna" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "shore" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "snowy_slopes" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "soulsand_valley" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "spawn_endermen" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "spawn_few_piglins" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "spawn_few_zombified_piglins" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "spawn_ghast" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "spawn_magma_cubes" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "spawn_many_magma_cubes" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "spawn_piglin" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "spawn_zombified_piglin" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "stone" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "swamp" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "taiga" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "the_end" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "warm" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+    "warped_forest" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated, @t/biome_tag_component]}
+}
+component.capped_surface inherit temp/SortedKeymap {
+    keys = {
+        "beach_material" = :Key {types = #str}
+        "ceiling_materials" = :Key {types = #list, structure = @block_list}
+        "floor_materials" = :Key {types = #list, structure = @block_list}
+        "foundation_material" = :Key {types = #str}
+        "sea_material" = :Key {types = #str}
+    }
+}
+component.climate inherit temp/SortedKeymap {
+    keys = {
+        "ash" = :Key {types = #float}
+        "blue_spores" = :Key {types = #float}
+        "downfall" = :Key {types = #float}
+        "red_spores" = :Key {types = #float}
+        "snow_accumulation" = :Key {types = #list, structure = @range_decimal}
+        "temperature" = :Key {types = #float}
+        "white_ash" = :Key {types = #float}
+    }
+}
+component.creature_spawn_probability inherit temp/SortedKeymap {
+    keys = {
+        "probability" = :Key {types = #float}
+    }
+}
+component.humidity inherit temp/SortedKeymap {
+    keys = {
+        "is_humid" = :Key {types = #bool}
+    }
+}
+component.map_tints inherit temp/SortedKeymap {
+    keys = {
+        "grass" = :Key {types = #dict, structure = @component.map_tints:grass}
+        "foliage" = :Key {types = #str}
+    }
+}
+component.map_tints:grass :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "noise" = :Key {types = #dict, structure = @component.map_tints:grass.noise}
+        "tint" = :Key {types = #dict, structure = @component.map_tints:grass.tint}
+    }
+}
+component.map_tints:grass:all  {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+component.map_tints:grass.noise inherit temp/SortedKeymap {
+    keys = @component.map_tints:grass:all
+}
+component.map_tints:grass.tint inherit temp/SortedKeymap {
+    keys = @component.map_tints:grass:all + {
+        "tint" = :Key {types = #str}
+    }
+}
+component.mesa_surface inherit temp/SortedKeymap {
+    keys = {
+        "bryce_pillars" = :Key {types = #bool}
+        "clay_material" = :Key {types = #str}
+        "floor_depth" = :Key {types = #int, tags = [@t/outdated]}
+        "floor_material" = :Key {types = #str, tags = [@t/outdated]}
+        "foundation_material" = :Key {types = #str}
+        "hard_clay_material" = :Key {types = #str}
+        "has_forest" = :Key {types = #bool}
+        "mid_material" = :Key {types = #str}
+        "sea_floor_depth" = :Key {types = #int}
+        "sea_floor_material" = :Key {types = #str}
+        "sea_material" = :Key {types = #str}
+        "top_material" = :Key {types = [#dict, #str], structure = @block}
+    }
+}
+component.mountain_parameters inherit temp/SortedKeymap {
+    keys = {
+        "peaks_factor" = :Key {types = #int}
+        "steep_material_adjustment" = :Key {types = #dict, structure = @component.mountain_parameters:steep_material_adjustment}
+        "top_slide" = :Key {types = #dict, structure = @component.mountain_parameters:top_slide}
+    }
+}
+component.mountain_parameters:steep_material_adjustment inherit temp/SortedKeymap {
+    keys = {
+        "east_slopes" = :Key {types = #bool}
+        "material" = :Key {types = #str}
+        "north_slopes" = :Key {types = #bool}
+    }
+}
+component.mountain_parameters:top_slide inherit temp/SortedKeymap {
+    keys = {
+        "enabled" = :Key {types = #bool}
+    }
+}
+component.multinoise_generation_rules inherit temp/SortedKeymap {
+    keys = {
+        "target_altitude" = :Key {types = #float}
+        "target_humidity" = :Key {types = #float}
+        "target_temperature" = :Key {types = #float}
+        "target_weirdness" = :Key {types = #float}
+        "weight" = :Key {types = #float}
+    }
+}
+component.nether_generation_rules inherit temp/SortedKeymap {
+    keys = {
+        "target_altitude" = :Key {types = #float}
+        "target_humidity" = :Key {types = #float}
+        "target_temperature" = :Key {types = #float}
+        "target_weirdness" = :Key {types = #float}
+        "weight" = :Key {types = #float}
+    }
+}
+component.overworld_generation_rules inherit temp/SortedKeymap {
+    keys = {
+        "generate_for_climates" = :Key {types = [#list, #str], structure = @component.overworld_generation_rules:biome_references_group}
+        "hills_transformation" = :Key {types = [#list, #str], structure = @component.overworld_generation_rules:biome_references_group}
+        "mutate_transformation" = :Key {types = [#list, #str], structure = @component.overworld_generation_rules:biome_references_group}
+    }
+}
+component.overworld_generation_rules:biome_references_group :Union {
+    substructures = [
+        :Key {types = #list, structure = @component.overworld_generation_rules:biome_references},
+        :Key {types = #str},
+    ]
+}
+component.overworld_generation_rules:biome_references inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#list, #str]
+    value_structure = @component.overworld_generation_rules:biome_reference_group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "biome reference", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.overworld_generation_rules:biome_reference_group :Union {
+    substructures = [
+        :Key {types = #list, structure = @component.overworld_generation_rules:biome_reference},
+        :Key {types = #str},
+    ]
+}
+component.overworld_generation_rules:biome_reference inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#int, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "measure_length" = true, "print_all" = true, "print_flat" = true}
+    }
+}
+component.overworld_height inherit temp/SortedKeymap {
+    keys = {
+        "noise_params" = :Key {types = #list, structure = @range_float}
+        "noise_type" = :Key {types = #str}
+    }
+}
+component.surface_builder inherit temp/SortedKeymap {
+    keys = {
+        "builder" = :Key {types = #dict, structure = @component.surface_builder:builder}
+    }
+}
+component.surface_builder:builder :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:capped" = :Key {types = #dict, structure = @component.surface_builder:builder.capped}
+        "minecraft:frozen_ocean" = :Key {types = #dict, structure = @component.surface_builder:builder.overworld}
+        "minecraft:mesa" = :Key {types = #dict, structure = @component.surface_builder:builder.mesa}
+        "minecraft:overworld" = :Key {types = #dict, structure = @component.surface_builder:builder.overworld}
+        "minecraft:swamp" = :Key {types = #dict, structure = @component.surface_builder:builder.swamp}
+        "minecraft:the_end" = :Key {types = #dict, structure = @component.surface_builder:builder.the_end}
+    }
+}
+component.surface_builder:builder:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+component.surface_builder:builder.capped inherit temp/SortedKeymap {
+    keys = @component.surface_builder:builder:all + {
+        "beach_material" = :Key {types = #str}
+        "floor_materials" = :Key {types = #list, structure = @temp/named_list{$name="material"}}
+        "ceiling_materials" = :Key {types = #list, structure = @temp/named_list{$name="material"}}
+        "sea_material" = :Key {types = #str}
+        "foundation_material" = :Key {types = #str}
+    }
+}
+component.surface_builder:builder.mesa inherit temp/SortedKeymap {
+    keys = @component.surface_builder:builder:all + {
+        "bryce_pillars" = :Key {types = #bool}
+        "clay_material" = :Key {types = #str}
+        "hard_clay_material" = :Key {types = #str}
+        "has_forest" = :Key {types = #bool}
+    } + @component.surface_builder:builder.overworld:keys
+}
+component.surface_builder:builder.overworld:keys { // does not include :all
+    "sea_floor_depth" = :Key {types = #int}
+    "sea_floor_material" = :Key {types = #str}
+    "foundation_material" = :Key {types = #str}
+    "mid_material" = :Key {types = #str}
+    "top_material" = :Key {types = #str}
+    "sea_material" = :Key {types = #str}
+}
+component.surface_builder:builder.overworld inherit temp/SortedKeymap {
+    keys = @component.surface_builder:builder:all + @component.surface_builder:builder.overworld:keys
+}
+component.surface_builder:builder.swamp inherit temp/SortedKeymap {
+    keys = @component.surface_builder:builder:all + {
+        "max_puddle_depth_below_sea_level" = :Key {types = #int}
+    } + @component.surface_builder:builder.overworld:keys
+}
+component.surface_builder:builder.the_end inherit temp/SortedKeymap {
+    keys = @component.surface_builder:builder:all
+}
+component.surface_material_adjustments inherit temp/SortedKeymap {
+    keys = {
+        "adjustments" = :Key {types = #list, structure = @component.surface_material_adjustments:adjustments}
+    }
+}
+component.surface_material_adjustments:adjustments inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @component.surface_material_adjustments:adjustments.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "adjustment", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.surface_material_adjustments:adjustments.item inherit temp/SortedKeymap {
+    keys = {
+        "materials" = :Key {types = #dict, structure = @component.surface_material_adjustments:adjustments.item.materials}
+        "noise_range" = :Key {types = #list, structure = @range_float}
+        "height_range" = :Key {types = #list, structure = @range_molang}
+        "noise_frequency_scale" = :Key {types = #float}
+    }
+}
+component.surface_material_adjustments:adjustments.item.materials inherit temp/SortedKeymap {
+    keys = {
+        "foundation_material" = :Key {types = [#dict, #str], structure = @block}
+        "mid_material" = :Key {types = [#dict, #str], structure = @block}
+        "sea_floor_material" = :Key {types = [#dict, #str], structure = @block}
+        "top_material" = :Key {types = [#dict, #str], structure = @block}
+    }
+}
+component.surface_parameters inherit temp/SortedKeymap {
+    keys = {
+        "floor_depth" = :Key {types = #int, tags = [@t/outdated]}
+        "floor_material" = :Key {types = #str, tags = [@t/outdated]}
+        "foundation_material" = :Key {types = #str}
+        "mid_material" = :Key {types = [#dict, #str], structure = @block}
+        "sea_floor_depth" = :Key {types = #int}
+        "sea_floor_material" = :Key {types = #str}
+        "sea_material" = :Key {types = #str}
+        "top_material" = :Key {types = #str}
+    }
+}
+component.tags inherit temp/SortedKeymap {
+    keys = {
+        "tags" = :Key {types = #list, structure = @component.tags:tags}
+    }
+}
+component.tags:tags inherit temp/Dict {
+    allow_same_key_optimization = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    tags = @t/biome_tag
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "tag", "show_item_key" = false, "measure_length" = true, "print_all" = true, "print_flat" = true}
+    }
+}
+component.world_generation_rules inherit temp/SortedKeymap {
+    keys = {
+        "generate_for_climates" = :Key {types = [#list, #str], structure = @component.world_generation_rules:item.group}
+        "hills_transformation" = :Key {types = [#list, #str], structure = @component.world_generation_rules:item.group}
+        "mutate_transformation" = :Key {types = [#list, #str], structure = @component.world_generation_rules:item.group}
+    }
+}
+component.world_generation_rules:item.group :Union {
+    substructures = [
+        :Key {types = #list, structure = inherit temp/Dict {
+            allow_key_moves = false
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = [#list, #str]
+            value_structure = @component.world_generation_rules:item.item.group
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "climate", "measure_length" = true}
+            }
+        }},
+        :Key {types = #str},
+    ]
+}
+component.world_generation_rules:item.item.group :Union {
+    substructures = [
+        :Key {types = #list, structure = inherit temp/Dict {
+            allow_key_moves = false
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = [#str, #int]
+            value_structure = null
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "item", "measure_length" = true}
+            }
+        }},
+        :Key {types = #str},
+    ]
+}

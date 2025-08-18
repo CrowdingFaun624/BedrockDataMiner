@@ -1,0 +1,29 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_upscaling_configs"
+    $ files_key_structure = @temp/string
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "upscaling_configuration" = :Key {types = #dict, structure = @file_link}
+        "target_resolution" = :Key {types = #dict, structure = @target_resolution}
+    }
+}
+file_link inherit temp/SortedKeymap {
+    keys = {
+        "file" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+target_resolution inherit temp/SortedKeymap {
+    keys = {
+        "x" = :Key {types = #int}
+        "y" = :Key {types = #int}
+    }
+}

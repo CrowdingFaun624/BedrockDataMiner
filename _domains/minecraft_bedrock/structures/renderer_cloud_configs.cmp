@@ -1,0 +1,28 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_cloud_configs"
+    $ structure = @renderer_cloud_config
+}
+renderer_cloud_config inherit temp/SortedKeymap {
+    keys = {
+        "low" = :Key {types = #dict, structure = @file_link}
+        "medium" = :Key {types = #dict, structure = @file_link}
+        "high" = :Key {types = #dict, structure = @file_link}
+        "ultra" = :Key {types = #dict, structure = @file_link}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "setting"}
+    }
+}
+file_link inherit temp/SortedKeymap {
+    keys = {
+        "file" = :Key {types = #str}
+    }
+}

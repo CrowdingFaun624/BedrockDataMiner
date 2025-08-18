@@ -1,0 +1,59 @@
+/* Converted by CmpMigrator 0.1.9 */
+download_client :AccessorType {
+    accessor_class = %ZipAccessor
+    linked_accessors = {
+        "file" = @download{$location="client.zip"}
+    }
+}
+download_server :AccessorType {
+    accessor_class = %ZipAccessor
+    linked_accessors = {
+        "file" = @download{$location="server.zip"}
+    }
+}
+data_generator :AccessorType {
+    accessor_class = %ZipAccessor
+    linked_accessors = {
+        "file" = :AccessorType {
+            accessor_class = %minecraft_common!ArchivalAccessor
+            arguments = {"archive_location" = "G:/Archive/mcje", "file_name" = "data_generator.zip"}
+            linked_accessors = {
+                "source" = :AccessorType {
+                    accessor_class = %DataGeneratorAccessor
+                    arguments = {"java_location" = "C:/Program Files/Java/jdk-21/bin/java.exe"}
+                }
+            }
+        }
+    }
+}
+download_json inherit download {
+    $ location = "version.json"
+}
+experimental_zip :AccessorType {
+    accessor_class = %SingleDirectoryFileAccessor
+    linked_accessors = {
+        "directory" = :AccessorType {
+            accessor_class = %ZipAccessor
+            linked_accessors = {
+                "file" = @download{$location="version.zip"}
+            }
+        }
+    }
+}
+download_experimental_data_pack :AccessorType {
+    accessor_class = %ZipAccessor
+    linked_accessors = {
+        "file" = @download{$location="experimental_data_pack.zip"}
+    }
+}
+download abstract :AccessorType {
+    accessor_class = %minecraft_common!ArchivalAccessor
+    $ (str) location
+    arguments = {"archive_location" = "G:/Archive/mcje/", "file_name" = location}
+    linked_accessors = {
+        "source" = :AccessorType {
+            accessor_class = %DownloadAccessor
+            arguments = {"log" = @minecraft_java!logs/download_log, "location" = location}
+        }
+    }
+}

@@ -1,0 +1,1354 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "ui"}
+    }
+}
+any :Union {
+    substructures = [
+        :Key {types = #dict, structure = @any.dict},
+        :Key {types = #list, structure = @any.list},
+        :Key {types = #bool},
+        :Key {types = #float},
+        :Key {types = #int},
+        :Key {types = #null},
+        // I've noticed that for nested elements with changes only to their variables,
+        // it often gets confused between very similar elements.
+        :Key {types = #str, structure = @temp/string},
+    ]
+}
+any.dict inherit temp/Dict {
+    value_types = [#dict, #list, #bool, #float, #int, #null, #str]
+    allow_key_moves = false
+    value_structure = @any
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item"}
+    }
+}
+any.list inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#dict, #list, #bool, #float, #int, #null, #str]
+    value_structure = @any
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item"}
+    }
+}
+vector_float inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}
+vector_decimal inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}
+str_or_decimal_or_vector_decimal_or_str :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #list, structure = @vector_decimal_or_str},
+        :Key {types = #str},
+    ]
+}
+vector_decimal_or_str inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [@temp/decimal, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}
+str_or_vector_int :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @vector_int},
+    ]
+}
+str_or_vector_int_or_str :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @vector_int_or_str},
+    ]
+}
+str_or_vector_decimal_or_str :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @vector_decimal_or_str},
+    ]
+}
+str_or_vector_decimal :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @vector_decimal},
+    ]
+}
+str_or_vector_float :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @vector_float},
+    ]
+}
+vector_int_or_str inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#int, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/ui_normalize/
+            arguments = {"serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @namespaces
+        }
+    }
+}
+namespaces inherit temp/Dict {
+    value_types = #dict
+    value_structure = @elements
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "namespace", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+elements inherit temp/Dict {
+    value_types = #dict
+    value_structure = @element
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "element", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+element inherit temp/SortedKeymap {
+    // ui_normalize wraps each element with a dict of the element's type.
+    // the type is only needed to choose which branch, so it is ignored.
+    keys = {
+        "alpha" = :Key {types = #dict, structure = @animation}
+        "aseprite_flip_book" = :Key {types = #dict, structure = @animation}
+        "button" = :Key {types = #dict, structure = @element.button}
+        "carousel_label" = :Key {types = #dict, structure = @element.carousel_label, tags = [@t/outdated]}
+        "clip" = :Key {types = #dict, structure = @animation}
+        "collection_panel" = :Key {types = #dict, structure = @element.collection_panel}
+        "color" = :Key {types = #dict, structure = @animation}
+        "custom" = :Key {types = #dict, structure = @element.custom}
+        "dropdown" = :Key {types = #dict, structure = @element.dropdown}
+        "edit_box" = :Key {types = #dict, structure = @element.edit_box}
+        "factory" = :Key {types = #dict, structure = @element.factory}
+        "flip_book" = :Key {types = #dict, structure = @animation}
+        "grid" = :Key {types = #dict, structure = @element.grid}
+        "grid_item" = :Key {types = #dict, structure = @element.grid_item, tags = [@t/outdated]}
+        "grid_page_indicator" = :Key {types = #dict, structure = @element.grid_page_indicator, tags = [@t/outdated]}
+        "image" = :Key {types = #dict, structure = @element.image}
+        "image_cycler" = :Key {types = #dict, structure = @element.image_cycler}
+        "input_panel" = :Key {types = #dict, structure = @element.input_panel}
+        "label" = :Key {types = #dict, structure = @element.label}
+        "label_cycler" = :Key {types = #dict, structure = @element.label_cycler} // Note: not supported by wiki
+        "offset" = :Key {types = #dict, structure = @animation}
+        "panel" = :Key {types = #dict, structure = @element.panel}
+        "screen" = :Key {types = #dict, structure = @element.screen}
+        "scroll_track" = :Key {types = #dict, structure = @element.scroll_track}
+        "scroll_view" = :Key {types = #dict, structure = @element.scroll_view}
+        "scrollbar" = :Key {types = #dict, structure = @element.scrollbar}
+        "scrollbar_box" = :Key {types = #dict, structure = @element.scrollbar_box}
+        "scrollbar_track" = :Key {types = #dict, structure = @element.scrollbar_track}
+        "selection_wheel" = :Key {types = #dict, structure = @element.selection_wheel}
+        "size" = :Key {types = #dict, structure = @animation}
+        "slider" = :Key {types = #dict, structure = @element.slider}
+        "slider_box" = :Key {types = #dict, structure = @element.slider_box}
+        "stack_panel" = :Key {types = #dict, structure = @element.stack_panel}
+        "tab" = :Key {types = #dict, structure = @element.tab, tags = [@t/outdated]}
+        "toggle" = :Key {types = #dict, structure = @element.toggle}
+        "tooltip_trigger" = :Key {types = #dict, structure = @element.tooltip_trigger}
+        "unknown" = :Key {types = #dict, structure = @element.unknown}
+        "uv" = :Key {types = #dict, structure = @animation}
+        "wait" = :Key {types = #dict, structure = @animation}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"passthrough" = true}
+    }
+}
+animation :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = @separate_variables
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "$variables" = :Key {types = #dict, structure = @my_variables}
+            "anim_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+            "activated" = :Key {types = [#bool, #str]}
+            "destroy_at_end" = :Key {types = #str}
+            "duration" = :Key {types = [@temp/decimal, #str]}
+            "easing" = :Key {types = #str}
+            "end_event" = :Key {types = #str}
+            "fps" = :Key {types = [@temp/decimal, #str]}
+            "frame_count" = :Key {types = [#int, #str]}
+            "frame_step" = :Key {types = [@temp/decimal, #str]}
+            "from" = :Key {types = [@temp/decimal, #list, #str], structure = @str_or_decimal_or_vector_decimal_or_str}
+            "initial_uv" = :Key {types = #list, structure = @vector_int}
+            "looping" = :Key {types = [#bool, #str]}
+            "next" = :Key {types = #str}
+            "orientation" = :Key {types = #str}
+            "play_event" = :Key {types = #str}
+            "reset_event" = :Key {types = #str}
+            "resettable" = :Key {types = [#bool, #str]}
+            "reversible" = :Key {types = [#bool, #str]}
+            "scale_from_starting_alpha" = :Key {types = [#bool, #str]}
+            "start_event" = :Key {types = #str}
+            "to" = :Key {types = [@temp/decimal, #list, #str], structure = @str_or_decimal_or_vector_decimal_or_str}
+            "type" = :Key {types = #str}
+            "wait_until_rendered_to_play" = :Key {types = #bool}
+        }
+    }
+}
+animation_list :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #str
+            value_structure = @temp/string
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"measure_length" = true, "show_item_key" = false, "field" = "animation"}
+            }
+        }},
+    ]
+}
+bindings :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #dict
+            value_structure = @bindings.item
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "binding", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}
+bindings.item :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = @separate_variables
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "$variables" = :Key {types = #dict, structure = @my_variables}
+            "binding_collection_name" = :Key {types = #str}
+            "binding_collection_prefix" = :Key {types = #str}
+            "binding_condition" = :Key {types = #str}
+            "binding_name" = :Key {types = #str}
+            "binding_name_override" = :Key {types = [#bool, #str]}
+            "binding_type" = :Key {types = #str}
+            "ignored" = :Key {types = #str}
+            "resolve_sibling_scope" = :Key {types = [#bool, #str]}
+            "source_control_name" = :Key {types = #str}
+            "source_property_name" = :Key {types = #str}
+            "target_property_name" = :Key {types = #str}
+        }
+    }
+}
+button_mappings :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #dict
+            value_structure = @button_mappings.item
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "button mapping", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}
+button_mappings.item inherit temp/SortedKeymap {
+    keys = {
+        "button_up_right_of_first_refusal" = :Key {types = [#bool, #str]}
+        "condition" = :Key {types = #str, tags = [@t/outdated]}
+        "consume_event" = :Key {types = #bool}
+        "consumes_next_event" = :Key {types = #bool, tags = [@t/outdated]}
+        "content_panel_scope" = :Key {types = #bool, tags = [@t/outdated]}
+        "from_button_id" = :Key {types = #str, structure = @temp/string}
+        "handle_deselect" = :Key {types = [#bool, #str]}
+        "handle_select" = :Key {types = #bool}
+        "ignore_input_scope" = :Key {types = [#bool, #str]}
+        "ignored" = :Key {types = #str}
+        "input_mode_condition" = :Key {types = #str}
+        "mapping_type" = :Key {types = #str}
+        "scope" = :Key {types = #str}
+        "to_button_id" = :Key {types = #str, structure = @temp/string}
+    }
+}
+control_ids :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = inherit temp/Dict {
+            value_types = #str
+            value_structure = null
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "control id", "measure_length" = true}
+            }
+        }},
+    ]
+}
+str_or_control_list :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @control_list},
+    ]
+}
+control_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#str, #dict]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #str, structure = @temp/string},
+            :Key {types = #dict, structure = @control_list.item},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "control", "show_item_key" = false, "measure_length" = true}
+    }
+}
+control_list.item inherit temp/SortedKeymap {
+    keys = {
+        "control_name" = :Key {types = #str, structure = @temp/string}
+    }
+}
+controls :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #dict
+            value_structure = @control.item
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "control", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}
+control.item inherit temp/Dict {
+    value_types = #dict
+    key_structure = @temp/string {
+        max_square_length = 50000
+    }
+    value_structure = @element
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "element"}
+    }
+}
+factory :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = :Normalizer {
+            outer_types = #dict
+            inner_types = #dict
+            functions = @separate_variables
+            structure = inherit temp/SortedKeymap {
+                keys = {
+                    "$variables" = :Key {types = #dict, structure = @my_variables}
+                    "name" = :Key {types = #str}
+                    "control_ids" = :Key {types = [#dict, #str], structure = @control_ids}
+                    "control_name" = :Key {types = #str, tags = [@t/outdated]}
+                    "factory_variables" = :Key {types = [#str, #list], structure = @factory.factory_variables}
+                    "insert_location" = :Key {types = #str, tags = [@t/outdated]}
+                    "max_children_size" = :Key {types = [#int, #str], tags = [@t/outdated]}
+                    "max_size" = :Key {types = #int}
+                }
+            }
+        }},
+    ]
+}
+factory.factory_variables :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #str
+            value_structure = @temp/string
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "variable", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}
+focus_container_custom :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #dict
+            value_structure = @focus_container_custom.item
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "container", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}
+focus_container_custom.item inherit temp/SortedKeymap {
+    keys = {
+        "other_focus_container_name" = :Key {types = #str}
+        "focus_id_inside" = :Key {types = #str}
+    }
+}
+focus_mapping inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @focus_mapping.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "mapping", "show_item_key" = false, "measure_length" = true}
+    }
+}
+focus_mapping.item inherit temp/SortedKeymap {
+    keys = {
+        "focus_identifier" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @temp/string}
+        "focus_change_right" = :Key {types = #str}
+    }
+}
+images :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #dict
+            value_structure = @images.item
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "image", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}
+images.item inherit temp/SortedKeymap {
+    keys = {
+        "texture_path" = :Key {types = #str, structure = @temp/string}
+    }
+}
+modifications inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "modification", "show_item_key" = false, "measure_length" = true}
+    }
+}
+my_variables inherit temp/Dict {
+    value_types = [#null, #bool, #dict, #float, #int, #list, #str]
+    value_structure = @any
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "variable", "measure_length" = true}
+    }
+}
+property_bag :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @property_bag.dict},
+    ]
+}
+property_bag.dict inherit temp/SortedKeymap {
+    keys = {
+        "#anchored_offset_value" = :Key {types = [@temp/decimal, #str]}
+        "#anchored_offset_value_x" = :Key {types = [@temp/decimal, #str]}
+        "#anchored_offset_value_y" = :Key {types = [@temp/decimal, #str]}
+        "#banner_colors" = :Key {types = #str}
+        "#banner_patterns" = :Key {types = #str}
+        "#block_position" = :Key {types = [#list, #str], structure = @str_or_vector_int}
+        "#bottom_left_block" = :Key {types = [#list, #str], structure = @str_or_vector_int}
+        "#button_navigation" = :Key {types = [#int, #str], tags = [@t/outdated]}
+        "#buttons_visible" = :Key {types = [#bool, #str]}
+        "#category" = :Key {types = #str, tags = [@t/outdated]}
+        "#coin_prompt_color" = :Key {types = #str, tags = [@t/outdated]}
+        "#collapsed_show_more_visible_binding" = :Key {types = [#bool, #str]}
+        "#collection_index" = :Key {types = [#int, #str]}
+        "#collection_name" = :Key {types = #str}
+        "#collection_prefix" = :Key {types = #str}
+        "#common" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+        "#context" = :Key {types = #str}
+        "#control_name" = :Key {types = #str, tags = [@t/outdated]}
+        "#custom_rot_y" = :Key {types = [#float, #str]}
+        "#default_prompt_color" = :Key {types = #str, tags = [@t/outdated]}
+        "#default_visibility" = :Key {types = #bool}
+        "#disabled_filter_visible" = :Key {types = [#bool, #str]}
+        "#empty_star_texture" = :Key {types = #str}
+        "#entity_id" = :Key {types = [#str, #int]}
+        "#epic" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+        "#filled_star_texture" = :Key {types = #str}
+        "#filtered_light_multiplier" = :Key {types = [#float, #str]}
+        "#flying_item_renderer" = :Key {types = [#bool, #str]}
+        "#force_skin_update" = :Key {types = #str}
+        "#gesture_delta_source" = :Key {types = #str}
+        "#gesture_mouse_delta_x" = :Key {types = #str}
+        "#has_focus" = :Key {types = [#bool, #str]}
+        "#hover_slice" = :Key {types = [#int, #str]}
+        "#hover_text" = :Key {types = #str}
+        "#hyperlink" = :Key {types = #str}
+        "#image_name" = :Key {types = #str}
+        "#include_entities" = :Key {types = [#bool, #str]}
+        "#include_players" = :Key {types = [#bool, #str]}
+        "#index" = :Key {types = [#int, #str]}
+        "#info_type" = :Key {types = #str}
+        "#is_cycle_button_focused" = :Key {types = [#bool, #str]}
+        "#is_dropdown" = :Key {types = [#bool, #str]}
+        "#is_featured" = :Key {types = [#bool, #str]}
+        "#is_left" = :Key {types = [#bool, #str]}
+        "#is_skins" = :Key {types = [#bool, #str]}
+        "#item_custom_color" = :Key {types = [#int, #str]}
+        "#item_id_aux" = :Key {types = [#int, #str]}
+        "#item_pickup_time" = :Key {types = [#float, #str]}
+        "#legendary" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+        "#look_at_cursor" = :Key {types = [#bool, #str]}
+        "#max_upsell_offers" = :Key {types = [#int, #str], tags = [@t/outdated]}
+        "#modal_label_text" = :Key {types = #str}
+        "#modal_title_text" = :Key {types = #str}
+        "#no_buttons_visible" = :Key {types = [#bool, #str]}
+        "#open" = :Key {types = [#bool, #str]}
+        "#owned_incompatible_prompt_color" = :Key {types = [#bool, #str]}
+        "#pack_id" = :Key {types = [#int, #str]}
+        "#panel_title" = :Key {types = #str}
+        "#player_uuid" = :Key {types = #str}
+        "#playername" = :Key {types = #str}
+        "#progress_bar_tool_amount" = :Key {types = [#float, #str]}
+        "#progress_bar_visible" = :Key {types = [#bool, #str]}
+        "#property_field" = :Key {types = #str}
+        "#rare" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+        "#remove_blocks" = :Key {types = [#bool, #str]}
+        "#reset_group" = :Key {types = #str}
+        "#should_host" = :Key {types = [#bool, #str]}
+        "#single_button_visible" = :Key {types = [#bool, #str]}
+        "#size_binding_x" = :Key {types = [@temp/decimal, #str]}
+        "#size_binding_y" = :Key {types = [@temp/decimal, #str]}
+        "#skin_idx" = :Key {types = [#int, #str]}
+        "#skin_rotation" = :Key {types = [#bool, #str]}
+        "#slider_steps" = :Key {types = [@temp/decimal, #str]}
+        "#slider_timeout" = :Key {types = [@temp/decimal, #str]}
+        "#slider_value" = :Key {types = [@temp/decimal, #str]}
+        "#start_selected" = :Key {types = [#bool, #str]}
+        "#sub_command" = :Key {types = #str}
+        "#text" = :Key {types = #str}
+        "#timer_duration" = :Key {types = [@temp/decimal, #str]}
+        "#timer_field_count_to_show" = :Key {types = [@temp/decimal, #str]}
+        "#toggle_state" = :Key {types = [#bool, #str]}
+        "#top_right_block" = :Key {types = [#list, #str], structure = @str_or_vector_int}
+        "#tts_dialog_body" = :Key {types = #str}
+        "#tts_dialog_title" = :Key {types = #str}
+        "#two_buttons_visible" = :Key {types = [#bool, #str]}
+        "#uncommon" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+        "#use_heart_offset" = :Key {types = [#bool, #str]}
+        "#using_ellipses" = :Key {types = [#bool, #str]}
+        "#visible" = :Key {types = [#bool, #str]}
+        "#visible_after_x_ratings" = :Key {types = #str, tags = [@t/outdated]}
+        "#x_padding" = :Key {types = [@temp/decimal, #str]}
+        "$tab_content" = :Key {types = #str}
+        "classic_radio_button_state" = :Key {types = [#str, #bool]}
+        "control_id" = :Key {types = #str, tags = [@t/outdated]}
+        "drop_shadow" = :Key {types = [#bool, #str]}
+        "entity_type" = :Key {types = #str}
+        "experimental_radio_button_state" = :Key {types = [#str, #bool]}
+        "flying_item_banner_patterns" = :Key {types = #str}
+        "flying_item_banner_colors" = :Key {types = #str}
+        "flying_item_count" = :Key {types = [#int, #str]}
+        "flying_item_destination_scale" = :Key {types = [#float, #str]}
+        "flying_item_destination_position_x" = :Key {types = [#float, #str]}
+        "flying_item_destination_position_y" = :Key {types = [#float, #str]}
+        "flying_item_custom_color" = :Key {types = [#int, #str]}
+        "flying_item_origin_scale" = :Key {types = [#float, #str]}
+        "flying_item_original_position_x" = :Key {types = [#float, #str]}
+        "flying_item_original_position_y" = :Key {types = [#float, #str]}
+        "force_update" = :Key {types = [#bool, #str]}
+        "is_durability" = :Key {types = [#bool, #str]}
+        "is_fixed_inventory" = :Key {types = [#bool, #str]}
+        "is_local" = :Key {types = [#bool, #str]}
+        "is_storage_bar" = :Key {types = [#bool, #str]}
+        "name" = :Key {types = #str, tags = [@t/outdated]}
+        "opacity_override" = :Key {types = [#float, #str]}
+        "reset_group" = :Key {types = #str, tags = [@t/outdated]}
+        "round_up" = :Key {types = [#bool, #str]}
+        "round_value" = :Key {types = [#bool, #str]}
+        "skin_pack_collection_name" = :Key {types = #str}
+        "timer_duration" = :Key {types = [#int, #str]}
+    }
+}
+renderer_properties inherit temp/SortedKeymap {
+    keys = {
+        "use_factory" = :Key {types = #bool}
+        "margin" = :Key {types = @temp/decimal}
+    }
+}
+separate_variables :Function {
+    function = %scripts/normalizers/normalizers/ui_separate_variables
+}
+sounds inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @sound
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sound", "show_item_key" = false, "measure_length" = true}
+    }
+}
+sound inherit temp/SortedKeymap {
+    keys = {
+        "event_type" = :Key {types = #str, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "min_seconds_between_plays" = :Key {types = #float}
+        "sound_name" = :Key {types = #str, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "sound_pitch" = :Key {types = #float}
+        "sound_volume" = :Key {types = #float}
+    }
+}
+text_labels :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #str
+            value_structure = @temp/string
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "label", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}
+variables :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @variables.item},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #dict
+            value_structure = @variables.item
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "variable", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}
+variables.item :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = @separate_variables
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "bindings" = :Key {types = [#list, #str], structure = @bindings}
+            "focus_navigation_mode_left" = :Key {types = #str, tags = [@t/outdated]}
+            "focus_container_custom_left" = :Key {types = #str, tags = [@t/outdated]}
+            "focus_wrap_enabled" = :Key {types = [#bool, #str], tags = [@t/outdated]}
+            "font_scale_factor" = :Key {types = @temp/decimal, tags = [@t/outdated]}
+            "ignored" = :Key {types = #str}
+            "offset" = :Key {types = #list, structure = @vector_int, tags = [@t/outdated]}
+            "requires" = :Key {types = #str}
+            "scroll_report" = :Key {types = #list, structure = @control_list, tags = [@t/outdated]}
+            "size" = :Key {types = [#list, #str], structure = @str_or_vector_decimal_or_str, tags = [@t/outdated]}
+            "visible" = :Key {types = #bool}
+            "$variables" = :Key {types = #dict, structure = @my_variables}
+        }
+    }
+}
+common.all {
+    "$variables" = :Key {types = #dict, structure = @my_variables}
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+common.button {
+    "default_control" = :Key {types = #str}
+    "hover_control" = :Key {types = #str}
+    "locked_control" = :Key {types = #str}
+    "pressed_control" = :Key {types = #str}
+}
+common.carousel_text {
+    "always_rotate" = :Key {types = #bool}
+    "hover_alpha" = :Key {types = #float}
+    "hover_color" = :Key {types = #list, structure = @vector_float}
+    "pressed_alpha" = :Key {types = #float}
+    "pressed_color" = :Key {types = #list, structure = @vector_float}
+    "rotate_speed" = :Key {types = @temp/decimal}
+}
+common.collection {
+    "collection_name" = :Key {types = #str}
+}
+common.control {
+    "+controls" = :Key {types = [#list, #str], structure = @controls}
+    "alignment" = :Key {types = #str, tags = [@t/outdated]}
+    "allow_clipping" = :Key {types = [#bool, #str]}
+    "alpha" = :Key {types = [@temp/decimal, #str]}
+    "animation_reset_name" = :Key {types = #str}
+    "anims" = :Key {types = [#list, #str], structure = @animation_list}
+    "clips_children" = :Key {types = [#bool, #str]}
+    "clip_offset" = :Key {types = #list, structure = @vector_int}
+    "clip_state_change_event" = :Key {types = #str}
+    "collection_index" = :Key {types = [#int, #str]}
+    "controls" = :Key {types = [#list, #str], structure = @controls}
+    "disable_anim_fast_forward" = :Key {types = [#bool, #str]}
+    "enable_scissor_test" = :Key {types = [#bool, #str]}
+    "enabled" = :Key {types = [#bool, #str]}
+    "grid_position" = :Key {types = [#list, #str], structure = @str_or_vector_int}
+    "ignored" = :Key {types = [#bool, #str]}
+    "layer" = :Key {types = [#int, #str]}
+    "modifications" = :Key {types = #list, structure = @modifications}
+    "propagate_alpha" = :Key {types = [#bool, #str]}
+    "property_bag" = :Key {types = [#dict, #str], structure = @property_bag}
+    "renderer" = :Key {types = #str}
+    "renderer_properties" = :Key {types = #dict, structure = @renderer_properties}
+    "scroll_report" = :Key {types = [#list, #str], structure = @str_or_control_list, tags = [@t/outdated]}
+    "selected" = :Key {types = [#bool, #str]}
+    "use_child_anchors" = :Key {types = [#bool, #str]}
+    "variables" = :Key {types = [#list, #dict, #str], structure = @variables}
+    "visible" = :Key {types = [#bool, #str]}
+    "z_order" = :Key {types = [#int, #str], tags = [@t/outdated]}
+}
+common.custom_render {
+    "background_color" = :Key {types = #str, tags = [@t/outdated]}
+    "camera_tilt_degrees" = :Key {types = [#int, #str]}
+    "color1" = :Key {types = [#list, #str], structure = @str_or_vector_decimal}
+    "color2" = :Key {types = [#list, #str], structure = @str_or_vector_decimal}
+    "end_event" = :Key {types = #str}
+    "full_storage_color" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+    "hover_text_max_width" = :Key {types = #str}
+    "primary_color" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+    "renderer" = :Key {types = #str}
+    "replaced_while_inactive" = :Key {types = #bool}
+    "rotation" = :Key {types = [#int, #str]}
+    "rotation_x" = :Key {types = [#int, #str]}
+    "rotation_y" = :Key {types = [#int, #str]}
+    "secondary_color" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+    "starting_rotation" = :Key {types = [#int, #str]}
+    "text_color" = :Key {types = #str}
+    "use_player_paperdoll" = :Key {types = #bool, tags = [@t/outdated]}
+    "use_selected_skin" = :Key {types = [#bool, #str]}
+    "use_skin_gui_scale" = :Key {types = [#bool, #str]}
+    "use_uuid" = :Key {types = #bool, tags = [@t/outdated]}
+}
+common.data_binding {
+    "bindings" = :Key {types = [#list, #str], structure = @bindings}
+    "binding_collection_name" = :Key {types = #str, tags = [@t/outdated]}
+}
+common.dropdown {
+    "dropdown_name" = :Key {types = #str}
+    "dropdown_content_control" = :Key {types = #str}
+    "dropdown_area" = :Key {types = #str}
+}
+common.factory {
+    "control_ids" = :Key {types = [#dict, #str], structure = @control_ids}
+    "control_name" = :Key {types = #str}
+    "factory_variables" = :Key {types = [#str, #list], structure = @factory.factory_variables, tags = [@t/outdated]}
+}
+common.focus {
+    "default_focus_precedence" = :Key {types = [#int, #str]}
+    "focus_change_down" = :Key {types = #str}
+    "focus_change_left" = :Key {types = #str}
+    "focus_change_right" = :Key {types = #str}
+    "focus_change_up" = :Key {types = #str}
+    "focus_container" = :Key {types = [#bool, #str]}
+    "focus_container_custom_down" = :Key {types = [#list, #str], structure = @focus_container_custom}
+    "focus_container_custom_left" = :Key {types = [#list, #str], structure = @focus_container_custom}
+    "focus_container_custom_right" = :Key {types = [#list, #str], structure = @focus_container_custom}
+    "focus_container_custom_up" = :Key {types = [#list, #str], structure = @focus_container_custom}
+    "focus_enabled" = :Key {types = [#bool, #str]}
+    "focus_identifier" = :Key {types = #str}
+    "focus_magnet_enabled" = :Key {types = [#bool, #str]}
+    "focus_mapping" = :Key {types = #list, structure = @focus_mapping}
+    "focus_nagivation_mode_down" = :Key {types = #str, tags = [@t/outdated]}
+    "focus_nagivation_mode_left" = :Key {types = #str, tags = [@t/outdated]}
+    "focus_nagivation_mode_right" = :Key {types = #str, tags = [@t/outdated]}
+    "focus_nagivation_mode_up" = :Key {types = #str, tags = [@t/outdated]}
+    "focus_navigation_mode_down" = :Key {types = #str}
+    "focus_navigation_mode_left" = :Key {types = #str}
+    "focus_navigation_mode_right" = :Key {types = #str}
+    "focus_navigation_mode_up" = :Key {types = #str}
+    "focus_wrap_enabled" = :Key {types = [#bool, #str]}
+    "persona_focus_precedence" = :Key {types = #str, tags = [@t/outdated]}
+    "use_last_focus" = :Key {types = [#bool, #str]}
+}
+common.grid {
+    "cycler_manager_size_control_target" = :Key {types = #str, tags = [@t/outdated]}
+    "grid_dimension_binding" = :Key {types = #str}
+    "grid_dimensions" = :Key {types = [#list, #str], structure = @str_or_vector_int}
+    "grid_fill_direction" = :Key {types = #str}
+    "grid_item_template" = :Key {types = #str}
+    "grid_item_when_current" = :Key {types = #str, tags = [@t/outdated]}
+    "grid_item_when_not_current" = :Key {types = #str, tags = [@t/outdated]}
+    "grid_rescaling_type" = :Key {types = #str}
+    "maximum_grid_items" = :Key {types = [#int, #str]}
+    "precached_grid_item_count" = :Key {types = [#int, #str]}
+}
+common.image_cycler {
+    "images" = :Key {types = [#str, #list], structure = @images}
+}
+common.input {
+    "always_handle_controller_direction" = :Key {types = #bool}
+    "always_handle_pointer" = :Key {types = #bool}
+    "always_listen_to_input" = :Key {types = #bool}
+    "button_mappings" = :Key {types = [#list, #str], structure = @button_mappings}
+    "consume_event" = :Key {types = #bool}
+    "consume_hover_events" = :Key {types = [#bool, #str]}
+    "gesture_tracking_button" = :Key {types = #str}
+    "hover_enabled" = :Key {types = #bool}
+    "inline_modal" = :Key {types = #bool}
+    "modal" = :Key {types = #bool}
+    "prevent_touch_input" = :Key {types = #bool}
+}
+common.label_cycler {
+    "target_cycler_to_compare" = :Key {types = #str}
+    "text_labels" = :Key {types = [#str, #list], structure = @text_labels}
+}
+common.layout {
+    "anchor_from" = :Key {types = #str}
+    "anchor_to" = :Key {types = #str}
+    "contained" = :Key {types = #bool}
+    "draggable" = :Key {types = #str}
+    "follows_cursor" = :Key {types = #bool}
+    "inherit_max_sibling_height" = :Key {types = [#bool, #str]}
+    "inherit_max_sibling_width" = :Key {types = #bool}
+    "max_size" = :Key {types = [#list, #str], structure = @str_or_vector_int_or_str}
+    "min_size" = :Key {types = [#list, #str], structure = @str_or_vector_int_or_str}
+    "offset" = :Key {types = [#list, #str], structure = @str_or_vector_decimal_or_str}
+    "size" = :Key {types = [#list, #str], structure = @str_or_vector_decimal_or_str}
+    "use_anchored_offset" = :Key {types = #bool}
+}
+common.screen {
+    "absorbs_input" = :Key {types = [#bool, #str]}
+    "always_accepts_input" = :Key {types = [#bool, #str]}
+    "cache_screen" = :Key {types = [#bool, #str]}
+    "close_on_player_hurt" = :Key {types = [#bool, #str]}
+    "force_render_below" = :Key {types = [#bool, #str]}
+    "gamepad_cursor" = :Key {types = [#bool, #str]}
+    "gamepad_cursor_deflection_mode" = :Key {types = [#bool, #str]}
+    "is_modal" = :Key {types = [#bool, #str]}
+    "is_showing_menu" = :Key {types = [#bool, #str]}
+    "load_screen_immediately" = :Key {types = [#bool, #str]}
+    "low_frequency_rendering" = :Key {types = [#bool, #str]}
+    "render_game_behind" = :Key {types = [#bool, #str]}
+    "render_only_when_topmost" = :Key {types = [#bool, #str]}
+    "screen_draws_last" = :Key {types = [#bool, #str]}
+    "screen_not_flushable" = :Key {types = [#bool, #str]}
+    "send_telemetry" = :Key {types = [#bool, #str]}
+    "should_be_skipped_during_automation" = :Key {types = [#bool, #str]}
+    "should_steal_mouse" = :Key {types = [#bool, #str]}
+    "use_custom_pocket_toast" = :Key {types = #str}
+    "vr_mode" = :Key {types = [#bool, #str]}
+}
+common.scroll_view {
+    "allow_scroll_even_when_content_fits" = :Key {types = [#bool, #str], tags = [@t/outdated]}
+    "always_handle_scrolling" = :Key {types = [#bool, #str]}
+    "content_panel" = :Key {types = #str, tags = [@t/outdated]}
+    "dampening" = :Key {types = #float, tags = [@t/outdated]}
+    "gesture_control_enabled" = :Key {types = [#bool, #str]}
+    "jump_to_bottom_on_update" = :Key {types = [#bool, #str]}
+    "lock_touch_scrolling" = :Key {types = #str}
+    "scroll_box_and_track_panel" = :Key {types = #str}
+    "scroll_content" = :Key {types = #str}
+    "scroll_speed" = :Key {types = [@temp/decimal, #str]}
+    "scroll_view_port" = :Key {types = #str}
+    "scroll_view_space_to_add_on_focus_change_down" = :Key {types = #str, tags = [@t/outdated]}
+    "scroll_view_space_to_add_on_focus_change_left" = :Key {types = #str, tags = [@t/outdated]}
+    "scroll_view_space_to_add_on_focus_change_right" = :Key {types = #str, tags = [@t/outdated]}
+    "scroll_view_space_to_add_on_focus_change_up" = :Key {types = #str, tags = [@t/outdated]}
+    "scrollbar_always_visible" = :Key {types = [#bool, #str]}
+    "scrollbar_box" = :Key {types = #str}
+    "scrollbar_box_track_button" = :Key {types = #str, tags = [@t/outdated]}
+    "scrollbar_track" = :Key {types = #str}
+    "scrollbar_touch_button" = :Key {types = #str}
+    "scrollbar_track_button" = :Key {types = #str}
+    "touch_mode" = :Key {types = [#bool, #str]}
+    "touch_scroll_box" = :Key {types = #str, tags = [@t/outdated]}
+}
+common.selection_wheel {
+    "analog_button_name" = :Key {types = #str}
+    "button_name" = :Key {types = #str}
+    "hover_button_name" = :Key {types = #str}
+    "initial_button_slice" = :Key {types = [#int, #str]}
+    "inner_radius" = :Key {types = [@temp/decimal, #str]}
+    "iterate_left_button_name" = :Key {types = #str}
+    "iterate_right_button_name" = :Key {types = #str}
+    "outer_radius" = :Key {types = [@temp/decimal, #str]}
+    "select_button_name" = :Key {types = #str}
+    "slice_count" = :Key {types = [#int, #str]}
+    "state_controls" = :Key {types = #list, structure = @control_list}
+}
+common.slider {
+    "background_control" = :Key {types = #str}
+    "background_hover_control" = :Key {types = #str}
+    "progress_control" = :Key {types = #str}
+    "progress_hover_control" = :Key {types = #str}
+    "slider_box_control" = :Key {types = #str}
+    "slider_collection_name" = :Key {types = #str}
+    "slider_deselected_button" = :Key {types = #str}
+    "slider_direction" = :Key {types = #str}
+    "slider_inverted" = :Key {types = #bool, tags = [@t/outdated]}
+    "slider_name" = :Key {types = #str}
+    "slider_render_bar_background_color" = :Key {types = #str, tags = [@t/outdated]}
+    "slider_render_bar_background_hover_color" = :Key {types = #str, tags = [@t/outdated]}
+    "slider_render_bar_progress_color" = :Key {types = #str, tags = [@t/outdated]}
+    "slider_render_bar_progress_hover_color" = :Key {types = #str, tags = [@t/outdated]}
+    "slider_render_bar_outline_color" = :Key {types = #str, tags = [@t/outdated]}
+    "slider_render_bar_outline_hover_color" = :Key {types = #str, tags = [@t/outdated]}
+    "slider_select_on_hover" = :Key {types = [#bool, #str]}
+    "slider_selected_button" = :Key {types = #str}
+    "slider_small_decrease_button" = :Key {types = #str}
+    "slider_small_increase_button" = :Key {types = #str}
+    "slider_steps" = :Key {types = [#int, #str]}
+    "slider_timeout" = :Key {types = [@temp/decimal, #str]}
+    "slider_track_button" = :Key {types = #str}
+}
+common.slider_box {
+    "default_control" = :Key {types = #str}
+    "hover_control" = :Key {types = #str}
+    "indent_control" = :Key {types = #str}
+    "locked_control" = :Key {types = #str}
+}
+common.sound {
+    "sound_name" = :Key {types = #str}
+    "sound_pitch" = :Key {types = [#float, #str]}
+    "sound_volume" = :Key {types = [@temp/decimal, #str]}
+    "sounds" = :Key {types = #list, structure = @sounds}
+}
+common.sprite {
+    "allow_debug_missing_texture" = :Key {types = [#bool, #str]}
+    "base_size" = :Key {types = [#list, #str], structure = @str_or_vector_int}
+    "bilinear" = :Key {types = [#bool, #str]}
+    "clip_direction" = :Key {types = #str}
+    "clip_pixelperfect" = :Key {types = [#bool, #str]}
+    "clip_ratio" = :Key {types = [#float, #str]}
+    "color" = :Key {types = [#list, #str], structure = @str_or_vector_decimal}
+    "color_corrected" = :Key {types = [#bool, #str], tags = [@t/outdated]}
+    "fill" = :Key {types = [#bool, #str]}
+    "force_texture_reload" = :Key {types = [#bool, #str]}
+    "grayscale" = :Key {types = [#bool, #str]}
+    "keep_ratio" = :Key {types = [#bool, #str]}
+    "nineslice_size" = :Key {types = [@temp/decimal, #list, #str], structure = @str_or_decimal_or_vector_decimal_or_str}
+    "pixel_perfect" = :Key {types = #bool}
+    "texture" = :Key {types = #str}
+    "texture_file_system" = :Key {types = #str}
+    "texture_source" = :Key {types = #str, tags = [@t/outdated]}
+    "tiled" = :Key {types = [#bool, #str]}
+    "tiled_scale" = :Key {types = [#list, #str], structure = @str_or_vector_decimal}
+    "uv" = :Key {types = [#list, #str], structure = @str_or_vector_int}
+    "uv_size" = :Key {types = [#list, #str], structure = @str_or_vector_int}
+    "zip_folder" = :Key {types = #str}
+}
+common.stack_panel {
+    "orientation" = :Key {types = #str}
+}
+common.tab {
+    "tab_content" = :Key {types = #str}
+    "tab_control" = :Key {types = #str}
+    "tab_group" = :Key {types = [#int, #str]}
+    "tab_index" = :Key {types = [#int, #str]}
+}
+common.text {
+    "backup_font_type" = :Key {types = #str}
+    "clip" = :Key {types = [#bool, #str], tags = [@t/outdated]}
+    "color" = :Key {types = [#list, #str], structure = @str_or_vector_decimal}
+    "enable_profanity_filter" = :Key {types = [#bool, #str]}
+    "font_scale_factor" = :Key {types = [@temp/decimal, #str]}
+    "font_size" = :Key {types = #str}
+    "font_type" = :Key {types = #str}
+    "hide_hyphen" = :Key {types = [#bool, #str]}
+    "line_padding" = :Key {types = [@temp/decimal, #str]}
+    "localize" = :Key {types = [#bool, #str]}
+    "locked_alpha" = :Key {types = [#float, #str]}
+    "locked_color" = :Key {types = [#list, #str], structure = @str_or_vector_float}
+    "notify_ellipses_sibling" = :Key {types = [#bool, #str]}
+    "notify_on_ellipses" = :Key {types = #list, structure = @control_list}
+    "place_holder_text" = :Key {types = #str, tags = [@t/outdated]}
+    "place_holder_text_color" = :Key {types = #str, tags = [@t/outdated]}
+    "rune_font" = :Key {types = #bool, tags = [@t/outdated]}
+    "shadow" = :Key {types = [#bool, #str]}
+    "text" = :Key {types = #str}
+    "text_alignment" = :Key {types = #str}
+    "use_place_holder" = :Key {types = [#bool, #str], tags = [@t/outdated]}
+    "wrap" = :Key {types = [#bool, #str], tags = [@t/outdated]}
+}
+common.text_edit {
+    "always_listening" = :Key {types = [#bool, #str]}
+    "can_be_deselected" = :Key {types = [#bool, #str]}
+    "constrain_to_rect" = :Key {types = [#bool, #str]}
+    "enabled_newline" = :Key {types = [#bool, #str]}
+    "max_length" = :Key {types = [#int, #str]}
+    "place_holder_control" = :Key {types = #str}
+    "place_holder_text_hover_color" = :Key {types = #str}
+    "text_box_name" = :Key {types = #str}
+    "text_control" = :Key {types = #str}
+    "text_edit_box_grid_collection_name" = :Key {types = #str}
+    "text_type" = :Key {types = #str}
+    "virtual_keyboard_buffer_control" = :Key {types = [#bool, #str]}
+}
+common.toggle {
+    "checked_control" = :Key {types = #str}
+    "checked_hover_control" = :Key {types = #str}
+    "checked_locked_control" = :Key {types = #str}
+    "checked_locked_hover_control" = :Key {types = #str}
+    "enable_directional_toggling" = :Key {types = [#bool, #str]}
+    "radio_toggle_group" = :Key {types = [#bool, #str]}
+    "reset_on_lost_focus" = :Key {types = [#bool, #str]}
+    "toggle_default_state" = :Key {types = [#bool, #str]}
+    "toggle_grid_collection_name" = :Key {types = [#bool, #str]}
+    "toggle_group_forced_index" = :Key {types = [#bool, #str, #int]}
+    "toggle_group_default_selected" = :Key {types = [#bool, #int, #str]}
+    "toggle_name" = :Key {types = #str}
+    "toggle_off_button" = :Key {types = #str}
+    "toggle_on_button" = :Key {types = #str}
+    "toggle_on_hover" = :Key {types = #str}
+    "unchecked_control" = :Key {types = #str}
+    "unchecked_hover_control" = :Key {types = #str}
+    "unchecked_locked_control" = :Key {types = #str}
+    "unchecked_locked_hover_control" = :Key {types = #str}
+}
+common.tooltip_trigger {
+    "tooltip_top_content_control" = :Key {types = #str}
+    "tooltip_bottom_content_control" = :Key {types = #str}
+    "tooltip_area" = :Key {types = #str}
+    "tooltip_name" = :Key {types = #str}
+}
+common.tts {
+    "priority" = :Key {types = [#int, #str]}
+    "text_tts" = :Key {types = #str}
+    "tooltip_tts_value" = :Key {types = #str}
+    "tts_control_header" = :Key {types = #str}
+    "tts_control_type_order_priority" = :Key {types = [#int, #str]}
+    "tts_ignore_count" = :Key {types = [#bool, #str]}
+    "tts_ignore_subsections" = :Key {types = [#bool, #str]}
+    "tts_index" = :Key {types = #int, tags = [@t/outdated]}
+    "tts_index_order" = :Key {types = #int, tags = [@t/outdated]}
+    "tts_index_priority" = :Key {types = [#int, #str]}
+    "tts_inherit_siblings" = :Key {types = [#bool, #str]}
+    "tts_name" = :Key {types = #str}
+    "tts_override_control_value" = :Key {types = #str}
+    "tts_play_on_unchanged_focus_control" = :Key {types = [#bool, #str]}
+    "tts_section_header" = :Key {types = #str}
+    "tts_skip_children" = :Key {types = [#bool, #str]}
+    "tts_skip_message" = :Key {types = [#bool, #str]}
+    "tts_toggle_off" = :Key {types = #str}
+    "tts_toggle_on" = :Key {types = #str}
+    "tts_value_changed" = :Key {types = #str}
+    "tts_value_order_priority" = :Key {types = [#int, #str]}
+    "ttsSectionContainer" = :Key {types = [#bool, #str]}
+    "use_priority" = :Key {types = [#bool, #str]}
+}
+common.unknown {
+    "next_sub_page_button_name" = :Key {types = #str}
+    "prev_sub_page_button_name" = :Key {types = #str}
+    "reset_on_focus_lost" = :Key {types = #str}
+}
+element:abstract abstract :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = @separate_variables
+}
+element.button inherit element:abstract {
+    structure = @element.button:dict
+}
+element.button:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.button + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.sound + @common.tts + {
+        "debug" = :Key {types = #str, tags = [@t/outdated]}
+        "follows_cursor_inside_parent" = :Key {types = #bool}
+        "toggle_manage_groups" = :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #str
+            value_structure = null
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "group", "show_item_key" = false, "measure_length" = true}
+            }
+        }}
+        "toggle_manager_behavior" = :Key {types = #str}
+    }
+}
+element.carousel_label inherit element:abstract {
+    structure = @element.carousel_label:dict
+}
+element.carousel_label:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.carousel_text + @common.control + @common.data_binding + @common.input + @common.layout + @common.text
+}
+element.collection_panel inherit element:abstract {
+    structure = @element.collection_panel:dict
+}
+element.collection_panel:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.collection + @common.control + @common.data_binding + @common.layout + {
+        "factory" = :Key {types = [#dict, #str], structure = @factory}
+    }
+}
+element.custom inherit element:abstract {
+    structure = @element.custom:dict
+}
+element.custom:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.custom_render + @common.data_binding + @common.layout + @common.sprite
+}
+element.dropdown inherit element:abstract {
+    structure = @element.dropdown:dict
+}
+element.dropdown:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.dropdown + @common.focus + @common.input + @common.layout + @common.sound + @common.toggle
+}
+element.edit_box inherit element:abstract {
+    structure = @element.edit_box:dict
+}
+element.edit_box:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.button + @common.control + @ common.data_binding + @common.focus + @common.input + @common.layout + @common.text_edit + @common.tts
+}
+element.factory inherit element:abstract {
+    structure = @element.factory:dict
+}
+element.factory:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.factory + @common.layout
+}
+element.grid inherit element:abstract {
+    structure = @element.grid:dict
+}
+element.grid:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.collection + @common.control + @common.data_binding + @common.focus + @common.grid + @common.layout + @common.tts + {
+        "debug" = :Key {types = #str, tags = [@t/outdated]}
+        "factory" = :Key {types = [#dict, #str], structure = @factory, tags = [@t/outdated]}
+    }
+}
+element.grid_item inherit element:abstract {
+    structure = @element.grid_item:dict
+}
+element.grid_item:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.layout
+}
+element.grid_page_indicator inherit element:abstract {
+    structure = @element.grid_page_indicator:dict
+}
+element.grid_page_indicator:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.collection + @common.grid + @common.layout
+}
+element.image inherit element:abstract {
+    structure = @element.image:dict
+}
+element.image:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.focus + @common.layout + @common.sprite + @common.tts + {
+        "factory" = :Key {types = [#dict, #str], structure = @factory, tags = [@t/outdated]}
+    }
+}
+element.image_cycler inherit element:abstract {
+    structure = @element.image_cycler:dict
+}
+element.image_cycler:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.image_cycler + @common.layout
+}
+element.input_panel inherit element:abstract {
+    structure = @element.input_panel:dict
+}
+element.input_panel:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.sound + @common.tts + {
+        "debug" = :Key {types = #str}
+        "gamepad_deflection_mode" = :Key {types = [#bool, #str]}
+    }
+}
+element.label inherit element:abstract {
+    structure = @element.label:dict
+}
+element.label:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.layout + @common.text + @common.tts
+}
+element.label_cycler inherit element:abstract {
+    structure = @element.label_cycler:dict
+}
+element.label_cycler:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.label_cycler + @common.layout + @common.text
+}
+element.panel inherit element:abstract {
+    structure = @element.panel:dict
+}
+element.panel:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.tts + {
+        "debug" = :Key {types = #str}
+        "factory" = :Key {types = [#dict, #str], structure = @factory}
+        "ignoreCollectionItem" = :Key {types = [#bool, #str]}
+        "localize" = :Key {types = #str}
+    }
+}
+element.screen inherit element:abstract {
+    structure = @element.screen:dict
+}
+element.screen:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.input + @common.layout + @common.screen + {
+        "allow_scroll_override" = :Key {types = #bool, tags = [@t/outdated]}
+        "factory" = :Key {types = [#dict, #str], structure = @factory, tags = [@t/outdated]}
+        "right_stick_scroll_disabled" = :Key {types = #str, tags = [@t/outdated]}
+    }
+}
+element.scroll_track inherit element:abstract {
+    structure = @element.scroll_track:dict
+}
+element.scroll_track:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.focus + @common.input + @common.layout + @common.tts
+}
+element.scroll_view inherit element:abstract {
+    structure = @element.scroll_view:dict
+}
+element.scroll_view:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.input + @common.layout + @common.scroll_view
+}
+element.scrollbar inherit element:abstract {
+    structure = @element.scrollbar:dict
+}
+element.scrollbar:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.scroll_view + @common.sound
+}
+element.scrollbar_box inherit element:abstract {
+    structure = @element.scrollbar_box:dict
+}
+element.scrollbar_box:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.focus + @common.input + @common.layout + @common.sound
+}
+element.scrollbar_track inherit element:abstract {
+    structure = @element.scrollbar_track:dict
+}
+element.scrollbar_track:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.input + @common.layout
+}
+element.selection_wheel inherit element:abstract {
+    structure = @element.selection_wheel:dict
+}
+element.selection_wheel:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.selection_wheel + @common.sound + @common.tts
+}
+element.slider inherit element:abstract {
+    structure = @element.slider:dict
+}
+element.slider:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.button + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.slider + @common.sound + @common.tts + {
+        "factory" = :Key {types = [#dict, #str], structure = @factory}
+    }
+}
+element.slider_box inherit element:abstract {
+    structure = @element.slider_box:dict
+}
+element.slider_box:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.input + @common.layout + @common.slider_box
+}
+element.stack_panel inherit element:abstract {
+    structure = @element.stack_panel:dict
+}
+element.stack_panel:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.collection + @common.control + @common.data_binding + @common.focus + @common.layout + @common.stack_panel + @common.tts + {
+        "factory" = :Key {types = [#dict, #str], structure = @factory}
+    }
+}
+element.tab inherit element:abstract {
+    structure = @element.tab:dict
+}
+element.tab:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.button + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.sound + @common.tab
+}
+element.toggle inherit element:abstract {
+    structure = @element.toggle:dict
+}
+element.toggle:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.sound + @common.toggle + @common.tts
+}
+element.tooltip_trigger inherit element:abstract {
+    structure = @element.tooltip_trigger:dict
+}
+element.tooltip_trigger:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.control + @common.data_binding + @common.focus + @common.input + @common.layout + @common.tooltip_trigger + @common.tts
+}
+element.unknown inherit element:abstract {
+    structure = @element.unknown:dict
+}
+element.unknown:dict inherit temp/SortedKeymap {
+    keys = @common.all + @common.button + @common.carousel_text + @common.collection + @common.control + @common.custom_render + @common.data_binding + @common.dropdown + @common.factory + @common.focus + @common.grid + \
+           @common.input + @common.layout + @common.screen + @common.scroll_view + @common.selection_wheel + @common.slider + @common.slider_box + @common.sound + @common.sprite + @common.stack_panel + @common.tab + @common.text + \
+           @common.text_edit + @common.toggle + @common.tts + @common.unknown
+}

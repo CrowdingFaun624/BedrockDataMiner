@@ -1,0 +1,177 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "materials"
+    $ file_field = "material"
+    $ pack_type = "resource pack"
+    $ structure = @material
+}
+material :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/materials_normalize_material
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "version" = :Key {types = #str}
+            "materials" = :Key {types = #dict, structure = @material.materials}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+material.materials inherit temp/Dict {
+    value_types = #dict
+    min_key_similarity_threshold = 0.875
+    key_structure = @temp/string
+    value_structure = @material.material
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "material", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+material.material inherit temp/SortedKeymap {
+    keys = {
+        "+defines" = :Key {types = #list, structure = @defines}
+        "+samplerStates" = :Key {types = #list, structure = @sampler_states}
+        "+states" = :Key {types = #list, structure = @states}
+        "+variants" = :Key {types = #list, structure = @variants}
+        "-defines" = :Key {types = #list, structure = @defines}
+        "-states" = :Key {types = #list, structure = @states}
+        "alphaDst" = :Key {types = #str}
+        "alphaSrc" = :Key {types = #str, tags = [@t/outdated]}
+        "backFace" = :Key {types = #dict, structure = @face}
+        "blendDst" = :Key {types = #str}
+        "blendSrc" = :Key {types = #str}
+        "defines" = :Key {types = #list, structure = @defines}
+        "depthBias" = :Key {types = @temp/decimal}
+        "depthBiasOGL" = :Key {types = @temp/decimal}
+        "depthFunc" = :Key {types = #str}
+        "fragmentShader" = :Key {types = #str}
+        "frontFace" = :Key {types = #dict, structure = @face}
+        "geometryShader" = :Key {types = #str, tags = [@t/outdated]}
+        "isAnimatedTexture" = :Key {types = #int}
+        "msaaSupport" = :Key {types = #str}
+        "polygonOffsetLevel" = :Key {types = @temp/decimal, tags = [@t/outdated]}
+        "primitiveMode" = :Key {types = #str}
+        "samplerStates" = :Key {types = #list, structure = @sampler_states}
+        "slopeScaledDepthBias" = :Key {types = @temp/decimal}
+        "slopeScaledDepthBiasOGL" = :Key {types = @temp/decimal}
+        "states" = :Key {types = #list, structure = @states}
+        "stencilReadMask" = :Key {types = #int}
+        "stencilRef" = :Key {types = #int}
+        "stencilRefOverride" = :Key {types = #int}
+        "stencilWriteMask" = :Key {types = #int}
+        "textures" = :Key {types = #list, structure = @textures, tags = [@t/outdated]}
+        "variants" = :Key {types = #list, structure = @variants}
+        "vertexFields" = :Key {types = #list, structure = @vertex_fields}
+        "vertexShader" = :Key {types = #str}
+        "vrGeometryShader" = :Key {types = #str}
+    }
+}
+defines inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "definition", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+face inherit temp/SortedKeymap {
+    keys = {
+        "stencilDepthFailOp" = :Key {types = #str}
+        "stencilFailOp" = :Key {types = #str}
+        "stencilFunc" = :Key {types = #str}
+        "stencilPass" = :Key {types = #str}
+        "stencilPassOp" = :Key {types = #str}
+    }
+}
+sampler_states inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @sampler_states.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sampler state", "show_item_key" = false, "measure_length" = true}
+    }
+}
+sampler_states.item inherit temp/SortedKeymap {
+    keys = {
+        "samplerIndex" = :Key {types = #int}
+        "textureFilter" = :Key {types = #str}
+        "textureIndex" = :Key {types = #int, tags = [@t/outdated]}
+        "textureLocation" = :Key {types = #str, tags = [@t/outdated]}
+        "textureName" = :Key {types = #str, tags = [@t/outdated]}
+        "textureWrap" = :Key {types = #str}
+    }
+}
+states inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "statement", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+textures inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @texture
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "texture", "show_item_key" = false, "measure_length" = true}
+    }
+}
+texture inherit temp/SortedKeymap {
+    keys = {
+        "textureIndex" = :Key {types = #int}
+        "textureLocation" = :Key {types = #str, structure = @temp/string}
+        "textureName" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+variants inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @material.materials
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "variant", "show_item_key" = false, "measure_length" = true}
+    }
+}
+vertex_fields inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @vertex_fields.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vertex field", "show_item_key" = false, "measure_length" = true}
+    }
+}
+vertex_fields.item inherit temp/SortedKeymap {
+    keys = {
+        "field" = :Key {types = #str, structure = @temp/string}
+    }
+}

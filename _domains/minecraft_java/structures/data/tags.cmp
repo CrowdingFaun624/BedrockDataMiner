@@ -1,0 +1,35 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "tags"
+    $ pack_type = "data pack"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "replace" = :Key {types = #bool}
+        "values" = :Key {types = #list, structure = @values}
+    }
+}
+values inherit temp/Set {
+    $ field = "value"
+    value_types = [#str, #dict]
+    value_structure = @value
+}
+value :Union {
+    substructures = [
+        :Key {types = #str, structure = @misc/string},
+        :Key {types = #dict, structure = @value.dict},
+    ]
+}
+value.dict inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str, structure = @misc/string}
+        "required" = :Key {types = #bool}
+    }
+}

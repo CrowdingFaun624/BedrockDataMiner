@@ -1,0 +1,163 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/misc/template/
+        vector = @structures/misc/vector/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "md3"
+    $ serializer = @s/md3_serializer
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "header" = :Key {types = #dict, structure = @header}
+        "frames" = :Key {types = #list, structure = @frames}
+        "tags" = :Key {types = #list, structure = @tags}
+        "surfaces" = :Key {types = #list, structure = @surfaces}
+    }
+}
+header inherit temp/SortedKeymap {
+    keys = {
+        "MD3_START" = :Key {types = #int}
+        "IDENT" = :Key {types = #int}
+        "VERSION" = :Key {types = #int}
+        "NAME" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "FLAGS" = :Key {types = #int}
+        "NUM_FRAMES" = :Key {types = #int}
+        "NUM_TAGS" = :Key {types = #int}
+        "NUM_SKINS" = :Key {types = #int}
+        "NUM_SURFACES" = :Key {types = #int}
+        "OFS_FRAMES" = :Key {types = #int}
+        "OFS_TAGS" = :Key {types = #int}
+        "OFS_SURFACES" = :Key {types = #int}
+        "OFS_EOF" = :Key {types = #int}
+    }
+}
+frames inherit temp/Set {
+    $ field = "frame"
+    value_types = #dict
+    value_structure = @frame
+}
+frame inherit temp/SortedKeymap {
+    keys = {
+        "MIN_BOUNDS" = :Key {types = #tuple, structure = @vector/vector.tuple_float}
+        "MAX_BOUNDS" = :Key {types = #tuple, structure = @vector/vector.tuple_float}
+        "LOCAL_ORIGIN" = :Key {types = #tuple, structure = @vector/vector.tuple_float}
+        "RADIUS" = :Key {types = #float}
+        "NAME" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+tags inherit temp/Set {
+    $ field = "tag"
+    value_types = #dict
+    value_structure = @tag
+}
+tag inherit temp/SortedKeymap {
+    keys = {
+        "NAME" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "ORIGIN" = :Key {types = #tuple, structure = @vector/vector.tuple_float}
+        "AXIS" = :Key {types = #tuple, structure = @tag:axis}
+    }
+}
+tag:axis inherit temp/List {
+    $ field = "axis"
+    $ print_all = true
+    $ print_flat = true
+    this_types = #tuple
+    value_types = #tuple
+    value_structure = @vector/vector.tuple_float
+}
+surfaces inherit temp/Set {
+    $ field = "surface"
+    value_types = #dict
+    value_structure = @surface
+}
+surface inherit temp/SortedKeymap {
+    keys = {
+        "header" = :Key {types = #dict, structure = @surface:header}
+        "shaders" = :Key {types = #list, structure = @shaders}
+        "triangles" = :Key {types = #list, structure = @triangles}
+        "tex_coords" = :Key {types = #list, structure = @tex_coords}
+        "vertices" = :Key {types = #list, structure = @vertices}
+    }
+}
+surface:header inherit temp/SortedKeymap {
+    keys = {
+        "SURFACE_START" = :Key {types = #int}
+        "IDENT" = :Key {types = #int}
+        "NAME" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "FLAGS" = :Key {types = #int}
+        "NUM_FRAMES" = :Key {types = #int}
+        "NUM_SHADERS" = :Key {types = #int}
+        "NUM_VERTS" = :Key {types = #int}
+        "NUM_TRIANGLES" = :Key {types = #int}
+        "OFS_TRIANGLES" = :Key {types = #int}
+        "OFS_SHADERS" = :Key {types = #int}
+        "OFS_ST" = :Key {types = #int}
+        "OFS_XYZNORMAL" = :Key {types = #int}
+        "OFS_END" = :Key {types = #int}
+    }
+}
+shaders inherit temp/Set {
+    $ field = "shader"
+    value_types = #dict
+    value_structure = @shader
+}
+shader inherit temp/SortedKeymap {
+    keys = {
+        "NAME" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "SHADER_INDEX" = :Key {types = #int}
+    }
+}
+triangles inherit temp/Set {
+    $ field = "triangle"
+    value_types = #dict
+    value_structure = @triangle
+}
+triangle inherit temp/SortedKeymap {
+    keys = {
+        "INDEXES" = :Key {types = #tuple, structure = @triangle:indexes}
+    }
+}
+triangle:indexes inherit temp/List {
+    $ field = "index"
+    $ print_all = true
+    $ print_flat = true
+    this_types = #tuple
+    value_types = #int
+    value_structure = null
+}
+tex_coords inherit temp/Set {
+    $ field = "tex coord"
+    value_types = #dict
+    value_structure = @tex_coord
+}
+tex_coord inherit temp/SortedKeymap {
+    keys = {
+        "ST" = :Key {types = #tuple, structure = @tex_coord:st}
+    }
+}
+tex_coord:st inherit temp/List {
+    $ field = "coordinate"
+    $ print_all = true
+    $ print_flat = true
+    this_types = #tuple
+    value_types = #float
+    value_structure = null
+}
+vertices inherit temp/Set {
+    $ field = "vertex"
+    value_types = #dict
+    value_structure = @vertex
+}
+vertex inherit temp/SortedKeymap {
+    keys = {
+        "X" = :Key {types = #int}
+        "Y" = :Key {types = #int}
+        "Z" = :Key {types = #int}
+        "NORMAL" = :Key {types = #int}
+    }
+}

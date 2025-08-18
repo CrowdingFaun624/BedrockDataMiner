@@ -1,0 +1,56 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        ip = @structures/misc/provider/int_provider/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+trunk_placer :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:straight_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.empty}
+        "minecraft:forking_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.empty}
+        "minecraft:giant_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.empty}
+        "minecraft:mega_jungle_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.empty}
+        "minecraft:dark_oak_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.empty}
+        "minecraft:fancy_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.empty}
+        "minecraft:bending_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.bending_trunk_placer}
+        "minecraft:upwards_branching_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.upwards_branching_trunk_placer}
+        "minecraft:cherry_trunk_placer" = :Key {types = #dict, structure = @trunk_placer.cherry_trunk_placer}
+    }
+}
+trunk_placer:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "base_height" = :Key {types = #int}
+    "height_rand_a" = :Key {types = #int}
+    "height_rand_b" = :Key {types = #int}
+}
+trunk_placer.empty inherit temp/SortedKeymap {
+    keys = @trunk_placer:all
+}
+trunk_placer.bending_trunk_placer inherit temp/SortedKeymap {
+    keys = @trunk_placer:all + {
+        "bend_length" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "min_height_for_leaves" = :Key {types = #int}
+    }
+}
+trunk_placer.upwards_branching_trunk_placer inherit temp/SortedKeymap {
+    keys = @trunk_placer:all + {
+        "extra_branch_steps" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "extra_branch_length" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "place_branch_per_log_probability" = :Key {types = #float}
+        "can_grow_through" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+    }
+}
+trunk_placer.cherry_trunk_placer inherit temp/SortedKeymap {
+    keys = @trunk_placer:all + {
+        "branch_count" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "branch_horizontal_length" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "branch_start_offset_from_top" = :Key {types = [#int, #dict], structure = @ip/int_provider:forced_uniform}
+        "branch_end_offset_from_top" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}

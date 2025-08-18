@@ -1,0 +1,675 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @minecraft_common!serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "structures_nbt"
+    $ file_field = "structure"
+    $ pack_type = "behavior pack"
+    $ serializer = @s/nbt_big
+    $ types = #TAG_Compound
+    $ structure = @structure
+}
+vector_tag_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "coordinate", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+vector_tag_double inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Double
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "coordinate", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+structure inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "author" = :Key {types = #TAG_String}
+        "DataVersion" = :Key {types = #TAG_Int}
+        "palette" = :Key {types = #TAG_List, structure = @palettes}
+        "size" = :Key {types = #TAG_List, structure = @vector_tag_int, delegate_arguments = {"always_print" = true}}
+        "version" = :Key {types = #TAG_Int}
+        "entities" = :Key {types = #TAG_List, structure = @entities}
+        "blocks" = :Key {types = #TAG_List, structure = @blocks}
+    }
+}
+blocks :Normalizer {
+    outer_types = #TAG_List
+    inner_types = #dict
+    functions = :Function {
+        function = %minecraft_common!scripts/normalizers/volume_normalize_nbt/volume_normalize_nbt
+        arguments = {"position_key" = "pos", "state_key" = "state"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "states" = :Key {types = #dict, structure = @volume_states}
+            "data" = :Key {types = #dict, structure = @volume_additional_data}
+            "size" = :Key {types = #tuple, structure = inherit temp/Dict {
+                allow_key_moves = false
+                key_weight = 0
+                key_types = #int
+                this_types = #tuple
+                value_types = #int
+                value_structure = null
+                delegate = null
+            }}
+        }
+        delegate = :Delegate {
+            delegate_class = %minecraft_common!VolumeDelegate
+            arguments = {"field" = "block"}
+        }
+    }
+}
+volume_states inherit temp/Dict {
+    allow_key_moves = false
+    key_types = #tuple
+    value_types = #int
+    value_structure = null
+    delegate = null
+}
+volume_additional_data inherit temp/Dict {
+    allow_key_moves = false
+    key_types = #tuple
+    value_types = #dict
+    value_structure = @block
+    delegate = null
+}
+block inherit temp/SortedKeymap {
+    keys = {
+        "nbt" = :Key {types = #TAG_Compound, structure = @block_nbt}
+    }
+}
+entities inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @entity
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "entity", "show_item_key" = false, "measure_length" = true}
+    }
+}
+entity inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "blockPos" = :Key {types = #TAG_List, structure = @vector_tag_int}
+        "nbt" = :Key {types = #TAG_Compound, structure = @entity_nbt}
+        "pos" = :Key {types = #TAG_List, structure = @vector_tag_double}
+    }
+}
+palettes inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @palette
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "palette", "measure_length" = true}
+    }
+}
+palette inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Name" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+        "Properties" = :Key {types = #TAG_Compound, structure = @palette_properties}
+    }
+}
+palette_properties inherit temp/Dict {
+    this_types = #TAG_Compound
+    value_types = #TAG_String
+    allow_key_moves = false
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "property", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+block_nbt inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "attachement_type" = :Key {types = #TAG_String}
+        "author" = :Key {types = #TAG_String}
+        "Base" = :Key {types = #TAG_Int}
+        "BrewTime" = :Key {types = #TAG_Short}
+        "BurnTime" = :Key {types = #TAG_Short}
+        "Color" = :Key {types = #TAG_String}
+        "components" = :Key {types = #TAG_Compound, structure = @nbt:components}
+        "config" = :Key {types = #TAG_Compound, structure = @nbt:config}
+        "CookingTimes" = :Key {types = #TAG_Int_Array, structure = @nbt:cooking_times}
+        "CookingTotalTimes" = :Key {types = #TAG_Int_Array, structure = @nbt:cooking_times}
+        "CookTime" = :Key {types = #TAG_Short}
+        "CookTimeTotal" = :Key {types = #TAG_Short}
+        "cooldown_ends_at" = :Key {types = #TAG_Long, tags = [@t/outdated]}
+        "current_mobs" = :Key {types = #TAG_List, structure = @nbt:current_mobs, tags = [@t/outdated]}
+        "Data" = :Key {types = #TAG_Int}
+        "Delay" = :Key {types = #TAG_Short}
+        "final_state" = :Key {types = #TAG_String}
+        "Fuel" = :Key {types = #TAG_Byte}
+        "id" = :Key {types = #TAG_String}
+        "ignoreEntities" = :Key {types = #TAG_Byte}
+        "integrity" = :Key {types = #TAG_Float}
+        "item" = :Key {types = #TAG_Compound, structure = @nbt:item}
+        "Item" = :Key {types = #TAG_String}
+        "Items" = :Key {types = #TAG_List, structure = @nbt:items}
+        "joint" = :Key {types = #TAG_String}
+        "last_vibration_frequency" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "Lock" = :Key {types = #TAG_String}
+        "loot_tables_to_eject" = :Key {types = #TAG_List, structure = @nbt:ominous_config.loot_tables_to_eject, tags = [@t/outdated]}
+        "LootTable" = :Key {types = #TAG_String}
+        "LootTableSeed" = :Key {types = #TAG_Long, tags = [@t/outdated]}
+        "MaxNearbyEntities" = :Key {types = #TAG_Short}
+        "MaxSpawnDelay" = :Key {types = #TAG_Short}
+        "metadata" = :Key {types = #TAG_String}
+        "MinSpawnDelay" = :Key {types = #TAG_Short}
+        "mirror" = :Key {types = #TAG_String}
+        "mode" = :Key {types = #TAG_String}
+        "name" = :Key {types = #TAG_String}
+        "next_mob_spawns_at" = :Key {types = #TAG_Long, tags = [@t/outdated]}
+        "normal_config" = :Key {types = [#TAG_Compound, #TAG_String], structure = @nbt:normal_config}
+        "ominous_config" = :Key {types = [#TAG_Compound, #TAG_String], structure = @nbt:ominous_config}
+        "OutputSignal" = :Key {types = #TAG_Int}
+        "Patterns" = :Key {types = #TAG_List, structure = @nbt:patterns}
+        "placement_priority" = :Key {types = #TAG_Int}
+        "pool" = :Key {types = #TAG_String}
+        "posX" = :Key {types = #TAG_Int}
+        "posY" = :Key {types = #TAG_Int}
+        "posZ" = :Key {types = #TAG_Int}
+        "powered" = :Key {types = #TAG_Byte}
+        "RecipesUsed" = :Key {types = #TAG_Compound, structure = @nbt:recipes_used}
+        "RecipesUsedSize" = :Key {types = #TAG_Short}
+        "registered_players" = :Key {types = #TAG_List, structure = @nbt:registered_players, tags = [@t/outdated]}
+        "required_player_range" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "RequiredPlayerRange" = :Key {types = #TAG_Short}
+        "Rot" = :Key {types = #TAG_Byte}
+        "rotation" = :Key {types = #TAG_String}
+        "seed" = :Key {types = #TAG_Long}
+        "selection_priority" = :Key {types = #TAG_Int}
+        "sherds" = :Key {types = #TAG_List, structure = @nbt:sherds}
+        "showair" = :Key {types = #TAG_Byte}
+        "showboundingbox" = :Key {types = #TAG_Byte}
+        "simultaneous_mobs" = :Key {types = #TAG_Float, tags = [@t/outdated]}
+        "simultaneous_mobs_added_per_player" = :Key {types = #TAG_Float, tags = [@t/outdated]}
+        "sizeX" = :Key {types = #TAG_Int}
+        "sizeY" = :Key {types = #TAG_Int}
+        "sizeZ" = :Key {types = #TAG_Int}
+        "SkullType" = :Key {types = #TAG_Byte}
+        "Slot0" = :Key {types = #TAG_Compound, structure = @nbt:item, tags = [@t/outdated]}
+        "Slot1" = :Key {types = #TAG_Compound, structure = @nbt:item, tags = [@t/outdated]}
+        "Slot2" = :Key {types = #TAG_Compound, structure = @nbt:item, tags = [@t/outdated]}
+        "Slot3" = :Key {types = #TAG_Compound, structure = @nbt:item, tags = [@t/outdated]}
+        "spawn_potentials" = :Key {types = #TAG_List, structure = @nbt:normal_config.spawn_potentials, tags = [@t/outdated]}
+        "spawn_range" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "SpawnCount" = :Key {types = #TAG_Short}
+        "SpawnData" = :Key {types = #TAG_Compound, structure = @entity_nbt}
+        "SpawnPotentials" = :Key {types = #TAG_List, structure = @nbt:spawn_potentials}
+        "SpawnRange" = :Key {types = #TAG_Short}
+        "target" = :Key {types = #TAG_String}
+        "target_cooldown_length" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "target_pool" = :Key {types = #TAG_String}
+        "Text1" = :Key {types = #TAG_String, structure = @nbt:text}
+        "Text2" = :Key {types = #TAG_String, structure = @nbt:text}
+        "Text3" = :Key {types = #TAG_String, structure = @nbt:text}
+        "Text4" = :Key {types = #TAG_String, structure = @nbt:text}
+        "ticks_between_spawn" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "total_mobs" = :Key {types = #TAG_Float, tags = [@t/outdated]}
+        "total_mobs_added_per_player" = :Key {types = #TAG_Float, tags = [@t/outdated]}
+        "total_mobs_spawned" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "TransferCooldown" = :Key {types = #TAG_Int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "tag", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+nbt:components inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "minecraft:block_entity_data" = :Key {types = #TAG_Compound, structure = @block_nbt}
+        "minecraft:lore" = :Key {types = #TAG_List, structure = @nbt:components:lore}
+    }
+}
+nbt:components:lore inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_String
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "line", "measure_length" = true, "print_all" = true, "print_flat" = true}
+    }
+}
+nbt:config inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "key_item" = :Key {types = #TAG_Compound, structure = @nbt:item}
+        "loot_table" = :Key {types = #TAG_String}
+    }
+}
+nbt:cooking_times inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_Int_Array
+    value_types = #TAG_Int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "time", "measure_length" = true}
+    }
+}
+nbt:current_mobs inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "mob", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:items inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "buy" = :Key {types = #TAG_Compound, structure = @nbt:item, tags = [@t/outdated]}
+        "count" = :Key {types = [#TAG_Byte, #TAG_Int]}
+        "Count" = :Key {types = [#TAG_Byte, #TAG_Int]}
+        "Damage" = :Key {types = #TAG_Short}
+        "id" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+        "maxUses" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "rewardExp" = :Key {types = #TAG_Byte, tags = [@t/outdated]}
+        "sell" = :Key {types = #TAG_Compound, structure = @nbt:item, tags = [@t/outdated]}
+        "Slot" = :Key {types = #TAG_Byte}
+        "tag" = :Key {types = #TAG_Compound, structure = @nbt:item.tag}
+        "uses" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+    }
+}
+nbt:item.tag inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Damage" = :Key {types = #TAG_Int}
+        "ench" = :Key {types = #TAG_List, structure = @nbt:item.tag.ench}
+        "Potion" = :Key {types = #TAG_String}
+    }
+}
+nbt:item.tag.ench inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:item.tag.ench.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "enchantment", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:item.tag.ench.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "id" = :Key {types = #TAG_Short, delegate_arguments = {"always_print" = true}}
+        "lvl" = :Key {types = #TAG_Short}
+    }
+}
+nbt:normal_config :Union {
+    substructures = [
+        :Key {types = #TAG_String},
+        :Key {types = #TAG_Compound, structure = inherit temp/SortedKeymap {
+            this_types = #TAG_Compound
+            keys = {
+                "simultaneous_mobs" = :Key {types = #TAG_Float}
+                "simultaneous_mobs_added_per_player" = :Key {types = #TAG_Float}
+                "spawn_potentials" = :Key {types = #TAG_List, structure = @nbt:normal_config.spawn_potentials}
+                "ticks_between_spawn" = :Key {types = #TAG_Int}
+                "total_mobs" = :Key {types = #TAG_Float}
+                "total_mobs_added_per_player" = :Key {types = #TAG_Float}
+            }
+        }},
+    ]
+}
+nbt:normal_config.spawn_potentials inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:normal_config.spawn_potentials.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "entity", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:normal_config.spawn_potentials.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "data" = :Key {types = #TAG_Compound, structure = @nbt:normal_config.spawn_potentials.item.data}
+        "weight" = :Key {types = #TAG_Int}
+    }
+}
+nbt:normal_config.spawn_potentials.item.data inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "entity" = :Key {types = #TAG_Compound, structure = @entity_nbt}
+        "equipment" = :Key {types = #TAG_Compound, structure = @nbt:normal_config.spawn_potentials.item.data.equipment}
+        "equipment_loot_table" = :Key {types = #TAG_String}
+    }
+}
+nbt:normal_config.spawn_potentials.item.data.equipment inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "loot_table" = :Key {types = #TAG_String}
+        "slot_drop_chances" = :Key {types = #TAG_Float}
+    }
+}
+nbt:ominous_config :Union {
+    substructures = [
+        :Key {types = #TAG_String},
+        :Key {types = #TAG_Compound, structure = inherit temp/SortedKeymap {
+            this_types = #TAG_Compound
+            keys = {
+                "loot_tables_to_eject" = :Key {types = #TAG_List, structure = @nbt:ominous_config.loot_tables_to_eject}
+                "simultaneous_mobs" = :Key {types = #TAG_Float}
+                "spawn_potentials" = :Key {types = #TAG_List, structure = @nbt:normal_config.spawn_potentials}
+                "total_mobs" = :Key {types = #TAG_Float}
+            }
+        }},
+    ]
+}
+nbt:ominous_config.loot_tables_to_eject inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:ominous_config.loot_tables_to_eject.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "loot table", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:ominous_config.loot_tables_to_eject.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "data" = :Key {types = #TAG_String}
+        "weight" = :Key {types = #TAG_Int}
+    }
+}
+nbt:patterns inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:patterns.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "pattern", "measure_length" = true}
+    }
+}
+nbt:patterns.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Color" = :Key {types = #TAG_Int}
+        "Pattern" = :Key {types = #TAG_String}
+    }
+}
+nbt:recipes_used inherit temp/Dict {
+    this_types = #TAG_Compound
+    value_types = #TAG_Int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "recipe", "measure_length" = true}
+    }
+}
+nbt:registered_players inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "player", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:sherds inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_String
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sherd", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:spawn_potentials inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:spawn_potentials.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "entity", "measure_length" = true}
+    }
+}
+nbt:spawn_potentials.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Entity" = :Key {types = #TAG_Compound, structure = @entity_nbt}
+        "Weight" = :Key {types = #TAG_Int}
+    }
+}
+nbt:text :Normalizer {
+    outer_types = #TAG_String
+    inner_types = #dict
+    functions = :Function {
+        function = %load_json
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "text" = :Key {types = #str}
+        }
+    }
+}
+entity_nbt inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "AbsorptionAmount" = :Key {types = #TAG_Float}
+        "Age" = :Key {types = #TAG_Int}
+        "Air" = :Key {types = #TAG_Short}
+        "ArmorDropChances" = :Key {types = #TAG_List, structure = @nbt:armor_drop_chances}
+        "ArmorItems" = :Key {types = #TAG_List, structure = @nbt:armor_items}
+        "Attributes" = :Key {types = #TAG_List, structure = @nbt:attributes}
+        "CanBreakDoors" = :Key {types = #TAG_Byte, tags = [@t/outdated]}
+        "CanPickUpLoot" = :Key {types = #TAG_Byte}
+        "Career" = :Key {types = #TAG_Int}
+        "CareerLevel" = :Key {types = #TAG_Int}
+        "ConversionTime" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "DeathTime" = :Key {types = #TAG_Short}
+        "Dimension" = :Key {types = #TAG_Int}
+        "FallDistance" = :Key {types = #TAG_Float}
+        "FallFlying" = :Key {types = #TAG_Byte}
+        "Fire" = :Key {types = #TAG_Short}
+        "ForcedAge" = :Key {types = #TAG_Int}
+        "HandDropChances" = :Key {types = #TAG_List, structure = @nbt:hand_drop_chances}
+        "HandItems" = :Key {types = #TAG_List, structure = @nbt:hand_items}
+        "Health" = :Key {types = #TAG_Float}
+        "HurtByTimestamp" = :Key {types = #TAG_Int}
+        "HurtTime" = :Key {types = #TAG_Short}
+        "id" = :Key {types = #TAG_String}
+        "Inventory" = :Key {types = #TAG_List, structure = @nbt:inventory}
+        "Invulnerable" = :Key {types = #TAG_Byte}
+        "IsBaby" = :Key {types = #TAG_Byte}
+        "IsVillager" = :Key {types = #TAG_Byte}
+        "Leashed" = :Key {types = #TAG_Byte}
+        "LeftHanded" = :Key {types = #TAG_Byte}
+        "Motion" = :Key {types = #TAG_List, structure = @vector_tag_double}
+        "Offers" = :Key {types = #TAG_Compound, structure = @nbt:offers}
+        "OnGround" = :Key {types = #TAG_Byte}
+        "PersistenceRequired" = :Key {types = #TAG_Byte}
+        "PortalCooldown" = :Key {types = #TAG_Int}
+        "Pos" = :Key {types = #TAG_List, structure = @vector_tag_double}
+        "Size" = :Key {types = #TAG_Int}
+        "Profession" = :Key {types = #TAG_Int}
+        "Riches" = :Key {types = #TAG_Int}
+        "Rotation" = :Key {types = #TAG_List, structure = @nbt:rotation}
+        "UUIDLeast" = :Key {types = #TAG_Long}
+        "UUIDMost" = :Key {types = #TAG_Long}
+        "VillagerProfession" = :Key {types = #TAG_Int, tags = [@t/outdated]}
+        "Willing" = :Key {types = #TAG_Byte}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+nbt:armor_drop_chances inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "chance", "measure_length" = false}
+    }
+}
+nbt:armor_items inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "armor item", "measure_length" = false}
+    }
+}
+nbt:attributes inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:attributes.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "attribute", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:attributes.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Base" = :Key {types = #TAG_Double}
+        "Modifiers" = :Key {types = #TAG_List, structure = @nbt:attributes.item.modifiers, tags = [@t/outdated]}
+        "Name" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+    }
+}
+nbt:attributes.item.modifiers inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:attributes.item.modifiers.modifier
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "modifier", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:attributes.item.modifiers.modifier inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Name" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+        "Operation" = :Key {types = #TAG_Int}
+        "Amount" = :Key {types = #TAG_Double}
+        "UUIDLeast" = :Key {types = #TAG_Long}
+        "UUIDMost" = :Key {types = #TAG_Long}
+    }
+}
+nbt:hand_drop_chances inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "chance", "measure_length" = false}
+    }
+}
+nbt:hand_items inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "hand item", "measure_length" = false}
+    }
+}
+nbt:inventory inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @nbt:item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+nbt:offers inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Recipes" = :Key {types = #TAG_List, structure = @nbt:items}
+    }
+}
+nbt:rotation inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "axis", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}

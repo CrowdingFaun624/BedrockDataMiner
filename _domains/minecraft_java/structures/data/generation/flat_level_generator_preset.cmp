@@ -1,0 +1,38 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "flat_level_generator_preset"
+    $ pack_type = "data pack"
+    $ structure = @flat_level_generator_preset
+}
+flat_level_generator_preset inherit temp/SortedKeymap {
+    keys = {
+        "display" = :Key {types = #str}
+        "settings" = :Key {types = #dict, structure = @settings}
+    }
+}
+'settings' inherit temp/SortedKeymap {
+    keys = {
+        "layers" = :Key {types = #list, structure = @layers}
+        "biome" = :Key {types = #str}
+        "lakes" = :Key {types = #bool}
+        "features" = :Key {types = #bool}
+        "structure_overrides" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="structure"}}
+    }
+}
+layers inherit temp/Sequence {
+    $ field = "layer"
+    value_types = #dict
+    value_structure = @layer
+}
+layer inherit temp/SortedKeymap {
+    keys = {
+        "height" = :Key {types = #int}
+        "block" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}

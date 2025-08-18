@@ -1,0 +1,35 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        tc = @structures/misc/text_component/
+        component = @structures/data/enchantments/effect_components/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ pack_type = "data pack"
+    $ name = "enchantments"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = @tc/root_type, structure = @tc/root}
+        "exclusive_set" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="enchantment"}}
+        "supported_items" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="item"}}
+        "primary_items" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="item"}}
+        "weight" = :Key {types = #int}
+        "max_level" = :Key {types = #int}
+        "min_cost" = :Key {types = #dict, structure = @cost}
+        "max_cost" = :Key {types = #dict, structure = @cost}
+        "anvil_cost" = :Key {types = #int}
+        "slots" = :Key {types = #list, structure = @misc/named_list{$name="slot"}}
+        "effects" = :Key {types = #dict, structure = @component/effect_components}
+    }
+}
+cost inherit temp/SortedKeymap {
+    keys = {
+        "base" = :Key {types = #int}
+        "per_level_above_first" = :Key {types = #int}
+    }
+}

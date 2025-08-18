@@ -1,0 +1,44 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "uniforms"
+    $ structure = @uniforms
+}
+uniforms inherit temp/Dict {
+    value_types = #list
+    value_structure = @uniform
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "uniform"}
+    }
+}
+uniform inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @constant
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "constant"}
+    }
+}
+constant :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/uniforms_normalize
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "Name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 5}
+            "Type" = :Key {types = #str}
+            "Elements" = :Key {types = #int}
+        }
+    }
+}

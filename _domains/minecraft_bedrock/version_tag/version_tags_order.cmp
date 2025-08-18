@@ -1,0 +1,19 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @version_tag/version_tags/
+    }
+}
+base :VersionTagOrder {
+    order = [[@t/beta], [@t/major], [@t/minor, @t/patch, @t/reupload]]
+    allowed_children = [
+        :AllowedChildren {tag = @t/beta, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/major, children = [@t/beta, @t/minor, @t/patch, @t/reupload]},
+        :AllowedChildren {tag = @t/minor, children = [@t/beta, @t/patch, @t/reupload]},
+        :AllowedChildren {tag = @t/patch, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/reupload, children = []},
+    ]
+    top_level_tag = @t/major
+    tags_before_top_level_tag = [@t/beta]
+    tags_after_top_level_tag = [@t/minor, @t/patch, @t/reupload]
+}

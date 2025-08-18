@@ -1,0 +1,33 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "contents"
+    $ function = []
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "content" = :Key {types = #list, structure = @content}
+    }
+}
+content inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @content.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "item"}
+    }
+}
+content.item inherit temp/SortedKeymap {
+    keys = {
+        "path" = :Key {types = #str, structure = @temp/string}
+    }
+}

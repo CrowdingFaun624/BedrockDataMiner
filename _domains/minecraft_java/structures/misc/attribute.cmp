@@ -1,0 +1,22 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        np = @structures/misc/provider/number_provider/
+    }
+}
+attribute_modifier_list inherit temp/Set {
+    $ field = "attribute modifier"
+    value_types = #dict
+    value_structure = @attribute_modifier
+}
+attribute_modifier inherit temp/SortedKeymap {
+    keys = {
+        "attribute" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "operation" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "amount" = :Key {types = [#float, #dict], structure = @np/number_provider{$types=#float}}
+        "id" = :Key {types = #str}
+        "slot" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="slot"}}
+    }
+}

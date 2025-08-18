@@ -1,0 +1,67 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "music_definitions"}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/normalizers/music_definitions_normalize
+            arguments = {"serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @environment
+        }
+    }
+}
+environment inherit temp/Dict {
+    value_types = #dict
+    value_structure = @resource_pack
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "environment", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+resource_pack :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_dict
+    }
+    structure = inherit temp/Dict {
+        key_types = #tuple
+        key_structure = @temp/defined_in
+        value_types = #dict
+        value_structure = @music_property
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+music_property inherit temp/SortedKeymap {
+    keys = {
+        "event_name" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @temp/string}
+        "max_delay" = :Key {types = #int}
+        "min_delay" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "property"}
+    }
+}

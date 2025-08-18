@@ -1,0 +1,136 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "manifests"
+    $ function = []
+    $ structure = @manifest
+}
+version_str :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @version},
+    ]
+}
+version inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_structure = null
+    value_types = [#int, #float]
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}
+manifest inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = [#int, #float]}
+        "header" = :Key {types = #dict, structure = @header, delegate_arguments = {"always_print" = true}, similarity_weight = 12}
+        "modules" = :Key {types = #list, structure = @modules}
+        "dependencies" = :Key {types = #list, structure = @dependencies}
+        "capabilities" = :Key {types = #list, structure = @capabilities}
+        "description" = :Key {types = #str, tags = [@t/outdated]}
+        "key_art_path" = :Key {types = #str, tags = [@t/outdated]}
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, tags = [@t/outdated]}
+        "pack_id" = :Key {types = #str, tags = [@t/outdated]}
+        "packs_version" = :Key {types = #str, tags = [@t/outdated]}
+        "screenshots" = :Key {types = #list, structure = @screenshots, tags = [@t/outdated]}
+        "metadata" = :Key {types = #dict, structure = @metadata}
+        "store_offer_name" = :Key {types = #str}
+    }
+}
+header inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #str, structure = @temp/string}
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "type" = :Key {types = #str}
+        "uuid" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 12}
+        "version" = :Key {types = [#list, #str], structure = @version_str}
+        "min_engine_version" = :Key {types = #list, structure = @version}
+        "pack_scope" = :Key {types = #str}
+        "pack_id" = :Key {types = #str, tags = [@t/outdated]}
+        "packs_version" = :Key {types = #str, tags = [@t/outdated]}
+        "store_offer_name" = :Key {types = #str, tags = [@t/outdated]}
+        "key_art_path" = :Key {types = #str, tags = [@t/outdated]}
+        "screenshots" = :Key {types = #list, structure = @screenshots, tags = [@t/outdated]}
+        "modules" = :Key {types = #list, structure = @modules}
+        "dependencies" = :Key {types = #list, structure = @dependencies}
+        "module_name" = :Key {types = #str, structure = @temp/string, tags = [@t/outdated]}
+        "entry" = :Key {types = #str, tags = [@t/outdated]}
+        "language" = :Key {types = #str}
+        "metadata" = :Key {types = #dict, structure = @metadata}
+    }
+}
+modules inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @header
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "module"}
+    }
+}
+dependencies inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @header
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "dependency"}
+    }
+}
+capabilities inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "capability"}
+    }
+}
+screenshots inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @screenshot
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "screenshot", "show_item_key" = false, "measure_length" = true}
+    }
+}
+screenshot inherit temp/SortedKeymap {
+    keys = {
+        "path" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+metadata inherit temp/SortedKeymap {
+    keys = {
+        "authors" = :Key {types = #list, structure = @authors}
+        "url" = :Key {types = #str}
+    }
+}
+authors inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "author", "show_item_key" = false, "measure_length" = true}
+    }
+}

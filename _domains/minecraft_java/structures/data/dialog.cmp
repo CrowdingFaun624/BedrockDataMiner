@@ -1,0 +1,300 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        misc = @structures/misc/misc/
+        tc = @structures/misc/text_component/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "dialogs"
+    $ pack_type = "data pack"
+    $ types = @a/compound // doesn't actually have this type but the types must match.
+    $ structure = @dialog
+}
+dialog_or_dialog_id :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/compound, structure = @dialog},
+    ]
+}
+dialog_list inherit temp/Set.nbt {
+    $ field = "dialog"
+    value_types = [@a/string, @a/compound]
+    value_structure = @dialog_or_dialog_id
+}
+dialog_list_or_dialog_ids :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/compound, structure = @dialog},
+        :Key {types = @a/list, structure = @dialog_list},
+    ]
+}
+dialog :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:notice" = :Key {types = @a/compound, structure = @dialog.notice}
+        "minecraft:confirmation" = :Key {types = @a/compound, structure = @dialog.confirmation}
+        "minecraft:multi_action" = :Key {types = @a/compound, structure = @dialog.multi_action}
+        "minecraft:server_links" = :Key {types = @a/compound, structure = @dialog.server_links}
+        "minecraft:dialog_list" = :Key {types = @a/compound, structure = @dialog.dialog_list}
+    }
+}
+dialog:all {
+    "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+    "title" = :Key {types = @tc/root_type, structure = @tc/root}
+    "external_title" = :Key {types = @tc/root_type, structure = @tc/root}
+    "body" = :Key {types = [@a/list, @a/compound], structure = @body:union}
+    "inputs" = :Key {types = @a/list, structure = @input_control_list}
+    "can_close_with_escape" = :Key {types = @a/bool}
+    "pause" = :Key {types = @a/bool}
+    "after_action" = :Key {types = @a/string}
+}
+dialog.notice inherit temp/SortedKeymap.nbt {
+    keys = @dialog:all + {
+        "action" = :Key {types = @a/compound, structure = @click_action}
+    }
+}
+dialog.confirmation inherit temp/SortedKeymap.nbt {
+    keys = @dialog:all + {
+        "yes" = :Key {types = @a/compound, structure = @click_action}
+        "no" = :Key {types = @a/compound, structure = @click_action}
+    }
+}
+dialog.multi_action inherit temp/SortedKeymap.nbt {
+    keys = @dialog:all + {
+        "actions" = :Key {types = @a/list, structure = @click_action_list}
+        "columns" = :Key {types = @a/int}
+        "exit_action" = :Key {types = @a/compound, structure = @click_action}
+    }
+}
+dialog.server_links inherit temp/SortedKeymap.nbt {
+    keys = @dialog:all + {
+        "exit_action" = :Key {types = @a/compound, structure = @click_action}
+        "columns" = :Key {types = @a/int}
+        "button_width" = :Key {types = @a/int}
+    }
+}
+dialog.dialog_list inherit temp/SortedKeymap.nbt {
+    keys = @dialog:all + {
+        "dialogs" = :Key {types = [@a/string, @a/compound, @a/list], structure = @dialog_list_or_dialog_ids}
+        "exit_action" = :Key {types = @a/compound, structure = @click_action}
+        "columns" = :Key {types = @a/int}
+        "button_width" = :Key {types = @a/int}
+    }
+}
+click_action_list inherit temp/Set.nbt {
+    $ field = "click action"
+    value_types = @a/compound
+    value_structure = @click_action
+}
+click_action inherit temp/SortedKeymap.nbt {
+    keys = {
+        "label" = :Key {types = @tc/root_type, structure = @tc/root}
+        "tooltip" = :Key {types = @tc/root_type, structure = @tc/root}
+        "width" = :Key {types = @a/int}
+        "action" = :Key {types = @a/compound, structure = @action}
+    }
+}
+body:union :Union {
+    substructures = [
+        :Key {types = @a/list, structure = @body_list},
+        :Key {types = @a/compound, structure = @body},
+    ]
+}
+body_list inherit temp/Set.nbt {
+    $ field = "body"
+    value_types = @a/compound
+    value_structure = @body
+}
+body :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:plain_message" = :Key {types = @a/compound, structure = @body.plain_message}
+        "minecraft:item" = :Key {types = @a/compound, structure = @body.item}
+    }
+}
+body:all {
+    "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+}
+body.plain_message inherit temp/SortedKeymap.nbt {
+    keys = @body:all + {
+        "contents" = :Key {types = @tc/root_type, structure = @tc/root}
+        "width" = :Key {types = @a/int}
+    }
+}
+body.item inherit temp/SortedKeymap.nbt {
+    keys = @body:all + {
+        "item" = :Key {types = @a/compound, structure = @misc/item_data_slotless}
+        "description" = :Key {types = [@a/string, @a/compound, @a/list], structure = @body.item:description_union}
+        "show_decoration" = :Key {types = @a/bool}
+        "show_tooltip" = :Key {types = @a/bool}
+        "width" = :Key {types = @a/int}
+        "height" = :Key {types = @a/int}
+    }
+}
+body.item:description_union :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/compound, structure = @body.item:description},
+        :Key {types = @a/list, structure = @tc/text_components},
+    ]
+}
+body.item:description inherit temp/SortedKeymap.nbt {
+    keys = {
+        "contents" = :Key {types = @tc/root_type, structure = @tc/root}
+        "width" = :Key {types = @a/int}
+    }
+}
+input_control_list inherit temp/Set.nbt {
+    $ field = "input control"
+    value_types = @a/compound
+    value_structure = @input_control
+}
+input_control :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:text" = :Key {types = @a/compound, structure = @input_control.text}
+        "minecraft:boolean" = :Key {types = @a/compound, structure = @input_control.boolean}
+        "minecraft:single_option" = :Key {types = @a/compound, structure = @input_control.single_option}
+        "minecraft:number_range" = :Key {types = @a/compound, structure = @input_control.number_range}
+    }
+}
+input_control:all {
+    "key" = :Key {types = @a/string}
+    "label" = :Key {types = @tc/root_type, structure = @tc/root}
+}
+input_control.text inherit temp/SortedKeymap.nbt {
+    keys = @input_control:all + {
+        "width" = :Key {types = @a/int}
+        "label_visible" = :Key {types = @a/bool}
+        "initial" = :Key {types = @a/string}
+        "max_length" = :Key {types = @a/int}
+        "multiline" = :Key {types = @a/compound, structure = @input_control.text:multiline}
+    }
+}
+input_control.text:multiline inherit temp/SortedKeymap.nbt {
+    keys = {
+        "max_lines" = :Key {types = @a/int}
+        "height" = :Key {types = @a/int}
+    }
+}
+input_control.boolean inherit temp/SortedKeymap.nbt {
+    keys = @input_control:all + {
+        "initial" = :Key {types = @a/bool}
+        "on_true" = :Key {types = @a/string}
+        "on_false" = :Key {types = @a/string}
+    }
+}
+input_control.single_option inherit temp/SortedKeymap.nbt {
+    keys = @input_control:all + {
+        "label_visible" = :Key {types = @a/bool}
+        "width" = :Key {types = @a/int}
+        "options" = :Key {types = @a/list, structure = @input_control.single_option:options}
+    }
+}
+input_control.single_option:options inherit temp/Set.nbt {
+    $ field = "option"
+    value_types = @a/compound
+    value_structure = @input_control.single_option:option
+}
+input_control.single_option:option inherit temp/SortedKeymap.nbt {
+    keys = {
+        "id" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "display" = :Key {types = @tc/root_type, structure = @tc/root}
+        "initial" = :Key {types = @a/bool}
+    }
+}
+input_control.number_range inherit temp/SortedKeymap.nbt {
+    keys = @input_control:all + {
+        "label_format" = :Key {types = @a/string}
+        "width" = :Key {types = @a/int}
+        "start" = :Key {types = @a/float}
+        "end" = :Key {types = @a/float}
+        "step" = :Key {types = @a/float}
+        "initial" = :Key {types = @a/int}
+    }
+}
+action :Switch { // similar to text_component/click_event but with "type" instead of "action" and with extra things.
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "open_url" = :Key {types = @a/compound, structure = @action.open_url}
+        "open_file" = :Key {types = @a/compound, structure = @action.open_file}
+        "run_command" = :Key {types = @a/compound, structure = @action.run_command}
+        "suggest_command" = :Key {types = @a/compound, structure = @action.suggest_command}
+        "change_page" = :Key {types = @a/compound, structure = @action.change_page}
+        "copy_to_clipboard" = :Key {types = @a/compound, structure = @action.copy_to_clipboard}
+        "show_dialog" = :Key {types = @a/compound, structure = @action.show_dialog}
+        "custom" = :Key {types = @a/compound, structure = @action.custom}
+        "dynamic/run_command" = :Key {types = @a/compound, structure = @action.dynamic.run_command}
+        "dynamic/custom" = :Key {types = @a/compound, structure = @action.dynamic.custom}
+    }
+}
+action:all {
+    "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+}
+action.open_url inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "url" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+action.open_file inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "path" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+action.run_command inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "command" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+action.suggest_command inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "command" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+action.change_page inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "page" = :Key {types = @a/int}
+    }
+}
+action.copy_to_clipboard inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "value" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+action.show_dialog inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "dialog" = :Key {types = [@a/string, @a/compound], structure = @dialog_or_dialog_id}
+    }
+}
+action.custom inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "id" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "payload" = :Key {types = @a/string}
+    }
+}
+action.dynamic.run_command inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "template" = :Key {types = @a/string}
+    }
+}
+action.dynamic.custom inherit temp/SortedKeymap.nbt {
+    keys = @action:all + {
+        "additions" = :Key {types = @a/compound, structure = @misc/any_nbt.compound}
+        "id" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+    }
+}

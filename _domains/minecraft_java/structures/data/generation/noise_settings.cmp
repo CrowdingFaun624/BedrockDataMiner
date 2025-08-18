@@ -1,0 +1,99 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        bs = @structures/misc/block_state/
+        df = @structures/data/generation/density_function/
+        misc = @structures/misc/misc/
+        sr = @structures/data/generation/surface_rule/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "noise_settings"
+    $ pack_type = "data pack"
+    $ structure = @noise_settings
+}
+noise_settings_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @noise_settings},
+    ]
+}
+noise_settings inherit temp/SortedKeymap {
+    keys = {
+        "sea_level" = :Key {types = #int}
+        "disable_mob_generation" = :Key {types = #bool}
+        "ore_veins_enabled" = :Key {types = #bool}
+        "aquifers_enabled" = :Key {types = #bool}
+        "legacy_random_source" = :Key {types = #bool}
+        "default_block" = :Key {types = @a/compound, structure = @bs/block_state}
+        "default_fluid" = :Key {types = @a/compound, structure = @bs/block_state}
+        "spawn_target" = :Key {types = #list, structure = @spawn_target}
+        "noise" = :Key {types = #dict, structure = @noise}
+        "noise_router" = :Key {types = #dict, structure = @noise_router}
+        "surface_rule" = :Key {types = #dict, structure = @sr/surface_rule}
+    }
+}
+spawn_target inherit temp/Set {
+    $ field = "range"
+    value_types = #dict
+    value_structure = @noise_parameter
+}
+noise_parameter inherit temp/SortedKeymap {
+    keys = {
+        "temperature" = :Key {types = [#dict, #list, #float], structure = @spawn_target:range}
+        "humidity" = :Key {types = [#dict, #list, #float], structure = @spawn_target:range}
+        "continentalness" = :Key {types = [#dict, #list, #float], structure = @spawn_target:range}
+        "erosion" = :Key {types = [#dict, #list, #float], structure = @spawn_target:range}
+        "weirdness" = :Key {types = [#dict, #list, #float], structure = @spawn_target:range}
+        "depth" = :Key {types = [#dict, #list, #float], structure = @spawn_target:range}
+        "offset" = :Key {types = #float}
+    }
+}
+spawn_target:range :Union {
+    substructures = [
+        :Key {types = #float},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "min" = :Key {types = #float}
+                "max" = :Key {types = #float}
+            }
+        }},
+        :Key {types = #list, structure = inherit temp/List {
+            $ print_all = true
+            $ print_flat = true
+            $ field = "range item"
+            value_types = #float
+            value_structure = null
+        }},
+    ]
+}
+noise inherit temp/SortedKeymap {
+    keys = {
+        "min_y" = :Key {types = #int}
+        "height" = :Key {types = #int}
+        "size_horizontal" = :Key {types = #int}
+        "size_vertical" = :Key {types = #int}
+    }
+}
+noise_router inherit temp/SortedKeymap {
+    keys = {
+        "initial_density_without_jaggedness" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "final_density" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "barrier" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "fluid_level_floodedness" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "fluid_level_spread" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "lava" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "vein_toggle" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "vein_ridged" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "vein_gap" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "temperature" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "vegetation" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "continents" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "erosion" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "depth" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "ridges" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+        "preliminary_surface_level" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
+    }
+}

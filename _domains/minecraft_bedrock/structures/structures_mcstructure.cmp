@@ -1,0 +1,794 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @minecraft_common!serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "structures_mcstructure"
+    $ file_field = "structure"
+    $ pack_type = "behavior pack"
+    $ types = #TAG_Compound
+    $ serializer = @s/nbt_little
+    $ structure = @structure
+}
+empty_compound inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {}
+}
+empty_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "item"}
+    }
+}
+vector_tag_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "coordinate", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+vector_tag_float inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "coordinate", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+structure :Normalizer {
+    outer_types = #TAG_Compound
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/structures_mcstructure_normalize/structures_mcstructure_normalize // <--- broken!!!
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "format_version" = :Key {types = #TAG_Int}
+            "size" = :Key {types = #TAG_List, structure = @vector_tag_int, delegate_arguments = {"always_print" = true}}
+            "structure_world_origin" = :Key {types = #TAG_List, structure = @vector_tag_int}
+            "structure" = :Key {types = #dict, structure = @structure.structure}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+structure.structure inherit temp/SortedKeymap {
+    keys = {
+        "layers" = :Key {types = #list, structure = @layers}
+        "palette" = :Key {types = #dict, structure = @palette}
+        "entities" = :Key {types = #TAG_List, structure = @entities}
+    }
+}
+layers inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @layer
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "field" = "layer"}
+    }
+}
+layer inherit temp/SortedKeymap {
+    keys = {
+        "states" = :Key {types = #dict, structure = @volume_states}
+        "data" = :Key {types = #dict, structure = @volume_additional_data}
+        "size" = :Key {types = #tuple, structure = inherit temp/Dict {
+            allow_key_moves = false
+            key_weight = 0
+            key_types = #int
+            this_types = #tuple
+            value_types = #int
+            value_structure = null
+            delegate = null
+        }}
+    }
+    delegate = :Delegate {
+        delegate_class = %minecraft_common!VolumeDelegate
+        arguments = {"field" = "block"}
+    }
+}
+volume_states inherit temp/Dict {
+    allow_key_moves = false
+    key_types = #tuple
+    value_types = #int
+    value_structure = null
+    delegate = null
+}
+volume_additional_data inherit temp/Dict {
+    allow_key_moves = false
+    key_types = #tuple
+    value_types = #TAG_Compound
+    value_structure = @block_position_data
+    delegate = null
+}
+item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "id" = :Key {types = #TAG_String}
+        "Count" = :Key {types = #TAG_Byte}
+        "Block" = :Key {types = #TAG_Compound, structure = @block_palette.item}
+        "Damage" = :Key {types = #TAG_Short, delegate_arguments = {"always_print" = true}}
+        "Name" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+        "Slot" = :Key {types = #TAG_Byte}
+        "tag" = :Key {types = #TAG_Compound, structure = @item.tag}
+        "WasPickedUp" = :Key {types = #TAG_Byte}
+    }
+}
+item.tag inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "author" = :Key {types = #TAG_String}
+        "Damage" = :Key {types = #TAG_Int}
+        "ench" = :Key {types = #TAG_List, structure = @item.tag.ench}
+        "generation" = :Key {types = #TAG_Int}
+        "pages" = :Key {types = #TAG_List, structure = @item.tag.pages}
+        "RepairCost" = :Key {types = #TAG_Int}
+        "title" = :Key {types = #TAG_String}
+        "xuid" = :Key {types = #TAG_String}
+    }
+}
+item.tag.ench inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = inherit temp/SortedKeymap {
+        this_types = #TAG_Compound
+        keys = {
+            "id" = :Key {types = #TAG_Short}
+            "lvl" = :Key {types = #TAG_Short}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"print_all" = true}
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "enchantment", "show_item_key" = false, "measure_length" = true}
+    }
+}
+item.tag.pages inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = inherit temp/SortedKeymap {
+        this_types = #TAG_Compound
+        keys = {
+            "photoname" = :Key {types = #TAG_String, structure = @temp/string.nbt}
+            "text" = :Key {types = #TAG_String, structure = @temp/string.nbt}
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "page", "show_item_key" = false, "measure_length" = true}
+    }
+}
+item_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+entities inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @entity
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "entity", "show_item_key" = false, "measure_length" = true}
+    }
+}
+entity inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Age" = :Key {types = #TAG_Short}
+        "Air" = :Key {types = #TAG_Short}
+        "Armor" = :Key {types = #TAG_List, structure = @item_list}
+        "AttackTime" = :Key {types = #TAG_Short}
+        "Attributes" = :Key {types = #TAG_List, structure = @entity.attributes}
+        "BodyRot" = :Key {types = #TAG_Float}
+        "boundX" = :Key {types = #TAG_Int}
+        "boundY" = :Key {types = #TAG_Int}
+        "boundZ" = :Key {types = #TAG_Int}
+        "BreedCooldown" = :Key {types = #TAG_Int}
+        "canPickupItems" = :Key {types = #TAG_Byte}
+        "ChestItems" = :Key {types = #TAG_List, structure = @item_list}
+        "Chested" = :Key {types = #TAG_Byte}
+        "Color" = :Key {types = #TAG_Byte}
+        "Color2" = :Key {types = #TAG_Byte}
+        "Command" = :Key {types = #TAG_String}
+        "CurrentTickCount" = :Key {types = #TAG_Int}
+        "CustomName" = :Key {types = #TAG_String}
+        "Dead" = :Key {types = #TAG_Byte}
+        "DeathTime" = :Key {types = #TAG_Short}
+        "definitions" = :Key {types = #TAG_List, structure = @entity.definitions}
+        "DwellingUniqueID" = :Key {types = #TAG_String}
+        "ExecuteOnFirstTick" = :Key {types = #TAG_Byte}
+        "expDropEnabled" = :Key {types = #TAG_Byte}
+        "FallDistance" = :Key {types = #TAG_Float}
+        "Fire" = :Key {types = #TAG_Short}
+        "hasBoundOrigin" = :Key {types = #TAG_Byte}
+        "hasSetCanPickupItems" = :Key {types = #TAG_Byte}
+        "Health" = :Key {types = #TAG_Short}
+        "HighTierCuredDiscount" = :Key {types = #TAG_Int}
+        "HomeDimensionId" = :Key {types = #TAG_Int}
+        "HomePos" = :Key {types = #TAG_List, structure = @vector_tag_float}
+        "HurtTime" = :Key {types = #TAG_Short}
+        "identifier" = :Key {types = #TAG_String}
+        "InLove" = :Key {types = #TAG_Int}
+        "internalComponents" = :Key {types = #TAG_Compound, structure = @entity.internal_components}
+        "InventoryVersion" = :Key {types = #TAG_String}
+        "Invulnerable" = :Key {types = #TAG_Byte}
+        "IsAngry" = :Key {types = #TAG_Byte}
+        "IsAutonomous" = :Key {types = #TAG_Byte}
+        "IsBaby" = :Key {types = #TAG_Byte}
+        "IsEating" = :Key {types = #TAG_Byte}
+        "IsGliding" = :Key {types = #TAG_Byte}
+        "IsGlobal" = :Key {types = #TAG_Byte}
+        "IsIllagerCaptain" = :Key {types = #TAG_Byte}
+        "IsInRaid" = :Key {types = #TAG_Byte}
+        "IsOrphaned" = :Key {types = #TAG_Byte}
+        "IsOutOfControl" = :Key {types = #TAG_Byte}
+        "IsPregnant" = :Key {types = #TAG_Byte}
+        "IsRoaring" = :Key {types = #TAG_Byte}
+        "IsScared" = :Key {types = #TAG_Byte}
+        "IsStunned" = :Key {types = #TAG_Byte}
+        "IsSwimming" = :Key {types = #TAG_Byte}
+        "IsTamed" = :Key {types = #TAG_Byte}
+        "IsTrusting" = :Key {types = #TAG_Byte}
+        "Item" = :Key {types = #TAG_Compound, structure = @entity.item}
+        "ItemInHand" = :Key {types = #TAG_Compound, structure = @item}
+        "LastDimensionId" = :Key {types = #TAG_Int}
+        "LastExecution" = :Key {types = #TAG_Long}
+        "LastOutput" = :Key {types = #TAG_String}
+        "LastOutputParams" = :Key {types = #TAG_List, structure = @block_entity_data.last_output_params}
+        "LeasherID" = :Key {types = #TAG_Long}
+        "limitedLife" = :Key {types = #TAG_Int}
+        "LootDropped" = :Key {types = #TAG_Byte}
+        "LoveCause" = :Key {types = #TAG_Long}
+        "LowTierCuredDiscount" = :Key {types = #TAG_Int}
+        "Mainhand" = :Key {types = #TAG_List, structure = @item_list}
+        "MarkVariant" = :Key {types = #TAG_Int}
+        "Motion" = :Key {types = #TAG_List, structure = @vector_tag_float}
+        "NaturalSpawn" = :Key {types = #TAG_Byte}
+        "NearbyCuredDiscount" = :Key {types = #TAG_Int}
+        "NearbyCuredDiscountTimeStamp" = :Key {types = #TAG_Int}
+        "Nuisances" = :Key {types = #TAG_List, structure = @entity.nuisances}
+        "Offers" = :Key {types = #TAG_Compound, structure = @block_entity_data.offers}
+        "Offhand" = :Key {types = #TAG_List, structure = @item_list}
+        "OnGround" = :Key {types = #TAG_Byte}
+        "OwnerID" = :Key {types = #TAG_Long}
+        "OwnerNew" = :Key {types = #TAG_Long}
+        "Persistent" = :Key {types = #TAG_Byte}
+        "PortalCooldown" = :Key {types = #TAG_Int}
+        "Pos" = :Key {types = #TAG_List, structure = @vector_tag_float}
+        "Pose" = :Key {types = #TAG_Compound, structure = @entity.pose}
+        "PreferredProfession" = :Key {types = #TAG_String}
+        "ReactToBell" = :Key {types = #TAG_Byte}
+        "RewardPlayersOnFirstFounding" = :Key {types = #TAG_Byte}
+        "Riches" = :Key {types = #TAG_Int}
+        "Rotation" = :Key {types = #TAG_List, structure = @entity.rotation}
+        "Saddled" = :Key {types = #TAG_Byte}
+        "Sheared" = :Key {types = #TAG_Byte}
+        "ShowBottom" = :Key {types = #TAG_Byte}
+        "Sitting" = :Key {types = #TAG_Byte}
+        "SkinID" = :Key {types = #TAG_Int}
+        "SpawnedByNight" = :Key {types = #TAG_Byte}
+        "Strength" = :Key {types = #TAG_Int}
+        "StrengthMax" = :Key {types = #TAG_Int}
+        "SuccessCount" = :Key {types = #TAG_Int}
+        "Surface" = :Key {types = #TAG_Byte}
+        "Tags" = :Key {types = #TAG_List, structure = @entity.tags}
+        "TargetID" = :Key {types = #TAG_Long}
+        "TickDelay" = :Key {types = #TAG_Int}
+        "Ticking" = :Key {types = #TAG_Byte}
+        "TrackOutput" = :Key {types = #TAG_Byte}
+        "TradeExperience" = :Key {types = #TAG_Int}
+        "TradeTablePath" = :Key {types = #TAG_String}
+        "TradeTier" = :Key {types = #TAG_Int}
+        "UniqueID" = :Key {types = #TAG_Long}
+        "Variant" = :Key {types = #TAG_Int}
+        "Version" = :Key {types = #TAG_Int}
+        "Willing" = :Key {types = #TAG_Byte}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+entity.attributes inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @entity.attributes.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "attribute", "show_item_key" = false, "measure_length" = true}
+    }
+}
+entity.attributes.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Base" = :Key {types = #TAG_Float}
+        "Current" = :Key {types = #TAG_Float}
+        "DefaultMax" = :Key {types = #TAG_Float}
+        "DefaultMin" = :Key {types = #TAG_Float}
+        "Max" = :Key {types = #TAG_Float}
+        "Min" = :Key {types = #TAG_Float}
+        "Modifiers" = :Key {types = #TAG_List, structure = @entity.attributes.item.modifiers}
+        "Name" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+    }
+}
+entity.attributes.item.modifiers inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = inherit temp/SortedKeymap {
+        this_types = #TAG_Compound
+        keys = {
+            "Amount" = :Key {types = #TAG_Float}
+            "Name" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+            "Operand" = :Key {types = #TAG_Int}
+            "Operation" = :Key {types = #TAG_Int}
+            "UUIDLeast" = :Key {types = #TAG_Long}
+            "UUIDMost" = :Key {types = #TAG_Long}
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "modifier", "show_item_key" = false, "measure_length" = true}
+    }
+}
+entity.definitions inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_String
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "definition", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+entity.internal_components inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "EntityStorageKeyComponent" = :Key {types = #TAG_Compound, structure = @entity.internal_components.entity_storage_key_component}
+    }
+}
+entity.internal_components.entity_storage_key_component inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "StorageKey" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+    }
+}
+entity.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Block" = :Key {types = #TAG_Compound, structure = @block_palette.item}
+        "Count" = :Key {types = #TAG_Byte}
+        "Damage" = :Key {types = #TAG_Short}
+        "Name" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+        "WasPickedUp" = :Key {types = #TAG_Byte}
+    }
+}
+entity.nuisances inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "nuisance", "show_item_key" = false, "measure_length" = true}
+    }
+}
+entity.pose inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "LastSignal" = :Key {types = #TAG_Int}
+        "PoseIndex" = :Key {types = #TAG_Int}
+    }
+}
+entity.rotation inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "axis", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+entity.tags inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_String
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "tag", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+palette inherit temp/SortedKeymap {
+    keys = {
+        "default" = :Key {types = #dict, structure = @palette.default}
+    }
+}
+palette.default inherit temp/SortedKeymap {
+    keys = {
+        "block_palette" = :Key {types = #TAG_List, structure = @block_palette}
+    }
+}
+block_palette inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @block_palette.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "palette", "show_item_key" = false, "measure_length" = true}
+    }
+}
+block_palette.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "name" = :Key {types = #TAG_String, structure = @temp/string.nbt, delegate_arguments = {"always_print" = true}}
+        "states" = :Key {types = #TAG_Compound, structure = @block_states}
+        "version" = :Key {types = [#TAG_Int, #TAG_Long]}
+    }
+}
+block_states inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "age" = :Key {types = #TAG_Int}
+        "allow_underwater_bit" = :Key {types = #TAG_Byte}
+        "attached_bit" = :Key {types = #TAG_Byte}
+        "attachment" = :Key {types = #TAG_String}
+        "bite_counter" = :Key {types = #TAG_Int}
+        "bloom" = :Key {types = #TAG_Byte}
+        "brewing_stand_slot_a_bit" = :Key {types = #TAG_Byte}
+        "brewing_stand_slot_b_bit" = :Key {types = #TAG_Byte}
+        "brewing_stand_slot_c_bit" = :Key {types = #TAG_Byte}
+        "button_pressed_bit" = :Key {types = #TAG_Byte}
+        "candles" = :Key {types = #TAG_Int}
+        "minecraft:cardinal_direction" = :Key {types = #TAG_String}
+        "cauldron_liquid" = :Key {types = #TAG_String}
+        "chisel_type" = :Key {types = #TAG_String}
+        "color" = :Key {types = #TAG_String}
+        "conditional_bit" = :Key {types = #TAG_Byte}
+        "coral_color" = :Key {types = #TAG_String}
+        "cracked_state" = :Key {types = #TAG_String}
+        "crafting" = :Key {types = #TAG_Byte}
+        "dead_bit" = :Key {types = #TAG_Byte}
+        "deprecated" = :Key {types = #TAG_Int}
+        "direction" = :Key {types = #TAG_Int}
+        "dirt_type" = :Key {types = #TAG_String}
+        "disabled_slots" = :Key {types = #TAG_Short}
+        "disarmed_bit" = :Key {types = #TAG_Byte}
+        "door_hinge_bit" = :Key {types = #TAG_Byte}
+        "double_plant_type" = :Key {types = #TAG_String}
+        "drag_down" = :Key {types = #TAG_Byte}
+        "dripstone_thickness" = :Key {types = #TAG_String}
+        "end_portal_eye_bit" = :Key {types = #TAG_Byte}
+        "explode_bit" = :Key {types = #TAG_Byte}
+        "extinguished" = :Key {types = #TAG_Byte}
+        "facing_direction" = :Key {types = #TAG_Int}
+        "fill_level" = :Key {types = #TAG_Int}
+        "flower_type" = :Key {types = #TAG_String}
+        "ground_sign_direction" = :Key {types = #TAG_Int}
+        "hanging" = :Key {types = #TAG_Byte}
+        "head_piece_bit" = :Key {types = #TAG_Byte}
+        "in_wall_bit" = :Key {types = #TAG_Byte}
+        "infiniburn_bit" = :Key {types = #TAG_Byte}
+        "item_frame_map_bit" = :Key {types = #TAG_Byte}
+        "lever_direction" = :Key {types = #TAG_String}
+        "liquid_depth" = :Key {types = #TAG_Int}
+        "lit" = :Key {types = #TAG_Byte}
+        "monster_egg_stone_type" = :Key {types = #TAG_String}
+        "multi_face_direction_bits" = :Key {types = #TAG_Int}
+        "no_drop_bit" = :Key {types = #TAG_Byte}
+        "occupied_bit" = :Key {types = #TAG_Byte}
+        "old_leaf_type" = :Key {types = #TAG_String}
+        "old_log_type" = :Key {types = #TAG_String}
+        "open_bit" = :Key {types = #TAG_Byte}
+        "orientation" = :Key {types = #TAG_String}
+        "output_lit_bit" = :Key {types = #TAG_Byte}
+        "output_subtract_bit" = :Key {types = #TAG_Byte}
+        "persistent_bit" = :Key {types = #TAG_Byte}
+        "pillar_axis" = :Key {types = #TAG_String}
+        "powered_bit" = :Key {types = #TAG_Byte}
+        "rail_data_bit" = :Key {types = #TAG_Byte}
+        "rail_direction" = :Key {types = #TAG_Int}
+        "redstone_signal" = :Key {types = #TAG_Int}
+        "repeater_delay" = :Key {types = #TAG_Int}
+        "respawn_anchor_charge" = :Key {types = #TAG_Int}
+        "rotation" = :Key {types = #TAG_Int}
+        "sand_stone_type" = :Key {types = #TAG_String}
+        "sand_type" = :Key {types = #TAG_String}
+        "sponge_type" = :Key {types = #TAG_String}
+        "stability" = :Key {types = #TAG_Int}
+        "stability_check" = :Key {types = #TAG_Byte}
+        "stone_slab_type" = :Key {types = #TAG_String}
+        "stone_slab_type_3" = :Key {types = #TAG_String}
+        "stone_slab_type_4" = :Key {types = #TAG_String}
+        "stone_type" = :Key {types = #TAG_String}
+        "structure_block_type" = :Key {types = #TAG_String}
+        "suspended_bit" = :Key {types = #TAG_Byte}
+        "tall_grass_type" = :Key {types = #TAG_String}
+        "toggle_bit" = :Key {types = #TAG_Byte}
+        "top_slot_bit" = :Key {types = #TAG_Byte}
+        "torch_facing_direction" = :Key {types = [#TAG_Int, #TAG_String]}
+        "triggered_bit" = :Key {types = #TAG_Byte}
+        "turtle_egg_count" = :Key {types = #TAG_String}
+        "update_bit" = :Key {types = #TAG_Byte}
+        "upper_block_bit" = :Key {types = #TAG_Byte}
+        "upside_down_bit" = :Key {types = #TAG_Byte}
+        "minecraft:vertical_half" = :Key {types = #TAG_String}
+        "vine_direction_bits" = :Key {types = #TAG_Int}
+        "wall_block_type" = :Key {types = #TAG_String}
+        "wall_connection_type_east" = :Key {types = #TAG_String}
+        "wall_connection_type_north" = :Key {types = #TAG_String}
+        "wall_connection_type_south" = :Key {types = #TAG_String}
+        "wall_connection_type_west" = :Key {types = #TAG_String}
+        "wall_post_bit" = :Key {types = #TAG_Byte}
+        "weirdo_direction" = :Key {types = #TAG_Int}
+        "wood_type" = :Key {types = #TAG_String}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+block_position_data inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "block_entity_data" = :Key {types = #TAG_Compound, structure = @block_entity_data}
+        "tick_delay" = :Key {types = #TAG_List, structure = @block_position_data.tick_delay}
+        "tick_queue_data" = :Key {types = #TAG_List, structure = @block_position_data.tick_queue_data}
+    }
+}
+block_position_data.tick_delay inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @block_position_data.tick_delay.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+block_position_data.tick_delay.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "tick_delay" = :Key {types = #TAG_Int}
+    }
+}
+block_position_data.tick_queue_data inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @block_position_data.tick_queue_data.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+block_position_data.tick_queue_data.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "tick_delay" = :Key {types = #TAG_Int}
+    }
+}
+block_entity_data inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "animationMode" = :Key {types = #TAG_Byte}
+        "animationSeconds" = :Key {types = #TAG_Float}
+        "AttachedBlocks" = :Key {types = #TAG_List, structure = @empty_list}
+        "auto" = :Key {types = #TAG_Byte}
+        "Base" = :Key {types = #TAG_Int}
+        "book" = :Key {types = #TAG_Compound, structure = @item}
+        "BreakBlocks" = :Key {types = #TAG_List, structure = @vector_tag_int}
+        "color" = :Key {types = [#TAG_Byte, #TAG_Int]}
+        "conditionalMode" = :Key {types = #TAG_Byte}
+        "conditionMet" = :Key {types = #TAG_Byte}
+        "CookTime" = :Key {types = #TAG_Short}
+        "Command" = :Key {types = #TAG_String}
+        "CustomName" = :Key {types = #TAG_String}
+        "data" = :Key {types = #TAG_Int}
+        "dataField" = :Key {types = #TAG_String}
+        "ExecuteOnFirstTick" = :Key {types = #TAG_Byte}
+        "final_state" = :Key {types = #TAG_String}
+        "Findable" = :Key {types = #TAG_Byte}
+        "FuelAmount" = :Key {types = #TAG_Short}
+        "FuelTotal" = :Key {types = #TAG_Short}
+        "hasBook" = :Key {types = #TAG_Byte}
+        "id" = :Key {types = #TAG_String}
+        "ignoreEntities" = :Key {types = #TAG_Byte}
+        "IgnoreLighting" = :Key {types = #TAG_Byte}
+        "includePlayers" = :Key {types = #TAG_Byte}
+        "integrity" = :Key {types = #TAG_Float}
+        "isMovable" = :Key {types = [#TAG_Byte, #TAG_Int]}
+        "isPowered" = :Key {types = #TAG_Byte}
+        "Item" = :Key {types = #TAG_Compound, structure = @item}
+        "ItemDropChance" = :Key {types = #TAG_Float}
+        "ItemRotation" = :Key {types = #TAG_Float}
+        "Items" = :Key {types = #TAG_List, structure = @item_list}
+        "joint" = :Key {types = #TAG_String}
+        "LastExecution" = :Key {types = #TAG_Long}
+        "LastOutput" = :Key {types = #TAG_String}
+        "LastOutputParams" = :Key {types = #TAG_List, structure = @block_entity_data.last_output_params}
+        "LastProgress" = :Key {types = #TAG_Float}
+        "LPCommandMode" = :Key {types = #TAG_Int}
+        "LPCondionalMode" = :Key {types = #TAG_Byte}
+        "LPRedstoneMode" = :Key {types = #TAG_Byte}
+        "mirror" = :Key {types = #TAG_Byte}
+        "MouthMoving" = :Key {types = #TAG_Byte}
+        "MouthTickCount" = :Key {types = #TAG_Int}
+        "name" = :Key {types = #TAG_String}
+        "NewState" = :Key {types = #TAG_Byte}
+        "OutputSignal" = :Key {types = #TAG_Int}
+        "page" = :Key {types = #TAG_Int}
+        "PersistFormatting" = :Key {types = #TAG_Byte}
+        "PotionId" = :Key {types = #TAG_Short}
+        "PotionType" = :Key {types = #TAG_Short}
+        "powered" = :Key {types = #TAG_Byte}
+        "Progress" = :Key {types = #TAG_Float}
+        "RecordItem" = :Key {types = #TAG_Compound, structure = @item}
+        "redstoneSaveMode" = :Key {types = #TAG_Int}
+        "removeBlocks" = :Key {types = #TAG_Byte}
+        "rotation" = :Key {types = #TAG_Byte}
+        "Rotation" = :Key {types = #TAG_Float}
+        "rott" = :Key {types = #TAG_Float}
+        "seed" = :Key {types = #TAG_Long}
+        "showBoundingBox" = :Key {types = #TAG_Byte}
+        "SignTextColor" = :Key {types = #TAG_Int}
+        "SkullType" = :Key {types = #TAG_Byte}
+        "State" = :Key {types = #TAG_Byte}
+        "Sticky" = :Key {types = #TAG_Byte}
+        "structureName" = :Key {types = #TAG_String}
+        "SuccessCount" = :Key {types = #TAG_Int}
+        "target" = :Key {types = #TAG_String}
+        "target_pool" = :Key {types = #TAG_String}
+        "Text" = :Key {types = #TAG_String}
+        "TextIgnoreLegacyBugResolved" = :Key {types = #TAG_Byte}
+        "TextOwner" = :Key {types = #TAG_String}
+        "TickDelay" = :Key {types = #TAG_Int}
+        "totalPages" = :Key {types = #TAG_Int}
+        "TrackOutput" = :Key {types = #TAG_Byte}
+        "TransferCooldown" = :Key {types = #TAG_Int}
+        "Type" = :Key {types = #TAG_Int}
+        "Version" = :Key {types = #TAG_Int}
+        "VibrationListener" = :Key {types = #TAG_Compound, structure = @block_entity_data.vibration_listener}
+        "x" = :Key {types = #TAG_Int}
+        "xStructureOffset" = :Key {types = #TAG_Int}
+        "xStructureSize" = :Key {types = #TAG_Int}
+        "y" = :Key {types = #TAG_Int}
+        "yStructureOffset" = :Key {types = #TAG_Int}
+        "yStructureSize" = :Key {types = #TAG_Int}
+        "z" = :Key {types = #TAG_Int}
+        "zStructureOffset" = :Key {types = #TAG_Int}
+        "zStructureSize" = :Key {types = #TAG_Int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+block_entity_data.last_output_params inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_String
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "parameter", "measure_length" = true}
+    }
+}
+block_entity_data.offers inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "Recipes" = :Key {types = #TAG_List, structure = @block_entity_data.offers:recipes}
+        "TierExpRequirements" = :Key {types = #TAG_List, structure = @block_entity_data.offers:tier_exp_requirements}
+    }
+}
+block_entity_data.offers:recipes inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @block_entity_data.offers:recipes.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "offer", "show_item_key" = false, "measure_length" = true}
+    }
+}
+block_entity_data.offers:recipes.item inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "buyA" = :Key {types = #TAG_Compound, structure = @item}
+        "buyB" = :Key {types = #TAG_Compound, structure = @item}
+        "buyCountA" = :Key {types = #TAG_Int}
+        "buyCountB" = :Key {types = #TAG_Int}
+        "demand" = :Key {types = #TAG_Int}
+        "maxUses" = :Key {types = #TAG_Int}
+        "priceMultiplierA" = :Key {types = #TAG_Float}
+        "priceMultiplierB" = :Key {types = #TAG_Float}
+        "rewardExp" = :Key {types = #TAG_Byte}
+        "sell" = :Key {types = #TAG_Compound, structure = @item}
+        "tier" = :Key {types = #TAG_Int}
+        "traderExp" = :Key {types = #TAG_Int}
+        "uses" = :Key {types = #TAG_Int}
+    }
+}
+block_entity_data.offers:tier_exp_requirements inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #TAG_List
+    value_types = #TAG_Compound
+    value_structure = @block_entity_data.offers:tier_exp_requirements.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "requirement", "measure_length" = true}
+    }
+}
+block_entity_data.offers:tier_exp_requirements.item inherit temp/Dict {
+    this_types = #TAG_Compound
+    value_types = #TAG_Int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "key", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+block_entity_data.vibration_listener inherit temp/SortedKeymap {
+    this_types = #TAG_Compound
+    keys = {
+        "event" = :Key {types = #TAG_Int}
+        "selector" = :Key {types = #TAG_Compound, structure = @empty_compound}
+    }
+}

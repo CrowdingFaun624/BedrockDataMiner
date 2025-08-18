@@ -1,0 +1,93 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "atmospherics"
+    $ file_field = "atmospheric file"
+    $ pack_type = "resource pack"
+    $ structure = @atmospherics
+}
+atmospherics inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:atmosphere_settings" = :Key {types = #dict, structure = @atmosphere_settings, similarity_weight = 15}
+    }
+}
+atmosphere_settings inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "horizon_blend_stops" = :Key {types = #dict, structure = @horizon_blend_stops}
+        "rayleigh_strength" = :Key {types = #dict, structure = @keyframe_dict}
+        "sun_mie_strength" = :Key {types = #dict, structure = @keyframe_dict}
+        "moon_mie_strength" = :Key {types = #dict, structure = @keyframe_dict}
+        "sun_glare_shape" = :Key {types = #dict, structure = @keyframe_dict}
+        "sky_zenith_color" = :Key {types = #dict, structure = @keyframe_vector_dict}
+        "sky_horizon_color" = :Key {types = #dict, structure = @keyframe_vector_dict}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+horizon_blend_stops inherit temp/SortedKeymap {
+    keys = {
+        "min" = :Key {types = [#dict, #float], structure = @keyframe_dict_or_float}
+        "start" = :Key {types = [#dict, #float], structure = @keyframe_dict_or_float}
+        "mie_start" = :Key {types = [#dict, #float], structure = @keyframe_dict_or_float}
+        "max" = :Key {types = [#dict, #float], structure = @keyframe_dict_or_float}
+    }
+}
+keyframe_dict_or_float :Union {
+    substructures = [
+        :Key {types = #float},
+        :Key {types = #dict, structure = @keyframe_dict},
+    ]
+}
+keyframe_dict inherit temp/Dict {
+    value_types = #float
+    key_structure = :Normalizer {
+        outer_types = #str
+        inner_types = #float
+        functions = :Function {
+            function = %parse_float
+        }
+        structure = :Primitive {
+            this_types = #float
+            delegate = :Delegate {delegate_class=%@PrimitiveDelegate}
+        }
+    }
+    value_structure = null
+}
+keyframe_vector_dict inherit temp/Dict {
+    key_types = [#str, #float]
+    value_types = #list
+    key_structure = :Normalizer {
+        outer_types = [#str, #float]
+        inner_types = #float
+        functions = :Function {
+            function = %parse_float
+        }
+        structure = :Primitive {
+            this_types = #float
+            delegate = :Delegate {delegate_class=%@PrimitiveDelegate}
+        }
+    }
+    value_structure = @vector_int
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true}
+    }
+}

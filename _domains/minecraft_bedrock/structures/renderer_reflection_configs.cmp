@@ -1,0 +1,78 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_reflection_configs"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "parent" = :Key {types = #dict, structure = @file_link}
+        "overrides" = :Key {types = #dict, structure = @reflection_config}
+        "low" = :Key {types = #dict, structure = @reflection_config}
+        "medium" = :Key {types = #dict, structure = @reflection_config}
+        "high" = :Key {types = #dict, structure = @reflection_config}
+        "ultra" = :Key {types = #dict, structure = @reflection_config}
+    } + @reflection_config:keys
+}
+file_link inherit temp/SortedKeymap {
+    keys = {
+        "file" = :Key {types = #str}
+    }
+}
+reflection_config:keys {
+    "file" = :Key {types = #str}
+    "ibl" = :Key {types = #dict, structure = @ibl}
+    "probe_regen" = :Key {types = #dict, structure = @probe_regen}
+    "ssr" = :Key {types = #dict, structure = @ssr}
+    "ssr_enabled" = :Key {types = #bool}
+}
+reflection_config inherit temp/SortedKeymap {
+    keys = @reflection_config:keys
+}
+probe_regen inherit temp/SortedKeymap {
+    keys = {
+        "far_plane_scaling" = :Key {types = #float}
+        "texture_format" = :Key {types = #str}
+        "regen_triggers" = :Key {types = #dict, structure = @regen_triggers}
+    }
+}
+regen_triggers inherit temp/SortedKeymap {
+    keys = {
+        "block_brightness_delta" = :Key {types = #float}
+        "distance_delta" = :Key {types = #float}
+        "frames_delta" = :Key {types = #int}
+        "gametime_delta" = :Key {types = #int}
+        "sky_brightness_delta" = :Key {types = #float}
+    }
+}
+ibl inherit temp/SortedKeymap {
+    keys = {
+        "convolution_type" = :Key {types = #str}
+        "dimension" = :Key {types = #int}
+        "far_plane_scaling" = :Key {types = #float, tags = [@t/outdated]}
+        "num_samples" = :Key {types = #int}
+        "texture_format" = :Key {types = #str, tags = [@t/outdated]}
+    }
+}
+ssr inherit temp/SortedKeymap {
+    keys = {
+        "binary_search_step_count" = :Key {types = #int}
+        "enable_gap_fill" = :Key {types = #bool}
+        "fading_distance" = :Key {types = #float}
+        "fading_power_horizontal" = :Key {types = #float}
+        "fading_power_vertical" = :Key {types = #float}
+        "linear_search_step_count" = :Key {types = #int}
+        "ray_offset" = :Key {types = #float}
+        "ray_step_length" = :Key {types = #float}
+        "roughness_cutoff" = :Key {types = #float}
+        "roughness_fade_start" = :Key {types = #float}
+        "ssr_scale" = :Key {types = #float}
+        "thickness" = :Key {types = #float}
+    }
+}

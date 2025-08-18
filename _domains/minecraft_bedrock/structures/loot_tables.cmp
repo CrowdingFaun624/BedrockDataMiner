@@ -1,0 +1,601 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @loot_tables
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "loot_tables"}
+    }
+}
+loot_tables inherit temp/Dict {
+    value_types = #dict
+    allow_key_moves = false
+    key_structure = @temp/string_remove_file_suffix
+    value_structure = @behavior_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "loot table", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+behavior_packs :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_flat
+    }
+    structure = inherit temp/Dict {
+        value_types = #file
+        value_structure = @cache
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_key, "field" = "behavior pack"}
+        }
+    }
+}
+range_decimal inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = @temp/decimal}
+        "min" = :Key {types = @temp/decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+range_decimal_or_decimal :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #dict, structure = @range_decimal},
+    ]
+}
+range_int inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+range_int_or_int :Union {
+    substructures = [
+        :Key {types = #dict, structure = @range_int},
+        :Key {types = #int},
+    ]
+}
+range_list_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range item", "print_all" = true, "print_flat" = true}
+    }
+}
+range_list_int_or_int :Union {
+    substructures = [
+        :Key {types = #list, structure = @range_list_int},
+        :Key {types = #int},
+    ]
+}
+cache :Cache {
+    this_types = #file
+    structure = :Condition {
+        substructures = [
+            :Key {types = #file, filter = :EqFilter {
+                key = "needs_repair"
+                value = true
+            }, structure = :File {
+                serializer = @serializers/loot_tables_repairable_json
+                outer_types = #file
+                inner_types = #dict
+                structure = @loot_table
+            }},
+            :Key {types = #file, filter = null, structure = :File { // in all other cases.
+                serializer = @minecraft_common!serializers/json
+                outer_types = #file
+                inner_types = #dict
+                structure = @loot_table
+            }},
+        ]
+    }
+}
+loot_table inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "random_sequence" = :Key {types = #str, tags = [@t/outdated]}
+        "pools" = :Key {types = #list, structure = @pools}
+    }
+}
+pools inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @pool
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "pool", "show_item_key" = false, "measure_length" = true}
+    }
+}
+pool inherit temp/SortedKeymap {
+    keys = {
+        "bonus_rolls" = :Key {types = @temp/decimal}
+        "conditions" = :Key {types = #list, structure = @conditions}
+        "entries" = :Key {types = #list, structure = @entries}
+        "functions" = :Key {types = #list, structure = @functions}
+        "rolls" = :Key {types = [@temp/decimal, #dict], structure = @range_decimal_or_decimal}
+        "tiers" = :Key {types = #dict, structure = @tiers}
+    }
+}
+tiers inherit temp/SortedKeymap {
+    keys = {
+        "bonus_chance" = :Key {types = @temp/decimal}
+        "bonus_rolls" = :Key {types = #int}
+        "initial_range" = :Key {types = #int}
+    }
+}
+entries inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @entry
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "entry", "show_item_key" = false, "measure_length" = true}
+    }
+}
+entry inherit temp/SortedKeymap {
+    keys = {
+        "aux_val" = :Key {types = #int}
+        "auxVal" = :Key {types = #int}
+        "conditions" = :Key {types = #list, structure = @conditions}
+        "count" = :Key {types = #int, delegate_arguments = {"always_print" = true}}
+        "functions" = :Key {types = #list, structure = @functions}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "pools" = :Key {types = #list, structure = @pools}
+        "quality" = :Key {types = #int}
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "weight" = :Key {types = #int}
+    }
+}
+functions :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "function", "delete" = true}
+    }
+    structure = @functions_dict
+}
+functions_dict inherit temp/SortedKeymap {
+    keys = {
+        "enchant_book_for_trading" = :Key {types = #dict, structure = @function.enchant_book_for_trading}
+        "enchant_random_gear" = :Key {types = #dict, structure = @function.enchant_random_gear}
+        "enchant_randomly" = :Key {types = #dict, structure = @function.enchant_randomly}
+        "enchant_with_levels" = :Key {types = #dict, structure = @function.enchant_with_levels}
+        "exploration_map" = :Key {types = #dict, structure = @function.exploration_map}
+        "fill_container" = :Key {types = #dict, structure = @function.fill_container}
+        "furnace_smelt" = :Key {types = #dict, structure = @function.furnace_smelt}
+        "looting_enchant" = :Key {types = #dict, structure = @function.looting_enchant}
+        "minecraft:enchant_randomly" = :Key {types = #dict, structure = @function.enchant_randomly}
+        "minecraft:enchant_with_levels" = :Key {types = #dict, structure = @function.enchant_with_levels, tags = [@t/outdated]}
+        "minecraft:set_count" = :Key {types = #dict, structure = @function.set_count}
+        "minecraft:set_damage" = :Key {types = #dict, structure = @function.set_damage}
+        "minecraft:set_data" = :Key {types = #dict, structure = @function.set_data}
+        "minecraft:set_data_from_color_index" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:set_potion" = :Key {types = #dict, structure = @function.set_potion}
+        "minecraft:set_stew_effect" = :Key {types = #dict, structure = @function.set_stew_effect}
+        "random_aux_value" = :Key {types = #dict, structure = @function.random_aux_value}
+        "random_block_state" = :Key {types = #dict, structure = @function.random_block_state}
+        "random_dye" = :Key {types = #dict, structure = @temp/empty}
+        "set_actor_id" = :Key {types = #dict, structure = @function.set_actor_id}
+        "set_armor_trim" = :Key {types = #dict, structure = @function.set_armor_trim}
+        "set_banner_details" = :Key {types = #dict, structure = @function.set_banner_details}
+        "set_book_contents" = :Key {types = #dict, structure = @function.set_book_contents}
+        "set_count" = :Key {types = #dict, structure = @function.set_count}
+        "set_damage" = :Key {types = #dict, structure = @function.set_damage}
+        "set_data" = :Key {types = #dict, structure = @function.set_data}
+        "set_lore" = :Key {types = #dict, structure = @function.set_lore}
+        "set_name" = :Key {types = #dict, structure = @function.set_name}
+        "set_ominous_bottle_amplifier" = :Key {types = #dict, structure = @function.set_ominous_bottle_amplifier}
+        "set_potion" = :Key {types = #dict, structure = @function.set_potion}
+        "specific_enchants" = :Key {types = #dict, structure = @function.specific_enchants}
+        "trader_material_type" = :Key {types = #dict, structure = @temp/empty}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "function", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+function.enchant_book_for_trading inherit temp/SortedKeymap {
+    keys = {
+        "base_cost" = :Key {types = #int}
+        "base_random_cost" = :Key {types = #int}
+        "enchantments" = :Key {types = #list, structure = @function.enchant_book_for_trading:enchantments}
+        "per_level_cost" = :Key {types = #int}
+        "per_level_random_cost" = :Key {types = #int}
+    }
+}
+function.enchant_book_for_trading:enchantments inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @function.enchant_book_for_trading:enchantments.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "enchantment"}
+    }
+}
+function.enchant_book_for_trading:enchantments.item inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @temp/string}
+    }
+}
+function.enchant_random_gear inherit temp/SortedKeymap {
+    keys = {
+        "chance" = :Key {types = @temp/decimal}
+    }
+}
+function.enchant_randomly inherit temp/SortedKeymap {
+    keys = {
+        "treasure" = :Key {types = #bool}
+    }
+}
+function.enchant_with_levels inherit temp/SortedKeymap {
+    keys = {
+        "levels" = :Key {types = [@temp/decimal, #dict], structure = @range_decimal_or_decimal, delegate_arguments = {"always_print" = true}}
+        "treasure" = :Key {types = #bool}
+    }
+}
+function.exploration_map inherit temp/SortedKeymap {
+    keys = {
+        "decoration_id" = :Key {types = #int, tags = [@t/outdated]}
+        "destination" = :Key {types = #str}
+    }
+}
+function.fill_container inherit temp/SortedKeymap {
+    keys = {
+        "loot_table" = :Key {types = #str}
+    }
+}
+function.furnace_smelt inherit temp/SortedKeymap {
+    keys = {
+        "conditions" = :Key {types = #list, structure = @conditions}
+    }
+}
+function.looting_enchant inherit temp/SortedKeymap {
+    keys = {
+        "count" = :Key {types = #dict, structure = @range_int}
+        "limit" = :Key {types = #int, tags = [@t/not_in_documentation]}
+    }
+}
+function.random_aux_value inherit temp/SortedKeymap {
+    keys = {
+        "values" = :Key {types = #dict, structure = @range_int}
+    }
+}
+function.random_block_state inherit temp/SortedKeymap {
+    keys = {
+        "block_state" = :Key {types = #str}
+        "values" = :Key {types = #dict, structure = @range_decimal}
+    }
+}
+function.set_actor_id inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str}
+    }
+}
+function.set_armor_trim inherit temp/SortedKeymap {
+    keys = {
+        "material" = :Key {types = #str}
+        "pattern" = :Key {types = #str}
+    }
+}
+function.set_banner_details inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #int}
+    }
+}
+function.set_book_contents inherit temp/SortedKeymap {
+    keys = {
+        "author" = :Key {types = #str}
+        "pages" = :Key {types = #list, structure = @function.set_book_contents:pages}
+        "title" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+function.set_book_contents:pages inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "page", "measure_length" = true}
+    }
+}
+function.set_count inherit temp/SortedKeymap {
+    keys = {
+        "add" = :Key {types = #bool}
+        "count" = :Key {types = [#dict, @temp/decimal], structure = @range_decimal_or_decimal}
+    }
+}
+function.set_damage inherit temp/SortedKeymap {
+    keys = {
+        "add" = :Key {types = #bool}
+        "damage" = :Key {types = #dict, structure = @range_decimal}
+    }
+}
+function.set_data inherit temp/SortedKeymap {
+    keys = {
+        "data" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+    }
+}
+function.set_lore inherit temp/SortedKeymap {
+    keys = {
+        "lore" = :Key {types = #list, structure = @function.set_lore:lore}
+    }
+}
+function.set_lore:lore inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "lore line", "measure_length" = true}
+    }
+}
+function.set_name inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str}
+    }
+}
+function.set_ominous_bottle_amplifier inherit temp/SortedKeymap {
+    keys = {
+        "amplifier" = :Key {types = #dict, structure = @range_int}
+    }
+}
+function.set_potion inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str}
+    }
+}
+function.set_stew_effect inherit temp/SortedKeymap {
+    keys = {
+        "effects" = :Key {types = #list, structure = @function.set_stew_effect:effects}
+    }
+}
+function.set_stew_effect:effects inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @function.set_stew_effect:effects.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "effect", "show_item_key" = false, "measure_length" = true}
+    }
+}
+function.set_stew_effect:effects.item inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #int, delegate_arguments = {"always_print" = true}}
+    }
+}
+function.specific_enchants inherit temp/SortedKeymap {
+    keys = {
+        "enchants" = :Key {types = [#dict, #list, #str], structure = @function.specific_enchants:enchants_group}
+    }
+}
+function.specific_enchants:enchants_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @function.specific_enchants:enchants.item},
+        :Key {types = #list, structure = @function.specific_enchants:enchants},
+        :Key {types = #str},
+    ]
+}
+function.specific_enchants:enchants inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#dict, #str]
+    value_structure = @function.specific_enchants:enchants.item_group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "enchantment", "show_item_key" = false, "measure_length" = true}
+    }
+}
+function.specific_enchants:enchants.item_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @function.specific_enchants:enchants.item},
+        :Key {types = #str},
+    ]
+}
+function.specific_enchants:enchants.item inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @temp/string}
+        "level" = :Key {types = [#int, #list], structure = @range_list_int_or_int}
+    }
+}
+conditions :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "condition", "delete" = true}
+    }
+    structure = @conditions_dict
+}
+conditions_dict inherit temp/SortedKeymap {
+    keys = {
+        "damaged_by_entity" = :Key {types = #dict, structure = @condition.damaged_by_entity}
+        "entity_killed" = :Key {types = #dict, structure = @condition.entity_killed}
+        "entity_properties" = :Key {types = #dict, structure = @condition.entity_properties}
+        "has_mark_variant" = :Key {types = #dict, structure = @condition.has_mark_variant}
+        "has_variant" = :Key {types = #dict, structure = @condition.has_variant}
+        "is_baby" = :Key {types = #dict, structure = @temp/empty}
+        "killed_by_entity" = :Key {types = #dict, structure = @condition.killed_by_entity}
+        "killed_by_player" = :Key {types = #dict, structure = @temp/empty}
+        "killed_by_player_or_pets" = :Key {types = #dict, structure = @temp/empty}
+        "match_tool" = :Key {types = #dict, structure = @condition.match_tool}
+        "passenger_of_entity" = :Key {types = #dict, structure = @condition.passenger_of_entity}
+        "random_chance" = :Key {types = #dict, structure = @condition.random_chance}
+        "random_chance_with_looting" = :Key {types = #dict, structure = @condition.random_chance_with_looting}
+        "random_chance_with_moon_crap" = :Key {types = #dict, structure = @condition.random_chance_with_moon_crap}
+        "random_difficulty_chance" = :Key {types = #dict, structure = @condition.random_difficulty_chance}
+        "random_regional_difficulty_chance" = :Key {types = #dict, structure = @condition.random_regional_difficulty_chance}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "condition"}
+    }
+}
+condition.damaged_by_entity inherit temp/SortedKeymap {
+    keys = {
+        "entity_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+condition.entity_killed inherit temp/SortedKeymap {
+    keys = {
+        "entity_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+condition.entity_properties inherit temp/SortedKeymap {
+    keys = {
+        "entity" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "properties" = :Key {types = #dict, structure = @condition.entity_properties:properties}
+    }
+}
+condition.entity_properties:properties inherit temp/SortedKeymap {
+    keys = {
+        "on_fire" = :Key {types = #bool}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "property"}
+    }
+}
+condition.killed_by_entity inherit temp/SortedKeymap {
+    keys = {
+        "entity_type" = :Key {types = #str}
+    }
+}
+condition.has_mark_variant inherit temp/SortedKeymap {
+    keys = {
+        "value" = :Key {types = #int}
+    }
+}
+condition.has_variant inherit temp/SortedKeymap {
+    keys = {
+        "value" = :Key {types = #int}
+    }
+}
+condition.match_tool inherit temp/SortedKeymap {
+    keys = {
+        "count" = :Key {types = #dict, structure = @condition.match_tool:count}
+        "durability" = :Key {types = #dict, structure = @condition.match_tool:durability}
+        "enchantments" = :Key {types = #list, structure = @condition.match_tool:enchantments}
+        "item" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+condition.match_tool:count inherit temp/SortedKeymap {
+    keys = {
+        "range_max" = :Key {types = #int}
+        "range_min" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+condition.match_tool:durability inherit temp/SortedKeymap {
+    keys = {
+        "range_max" = :Key {types = #int}
+        "range_min" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+condition.match_tool:enchantments inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @condition.match_tool:enchantments.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "enchantment", "show_item_key" = false, "measure_length" = true}
+    }
+}
+condition.match_tool:enchantments.item inherit temp/SortedKeymap {
+    keys = {
+        "enchantment" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @temp/string}
+        "levels" = :Key {types = #dict, structure = @condition.match_tool:enchantments.item.levels}
+        "range_max" = :Key {types = #int}
+        "range_min" = :Key {types = #int}
+    }
+}
+condition.match_tool:enchantments.item.levels inherit temp/SortedKeymap {
+    keys = {
+        "range_max" = :Key {types = #int}
+        "range_min" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+condition.passenger_of_entity inherit temp/SortedKeymap {
+    keys = {
+        "entity_type" = :Key {types = #str}
+    }
+}
+condition.random_chance inherit temp/SortedKeymap {
+    keys = {
+        "chance" = :Key {types = @temp/decimal}
+    }
+}
+condition.random_chance_with_looting inherit temp/SortedKeymap {
+    keys = {
+        "chance" = :Key {types = @temp/decimal}
+        "looting_multiplier" = :Key {types = @temp/decimal}
+    }
+}
+condition.random_chance_with_moon_crap inherit temp/SortedKeymap {
+    keys = {
+        "chance" = :Key {types = @temp/decimal}
+    }
+}
+condition.random_difficulty_chance inherit temp/SortedKeymap {
+    keys = {
+        "default_chance" = :Key {types = @temp/decimal, delegate_arguments = {"always_print" = true}}
+        "easy" = :Key {types = @temp/decimal}
+        "hard" = :Key {types = @temp/decimal}
+        "peaceful" = :Key {types = @temp/decimal}
+    }
+}
+condition.random_regional_difficulty_chance inherit temp/SortedKeymap {
+    keys = {
+        "max_chance" = :Key {types = @temp/decimal}
+    }
+}

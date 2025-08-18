@@ -1,0 +1,77 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @resource_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "language"}
+    }
+}
+base_single abstract :StructureBase {
+    $ (str) name
+    this_types = #file
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+}
+resource_packs inherit temp/Dict {
+    value_types = #dict
+    value_structure = @files
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+files inherit temp/Dict {
+    value_types = #file
+    value_structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "file", "measure_length" = true}
+    }
+}
+cache :Cache {
+    this_types = #file
+    structure = :Converging {
+        within_structure_depth = 1
+        end_structure = @keys
+        this_types = #file
+        structure = :Condition {
+            substructures = [
+                :Key {types = #file, filter = :EqFilter {
+                    key = "serializer"
+                    value = "json"
+                    default = true
+                }, structure = @file{$serializer = @@minecraft_common!serializers/json}}
+                :Key {types = #file, filter = :EqFilter {
+                    key = "serializer"
+                    value = "lang"
+                }, structure = @file{$serializer=@serializers/language_serializer}}
+            ]
+        }
+    }
+}
+file abstract :File {
+    $ (:Serializer) serializer
+    serializer = serializer
+    outer_types = #file
+    inner_types = #dict
+    structure = @keys
+}
+keys inherit temp/Dict {
+    value_types = #str
+    key_structure = @misc/string
+    value_structure = @misc/string{$limit=1000000}
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "key", "measure_length" = true}
+    }
+}

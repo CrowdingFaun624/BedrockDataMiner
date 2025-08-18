@@ -1,0 +1,247 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "flight_recorder_config"
+    $ serializer = @s/xml_serializer
+    $ structure = @configuration
+}
+configuration inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str}
+        "attrib" = :Key {types = #dict, structure = @configuration.attrib}
+        "text" = :Key {types = #str}
+        "children" = :Key {types = #list, structure = @configuration.children}
+    }
+}
+configuration.attrib inherit temp/SortedKeymap {
+    keys = {
+        "version" = :Key {types = #str}
+        "label" = :Key {types = #str}
+        "description" = :Key {types = #str}
+        "provider" = :Key {types = #str}
+    }
+}
+configuration.children inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @configuration.child_switch
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "show_item_key" = false, "field" = "child"}
+    }
+}
+configuration.child_switch :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "tag"}
+    }
+    substructures = {
+        "event" = :Key {types = #dict, structure = @event}
+        "control" = :Key {types = #dict, structure = @control}
+    }
+}
+event inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "attrib" = :Key {types = #dict, structure = @event.attrib, delegate_arguments = {"always_print" = true}}
+        "text" = :Key {types = #str}
+        "children" = :Key {types = #list, structure = @event.children}
+    }
+}
+event.attrib inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+event.children inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @setting
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "show_item_key" = false, "field" = "setting"}
+    }
+}
+setting inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, similarity_weight = 0}
+        "attrib" = :Key {types = #dict, structure = @setting.attrib, delegate_arguments = {"always_print" = true}, similarity_weight = 2}
+        "text" = :Key {types = #str}
+    }
+}
+setting.attrib inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string, similarity_weight = 3}
+        "control" = :Key {types = #str, structure = @misc/string}
+    }
+}
+control inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 0}
+        "children" = :Key {types = #list, structure = @control.children}
+    }
+}
+control.children inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @control.child_switch
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "child", "show_item_key" = false, "measure_length" = true}
+    }
+}
+control.child_switch :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "tag"}
+    }
+    substructures = {
+        "selection" = :Key {types = #dict, structure = @selection}
+        "condition" = :Key {types = #dict, structure = @condition}
+        "text" = :Key {types = #dict, structure = @text}
+        "flag" = :Key {types = #dict, structure = @flag}
+    }
+}
+selection inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 0}
+        "attrib" = :Key {types = #dict, structure = @selection.attrib, delegate_arguments = {"always_print" = true}}
+        "children" = :Key {types = #list, structure = @selection.children}
+    }
+}
+selection.attrib inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}, similarity_weight = 6}
+        "default" = :Key {types = #str}
+        "label" = :Key {types = #str, structure = @misc/string, similarity_weight = 2}
+    }
+}
+selection.children inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @option
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "show_item_key" = false, "field" = "option"}
+    }
+}
+option inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, similarity_weight = 0}
+        "attrib" = :Key {types = #dict, structure = @option.attrib, similarity_weight = 3}
+        "text" = :Key {types = #str}
+    }
+}
+option.attrib inherit temp/SortedKeymap {
+    keys = {
+        "label" = :Key {types = #str, structure = @misc/string}
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}, similarity_weight = 3}
+    }
+}
+condition inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 0}
+        "attrib" = :Key {types = #dict, structure = @condition.attrib, delegate_arguments = {"always_print" = true}}
+        "children" = :Key {types = #list, structure = @condition.children}
+    }
+}
+condition.attrib inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}, similarity_weight = 8}
+        "true" = :Key {types = #str}
+        "false" = :Key {types = #str}
+    }
+}
+condition.children inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @condition.child_switch
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "test", "show_item_key" = false, "measure_length" = true}
+    }
+}
+condition.child_switch :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "tag"}
+    }
+    substructures = {
+        "test" = :Key {types = #dict, structure = @test}
+        "or" = :Key {types = #dict, structure = @or}
+    }
+}
+test inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 0}
+        "attrib" = :Key {types = #dict, structure = @test.attrib, delegate_arguments = {"always_print" = true}}
+    }
+}
+test.attrib inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}, similarity_weight = 8}
+        "operator" = :Key {types = #str}
+        "value" = :Key {types = #str}
+    }
+}
+or inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 0}
+        "children" = :Key {types = #list, structure = @or.children}
+    }
+}
+or.children inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @test
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "test", "show_item_key" = false, "measure_length" = true}
+    }
+}
+text inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 0}
+        "attrib" = :Key {types = #dict, structure = @text.attrib, delegate_arguments = {"always_print" = true}, similarity_weight = 4}
+        "text" = :Key {types = #str}
+    }
+}
+text.attrib inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}, similarity_weight = 12}
+        "label" = :Key {types = #str, structure = @misc/string, similarity_weight = 6}
+        "contentType" = :Key {types = #str}
+        "minimum" = :Key {types = #str}
+    }
+}
+flag inherit temp/SortedKeymap {
+    keys = {
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}, similarity_weight = 0}
+        "attrib" = :Key {types = #dict, structure = @flag.attrib, delegate_arguments = {"always_print" = true}, similarity_weight = 4}
+        "text" = :Key {types = #str}
+    }
+}
+flag.attrib inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string, similarity_weight = 3}
+        "label" = :Key {types = #str, structure = @misc/string}
+    }
+}

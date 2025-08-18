@@ -1,0 +1,39 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "ui_global_variables"
+    $ pack_type = "resource pack"
+    $ structure = @file
+}
+file inherit temp/Dict {
+    value_types = [#list, #int, #float]
+    key_structure = @temp/string
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #list, structure = @vector},
+            :Key {types = #int},
+            :Key {types = #float},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "variable", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+vector inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#float, #int, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}

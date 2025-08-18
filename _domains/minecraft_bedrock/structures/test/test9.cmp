@@ -1,0 +1,45 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @test9
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "test9"}
+    }
+}
+test9 inherit temp/SortedKeymap {
+    keys = {
+        "a" = :Key {types = #fake_file, structure = @simple_file}
+        "b" = :Key {types = #fake_file, structure = @simple_file}
+        "c" = :Key {types = #fake_file, structure = @simple_file}
+        "d" = :Key {types = #fake_file, structure = @simple_file}
+        "e" = :Key {types = #fake_file, structure = @complex_file}
+        "f" = :Key {types = #fake_file, structure = @complex_file}
+        "g" = :Key {types = #fake_file, structure = @complex_file}
+        "h" = :Key {types = #fake_file, structure = @complex_file}
+    }
+}
+simple_file :File {
+    serializer = null
+    outer_types = #fake_file
+    inner_types = #int
+    structure = :Primitive {
+        this_types = #int
+        delegate = :Delegate {delegate_class=%@PrimitiveDelegate}
+    }
+}
+complex_file :File {
+    serializer = null
+    outer_types = #fake_file
+    inner_types = #dict
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "" = :Key {types = #int}
+        }
+    }
+}

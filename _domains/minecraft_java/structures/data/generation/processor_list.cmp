@@ -1,0 +1,148 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        be = @structures/misc/block_entity/
+        bs = @structures/misc/block_state/
+        ip = @structures/misc/provider/int_provider/
+        misc = @structures/misc/misc/
+        prt = @structures/data/generation/pos_rule_test/
+        rt = @structures/data/generation/rule_test/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "processor_list"
+    $ pack_type = "data pack"
+    $ types = [#list, #dict]
+    $ structure = @processor_list
+}
+processor_list_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @processor_list.dict},
+        :Key {types = #list, structure = @processor_list.list},
+    ]
+}
+processor_list :Union {
+    substructures = [
+        :Key {types = #dict, structure = @processor_list.dict},
+        :Key {types = #list, structure = @processor_list.list},
+    ]
+}
+processor_list.dict inherit temp/SortedKeymap {
+    keys = {
+        "processors" = :Key {types = #list, structure = @processor_list.list}
+    }
+}
+processor_list.list inherit temp/Set {
+    $ field = "processor"
+    value_types = #dict
+    value_structure = @processor
+}
+processor :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "processor_type"}
+    }
+    substructures = {
+        "minecraft:rule" = :Key {types = #dict, structure = @processor.rule}
+        "minecraft:block_rot" = :Key {types = #dict, structure = @processor.block_rot}
+        "minecraft:block_age" = :Key {types = #dict, structure = @processor.block_age}
+        "minecraft:block_ignore" = :Key {types = #dict, structure = @processor.block_ignore}
+        "minecraft:gravity" = :Key {types = #dict, structure = @processor.gravity}
+        "minecraft:protected_blocks" = :Key {types = #dict, structure = @processor.protected_blocks}
+        "minecraft:blackstone_replace" = :Key {types = #dict, structure = @processor.empty}
+        "minecraft:jigsaw_replacement" = :Key {types = #dict, structure = @processor.empty}
+        "minecraft:lava_submerged_block" = :Key {types = #dict, structure = @processor.empty}
+        "minecraft:capped" = :Key {types = #dict, structure = @processor.capped}
+        "minecraft:nop" = :Key {types = #dict, structure = @processor.empty}
+    }
+}
+processor:all {
+    "processor_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+processor.rule inherit temp/SortedKeymap {
+    keys = @processor:all + {
+        "rules" = :Key {types = #list, structure = @processor.rule:rules}
+    }
+}
+processor.rule:rules inherit temp/Sequence {
+    $ field = "rule"
+    value_types = #dict
+    value_structure = @processor.rule:rule
+}
+processor.rule:rule inherit temp/SortedKeymap {
+    keys = {
+        "position_predicate" = :Key {types = #dict, structure = @prt/pos_rule_test}
+        "input_predicate" = :Key {types = #dict, structure = @rt/rule_test}
+        "location_predicate" = :Key {types = #dict, structure = @rt/rule_test}
+        "output_state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "block_entity_modifier" = :Key {types = #dict, structure = @processor.rule:block_entity_modifier}
+    }
+}
+processor.rule:block_entity_modifier :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:append_loot" = :Key {types = #dict, structure = @processor.rule:block_entity_modifier.append_loot}
+        "minecraft:append_static" = :Key {types = #dict, structure = @processor.rule:block_entity_modifier.append_static}
+        "minecraft:clear" = :Key {types = #dict, structure = @processor.rule:block_entity_modifier.empty}
+        "minecraft:passthrough" = :Key {types = #dict, structure = @processor.rule:block_entity_modifier.empty}
+    }
+}
+processor.rule:block_entity_modifier:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+processor.rule:block_entity_modifier.append_loot inherit temp/SortedKeymap {
+    keys = @processor.rule:block_entity_modifier:all + {
+        "loot_table" = :Key {types = #str}
+    }
+}
+processor.rule:block_entity_modifier.append_static inherit temp/SortedKeymap {
+    keys = @processor.rule:block_entity_modifier:all + {
+        "data" = :Key {types = @a/compound, structure = @be/block_entity}
+    }
+}
+processor.rule:block_entity_modifier.empty inherit temp/SortedKeymap {
+    keys = @processor:all
+}
+processor.block_rot inherit temp/SortedKeymap {
+    keys = @processor:all + {
+        "integrity" = :Key {types = #float}
+        "rottable_blocks" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+    }
+}
+processor.block_age inherit temp/SortedKeymap {
+    keys = @processor:all + {
+        "mossiness" = :Key {types = #float}
+    }
+}
+processor.block_ignore inherit temp/SortedKeymap {
+    keys = @processor:all + {
+        "blocks" = :Key {types = @a/list, structure = @bs/block_state_list}
+    }
+}
+processor.gravity inherit temp/SortedKeymap {
+    keys = @processor:all + {
+        "heightmap" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "offset" = :Key {types = #int}
+    }
+}
+processor.protected_blocks inherit temp/SortedKeymap {
+    keys = @processor:all + {
+        "value" = :Key {types = #str}
+    }
+}
+processor.empty inherit temp/SortedKeymap {
+    keys = @processor:all
+}
+processor.capped inherit temp/SortedKeymap {
+    keys = @processor:all + {
+        "value" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "limit" = :Key {types = #int} // not documented on wiki
+        "delegate" = :Key {types = #dict, structure = @processor}
+    }
+}

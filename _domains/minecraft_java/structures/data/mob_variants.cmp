@@ -1,0 +1,85 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+        t = @structure_tags/
+    }
+}
+base abstract inherit temp/base_multiple_pack_files {
+    $ name = "mob_variants"
+    $ pack_type = "data pack"
+    $ types = #dict
+    $ (dict) imports
+    $ structure = @root{$imports=imports}
+}
+root abstract inherit temp/SortedKeymap {
+    $ (dict) imports
+    keys = imports
+}
+variant:spawn_conditions {
+    "spawn_conditions" = :Key {types = #list, structure = @spawn_conditions}
+    "biomes" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="biome"}, tags = @t/outdated}
+}
+variant:asset_id {
+    "asset_id" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+    "texture" = :Key {types = #str, structure = @misc/string, tags = @t/outdated}
+}
+variant:assets {
+    "assets" = :Key {types = #dict, structure = @wolf.assets}
+    "texture" = :Key {types = #str, tags = @t/outdated}
+    "angry_texture" = :Key {types = #str, tags = @t/outdated}
+    "tame_texture" = :Key {types = #str, tags = @t/outdated}
+    "wild_texture" = :Key {types = #str, tags = @t/outdated}
+}
+variant:model {
+    "model" = :Key {types = #str}
+}
+wolf.assets inherit temp/SortedKeymap {
+    keys = {
+        "angry" = :Key {types = #str}
+        "wild" = :Key {types = #str}
+        "tame" = :Key {types = #str}
+    }
+}
+spawn_conditions inherit temp/Set {
+    $ field = "spawn condition"
+    value_types = #dict
+    value_structure = @spawn_condition
+}
+spawn_condition inherit temp/SortedKeymap {
+    keys = {
+        "priority" = :Key {types = #int}
+        "condition" = :Key {types = #dict, structure = @condition}
+    }
+}
+condition :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:biome" = :Key {types = #dict, structure = @condition.biome}
+        "minecraft:structure" = :Key {types = #dict, structure = @condition.structure}
+        "minecraft:moon_brightness" = :Key {types = #dict, structure = @condition.moon_brightness}
+    }
+}
+condition:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+condition.biome inherit temp/SortedKeymap {
+    keys = @condition:all + {
+        "biomes" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="biome"}}
+    }
+}
+condition.structure inherit temp/SortedKeymap {
+    keys = @condition:all + {
+        "structures" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="structure"}}
+    }
+}
+condition.moon_brightness inherit temp/SortedKeymap {
+    keys = @condition:all + {
+        "range" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+    }
+}

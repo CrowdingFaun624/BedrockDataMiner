@@ -1,0 +1,36 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/misc/template/
+    }
+}
+minimum_size :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:two_layers_feature_size" = :Key {types = #dict, structure = @minimum_size.two_layers_feature_size}
+        "minecraft:three_layers_feature_size" = :Key {types = #dict, structure = @minimum_size.three_layers_feature_size}
+    }
+}
+minimum_size:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "min_clipped_height" = :Key {types = #int}
+}
+minimum_size.two_layers_feature_size inherit temp/SortedKeymap {
+    keys = @minimum_size:all + {
+        "limit" = :Key {types = #int}
+        "lower_size" = :Key {types = #int}
+        "upper_size" = :Key {types = #int}
+    }
+}
+minimum_size.three_layers_feature_size inherit temp/SortedKeymap {
+    keys = @minimum_size:all + {
+        "limit" = :Key {types = #int}
+        "upper_limit" = :Key {types = #int}
+        "lower_size" = :Key {types = #int}
+        "middle_size" = :Key {types = #int}
+        "upper_size" = :Key {types = #int}
+    }
+}

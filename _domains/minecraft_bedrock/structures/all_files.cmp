@@ -1,0 +1,28 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+        t = @structure_tags/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @files
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "all_files"}
+    }
+}
+files inherit temp/Dict {
+    key_weight = 5
+    value_weight = 1
+    min_key_similarity_threshold = 0.0 // 0.75
+    min_value_similarity_threshold = 0.0
+    tags = @t/file_hash_tag
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "file", "measure_length" = true, "sort" = %sort_by_key}
+    }
+}

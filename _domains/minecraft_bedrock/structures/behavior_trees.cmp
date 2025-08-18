@@ -1,0 +1,129 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "behavior_trees"
+    $ pack_type = "behavior pack"
+    $ file_field = "behavior tree"
+    $ structure = @behavior_tree
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true}
+    }
+}
+behavior_tree inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:behavior_tree" = :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "minecraft:name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+                "minecraft:root" = :Key {types = #dict, structure = @root}
+            }
+        }}
+    }
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:sequence" = :Key {types = #dict, structure = @root.sequence}
+    }
+}
+root.sequence inherit temp/SortedKeymap {
+    keys = {
+        "children" = :Key {types = #list, structure = @root.sequence.children}
+    }
+}
+root.sequence.children inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    min_value_similarity_threshold = 0.28
+    value_structure = @root.sequence.children.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "child", "show_item_key" = false, "measure_length" = true}
+    }
+}
+root.sequence.children.item inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:activate_tool" = :Key {types = #dict, structure = @behavior.activate_tool}
+        "minecraft:attack" = :Key {types = #dict, structure = @behavior.attack}
+        "minecraft:break_block" = :Key {types = #dict, structure = @behavior.break_block}
+        "minecraft:consume_item" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:find_block" = :Key {types = #dict, structure = @behavior.find_block}
+        "minecraft:interact" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:find_entity" = :Key {types = #dict, structure = @behavior.find_entity}
+        "minecraft:look_at" = :Key {types = #dict, structure = @behavior.look_at}
+        "minecraft:look_at_entity" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:move" = :Key {types = #dict, structure = @behavior.move}
+        "minecraft:move_to" = :Key {types = #dict, structure = @behavior.move_to}
+        "minecraft:place_block" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:shoot_bow" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:use_entity" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:wait" = :Key {types = #dict, structure = @behavior.wait}
+        "minecraft:wait_ticks" = :Key {types = #dict, structure = @temp/empty}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "behavior"}
+    }
+}
+behavior.activate_tool inherit temp/SortedKeymap {
+    keys = {
+        "block_pos" = :Key {types = #list, structure = @vector_int, delegate_arguments = {"always_print" = true}}
+    }
+}
+behavior.attack inherit temp/SortedKeymap {
+    keys = {
+        "num_of_ticks" = :Key {types = #int, delegate_arguments = {"always_print" = true}}
+    }
+}
+behavior.break_block inherit temp/SortedKeymap {
+    keys = {
+        "block_pos" = :Key {types = #list, structure = @vector_int, delegate_arguments = {"always_print" = true}}
+        "num_of_ticks" = :Key {types = #int}
+    }
+}
+behavior.find_block inherit temp/SortedKeymap {
+    keys = {
+        "block_name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+behavior.find_entity inherit temp/SortedKeymap {
+    keys = {
+        "entity_name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+behavior.look_at inherit temp/SortedKeymap {
+    keys = {
+        "block_pos" = :Key {types = #list, structure = @vector_int, delegate_arguments = {"always_print" = true}}
+    }
+}
+behavior.move inherit temp/SortedKeymap {
+    keys = {
+        "desired_direction" = :Key {types = #str}
+        "max_number_of_ticks" = :Key {types = #int}
+    }
+}
+behavior.move_to inherit temp/SortedKeymap {
+    keys = {
+        "block_pos_id" = :Key {types = #str}
+        "distance_epsilon" = :Key {types = #float}
+    }
+}
+behavior.wait inherit temp/SortedKeymap {
+    keys = {
+        "wait_duration" = :Key {types = #int}
+    }
+}

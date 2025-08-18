@@ -1,0 +1,37 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #list
+    structure = @pieces
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "pieces"}
+    }
+}
+pieces :Normalizer {
+    outer_types = #list
+    inner_types = #list
+    functions = [
+        :Function {
+            function = %scripts/normalizers/normalizers/packs_normalize
+        },
+        :Function {
+            function = %pieces_normalize
+        },
+    ]
+    structure = inherit temp/Dict {
+        key_weight = 0
+        key_types = #int
+        this_types = #list
+        value_types = #str
+        value_structure = null
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "piece", "sort" = %sort_by_value, "show_item_key" = false, "measure_length" = true}
+        }
+    }
+}

@@ -1,0 +1,229 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "version_json"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "time" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "releaseTime" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "minecraftArguments" = :Key {types = #str}
+        "minimumLauncherVersion" = :Key {types = #int}
+        "mainClass" = :Key {types = #str}
+        "complianceLevel" = :Key {types = #int}
+        "assets" = :Key {types = #str}
+        "assetIndex" = :Key {types = #dict, structure = @asset_index}
+        "downloads" = :Key {types = #dict, structure = @downloads}
+        "javaVersion" = :Key {types = #dict, structure = @java_version}
+        "logging" = :Key {types = #dict, structure = @logging}
+        "arguments" = :Key {types = #dict, structure = @arguments}
+        "libraries" = :Key {types = #list, structure = @libraries}
+    }
+}
+asset_index inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "sha1" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "size" = :Key {types = #int}
+        "totalSize" = :Key {types = #int}
+        "url" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+downloads inherit temp/SortedKeymap {
+    keys = {
+        "client" = :Key {types = #dict, structure = @downloads.file}
+        "client_mappings" = :Key {types = #dict, structure = @downloads.file}
+        "server" = :Key {types = #dict, structure = @downloads.file}
+        "server_mappings" = :Key {types = #dict, structure = @downloads.file}
+        "windows_server" = :Key {types = #dict, structure = @downloads.file}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "print_all" = true, "field" = "file"}
+    }
+}
+downloads.file inherit temp/SortedKeymap {
+    keys = {
+        "url" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "sha1" = :Key {types = #str}
+        "size" = :Key {types = #int}
+    }
+}
+java_version inherit temp/SortedKeymap {
+    keys = {
+        "component" = :Key {types = #str}
+        "majorVersion" = :Key {types = #int}
+    }
+}
+logging inherit temp/SortedKeymap {
+    keys = {
+        "client" = :Key {types = #dict, structure = @logging.client}
+    }
+}
+logging.client inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+        "argument" = :Key {types = #str}
+        "file" = :Key {types = #dict, structure = @logging.client.file}
+    }
+}
+logging.client.file inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "url" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "sha1" = :Key {types = #str}
+        "size" = :Key {types = #int}
+    }
+}
+arguments inherit temp/SortedKeymap {
+    keys = {
+        "game" = :Key {types = #list, structure = @arguments.environment}
+        "jvm" = :Key {types = #list, structure = @arguments.environment}
+    }
+}
+arguments.environment :Sequence {
+    value_types = [#str, #dict]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #str, structure = @misc/string},
+            :Key {types = #dict, structure = @argument},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "argument", "measure_length" = true}
+    }
+}
+argument inherit temp/SortedKeymap {
+    keys = {
+        "value" = :Key {types = [#str, #list], structure = @argument.value}
+        "rules" = :Key {types = #list, structure = @rules}
+    }
+}
+argument.value :Union {
+    substructures = [
+        :Key {types = #str, structure = @misc/string},
+        :Key {types = #list, structure = :Sequence {
+            value_types = #str
+            value_structure = @misc/string
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"print_flat" = true, "print_all" = true}
+            }
+        }},
+    ]
+}
+rules inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @rule
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "rule", "show_item_key" = false, "measure_length" = true}
+    }
+}
+rule inherit temp/SortedKeymap {
+    keys = {
+        "action" = :Key {types = #str}
+        "features" = :Key {types = #dict, structure = @rule.features}
+        "os" = :Key {types = #dict, structure = @rule.os}
+    }
+}
+rule.features inherit temp/SortedKeymap {
+    keys = {
+        "is_demo_user" = :Key {types = #bool}
+        "has_custom_resolution" = :Key {types = #bool}
+        "has_quick_plays_support" = :Key {types = #bool}
+        "is_quick_play_singleplayer" = :Key {types = #bool}
+        "is_quick_play_multiplayer" = :Key {types = #bool}
+        "is_quick_play_realms" = :Key {types = #bool}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "feature", "measure_length" = true}
+    }
+}
+rule.os inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "version" = :Key {types = #str, structure = @misc/string}
+        "arch" = :Key {types = #str}
+    }
+}
+libraries inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @library
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "library", "show_item_key" = false, "measure_length" = true}
+    }
+}
+library inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string}
+        "url" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string}
+        "downloads" = :Key {types = #dict, structure = @library.downloads}
+        "natives" = :Key {types = #dict, structure = @library.natives}
+        "extract" = :Key {types = #dict, structure = @library.extract}
+        "rules" = :Key {types = #list, structure = @rules}
+    }
+}
+library.downloads inherit temp/SortedKeymap {
+    keys = {
+        "artifact" = :Key {types = #dict, structure = @artifact}
+        "classifiers" = :Key {types = #dict, structure = @library.downloads.classifiers}
+    }
+}
+library.downloads.classifiers inherit temp/Dict {
+    value_types = #dict
+    value_structure = @artifact
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "classifier", "measure_length" = true}
+    }
+}
+artifact inherit temp/SortedKeymap {
+    keys = {
+        "url" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string}
+        "path" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string}
+        "sha1" = :Key {types = #str, similarity_weight = 0}
+        "size" = :Key {types = #int, similarity_weight = 0}
+    }
+}
+library.natives inherit temp/SortedKeymap {
+    keys = {
+        "windows" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string}
+        "osx" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string}
+        "linux" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @misc/string}
+    }
+}
+library.extract inherit temp/SortedKeymap {
+    keys = {
+        "exclude" = :Key {types = #list, structure = @library.extract.exclude}
+    }
+}
+library.extract.exclude inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @misc/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "path", "show_item_key" = false, "measure_length" = true}
+    }
+}

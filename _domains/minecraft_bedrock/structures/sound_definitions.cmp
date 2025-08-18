@@ -1,0 +1,128 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "sound_definitions"}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/normalizers/normalize_sound_definitions
+            arguments = {"serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @sound_event
+        }
+    }
+}
+sound_event inherit temp/Dict {
+    value_types = #dict
+    key_structure = @temp/string {
+        similarity_weight_function = :Function {
+            function = %scripts/normalizers/normalizers/sound_events_similarity_weight
+        }
+    }
+    min_key_similarity_threshold = 0.1
+    value_structure = @resource_pack
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sound event", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+resource_pack :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_dict
+    }
+    structure = inherit temp/Dict {
+        key_types = #tuple
+        key_structure = @temp/defined_in
+        value_types = #dict
+        value_structure = @sound_event_property
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+sound_event_property :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        // https://bugs.mojang.com/browse/MCPE-153558
+        // https://bugs.mojang.com/browse/MCPE-178265
+        function = %delete_keys
+        arguments = {"keys" = ["pitch", "volume"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "category" = :Key {types = #str}
+            "max_distance" = :Key {types = [#float, #int]}
+            "min_distance" = :Key {types = #float}
+            "subtitle" = :Key {types = #str}
+            "sounds" = :Key {types = #list, structure = @sounds}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order, "field" = "property"}
+        }
+    }
+}
+sounds inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#dict, #str]
+    min_value_similarity_threshold = 0.3
+    value_structure = @sound_properties
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sound", "show_item_key" = false, "print_all" = true, "measure_length" = true}
+    }
+}
+sound_properties :Normalizer {
+    outer_types = [#str, #dict]
+    inner_types = #dict
+    functions = [
+        :Function {
+            function = %scripts/normalizers/normalizers/sound_definitions_make_strings_to_dict
+        },
+        :Function {
+            // ttps://bugs.mojang.com/browse/MCPE-153561
+            function = %delete_key
+            arguments = {"key" = "pitch:"}
+        },
+    ]
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "name" = :Key {types = #str, structure = @temp/string, similarity_weight = 10, required = true, delegate_arguments = {"always_print" = true}}
+            "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+            "exclude_from_pocket_platforms" = :Key {types = #bool}
+            "is3D" = :Key {types = #bool}
+            "load_on_low_memory" = :Key {types = #bool}
+            "pitch" = :Key {types = [#float, #int]}
+            "stream" = :Key {types = #bool}
+            "volume" = :Key {types = [#float, #int]}
+            "weight" = :Key {types = #int}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order, "field" = "property"}
+        }
+    }
+}

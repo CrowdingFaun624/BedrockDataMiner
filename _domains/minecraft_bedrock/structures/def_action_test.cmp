@@ -1,0 +1,49 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "def_action_test"
+    $ structure = @def_action_test
+}
+def_action_test inherit temp/SortedKeymap {
+    keys = {
+        "singletest" = :Key {types = #str}
+        "objecttest" = :Key {types = #dict, structure = @action}
+        "listtest" = :Key {types = #dict, structure = @action}
+        "arraytest" = :Key {types = #list, structure = @action_list}
+        "complex array action" = :Key {types = #list, structure = @action_list}
+        "complex array action2" = :Key {types = #list, structure = @action_list}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "test"}
+    }
+}
+action_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#str, #dict]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #str, structure = @temp/string},
+            :Key {types = #dict, structure = @action},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "action", "show_item_key" = false, "measure_length" = true}
+    }
+}
+action inherit temp/SortedKeymap {
+    keys = {
+        "prob" = :Key {types = #float}
+        "selector" = :Key {types = #bool}
+        "action" = :Key {types = #str}
+        "actions" = :Key {types = #list, structure = @action_list}
+    }
+}

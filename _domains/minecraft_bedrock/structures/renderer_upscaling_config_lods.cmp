@@ -1,0 +1,26 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_upscaling_config_lods"
+    $ files_key_structure = @temp/string
+    $ structure = @file
+}
+file inherit temp/Dict {
+    value_types = #dict
+    value_structure = @configuration
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "configuration", "measure_length" = true}
+    }
+}
+configuration inherit temp/SortedKeymap {
+    keys = {
+        "upscaling_factor" = :Key {types = #float}
+        "upscaling_mode" = :Key {types = #str}
+    }
+}

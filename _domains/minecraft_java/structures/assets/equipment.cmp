@@ -1,0 +1,64 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "equipment"
+    $ pack_type = "resource pack"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "layers" = :Key {types = #dict, structure = @layers}
+    }
+}
+layers inherit temp/SortedKeymap {
+    keys = {
+        "camel_saddle" = :Key {types = #list, structure = @textures}
+        "donkey_saddle" = :Key {types = #list, structure = @textures}
+        "happy_ghast_body" = :Key {types = #list, structure = @textures}
+        "horse_body" = :Key {types = #list, structure = @textures}
+        "horse_saddle" = :Key {types = #list, structure = @textures}
+        "humanoid" = :Key {types = #list, structure = @textures}
+        "humanoid_leggings" = :Key {types = #list, structure = @textures}
+        "llama_body" = :Key {types = #list, structure = @textures}
+        "mule_saddle" = :Key {types = #list, structure = @textures}
+        "pig_saddle" = :Key {types = #list, structure = @textures}
+        "skeleton_horse_saddle" = :Key {types = #list, structure = @textures}
+        "strider_saddle" = :Key {types = #list, structure = @textures}
+        "wings" = :Key {types = #list, structure = @textures}
+        "wolf_body" = :Key {types = #list, structure = @textures}
+        "zombie_horse_saddle" = :Key {types = #list, structure = @textures}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "body type", "measure_length" = true}
+    }
+}
+textures inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @texture
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "texture", "show_item_key" = false, "measure_length" = true}
+    }
+}
+texture inherit temp/SortedKeymap {
+    keys = {
+        "texture" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "dyeable" = :Key {types = #dict, structure = @dyeable}
+        "use_player_texture" = :Key {types = #bool}
+    }
+}
+dyeable inherit temp/SortedKeymap {
+    keys = {
+        "color_when_undyed" = :Key {types = #int}
+    }
+}

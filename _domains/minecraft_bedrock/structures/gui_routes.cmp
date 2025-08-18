@@ -1,0 +1,145 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "gui_routes"
+    $ structure = @parent
+}
+parent inherit temp/SortedKeymap {
+    keys = {
+        "routes" = :Key {types = #list, structure = @routes}
+    }
+}
+routes :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "fileName"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @route
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "route", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+route inherit temp/SortedKeymap {
+    keys = {
+        "defaultRoute" = :Key {types = #str, structure = @temp/string}
+        "fileName" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "scope" = :Key {types = #list, structure = @scope}
+        "supportedRoutes" = :Key {types = #list, structure = @supported_routes}
+    }
+}
+scope inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "scope", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+supported_routes :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "route"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        key_structure = @temp/string
+        value_structure = @supported_route
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "supported route", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+supported_route inherit temp/SortedKeymap {
+    keys = {
+        "knownEntries" = :Key {types = #list, structure = @known_entries}
+        "modes" = :Key {types = #list, structure = @modes}
+        "params" = :Key {types = #list, structure = @parameters}
+        "regexp" = :Key {types = #str, structure = @temp/string}
+        "route" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "transition" = :Key {types = #str}
+        "prerequisites" = :Key {types = #list, structure = @prerequisites}
+    }
+}
+known_entries inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @known_entry
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "entry", "show_item_key" = false, "measure_length" = true}
+    }
+}
+prerequisites inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "prerequisite", "show_item_key" = false, "measure_length" = true}
+    }
+}
+known_entry inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "status" = :Key {types = #str}
+        "tab" = :Key {types = #str}
+    }
+}
+modes inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "mode", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+parameters :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "name"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @parameter
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "parameter", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+parameter inherit temp/SortedKeymap {
+    keys = {
+        "delimiter" = :Key {types = #str}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "optional" = :Key {types = #bool}
+        "pattern" = :Key {types = #str, structure = @temp/string}
+        "prefix" = :Key {types = #str}
+        "repeat" = :Key {types = #bool}
+    }
+}

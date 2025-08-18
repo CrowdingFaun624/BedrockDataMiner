@@ -1,0 +1,456 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "particles"
+    $ file_field = "particle"
+    $ pack_type = "resource pack"
+    $ structure = @particle
+}
+block_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "show_item_key" = false, "measure_length" = true}
+    }
+}
+color :Union {
+    substructures = [
+        :Key {types = #list, structure = @color.list},
+        :Key {types = #str},
+    ]
+}
+color.list inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [@temp/decimal, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "channel", "print_flat" = true, "print_all" = true}
+    }
+}
+vector_decimal_molang inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [@temp/decimal, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+vector_decimal_molang_or_decimal_molang :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #list, structure = @vector_decimal_molang},
+        :Key {types = #str},
+    ]
+}
+particle :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/particles_normalize_old
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "format_version" = :Key {types = #str}
+            "particle_effect" = :Key {types = #dict, structure = @particle_effect}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+particle_effect :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %delete_keys
+        arguments = {"keys" = ["minecraft:particle_appearance_tinting", "minecraft:particle_appearance_lighting"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "components" = :Key {types = #dict, structure = @components}
+            "curves" = :Key {types = #dict, structure = @curves}
+            "description" = :Key {types = #dict, structure = @description}
+            "events" = :Key {types = #dict, structure = @events}
+        }
+    }
+}
+curves inherit temp/Dict {
+    value_types = #dict
+    value_structure = @curve
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "curve", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+curve inherit temp/SortedKeymap {
+    keys = {
+        "horizontal_range" = :Key {types = #str}
+        "input" = :Key {types = #str}
+        "nodes" = :Key {types = #list, structure = @curve.nodes}
+        "type" = :Key {types = #str}
+    }
+}
+curve.nodes inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "node", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @temp/string}
+        "basic_render_parameters" = :Key {types = #dict, structure = @description.basic_render_parameters}
+    }
+}
+description.basic_render_parameters inherit temp/SortedKeymap {
+    keys = {
+        "material" = :Key {types = #str, structure = @temp/string}
+        "texture" = :Key {types = #str, structure = @temp/string}
+    }
+}
+events inherit temp/Dict {
+    value_types = #dict
+    value_structure = @event
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "event", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+event inherit temp/SortedKeymap {
+    keys = {
+        "particle_effect" = :Key {types = #dict, structure = @event.particle_effect}
+        "sound_effect" = :Key {types = #dict, structure = @event.sound_effect}
+    }
+}
+event.particle_effect inherit temp/SortedKeymap {
+    keys = {
+        "effect" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "type" = :Key {types = #str}
+    }
+}
+event.sound_effect inherit temp/SortedKeymap {
+    keys = {
+        "event_name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+components inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:emitter_initialization" = :Key {types = #dict, structure = @component.emitter_initialization}
+        "minecraft:emitter_local_space" = :Key {types = #dict, structure = @component.emitter_local_space}
+        "minecraft:emitter_lifetime_expression" = :Key {types = #dict, structure = @component.emitter_lifetime_expression}
+        "minecraft:emitter_lifetime_looping" = :Key {types = #dict, structure = @component.emitter_lifetime_looping}
+        "minecraft:emitter_lifetime_once" = :Key {types = #dict, structure = @component.emitter_lifetime_once}
+        "minecraft:emitter_rate_instant" = :Key {types = #dict, structure = @component.emitter_rate_instant}
+        "minecraft:emitter_rate_manual" = :Key {types = #dict, structure = @component.emitter_rate_manual}
+        "minecraft:emitter_rate_steady" = :Key {types = #dict, structure = @component.emitter_rate_steady}
+        "minecraft:emitter_shape_box" = :Key {types = #dict, structure = @component.emitter_shape_box}
+        "minecraft:emitter_shape_custom" = :Key {types = #dict, structure = @component.emitter_shape_custom}
+        "minecraft:emitter_shape_disc" = :Key {types = #dict, structure = @component.emitter_shape_disc}
+        "minecraft:emitter_shape_entity_aabb" = :Key {types = #dict, structure = @component.emitter_shape_entity_aabb}
+        "minecraft:emitter_shape_point" = :Key {types = #dict, structure = @component.emitter_shape_point}
+        "minecraft:emitter_shape_sphere" = :Key {types = #dict, structure = @component.emitter_shape_sphere}
+        "minecraft:particle_appearance_billboard" = :Key {types = #dict, structure = @component.particle_appearance_billboard}
+        "minecraft:particle_appearance_lighting" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:particle_appearance_tinting" = :Key {types = #dict, structure = @component.particle_appearance_tinting}
+        "minecraft:particle_expire_if_not_in_blocks" = :Key {types = #list, structure = @block_list}
+        "minecraft:particle_initial_speed" = :Key {types = [@temp/decimal, #list, #str], structure = @vector_decimal_molang_or_decimal_molang}
+        "minecraft:particle_initial_spin" = :Key {types = #dict, structure = @component.particle_initial_spin}
+        "minecraft:particle_initialization" = :Key {types = #dict, structure = @component.particle_initialization}
+        "minecraft:particle_lifetime_events" = :Key {types = #dict, structure = @component.particle_lifetime_events}
+        "minecraft:particle_lifetime_expression" = :Key {types = #dict, structure = @component.particle_lifetime_expression}
+        "minecraft:particle_kill_plane" = :Key {types = #list, structure = @component.particle_kill_plane}
+        "minecraft:particle_motion_collision" = :Key {types = #dict, structure = @component.particle_motion_collision}
+        "minecraft:particle_motion_dynamic" = :Key {types = #dict, structure = @component.particle_motion_dynamic}
+        "minecraft:particle_motion_parametric" = :Key {types = #dict, structure = @component.particle_motion_parametric}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+component.emitter_initialization inherit temp/SortedKeymap {
+    keys = {
+        "creation_expression" = :Key {types = #str}
+        "per_update_expression" = :Key {types = #str}
+    }
+}
+component.emitter_lifetime_expression inherit temp/SortedKeymap {
+    keys = {
+        "activation_expression" = :Key {types = [#int, #str]}
+        "expiration_expression" = :Key {types = [#int, #str]}
+    }
+}
+component.emitter_lifetime_looping inherit temp/SortedKeymap {
+    keys = {
+        "active_time" = :Key {types = [@temp/decimal, #str]}
+    }
+}
+component.emitter_lifetime_once inherit temp/SortedKeymap {
+    keys = {
+        "active_time" = :Key {types = [@temp/decimal, #str]}
+    }
+}
+component.emitter_local_space inherit temp/SortedKeymap {
+    keys = {
+        "position" = :Key {types = #bool}
+        "rotation" = :Key {types = #bool}
+        "velocity" = :Key {types = #bool}
+    }
+}
+component.emitter_rate_instant inherit temp/SortedKeymap {
+    keys = {
+        "num_particles" = :Key {types = [#int, #str]}
+    }
+}
+component.emitter_rate_manual inherit temp/SortedKeymap {
+    keys = {
+        "max_particles" = :Key {types = #int}
+    }
+}
+component.emitter_rate_steady inherit temp/SortedKeymap {
+    keys = {
+        "spawn_rate" = :Key {types = [#int, #str]}
+        "max_particles" = :Key {types = #int}
+    }
+}
+component.emitter_shape:direction :Union {
+    substructures = [
+        :Key {types = #list, structure = @vector_decimal_molang},
+        :Key {types = #str},
+    ]
+}
+component.emitter_shape_box inherit temp/SortedKeymap {
+    keys = {
+        "direction" = :Key {types = [#list, #str], structure = @component.emitter_shape:direction}
+        "half_dimensions" = :Key {types = #list, structure = @vector_decimal_molang}
+        "offset" = :Key {types = #list, structure = @vector_decimal_molang}
+        "surface_only" = :Key {types = #bool}
+    }
+}
+component.emitter_shape_custom inherit temp/SortedKeymap {
+    keys = {
+        "direction" = :Key {types = #list, structure = @vector_decimal_molang}
+        "offset" = :Key {types = #list, structure = @vector_decimal_molang}
+    }
+}
+component.emitter_shape_disc inherit temp/SortedKeymap {
+    keys = {
+        "direction" = :Key {types = [#list, #str], structure = @component.emitter_shape:direction}
+        "offset" = :Key {types = #list, structure = @vector_decimal_molang}
+        "plane_normal" = :Key {types = [#list, #str], structure = @component.emitter_shape:direction}
+        "radius" = :Key {types = [@temp/decimal, #str]}
+        "surface_only" = :Key {types = #bool}
+    }
+}
+component.emitter_shape_entity_aabb inherit temp/SortedKeymap {
+    keys = {
+        "direction" = :Key {types = [#list, #str], structure = @component.emitter_shape:direction}
+        "surface_only" = :Key {types = #bool}
+    }
+}
+component.emitter_shape_point inherit temp/SortedKeymap {
+    keys = {
+        "direction" = :Key {types = #list, structure = @vector_decimal_molang}
+        "offset" = :Key {types = #list, structure = @vector_decimal_molang}
+    }
+}
+component.emitter_shape_sphere inherit temp/SortedKeymap {
+    keys = {
+        "direction" = :Key {types = [#list, #str], structure = @component.emitter_shape:direction}
+        "offset" = :Key {types = #list, structure = @vector_decimal_molang}
+        "radius" = :Key {types = [@temp/decimal, #str]}
+        "surface_only" = :Key {types = #bool}
+    }
+}
+component.particle_appearance_billboard inherit temp/SortedKeymap {
+    keys = {
+        "direction" = :Key {types = #dict, structure = @component.particle_appearance_billboard:direction}
+        "face_camera_mode" = :Key {types = #str, tags = [@t/outdated]}
+        "facing_camera_mode" = :Key {types = #str, tags = [@t/not_in_documentation]}
+        "size" = :Key {types = #list, structure = @vector_decimal_molang}
+        "uv" = :Key {types = #dict, structure = @component.particle_appearance_billboard:uv}
+    }
+}
+component.particle_appearance_billboard:direction inherit temp/SortedKeymap {
+    keys = {
+        "custom_direction" = :Key {types = #list, structure = @vector_decimal_molang}
+        "mode" = :Key {types = #str}
+    }
+}
+component.particle_appearance_billboard:uv inherit temp/SortedKeymap {
+    keys = {
+        "base_UV" = :Key {types = #list, structure = @vector_decimal_molang}
+        "flipbook" = :Key {types = #dict, structure = @component.particle_appearance_billboard:uv, tags = [@t/not_in_documentation]}
+        "frames_per_second" = :Key {types = #int}
+        "loop" = :Key {types = #bool}
+        "max_frame" = :Key {types = [#int, #str]}
+        "size_UV" = :Key {types = #list, structure = @vector_decimal_molang}
+        "step_UV" = :Key {types = #list, structure = @vector_decimal_molang}
+        "stretch_to_lifetime" = :Key {types = #bool}
+        "texture_height" = :Key {types = #int, tags = [@t/not_in_documentation]}
+        "texture_width" = :Key {types = #int, tags = [@t/not_in_documentation]}
+        "textureheight" = :Key {types = #int, tags = [@t/outdated]}
+        "texturewidth" = :Key {types = #int, tags = [@t/outdated]}
+        "uv" = :Key {types = #list, structure = @vector_decimal_molang, tags = [@t/not_in_documentation]}
+        "uv_size" = :Key {types = #list, structure = @vector_decimal_molang, tags = [@t/not_in_documentation]}
+    }
+}
+component.particle_appearance_tinting inherit temp/SortedKeymap {
+    keys = {
+        "color" = :Key {types = [#dict, #list, #str], structure = @component.particle_appearance_tinting:color.group}
+        "interpolant" = :Key {types = [@temp/decimal, #str]}
+    }
+}
+component.particle_appearance_tinting:color.group :Normalizer {
+    outer_types = [#str, #list, #dict]
+    inner_types = [#dict, #list]
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/particles_normalize_component_particle_appearance_tinting_color
+    }
+    structure = :Union {
+        substructures = [
+            :Key {types = #dict, structure = @component.particle_appearance_tinting:color.dict},
+            :Key {types = #list, structure = @component.particle_appearance_tinting:color.list},
+        ]
+    }
+}
+component.particle_appearance_tinting:color.dict inherit temp/SortedKeymap {
+    keys = {
+        "gradient" = :Key {types = [#dict, #list], structure = @component.particle_appearance_tinting:color.gradient.group}
+        "interpolant" = :Key {types = #str}
+    }
+}
+component.particle_appearance_tinting:color.gradient.group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @component.particle_appearance_tinting:color.group.dict},
+        :Key {types = #list, structure = @component.particle_appearance_tinting:color.list},
+    ]
+}
+component.particle_appearance_tinting:color.group.dict inherit temp/Dict {
+    value_types = [#list, #str]
+    value_structure = @color
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "value", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+component.particle_appearance_tinting:color.list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#list, #str]
+    value_structure = @color
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "color", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.particle_initial_spin inherit temp/SortedKeymap {
+    keys = {
+        "rotation" = :Key {types = #str}
+        "rotation_rate" = :Key {types = [#int, #str]}
+    }
+}
+component.particle_initialization inherit temp/SortedKeymap {
+    keys = {
+        "per_render_expression" = :Key {types = #str}
+        "per_update_expression" = :Key {types = #str, tags = [@t/not_in_documentation]}
+    }
+}
+component.particle_kill_plane inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "variable", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+component.particle_lifetime_events inherit temp/SortedKeymap {
+    keys = {
+        "timeline" = :Key {types = #dict, structure = @component.particle_lifetime_events:timeline}
+    }
+}
+component.particle_lifetime_events:timeline inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "timestamp", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+component.particle_lifetime_expression inherit temp/SortedKeymap {
+    keys = {
+        "max_lifetime" = :Key {types = [@temp/decimal, #str]}
+    }
+}
+component.particle_motion_collision inherit temp/SortedKeymap {
+    keys = {
+        "coefficient_of_restitution" = :Key {types = @temp/decimal}
+        "collision_drag" = :Key {types = @temp/decimal}
+        "collision_radius" = :Key {types = @temp/decimal}
+        "enabled" = :Key {types = [#int, #str]}
+        "events" = :Key {types = #list, structure = @component.particle_motion_collision:events}
+        "expire_on_contact" = :Key {types = #bool}
+    }
+}
+component.particle_motion_collision:events inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @component.particle_motion_collision:events.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "event", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.particle_motion_collision:events.item inherit temp/SortedKeymap {
+    keys = {
+        "event" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @temp/string}
+        "min_speed" = :Key {types = @temp/decimal}
+    }
+}
+component.particle_motion_dynamic inherit temp/SortedKeymap {
+    keys = {
+        "linear_acceleration" = :Key {types = #list, structure = @vector_decimal_molang}
+        "linear_drag" = :Key {types = @temp/decimal, tags = [@t/outdated]}
+        "linear_drag_coefficient" = :Key {types = [@temp/decimal, #str]}
+        "rotation_acceleration" = :Key {types = [@temp/decimal, #str]}
+        "rotation_drag_coefficient" = :Key {types = [@temp/decimal, #str]}
+    }
+}
+component.particle_motion_parametric inherit temp/SortedKeymap {
+    keys = {
+        "relative_position" = :Key {types = #list, structure = @vector_decimal_molang}
+        "rotation" = :Key {types = #str}
+    }
+}

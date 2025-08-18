@@ -1,0 +1,99 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        bs = @structures/misc/block_state/
+        fp = @structures/misc/provider/float_provider/
+        hp = @structures/misc/provider/height_provider/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "carver"
+    $ pack_type = "data pack"
+    $ structure = @carver
+}
+carver_list_or_carver :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @carver},
+        :Key {types = #list, structure = @carver_or_id_list},
+    ]
+}
+carver_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @carver},
+    ]
+}
+carver_or_id_list inherit temp/Set {
+    $ field = "carver"
+    value_types = [#str, #dict]
+    value_structure = @carver_or_id
+}
+carver :Switch {
+    switch_function = :Function {
+        function = %get_get_key
+        arguments = {"key" = "type", "default" = "old"}
+    }
+    substructures = {
+        "old" = :Key {types = #dict, structure = @old_carver, tags = @t/outdated}
+        "minecraft:cave" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.cave}}
+        "minecraft:nether_cave" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.cave}}
+        "minecraft:canyon" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.canyon}}
+    }
+}
+carver:abstract abstract inherit temp/SortedKeymap {
+    $ (dict) imports
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "config" = :Key {types = #dict, structure = @config{$imports=imports}}
+    }
+}
+config abstract inherit temp/SortedKeymap {
+    $ (list) imports
+    keys = {
+        "probability" = :Key {types = #float}
+        "y" = :Key {types = #dict, structure = @hp/height_provider}
+        "lava_level" = :Key {types = #dict, structure = @hp/vertical_anchor}
+        "replaceable" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+        "debug_settings" = :Key {types = #dict, structure = @debug_settings}
+    } + imports
+}
+debug_settings inherit temp/SortedKeymap {
+    keys = {
+        "debug_mode" = :Key {types = #bool}
+        "air_state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "water_state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "lava_state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "barrier_state" = :Key {types = @a/compound, structure = @bs/block_state}
+    }
+}
+config.cave {
+    "yScale" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+    "horizontal_radius_multiplier" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+    "vertical_radius_multiplier" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+    "floor_level" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+}
+config.canyon  {
+    "yScale" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+    "vertical_rotation" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+    "shape" = :Key {types = #dict, structure = @config.canyon:shape}
+}
+config.canyon:shape inherit temp/SortedKeymap {
+    keys = {
+        "distance_factor" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "thickness" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "horizontal_radius_factor" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "vertical_radius_default_factor" = :Key {types = #float}
+        "vertical_radius_center_factor" = :Key {types = #float}
+        "width_smoothness" = :Key {types = #int}
+    }
+}
+old_carver inherit temp/SortedKeymap {
+    keys = {
+        "air" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="carver"}}
+    }
+}

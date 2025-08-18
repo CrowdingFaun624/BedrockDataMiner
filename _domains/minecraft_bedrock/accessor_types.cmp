@@ -1,0 +1,42 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @version_tag/version_tags/
+    }
+}
+download :AccessorType {
+    accessor_class = %SubDirectoryAccessor
+    arguments = {"ipa_tag" = @t/ipa, "double_assets_tag" = @t/double_assets}
+    linked_accessors = {
+        "superdirectory" = :AccessorType {
+            accessor_class = %ZipAccessor
+            linked_accessors = {
+                "file" = :AccessorType {
+                    accessor_class = %minecraft_common!ArchivalAccessor
+                    arguments = {"archive_location" = "G:/Archive/mcbe/", "file_name" = "client.zip"}
+                    linked_accessors = {
+                        "source" = :AccessorType {
+                            accessor_class = %DownloadAccessor
+                            arguments = {"location" = "client.zip", "log" = "minecraft_bedrock!logs/download_log"}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+stored :AccessorType {
+    accessor_class = %SubDirectoryAccessor
+    arguments = {
+        "ipa_tag" = @t/ipa,
+        "double_assets_tag" = @t/double_assets
+    }
+    linked_accessors = {
+        "superdirectory" = :AccessorType {
+            accessor_class = %StoredAccessor
+        }
+    }
+}
+minecraft_wiki :AccessorType {
+    accessor_class = %DummyAccessor
+}

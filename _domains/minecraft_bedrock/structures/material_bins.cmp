@@ -1,0 +1,362 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        mcs = @minecraft_common!serializers/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @files
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "material_bins"}
+    }
+}
+vector_float inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}
+files inherit temp/Dict {
+    value_types = #file
+    value_structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "file"}
+    }
+}
+cache :Cache {
+    this_types = #file
+    structure = :Condition {
+        substructures = [
+            :Key {types = #file, filter = :EqFilter {
+                key = "version"
+                value = "0.9.1"
+            }, structure = :File {
+                serializer = @s/material_bin_serializer_0_9_1
+                outer_types = #file
+                inner_types = #file // fileception
+                structure = @in_file
+            }},
+            :Key {types = #file, filter = :EqFilter {
+                key = "version"
+                value = "0.9.0"
+            }, structure = :File {
+                serializer = @s/material_bin_serializer_0_9_0
+                outer_types = #file
+                inner_types = #file
+                structure = @in_file
+            }},
+            :Key {types = #file, filter = :EqFilter {
+                key = "version"
+                value = "0.8.2"
+            }, structure = :File {
+                serializer = @s/material_bin_serializer_0_8_2
+                outer_types = #file
+                inner_types = #file
+                structure = @in_file
+            }},
+            :Key {types = #file, filter = :EqFilter {
+                key = "version"
+                value = "0.6.0"
+            }, structure = :File {
+                serializer = @s/material_bin_serializer_0_6_0
+                outer_types = #file
+                inner_types = #file
+                structure = @in_file
+            }},
+        ]
+    }
+}
+in_file :File {
+    // MaterialBinSerializer returns another file containing many many references to other files.
+    serializer = @s/custom_json
+    outer_types = #file
+    inner_types = #dict
+    structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "data" = :Key {types = #file, structure = @cache_main_data_file}
+        "passes" = :Key {types = #dict, structure = @passes}
+    }
+}
+cache_main_data_file :Cache {
+    this_types = #file
+    structure = :File {
+        serializer = @s/custom_json
+        outer_types = #file
+        inner_types = #dict
+        structure = @main_data_file
+    }
+}
+main_data_file inherit temp/SortedKeymap {
+    keys = {
+        "version" = :Key {types = #int}
+        "encryptionVariant" = :Key {types = #str}
+        "name" = :Key {types = #str, structure = @temp/string, similarity_weight = 20, delegate_arguments = {"always_print" = true}}
+        "hasParentName" = :Key {types = #bool}
+        "parentName" = :Key {types = #str}
+        "samplerDefinitionMap" = :Key {types = #dict, structure = @sampler_definition_map, similarity_weight = 0}
+        "propertyFieldMap" = :Key {types = #dict, structure = @property_field_map, similarity_weight = 0}
+        "formatVersion" = :Key {types = #str}
+        "passes" = :Key {types = #list, structure = @passes_list}
+    }
+}
+sampler_definition_map inherit temp/Dict {
+    value_types = #dict
+    value_structure = @sampler_definition
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sampler definition"}
+    }
+}
+sampler_definition inherit temp/SortedKeymap {
+    keys = {
+        "reg" = :Key {types = #int}
+        "access" = :Key {types = [#str, #int]}
+        "precision" = :Key {types = #int}
+        "allowUnorderedAccess" = :Key {types = #bool}
+        "type" = :Key {types = [#str, #int]}
+        "textureFormat" = :Key {types = #str}
+        "hasDefaultTexture" = :Key {types = #bool}
+        "defaultTexture" = :Key {types = #str}
+        "hasUnknownInt" = :Key {types = #bool}
+        "hasUnknownString" = :Key {types = #bool}
+        "hasCustomTypeInfo" = :Key {types = #bool}
+        "customTypeInfo" = :Key {types = #dict, structure = @custom_type_info}
+        "unknownByte" = :Key {types = #int}
+        "hasUnknownByte2" = :Key {types = #bool}
+        "unknownByte2" = :Key {types = #int}
+        "unknownInt" = :Key {types = #int}
+    }
+}
+custom_type_info inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str}
+        "size" = :Key {types = #int}
+    }
+}
+property_field_map inherit temp/Dict {
+    value_types = #dict
+    value_structure = @property_field
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "property field"}
+    }
+}
+property_field inherit temp/SortedKeymap {
+    keys = {
+        "num" = :Key {types = #int}
+        "type" = :Key {types = #int}
+        "hasData" = :Key {types = #bool}
+        "vectorData" = :Key {types = #list, structure = @vector_float}
+    }
+}
+passes_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "pass", "show_item_key" = false, "measure_length" = true}
+    }
+}
+passes inherit temp/Dict {
+    value_types = #dict
+    value_structure = @pass
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "pass"}
+    }
+}
+pass inherit temp/SortedKeymap {
+    keys = {
+        "pass_info" = :Key {types = #file, structure = @cache_pass_info}
+        "glsl_files" = :Key {types = #dict, structure = @glsl_files}
+    }
+}
+cache_pass_info :Cache {
+    this_types = #file
+    structure = :File {
+        serializer = @mcs/json
+        outer_types = #file
+        inner_types = #dict
+        structure = @pass_info
+    }
+}
+glsl_files inherit temp/Dict {
+    value_types = #file
+    key_structure = @temp/string
+    value_structure = :Cache {
+        this_types = #file
+        structure = :File {
+            serializer = @s/text_serializer
+            outer_types = #file
+            inner_types = #str
+            structure = @structures/text_file/lines
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "glsl file"}
+    }
+}
+pass_info inherit temp/SortedKeymap {
+    keys = {
+        "bitSet" = :Key {types = #str}
+        "defaultFlagModes" = :Key {types = #dict, structure = @default_flag_modes}
+        "fallback" = :Key {types = #str}
+        "flagDefaultValues" = :Key {types = #dict, structure = @flag_values}
+        "graphicsProfile" = :Key {types = #int}
+        "hasBitSet" = :Key {types = #bool}
+        "hasBlendMode" = :Key {types = #bool}
+        "hasDefaultBlendMode" = :Key {types = #bool}
+        "variantList" = :Key {types = #list, structure = @variant_list}
+    }
+}
+default_flag_modes inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    key_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "flag mode", "measure_length" = true}
+    }
+}
+flag_values inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "flag"}
+    }
+}
+variant_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @variant
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "variant"}
+    }
+}
+variant inherit temp/SortedKeymap {
+    keys = {
+        "isSupported" = :Key {types = #bool}
+        "flags" = :Key {types = #dict, structure = @flag_values}
+        "flagModeList" = :Key {types = #list, structure = @flag_mode_list}
+        "shaderCodes" = :Key {types = #list, structure = @shader_codes_list}
+    }
+}
+flag_mode_list :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %turn_to_dict
+        arguments = {"key_key" = "key", "value_key" = "value"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #str
+        value_structure = null
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "flag mode", "measure_length" = true}
+        }
+    }
+}
+shader_codes_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @shader_codes
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "shader_codes"}
+    }
+}
+shader_codes inherit temp/SortedKeymap {
+    keys = {
+        "platformShaderStage" = :Key {types = #dict, structure = @platform_shader_stage, similarity_weight = 20}
+        "shaderCode" = :Key {types = #dict, structure = @shader_code}
+    }
+}
+platform_shader_stage inherit temp/SortedKeymap {
+    keys = {
+        "stageName" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "platformName" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "stage" = :Key {types = #str}
+        "platform" = :Key {types = #str}
+    }
+}
+shader_code inherit temp/SortedKeymap {
+    keys = {
+        "shaderInputMap" = :Key {types = #dict, structure = @shader_input_map}
+        "sourceHash" = :Key {types = #int}
+        "bgfxShaderData" = :Key {types = #dict, structure = @bgfx_shader_data}
+    }
+}
+shader_input_map inherit temp/Dict {
+    value_types = #dict
+    value_structure = @shader_input
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "shader input"}
+    }
+}
+shader_input inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+        "attribute" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 12}
+        "isPerInstance" = :Key {types = #bool}
+        "hasPrecisionConstraint" = :Key {types = #bool}
+        "hasInterpolationConstraint" = :Key {types = #bool}
+        "interpolationConstraint" = :Key {types = #str}
+    }
+}
+bgfx_shader_data inherit temp/SortedKeymap {
+    keys = {
+        "magic" = :Key {types = #int}
+        "hash" = :Key {types = #int}
+        "uniforms" = :Key {types = #list, structure = @uniforms}
+        "codeFile" = :Key {types = #str}
+    }
+}
+uniforms :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "name", "delete" = true}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @uniform
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "uniform"}
+        }
+    }
+}
+uniform inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #int}
+        "num" = :Key {types = #int}
+        "regIndex" = :Key {types = #int}
+        "regCount" = :Key {types = #int}
+    }
+}

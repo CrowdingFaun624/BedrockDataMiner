@@ -1,0 +1,143 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        hp = @structures/misc/provider/height_provider/
+        misc = @structures/misc/misc/
+        pa = @structures/data/generation/pool_alias/
+        temp = @structures/misc/template/
+        tp = @structures/data/generation/template_pool/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "structure"
+    $ pack_type = "data pack"
+    $ structure = @structure
+}
+structure_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @structure},
+    ]
+}
+structure :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:buried_treasure" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:desert_pyramid" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:end_city" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:fortress" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:igloo" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:jigsaw" = :Key {types = #dict, structure = @structure.jigsaw}
+        "minecraft:jungle_temple" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:mineshaft" = :Key {types = #dict, structure = @structure.mineshaft}
+        "minecraft:nether_fossil" = :Key {types = #dict, structure = @structure.nether_fossil}
+        "minecraft:ocean_monument" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:ocean_ruin" = :Key {types = #dict, structure = @structure.ocean_ruin}
+        "minecraft:ruined_portal" = :Key {types = #dict, structure = @structure.ruined_portal}
+        "minecraft:shipwreck" = :Key {types = #dict, structure = @structure.shipwreck}
+        "minecraft:stronghold" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:swamp_hut" = :Key {types = #dict, structure = @structure.empty}
+        "minecraft:woodland_mansion" = :Key {types = #dict, structure = @structure.empty}
+    }
+}
+structure:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "biomes" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="biome"}}
+    "step" = :Key {types = #str}
+    "terrain_adaptation" = :Key {types = #str}
+    "spawn_overrides" = :Key {types = #dict, structure = @spawn_overrides}
+}
+spawn_overrides inherit temp/SortedKeymap {
+    $ keymap_field = "mob category"
+    keys = {
+        "monster" = :Key {types = #dict, structure = @spawn_overrides.category}
+        "creature" = :Key {types = #dict, structure = @spawn_overrides.category}
+        "ambient" = :Key {types = #dict, structure = @spawn_overrides.category}
+        "water_creature" = :Key {types = #dict, structure = @spawn_overrides.category}
+        "underground_water_creature" = :Key {types = #dict, structure = @spawn_overrides.category}
+        "water_ambient" = :Key {types = #dict, structure = @spawn_overrides.category}
+        "misc" = :Key {types = #dict, structure = @spawn_overrides.category}
+        "axolotls" = :Key {types = #dict, structure = @spawn_overrides.category}
+    }
+}
+spawn_overrides.category inherit temp/SortedKeymap {
+    keys = {
+        "bounding_box" = :Key {types = #str}
+        "spawns" = :Key {types = #list, structure = @structures/data/generation/biome/spawners.category}
+    }
+}
+structure.empty inherit temp/SortedKeymap {
+    keys = @structure:all
+}
+structure.jigsaw inherit temp/SortedKeymap {
+    keys = @structure:all + {
+        "start_pool" = :Key {types = [#str, #dict], structure = @tp/template_pool_or_id}
+        "size" = :Key {types = #int}
+        "start_height" = :Key {types = #dict, structure = @hp/height_provider}
+        "project_start_to_heightmap" = :Key {types = #str}
+        "start_jigsaw_name" = :Key {types = #str}
+        "max_distance_from_center" = :Key {types = #int}
+        "use_expansion_hack" = :Key {types = #bool}
+        "pool_aliases" = :Key {types = #list, structure = @pa/pool_alias_list}
+        "dimension_padding" = :Key {types = [#int, #dict], structure = @structure.jigsaw:dimension_padding}
+        "liquid_settings" = :Key {types = #str}
+    }
+}
+structure.jigsaw:dimension_padding :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "bottom" = :Key {types = #int}
+                "top" = :Key {types = #int}
+            }
+        }},
+    ]
+}
+structure.mineshaft inherit temp/SortedKeymap {
+    keys = @structure:all + {
+        "mineshaft_type" = :Key {types = #str}
+    }
+}
+structure.nether_fossil inherit temp/SortedKeymap {
+    keys = @structure:all + {
+        "height" = :Key {types = #dict, structure = @hp/height_provider}
+    }
+}
+structure.ocean_ruin inherit temp/SortedKeymap {
+    keys = @structure:all + {
+        "biome_temp" = :Key {types = #str}
+        "large_probability" = :Key {types = #float}
+        "cluster_probability" = :Key {types = #float}
+    }
+}
+structure.ruined_portal inherit temp/SortedKeymap {
+    keys = @structure:all + {
+        "setups" = :Key {types = #list, structure = @structure.ruined_portal:setups}
+    }
+}
+structure.ruined_portal:setups inherit temp/Set {
+    $ field = "setup"
+    value_types = #dict
+    value_structure = @structure.ruined_portal:setup
+}
+structure.ruined_portal:setup inherit temp/SortedKeymap {
+    keys = {
+        "weight" = :Key {types = #float}
+        "placement" = :Key {types = #str}
+        "air_pocket_probability" = :Key {types = #float}
+        "mossiness" = :Key {types = #float}
+        "overgrown" = :Key {types = #bool}
+        "vines" = :Key {types = #bool}
+        "can_be_cold" = :Key {types = #bool}
+        "replace_with_blackstone" = :Key {types = #bool}
+    }
+}
+structure.shipwreck inherit temp/SortedKeymap {
+    keys = @structure:all + {
+        "is_beached" = :Key {types = #bool}
+    }
+}

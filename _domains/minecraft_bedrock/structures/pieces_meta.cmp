@@ -1,0 +1,105 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files_reversed {
+    $ name = "pieces_meta"
+    $ function = []
+    $ pack_type = "piece"
+    $ file_field = "meta file"
+    $ structure = @meta
+}
+meta inherit temp/SortedKeymap {
+    keys = {
+        "piece_id" = :Key {types = #str}
+        "piece_name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "piece_type" = :Key {types = #str}
+        "zone" = :Key {types = #list, structure = @zones}
+        "tint_base_color" = :Key {types = #dict, structure = @tint_base_color}
+        "tint_color" = :Key {types = #dict, structure = @tint_base_color}
+        "body_variant" = :Key {types = #str}
+        "face_clothing_map" = :Key {types = #str}
+        "clothing_map" = :Key {types = #str}
+        "animation_sources" = :Key {types = #list, structure = @animation_sources}
+        "geometry_sources" = :Key {types = #list, structure = @geometry_sources}
+        "texture_sources" = :Key {types = #list, structure = @texture_sources}
+    }
+}
+zones inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "zone", "show_item_key" = false, "measure_length" = true}
+    }
+}
+texture_sources inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @texture_source
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "texture source", "show_item_key" = false, "measure_length" = true}
+    }
+}
+texture_source inherit temp/SortedKeymap {
+    keys = {
+        "texture" = :Key {types = #str, structure = @temp/string, similarity_weight = 4, delegate_arguments = {"always_print" = true}}
+        "tint_map" = :Key {types = #str, structure = @temp/string}
+        "use_face_uv" = :Key {types = #bool}
+        "frames" = :Key {types = #int}
+        "animated" = :Key {types = #bool}
+    }
+}
+tint_base_color inherit temp/SortedKeymap {
+    keys = {
+        "r_color" = :Key {types = #str}
+        "g_color" = :Key {types = #str}
+        "b_color" = :Key {types = #str}
+        "a_color" = :Key {types = #str}
+    }
+}
+animation_sources inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @animation_source
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "animation source", "show_item_key" = false, "measure_length" = true}
+    }
+}
+animation_source inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, similarity_weight = 4, delegate_arguments = {"always_print" = true}}
+        "animationFile" = :Key {types = #str, structure = @temp/string}
+    }
+}
+geometry_sources inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @geometry_source
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "geometry source", "show_item_key" = false, "measure_length" = true}
+    }
+}
+geometry_source inherit temp/SortedKeymap {
+    keys = {
+        "arm_size" = :Key {types = #str}
+        "geometry" = :Key {types = #str, structure = @temp/string, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "zone" = :Key {types = #str}
+        "is_face" = :Key {types = #str}
+    }
+}

@@ -1,0 +1,40 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "regional_compliancies"
+    $ pack_type = "resource pack"
+    $ structure = @regions
+}
+regions inherit temp/Dict {
+    value_types = #list
+    value_structure = @warnings
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "region", "measure_length" = true}
+    }
+}
+warnings inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @warning
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "warning", "show_item_key" = false, "measure_length" = true}
+    }
+}
+warning inherit temp/SortedKeymap {
+    keys = {
+        "delay" = :Key {types = #int}
+        "period" = :Key {types = #int}
+        "title" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "message" = :Key {types = #str, structure = @misc/string}
+    }
+}

@@ -1,0 +1,35 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/misc/template/
+    }
+}
+source :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @source:dict},
+    ]
+}
+source:dict :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "context" = :Key {types = #dict, structure = @source.context}
+        "storage" = :Key {types = #dict, structure = @source.storage}
+    }
+}
+source:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+source.context inherit temp/SortedKeymap {
+    keys = @source:all + {
+        "target" = :Key {types = #str}
+    }
+}
+source.storage inherit temp/SortedKeymap {
+    keys = @source:all + {
+        "source" = :Key {types = #str}
+    }
+}

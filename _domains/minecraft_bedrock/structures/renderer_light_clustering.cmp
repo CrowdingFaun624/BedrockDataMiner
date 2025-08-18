@@ -1,0 +1,51 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "renderer_light_clustering"
+    $ structure = @renderer_light_clustering
+}
+renderer_light_clustering inherit temp/SortedKeymap {
+    keys = {
+        "cluster_first_depth_max" = :Key {types = #float}
+        "cluster_second_depth_max" = :Key {types = #float}
+        "cluster_size" = :Key {types = #list, structure = @vector_int}
+        "clusterSize" = :Key {types = #list, structure = @vector_int, tags = [@t/outdated]}
+        "far_plane" = :Key {types = #float}
+        "farPlane" = :Key {types = #float, tags = [@t/outdated]}
+        "lights_per_cluster" = :Key {types = #int}
+        "lightsPerCluster" = :Key {types = #int, tags = [@t/outdated]}
+        "NearFar" = :Key {types = #dict, structure = @near_far, tags = [@t/outdated]}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+near_far inherit temp/SortedKeymap {
+    keys = {
+        "x" = :Key {types = #float}
+        "y" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "print_all" = true}
+    }
+}

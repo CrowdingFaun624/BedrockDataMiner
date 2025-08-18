@@ -1,0 +1,145 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "textures"
+    $ file_field = "texture"
+    $ pack_type = "resource pack"
+    $ structure = @metadata
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true, "print_all" = true}
+    }
+}
+vector_int_or_int :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #list, structure = @vector_int},
+    ]
+}
+size_and_position inherit temp/SortedKeymap {
+    keys = {
+        "x" = :Key {types = #int}
+        "y" = :Key {types = #int}
+        "w" = :Key {types = #int}
+        "h" = :Key {types = #int}
+    }
+}
+size inherit temp/SortedKeymap {
+    keys = {
+        "w" = :Key {types = #int}
+        "h" = :Key {types = #int}
+    }
+}
+metadata inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "base_size" = :Key {types = #list, structure = @vector_int}
+        "nineslice_size" = :Key {types = [#int, #list], structure = @vector_int_or_int}
+        "tiled" = :Key {types = #bool}
+        "meta" = :Key {types = #dict, structure = @meta}
+        "frames" = :Key {types = #list, structure = @frames}
+        "minecraft:texture_set" = :Key {types = #dict, structure = @component.texture_set}
+    }
+}
+meta inherit temp/SortedKeymap {
+    keys = {
+        "app" = :Key {types = #str}
+        "version" = :Key {types = #str}
+        "image" = :Key {types = #str}
+        "format" = :Key {types = #str}
+        "size" = :Key {types = #dict, structure = @size}
+        "scale" = :Key {types = [#int, #str]}
+        "frameTags" = :Key {types = #list, structure = @meta.frame_tags}
+        "layers" = :Key {types = #list, structure = @meta.layers}
+        "slices" = :Key {types = #list, structure = @meta.slices}
+    }
+}
+meta.frame_tags inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "frame tag"}
+    }
+}
+meta.layers inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @meta.layers.layer
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "layer"}
+    }
+}
+meta.layers.layer inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 12}
+        "opacity" = :Key {types = #int}
+        "blendMode" = :Key {types = #str}
+        "group" = :Key {types = #str, structure = @temp/string}
+    }
+}
+meta.slices inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #null
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "slice"}
+    }
+}
+frames inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @frames.frame
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "frame"}
+    }
+}
+frames.frame inherit temp/SortedKeymap {
+    keys = {
+        "filename" = :Key {types = #str, structure = @temp/string, similarity_weight = 12, delegate_arguments = {"always_print" = true}}
+        "frame" = :Key {types = #dict, structure = @size_and_position}
+        "rotated" = :Key {types = #bool}
+        "trimmed" = :Key {types = #bool}
+        "spriteSourceSize" = :Key {types = #dict, structure = @size_and_position}
+        "sourceSize" = :Key {types = #dict, structure = @size}
+        "duration" = :Key {types = #int}
+    }
+}
+component.texture_set inherit temp/SortedKeymap {
+    keys = {
+        "color" = :Key {types = #str}
+        "metalness_emissive_roughness_subsurface" = :Key {types = [#str, #list], structure = @component.texture_set:metalness_emissive_roughness_subsurface}
+        "normal" = :Key {types = #str}
+    }
+}
+component.texture_set:metalness_emissive_roughness_subsurface :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @vector_int},
+    ]
+}

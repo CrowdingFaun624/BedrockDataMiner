@@ -1,0 +1,44 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "pbr"
+    $ file_field = "pbr file"
+    $ pack_type = "resource pack"
+    $ structure = @pbr_file
+}
+pbr_file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:pbr_fallback_settings" = :Key {types = #dict, structure = @pbr_fallback_settings, similarity_weight = 15}
+    }
+}
+pbr_fallback_settings inherit temp/SortedKeymap {
+    keys = {
+        "blocks" = :Key {types = #dict, structure = @domain_settings}
+        "actors" = :Key {types = #dict, structure = @domain_settings}
+        "particles" = :Key {types = #dict, structure = @domain_settings}
+        "items" = :Key {types = #dict, structure = @domain_settings}
+    }
+}
+domain_settings inherit temp/SortedKeymap {
+    keys = {
+        "global_metalness_emissive_roughness_subsurface" = :Key {types = #list, structure = @vector_int}
+    }
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true}
+    }
+}

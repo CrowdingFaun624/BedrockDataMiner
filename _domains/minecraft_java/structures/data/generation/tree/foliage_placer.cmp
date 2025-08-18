@@ -1,0 +1,69 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        ip = @structures/misc/provider/int_provider/
+        temp = @structures/misc/template/
+    }
+}
+foliage_placer :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:acacia_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.empty}
+        "minecraft:blob_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.simple_height}
+        "minecraft:bush_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.simple_height}
+        "minecraft:cherry_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.cherry_foliage_placer}
+        "minecraft:dark_oak_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.empty}
+        "minecraft:fancy_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.simple_height}
+        "minecraft:jungle_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.simple_height}
+        "minecraft:mega_pine_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.mega_pine_foliage_placer}
+        "minecraft:pine_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.pine_foliage_placer}
+        "minecraft:random_spread_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.random_spread_foliage_placer}
+        "minecraft:spruce_foliage_placer" = :Key {types = #dict, structure = @foliage_placer.spruce_foliage_placer}
+    }
+}
+foliage_placer:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "radius" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    "offset" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+}
+foliage_placer.cherry_foliage_placer inherit temp/SortedKeymap {
+    keys = @foliage_placer:all + {
+        "height" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "wide_bottom_layer_hole_chance" = :Key {types = #float}
+        "corner_hole_chance" = :Key {types = #float}
+        "hanging_leaves_chance" = :Key {types = #float}
+        "hanging_leaves_extension_chance" = :Key {types = #float}
+    }
+}
+foliage_placer.empty inherit temp/SortedKeymap {
+    keys = @foliage_placer:all
+}
+foliage_placer.mega_pine_foliage_placer inherit temp/SortedKeymap {
+    keys = @foliage_placer:all + {
+        "crown_height" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}
+foliage_placer.pine_foliage_placer inherit temp/SortedKeymap {
+    keys = @foliage_placer:all + {
+        "height" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}
+foliage_placer.random_spread_foliage_placer inherit temp/SortedKeymap {
+    keys = @foliage_placer:all + {
+        "foliage_height" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "leaf_placement_attempts" = :Key {types = #int}
+    }
+}
+foliage_placer.simple_height inherit temp/SortedKeymap {
+    keys = @foliage_placer:all + {
+        "height" = :Key {types = #int}
+    }
+}
+foliage_placer.spruce_foliage_placer inherit temp/SortedKeymap {
+    keys = @foliage_placer:all + {
+        "trunk_height" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}

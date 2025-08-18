@@ -1,0 +1,70 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        str = @structures/data/generation/structure/
+        vector = @structures/misc/vector/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "structure_set"
+    $ pack_type = "data pack"
+    $ structure = @structure_set
+}
+structure_set inherit temp/SortedKeymap {
+    keys = {
+        "structures" = :Key {types = #list, structure = @structures}
+        "placement" = :Key {types = #dict, structure = @placement}
+    }
+}
+structures inherit temp/Set {
+    $ field = "structure"
+    value_types = #dict
+    value_structure = @structure
+}
+structure inherit temp/SortedKeymap {
+    keys = {
+        "structure" = :Key {types = [#str, #dict], structure = @str/structure_or_id, delegate_arguments = {"always_print" = true}}
+        "weight" = :Key {types = #int}
+    }
+}
+placement :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:concentric_rings" = :Key {types = #dict, structure = @placement.concentric_rings}
+        "minecraft:random_spread" = :Key {types = #dict, structure = @placement.random_spread}
+    }
+}
+placement:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "salt" = :Key {types = #int}
+    "frequency" = :Key {types = #float}
+    "frequency_reduction_method" = :Key {types = #str}
+    "exclusion_zone" = :Key {types = #dict, structure = @exclusion_zone}
+    "locate_offset" = :Key {types = #list, structure = @vector/vector.int}
+}
+exclusion_zone inherit temp/SortedKeymap {
+    keys = {
+        "chunk_count" = :Key {types = #int}
+        "other_set" = :Key {types = #str}
+    }
+}
+placement.concentric_rings inherit temp/SortedKeymap {
+    keys = @placement:all + {
+        "distance" = :Key {types = #int}
+        "count" = :Key {types = #int}
+        "preferred_biomes" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="biome"}}
+        "spread" = :Key {types = #int}
+    }
+}
+placement.random_spread inherit temp/SortedKeymap {
+    keys = @placement:all + {
+        "spread_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "spacing" = :Key {types = #int}
+        "separation" = :Key {types = #int}
+    }
+}

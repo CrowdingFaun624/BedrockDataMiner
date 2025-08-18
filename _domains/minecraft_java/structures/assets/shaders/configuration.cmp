@@ -1,0 +1,144 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "configuration"
+    $ pack_type = "resource pack"
+    $ structure = @root
+}
+vector_decimal inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @misc/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true, "print_flat" = true, "field" = "component"}
+    }
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "attributes" = :Key {types = #list, structure = @misc/named_list{$name="attribute"}}
+        "targets" = :Key {types = [#dict, #list], structure = @targets}
+        "passes" = :Key {types = #list, structure = @passes}
+        "vertex" = :Key {types = #str, structure = @misc/string}
+        "fragment" = :Key {types = #str, structure = @misc/string}
+        "blend" = :Key {types = #dict, structure = @blend}
+        "defines" = :Key {types = #dict, structure = @defines}
+        "samplers" = :Key {types = #list, structure = @samplers}
+        "uniforms" = :Key {types = #list, structure = @uniforms}
+    }
+}
+targets :Union {
+    substructures = [
+        :Key {types = #list, structure = @misc/named_list{$name="target"}},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "swap" = :Key {types = #dict, structure = @misc/empty_dict}
+                "large_blur" = :Key {types = #dict, structure = @misc/empty_dict}
+                "small_blur" = :Key {types = #dict, structure = @misc/empty_dict}
+                "temp" = :Key {types = #dict, structure = @misc/empty_dict}
+                "final" = :Key {types = #dict, structure = @misc/empty_dict}
+            }
+        }},
+    ]
+}
+passes inherit temp/Sequence {
+    $ field = "pass"
+    value_types = #dict
+    value_structure = @pass
+}
+pass inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "auxtargets" = :Key {types = #list, structure = @aux_targets}
+        "inputs" = :Key {types = #list, structure = @inputs}
+        "intarget" = :Key {types = #str}
+        "use_linear_filter" = :Key {types = #bool}
+        "output" = :Key {types = #str}
+        "outtarget" = :Key {types = #str}
+        "uniforms" = :Key {types = #list, structure = @uniforms}
+    }
+}
+aux_targets inherit temp/Sequence {
+    $ field = "aux target"
+    value_types = #dict
+    value_structure = @aux_target
+}
+aux_target inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "id" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "width" = :Key {types = #int}
+        "height" = :Key {types = #int}
+        "bilinear" = :Key {types = #bool}
+    }
+}
+inputs inherit temp/Sequence {
+    $ field = "input"
+    value_types = #dict
+    value_structure = @input
+}
+input inherit temp/SortedKeymap {
+    keys = {
+        "sampler_name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "target" = :Key {types = #str}
+        "bilinear" = :Key {types = #bool}
+        "use_depth_buffer" = :Key {types = #bool}
+    }
+}
+blend inherit temp/SortedKeymap {
+    keys = {
+        "func" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "srcrgb" = :Key {types = #str}
+        "dstrgb" = :Key {types = #str}
+    }
+}
+defines inherit temp/SortedKeymap {
+    keys = {
+        "values" = :Key {types = #dict, structure = @values}
+        "flags" = :Key {types = #list, structure = @flags}
+    }
+}
+values inherit temp/Dict {
+    $ field = "value"
+    value_types = #str
+    key_structure = @misc/string
+    value_structure = @misc/string
+}
+flags inherit temp/Set {
+    $ field = "flag"
+    value_types = #str
+    value_structure = @misc/string
+}
+samplers inherit temp/Sequence {
+    $ field = "sampler"
+    value_types = #dict
+    value_structure = @sampler
+}
+sampler inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+uniforms inherit temp/Sequence {
+    $ field = "uniform"
+    value_types = #dict
+    value_structure = @uniform
+}
+uniform inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "count" = :Key {types = #int}
+        "RadiusMultiplier" = :Key {types = #float}
+        "values" = :Key {types = #list, structure = @vector_decimal}
+    }
+}

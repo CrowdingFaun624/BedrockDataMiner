@@ -1,0 +1,30 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @behavior_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "scripts"}
+    }
+}
+behavior_packs inherit temp/Dict {
+    value_types = #dict
+    value_structure = @scripts
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "behavior pack", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+scripts inherit temp/Dict {
+    value_types = #file
+    value_structure = @structures/text_file/cache
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "script", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}

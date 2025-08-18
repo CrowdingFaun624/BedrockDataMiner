@@ -1,0 +1,414 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        temp = @structures/misc/template/
+        misc = @structures/misc/misc/
+        particles = @structures/data/particles/particles/
+        pred = @structures/misc/predicate/
+        sound_events = @structures/misc/sound_events/
+        block_state_provider = @structures/misc/provider/block_state_provider/
+        float_provider = @structures/misc/provider/float_provider/
+        block_predicate = @structures/misc/block_predicate/
+        bs = @structures/misc/block_state/
+        t = @structure_tags/
+        vector = @structures/misc/vector/
+    }
+}
+level_based_value_type [#float, #dict]
+effect_components inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:ammo_use" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:armor_effectiveness" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:attributes" = :Key {types = #list, structure = @component.attributes}
+        "minecraft:block_experience" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:crossbow_charge_time" = :Key {types = [#dict, #list], structure = @value_effect_list_or_value_effect}
+        "minecraft:crossbow_charging_sounds" = :Key {types = #list, structure = @component.crossbow_charging_sounds}
+        "minecraft:damage" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:damage_immunity" = :Key {types = #list, structure = @component_list{$structure=@component.damage_immunity}}
+        "minecraft:damage_protection" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:equipment_drops" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:fishing_luck_bonus" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:fishing_time_reduction" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:hit_block" = :Key {types = #list, structure = @component_list{$structure=@component.entity_effect}}
+        "minecraft:item_damage" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:knockback" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:location_changed" = :Key {types = #list, structure = @component_list{$structure=@component.location_changed}}
+        "minecraft:mob_experience" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:post_attack" = :Key {types = #list, structure = @component_list{$structure=@component.post_attack}}
+        "minecraft:prevent_armor_change" = :Key {types = #dict, structure = @misc/empty_dict}
+        "minecraft:prevent_equipment_drop" = :Key {types = #dict, structure = @misc/empty_dict}
+        "minecraft:projectile_count" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:projectile_piercing" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:projectile_spawned" = :Key {types = #list, structure = @component_list{$structure=@component.entity_effect}}
+        "minecraft:projectile_spread" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:repair_with_xp" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:smash_damage_per_fallen_block" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:tick" = :Key {types = #list, structure = @component_list{$structure=@component.entity_effect}}
+        "minecraft:trident_return_acceleration" = :Key {types = #list, structure = @component_list{$structure=@component.value_effect}}
+        "minecraft:trident_sound" = :Key {types = #list, structure = @component.trident_sound}
+        "minecraft:trident_spin_attack_strength" = :Key {types = [#dict, #list], structure = @value_effect_list_or_value_effect}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "effect component"}
+    }
+}
+component_list abstract inherit temp/Set {
+    $ field = "component"
+    $ (type | list) types = #dict
+    value_types = types
+    $ (:Structure) structure
+    value_structure = structure
+}
+component.attributes inherit temp/Set {
+    $ field = "attribute effect"
+    value_types = #dict
+    value_structure = @effect.attribute
+}
+component.crossbow_charging_sounds inherit temp/List {
+    $ field = "sound set"
+    value_types = #dict
+    value_structure = inherit temp/SortedKeymap {
+        keys = {
+            "start" = :Key {types = #str}
+            "mid" = :Key {types = #str}
+            "end" = :Key {types = #str}
+        }
+    }
+}
+component.damage_immunity inherit temp/SortedKeymap {
+    keys = {
+        "effect" = :Key {types = #dict, structure = @misc/empty_dict}
+        "requirements" = :Key {types = #dict, structure = @pred/predicate}
+    }
+}
+component.entity_effect:keys {
+    "effect" = :Key {types = #dict, structure = @effect.entity}
+    "requirements" = :Key {types = #dict, structure = @pred/predicate}
+}
+component.entity_effect inherit temp/SortedKeymap {
+    keys = @component.entity_effect:keys
+}
+component.location_changed inherit temp/SortedKeymap {
+    keys = {
+        "effect" = :Key {types = #dict, structure = @effect.location}
+        "requirements" = :Key {types = #dict, structure = @pred/predicate}
+    }
+}
+component.post_attack inherit temp/SortedKeymap {
+    keys = {
+        "enchanted" = :Key {types = #str}
+        "affected" = :Key {types = #str}
+    } + @component.entity_effect:keys
+}
+component.trident_sound inherit temp/List {
+    $ field = "sound"
+    value_types = #str
+    value_structure = @misc/string
+}
+component.value_effect inherit temp/SortedKeymap {
+    keys = {
+        "effect" = :Key {types = #dict, structure = @effect.value}
+        "requirements" = :Key {types = #dict, structure = @pred/predicate}
+        "enchanted" = :Key {types = #str}
+    }
+}
+value_effect_list_or_value_effect :Union {
+    substructures = [
+        :Key {types = #list, structure = @value_effect_list},
+        :Key {types = #dict, structure = @effect.value},
+    ]
+}
+value_effect_list inherit temp/Set {
+    $ field = "value effect"
+    value_types = #dict
+    value_structure = @effect.value
+}
+effect.value :Switch {
+    switch_function = :Function {
+        function = %get_get_key
+        arguments = {"key" = "type", "default" = "effect"}
+    }
+    substructures = {
+        "effect" = :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "effect" = :Key {types = #dict, structure = @effect.value}
+            }
+        }}
+        "minecraft:set" = :Key {types = #dict, structure = @effect.value.set}
+        "minecraft:add" = :Key {types = #dict, structure = @effect.value.add}
+        "minecraft:multiply" = :Key {types = #dict, structure = @effect.value.multiply}
+        "minecraft:remove_binomial" = :Key {types = #dict, structure = @effect.value.remove_binomial}
+        "minecraft:all_of" = :Key {types = #dict, structure = @effect.value.all_of}
+    }
+}
+effect.value:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+effect.value.set inherit temp/SortedKeymap {
+    keys = @effect.value:all + {
+        "value" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+effect.value.add inherit temp/SortedKeymap {
+    keys = @effect.value:all + {
+        "value" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+effect.value.multiply inherit temp/SortedKeymap {
+    keys = @effect.value:all + {
+        "factor" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+effect.value.remove_binomial inherit temp/SortedKeymap {
+    keys = @effect.value:all + {
+        "chance" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+effect.value.all_of inherit temp/SortedKeymap {
+    keys = @effect.value:all + {
+        "effects" = :Key {types = #list, structure = @value_effect_list}
+    }
+}
+effect.attribute inherit temp/SortedKeymap {
+    keys = {
+        "attribute" = :Key {types = #str}
+        "amount" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "operation" = :Key {types = #str}
+        "name" = :Key {types = #str, tags = @t/outdated}
+        "id" = :Key {types = #str}
+        "uuid" = :Key {types = #str, tags = @t/outdated}
+    }
+}
+location_effect_list inherit temp/Set { // technically only can refer to location if the above is also a location
+    $ field = "entity effect"
+    value_types = #dict
+    value_structure = @effect.location
+}
+effect.entity:keys {
+    "minecraft:all_of" = :Key {types = #dict, structure = @effect.entity.all_of}
+    "minecraft:apply_mob_effect" = :Key {types = #dict, structure = @effect.entity.apply_mob_effect}
+    "minecraft:damage_entity" = :Key {types = #dict, structure = @effect.entity.damage_entity}
+    "minecraft:damage_item" = :Key {types = #dict, structure = @effect.entity.change_item_damage, tags = @t/outdated}
+    "minecraft:change_item_damage" = :Key {types = #dict, structure = @effect.entity.change_item_damage}
+    "minecraft:explode" = :Key {types = #dict, structure = @effect.entity.explode}
+    "minecraft:ignite" = :Key {types = #dict, structure = @effect.entity.ignite}
+    "minecraft:play_sound" = :Key {types = #dict, structure = @effect.entity.play_sound}
+    "minecraft:replace_block" = :Key {types = #dict, structure = @effect.entity.replace_block}
+    "minecraft:replace_disc" = :Key {types = #dict, structure = @effect.entity.replace_disk, tags = @t/outdated}
+    "minecraft:replace_disk" = :Key {types = #dict, structure = @effect.entity.replace_disk}
+    "minecraft:run_function" = :Key {types = #dict, structure = @effect.entity.run_function}
+    "minecraft:set_block_properties" = :Key {types = #dict, structure = @effect.entity.set_block_properties}
+    "minecraft:spawn_particles" = :Key {types = #dict, structure = @effect.entity.spawn_particles}
+    "minecraft:summon_entity" = :Key {types = #dict, structure = @effect.entity.summon_entity}
+}
+effect.entity :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = @effect.entity:keys
+}
+effect.entity:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+effect.entity.all_of inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "effects" = :Key {types = #list, structure = @location_effect_list}
+    }
+}
+effect.entity.apply_mob_effect inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "to_apply" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="effect"}}
+        "min_duration" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "max_duration" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "min_amplifier" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "max_amplifier" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+effect.entity.damage_entity inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "damage_type" = :Key {types = #str}
+        "min_damage" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "max_damage" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+effect.entity.change_item_damage inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "amount" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+effect.entity.explode inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "attribute_to_user" = :Key {types = #bool}
+        "damage_type" = :Key {types = #str}
+        "immune_blocks" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+        "knockback_multiplier" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "offset" = :Key {types = #list, structure = @vector/vector.int}
+        "radius" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "create_fire" = :Key {types = #bool}
+        "block_interaction" = :Key {types = #str}
+        "small_particle" = :Key {types = @a/compound, structure = @particles/particle}
+        "large_particle" = :Key {types = @a/compound, structure = @particles/particle}
+        "sound" = :Key {types = #str}
+    }
+}
+effect.entity.ignite inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "duration" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+effect.entity.play_sound inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "sound" = :Key {types = [#str, #dict], structure = @sound_events/sound_event_or_id}
+        "volume" = :Key {types = @level_based_value_type, structure = @float_provider/float_provider}
+        "pitch" = :Key {types = @level_based_value_type, structure = @float_provider/float_provider}
+    }
+}
+effect.entity.replace_block inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "block_state" = :Key {types = #dict, structure = @block_state_provider/block_state_provider}
+        "offset" = :Key {types = #list, structure = @vector/vector.int}
+        "trigger_game_event" = :Key {types = #str}
+        "predicate" = :Key {types = #dict, structure = @block_predicate/block_predicate}
+    }
+}
+effect.entity.replace_disk inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "block_state" = :Key {types = #dict, structure = @block_state_provider/block_state_provider}
+        "offset" = :Key {types = #list, structure = @vector/vector.int}
+        "radius" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "height" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "trigger_game_event" = :Key {types = #str}
+        "predicate" = :Key {types = #dict, structure = @block_predicate/block_predicate}
+    }
+}
+effect.entity.run_function inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "function" = :Key {types = #str}
+    }
+}
+effect.entity.set_block_properties inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "offset" = :Key {types = #list, structure = @vector/vector.int}
+        "properties" = :Key {types = @a/compound, structure = @bs/properties}
+        "trigger_game_event" = :Key {types = #str}
+    }
+}
+effect.entity.spawn_particles inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "particle" = :Key {types = @a/compound, structure = @particles/particle}
+        "horizontal_position" = :Key {types = #dict, structure = @effect.entity.spawn_particles:position}
+        "vertical_position" = :Key {types = #dict, structure = @effect.entity.spawn_particles:position}
+        "horizontal_velocity" = :Key {types = #dict, structure = @effect.entity.spawn_particles:velocity}
+        "vertical_velocity" = :Key {types = #dict, structure = @effect.entity.spawn_particles:velocity}
+        "speed" = :Key {types = #float} // not on MCW
+    }
+}
+effect.entity.spawn_particles:position :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "entity_position" = :Key {types = #dict, structure = @effect.entity.spawn_particles:position.entity_position}
+        "in_bounding_box" = :Key {types = #dict, structure = @effect.entity.spawn_particles:position.in_bounding_box}
+    }
+}
+effect.entity.spawn_particles:position:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+effect.entity.spawn_particles:position.entity_position inherit temp/SortedKeymap {
+    keys = @effect.entity.spawn_particles:position:all + {
+        "offset" = :Key {types = @misc/decimal}
+    }
+}
+effect.entity.spawn_particles:position.in_bounding_box inherit temp/SortedKeymap {
+    keys = @effect.entity.spawn_particles:position:all + {
+        "offset" = :Key {types = @misc/decimal}
+        "scale" = :Key {types = @misc/decimal}
+    }
+}
+effect.entity.spawn_particles:velocity inherit temp/SortedKeymap {
+    keys = {
+        "base" = :Key {types = [#float, #dict], structure = @float_provider/float_provider}
+        "movement_scale" = :Key {types = @misc/decimal}
+    }
+}
+effect.entity.summon_entity inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "entity" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="entity"}}
+    }
+}
+effect.location :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:attribute" = :Key {types = #dict, structure = @effect.location.attribute}
+    } + @effect.entity:keys
+}
+effect.location.attribute inherit temp/SortedKeymap {
+    keys = @effect.entity:all + {
+        "attribute" = :Key {types = #str}
+        "amount" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "operation" = :Key {types = #str}
+        "name" = :Key {types = #str, tags = @t/outdated}
+        "id" = :Key {types = #str}
+        "uuid" = :Key {types = #str, tags = @t/outdated}
+    }
+}
+level_based_value :Switch {
+    switch_function = :Function {
+        function = %scripts/normalizers/normalizers/provider_switch
+        arguments = {"key" = "type", "default" = "minecraft:constant_float"}
+    }
+    substructures = {
+        "minecraft:constant_float" = :Key {types = #float} // not real
+        "minecraft:linear" = :Key {types = #dict, structure = @level_based_value.linear}
+        "minecraft:levels_squared" = :Key {types = #dict, structure = @level_based_value.levels_squared}
+        "minecraft:clamped" = :Key {types = #dict, structure = @level_based_value.clamped}
+        "minecraft:fraction" = :Key {types = #dict, structure = @level_based_value.fraction}
+        "minecraft:lookup" = :Key {types = #dict, structure = @level_based_value.lookup}
+    }
+}
+level_based_value:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+level_based_value.linear inherit temp/SortedKeymap {
+    keys = @level_based_value:all + {
+        "base" = :Key {types = #float}
+        "per_level_above_first" = :Key {types = #float}
+    }
+}
+level_based_value.levels_squared inherit temp/SortedKeymap {
+    keys = @level_based_value:all + {
+        "added" = :Key {types = #float}
+    }
+}
+level_based_value.clamped inherit temp/SortedKeymap {
+    keys = @level_based_value:all + {
+        "value" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "min" = :Key {types = #float}
+        "max" = :Key {types = #float}
+    }
+}
+level_based_value.fraction inherit temp/SortedKeymap {
+    keys = @level_based_value:all + {
+        "numerator" = :Key {types = @level_based_value_type, structure = @level_based_value}
+        "denominator" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+level_based_value.lookup inherit temp/SortedKeymap {
+    keys = @level_based_value:all + {
+        "values" = :Key {types = #list, structure = @level_based_value.lookup:values}
+        "fallback" = :Key {types = @level_based_value_type, structure = @level_based_value}
+    }
+}
+level_based_value.lookup:values inherit temp/List {
+    $ field = "value"
+    value_types = #float
+    value_structure = null
+}

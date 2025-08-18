@@ -1,0 +1,143 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        vector = @structures/misc/vector/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "structures"
+    $ pack_type = "pack" // is resource pack before 17w43a
+    $ types = @a/compound
+    $ serializer = @minecraft_common!serializers/nbt_big
+    $ structure = @root
+}
+root inherit temp/SortedKeymap.nbt {
+    keys = {
+        "version" = :Key {types = @a/int}
+        "DataVersion" = :Key {types = @a/int, delegate_arguments = {"always_print" = true}}
+        "author" = :Key {types = @a/string}
+        "size" = :Key {types = @a/list, structure = @vector/vector.tag_int}
+        "palette" = :Key {types = @a/list, structure = @palette}
+        "palettes" = :Key {types = @a/list, structure = @palettes}
+        "blocks" = :Key {types = @a/list, structure = @blocks}
+        "entities" = :Key {types = @a/list, structure = @entities}
+    }
+}
+palettes inherit temp/Set.nbt {
+    $ field = "palette"
+    value_types = @a/list
+    value_structure = @palette
+}
+palette inherit temp/List.nbt { // indexes are VERY important
+    $ field = "block"
+    value_types = @a/compound
+    value_structure = @block_state
+}
+block_state inherit temp/SortedKeymap.nbt {
+    keys = {
+        "Name" = :Key {types = @a/string}
+        "Properties" = :Key {types = @a/compound, structure = @block_state.properties}
+    }
+}
+block_state.properties inherit temp/Dict.nbt {
+    $ field = "property"
+    value_types = @a/string
+    value_structure = null
+}
+blocks :Condition {
+    substructures = [
+        :Key {types = @a/list, filter = :EqFilter {
+            key = "old_blocks"
+            value = false
+            default = true
+        }, structure = @blocks:new},
+        :Key {types = @a/list, filter = :EqFilter {
+            key = "old_blocks"
+            value = true
+        }, structure = @blocks:old},
+    ]
+}
+blocks:old :Normalizer {
+    outer_types = @a/list
+    inner_types = #dict
+    functions = :Function {
+        function = %minecraft_common!scripts/normalizers/volume_normalize_nbt/volume_normalize_nbt_old
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "states" = :Key {types = #dict, structure = @volume_states}
+            "data" = :Key {types = #dict, structure = @volume_additional_data}
+            "palette" = :Key {types = #dict, structure = @very_old_palette}
+            "size" = :Key {types = #tuple, structure = @vector/vector.tuple_int}
+        }
+        delegate = :Delegate {
+            delegate_class = %minecraft_common!VolumeDelegate
+            arguments = {"field" = "block"}
+        }
+    }
+}
+very_old_palette inherit temp/Dict {
+    $ field = "character"
+    key_weight = 0
+    value_types = #dict
+    value_structure = @very_old_palette:item
+}
+very_old_palette:item inherit temp/SortedKeymap {
+    keys = {
+        "block_id" = :Key {types = #int, delegate_arguments = {"always_print" = true}, similarity_weight = 5}
+        "data" = :Key {types = #int}
+    }
+}
+blocks:new :Normalizer {
+    outer_types = @a/list
+    inner_types = #dict
+    functions = :Function {
+        function = %minecraft_common!scripts/normalizers/volume_normalize_nbt/volume_normalize_nbt
+        arguments = {"position_key" = "pos", "state_key" = "state"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "states" = :Key {types = #dict, structure = @volume_states}
+            "data" = :Key {types = #dict, structure = @volume_additional_data}
+            "size" = :Key {types = #tuple, structure = @vector/vector.tuple_int}
+        }
+        delegate = :Delegate {
+            delegate_class = %minecraft_common!VolumeDelegate
+            arguments = {"field" = "block"}
+        }
+    }
+}
+volume_states inherit temp/Dict {
+    allow_key_moves = false
+    key_types = #tuple
+    value_types = #int
+    value_structure = null
+    delegate = null
+}
+volume_additional_data inherit temp/Dict {
+    allow_key_moves = false
+    key_types = #tuple
+    value_types = @a/compound
+    value_structure = @block
+    delegate = null
+}
+block inherit temp/SortedKeymap.nbt {
+    keys = {
+        "nbt" = :Key {types = @a/compound, structure = @structures/misc/block_entity/block_entity}
+    }
+}
+entities inherit temp/Set.nbt {
+    $ field = "entity"
+    value_types = @a/compound
+    value_structure = @entity
+}
+entity inherit temp/SortedKeymap.nbt {
+    keys = {
+        "pos" = :Key {types = @a/list, structure = @vector/vector.tag_double}
+        "blockPos" = :Key {types = @a/list, structure = @vector/vector.tag_int}
+        "nbt" = :Key {types = @a/compound, structure = @structures/misc/entity/entity}
+    }
+}

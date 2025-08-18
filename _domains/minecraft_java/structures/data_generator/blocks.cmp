@@ -1,0 +1,463 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        ip = @structures/misc/provider/int_provider/
+        misc = @structures/misc/misc/
+        particle = @structures/data/particles/particles/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "blocks"
+    $ structure = @blocks
+}
+blocks inherit temp/Dict {
+    $ field = "block"
+    value_types = #dict
+    value_structure = @block
+}
+block inherit temp/SortedKeymap {
+    keys = {
+        "definition" = :Key {types = #dict, structure = @definition}
+        "properties" = :Key {types = #dict, structure = @properties}
+        "states" = :Key {types = #list, structure = @states}
+    }
+}
+properties inherit temp/Dict {
+    $ field = "property"
+    value_types = #list
+    value_structure = @misc/named_list{$name="value"}
+}
+states inherit temp/Set {
+    $ field = "state"
+    value_types = #dict
+    value_structure = @state
+}
+state inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #int, delegate_arguments = {"always_print" = true}}
+        "default" = :Key {types = #bool}
+        "properties" = :Key {types = #dict, structure = @state:properties}
+    }
+}
+state:properties inherit temp/Dict {
+    $ field = "property"
+    value_types = #str
+    value_structure = null
+}
+definition :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:air" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:amethyst" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:amethyst_cluster" = :Key {types = #dict, structure = @definition:block{$imports=@definition.amethyst_cluster}}
+        "minecraft:anvil" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:attached_stem" = :Key {types = #dict, structure = @definition:block{$imports=@definition.abstract_stem+@definition.attached_stem}}
+        "minecraft:azalea" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:bamboo_sapling" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:bamboo_stalk" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:banner" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored}}
+        "minecraft:barrel" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:barrier" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:base_coral_fan" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:base_coral_plant" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:base_coral_wall_fan" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:beacon" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:bed" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored}}
+        "minecraft:beehive" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:beetroot" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:bell" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:blast_furnace" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:big_dripleaf" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:big_dripleaf_stem" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:block" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:bonemealable_feature_placer" = :Key {types = #dict, structure = @definition:block{$imports=@definition.feature_placer}}
+        "minecraft:brewing_stand" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:brushable" = :Key {types = #dict, structure = @definition:block{$imports=@definition.brushable}}
+        "minecraft:bubble_column" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:budding_amethyst" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:bush" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:button" = :Key {types = #dict, structure = @definition:block{$imports=@definition.block_set_type+@definition.button}}
+        "minecraft:cactus" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:cactus_flower" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:cake" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:calibrated_sculk_sensor" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:campfire" = :Key {types = #dict, structure = @definition:block{$imports=@definition.campfire}}
+        "minecraft:candle" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:candle_cake" = :Key {types = #dict, structure = @definition:block{$imports=@definition.candle_cake}}
+        "minecraft:carpet" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:carrot" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:cartography_table" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:carved_pumpkin" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:cauldron" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:cave_vines" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:cave_vines_plant" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:ceiling_hanging_sign" = :Key {types = #dict, structure = @definition:block{$imports=@definition.wood_type}}
+        "minecraft:chain" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:cherry_leaves" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:chest" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:chiseled_book_shelf" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:chorus_flower" = :Key {types = #dict, structure = @definition:block{$imports=@definition.chorus_flower}}
+        "minecraft:chorus_plant" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:cocoa" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:colored_falling" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored_falling}}
+        "minecraft:command" = :Key {types = #dict, structure = @definition:block{$imports=@definition.command}}
+        "minecraft:comparator" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:composter" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:concrete_powder" = :Key {types = #dict, structure = @definition:block{$imports=@definition.concrete_powder}}
+        "minecraft:conduit" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:copper_bulb_block" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:coral" = :Key {types = #dict, structure = @definition:block{$imports=@definition.coral}}
+        "minecraft:coral_fan" = :Key {types = #dict, structure = @definition:block{$imports=@definition.coral}}
+        "minecraft:coral_plant" = :Key {types = #dict, structure = @definition:block{$imports=@definition.coral}}
+        "minecraft:coral_wall_fan" = :Key {types = #dict, structure = @definition:block{$imports=@definition.coral}}
+        "minecraft:crafter" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:crafting_table" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:creaking_heart" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:crop" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:crying_obsidian" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:daylight_detector" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:dead_bush" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:decorated_pot" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:detector_rail" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:dirt_path" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:dispenser" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:door" = :Key {types = #dict, structure = @definition:block{$imports=@definition.block_set_type}}
+        "minecraft:double_plant" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:dragon_egg" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:dried_ghast" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:drop_experience" = :Key {types = #dict, structure = @definition:block{$imports=@definition.drop_experience}}
+        "minecraft:dry_vegetation" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:dropper" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:enchantment_table" = :Key {types = #dict, structure = @definition:block} // enchantment table. WHY
+        "minecraft:end_gateway" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:end_portal" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:end_portal_frame" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:end_rod" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:ender_chest" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:eyeblossom" = :Key {types = #dict, structure = @definition:block{$imports=@definition.eyeblossom}}
+        "minecraft:farm" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:fence" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:fence_gate" = :Key {types = #dict, structure = @definition:block{$imports=@definition.wood_type}}
+        "minecraft:fire" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:firefly_bush" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:fletching_table" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:flower" = :Key {types = #dict, structure = @definition:block{$imports=@definition.flower}}
+        "minecraft:flower_bed" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:flower_pot" = :Key {types = #dict, structure = @definition:block{$imports=@definition.flower_pot}}
+        "minecraft:frogspawn" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:frosted_ice" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:fungus" = :Key {types = #dict, structure = @definition:block{$imports=@definition.feature_placer+@definition.fungus}}
+        "minecraft:furnace" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:glazed_terracotta" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:glow_lichen" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:grass" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:grindstone" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:half_transparent" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:huge_mushroom" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:hanging_moss" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:hanging_roots" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:hay" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:heavy_core" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:honey" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:hopper" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:ice" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:infested" = :Key {types = #dict, structure = @definition:block{$imports=@definition.infested}}
+        "minecraft:infested_rotated_pillar" = :Key {types = #dict, structure = @definition:block{$imports=@definition.infested}}
+        "minecraft:iron_bars" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:jack_o_lantern" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:jigsaw" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:jukebox" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:kelp" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:kelp_plant" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:ladder" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:lantern" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:lava_cauldron" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:layered_cauldron" = :Key {types = #dict, structure = @definition:block{$imports=@definition.layered_cauldron}}
+        "minecraft:leaf_litter" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:leaves" = :Key {types = #dict, structure = @definition:block{$imports=@definition.particle_leaves+@definition.leaf_particle}}
+        "minecraft:lectern" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:lever" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:light" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:lightning_rod" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:liquid" = :Key {types = #dict, structure = @definition:block{$imports=@definition.liquid}}
+        "minecraft:loom" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:magma" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:mangrove_leaves" = :Key {types = #dict, structure = @definition:block{$imports=@definition.particle_leaves+@definition.leaf_particle}}
+        "minecraft:mangrove_propagule" = :Key {types = #dict, structure = @definition:block{$imports=@definition.sapling}}
+        "minecraft:mangrove_roots" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:moss" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:mossy_carpet" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:moving_piston" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:mud" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:multiface" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:mushroom" = :Key {types = #dict, structure = @definition:block{$imports=@definition.feature_placer}}
+        "minecraft:mycelium" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:nether_portal" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:nether_sprouts" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:nether_wart" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:netherrack" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:note" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:nylium" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:observer" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:particle_leaves" = :Key {types = #dict, structure = @definition:block{$imports=@definition.particle_leaves+@definition.leaf_particle}}
+        "minecraft:piglinwallskull" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:pink_petals" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:piston_base" = :Key {types = #dict, structure = @definition:block{$imports=@definition.piston_base}}
+        "minecraft:piston_head" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:pitcher_crop" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:player_head" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:player_wall_head" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:pointed_dripstone" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:potato" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:powder_snow" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:powered" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:powered_rail" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:pressure_plate" = :Key {types = #dict, structure = @definition:block{$imports=@definition.block_set_type}}
+        "minecraft:pumpkin" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:rail" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:redstone_lamp" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:redstone_ore" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:redstone_torch" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:redstone_wall_torch" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:redstone_wire" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:repeater" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:respawn_anchor" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:rooted_dirt" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:roots" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:rotated_pillar" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sand" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored_falling}}
+        "minecraft:sapling" = :Key {types = #dict, structure = @definition:block{$imports=@definition.sapling}}
+        "minecraft:scaffolding" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sculk" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sculk_catalyst" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sculk_sensor" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sculk_shrieker" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sculk_vein" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sea_pickle" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:seagrass" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:short_dry_grass" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:shulker_box" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored}}
+        "minecraft:skull" = :Key {types = #dict, structure = @definition:block{$imports=@definition.skull}}
+        "minecraft:slab" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:slime" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:small_dripleaf" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:smithing_table" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:smoker" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sniffer_egg" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:snow_layer" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:snowy_dirt" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:soul_fire" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:soul_sand" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:spawner" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sponge" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:spore_blossom" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:stained_glass" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored}}
+        "minecraft:stained_glass_pane" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored}}
+        "minecraft:stair" = :Key {types = #dict, structure = @definition:block{$imports=@definition.stair}}
+        "minecraft:standing_sign" = :Key {types = #dict, structure = @definition:block{$imports=@definition.wood_type}}
+        "minecraft:stem" = :Key {types = #dict, structure = @definition:block{$imports=@definition.stem+@definition.abstract_stem}}
+        "minecraft:stonecutter" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:structure" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:structure_void" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sugar_cane" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:sweet_berry_bush" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:tall_dry_grass" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:tall_flower" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:tall_grass" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:tall_seagrass" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:target" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:terracotta" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:test" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:test_instance" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:tinted_glass" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:tinted_leaves" = :Key {types = #dict, structure = @definition:block{$imports=@definition.particle_leaves}}
+        "minecraft:tinted_particle_leaves" = :Key {types = #dict, structure = @definition:block{$imports=@definition.particle_leaves}}
+        "minecraft:tnt" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:torch" = :Key {types = #dict, structure = @definition:block{$imports=@definition.torch}}
+        "minecraft:torchflower_crop" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:transparent" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:trapdoor" = :Key {types = #dict, structure = @definition:block{$imports=@definition.block_set_type}}
+        "minecraft:trapped_chest" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:trial_spawner" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:trip_wire_hook" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:tripwire" = :Key {types = #dict, structure = @definition:block{$imports=@definition.tripwire}}
+        "minecraft:turtle_egg" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:twisting_vines" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:twisting_vines_plant" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:untinted_particle_leaves" = :Key {types = #dict, structure = @definition:block{$imports=@definition.particle_leaves+@definition.leaf_particle}}
+        "minecraft:vault" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:vine" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:wall" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:wall_banner" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored}}
+        "minecraft:wall_hanging_sign" = :Key {types = #dict, structure = @definition:block{$imports=@definition.wood_type}}
+        "minecraft:wall_sign" = :Key {types = #dict, structure = @definition:block{$imports=@definition.wood_type}}
+        "minecraft:wall_skull" = :Key {types = #dict, structure = @definition:block{$imports=@definition.skull}}
+        "minecraft:wall_torch" = :Key {types = #dict, structure = @definition:block{$imports=@definition.torch}}
+        "minecraft:waterlily" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:waterlogged_transparent" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:weathering_copper_bulb" = :Key {types = #dict, structure = @definition:block{$imports=@definition.weathering}}
+        "minecraft:weathering_copper_door" = :Key {types = #dict, structure = @definition:block{$imports=@definition.block_set_type+@definition.weathering}}
+        "minecraft:weathering_copper_full" = :Key {types = #dict, structure = @definition:block{$imports=@definition.weathering}}
+        "minecraft:weathering_copper_grate" = :Key {types = #dict, structure = @definition:block{$imports=@definition.weathering}}
+        "minecraft:weathering_copper_slab" = :Key {types = #dict, structure = @definition:block{$imports=@definition.weathering}}
+        "minecraft:weathering_copper_stair" = :Key {types = #dict, structure = @definition:block{$imports=@definition.stair+@definition.weathering}}
+        "minecraft:weathering_copper_trap_door" = :Key {types = #dict, structure = @definition:block{$imports=@definition.block_set_type+@definition.weathering}}
+        "minecraft:web" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:weeping_vines" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:weeping_vines_plant" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:weighted_pressure_plate" = :Key {types = #dict, structure = @definition:block{$imports=@definition.block_set_type+@definition.weighted_pressure_plate}}
+        "minecraft:wet_sponge" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:wither_rose" = :Key {types = #dict, structure = @definition:block{$imports=@definition.flower}}
+        "minecraft:wither_skull" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:wither_wall_skull" = :Key {types = #dict, structure = @definition:block}
+        "minecraft:wool_carpet" = :Key {types = #dict, structure = @definition:block{$imports=@definition.colored}}
+    }
+}
+definition:block inherit temp/SortedKeymap {
+    $ (dict) imports = {}
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "properties" = :Key {types = #dict, structure = @misc/empty_dict}
+    } + imports
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+definition.abstract_stem {
+    "fruit" = :Key {types = #str}
+    "seed" = :Key {types = #str}
+}
+definition.amethyst_cluster {
+    "aabb_offset" = :Key {types = #float}
+    "height" = :Key {types = #float}
+    "width" = :Key {types = #float}
+}
+definition.attached_stem {
+    "stem" = :Key {types = #str}
+}
+definition.block_set_type {
+    "block_set_type" = :Key {types = #str}
+}
+definition.brushable {
+    "brush_comleted_sound" = :Key {types = #str, tags = @t/outdated} // https://bugs.mojang.com/browse/MC/issues/MC-265703
+    "brush_completed_sound" = :Key {types = #str}
+    "brush_sound" = :Key {types = #str}
+    "turns_into" = :Key {types = #str}
+}
+definition.button {
+    "ticks_to_stay_pressed" = :Key {types = #int}
+}
+definition.campfire {
+    "fire_damage" = :Key {types = #int}
+    "spawn_particles" = :Key {types = #bool}
+}
+definition.candle_cake {
+    "candle" = :Key {types = #str}
+}
+definition.chorus_flower {
+    "plant" = :Key {types = #str}
+}
+definition.colored {
+    "color" = :Key {types = #str}
+}
+definition.colored_falling {
+    "falling_dust_color" = :Key {types = #str}
+}
+definition.command {
+    "automatic" = :Key {types = #bool}
+}
+definition.concrete_powder {
+    "concrete" = :Key {types = #str}
+}
+definition.coral {
+    "dead" = :Key {types = #str}
+}
+definition.drop_experience {
+    "experience" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+}
+definition.eyeblossom {
+    "open" = :Key {types = #bool}
+}
+definition.feature_placer {
+    "feature" = :Key {types = #str}
+}
+definition.flower {
+    "suspicious_stew_effects" = :Key {types = #list, structure = @definition.flower:suspicious_stew_effects}
+}
+definition.flower:suspicious_stew_effects inherit temp/Set {
+    $ field = "effect"
+    value_types = #dict
+    value_structure = @definition.flower:suspcious_stew_effect
+}
+definition.flower:suspcious_stew_effect inherit temp/SortedKeymap {
+    keys = {
+        "duration" = :Key {types = #int}
+        "id" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+definition.flower_pot {
+    "potted" = :Key {types = #str}
+}
+definition.fungus {
+    "grows_on" = :Key {types = #str}
+}
+definition.infested {
+    "host" = :Key {types = #str}
+}
+definition.layered_cauldron {
+    "interactions" = :Key {types = #str}
+    "precipitation" = :Key {types = #str}
+}
+definition.leaf_particle {
+    "leaf_particle" = :Key {types = @a/compound, structure = @particle/particle}
+    "particle" = :Key {types = @a/compound, structure = @particle/particle, tags = @t/outdated}
+}
+definition.liquid {
+    "fluid" = :Key {types = #str}
+}
+definition.particle_leaves {
+    "chance" = :Key {types = #int, tags = @t/outdated}
+    "leaf_particle_chance" = :Key {types = #float}
+}
+definition.piston_base {
+    "sticky" = :Key {types = #bool}
+}
+definition.sapling {
+    "tree" = :Key {types = #str}
+}
+definition.skull {
+    "kind" = :Key {types = #str}
+}
+definition.stair {
+    "base_state" = :Key {types = #dict, structure = @definition.stair:base_state}
+}
+definition.stair:base_state inherit temp/SortedKeymap {
+    keys = {
+        "Name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+definition.stem {
+    "attached_stem" = :Key {types = #str}
+}
+definition.torch {
+    "particle_options" = :Key {types = #str}
+}
+definition.tripwire {
+    "hook" = :Key {types = #str}
+}
+definition.weathering {
+    "weathering_state" = :Key {types = #str}
+}
+definition.weighted_pressure_plate {
+    "max_weight" = :Key {types = #int}
+}
+definition.wood_type {
+    "wood_type" = :Key {types = #str}
+}

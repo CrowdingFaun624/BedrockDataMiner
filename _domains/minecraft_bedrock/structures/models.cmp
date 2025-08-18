@@ -1,0 +1,395 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "models"}
+    }
+}
+vector_decimal inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_flat" = true, "print_all" = true}
+    }
+}
+number_angle @temp/number {
+    this_types = @temp/decimal
+    normal_value = 22.5
+}
+number_inflate @temp/number {
+    this_types = @temp/decimal
+    normal_value = 0.25
+}
+number_offset @temp/number {
+    this_types = @temp/decimal
+    normal_value = 0.25
+}
+number_origin @temp/number {
+    this_types = @temp/decimal
+    normal_value = 8
+}
+number_pivot @temp/number {
+    this_types = @temp/decimal
+    normal_value = 4
+}
+number_texture_size @temp/number {
+    this_types = @temp/decimal
+    normal_value = 16
+}
+vector_decimal_angle inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = @number_angle
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_flat" = true, "print_all" = true}
+    }
+}
+vector_decimal_offset inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = @number_offset
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_flat" = true, "print_all" = true}
+    }
+}
+vector_decimal_origin inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = @number_origin
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_flat" = true, "print_all" = true}
+    }
+}
+vector_decimal_pivot inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = @number_pivot
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_flat" = true, "print_all" = true}
+    }
+}
+vector_decimal_angle_or_null :Union {
+    substructures = [
+        :Key {types = #list, structure = @vector_decimal_angle},
+        :Key {types = #null},
+    ]
+}
+vector_decimal_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @vector_decimal
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "show_item_key" = false, "field" = "position"}
+    }
+}
+vector_decimal_list_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @vector_decimal_list
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate // length is always 4
+        arguments = {"measure_length" = false, "show_item_key" = false, "field" = "poly"}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Condition {
+        substructures = [
+            :Key {types = #dict, filter = :EqFilter {
+                key = "needs_repair"
+                value = false
+                default = true
+            }, structure = :Normalizer {
+                outer_types = #dict
+                inner_types = #fake_file
+                functions = :Function {
+                    function = %scripts/normalizers/models_model_normalize/
+                    arguments = {"serializer" = @minecraft_common!serializers/json}
+                }
+                structure = :File {
+                    serializer = null
+                    outer_types = #fake_file
+                    inner_types = #dict
+                    structure = @files
+                }
+            }},
+            :Key {types = #dict, filter = :EqFilter {
+                key = "needs_repair"
+                value = true
+            }, structure = :Normalizer {
+                outer_types = #dict
+                inner_types = #fake_file
+                functions = :Function {
+                    function = %scripts/normalizers/models_model_normalize/
+                    arguments = {"serializer" = @serializers/models_repairable_json}
+                }
+                structure = :File {
+                    serializer = null
+                    outer_types = #fake_file
+                    inner_types = #dict
+                    structure = @files
+                }
+            }},
+        ]
+    }
+}
+files inherit temp/Dict {
+    key_structure = @temp/string{
+        similarity_weight_function = :Function {
+            function = %scripts/normalizers/normalizers/models_file_similarity_weight
+        }
+    }
+    min_key_similarity_threshold = 0.6
+    min_value_similarity_threshold = 0.25
+    value_types = #dict
+    value_structure = @resource_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "file", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+resource_packs :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_flat
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @model
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+model inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = [#null, #str]}
+        "minecraft:geometry" = :Key {types = #dict, structure = @geometry}
+    }
+}
+geometry inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 5}
+        "bones" = :Key {types = #list, structure = @bones}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, similarity_weight = 50, delegate_arguments = {"always_print" = true}}
+        "animationArmsDown" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationArmsOutFront" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationDontShowArmor" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationInvertedCrouch" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationNoHeadBob" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationSingleArmAnimation" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationSingleLegAnimation" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationStationaryLegs" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationStatueOfLibertyArms" = :Key {types = #bool, tags = [@t/outdated]}
+        "animationUpsideDown" = :Key {types = #bool, tags = [@t/outdated]}
+        "cape" = :Key {types = [#null, #str], tags = [@t/outdated]}
+        "META_ModelVersion" = :Key {types = #str, tags = [@t/outdated]}
+        "rigtype" = :Key {types = [#null, #str], tags = [@t/outdated]}
+        "rigType" = :Key {types = [#null, #str], tags = [@t/outdated]}
+        "texture_height" = :Key {types = @temp/decimal, structure = @number_texture_size}
+        "texture_width" = :Key {types = @temp/decimal, structure = @number_texture_size}
+        "textureheight" = :Key {types = @temp/decimal, structure = @number_texture_size}
+        "texturewidth" = :Key {types = @temp/decimal, structure = @number_texture_size}
+        "visible_bounds_height" = :Key {types = @temp/decimal, structure = @number_offset}
+        "visible_bounds_offset" = :Key {types = #list, structure = @vector_decimal_offset}
+        "visible_bounds_width" = :Key {types = @temp/decimal, structure = @number_offset}
+    }
+}
+bones :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "name"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        key_structure = @temp/string
+        key_weight = 3
+        value_weight = 5
+        value_structure = @bone
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "bone", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+bone :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %delete_key
+        arguments = {"key" = "name"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "bind_pose_rotation" = :Key {types = #list, structure = @vector_decimal_angle}
+            "binding" = :Key {types = #str}
+            "cubes" = :Key {types = #list, structure = @cubes}
+            "inflate" = :Key {types = @temp/decimal, structure = @number_inflate}
+            "locators" = :Key {types = #dict, structure = @locators}
+            "material" = :Key {types = #str, tags = [@t/outdated]}
+            "META_BoneType" = :Key {types = [#null, #str], tags = [@t/outdated]}
+            "mirror" = :Key {types = [#bool, #str]}
+            "neverRender" = :Key {types = [#bool, #str]}
+            "parent" = :Key {types = [#null, #str], delegate_arguments = {"always_print" = true}}
+            "pivot" = :Key {types = #list, structure = @vector_decimal_pivot}
+            "poly_mesh" = :Key {types = #dict, structure = @poly_mesh}
+            "pos" = :Key {types = #list, structure = @vector_decimal_pivot, tags = [@t/outdated]}
+            "pre_rotation" = :Key {types = #list, structure = @vector_decimal, tags = [@t/outdated]}
+            "reset" = :Key {types = [#bool, #str]}
+            "rotation" = :Key {types = [#list, #null], structure = @vector_decimal_angle_or_null}
+            "texture_meshes" = :Key {types = #list, structure = @texture_meshes}
+        }
+    }
+}
+cubes inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @cube
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "cube", "show_item_key" = false, "measure_length" = true}
+    }
+}
+cube inherit temp/SortedKeymap {
+    keys = {
+        "inflate" = :Key {types = @temp/decimal, structure = @number_inflate}
+        "mirror" = :Key {types = #bool}
+        "origin" = :Key {types = #list, structure = @vector_decimal_origin}
+        "rotation" = :Key {types = #list, structure = @vector_decimal_angle}
+        "pivot" = :Key {types = #list, structure = @vector_decimal_pivot}
+        "size" = :Key {types = #list, structure = @vector_decimal_pivot}
+        "uv" = :Key {types = [#dict, #list], structure = @uv_group}
+    }
+}
+uv_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "north" = :Key {types = #dict, structure = @uv_dict.item}
+                "east" = :Key {types = #dict, structure = @uv_dict.item}
+                "south" = :Key {types = #dict, structure = @uv_dict.item}
+                "west" = :Key {types = #dict, structure = @uv_dict.item}
+                "up" = :Key {types = #dict, structure = @uv_dict.item}
+                "down" = :Key {types = #dict, structure = @uv_dict.item}
+            }
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"sort" = %sort_by_component_order}
+            }
+        }},
+        :Key {types = #list, structure = @uv_list},
+    ]
+}
+uv_dict.item inherit temp/SortedKeymap {
+    keys = {
+        "uv" = :Key {types = #list, structure = @uv_list}
+        "uv_size" = :Key {types = #list, structure = @uv_size}
+    }
+}
+uv_size inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "uv size item", "print_flat" = true, "print_all" = true}
+    }
+}
+uv_list inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = @number_texture_size
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "uv item", "print_flat" = true, "print_all" = true}
+    }
+}
+locators inherit temp/Dict {
+    value_types = #list
+    value_structure = @vector_decimal_pivot
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "locator", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+poly_mesh inherit temp/SortedKeymap {
+    keys = {
+        "normalized_uvs" = :Key {types = #bool}
+        "positions" = :Key {types = #list, structure = @vector_decimal_list}
+        "polys" = :Key {types = #list, structure = @vector_decimal_list_list}
+        "average_normals" = :Key {types = #null}
+        "uvs" = :Key {types = #list, structure = @vector_decimal_list}
+        "normals" = :Key {types = #list, structure = @vector_decimal_list}
+    }
+}
+texture_meshes inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @texture_mesh
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "texture mesh", "show_item_key" = false, "measure_length" = true}
+    }
+}
+texture_mesh inherit temp/SortedKeymap {
+    keys = {
+        "local_pivot" = :Key {types = #list, structure = @vector_decimal}
+        "position" = :Key {types = #list, structure = @vector_decimal}
+        "rotation" = :Key {types = #list, structure = @vector_decimal}
+        "scale" = :Key {types = #list, structure = @vector_decimal, tags = [@t/outdated]}
+        "texture" = :Key {types = #str}
+    }
+}

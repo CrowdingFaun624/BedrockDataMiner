@@ -1,0 +1,96 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "renderer_platform_configuration"
+    $ structure = @platforms
+}
+platforms inherit temp/Dict {
+    value_types = #dict
+    value_structure = @platform
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "platform", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+platform :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/renderer_platform_configurations_normalize_shadow_config
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "presets" = :Key {types = #list, structure = @presets}
+            "cloud_config" = :Key {types = #dict, structure = @file_link}
+            "deferred_lighting_config" = :Key {types = #dict, structure = @file_link}
+            "bloom_config" = :Key {types = #dict, structure = @file_link}
+            "point_light_loding_config" = :Key {types = #dict, structure = @file_link}
+            "point_light_shadow_config" = :Key {types = #dict, structure = @file_link}
+            "reflection_config" = :Key {types = #dict, structure = @file_link}
+            "render_distance_config" = :Key {types = #dict, structure = @file_link}
+            "resolution_config" = :Key {types = #dict, structure = @file_link}
+            "shadow_config" = :Key {types = #dict, structure = @file_link}
+            "tiers" = :Key {types = #dict, structure = @tiers}
+            "volumetric_fog_config" = :Key {types = #dict, structure = @file_link}
+            "upscaling_config" = :Key {types = #dict, structure = @file_link}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_key}
+        }
+    }
+}
+file_link inherit temp/SortedKeymap {
+    keys = {
+        "file" = :Key {types = #str, structure = @temp/string}
+    }
+}
+presets inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @preset
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "preset", "show_item_key" = false, "measure_length" = true}
+    }
+}
+tiers inherit temp/Dict {
+    value_types = #list
+    value_structure = @presets
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "tier", "measure_length" = true}
+    }
+}
+preset inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 4}
+        "lods" = :Key {types = #dict, structure = @lods}
+    }
+}
+lods inherit temp/SortedKeymap {
+    keys = {
+        "clouds" = :Key {types = #str}
+        "default_deferred_distance" = :Key {types = #int}
+        "target_resolution" = :Key {types = #str}
+        "target_frame_rate" = :Key {types = #int}
+        "shadows" = :Key {types = #str}
+        "point_light_shadows" = :Key {types = #str}
+        "volumetric_fog" = :Key {types = #str}
+        "bloom" = :Key {types = #bool}
+        "point_light_lodding" = :Key {types = #str}
+        "reflections" = :Key {types = #str}
+        "upscaling_mode" = :Key {types = #str}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}

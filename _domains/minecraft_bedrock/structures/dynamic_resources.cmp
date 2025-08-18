@@ -1,0 +1,27 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "dynamic_resources"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "resources" = :Key {types = #dict, structure = @resources}
+    }
+}
+resources inherit temp/SortedKeymap {
+    keys = {
+        "DYNAMIC_BRIGHTNESS" = :Key {types = #str}
+        "DYNAMIC_WEATHER" = :Key {types = #str}
+        "DYNAMIC_SEASON_FOLIAGE" = :Key {types = #str}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource", "measure_length" = true}
+    }
+}

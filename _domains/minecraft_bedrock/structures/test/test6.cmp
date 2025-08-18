@@ -1,0 +1,50 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @test1
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "test6"}
+    }
+}
+test1 inherit temp/SortedKeymap {
+    keys = {
+        "a" = :Key {types = #list, structure = @simple_list}
+        "b" = :Key {types = #list, structure = @simple_list}
+        "c" = :Key {types = #list, structure = @simple_list}
+        "d" = :Key {types = #list, structure = @simple_list}
+        "e" = :Key {types = #list, structure = @simple_list}
+        "f" = :Key {types = #list, structure = @simple_list}
+        "g" = :Key {types = #list, structure = @complex_list}
+        "h" = :Key {types = #list, structure = @complex_list}
+        "i" = :Key {types = #list, structure = @complex_list}
+        "j" = :Key {types = #list, structure = @complex_list}
+        "k" = :Key {types = #list, structure = @complex_list}
+        "l" = :Key {types = #list, structure = @complex_list}
+    }
+}
+simple_list inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+}
+complex_list inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = inherit temp/SortedKeymap {
+        keys = {
+            "" = :Key {types = #int}
+        }
+    }
+}

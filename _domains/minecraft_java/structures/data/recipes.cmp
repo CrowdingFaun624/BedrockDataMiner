@@ -1,0 +1,196 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+        data_components = @structures/misc/data_components/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "recipes"
+    $ types = #dict
+    $ structure = @recipe
+}
+ingredients :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @ingredients.list},
+        :Key {types = #dict, structure = @ingredients.old},
+    ]
+}
+ingredients.list inherit temp/Set {
+    $ field = "item"
+    value_types = [#str, #list, #dict]
+    value_structure = @ingredients
+}
+ingredients.old inherit temp/SortedKeymap {
+    tags = @t/outdated
+    keys = {
+        "item" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "tag" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "data" = :Key {types = #int, tags = @t/outdated, delegate_arguments = {"always_print" = true}}
+    }
+}
+item_single :Union {
+    substructures = [
+        :Key {types = #str, tags = @t/outdated},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "id" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+                "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+            }
+        }},
+    ]
+}
+item_multi :Union {
+    substructures = [
+        :Key {types = #str, tags = @t/outdated},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "item" = :Key {types = #str, delegate_arguments = {"always_print" = true}, tags = @t/outdated}
+                "id" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+                "data" = :Key {types = #int, tags = @t/outdated}
+                "count" = :Key {types = #int}
+                "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+            }
+        }},
+    ]
+}
+recipe :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "blasting" = :Key {types = #dict, structure = @recipe.smelting, tags = @t/outdated}
+        "minecraft:blasting" = :Key {types = #dict, structure = @recipe.smelting}
+        "campfire" = :Key {types = #dict, structure = @recipe.campfire_cooking, tags = @t/outdated}
+        "minecraft:campfire_cooking" = :Key {types = #dict, structure = @recipe.campfire_cooking}
+        "crafting_shaped" = :Key {types = #dict, structure = @recipe.crafting_shaped, tags = @t/outdated}
+        "minecraft:crafting_shaped" = :Key {types = #dict, structure = @recipe.crafting_shaped}
+        "crafting_shapeless" = :Key {types = #dict, structure = @recipe.crafting_shapeless, tags = @t/outdated}
+        "minecraft:crafting_shapeless" = :Key {types = #dict, structure = @recipe.crafting_shapeless}
+        "minecraft:crafting_transmute" = :Key {types = #dict, structure = @recipe.crafting_transmute}
+        "crafting_special_armordye" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_armordye" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_banneraddpattern" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "crafting_special_bannerduplicate" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_bannerduplicate" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_bookcloning" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_bookcloning" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_firework_rocket" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_firework_rocket" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_firework_star" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_firework_star" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_firework_star_fade" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_firework_star_fade" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_mapcloning" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_mapcloning" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_mapextending" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_mapextending" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_repairitem" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_repairitem" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_shielddecoration" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_shielddecoration" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_shulkerboxcoloring" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_shulkerboxcoloring" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_suspiciousstew" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_suspiciousstew" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "crafting_special_tippedarrow" = :Key {types = #dict, structure = @recipe.crafting_special, tags = @t/outdated}
+        "minecraft:crafting_special_tippedarrow" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "minecraft:crafting_decorated_pot" = :Key {types = #dict, structure = @recipe.crafting_special}
+        "smelting" = :Key {types = #dict, structure = @recipe.smelting, tags = @t/outdated}
+        "minecraft:smelting" = :Key {types = #dict, structure = @recipe.smelting}
+        "minecraft:smithing" = :Key {types = #dict, structure = @recipe.smithing_transform, tags = @t/outdated}
+        "minecraft:smithing_transform" = :Key {types = #dict, structure = @recipe.smithing_transform}
+        "minecraft:smithing_trim" = :Key {types = #dict, structure = @recipe.smithing_trim}
+        "smoking" = :Key {types = #dict, structure = @recipe.smelting, tags = @t/outdated}
+        "minecraft:smoking" = :Key {types = #dict, structure = @recipe.smelting}
+        "minecraft:stonecutting" = :Key {types = #dict, structure = @recipe.stonecutting}
+    }
+}
+recipe:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+recipe:recipe_book {
+    "category" = :Key {types = #str}
+}
+recipe:recipe_book_group {
+    "group" = :Key {types = #str}
+}
+recipe.campfire_cooking inherit temp/SortedKeymap {
+    keys = @recipe:all + @recipe:recipe_book + {
+        "ingredient" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "cookingtime" = :Key {types = #int}
+        "result" = :Key {types = [#str, #dict], structure = @item_single}
+        "experience" = :Key {types = #float}
+    }
+}
+recipe.crafting_shaped inherit temp/SortedKeymap {
+    keys = @recipe:all + @recipe:recipe_book + @recipe:recipe_book_group + {
+        "show_notification" = :Key {types = #bool} // https://bugs.mojang.com/browse/MC/issues/MC-260148
+        "pattern" = :Key {types = #list, structure = @recipe.crafting_shaped:pattern}
+        "key" = :Key {types = #dict, structure = @recipe.crafting_shaped:key}
+        "result" = :Key {types = [#str, #dict], structure = @item_multi}
+    }
+}
+recipe.crafting_shaped:pattern inherit temp/List {
+    $ field = "line"
+    $ print_all = true
+    value_types = #str
+    value_structure = null
+}
+recipe.crafting_shaped:key inherit temp/Dict {
+    $ field = "key"
+    value_types = [#str, #list, #dict]
+    value_structure = @ingredients
+}
+recipe.crafting_shapeless inherit temp/SortedKeymap {
+    keys = @recipe:all + @recipe:recipe_book + @recipe:recipe_book_group + {
+        "ingredients" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "result" = :Key {types = [#str, #dict], structure = @item_multi}
+    }
+}
+recipe.crafting_special inherit temp/SortedKeymap {
+    keys = @recipe:all + @recipe:recipe_book
+}
+recipe.crafting_transmute inherit temp/SortedKeymap {
+    keys = @recipe:all + @recipe:recipe_book + @recipe:recipe_book_group + {
+        "input" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="item"}}
+        "material" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="item"}}
+        "result" = :Key {types = [#str, #dict], structure = @item_single}
+    }
+}
+recipe.smelting inherit temp/SortedKeymap {
+    keys = @recipe:all + @recipe:recipe_book + @recipe:recipe_book_group + {
+        "ingredient" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "cookingtime" = :Key {types = #int}
+        "result" = :Key {types = [#str, #dict], structure = @item_single}
+        "experience" = :Key {types = #float}
+    }
+}
+recipe.smithing_transform inherit temp/SortedKeymap {
+    keys = @recipe:all + {
+        "template" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "base" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "addition" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "result" = :Key {types = [#str, #dict], structure = @item_multi}
+    }
+}
+recipe.smithing_trim inherit temp/SortedKeymap {
+    keys = @recipe:all + {
+        "pattern" = :Key {types = #str}
+        "template" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "base" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "addition" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+    }
+}
+recipe.stonecutting inherit temp/SortedKeymap {
+    keys = @recipe:all + {
+        "ingredient" = :Key {types = [#str, #list, #dict], structure = @ingredients}
+        "result" = :Key {types = [#str, #dict], structure = @item_multi}
+        "count" = :Key {types = #int, tags = @t/outdated}
+    }
+}

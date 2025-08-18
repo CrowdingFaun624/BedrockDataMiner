@@ -1,0 +1,37 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+sound_event_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @sound_event},
+    ]
+}
+sound_event inherit temp/SortedKeymap {
+    keys = {
+        "replace" = :Key {types = #bool}
+        "subtitle" = :Key {types = #str}
+        "sounds" = :Key {types = #list, structure = @sounds}
+    }
+}
+sounds inherit temp/Set {
+    $ field = "sound"
+    value_types = #dict
+    value_structure = @sound
+}
+sound inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "volume" = :Key {types = @misc/decimal}
+        "pitch" = :Key {types = @misc/decimal}
+        "weight" = :Key {types = #int}
+        "stream" = :Key {types = #bool}
+        "attenuation_distance" = :Key {types = #int}
+        "preload" = :Key {types = #bool}
+        "type" = :Key {types = #str}
+    }
+}

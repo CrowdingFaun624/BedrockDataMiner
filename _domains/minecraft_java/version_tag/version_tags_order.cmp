@@ -1,0 +1,25 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @version_tag/version_tags/
+    }
+}
+base :VersionTagOrder {
+    order = [[@t/experimental_snapshot, @t/snapshot, @t/preview, @t/development, @t/test_build, @t/prerelease, @t/release_candidate], [@t/major], [@t/minor, @t/patch, @t/reupload]]
+    allowed_children = [
+        :AllowedChildren {tag = @t/experimental_snapshot, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/snapshot, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/preview, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/development, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/test_build, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/prerelease, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/release_candidate, children = [@t/reupload]},
+        :AllowedChildren {tag = @t/major, children = [@t/experimental_snapshot, @t/snapshot, @t/preview, @t/development, @t/test_build, @t/prerelease, @t/release_candidate, @t/minor, @t/patch, @t/reupload]},
+        :AllowedChildren {tag = @t/minor, children = [@t/experimental_snapshot, @t/snapshot, @t/preview, @t/development, @t/test_build, @t/prerelease, @t/release_candidate, @t/patch, @t/reupload]},
+        :AllowedChildren {tag = @t/patch, children = [@t/preview, @t/development, @t/prerelease, @t/release_candidate, @t/reupload]},
+        :AllowedChildren {tag = @t/reupload, children = []},
+    ]
+    top_level_tag = @t/major
+    tags_before_top_level_tag = [@t/snapshot, @t/preview, @t/development, @t/prerelease, @t/release_candidate]
+    tags_after_top_level_tag = [@t/minor, @t/patch, @t/reupload]
+}

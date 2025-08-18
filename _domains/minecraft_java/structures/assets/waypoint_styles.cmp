@@ -1,0 +1,32 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "waypoint_styles"
+    $ pack_type = "resource pack"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "near_distance" = :Key {types = #int}
+        "far_distance" = :Key {types = #int}
+        "sprites" = :Key {types = #list, structure = @sprites}
+    }
+}
+sprites inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    value_types = #str
+    key_weight = 1
+    value_weight = 4
+    value_structure = @misc/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sprite", "measure_length" = true, "show_item_key" = true}
+    }
+}

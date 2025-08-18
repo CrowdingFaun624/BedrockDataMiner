@@ -1,0 +1,347 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "cameras"
+    $ file_field = "camera"
+    $ pack_type = "resource pack"
+    $ structure = @camera
+}
+rotation_decimal inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "axis", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+vector_decimal inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+camera inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "activation_rule" = :Key {types = #dict, structure = @activation_rule, tags = [@t/outdated]}
+        "blend_in_default" = :Key {types = #dict, structure = @component.camera_blend_in_default}
+        "faces_player_front" = :Key {types = #bool, tags = [@t/outdated]}
+        "far_clipping_plane" = :Key {types = #float, tags = [@t/outdated]}
+        "field_of_view" = :Key {types = @temp/decimal, tags = [@t/outdated]}
+        "near_clipping_plane" = :Key {types = @temp/decimal, tags = [@t/outdated]}
+        "player_rotation_offset" = :Key {types = #list, structure = @vector_decimal, tags = [@t/outdated]}
+        "priority" = :Key {types = #int, tags = [@t/outdated]}
+        "render_first_person_objects" = :Key {types = #bool, tags = [@t/outdated]}
+        "render_player_model" = :Key {types = #bool, tags = [@t/outdated]}
+        "behaviors" = :Key {types = #dict, structure = @behaviors, tags = [@t/outdated]}
+        "minecraft:camera_entity" = :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "description" = :Key {types = #dict, structure = @description}
+                "components" = :Key {types = #dict, structure = @components}
+            }
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"sort" = %sort_by_component_order}
+            }
+        }}
+    }
+}
+activation_rule inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+        "camera_option" = :Key {types = #str}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+components inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:allow_inside_block" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera" = :Key {types = #dict, structure = @component.camera}
+        "minecraft:camera_attach_to_player" = :Key {types = #dict, structure = @component.camera_attach_to_player}
+        "minecraft:camera_avoidance" = :Key {types = #dict, structure = @component.camera_avoidance}
+        "minecraft:camera_blend_in_default" = :Key {types = #dict, structure = @component.camera_blend_in_default}
+        "minecraft:camera_bob" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated]}
+        "minecraft:camera_direct_look" = :Key {types = #dict, structure = @component.camera_direct_look}
+        "minecraft:camera_first_person" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_fixed_boom" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_liquid_offset" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_look_at_player" = :Key {types = #dict, structure = @component.camera_look_at_player, tags = [@t/outdated]}
+        "minecraft:camera_offset" = :Key {types = #dict, structure = @component.camera_offset}
+        "minecraft:camera_option_activation" = :Key {types = #dict, structure = @component.camera_option_activation}
+        "minecraft:camera_orbit" = :Key {types = #dict, structure = @component.camera_orbit}
+        "minecraft:camera_perspective_option" = :Key {types = #dict, structure = @component.camera_perspective_option}
+        "minecraft:camera_player_bob" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_player_sleep_vignette" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_portal_distortion" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_render_first_person_objects" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_render_player_model" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_shake" = :Key {types = #dict, structure = @component.camera_shake}
+        "minecraft:camera_sleep_vignette" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated]}
+        "minecraft:camera_sneak_offset" = :Key {types = #dict, structure = @component.camera_sneak_offset, tags = [@t/outdated]}
+        "minecraft:camera_third_person" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:camera_third_person_boom" = :Key {types = #dict, structure = @component.camera_third_person_boom}
+        "minecraft:death_camera_component" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:default_input_camera" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:extend_player_rendering" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:gameplay_affects_fov" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:player_state_affects_rendering" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:redirect_camera_input" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:stationary_camera" = :Key {types = #dict, structure = @component.stationary_camera}
+        "minecraft:target" = :Key {types = #dict, structure = @component.target}
+        "minecraft:update_player_from_camera" = :Key {types = #dict, structure = @component.update_player_from_camera}
+        "minecraft:vr_comfort_move" = :Key {types = #dict, structure = @temp/empty}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "component", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+behaviors inherit temp/SortedKeymap {
+    tags = [@t/outdated]
+    keys = {
+        "attach" = :Key {types = #dict, structure = @component.camera_attach_to_player}
+        "avoidance" = :Key {types = #dict, structure = @component.camera_avoidance}
+        "bob" = :Key {types = #dict, structure = @temp/empty}
+        "comfort_move" = :Key {types = #dict, structure = @temp/empty}
+        "first_person_look" = :Key {types = #dict, structure = @component.camera_direct_look}
+        "fly" = :Key {types = #dict, structure = @component.fly}
+        "liquid_offset" = :Key {types = #dict, structure = @temp/empty}
+        "look_at" = :Key {types = #dict, structure = @component.camera_look_at_player}
+        "orbit" = :Key {types = #dict, structure = @component.camera_orbit}
+        "portal" = :Key {types = #dict, structure = @temp/empty}
+        "ride_rotation" = :Key {types = #dict, structure = @temp/empty}
+        "shake" = :Key {types = #dict, structure = @component.camera_shake}
+        "sleep" = :Key {types = #dict, structure = @component.sleep}
+        "sneak" = :Key {types = #dict, structure = @component.camera_sneak_offset}
+    }
+}
+component.camera inherit temp/SortedKeymap {
+    keys = {
+        "far_clipping_plane" = :Key {types = #float}
+        "field_of_view" = :Key {types = #float}
+        "near_clipping_plane" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_attach_to_player inherit temp/SortedKeymap {
+    keys = {
+        "offset" = :Key {types = #list, structure = @vector_decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_avoidance inherit temp/SortedKeymap {
+    keys = {
+        "avoidance_rays_vertical" = :Key {types = #list, structure = @component.camera_avoidance:avoidance_rays_vertical}
+        "relax_distance_smoothing_spring" = :Key {types = @temp/decimal}
+        "distance_constraint_min" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_avoidance:avoidance_rays_vertical inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @component.camera_avoidance:avoidance_rays_vertical.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "ray", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.camera_avoidance:avoidance_rays_vertical.item inherit temp/SortedKeymap {
+    keys = {
+        "distance" = :Key {types = #float}
+        "weight" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+component.camera_blend_in_default inherit temp/SortedKeymap {
+    keys = {
+        "blend_time" = :Key {types = #float}
+        "ease" = :Key {types = #str, tags = [@t/outdated]}
+        "camera_from_accepts_input" = :Key {types = #bool}
+        "camera_to_accepts_input" = :Key {types = #bool}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_direct_look inherit temp/SortedKeymap {
+    keys = {
+        "pitch_max" = :Key {types = #float}
+        "pitch_min" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_look_at_player inherit temp/SortedKeymap {
+    keys = {
+        "hard_bounds" = :Key {types = #list, structure = @vector_decimal, tags = [@t/outdated]}
+        "soft_bounds" = :Key {types = #list, structure = @vector_decimal, tags = [@t/outdated]}
+        "soft_bounds_smoothing_spring" = :Key {types = #int, tags = [@t/outdated]}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_offset inherit temp/SortedKeymap {
+    keys = {
+        "entity" = :Key {types = #list, structure = @vector_decimal}
+        "view" = :Key {types = #list, structure = @vector_decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_option_activation inherit temp/SortedKeymap {
+    keys = {
+        "view_mode" = :Key {types = #str}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_orbit inherit temp/SortedKeymap {
+    keys = {
+        "azimuth_smoothing_spring" = :Key {types = #int}
+        "distance_smoothing_spring" = :Key {types = #int}
+        "invert_x_input" = :Key {types = #bool}
+        "polar_angle_min" = :Key {types = #float}
+        "polar_angle_max" = :Key {types = #float}
+        "polar_angle_smoothing_spring" = :Key {types = #int}
+        "radius" = :Key {types = #float}
+        "yaw_angle_max" = :Key {types = #float}
+        "yaw_angle_min" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_perspective_option inherit temp/SortedKeymap {
+    keys = {
+        "view_mode" = :Key {types = #str}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_shake inherit temp/SortedKeymap {
+    keys = {
+        "amplitude" = :Key {types = #float}
+        "frequency" = :Key {types = #float}
+        "noise_multiplier" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_sneak_offset inherit temp/SortedKeymap {
+    keys = {
+        "camera_interpolation_rate" = :Key {types = #float, tags = [@t/outdated]}
+        "interpolation_rate" = :Key {types = #float}
+        "offset" = :Key {types = #float}
+        "sneak_offset" = :Key {types = #float, tags = [@t/outdated]}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.camera_third_person_boom inherit temp/SortedKeymap {
+    keys = {
+        "rotation_space" = :Key {types = #str}
+        "starting_radius" = :Key {types = #float}
+        "starting_rot" = :Key {types = #list, structure = @rotation_decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.fly inherit temp/SortedKeymap {
+    keys = {
+        "speed" = :Key {types = #float}
+        "speed_alt" = :Key {types = #float}
+    }
+}
+component.sleep inherit temp/SortedKeymap {
+    keys = {
+        "pre_rotation_offset" = :Key {types = #list, structure = @vector_decimal}
+        "pre_rotation_offset_vr" = :Key {types = #list, structure = @vector_decimal}
+        "post_rotation_offset" = :Key {types = #list, structure = @vector_decimal}
+    }
+}
+component.stationary_camera inherit temp/SortedKeymap {
+    keys = {
+        "pos" = :Key {types = #list, structure = @vector_decimal}
+        "rot" = :Key {types = #list, structure = @rotation_decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.target inherit temp/SortedKeymap {
+    keys = {
+        "continue_targeting" = :Key {types = #bool}
+        "horizontal_rotation_limit" = :Key {types = #list, structure = @vector_decimal}
+        "rotation_speed" = :Key {types = #float}
+        "snap_to_target" = :Key {types = #bool}
+        "tracking_radius" = :Key {types = #float}
+        "vertical_rotation_limit" = :Key {types = #list, structure = @vector_decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.update_player_from_camera inherit temp/SortedKeymap {
+    keys = {
+        "look_mode" = :Key {types = #str}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}

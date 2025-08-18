@@ -1,0 +1,122 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "flight_recorder_config"
+    $ serializer = @s/xml_serializer
+    $ structure = @configuration
+}
+element inherit temp/SortedKeymap {
+    $ (dict) attributes = {}
+    $ (dict) children = {
+        "" = :Key {types = #dict, structure = @misc/empty_dict} // this is necessary to ensure that the SwitchStructure knows what types it has.
+    }
+    keys = {
+        "tag" = :Key {types = #str}
+        "attrib" = :Key {types = #dict, structure = inherit temp/SortedKeymap {keys = attributes}}
+        "text" = :Key {types = #str}
+        "children" = :Key {types = #list, structure = inherit temp/Set {
+            $ field = "child"
+            value_types = #dict
+            value_structure = :Switch {
+                switch_function = :Function {
+                    function = %get_key
+                    arguments = {"key" = "tag"}
+                }
+                substructures = children
+            }
+        }}
+    }
+}
+configuration inherit element {
+    $ attributes = {
+        "status" = :Key {types = #str}
+        "packages" = :Key {types = #str}
+    }
+    $ children = {
+        "Appenders" = :Key {types = #dict, structure = @appenders}
+        "Loggers" = :Key {types = #dict, structure = @loggers}
+    }
+}
+appenders inherit element {
+    $ children = {
+        "Console" = :Key {types = #dict, structure = @console}
+        "RollingRandomAccessFile" = :Key {types = #dict, structure=@random_rolling_access_file}
+        "Queue" = :Key {types = #dict, structure = @queue}
+    }
+}
+console inherit element {
+    $ attributes = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}},
+        "target" = :Key {types = #str}
+    }
+    $ children = {
+        "PatternLayout" = :Key {types = #dict, structure = @pattern_layout}
+    }
+}
+pattern_layout inherit element {
+    $ attributes = {
+        "pattern" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+random_rolling_access_file inherit element {
+    $ attributes = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "fileName" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}},
+        "filePattern" = :Key {types = #str, structure = @misc/string}
+    }
+    $ children = {
+        "PatternLayout" = :Key {types = #dict, structure = @pattern_layout},
+        "Policies" = :Key {types = #dict, structure = @policies}
+    }
+}
+policies inherit element {
+    $ children = {
+        "TimeBasedTriggeringPolicy" = :Key {types = #dict, structure = @element}
+        "OnStartupTriggeringPolicy" = :Key {types = #dict, structure = @element}
+    }
+}
+queue inherit element {
+    $ attributes = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+    }
+    $ children = {
+        "PatternLayout" = :Key {types = #dict, structure = @pattern_layout}
+    }
+}
+loggers inherit element {
+    $ children = {
+        "Root" = :Key {types = #dict, structure = @root}
+    }
+}
+root inherit element {
+    $ attributes = {
+        "level" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+    $ children = {
+        "filters" = :Key {types = #dict, structure = @filters},
+        "AppenderRef" = :Key {types = #dict, structure = @appender_ref}
+    }
+}
+filters inherit element {
+    $ children = {
+        "MarkerFilter" = :Key {types = #dict, structure = @marker_filter}
+    }
+}
+marker_filter inherit element {
+    $ attributes = {
+        "marker" = :Key {types = #str, delegate_arguments = {"always_print" = true}},
+        "onMatch" = :Key {types = #str}
+        "onMismatch" = :Key {types = #str}
+    }
+}
+appender_ref inherit element {
+    $ attributes = {
+        "ref" = :Key {types = #str}
+    }
+}

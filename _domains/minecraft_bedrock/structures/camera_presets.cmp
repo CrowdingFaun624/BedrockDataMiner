@@ -1,0 +1,59 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "camera_presets"
+    $ file_field = "camera preset"
+    $ pack_type = "behavior pack"
+    $ structure = @camera
+}
+vector_float inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "axis", "print_all" = true, "print_flat" = true}
+    }
+}
+camera inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:camera_preset" = :Key {types = #dict, similarity_weight = 20, structure = inherit temp/SortedKeymap {
+            keys = {
+                "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+                "control_scheme" = :Key {types = #str}
+                "inherit_from" = :Key {types = #str, tags = [@t/outdated]}
+                "listener" = :Key {types = #str, tags = [@t/outdated]}
+                "player_effects" = :Key {types = #bool, tags = [@t/outdated]}
+                "aim_assist" = :Key {types = #dict, structure = @aim_assist}
+                "view_offset" = :Key {types = #list, structure = @vector_float}
+                "entity_offset" = :Key {types = #list, structure = @vector_float}
+                "align_target_and_camera_forward" = :Key {types = #bool}
+                "radius" = :Key {types = #int}
+                "pos_x" = :Key {types = #int}
+                "pos_y" = :Key {types = #int}
+                "pos_z" = :Key {types = #int}
+                "rot_x" = :Key {types = #int}
+                "rot_y" = :Key {types = #int}
+            }
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"sort" = %sort_by_component_order}
+            }
+        }}
+    }
+}
+aim_assist inherit temp/SortedKeymap {
+    keys = {
+        "preset" = :Key {types = #str}
+    }
+}

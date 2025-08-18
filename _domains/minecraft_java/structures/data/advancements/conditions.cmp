@@ -1,0 +1,375 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        misc = @structures/misc/misc/
+        np = @structures/misc/provider/number_provider/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+condition.advancement :Union {
+    substructures = [
+        :Key {types = #bool},
+        :Key {types = #dict, structure = inherit temp/Dict {
+            $ field = "criterion"
+            value_types = #bool
+            value_structure = null
+        }},
+    ]
+}
+condition.advancements inherit temp/Dict {
+    $ field = "advancement"
+    value_types = [#bool, #dict]
+    value_structure = @condition.advancement
+}
+condition.block inherit temp/SortedKeymap {
+    keys = {
+        "block" = :Key {types = #str, tags = @t/outdated}
+        "blocks" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+        "nbt" = :Key {types = #str}
+        "state" = :Key {types = #dict, structure = @condition.block_state}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+        "predicates" = :Key {types = @a/compound, structure = @structures/misc/data_component_predicates/data_component_predicates}
+        "tag" = :Key {types = #str, tags = @t/outdated}
+    }
+}
+condition.block_state inherit temp/Dict {
+    $ field = "state"
+    value_types = [#str, #dict]
+    value_structure = @misc/range_item_or_item{$types=#str, $structure=@misc/string}
+}
+condition.damage inherit temp/SortedKeymap {
+    keys = {
+        "blocked" = :Key {types = #bool}
+        "dealt" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "is_projectile" = :Key {types = #bool, tags = @t/outdated}
+        "source_entity" = :Key {types = #dict, structure = @condition.entity}
+        "taken" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "type" = :Key {types = #dict, structure = @condition.damage_type}
+    }
+}
+condition.damage_type inherit temp/SortedKeymap {
+    keys = {
+        "direct_entity" = :Key {types = #dict, structure = @condition.entity}
+        "source_entity" = :Key {types = #dict, structure = @condition.entity}
+        "is_direct" = :Key {types = #bool}
+        "is_lightning" = :Key {types = #bool, tags = @t/outdated}
+        "is_projectile" = :Key {types = #bool, tags = @t/outdated}
+        "tags" = :Key {types = #list, structure = @condition.tags}
+    }
+}
+condition.distance inherit temp/SortedKeymap {
+    keys = {
+        "min" = :Key {types = #int, tags = @t/outdated}
+        "absolute" = :Key {types = [#dict, @misc/decimal], structure = @misc/range_decimal_or_decimal}
+        "horizontal" = :Key {types = [#dict, @misc/decimal], structure = @misc/range_decimal_or_decimal}
+        "x" = :Key {types = [#dict, @misc/decimal], structure = @misc/range_decimal_or_decimal}
+        "y" = :Key {types = [#dict, @misc/decimal], structure = @misc/range_decimal_or_decimal}
+        "z" = :Key {types = [#dict, @misc/decimal], structure = @misc/range_decimal_or_decimal}
+    }
+}
+condition.effect inherit temp/SortedKeymap {
+    keys = {
+        "amplifier" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+        "duration" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+        "ambient" = :Key {types = #bool}
+        "visible" = :Key {types = #bool}
+    }
+}
+condition.effects inherit temp/Dict {
+    $ field = "effect"
+    value_types = #dict
+    value_structure = @condition.effect
+}
+condition.enchantments inherit temp/Set.nbt {
+    $ field = "enchantment"
+    tags = @t/outdated
+    value_types = @a/compound
+    value_structure = @condition.enchantment
+}
+condition.enchantment inherit temp/SortedKeymap.nbt {
+    tags = @t/outdated
+    keys = {
+        "enchantment" = :Key {types = @a/string, structure = @misc/string.nbt, tags = @t/outdated, delegate_arguments = {"always_print" = true}}
+        "levels" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+    }
+}
+condition.entity inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = [#list, #str], structure = @misc/named_list_or_item{$name="entity"}}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+        "distance" = :Key {types = #dict, structure = @condition.distance}
+        "effects" = :Key {types = #dict, structure = @condition.effects}
+        "equipment" = :Key {types = #dict, structure = @condition.slots}
+        "flags" = :Key {types = #dict, structure = @condition.flags}
+        "location" = :Key {types = #dict, structure = @condition.location}
+        "nbt" = :Key {types = #str} // TODO: NBT parser
+        "passenger" = :Key {types = #dict, structure = @condition.entity}
+        "slots" = :Key {types = #dict, structure = @condition.slots}
+        "stepping_on" = :Key {types = #dict, structure = @condition.location}
+        "movement_affected_by" = :Key {types = #dict, structure = @condition.location}
+        "team" = :Key {types = #str}
+        "targeted_entity" = :Key {types = #dict, structure = @condition.entity}
+        "vehicle" = :Key {types = #dict, structure = @condition.entity}
+        "movement" = :Key {types = #dict, structure = @condition.movement}
+        "periodic_tick" = :Key {types = #int}
+        "predicates" = :Key {types = @a/compound, structure = @structures/misc/data_component_predicates/data_component_predicates}
+        "type_specific" = :Key {types = #dict, structure = @condition.type_specific}
+        "catType" = :Key {types = #str, tags = @t/outdated}
+    } + @condition.type_specific:old
+}
+condition.fluid inherit temp/SortedKeymap {
+    keys = {
+        "blocks" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="fluid"}}
+        "fluids" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="fluid"}, tags = @t/outdated}
+        "nbt" = :Key {types = #str}
+        "state" = :Key {types = #dict, structure = @condition.block_state}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+        "predicates" = :Key {types = @a/compound, structure = @structures/misc/data_component_predicates/data_component_predicates}
+    }
+}
+condition.input inherit temp/SortedKeymap {
+    keys = {
+        "forward" = :Key {types = #bool}
+        "backward" = :Key {types = #bool}
+        "left" = :Key {types = #bool}
+        "right" = :Key {types = #bool}
+        "jump" = :Key {types = #bool}
+        "sneak" = :Key {types = #bool}
+        "sprint" = :Key {types = #bool}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "control", "sort" = %sort_by_component_order}
+    }
+}
+condition.item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "item" = :Key {types = @a/string, tags = @t/outdated}
+        "items" = :Key {types = [@a/list, @a/string], structure = @misc/named_list_or_item.nbt{$name="item"}}
+        "count" = :Key {types = [@a/float, @a/int, @a/compound], structure = @misc/range_decimal_or_decimal.nbt}
+        "enchantments" = :Key {types = @a/list, structure = @condition.enchantments, tags = @t/outdated}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+        "predicates" = :Key {types = @a/compound, structure = @structures/misc/data_component_predicates/data_component_predicates}
+        "data" = :Key {types = @a/int, tags = @t/outdated}
+        "tag" = :Key {types = @a/string, tags = @t/outdated} // in this case, means an item tag, not the NBT item tag.
+        "nbt" = :Key {types = @a/string, tags = @t/outdated}
+    }
+}
+condition.items inherit temp/Set {
+    $ field = "item"
+    value_types = @a/compound
+    value_structure = @condition.item
+}
+condition.flags inherit temp/SortedKeymap {
+    keys = {
+        "is_baby" = :Key {types = #bool}
+        "is_on_fire" = :Key {types = #bool}
+        "is_sneaking" = :Key {types = #bool}
+        "is_sprinting" = :Key {types = #bool}
+        "is_swimming" = :Key {types = #bool}
+        "is_on_ground" = :Key {types = #bool}
+        "is_flying" = :Key {types = #bool}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "flag", "sort" = %sort_by_component_order}
+    }
+}
+condition.light inherit temp/SortedKeymap {
+    keys = {
+        "light" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+    }
+}
+condition.location inherit temp/SortedKeymap {
+    $ (:StructureTag | list) tags = []
+    tags = tags
+    keys = {
+        "biome" = :Key {types = #str, tags = @t/outdated}
+        "biomes" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="biome"}}
+        "block" = :Key {types = #dict, structure = @condition.block}
+        "dimension" = :Key {types = #str}
+        "feature" = :Key {types = #str, tags = @t/outdated}
+        "fluid" = :Key {types = #dict, structure = @condition.fluid}
+        "light" = :Key {types = #dict, structure = @condition.light}
+        "position" = :Key {types = #dict, structure = @condition.position}
+        "smokey" = :Key {types = #bool}
+        "can_see_sky" = :Key {types = #bool}
+        "structure" = :Key {types = #str, tags = @t/outdated}
+        "structures" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="structure"}}
+    }
+}
+condition.movement inherit temp/SortedKeymap {
+    keys = {
+        "x" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "y" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "z" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "speed" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "horizontal_speed" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "vertical_speed" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "fall_distance" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+    }
+}
+condition.position inherit temp/SortedKeymap {
+    keys = {
+        "x" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "y" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+        "z" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+    }
+}
+condition.potato_refined inherit temp/SortedKeymap { // exclusive to April Fools
+    keys = {
+        "type" = :Key {types = #str} // can be "standard" or "lubrication". Has no affect on available keys, so it is not switched upon.
+        "item_predicate" = :Key {types = @a/compound, structure = @condition.item}
+        "min_lubrication" = :Key {types = #int}
+    }
+}
+condition.recipes_unlocked inherit temp/Dict {
+    $ field = "recipe"
+    value_types = #bool
+    value_structure = null
+}
+condition.scores inherit temp/Dict {
+    $ field = "score"
+    value_types = [#int, #dict]
+    value_structure = @np/number_provider{$types=#int}
+}
+condition.slots inherit temp/Dict {
+    $ field = "slot"
+    value_types = @a/compound
+    value_structure = @condition.item
+}
+condition.slots_filled inherit temp/SortedKeymap {
+    keys = {
+        "empty" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+        "full" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+        "occupied" = :Key {types = [@misc/decimal, #dict], structure = @misc/range_decimal_or_decimal}
+    }
+}
+condition.stat inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+        "stat" = :Key {types = #str}
+        "value" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+    }
+}
+condition.stats inherit temp/Set {
+    $ field = "stat"
+    value_types = #dict
+    value_structure = @condition.stat
+}
+condition.tag inherit temp/SortedKeymap {
+    keys = {
+        "id" = :Key {types = #str}
+        "expected" = :Key {types = #bool}
+    }
+}
+condition.tags inherit temp/Set {
+    $ field = "tag"
+    value_types = #dict
+    value_structure = @condition.tag
+}
+condition.type_specific :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:axolotl" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:cat" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:fishing_hook" = :Key {types = #dict, structure = @condition.type_specific.fishing_hook}
+        "minecraft:fox" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:frog" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:horse" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:lightning" = :Key {types = #dict, structure = @condition.type_specific.lightning}
+        "minecraft:llama" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:mooshroom" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:painting" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:parrot" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:player" = :Key {types = #dict, structure = @condition.type_specific.player}
+        "minecraft:rabbit" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:raider" = :Key {types = #dict, structure = @condition.type_specific.raider}
+        "minecraft:salmon" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:sheep" = :Key {types = #dict, structure = @condition.type_specific.sheep}
+        "minecraft:slime" = :Key {types = #dict, structure = @condition.type_specific.slime}
+        "minecraft:tropical_fish" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:villager" = :Key {types = #dict, structure = @condition.type_specific.variant}
+        "minecraft:wolf" = :Key {types = #dict, structure = @condition.type_specific.wolf}
+    } + @condition.type_specific:old
+}
+condition.type_specific:old { // imported into both Switch and Keymap.
+    "axolotl" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "cat" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "fishing_hook" = :Key {types = #dict, structure = @condition.type_specific.fishing_hook, tags=@t/outdated}
+    "fox" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "frog" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "horse" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "lightning" = :Key {types = #dict, structure = @condition.type_specific.lightning, tags=@t/outdated}
+    "lightning_bolt" = :Key {types = #dict, structure = @condition.type_specific.lightning, tags=@t/outdated}
+    "llama" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "mooshroom" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "painting" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "parrot" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "player" = :Key {types = #dict, structure = @condition.type_specific.player, tags=@t/outdated}
+    "rabbit" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "raider" = :Key {types = #dict, structure = @condition.type_specific.raider, tags=@t/outdated}
+    "salmon" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "sheep" = :Key {types = #dict, structure = @condition.type_specific.sheep, tags=@t/outdated}
+    "slime" = :Key {types = #dict, structure = @condition.type_specific.slime, tags=@t/outdated}
+    "tropical_fish" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "villager" = :Key {types = #dict, structure = @condition.type_specific.variant, tags=@t/outdated}
+    "wolf" = :Key {types = #dict, structure = @condition.type_specific.wolf, tags=@t/outdated}
+}
+condition.type_specific:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+condition.type_specific.fishing_hook inherit temp/SortedKeymap {
+    keys = @condition.type_specific:all + {
+        "in_open_water" = :Key {types = #bool}
+    }
+}
+condition.type_specific.lightning inherit temp/SortedKeymap {
+    keys = @condition.type_specific:all + {
+        "blocks_set_on_fire" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+        "entity_struck" = :Key {types = #dict, structure = @condition.entity}
+    }
+}
+condition.type_specific.player inherit temp/SortedKeymap {
+    keys = @condition.type_specific:all + {
+        "looking_at" = :Key {types = #dict, structure = @condition.entity}
+        "advancements" = :Key {types = #dict, structure = @condition.advancements}
+        "gamemode" = :Key {types = #list, structure = @misc/named_list{$name="gamemode"}}
+        "level" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+        "recipes" = :Key {types = #dict, structure = @condition.recipes_unlocked}
+        "stats" = :Key {types = #list, structure = @condition.stats}
+        "input" = :Key {types = #dict, structure = @condition.input}
+    }
+}
+condition.type_specific.raider inherit temp/SortedKeymap {
+    keys = @condition.type_specific:all + {
+        "is_captain" = :Key {types = #bool}
+        "has_raid" = :Key {types = #bool}
+    }
+}
+condition.type_specific.sheep inherit temp/SortedKeymap {
+    keys = @condition.type_specific:all + {
+        "sheared" = :Key {types = #bool}
+        "color" = :Key {types = #str}
+    }
+}
+condition.type_specific.slime inherit temp/SortedKeymap {
+    keys = @condition.type_specific:all + {
+        "size" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
+    }
+}
+condition.type_specific.variant inherit temp/SortedKeymap {
+    keys = @condition.type_specific:all + {
+        "variant" = :Key {types = #str}
+    }
+}
+condition.type_specific.wolf inherit temp/SortedKeymap {
+    keys = @condition.type_specific:all + {
+        "variant" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="variant"}}
+    }
+}

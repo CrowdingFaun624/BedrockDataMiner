@@ -1,0 +1,165 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+data_component_predicates inherit temp/SortedKeymap.nbt {
+    keys = {
+        "minecraft:attribute_modifiers" = :Key {types = @a/compound, structure = @predicate.attribute_modifiers}
+        "minecraft:bundle_contents" = :Key {types = @a/compound, structure = @predicate.bundle_contents}
+        "minecraft:container" = :Key {types = @a/compound, structure = @predicate.container}
+        "minecraft:custom_data" = :Key {types = [@a/string, @a/compound], structure = @predicate.custom_data:union}
+        "minecraft:damage" = :Key {types = @a/compound, structure = @predicate.damage}
+        "minecraft:enchantments" = :Key {types = @a/list, structure = @predicate.enchantments}
+        "minecraft:firework_explosion" = :Key {types = @a/compound, structure = @condition.fireworks}
+        "minecraft:fireworks" = :Key {types = @a/compound, structure = @predicate.fireworks}
+        "minecraft:jukebox_playable" = :Key {types = @a/compound, structure = @predicate.jukebox_playable}
+        "minecraft:potion_contents" = :Key {types = [@a/string, @a/list], structure = @misc/named_list_or_item.nbt{$name = "potion"}}
+        "minecraft:stored_enchantments" = :Key {types = @a/list, structure = @predicate.enchantments}
+        "minecraft:trim" = :Key {types = @a/compound, structure = @predicate.trim}
+        "minecraft:writable_book_content" = :Key {types = @a/compound, structure = @predicate.writable_book_content}
+        "minecraft:written_book_content" = :Key {types = @a/compound, structure = @predicate.written_book_content}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+sequence_predicate abstract inherit temp/SortedKeymap.nbt {
+    $ (type | list) test_structure_types = @a/compound
+    $ (:Structure) test_structure
+    keys = {
+        "contains" = :Key {types = @a/list, structure = @sequence_predicate.contains{$test_structure = test_structure, $test_structure_types = test_structure_types}}
+        "size" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+        "count" = :Key {types = @a/list, structure = @sequence_predicate.count{$test_structure = test_structure, $test_structure_types = test_structure_types}}
+    }
+}
+sequence_predicate.contains abstract inherit temp/Dict {
+    this_types = @a/list
+    key_types = @a/int
+    $ (type | list) test_structure_types = @a/compound
+    $ (:Structure) test_structure
+    value_types = test_structure_types
+    value_structure = test_structure
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "test", "measure_length" = true, "show_item_key" = false}
+    }
+}
+sequence_predicate.count abstract inherit temp/Dict {
+    this_types = @a/list
+    key_types = @a/int
+    value_types = @a/compound
+    $ (type | list) test_structure_types = @a/compound
+    $ (:Structure) test_structure
+    value_structure = @sequence_predicate.count.item{$test_structure = test_structure, $test_structure_types = test_structure_types}
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "test", "measure_length" = true, "show_item_key" = false}
+    }
+}
+sequence_predicate.count.item abstract inherit temp/SortedKeymap.nbt {
+    $ (type | list) test_structure_types = @a/compound
+    $ (:Structure) test_structure
+    keys = {
+        "test" = :Key {types = test_structure_types, structure = test_structure}
+        "count" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+    }
+}
+predicate.attribute_modifiers inherit temp/SortedKeymap.nbt {
+    keys = {
+        "modifiers" = :Key {types = @a/compound, structure = @sequence_predicate{$test_structure = @condition.attribute}}
+    }
+}
+predicate.bundle_contents inherit temp/SortedKeymap.nbt {
+    keys = {
+        "items" = :Key {types = @a/compound, structure = @sequence_predicate{$test_structure = @condition.items}}
+    }
+}
+predicate.container inherit temp/SortedKeymap.nbt {
+    keys = {
+        "items" = :Key {types = @a/compound, structure = @sequence_predicate{$test_structure = @condition.items}}
+    }
+}
+predicate.custom_data:union :Union {
+    substructures = [
+        :Key {types = @a/string}, // TODO: SNBT
+        :Key {types = @a/compound, structure = @misc/any_nbt.compound},
+    ]
+}
+predicate.damage inherit temp/SortedKeymap.nbt {
+    keys = {
+        "damage" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+        "durability" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+    }
+}
+predicate.enchantments inherit temp/Set.nbt {
+    $ field = "enchantment condition"
+    value_types = @a/compound
+    value_structure = @predicate.enchantments:item
+}
+predicate.enchantments:item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "enchantment" = :Key {types = @a/string, tags = @t/outdated}
+        "enchantments" = :Key {types = [@a/string, @a/list], structure = @misc/named_list_or_item.nbt{$name = "enchantment"}}
+        "levels" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+    }
+}
+predicate.fireworks inherit temp/SortedKeymap.nbt {
+    keys = {
+        "explosions" = :Key {types = @a/compound, structure = @sequence_predicate{$test_structure = @condition.fireworks}}
+    }
+}
+predicate.jukebox_playable inherit temp/SortedKeymap.nbt {
+    keys = {
+        "song" = :Key {types = [@a/list, @a/string], structure = @misc/named_list_or_item.nbt{$name = "song"}}
+    }
+}
+predicate.trim inherit temp/SortedKeymap.nbt {
+    keys = {
+        "material" = :Key {types = [@a/list, @a/string], structure = @misc/named_list_or_item.nbt{$name = "material"}}
+        "pattern" = :Key {types = [@a/list, @a/string], structure = @misc/named_list_or_item.nbt{$name = "pattern"}}
+    }
+}
+predicate.writable_book_content inherit temp/SortedKeymap.nbt {
+    keys = {
+        "pages" = :Key {types = @a/compound, structure = @sequence_predicate{$test_structure = @misc/string, $test_structure_types = #str}}
+    }
+}
+predicate.written_book_content inherit temp/SortedKeymap.nbt {
+    keys = {
+        "pages" = :Key {types = @a/compound, structure = @sequence_predicate{$test_structure = @misc/string, $test_structure_types = #str}}
+        "author" = :Key {types = @a/string}
+        "title" = :Key {types = @a/string}
+        "generation" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+        "resolved" = :Key {types = #bool}
+    }
+}
+condition.attribute inherit temp/SortedKeymap.nbt {
+    keys = {
+        "attribute" = :Key {types = [@a/string, @a/list], structure = @misc/named_list_or_item.nbt{$name="attribute"}}
+        "id" = :Key {types = @a/list, structure = @misc/named_list.nbt{$name="attribute"}}
+        "size" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+        "operation" = :Key {types = @a/string}
+        "slot" = :Key {types = @a/string}
+    }
+}
+condition.items inherit temp/SortedKeymap.nbt {
+    keys = {
+        "items" = :Key {types = [@a/string, @a/list], structure = @misc/named_list_or_item.nbt{$name = "item"}}
+        "count" = :Key {types = [@a/int, @a/compound], structure = @misc/range_int_or_int.nbt}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+        "predicates" = :Key {types = @a/compound, structure = @data_component_predicates}
+    }
+}
+condition.fireworks inherit temp/SortedKeymap.nbt {
+    keys = {
+        "shape" = :Key {types = @a/string}
+        "has_trail" = :Key {types = #bool}
+        "has_twinkle" = :Key {types = #bool}
+    }
+}

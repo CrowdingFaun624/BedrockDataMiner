@@ -1,0 +1,60 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @file
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "starter_seeds"}
+    }
+}
+file :Normalizer {
+    outer_types = #dict
+    inner_types = #fake_file
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_list_file
+        arguments = {"serializer" = @minecraft_bedrock!serializers/lines_serializer}
+    }
+    structure = :File {
+        serializer = null
+        outer_types = #fake_file
+        inner_types = #dict
+        structure = @resource_packs
+    }
+}
+resource_packs inherit temp/Dict {
+    value_types = #list
+    key_types = #tuple
+    key_structure = @temp/defined_in
+    value_structure = @starter_seeds
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+starter_seeds inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    value_types = #str
+    value_structure = :Normalizer {
+        outer_types = #str
+        inner_types = #int
+        functions = :Function {
+            function = %parse_int
+        }
+        structure = :Primitive {
+            this_types = #int
+            delegate = :Delegate {delegate_class=%@PrimitiveDelegate}
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "seed", "measure_length" = true, "show_item_key" = false}
+    }
+}

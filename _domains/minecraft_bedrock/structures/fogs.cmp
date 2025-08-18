@@ -1,0 +1,123 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "fogs"
+    $ file_field = "fog"
+    $ pack_type = "resource pack"
+    $ structure = @fog
+}
+fog inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:fog_settings" = :Key {types = #dict, structure = @fog_settings, similarity_weight = 12}
+    }
+}
+vector_float inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true}
+    }
+}
+fog_settings inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "distance" = :Key {types = #dict, structure = @distance}
+        "volumetric" = :Key {types = #dict, structure = @volumetric}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+distance inherit temp/SortedKeymap {
+    keys = {
+        "air" = :Key {types = #dict, structure = @distance.item}
+        "lava" = :Key {types = #dict, structure = @distance.item}
+        "lava_resistance" = :Key {types = #dict, structure = @distance.item}
+        "powder_snow" = :Key {types = #dict, structure = @distance.item}
+        "water" = :Key {types = #dict, structure = @distance.item}
+        "weather" = :Key {types = #dict, structure = @distance.item}
+    }
+}
+distance.item inherit temp/SortedKeymap {
+    keys = {
+        "fog_start" = :Key {types = @temp/decimal}
+        "fog_end" = :Key {types = @temp/decimal}
+        "fog_color" = :Key {types = #str}
+        "render_distance_type" = :Key {types = #str}
+        "transition_fog" = :Key {types = #dict, structure = @transition_fog}
+    }
+}
+transition_fog inherit temp/SortedKeymap {
+    keys = {
+        "init_fog" = :Key {types = #dict, structure = @distance.item}
+        "max_seconds" = :Key {types = #int}
+        "mid_percent" = :Key {types = #float}
+        "mid_seconds" = :Key {types = #int}
+        "min_percent" = :Key {types = #float}
+    }
+}
+volumetric inherit temp/SortedKeymap {
+    keys = {
+        "density" = :Key {types = #dict, structure = @volumetric.densities}
+        "media_coefficients" = :Key {types = #dict, structure = @volumetric.media_coefficients}
+        "henyey_greenstein_g" = :Key {types = #dict, structure = @volumetric.henyey_greenstein_gs} // 🤓
+    }
+}
+volumetric.densities inherit temp/SortedKeymap {
+    keys = {
+        "air" = :Key {types = #dict, structure = @volumetric.density}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "medium", "measure_length" = true}
+    }
+}
+volumetric.density inherit temp/SortedKeymap {
+    keys = {
+        "max_density" = :Key {types = #float}
+        "zero_density_height" = :Key {types = #float}
+        "max_density_height" = :Key {types = #float}
+    }
+}
+volumetric.media_coefficients inherit temp/SortedKeymap {
+    keys = {
+        "air" = :Key {types = #dict, structure = @volumetric.media_coefficient}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "medium", "measure_length" = true}
+    }
+}
+volumetric.media_coefficient inherit temp/SortedKeymap {
+    keys = {
+        "scattering" = :Key {types = #list, structure = @vector_float}
+        "absorption" = :Key {types = #list, structure = @vector_float}
+    }
+}
+volumetric.henyey_greenstein_gs inherit temp/SortedKeymap {
+    keys = {
+        "air" = :Key {types = #dict, structure = @volumetric.henyey_greenstein_g}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "medium", "measure_length" = true}
+    }
+}
+volumetric.henyey_greenstein_g inherit temp/SortedKeymap {
+    keys = {
+        "henyey_greenstein_g" = :Key {types = #float}
+    }
+}

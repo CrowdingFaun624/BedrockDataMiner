@@ -1,0 +1,127 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_shadow_configs"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "cascades" = :Key {types = #list, structure = @cascades}
+        "low" = :Key {types = #dict, structure = @shadow_config}
+        "medium" = :Key {types = #dict, structure = @shadow_config}
+        "high" = :Key {types = #dict, structure = @shadow_config}
+        "ultra" = :Key {types = #dict, structure = @shadow_config}
+    } + @shadow_config:keys
+}
+cascades inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @cascade
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "cascade", "show_item_key" = false, "measure_length" = true}
+    }
+}
+cascade inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @point_light_shadow
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+shadow_config:keys {
+    "cascade_bias" = :Key {types = #list, structure = @vector_float}
+    "cascade_light_quantization_steps" = :Key {types = #list, structure = @vector_int}
+    "cascade_pcf_width" = :Key {types = #list, structure = @vector_float}
+    "cascade_range" = :Key {types = #list, structure = @vector_float}
+    "cascade_resolution" = :Key {types = #list, structure = @vector_int}
+    "cascade_slope_bias" = :Key {types = #list, structure = @vector_float}
+    "cloud_shadow_contribution" = :Key {types = @temp/decimal}
+    "cloud_shadow_pcf_width" = :Key {types = @temp/decimal}
+    "cloud_shadow_quantization_steps" = :Key {types = #int}
+    "cloud_shadows" = :Key {types = #bool}
+    "directional_light_shadow" = :Key {types = #dict, structure = @shadow_config, tags = [@t/outdated]}
+    "file" = :Key {types = #str}
+    "max_shadow_distance" = :Key {types = @temp/decimal}
+    "moon_shadows" = :Key {types = #bool}
+    "normal_offset_strength" = :Key {types = @temp/decimal}
+    "num_cascades" = :Key {types = #int, tags = [@t/outdated]}
+    "num_cascade_levels" = :Key {types = #int}
+    "num_variable_cascade_levels" = :Key {types = #int}
+    "point_light_shadow" = :Key {types = #dict, structure = @point_light_shadow, tags = [@t/outdated]}
+    "shadow_clamp_angle" = :Key {types = #int}
+    "shadow_range" = :Key {types = #dict, structure = @shadow_range}
+    "sun_shadows" = :Key {types = #bool}
+}
+shadow_config inherit temp/SortedKeymap {
+    keys = @shadow_config:keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+shadow_range inherit temp/SortedKeymap {
+    keys = {
+        "near" = :Key {types = @temp/decimal}
+        "far" = :Key {types = @temp/decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "print_all" = true}
+    }
+}
+point_light_shadow inherit temp/SortedKeymap {
+    keys = {
+        "bias" = :Key {types = @temp/decimal}
+        "has_dynamic_geometry" = :Key {types = #bool}
+        "has_static_geometry" = :Key {types = #bool}
+        "pcf_width" = :Key {types = [#int, @temp/decimal]}
+        "range" = :Key {types = [@temp/decimal, #int]}
+        "update_frequency" = :Key {types = #int}
+        "update_offset" = :Key {types = #int}
+        "light_quantization_steps" = :Key {types = #int}
+        "slope_bias" = :Key {types = @temp/decimal}
+        "far_plane" = :Key {types = @temp/decimal}
+        "near_plane" = :Key {types = @temp/decimal}
+        "max_point_light_shadows" = :Key {types = #int}
+        "resolution" = :Key {types = #int}
+        "enabled" = :Key {types = #bool}
+    }
+}
+vector_float inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "measure_length" = false}
+    }
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "measure_length" = false}
+    }
+}

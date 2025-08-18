@@ -1,0 +1,36 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_point_light_shadow_configs"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "low" = :Key {types = #dict, structure = @point_light_shadow_config}
+        "medium" = :Key {types = #dict, structure = @point_light_shadow_config}
+        "high" = :Key {types = #dict, structure = @point_light_shadow_config}
+        "ultra" = :Key {types = #dict, structure = @point_light_shadow_config}
+    } + @point_light_shadow_config:keys
+}
+point_light_shadow_config:keys {
+    "file" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    "cached_shadows" = :Key {types = #bool}
+    "bias" = :Key {types = #float}
+    "slope_bias" = :Key {types = #float}
+    "far_plane" = :Key {types = #float}
+    "near_plane" = :Key {types = #float}
+    "max_point_light_shadows" = :Key {types = #int}
+    "resolution" = :Key {types = #int}
+}
+point_light_shadow_config inherit temp/SortedKeymap {
+    keys = @point_light_shadow_config:keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}

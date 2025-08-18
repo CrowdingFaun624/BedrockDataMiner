@@ -1,0 +1,225 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+        s = @serializers/
+        vector = @structures/misc/vector/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "block_models"
+    $ pack_type = "resource pack"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "__comment" = :Key {types = #str, tags = @t/outdated}
+        "inheritFrom" = :Key {types = #str, tags = @t/outdated}
+        "inventoryRender3D" = :Key {types = #bool, tags = @t/outdated}
+        "randomOffsetX" = :Key {types = #bool, tags = @t/outdated}
+        "randomOffsetY" = :Key {types = #bool, tags = @t/outdated}
+        "randomOffsetZ" = :Key {types = #bool, tags = @t/outdated}
+        "rotateVariantTextures" = :Key {types = #bool, tags = @t/outdated}
+        "rotation" = :Key {types = #list, structure = @vector/vector.decimal, tags = @t/outdated}
+        "rotationOrigin" = :Key {types = #list, structure = @vector/vector.decimal, tags = @t/outdated}
+        "translation" = :Key {types = #list, structure = @vector/vector.decimal, tags = @t/outdated}
+        "parent" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "useAmbientOcclusion" = :Key {types = #bool, tags = @t/outdated}
+        "ambientocclusion" = :Key {types = #bool}
+        "display" = :Key {types = #dict, structure = @display}
+        "textures" = :Key {types = #dict, structure = @textures}
+        "texture_size" = :Key {types = #list, structure = @vector/vector.int}
+        "gui_light" = :Key {types = #str}
+        "groups" = :Key {types = #list, structure = @groups}
+        "elements" = :Key {types = #list, structure = @elements}
+    }
+}
+display inherit temp/SortedKeymap {
+    keys = {
+        "thirdperson" = :Key {types = #dict, structure = @display.item, tags = @t/outdated}
+        "thirdperson_righthand" = :Key {types = #dict, structure = @display.item}
+        "thirdperson_lefthand" = :Key {types = #dict, structure = @display.item}
+        "firstperson" = :Key {types = #dict, structure = @display.item, tags = @t/outdated}
+        "firstperson_righthand" = :Key {types = #dict, structure = @display.item}
+        "firstperson_lefthand" = :Key {types = #dict, structure = @display.item}
+        "gui" = :Key {types = #dict, structure = @display.item}
+        "head" = :Key {types = #dict, structure = @display.item}
+        "ground" = :Key {types = #dict, structure = @display.item}
+        "fixed" = :Key {types = #dict, structure = @display.item}
+    }
+}
+display.item inherit temp/SortedKeymap {
+    keys = {
+        "rotation" = :Key {types = #list, structure = @vector/vector.decimal}
+        "translation" = :Key {types = #list, structure = @vector/vector.decimal}
+        "scale" = :Key {types = #list, structure = @vector/vector.decimal}
+    }
+}
+textures inherit temp/Dict {
+    value_types = #str
+    key_structure = @misc/string
+    value_structure = @misc/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "texture", "measure_length" = true}
+    }
+}
+groups inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "group", "show_item_key" = false, "measure_length" = true}
+    }
+}
+group inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "origin" = :Key {types = #list, structure = @vector/vector.int}
+        "color" = :Key {types = #int}
+        "children" = :Key {types = #list, structure = @vector/vector.int}
+    }
+}
+elements inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @element
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "element", "show_item_key" = false, "measure_length" = true}
+    }
+}
+element :Switch {
+    switch_function = :Function {
+        function = %get_get_key
+        arguments = {"key" = "type", "default" = "_new"}
+    }
+    substructures = {
+        "_new" = :Key {types = #dict, structure = @element.new}
+        "cube" = :Key {types = #dict, structure = @element.cube}
+        "plane" = :Key {types = #dict, structure = @element.plane}
+    }
+}
+element.new inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "__comment" = :Key {types = #str, structure = @misc/string}
+        "from" = :Key {types = #list, structure = @vector/vector.decimal}
+        "to" = :Key {types = #list, structure = @vector/vector.decimal}
+        "rotation" = :Key {types = #dict, structure = @element.new:rotation}
+        "shade" = :Key {types = #bool}
+        "light_emission" = :Key {types = #int}
+        "faces" = :Key {types = #dict, structure = @faces}
+    }
+}
+element.new:rotation inherit temp/SortedKeymap {
+    keys = {
+        "origin" = :Key {types = #list, structure = @vector/vector.decimal}
+        "axis" = :Key {types = #str}
+        "angle" = :Key {types = @misc/decimal}
+        "rescale" = :Key {types = #bool}
+    }
+}
+element:all { // only for old elements before 14w25a
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "__comment" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "from" = :Key {types = #list, structure = @vector/vector.decimal}
+    "to" = :Key {types = #list, structure = @vector/vector.decimal}
+    "origin" = :Key {types = #list, structure = @vector/vector.decimal}
+    "rotation" = :Key {types = #list, structure = @vector/vector.decimal}
+    "uv" = :Key {types = #list, structure = @element:uv}
+}
+element.cube inherit temp/SortedKeymap {
+    keys = @element:all + {
+        "faceData" = :Key {types = [#list, #dict], structure = @element.cube:face_data}
+        "shade" = :Key {types = [#bool, #float, #list], structure = @element.cube:faces}
+        "overlay" = :Key {types = [#bool, #float, #list], structure = @element.cube:faces, tags = @t/outdated}
+        "cull" = :Key {types = [#bool, #float, #list], structure = @element.cube:faces, tags = @t/outdated}
+        "tintOverlay" = :Key {types = [#bool, #float, #list], structure = @element.cube:faces, tags = @t/outdated}
+        "tint" = :Key {types = [#bool, #float, #list], structure = @element.cube:faces, tags = @t/outdated}
+    }
+}
+element.cube:faces :Union {
+    substructures = [
+        :Key {types = #bool},
+        :Key {types = #float},
+        :Key {types = #list, structure = inherit temp/List {
+            $ field = "face"
+            value_types = [#bool, #float]
+            value_structure = null
+        }},
+    ]
+}
+element.cube:face_data :Union {
+    substructures = [
+        :Key {types = #dict, structure = @faces},
+        :Key {types = #list, structure = @face_list},
+    ]
+}
+element:uv inherit temp/List {
+    $ field = "item"
+    value_types = [#int, #str, #list]
+    value_structure = @element:uv.union
+}
+element:uv.union :Union {
+    substructures = [
+        :Key {types = #list, structure = @element:uv},
+        :Key {types = #int},
+        :Key {types = #str},
+    ]
+}
+element.plane inherit temp/SortedKeymap {
+    keys = @element:all + {
+        "facing" = :Key {types = #str}
+        "twoSided" = :Key {types = #bool}
+        "faceData" = :Key {types = #dict, structure = @face}
+        "rescaleRotation" = :Key {types = #bool}
+        "shade" = :Key {types = #float}
+        "overlay" = :Key {types = #bool, tags = @t/outdated}
+        "cull" = :Key {types = #bool, tags = @t/outdated}
+        "tintOverlay" = :Key {types = #bool, tags = @t/outdated}
+        "tint" = :Key {types = [#bool, #float], tags = @t/outdated}
+    }
+}
+faces inherit temp/SortedKeymap {
+    keys = {
+        "down" = :Key {types = #dict, structure = @face}
+        "up" = :Key {types = #dict, structure = @face}
+        "north" = :Key {types = #dict, structure = @face}
+        "south" = :Key {types = #dict, structure = @face}
+        "west" = :Key {types = #dict, structure = @face}
+        "east" = :Key {types = #dict, structure = @face}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "face", "measure_length" = true}
+    }
+}
+face_list inherit temp/List {
+    $ field = "face"
+    value_types = #dict
+    value_structure = @face
+}
+face inherit temp/SortedKeymap {
+    keys = {
+        "uv" = :Key {types = #list, structure = @vector/vector.decimal}
+        "texture" = :Key {types = #str}
+        "cull" = :Key {types = #bool, tags = @t/outdated}
+        "cullfacing" = :Key {types = #str, tags = @t/outdated}
+        "cullface" = :Key {types = #str}
+        "rotation" = :Key {types = #int}
+        "overlay" = :Key {types = #bool, tags = @t/outdated}
+        "shade" = :Key {types = #float}
+        "textureFacing" = :Key {types = #str, tags = @t/outdated}
+        "tint" = :Key {types = #bool, tags = @t/outdated}
+        "tintOverlay" = :Key {types = #bool, tags = @t/outdated}
+        "tintindex" = :Key {types = #int}
+    }
+}

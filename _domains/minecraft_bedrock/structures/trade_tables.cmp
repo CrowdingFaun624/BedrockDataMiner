@@ -1,0 +1,153 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "trade_tables"
+    $ file_field = "trade table"
+    $ pack_type = "behavior pack"
+    $ structure = @trade_table
+}
+trade_table inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "tiers" = :Key {types = #list, structure = @tiers}
+    }
+}
+tiers inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @tier
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "tier"}
+    }
+}
+tier inherit temp/SortedKeymap {
+    keys = {
+        "groups" = :Key {types = #list, structure = @groups, similarity_weight = 10}
+        "num_to_select" = :Key {types = #int}
+        "total_exp_required" = :Key {types = #int}
+        "trades" = :Key {types = #list, structure = @trades, similarity_weight = 10}
+    }
+}
+groups inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    min_value_similarity_threshold = 0.3
+    value_structure = @tier
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "group", "show_item_key" = false, "measure_length" = true}
+    }
+}
+trades inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    min_value_similarity_threshold = 0.3
+    value_structure = @trade
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "trade", "show_item_key" = false, "measure_length" = true}
+    }
+}
+biome_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "biome", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+trade inherit temp/SortedKeymap {
+    keys = {
+        "weight" = :Key {types = #int}
+        "max_uses" = :Key {types = #int}
+        "reward_exp" = :Key {types = #bool}
+        "total_exp_required" = :Key {types = #int}
+        "trader_exp" = :Key {types = #int}
+        "gives" = :Key {types = #list, structure = @trade:gives}
+        "wants" = :Key {types = #list, structure = @trade:wants}
+    }
+}
+trade:gives inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    min_value_similarity_threshold = 0.75
+    value_structure = @trade:gives.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "given item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+trade:wants inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    min_value_similarity_threshold = 0.75
+    value_structure = @trade:wants.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "wanted item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+trade:gives.item inherit temp/SortedKeymap {
+    keys = {
+        "item" = :Key {types = #str, structure = @temp/string, similarity_weight = 12, delegate_arguments = {"always_print" = true}}
+        "quantity" = :Key {types = [#dict, #int], structure = @structures/loot_tables/range_int_or_int}
+        "biomes" = :Key {types = #list, structure = @biome_list}
+        "choice" = :Key {types = #list, structure = @trade:gives.item.choice}
+        "filters" = :Key {types = #dict, structure = @structures/entities/filter}
+        "functions" = :Key {types = #list, structure = @structures/loot_tables/functions}
+    }
+}
+trade:gives.item.choice inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @trade:gives.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "choice", "show_item_key" = false, "measure_length" = true}
+    }
+}
+trade:wants.item inherit temp/SortedKeymap {
+    keys = {
+        "item" = :Key {types = #str, structure = @temp/string, similarity_weight = 12, delegate_arguments = {"always_print" = true}}
+        "quantity" = :Key {types = [#dict, #int], structure = @structures/loot_tables/range_int_or_int}
+        "choice" = :Key {types = #list, structure = @trade:wants.item.choice}
+        "biomes" = :Key {types = #list, structure = @biome_list, tags = [@t/outdated]}
+        "filters" = :Key {types = #dict, structure = @structures/entities/filter}
+        "functions" = :Key {types = #list, structure = @structures/loot_tables/functions, tags = [@t/outdated]}
+        "price_multiplier" = :Key {types = @temp/decimal}
+    }
+}
+trade:wants.item.choice inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @trade:wants.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "choice", "show_item_key" = false, "measure_length" = true}
+    }
+}

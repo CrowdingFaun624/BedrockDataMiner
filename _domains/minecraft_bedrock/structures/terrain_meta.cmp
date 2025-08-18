@@ -1,0 +1,71 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "terrain_meta"
+    $ types = #list
+    $ structure = @images
+}
+images :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "name", "delete" = true}
+    }
+    structure = inherit temp/Dict {
+        min_key_similarity_threshold = 0.5
+        key_structure = @temp/string
+        value_types = #dict
+        value_structure = @image
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "image", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+image inherit temp/SortedKeymap {
+    keys = {
+        "additonal_textures" = :Key {types = #list, structure = @uvs}
+        "uv" = :Key {types = #list, structure = @uv}
+        "uvs" = :Key {types = #list, structure = @uvs}
+    }
+}
+uvs inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @uv
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "uv", "measure_length" = true}
+    }
+}
+uv :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_tuple
+        arguments = {"keys" = ["x1", "y1", "x2", "y2", "1", "2"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "x1" = :Key {types = [#float, #int]}
+            "y1" = :Key {types = [#float, #int]}
+            "x2" = :Key {types = [#float, #int]}
+            "y2" = :Key {types = [#float, #int]}
+            "1" = :Key {types = #int}
+            "2" = :Key {types = #int}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}

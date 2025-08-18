@@ -1,0 +1,30 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "hb_touch_gestures_config"
+    $ structure = @file
+}
+file inherit temp/Dict {
+    value_types = #dict
+    value_structure = @gesture
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "gesture", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+gesture inherit temp/SortedKeymap {
+    keys = {
+        "max_touches" = :Key {types = #int}
+        "min_touches" = :Key {types = #int}
+        "max_interval_between_moves_ms" = :Key {types = #int}
+        "time_tolerance_ms" = :Key {types = #int}
+        "distance_tolerance_cm" = :Key {types = #float}
+        "min_distance_cm" = :Key {types = #float, tags = [@t/outdated]}
+    }
+}

@@ -1,0 +1,42 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_volumetric_fog_configs"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "parent" = :Key {types = #dict, structure = @file_link}
+        "overrides" = :Key {types = #dict, structure = @volumetric_fog_config}
+        "low" = :Key {types = #dict, structure = @volumetric_fog_config}
+        "medium" = :Key {types = #dict, structure = @volumetric_fog_config}
+        "high" = :Key {types = #dict, structure = @volumetric_fog_config}
+        "ultra" = :Key {types = #dict, structure = @volumetric_fog_config}
+    } + @volumetric_fog_config:keys
+}
+file_link inherit temp/SortedKeymap {
+    keys = {
+        "file" = :Key {types = #str}
+    }
+}
+volumetric_fog_config:keys {
+        "file" = :Key {types = #str}
+        "tile_width" = :Key {types = #int}
+        "tile_height" = :Key {types = #int}
+        "depth_slices" = :Key {types = #int}
+        "near_plane" = :Key {types = #float}
+        "far_plane" = :Key {types = #float}
+        "shadow_pcf_scale" = :Key {types = #float}
+    }
+volumetric_fog_config inherit temp/SortedKeymap {
+    keys = @volumetric_fog_config:keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}

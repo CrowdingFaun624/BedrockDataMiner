@@ -1,0 +1,45 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        bsp = @structures/misc/provider/block_state_provider/
+        ip = @structures/misc/provider/int_provider/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+root_placer :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:mangrove_root_placer" = :Key {types = #dict, structure = @root_placer.mangrove_root_placer}
+    }
+}
+root_placer:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "root_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    "trunk_offset_y" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    "above_root_placement" = :Key {types = #dict, structure = @above_root_placement}
+}
+above_root_placement inherit temp/SortedKeymap {
+    keys = {
+        "above_root_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "above_root_placement_chance" = :Key {types = #float}
+    }
+}
+root_placer.mangrove_root_placer inherit temp/SortedKeymap {
+    keys = @root_placer:all + {
+        "mangrove_root_placement" = :Key {types = #dict, structure = @root_placer.mangrove_root_placer:mangrove_root_placement}
+    }
+}
+root_placer.mangrove_root_placer:mangrove_root_placement inherit temp/SortedKeymap {
+    keys = {
+        "max_root_width" = :Key {types = #int}
+        "max_root_length" = :Key {types = #int}
+        "random_skew_chance" = :Key {types = #float}
+        "can_grow_through" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+        "muddy_roots_in" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+        "muddy_roots_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    }
+}

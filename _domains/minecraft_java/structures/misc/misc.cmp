@@ -1,0 +1,547 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        item_old = @structures/misc/item_old/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+        vector = @structures/misc/vector/
+    }
+}
+any :Union {
+    substructures = [
+        :Key {types = #dict, structure = @any.dict},
+        :Key {types = #list, structure = @any.list},
+        :Key {types = #str},
+        :Key {types = #int},
+        :Key {types = #float},
+        :Key {types = #null},
+    ]
+}
+any.dict inherit temp/Dict {
+    this_types = #dict
+    key_types = #str
+    value_types = [#dict, #list, #str, #int, #float, #null]
+    value_structure = @any
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true}
+    }
+}
+any.list inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    value_types = [#dict, #list, #str, #int, #float, #null]
+    value_structure = @any
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true}
+    }
+}
+any_nbt :Union {
+    substructures = [
+        :Key {types = #dict, structure = @any.dict},
+        :Key {types = #list, structure = @any.list},
+        :Key {types = #str},
+        :Key {types = #int},
+        :Key {types = #float},
+        :Key {types = #null},
+        :Key {types = #TAG_Byte},
+        :Key {types = #TAG_Short},
+        :Key {types = #TAG_Int},
+        :Key {types = #TAG_Long},
+        :Key {types = #TAG_Float},
+        :Key {types = #TAG_Double},
+        :Key {types = #TAG_Byte_Array, structure = @any_nbt.TAG_List{$this_types=#TAG_Byte_Array}},
+        :Key {types = #TAG_String},
+        :Key {types = #TAG_List, structure = @any_nbt.TAG_List{$this_types=#TAG_List}},
+        :Key {types = #TAG_Compound, structure = @any_nbt.TAG_Compound},
+        :Key {types = #TAG_Int_Array, structure = @any_nbt.TAG_List{$this_types=#TAG_Int_Array}},
+        :Key {types = #TAG_Long_Array, structure = @any_nbt.TAG_List{$this_types=#TAG_Long_Array}},
+    ]
+}
+any_nbt.compound inherit any.dict {
+    this_types = @a/compound
+    key_types = @a/string
+    value_types = [#dict, #list, #str, #int, #float, #null, #TAG_Byte, #TAG_Short, #TAG_Int, #TAG_Long, #TAG_Float, #TAG_Double, #TAG_Byte_Array, #TAG_String, #TAG_List, #TAG_Compound, #TAG_Int_Array, #TAG_Long_Array]
+    value_structure = @any_nbt
+}
+any_nbt.TAG_Compound inherit any.dict {
+    this_types = #TAG_Compound
+    key_types = #TAG_String
+    value_types = [#dict, #list, #str, #int, #float, #null, #TAG_Byte, #TAG_Short, #TAG_Int, #TAG_Long, #TAG_Float, #TAG_Double, #TAG_Byte_Array, #TAG_String, #TAG_List, #TAG_Compound, #TAG_Int_Array, #TAG_Long_Array]
+    value_structure = @any_nbt
+}
+any_nbt.TAG_List abstract inherit any.list {
+    $ (type | list) this_types
+    this_types = this_types
+    key_types = #int
+    value_types = [#dict, #list, #str, #int, #float, #null, #TAG_Byte, #TAG_Short, #TAG_Int, #TAG_Long, #TAG_Float, #TAG_Double, #TAG_Byte_Array, #TAG_String, #TAG_List, #TAG_Compound, #TAG_Int_Array, #TAG_Long_Array]
+    value_structure = @any_nbt
+}
+banner_pattern_list inherit temp/List.nbt {
+    $ field = "banner pattern"
+    value_types = @a/compound
+    value_structure = @banner_pattern
+}
+banner_pattern inherit temp/SortedKeymap.nbt {
+    keys = {
+        "Color" = :Key {types = @a/int, tags = @t/outdated, delegate_arguments = {"always_print" = true}}
+        "Pattern" = :Key {types = @a/string, tags = @t/outdated, delegate_arguments = {"always_print" = true}}
+        "color" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "pattern" = :Key {types = [@a/string, @a/compound], structure = @banner_pattern_definition_or_id, delegate_arguments = {"always_print" = true}}
+    }
+}
+banner_pattern_or_list :Union {
+    substructures = [
+        :Key {types = @a/list, structure = @banner_pattern_list},
+        :Key {types = @a/compound, structure = @banner_pattern},
+    ]
+}
+banner_pattern_definition_or_id :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/compound, structure = @structures/data/banner_patterns/banner_pattern_definition},
+    ]
+}
+bee_list inherit temp/Set.nbt {
+    $ field = "bee"
+    value_types = @a/compound
+    value_structure = @bee
+}
+bee inherit temp/SortedKeymap.nbt {
+    keys = {
+        "entity_data" = :Key {types = @a/string, structure = @string.nbt}
+        "min_ticks_in_hive" = :Key {types = @a/int}
+        "ticks_in_hive" = :Key {types = @a/int}
+    }
+}
+color :Union {
+    substructures = [
+        :Key {types = @a/int},
+        :Key {types = @a/list, structure = @color_list},
+    ]
+}
+color_list inherit temp/List.nbt {
+    $ field = "channel"
+    $ print_flat = true
+    $ print_all = true
+    value_types = @a/float
+    value_structure = null
+}
+consume_effect_list inherit temp/Set.nbt {
+    $ field = "effect"
+    value_types = @a/compound
+    value_structure = @consume_effect
+}
+consume_effect :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "apply_effects" = :Key {types = @a/compound, structure = @consume_effect.apply_effects}
+        "remove_effects" = :Key {types = @a/compound, structure = @consume_effect.remove_effects}
+        "clear_all_effects" = :Key {types = @a/compound, structure = @consume_effect.clear_all_effects}
+        "teleport_randomly" = :Key {types = @a/compound, structure = @consume_effect.teleport_randomly}
+        "play_sound" = :Key {types = @a/compound, structure = @consume_effect.play_sound}
+    }
+}
+consume_effect.apply_effects inherit temp/SortedKeymap.nbt {
+    keys = {
+        "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "effects" = :Key {types = @a/list, structure = @effect_data_list}
+        "probability" = :Key {types = @a/float}
+    }
+}
+consume_effect.remove_effects inherit temp/SortedKeymap.nbt {
+    keys = {
+        "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "effects" = :Key {types = [@a/list, @a/string], structure = @named_list_or_item.nbt{$name="effect"}}
+    }
+}
+consume_effect.clear_all_effects inherit temp/SortedKeymap.nbt {
+    keys = {
+        "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+consume_effect.teleport_randomly inherit temp/SortedKeymap.nbt {
+    keys = {
+        "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "diameter" = :Key {types = @a/float}
+    }
+}
+consume_effect.play_sound inherit temp/SortedKeymap.nbt {
+    keys = {
+        "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "sound" = :Key {types = [@a/string, @a/compound], structure = @sound_event}
+    }
+}
+decimal [#float, #int]
+effect_data inherit temp/SortedKeymap.nbt {
+    keys = {
+        "id" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "ambient" = :Key {types = @a/bool}
+        "amplifier" = :Key {types = @a/byte}
+        "duration" = :Key {types = @a/int}
+        "show_particles" = :Key {types = @a/bool}
+        "show_icon" = :Key {types = @a/bool}
+        "hidden_effect" = :Key {types = @a/compound, structure = @effect_data}
+    }
+}
+effect_data_list inherit temp/Set.nbt {
+    $ field = "effect"
+    value_types = @a/compound
+    value_structure = @effect_data
+}
+empty_dict inherit temp/SortedKeymap {
+    keys = {}
+}
+empty_compound inherit temp/SortedKeymap {
+    this_types = @a/compound
+    keys = {}
+}
+event_listener.block inherit temp/SortedKeymap.nbt {
+    keys = {
+        "event" = :Key {types = @a/compound, structure = @event_listener:event}
+        "event_delay" = :Key {types = @a/int}
+        "selector" = :Key {types = @a/compound, structure = @event_listener:selector}
+    }
+}
+event_listener.entity inherit temp/SortedKeymap.nbt {
+    keys = {
+        "event" = :Key {types = @a/compound, structure = @event_listener:event}
+        "event_delay" = :Key {types = @a/int}
+        "event_distance" = :Key {types = @a/int}
+        "range" = :Key {types = @a/int}
+        "source" = :Key {types = @a/compound, structure = @position_source}
+    }
+}
+event_listener:event inherit temp/SortedKeymap.nbt {
+    keys = {
+        "distance" = :Key {types = @a/float}
+        "game_event" = :Key {types = @a/string, structure = @string.nbt}
+        "pos" = :Key {types = @a/list, structure = @vector/vector.tag_double}
+        "projectile_owner" = :Key {types = @a/int_array, structure = @uuid_list.nbt}
+        "source" = :Key {types = @a/int_array, structure = @uuid_list.nbt}
+    }
+}
+event_listener:selector inherit temp/SortedKeymap.nbt {
+    keys = {
+        "tick" = :Key {types = @a/long}
+        "event" = :Key {types = @a/compound, structure = @event_listener:event}
+    }
+}
+position_source :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "block" = :Key {types = @a/compound, structure = @position_source.block}
+        "entity" = :Key {types = @a/compound, structure = @position_source.entity}
+    }
+}
+position_source:all {
+    "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+}
+position_source.block inherit temp/SortedKeymap.nbt {
+    keys = @position_source:all + {
+        "pos" = :Key {types = @a/int_array, structure = @vector/vector.tag_int_array}
+    }
+}
+position_source.entity inherit temp/SortedKeymap.nbt {
+    keys = @position_source:all + {
+        "source_entity" = :Key {types = @a/int_array, structure = @uuid_list.nbt}
+        "y_offset" = :Key {types = @a/float}
+    }
+}
+filterable_lines inherit temp/List {
+    $ field = "line"
+    $ (type | list) types = #str
+    $ (:Structure | null) structure = null
+    value_types = [#dict, types]
+    value_structure = @filterable_text_or_text{$types=types, $structure=structure}
+}
+filterable_text_or_text :Union {
+    $ (type | list) types = #str
+    $ (:Structure | null) structure = null
+    substructures = [
+        :Key {types = #dict, structure = @filterable_text{$types=types, $structure=structure}}, // this has the weird edge case where types may include #dict
+        :Key {types = types, structure = structure},
+    ]
+}
+filterable_text inherit temp/SortedKeymap {
+    $ (type | list) types = #str
+    $ (:Structure | null) structure = null
+    keys = {
+        "raw" =:Key  {types = types, structure = structure}
+        "filtered" = :Key {types = types, structure = structure}
+    }
+}
+filterable_text.nbt inherit temp/SortedKeymap.nbt {
+    $ (type | list) types = @a/string
+    $ (:Structure | null) structure = null
+    keys = {
+        "raw" = :Key {types = types, structure = structure}
+        "filtered" = :Key {types = types, structure = structure}
+    }
+}
+firework_explosion_list inherit temp/Set.nbt {
+    $ field = "explosion"
+    value_types = @a/compound
+    value_structure = @firework_explosion
+}
+firework_explosion:keys {
+    "shape" = :Key {types = @a/string}
+    "colors" = :Key {types = @a/list, structure = @firework_explosion.colors}
+    "fade_colors" = :Key {types = @a/list, structure = @firework_explosion.colors}
+    "has_trail" = :Key {types = @a/bool}
+    "has_twinkle" = :Key {types = @a/bool}
+}
+firework_explosion inherit temp/SortedKeymap.nbt {
+    keys = @firework_explosion:keys
+}
+firework_explosion.colors inherit temp/Set.nbt {
+    $ field = "color"
+    value_types = @a/int
+    value_structure = null
+}
+item_data_slotless inherit temp/SortedKeymap.nbt {
+    keys = {
+        "id" = :Key {types = @a/string, structure = @string.nbt, delegate_arguments = {"always_print" = true}}
+        "Count" = :Key {types = @a/byte, tags = @t/outdated}
+        "count" = :Key {types = @a/int}
+        "Damage" = :Key {types = @a/short, tags = @t/outdated}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+        "tag" = :Key {types = @a/compound, structure = @item_old/tag}
+    }
+}
+item_data_slotless_list inherit temp/Set.nbt {
+    $ field = "item"
+    value_types = @a/compound
+    value_structure = @item_data_slotless
+}
+item_data inherit temp/SortedKeymap.nbt {
+    keys = {
+        "Slot" = :Key {types = @a/byte}
+        "id" = :Key {types = @a/string, structure = @string.nbt, delegate_arguments = {"always_print" = true}}
+        "Count" = :Key {types = @a/byte, tags = @t/outdated}
+        "count" = :Key {types = @a/int}
+        "Damage" = :Key {types = @a/short, tags = @t/outdated}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+        "tag" = :Key {types = @a/compound, structure = @item_old/tag}
+    }
+}
+item_type inherit temp/SortedKeymap.nbt {
+    keys = {
+        "id" = :Key {types = @a/string, structure = @string.nbt, delegate_arguments = {"always_print" = true}}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+    }
+}
+item_data_list inherit temp/Set.nbt {
+    $ field = "item"
+    value_types = @a/compound
+    value_structure = @item_data
+}
+item_type_or_id :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/compound, structure = @item_type},
+    ]
+}
+named_list abstract inherit temp/Set {
+    $ (str) name
+    $ field = name
+    value_types = #str
+    value_structure = @string
+}
+named_list.nbt abstract inherit temp/Set.nbt {
+    $ (str) name
+    $ field = name
+    value_types = @a/string
+    value_structure = @string.nbt
+}
+named_list_or_item abstract :Union {
+    $ (str) name
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @named_list{$name=name}},
+    ]
+}
+named_list_or_item.nbt abstract :Union {
+    $ (str) name
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/list, structure = @named_list.nbt{$name=name}},
+    ]
+}
+named_list_of_named_list abstract inherit temp/Set {
+    $ (str) name
+    $ field = name
+    value_types = [#str, #list]
+    value_structure = @named_list_of_named_list_or_item{$name=name}
+}
+named_list_of_named_list_or_item abstract :Union {
+    $ (str) name
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #list, structure = @named_list_of_named_list{$name=name}},
+    ]
+}
+number abstract :Number {
+    this_types = @decimal
+    delegate = :Delegate {
+        delegate_class = %@PrimitiveDelegate
+    }
+}
+position_dimension inherit temp/SortedKeymap.nbt {
+    keys = {
+        "pos" = :Key {types = @a/int_array, structure = @vector/vector.tag_int_array}
+        "dimension" = :Key {types = @a/string}
+    }
+}
+profile :Union {
+    substructures = [
+        :Key {types = @a/string, structure = @string.nbt},
+        :Key {types = @a/compound, structure = inherit temp/SortedKeymap.nbt {
+            keys = {
+                "Name" = :Key {types = @a/string, structure = @string.nbt, delegate_arguments = {"always_print" = true}, tags = @t/outdated}
+                "name" = :Key {types = @a/string, structure = @string.nbt, delegate_arguments = {"always_print" = true}}
+                "Id" = :Key {types = @a/int_array, structure = @uuid_list.nbt, tags = @t/outdated}
+                "id" = :Key {types = @a/int_array, structure = @uuid_list.nbt}
+                "Properties" = :Key {types = @a/compound, structure = @profile.properties.old}
+                "properties" = :Key {types = @a/list, structure = @profile.properties}
+            }
+        }},
+    ]
+}
+profile.properties.old inherit temp/SortedKeymap.nbt {
+    keys = {
+        "textures" = :Key {types = @a/list, structure = @profile.properties.old.textures}
+    }
+}
+profile.properties inherit temp/Set.nbt {
+    $ field = "property"
+    value_types = @a/compound
+    value_structure = @profile.properties.item
+}
+profile.properties.old.textures inherit temp/Set.nbt {
+    $ field = "texture"
+    value_types = @a/compound
+    value_structure = @profile.properties.old.texture
+}
+profile.properties.old.texture inherit temp/SortedKeymap.nbt {
+    keys = {
+        "Value" = :Key {types = @a/string} // todo: do base64 processing
+        "Signature" = :Key {types = @a/string}
+    }
+}
+profile.properties.item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "name" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "value" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "signature" = :Key {types = @a/string}
+    }
+}
+range_decimal inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = @decimal}
+        "min" = :Key {types = @decimal}
+    }
+}
+range_decimal.nbt inherit temp/SortedKeymap.nbt {
+    keys = {
+        "max" = :Key {types = [@a/int, @a/float]}
+        "min" = :Key {types = [@a/int, @a/float]}
+    }
+}
+range_decimal_or_decimal :Union {
+    substructures = [
+        :Key {types = @decimal},
+        :Key {types = #dict, structure = @range_decimal},
+    ]
+}
+range_decimal_or_decimal.nbt :Union {
+    substructures = [
+        :Key {types = @a/int},
+        :Key {types = @a/float},
+        :Key {types = @a/compound, structure = @range_decimal.nbt},
+    ]
+}
+range_int inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+    }
+}
+range_int_or_int :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = @range_int},
+    ]
+}
+range_int.nbt inherit temp/SortedKeymap.nbt {
+    keys = {
+        "max" = :Key {types = @a/int}
+        "min" = :Key {types = @a/int}
+    }
+}
+range_int_or_int.nbt :Union {
+    substructures = [
+        :Key {types = @a/int},
+        :Key {types = @a/compound, structure = @range_int.nbt},
+    ]
+}
+range_item abstract inherit temp/SortedKeymap {
+    $ (type | list) types
+    $ (:Structure | null) structure = null
+    keys = {
+        "max" = :Key {types = types, structure = structure}
+        "min" = :Key {types = types, structure = structure}
+    }
+}
+range_item_or_item abstract :Union {
+    $ (type | list) types
+    $ (:Structure | null) structure = null
+    substructures = [
+        :Key {types = types},
+        :Key {types = #dict, structure = @range_item{$types=types, $structure=structure}},
+    ]
+}
+sound_event :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/compound, structure = inherit temp/SortedKeymap.nbt {
+            keys = {
+                "sound_id" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+                "range" = :Key {types = @a/float}
+            }
+        }},
+    ]
+}
+string :String {
+    $ (int) limit = 10000
+    max_square_length = limit
+    delegate = :Delegate {delegate_class=%@PrimitiveDelegate}
+}
+string.nbt inherit string {
+    this_types = @a/string
+}
+uuid_tag_list inherit temp/List.nbt {
+    $ field = "number"
+    this_types = #TAG_List
+    value_types = @a/int
+    value_structure = null
+}
+uuid_list.nbt inherit temp/List.nbt {
+    $ field = "number"
+    this_types = @a/int_array
+    value_types = @a/int
+    value_structure = null
+}
+uuid_list_list.nbt inherit temp/List.nbt {
+    $ field = "UUID"
+    value_types = @a/int_array
+    value_structure = @uuid_list.nbt
+}

@@ -1,0 +1,195 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "animation_controllers"
+    $ pack_type = "resource pack"
+    $ files_key_weight = 4
+    $ files_key_structure = @temp/string_remove_file_suffix
+    $ files_min_key_similarity_threshold = 0.5
+    $ structure = @animation_controllers_file
+}
+animation_controllers_file :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/animation_controllers_fix_old
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "format_version" = :Key {types = #str}
+            "animation_controllers" = :Key {types = #dict, structure = @animation_controllers, similarity_weight = 14}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+animation_controllers inherit temp/Dict {
+    min_value_similarity_threshold = 0.7
+    value_types = #dict
+    key_structure = @temp/string
+    value_structure = @animation_controller
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "animation controller", "measure_length" = true, "sort" = %sort_by_key}
+    }
+}
+animation_controller inherit temp/SortedKeymap {
+    keys = {
+        "initial_state" = :Key {types = #str}
+        "states" = :Key {types = #dict, structure = @states}
+    }
+}
+states inherit temp/Dict {
+    min_key_similarity_threshold = 0.4
+    value_types = #dict
+    value_structure = @state
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "state", "measure_length" = true, "sort" = %sort_by_key}
+    }
+}
+state inherit temp/SortedKeymap {
+    keys = {
+        "animations" = :Key {types = [#dict, #list], structure = :Union {
+            substructures = [
+                :Key {types = #dict, structure = @animations:dict},
+                :Key {types = #list, structure = @animations},
+            ]
+        }}
+        "blend_transition" = :Key {types = #float}
+        "blend_via_shortest_path" = :Key {types = #bool}
+        "parameters" = :Key {types = #list, structure = @parameters, tags = [@t/outdated]}
+        "particle_effects" = :Key {types = #list, structure = @particle_effects}
+        "sound_effects" = :Key {types = #list, structure = @sound_effects}
+        "transitions" = :Key {types = #list, structure = @transitions}
+    }
+}
+animations inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    value_types = [#dict, #str]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #dict, structure = @animation},
+            :Key {types = #str},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "animation dict", "show_item_key" = false, "measure_length" = true}
+    }
+}
+animations:dict inherit temp/Dict {
+    value_types = [#dict, #list]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #dict, structure = @temp/empty},
+            :Key {types = #list, structure = @animation:list},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "animation", "measure_length" = true}
+    }
+}
+animation inherit temp/Dict {
+    $ field = "animation"
+    value_types = [#list, #str]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #list, structure = @animation:list},
+            :Key {types = #str},
+        ]
+    }
+}
+animation:list inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    value_types = #dict
+    value_structure = @animation:list.dict
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+animation:list.dict inherit temp/Dict {
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "timestamp", "measure_length" = true}
+    }
+}
+parameters inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    value_types = #str
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "parameter", "show_item_key" = false, "measure_length" = true}
+    }
+}
+particle_effects inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    value_types = #dict
+    value_structure = @particle_effect
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "particle effect", "show_item_key" = false, "measure_length" = true}
+    }
+}
+particle_effect inherit temp/SortedKeymap {
+    keys = {
+        "effect" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "locator" = :Key {types = #str}
+    }
+}
+sound_effects inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @sound_effect
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "sound effect", "show_item_key" = false, "measure_length" = true}
+    }
+}
+sound_effect inherit temp/SortedKeymap {
+    keys = {
+        "effect" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+transitions inherit temp/Dict {
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    value_types = #dict
+    value_structure = @transition
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "transition list", "show_item_key" = false, "measure_length" = true}
+    }
+}
+transition inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "transition", "measure_length" = true}
+    }
+}

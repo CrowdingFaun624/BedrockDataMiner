@@ -1,0 +1,1047 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "features"
+    $ file_field = "feature"
+    $ structure = @feature
+}
+block_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#dict, #str]
+    value_structure = @block_reference
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "show_item_key" = false, "measure_length" = true}
+    }
+}
+block_list_or_block :Union {
+    substructures = [
+        :Key {types = #dict, structure = @block_reference.dict},
+        :Key {types = #list, structure = @block_list},
+        :Key {types = #str, structure = @temp/string_remove_minecraft_prefix},
+    ]
+}
+block_reference :Union {
+    substructures = [
+        :Key {types = #dict, structure = @block_reference.dict},
+        :Key {types = #str, structure = @temp/string_remove_minecraft_prefix},
+    ]
+}
+block_reference.dict inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string_remove_minecraft_prefix, delegate_arguments = {"always_print" = true}, similarity_weight = 5}
+        "states" = :Key {types = #dict, structure = @block_reference.states}
+        "tags" = :Key {types = #str}
+    }
+}
+block_reference.states inherit temp/SortedKeymap {
+    keys = {
+        "active" = :Key {types = #bool}
+        "age" = :Key {types = #int}
+        "big_dripleaf_head" = :Key {types = #bool}
+        "creaking_heart_state" = :Key {types = #str}
+        "direction" = :Key {types = #int}
+        "dirt_type" = :Key {types = #str}
+        "double_plant_type" = :Key {types = #str}
+        "facing_direction" = :Key {types = #int, tags = [@t/outdated]}
+        "flower_type" = :Key {types = #str}
+        "growth" = :Key {types = #int}
+        "hanging" = :Key {types = #bool}
+        "moisturized_amount" = :Key {types = #int}
+        "natural" = :Key {types = #bool}
+        "new_leaf_type" = :Key {types = #str}
+        "new_log_type" = :Key {types = #str}
+        "old_leaf_type" = :Key {types = #str}
+        "old_log_type" = :Key {types = #str}
+        "pillar_axis" = :Key {types = #str}
+        "stone_type" = :Key {types = #str}
+        "tall_grass_type" = :Key {types = #str}
+        "tip" = :Key {types = #bool}
+        "upper_block_bit" = :Key {types = #bool}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+empty_dict inherit temp/SortedKeymap {
+    keys = {}
+}
+feature_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "feature", "show_item_key" = false, "measure_length" = true}
+    }
+}
+fraction inherit temp/SortedKeymap {
+    keys = {
+        "denominator" = :Key {types = #int}
+        "numerator" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+fraction_or_decimal :Union {
+    substructures = [
+        :Key {types = #dict, structure = @fraction},
+        :Key {types = @temp/decimal},
+    ]
+}
+fraction_slope inherit temp/SortedKeymap {
+    keys = {
+        "rise" = :Key {types = #int}
+        "run" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+range_dict_decimal inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = @temp/decimal}
+        "min" = :Key {types = @temp/decimal}
+        "range_max" = :Key {types = @temp/decimal}
+        "range_min" = :Key {types = @temp/decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+range_dict_int inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+        "range_max" = :Key {types = #int}
+        "range_min" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+range_int_or_int :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = @range_dict_int},
+    ]
+}
+range_int_or_int_or_molang :Union {
+    substructures = [
+        :Key {types = #int},
+        :Key {types = #dict, structure = @range_dict_int},
+        :Key {types = #str},
+    ]
+}
+range_decimal_or_decimal_or_molang :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #dict, structure = @range_dict_decimal},
+        :Key {types = #str},
+    ]
+}
+range_list_decimal inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range item", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+range_list_molang inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#int, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range item", "measure_length" = false}
+    }
+}
+vector_int inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+feature inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:aggregate_feature" = :Key {types = #dict, structure = @feature.aggregate_feature}
+        "minecraft:catalyst_feature" = :Key {types = #dict, structure = @feature.catalyst_feature}
+        "minecraft:cave_carver_feature" = :Key {types = #dict, structure = @feature.cave_carver_feature}
+        "minecraft:fossil_feature" = :Key {types = #dict, structure = @feature.fossil_feature}
+        "minecraft:geode_feature" = :Key {types = #dict, structure = @feature.geode_feature}
+        "minecraft:growing_plant_feature" = :Key {types = #dict, structure = @feature.growing_plant_feature}
+        "minecraft:hell_cave_carver_feature" = :Key {types = #dict, structure = @feature.nether_cave_carver_feature, tags = [@t/outdated]}
+        "minecraft:multiface_feature" = :Key {types = #dict, structure = @feature.multiface_feature}
+        "minecraft:nether_cave_carver_feature" = :Key {types = #dict, structure = @feature.nether_cave_carver_feature}
+        "minecraft:ore_feature" = :Key {types = #dict, structure = @feature.ore_feature}
+        "minecraft:partially_exposed_blob_feature" = :Key {types = #dict, structure = @feature.partially_exposed_blob_feature}
+        "minecraft:scatter_feature" = :Key {types = #dict, structure = @feature.scatter_feature}
+        "minecraft:sculk_patch_feature" = :Key {types = #dict, structure = @feature.sculk_patch_feature}
+        "minecraft:search_feature" = :Key {types = #dict, structure = @feature.search_feature}
+        "minecraft:sequence_feature" = :Key {types = #dict, structure = @feature.sequence_feature}
+        "minecraft:single_block_feature" = :Key {types = #dict, structure = @feature.single_block_feature}
+        "minecraft:snap_to_surface_feature" = :Key {types = #dict, structure = @feature.snap_to_surface_feature}
+        "minecraft:structure_template_feature" = :Key {types = #dict, structure = @feature.structure_template_feature}
+        "minecraft:surface_relative_threshold_feature" = :Key {types = #dict, structure = @feature.surface_relative_threshold_feature}
+        "minecraft:tree_feature" = :Key {types = #dict, structure = @feature.tree_feature}
+        "minecraft:underwater_cave_carver_feature" = :Key {types = #dict, structure = @feature.underwater_cave_carver_feature}
+        "minecraft:vegetation_patch_feature" = :Key {types = #dict, structure = @feature.vegetation_patch_feature}
+        "minecraft:weighted_random_feature" = :Key {types = #dict, structure = @feature.weighted_random_feature}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+feature.aggregate_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "early_out" = :Key {types = #str}
+        "features" = :Key {types = #list, structure = @feature_list}
+    }
+}
+feature.catalyst_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "can_place_sculk_catalyst_on" = :Key {types = #list, structure = @block_list}
+        "central_block" = :Key {types = #str}
+        "central_patch_feature" = :Key {types = #str}
+        "max_patch_distance" = :Key {types = #int}
+        "patch_feature" = :Key {types = #str}
+        "pathes_count_max" = :Key {types = #int}
+        "pathes_count_min" = :Key {types = #int}
+        "vertical_range" = :Key {types = #int}
+    }
+}
+feature.cave_carver_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "fill_with" = :Key {types = #str}
+        "floor_level" = :Key {types = #list, structure = @range_list_decimal}
+        "height_limit" = :Key {types = #int}
+        "horizontal_radius_multiplier" = :Key {types = #list, structure = @range_list_decimal}
+        "skip_carve_chance" = :Key {types = #int}
+        "vertical_radius_multiplier" = :Key {types = #list, structure = @range_list_decimal}
+        "width_modifier" = :Key {types = @temp/decimal}
+        "y_scale" = :Key {types = #list, structure = @range_list_decimal}
+    }
+}
+feature.fossil_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "max_empty_corners" = :Key {types = #int}
+        "ore_block" = :Key {types = #str}
+    }
+}
+feature.geode_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "alternate_inner_layer" = :Key {types = #str}
+        "base_crack_size" = :Key {types = @temp/decimal}
+        "crack_point_offset" = :Key {types = @temp/decimal}
+        "filler" = :Key {types = #str}
+        "generate_crack_chance" = :Key {types = @temp/decimal}
+        "inner_layer" = :Key {types = #str}
+        "inner_placements" = :Key {types = #list, structure = @block_list}
+        "invalid_blocks_threshold" = :Key {types = #int}
+        "middle_layer" = :Key {types = #str}
+        "outer_layer" = :Key {types = #str}
+        "max_distribution_points" = :Key {types = #int}
+        "max_outer_wall_distance" = :Key {types = #int}
+        "max_point_offset" = :Key {types = #int}
+        "max_radius" = :Key {types = #int}
+        "min_distribution_points" = :Key {types = #int}
+        "min_outer_wall_distance" = :Key {types = #int}
+        "min_point_offset" = :Key {types = #int}
+        "noise_multiplier" = :Key {types = @temp/decimal}
+        "placements_require_layer0_alternate" = :Key {types = #bool}
+        "use_alternate_layer0_chance" = :Key {types = @temp/decimal}
+        "use_potential_placements_chance" = :Key {types = @temp/decimal}
+    }
+}
+feature.growing_plant_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "allow_water" = :Key {types = #bool}
+        "age" = :Key {types = [#int, #str, #dict], structure = @range_int_or_int_or_molang}
+        "body_blocks" = :Key {types = #list, structure = @feature.growing_plant_feature:body_blocks}
+        "growth_direction" = :Key {types = #str}
+        "head_blocks" = :Key {types = #list, structure = @feature.growing_plant_feature:head_blocks}
+        "height_distribution" = :Key {types = #list, structure = @feature.growing_plant_feature:height_distribution}
+    }
+}
+feature.growing_plant_feature:body_blocks inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @feature.growing_plant_feature:body_blocks.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "body block", "show_item_key" = false, "measure_length" = true}
+    }
+}
+feature.growing_plant_feature:body_blocks.item :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_tuple
+        arguments = {"keys" = ["plant_body_block", "weight"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "plant_body_block" = :Key {types = [#str, #dict], structure = @block_reference, delegate_arguments = {"always_print" = true}}
+            "weight" = :Key {types = @temp/decimal}
+        }
+    }
+}
+feature.growing_plant_feature:head_blocks inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @feature.growing_plant_feature:head_blocks.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "head block", "show_item_key" = false, "measure_length" = true}
+    }
+}
+feature.growing_plant_feature:head_blocks.item :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_tuple
+        arguments = {"keys" = ["plant_head_block", "weight"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "plant_head_block" = :Key {types = [#str, #dict], structure = @block_reference, delegate_arguments = {"always_print" = true}}
+            "weight" = :Key {types = @temp/decimal}
+        }
+    }
+}
+feature.growing_plant_feature:height_distribution inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @feature.growing_plant_feature:height_distribution.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "height", "show_item_key" = false, "measure_length" = true}
+    }
+}
+feature.growing_plant_feature:height_distribution.item :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_tuple
+        arguments = {"keys" = ["height", "weight"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "height" = :Key {types = [@temp/decimal, #str, #dict], structure = @range_decimal_or_decimal_or_molang, delegate_arguments = {"always_print" = true}}
+            "weight" = :Key {types = @temp/decimal}
+        }
+    }
+}
+feature.multiface_feature inherit temp/SortedKeymap {
+    keys = {
+        "can_place_on" = :Key {types = #list, structure = @block_list}
+        "can_place_on_ceiling" = :Key {types = #bool}
+        "can_place_on_floor" = :Key {types = #bool}
+        "can_place_on_wall" = :Key {types = #bool}
+        "chance_of_spreading" = :Key {types = @temp/decimal}
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "places_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "search_range" = :Key {types = #int}
+    }
+}
+feature.nether_cave_carver_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "fill_with" = :Key {types = #str}
+        "width_modifier" = :Key {types = @temp/decimal}
+        "skip_carve_chance" = :Key {types = #int}
+        "height_limit" = :Key {types = #int}
+        "y_scale" = :Key {types = #list, structure = @range_list_decimal}
+        "horizontal_radius_multiplier" = :Key {types = #list, structure = @range_list_decimal}
+        "vertical_radius_multiplier" = :Key {types = #list, structure = @range_list_decimal}
+        "floor_level" = :Key {types = #list, structure = @range_list_decimal}
+    }
+}
+feature.ore_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "count" = :Key {types = #int}
+        "discard_chance_on_air_exposure" = :Key {types = @temp/decimal}
+        "may_replace" = :Key {types = [#list, #dict, #str], structure = @block_list_or_block, tags = [@t/outdated]}
+        "places_block" = :Key {types = [#dict, #str], structure = @block_reference, tags = [@t/outdated]}
+        "replace_rules" = :Key {types = #list, structure = @feature.ore_feature:replace_rules}
+    }
+}
+feature.ore_feature:replace_rules inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @feature.ore_feature:replace_rules.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "rule", "show_item_key" = false, "measure_length" = true}
+    }
+}
+feature.ore_feature:replace_rules.item inherit temp/SortedKeymap {
+    keys = {
+        "places_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "may_replace" = :Key {types = #list, structure = @block_list}
+    }
+}
+feature.partially_exposed_blob_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "exposed_face" = :Key {types = #str}
+        "placement_probability_per_valid_position" = :Key {types = @temp/decimal}
+        "placement_radius_around_floor" = :Key {types = #int}
+        "places_block" = :Key {types = [#dict, #str], structure = @block_reference}
+    }
+}
+feature.scatter_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "coordinate_eval_order" = :Key {types = #str}
+        "distribution" = :Key {types = #dict, structure = @feature.scatter_feature:distribution}
+        "iterations" = :Key {types = [#int, #str]}
+        "places_feature" = :Key {types = #str}
+        "project_input_to_floor" = :Key {types = #bool}
+        "scatter_chance" = :Key {types = [#dict, @temp/decimal, #str], structure = @feature.scatter_feature:scatter_chance}
+        "x" = :Key {types = [#dict, #int, #str], structure = @feature.scatter_feature:coordinate_group}
+        "y" = :Key {types = [#dict, #int, #str], structure = @feature.scatter_feature:coordinate_group}
+        "z" = :Key {types = [#dict, #int, #str], structure = @feature.scatter_feature:coordinate_group}
+    }
+}
+feature.scatter_feature:coordinate_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @feature.scatter_feature:coordinate},
+        :Key {types = #int},
+        :Key {types = #str},
+    ]
+}
+feature.scatter_feature:coordinate inherit temp/SortedKeymap {
+    keys = {
+        "distribution" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "step_size" = :Key {types = #int}
+        "grid_offset" = :Key {types = #int}
+        "extent" = :Key {types = #list, structure = @range_list_molang}
+    }
+}
+feature.scatter_feature:distribution inherit temp/SortedKeymap {
+    keys = {
+        "iterations" = :Key {types = #int}
+        "x" = :Key {types = #dict, structure = @feature.scatter_feature:coordinate}
+        "y" = :Key {types = #dict, structure = @feature.scatter_feature:coordinate}
+        "z" = :Key {types = #dict, structure = @feature.scatter_feature:coordinate}
+        "coordinate_eval_order" = :Key {types = #str}
+    }
+}
+feature.scatter_feature:scatter_chance :Union {
+    substructures = [
+        :Key {types = #dict, structure = @fraction},
+        :Key {types = @temp/decimal},
+        :Key {types = #str},
+    ]
+}
+feature.sculk_patch_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "can_place_sculk_patch_on" = :Key {types = #list, structure = @block_list}
+        "cant_place_sculk_vein_on" = :Key {types = #list, structure = @block_list}
+        "central_block" = :Key {types = #str}
+        "central_block_placement_chance" = :Key {types = @temp/decimal}
+        "charge_amount" = :Key {types = #int}
+        "cursor_count" = :Key {types = #int}
+        "extra_growth_chance" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "ground_block" = :Key {types = #str}
+        "growth_chance" = :Key {types = @temp/decimal}
+        "growth_rounds" = :Key {types = #int}
+        "horizontal_radius" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "replaceable_blocks" = :Key {types = #list, structure = @block_list}
+        "spread_attempts" = :Key {types = #int}
+        "spread_rounds" = :Key {types = #int}
+        "surface" = :Key {types = #str}
+        "vertical_range" = :Key {types = #int}
+    }
+}
+feature.search_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "places_feature" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "required_successes" = :Key {types = #int}
+        "search_axis" = :Key {types = #str}
+        "search_volume" = :Key {types = #dict, structure = @feature.search_feature:search_volume}
+    }
+}
+feature.search_feature:search_volume inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #list, structure = @vector_int}
+        "min" = :Key {types = #list, structure = @vector_int}
+    }
+}
+feature.sequence_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "features" = :Key {types = #list, structure = @feature_list}
+    }
+}
+feature.single_block_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "enforce_placement_rules" = :Key {types = #bool}
+        "enforce_survivability_rules" = :Key {types = #bool}
+        "may_attach_to" = :Key {types = #dict, structure = @feature.single_block_feature:may_attach_to}
+        "may_not_attach_to" = :Key {types = #dict, structure = @feature.single_block_feature:may_attach_to}
+        "may_replace" = :Key {types = #list, structure = @block_list}
+        "places_block" = :Key {types = [#dict, #str], structure = @block_reference}
+    }
+}
+feature.single_block_feature:may_attach_to inherit temp/SortedKeymap {
+    keys = {
+        "auto_rotate" = :Key {types = #bool}
+        "bottom" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "east" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "min_sides_must_attach" = :Key {types = #int}
+        "north" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "sides" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "top" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "south" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "west" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+    }
+}
+feature.snap_to_surface_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "allow_air_placement" = :Key {types = #bool}
+        "allow_underwater_placement" = :Key {types = #bool}
+        "allowed_surface_blocks" = :Key {types = #list, structure = @block_list}
+        "feature_to_snap" = :Key {types = #str}
+        "surface" = :Key {types = #str}
+        "vertical_search_range" = :Key {types = #int}
+    }
+}
+feature.structure_template_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "adjustment_radius" = :Key {types = #int}
+        "constraints" = :Key {types = #dict, structure = @feature.structure_template_feature:constraints}
+        "facing_direction" = :Key {types = #str}
+        "structure_name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+feature.structure_template_feature:constraints inherit temp/SortedKeymap {
+    keys = {
+        "block_intersection" = :Key {types = #dict, structure = @feature.structure_template_feature:constraints.block_intersection}
+        "grounded" = :Key {types = #dict, structure = @empty_dict}
+        "unburied" = :Key {types = #dict, structure = @empty_dict}
+    }
+}
+feature.structure_template_feature:constraints.block_intersection inherit temp/SortedKeymap {
+    keys = {
+        "block_allowlist" = :Key {types = #list, structure = @block_list}
+    }
+}
+feature.surface_relative_threshold_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "feature_to_place" = :Key {types = #str}
+        "minimum_distance_below_surface" = :Key {types = #int}
+    }
+}
+feature.tree_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "can_be_submerged" = :Key {types = #dict, structure = @feature.tree_feature:can_be_submerged, tags = [@t/outdated]}
+        "base_block" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "base_cluster" = :Key {types = #dict, structure = @feature.tree_feature:base_cluster}
+        "may_grow_on" = :Key {types = #list, structure = @block_list}
+        "may_replace" = :Key {types = #list, structure = @block_list}
+        "may_grow_through" = :Key {types = #list, structure = @block_list}
+        "acacia_trunk" = :Key {types = #dict, structure = @feature.tree_feature:acacia_trunk}
+        "cherry_trunk" = :Key {types = #dict, structure = @feature.tree_feature:cherry_trunk}
+        "fallen_trunk" = :Key {types = #dict, structure = @feature.tree_feature:fallen_trunk}
+        "fancy_trunk" = :Key {types = #dict, structure = @feature.tree_feature:fancy_trunk}
+        "mangrove_trunk" = :Key {types = #dict, structure = @feature.tree_feature:mangrove_trunk}
+        "mega_trunk" = :Key {types = #dict, structure = @feature.tree_feature:mega_trunk}
+        "trunk" = :Key {types = #dict, structure = @feature.tree_feature:trunk}
+        "mangrove_roots" = :Key {types = #dict, structure = @feature.tree_feature:mangrove_roots}
+    } + @feature.tree_feature:canopy:keys
+}
+feature.tree_feature:base_cluster inherit temp/SortedKeymap {
+    keys = {
+        "cluster_radius" = :Key {types = #int}
+        "may_replace" = :Key {types = #list, structure = @block_list}
+        "num_clusters" = :Key {types = #int}
+    }
+}
+feature.tree_feature:can_be_submerged inherit temp/SortedKeymap {
+    keys = {
+        "max_depth" = :Key {types = #int}
+    }
+}
+feature.tree_feature:acacia_trunk inherit temp/SortedKeymap {
+    keys = {
+        "branches" = :Key {types = #dict, structure = @feature.tree_feature:acacia_trunk.branches}
+        "trunk_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "trunk_decoration" = :Key {types = #dict, structure = @feature.tree_feature:decoration}
+        "trunk_height" = :Key {types = #dict, structure = @feature.tree_feature:acacia_trunk.trunk_height}
+        "trunk_lean" = :Key {types = #dict, structure = @feature.tree_feature:acacia_trunk.trunk_lean}
+        "trunk_width" = :Key {types = #int}
+    }
+}
+feature.tree_feature:acacia_trunk.branches inherit temp/SortedKeymap {
+    keys = {
+        "branch_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy}
+        "branch_chance" = :Key {types = [@temp/decimal, #dict], structure = @fraction_or_decimal}
+        "branch_length" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "branch_position" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+    }
+}
+feature.tree_feature:acacia_trunk.trunk_height inherit temp/SortedKeymap {
+    keys = {
+        "base" = :Key {types = #int}
+        "intervals" = :Key {types = #list, structure = @feature.tree_feature:trunk.intervals}
+        "min_height_for_canopy" = :Key {types = #int}
+    }
+}
+feature.tree_feature:acacia_trunk.trunk_lean inherit temp/SortedKeymap {
+    keys = {
+        "allow_diagonal_growth" = :Key {types = #bool}
+        "lean_height" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "lean_length" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "lean_steps" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+    }
+}
+feature.tree_feature:cherry_trunk inherit temp/SortedKeymap {
+    keys = {
+        "trunk_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "trunk_height" = :Key {types = #dict, structure = @feature.tree_feature:cherry_trunk.trunk_height}
+        "branches" = :Key {types = #dict, structure = @feature.tree_feature:cherry_trunk.branches}
+    }
+}
+feature.tree_feature:cherry_trunk.trunk_height inherit temp/SortedKeymap {
+    keys = {
+        "base" = :Key {types = #int}
+        "intervals" = :Key {types = #list, structure = @feature.tree_feature:trunk.intervals}
+    }
+}
+feature.tree_feature:cherry_trunk.branches inherit temp/SortedKeymap {
+    keys = {
+        "branch_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy}
+        "branch_end_offset_from_top" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "branch_horizontal_length" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "branch_start_offset_from_top" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "tree_type_weights" = :Key {types = #dict, structure = @feature.tree_feature:cherry_trunk.branches.tree_type_weights}
+    }
+}
+feature.tree_feature:cherry_trunk.branches.tree_type_weights inherit temp/SortedKeymap {
+    keys = {
+        "one_branch" = :Key {types = #int}
+        "two_branches" = :Key {types = #int}
+        "two_branches_and_trunk" = :Key {types = #int}
+    }
+}
+feature.tree_feature:fallen_trunk inherit temp/SortedKeymap {
+    keys = {
+        "log_length" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "stump_height" = :Key {types = #int}
+        "height_modifier" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "trunk_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "log_decoration_feature" = :Key {types = #str}
+        "trunk_decoration" = :Key {types = #dict, structure = @feature.tree_feature:decoration}
+    }
+}
+feature.tree_feature:fancy_trunk inherit temp/SortedKeymap {
+    keys = {
+        "branches" = :Key {types = #dict, structure = @feature.tree_feature:fancy_trunk.branches}
+        "foliage_altitude_factor" = :Key {types = @temp/decimal}
+        "trunk_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "trunk_height" = :Key {types = #dict, structure = @feature.tree_feature:fancy_trunk.trunk_height}
+        "trunk_width" = :Key {types = #int}
+        "width_scale" = :Key {types = @temp/decimal}
+    }
+}
+feature.tree_feature:fancy_trunk.branches inherit temp/SortedKeymap {
+    keys = {
+        "slope" = :Key {types = @temp/decimal}
+        "density" = :Key {types = @temp/decimal}
+        "min_altitude_factor" = :Key {types = @temp/decimal}
+    }
+}
+feature.tree_feature:fancy_trunk.trunk_height inherit temp/SortedKeymap {
+    keys = {
+        "base" = :Key {types = #int}
+        "variance" = :Key {types = #int}
+        "scale" = :Key {types = @temp/decimal}
+    }
+}
+feature.tree_feature:mangrove_trunk inherit temp/SortedKeymap {
+    keys = {
+        "branches" = :Key {types = #dict, structure = @feature.tree_feature:mangrove_trunk.branches}
+        "trunk_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "trunk_decoration" = :Key {types = #dict, structure = @feature.tree_feature:decoration}
+        "trunk_height" = :Key {types = #dict, structure = @feature.tree_feature:mangrove_trunk.trunk_height}
+        "trunk_width" = :Key {types = #int}
+    }
+}
+feature.tree_feature:mangrove_trunk.branches inherit temp/SortedKeymap {
+    keys = {
+        "branch_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy}
+        "branch_length" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "branch_steps" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "branch_chance" = :Key {types = [@temp/decimal, #dict], structure = @fraction_or_decimal}
+        "branch_position" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+    }
+}
+feature.tree_feature:mangrove_trunk.trunk_height inherit temp/SortedKeymap {
+    keys = {
+        "base" = :Key {types = #int}
+        "height_rand_a" = :Key {types = #int}
+        "height_rand_b" = :Key {types = #int}
+    }
+}
+feature.tree_feature:mega_trunk inherit temp/SortedKeymap {
+    keys = {
+        "branches" = :Key {types = #dict, structure = @feature.tree_feature:mega_trunk.branches}
+        "trunk_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "trunk_decoration" = :Key {types = #dict, structure = @feature.tree_feature:decoration}
+        "trunk_height" = :Key {types = #dict, structure = @feature.tree_feature:mega_trunk.trunk_height}
+        "trunk_width" = :Key {types = #int}
+    }
+}
+feature.tree_feature:mega_trunk.branches inherit temp/SortedKeymap {
+    keys = {
+        "branch_altitude_factor" = :Key {types = #dict, structure = @range_dict_decimal}
+        "branch_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy}
+        "branch_interval" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "branch_length" = :Key {types = #int}
+        "branch_slope" = :Key {types = @temp/decimal}
+    }
+}
+feature.tree_feature:mega_trunk.trunk_height inherit temp/SortedKeymap {
+    keys = {
+        "base" = :Key {types = #int}
+        "intervals" = :Key {types = #list, structure = @feature.tree_feature:trunk.intervals}
+    }
+}
+feature.tree_feature:trunk inherit temp/SortedKeymap {
+    keys = {
+        "can_be_submerged" = :Key {types = [#bool, #dict], structure = @feature.tree_feature:trunk.can_be_submerged_group}
+        "height_modifier" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "trunk_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "trunk_decoration" = :Key {types = #dict, structure = @feature.tree_feature:decoration}
+        "trunk_height" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+    }
+}
+feature.tree_feature:trunk.can_be_submerged_group :Union {
+    substructures = [
+        :Key {types = #bool},
+        :Key {types = #dict, structure = @feature.tree_feature:trunk.can_be_submerged},
+    ]
+}
+feature.tree_feature:trunk.can_be_submerged inherit temp/SortedKeymap {
+    keys = {
+        "max_depth" = :Key {types = #int}
+    }
+}
+feature.tree_feature:mangrove_roots inherit temp/SortedKeymap {
+    keys = {
+        "max_root_width" = :Key {types = #int}
+        "max_root_length" = :Key {types = #int}
+        "root_block" = :Key {types = [#str, #dict], structure = @block_reference}
+        "above_root" = :Key {types = #dict, structure = @feature.tree_feature:mangrove_roots.above_root}
+        "muddy_root_block" = :Key {types = [#str, #dict], structure = @block_reference}
+        "mud_block" = :Key {types = [#str, #dict], structure = @block_reference}
+        "y_offset" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "roots_may_grow_through" = :Key {types = #list, structure = @block_list}
+        "root_decoration" = :Key {types = #dict, structure = @feature.tree_feature:decoration}
+    }
+}
+feature.tree_feature:mangrove_roots.above_root inherit temp/SortedKeymap {
+    keys = {
+        "above_root_block" = :Key {types = #str}
+        "above_root_chance" = :Key {types = [@temp/decimal, #dict], structure = @fraction_or_decimal}
+    }
+}
+feature.tree_feature:decoration inherit temp/SortedKeymap {
+    keys = {
+        "decoration_chance" = :Key {types = [@temp/decimal, #dict], structure = @fraction_or_decimal}
+        "decoration_block" = :Key {types = #str}
+        "num_steps" = :Key {types = #int}
+        "step_direction" = :Key {types = #str}
+    }
+}
+feature.tree_feature:trunk.intervals inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "interval", "show_item_key" = false, "measure_length" = true}
+    }
+}
+feature.tree_feature:canopy:leaf_blocks inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @feature.tree_feature:canopy:leaf_blocks.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "leaf block", "show_item_key" = false, "measure_length" = true}
+    }
+}
+feature.tree_feature:canopy:leaf_blocks.item :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_tuple
+        arguments = {"keys" = ["leaf_block", "weight"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "leaf_block" = :Key {types = [#str, #dict], structure = @block_reference}
+            "weight" = :Key {types = @temp/decimal}
+        }
+    }
+}
+feature.tree_feature:canopy:keys {
+        "acacia_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.acacia_canopy}
+        "canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.canopy}
+        "cherry_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.cherry_canopy}
+        "fancy_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.fancy_canopy}
+        "mangrove_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.mangrove_canopy}
+        "mega_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.mega_canopy}
+        "mega_pine_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.mega_pine_canopy}
+        "pine_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.pine_canopy}
+        "roofed_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.roofed_canopy}
+        "spruce_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.spruce_canopy}
+        "random_spread_canopy" = :Key {types = #dict, structure = @feature.tree_feature:canopy.random_spread_canopy}
+    }
+feature.tree_feature:canopy inherit temp/SortedKeymap {
+    keys = @feature.tree_feature:canopy:keys
+}
+feature.tree_feature:canopy.acacia_canopy inherit temp/SortedKeymap {
+    keys = {
+        "canopy_size" = :Key {types = #int}
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "simplify_canopy" = :Key {types = #bool}
+    }
+}
+feature.tree_feature:canopy.canopy inherit temp/SortedKeymap {
+    keys = {
+        "canopy_offset" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "min_width" = :Key {types = #int}
+        "canopy_slope" = :Key {types = #dict, structure = @fraction_slope}
+        "variation_chance" = :Key {types = [@temp/decimal, #dict, #list], structure = @feature.tree_feature:canopy.canopy:variation_chance_group}
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "canopy_decoration" = :Key {types = #dict, structure = @feature.tree_feature:decoration}
+    }
+}
+feature.tree_feature:canopy.canopy:variation_chance_group :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #dict, structure = @fraction},
+        :Key {types = #list, structure = @feature.tree_feature:canopy.canopy:variation_chance},
+    ]
+}
+feature.tree_feature:canopy.canopy:variation_chance inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [@temp/decimal, #dict]
+    value_structure = @feature.tree_feature:canopy.canopy:variation_chance.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "chance", "show_item_key" = false, "measure_length" = true}
+    }
+}
+feature.tree_feature:canopy.canopy:variation_chance.item :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #dict, structure = @fraction},
+    ]
+}
+feature.tree_feature:canopy.cherry_canopy inherit temp/SortedKeymap {
+    keys = {
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+        "height" = :Key {types = #int}
+        "radius" = :Key {types = #int}
+        "trunk_width" = :Key {types = #int}
+        "wide_bottom_layer_hole_chance" = :Key {types = @temp/decimal}
+        "corner_hole_chance" = :Key {types = @temp/decimal}
+        "hanging_leaves_chance" = :Key {types = @temp/decimal}
+        "hanging_leaves_extension_chance" = :Key {types = @temp/decimal}
+    }
+}
+feature.tree_feature:canopy.fancy_canopy inherit temp/SortedKeymap {
+    keys = {
+        "height" = :Key {types = #int}
+        "radius" = :Key {types = #int}
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+    }
+}
+feature.tree_feature:canopy.mangrove_canopy inherit temp/SortedKeymap {
+    keys = {
+        "canopy_height" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "canopy_radius" = :Key {types = #int}
+        "leaf_placement_attempts" = :Key {types = #int}
+        "leaf_blocks" = :Key {types = #list, structure = @feature.tree_feature:canopy:leaf_blocks}
+        "canopy_decoration" = :Key {types = #dict, structure = @feature.tree_feature:decoration}
+        "hanging_block" = :Key {types = [#str, #dict], structure = @block_reference}
+        "hanging_block_placement_chance" = :Key {types = [#dict, @temp/decimal], structure = @fraction_or_decimal}
+    }
+}
+feature.tree_feature:canopy.mega_canopy inherit temp/SortedKeymap {
+    keys = {
+        "canopy_height" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "base_radius" = :Key {types = #int}
+        "core_width" = :Key {types = #int}
+        "simplify_canopy" = :Key {types = #bool}
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+    }
+}
+feature.tree_feature:canopy.mega_pine_canopy inherit temp/SortedKeymap {
+    keys = {
+        "canopy_height" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "base_radius" = :Key {types = #int}
+        "radius_step_modifier" = :Key {types = @temp/decimal}
+        "core_width" = :Key {types = #int}
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+    }
+}
+feature.tree_feature:canopy.pine_canopy inherit temp/SortedKeymap {
+    keys = {
+        "canopy_height" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "base_radius" = :Key {types = #int}
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+    }
+}
+feature.tree_feature:canopy.roofed_canopy inherit temp/SortedKeymap {
+    keys = {
+        "canopy_height" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "core_width" = :Key {types = #int}
+        "outer_radius" = :Key {types = #int}
+        "inner_radius" = :Key {types = #int}
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+    }
+}
+feature.tree_feature:canopy.spruce_canopy inherit temp/SortedKeymap {
+    keys = {
+        "lower_offset" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "upper_offset" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "max_radius" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "leaf_block" = :Key {types = [#dict, #str], structure = @block_reference}
+    }
+}
+feature.tree_feature:canopy.random_spread_canopy inherit temp/SortedKeymap {
+    keys = {
+        "canopy_height" = :Key {types = [#dict, #int], structure = @range_int_or_int}
+        "canopy_radius" = :Key {types = #int}
+        "leaf_placement_attempts" = :Key {types = #int}
+        "leaf_blocks" = :Key {types = #list, structure = @feature.tree_feature:canopy:leaf_blocks}
+    }
+}
+feature.underwater_cave_carver_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "fill_with" = :Key {types = #str}
+        "floor_level" = :Key {types = #list, structure = @range_list_decimal}
+        "height_limit" = :Key {types = #int}
+        "horizontal_radius_multiplier" = :Key {types = #list, structure = @range_list_decimal}
+        "replace_air_with" = :Key {types = #str}
+        "skip_carve_chance" = :Key {types = #int}
+        "vertical_radius_multiplier" = :Key {types = #list, structure = @range_list_decimal}
+        "width_modifier" = :Key {types = @temp/decimal}
+        "y_scale" = :Key {types = #list, structure = @range_list_decimal}
+    }
+}
+feature.vegetation_patch_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "depth" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "extra_deep_block_chance" = :Key {types = @temp/decimal}
+        "extra_edge_column_chance" = :Key {types = @temp/decimal}
+        "ground_block" = :Key {types = #str}
+        "horizontal_radius" = :Key {types = [#int, #dict], structure = @range_int_or_int}
+        "replaceable_blocks" = :Key {types = #list, structure = @block_list}
+        "surface" = :Key {types = #str}
+        "vegetation_chance" = :Key {types = @temp/decimal}
+        "vegetation_feature" = :Key {types = #str}
+        "vertical_range" = :Key {types = #int}
+        "waterlogged" = :Key {types = #bool}
+    }
+}
+feature.weighted_random_feature inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "features" = :Key {types = #list, structure = @feature.weighted_random_feature:features}
+    }
+}
+feature.weighted_random_feature:features inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #list
+    value_structure = @feature.weighted_random_feature:features.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "feature", "show_item_key" = false, "measure_length" = true}
+    }
+}
+feature.weighted_random_feature:features.item :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_tuple
+        arguments = {"keys" = ["feature", "weight"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "feature" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+            "weight" = :Key {types = @temp/decimal}
+        }
+    }
+}

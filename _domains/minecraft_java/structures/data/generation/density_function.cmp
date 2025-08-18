@@ -1,0 +1,183 @@
+/* Converted by CmpMigrator 0.1.9 */
+// MCW says every float in this file is a double, except for some in density_function.spline
+settings {
+    aliases {
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "density_function"
+    $ pack_type = "data pack"
+    $ types = [#float, #dict]
+    $ structure = @density_function
+}
+density_function_type [#float, #dict]
+density_function_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = @density_function_type, structure = @density_function},
+    ]
+}
+density_function :Switch {
+    switch_function = :Function {
+        function = %scripts/normalizers/normalizers/density_function_switch
+    }
+    substructures = {
+        "constant_shorthand" = :Key {types = #float}
+        "minecraft:abs" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:add" = :Key {types = #dict, structure = @density_function.double_argument}
+        "minecraft:beardifier" = :Key {types = #dict, structure = @density_function.empty}
+        "minecraft:blend_alpha" = :Key {types = #dict, structure = @density_function.empty}
+        "minecraft:blend_density" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:blend_offset" = :Key {types = #dict, structure = @density_function.empty}
+        "minecraft:cache_2d" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:cache_all_in_cell" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:cache_once" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:clamp" = :Key {types = #dict, structure = @density_function.clamp}
+        "minecraft:constant" = :Key {types = #dict, structure = @density_function.constant}
+        "minecraft:cube" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:end_islands" = :Key {types = #dict, structure = @density_function.empty}
+        "minecraft:find_top_surface" = :Key {types = #dict, structure = @density_function.find_top_surface}
+        "minecraft:flat_cache" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:half_negative" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:interpolated" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:invert" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:max" = :Key {types = #dict, structure = @density_function.double_argument}
+        "minecraft:min" = :Key {types = #dict, structure = @density_function.double_argument}
+        "minecraft:mul" = :Key {types = #dict, structure = @density_function.double_argument}
+        "minecraft:noise" = :Key {types = #dict, structure = @density_function.noise}
+        "minecraft:old_blended_noise" = :Key {types = #dict, structure = @density_function.old_blended_noise}
+        "minecraft:quarter_negative" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:range_choice" = :Key {types = #dict, structure = @density_function.range_choice}
+        "minecraft:shift" = :Key {types = #dict, structure = @density_function.shift}
+        "minecraft:shift_a" = :Key {types = #dict, structure = @density_function.shift}
+        "minecraft:shift_b" = :Key {types = #dict, structure = @density_function.shift}
+        "minecraft:shifted_noise" = :Key {types = #dict, structure = @density_function.shifted_noise}
+        "minecraft:spline" = :Key {types = #dict, structure = @density_function.spline}
+        "minecraft:square" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:squeeze" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:weird_scaled_sampler" = :Key {types = #dict, structure = @density_function.weird_scaled_sampler}
+        "minecraft:y_clamped_gradient" = :Key {types = #dict, structure = @density_function.y_clamped_gradient}
+    }
+}
+density_function:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+density_function.clamp inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "input" = :Key {types = @density_function_type, structure = @density_function} // id not allowed
+        "min" = :Key {types = #float}
+        "max" = :Key {types = #float}
+    }
+}
+density_function.constant inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "argument" = :Key {types = #float}
+    }
+}
+density_function.double_argument inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "argument1" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+        "argument2" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+    }
+}
+density_function.empty inherit temp/SortedKeymap {
+    keys = @density_function:all
+}
+density_function.find_top_surface inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "density" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+        "upper_bound" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+        "lower_bound" = :Key {types = #int}
+        "cell_height" = :Key {types = #int}
+    }
+}
+density_function.noise inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "noise" = :Key {types = #str}
+        "xz_scale" = :Key {types = #float}
+        "y_scale" = :Key {types = #float}
+    }
+}
+density_function.old_blended_noise inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "xz_scale" = :Key {types = #float}
+        "y_scale" = :Key {types = #float}
+        "xz_factor" = :Key {types = #float}
+        "y_factor" = :Key {types = #float}
+        "smear_scale_multiplier" = :Key {types = #float}
+    }
+}
+density_function.range_choice inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "input" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+        "min_inclusive" = :Key {types = #float}
+        "max_exclusive" = :Key {types = #float}
+        "when_in_range" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+        "when_out_of_range" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+    }
+}
+density_function.shift inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "argument" = :Key {types = #str}
+    }
+}
+density_function.shifted_noise inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "noise" = :Key {types = #str}
+        "xz_scale" = :Key {types = #float}
+        "y_scale" = :Key {types = #float}
+        "shift_x" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+        "shift_y" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+        "shift_z" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+    }
+}
+density_function.single_argument inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "argument" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+    }
+}
+density_function.spline inherit temp/SortedKeymap { // all floats in here and other spline Components are floats on MCW (except the density_function reference)
+    keys = @density_function:all + {
+        "spline" = :Key {types = [#float, #dict], structure = @density_function.spline:spline}
+    }
+}
+density_function.spline:spline :Union {
+    substructures = [
+        :Key {types = #float},
+        :Key {types = #dict, structure = @density_function.spline:spline.keymap},
+    ]
+}
+density_function.spline:spline.keymap inherit temp/SortedKeymap {
+    keys = {
+        "coordinate" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+        "points" = :Key {types = #list, structure = @density_function.spline:points}
+    }
+}
+density_function.spline:points inherit temp/List {
+    $ field = "point"
+    value_types = #dict
+    value_structure = @density_function.spline:point
+}
+density_function.spline:point inherit temp/SortedKeymap {
+    keys = {
+        "location" = :Key {types = #float}
+        "value" = :Key {types = [#float, #dict], structure = @density_function.spline:spline}
+        "derivative" = :Key {types = #float}
+    }
+}
+density_function.weird_scaled_sampler inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "rarity_value_mapper" = :Key {types = #str}
+        "noise" = :Key {types = #str}
+        "input" = :Key {types = [#str, @density_function_type], structure = @density_function_or_id}
+    }
+}
+density_function.y_clamped_gradient inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "from_y" = :Key {types = #int}
+        "to_y" = :Key {types = #int}
+        "from_value" = :Key {types = #float}
+        "to_value" = :Key {types = #float}
+    }
+}

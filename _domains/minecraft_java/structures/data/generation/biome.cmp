@@ -1,0 +1,136 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        carver = @structures/data/generation/carver/
+        pf = @structures/data/generation/placed_feature/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        particle = @structures/data/particles/particles/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "biome"
+    $ pack_type = "data pack"
+    $ structure = @biome
+}
+biome inherit temp/SortedKeymap {
+    keys = {
+        "has_precipitation" = :Key {types = #bool}
+        "precipitation" = :Key {types = #str, tags = @t/outdated}
+        "temperature" = :Key {types = #float}
+        "temperature_modifier" = :Key {types = #str}
+        "downfall" = :Key {types = #float}
+        "effects" = :Key {types = #dict, structure = @effects}
+        "carvers" = :Key {types = [#str, #dict, #list], structure = @carver/carver_list_or_carver}
+        "features" = :Key {types = #list, structure = @features}
+        "creature_spawn_probability" = :Key {types = #float}
+        "spawners" = :Key {types = #dict, structure = @spawners}
+        "spawn_costs" = :Key {types = #dict, structure = @spawn_costs}
+    }
+}
+effects inherit temp/SortedKeymap {
+    keys = {
+        "fog_color" = :Key {types = #int}
+        "sky_color" = :Key {types = #int}
+        "water_color" = :Key {types = #int}
+        "water_fog_color" = :Key {types = #int}
+        "foliage_color" = :Key {types = #int}
+        "dry_foliage_color" = :Key {types = #int}
+        "grass_color" = :Key {types = #int}
+        "grass_color_modifier" = :Key {types = #str}
+        "particle" = :Key {types = #dict, structure = @effects.particle}
+        "ambient_sound" = :Key {types = [@a/string, @a/compound], structure = @misc/sound_event}
+        "mood_sound" = :Key {types = #dict, structure = @effects.mood_sound}
+        "additions_sound" = :Key {types = #dict, structure = @effects.additions_sound}
+        "music" = :Key {types = [#list, #dict], structure = @effects.musics}
+        "music_volume" = :Key {types = #float}
+    }
+}
+effects.additions_sound inherit temp/SortedKeymap {
+    keys = {
+        "sound" = :Key {types = [@a/string, @a/compound], structure = @misc/sound_event}
+        "tick_chance" = :Key {types = #float} // double
+    }
+}
+effects.mood_sound inherit temp/SortedKeymap {
+    keys = {
+        "sound" = :Key {types = [@a/string, @a/compound], structure = @misc/sound_event}
+        "tick_delay" = :Key {types = #int}
+        "block_search_extent" = :Key {types = #int}
+        "offset" = :Key {types = #float} // double
+    }
+}
+effects.musics :Union {
+    substructures = [
+        :Key {types = #dict, structure = @effects.music.data},
+        :Key {types = #list, structure = inherit temp/Set {
+            $ field = "music"
+            value_types = #dict
+            value_structure = @effects.music
+        }},
+    ]
+}
+effects.music inherit temp/SortedKeymap {
+    keys = {
+        "data" = :Key {types = #dict, structure = @effects.music.data}
+        "weight" = :Key {types = #int}
+    }
+}
+effects.music.data inherit temp/SortedKeymap {
+    keys = {
+        "sound" = :Key {types = [@a/string, @a/compound], structure = @misc/sound_event}
+        "min_delay" = :Key {types = #int}
+        "max_delay" = :Key {types = #int}
+        "replace_current_music" = :Key {types = #bool}
+    }
+}
+effects.particle inherit temp/SortedKeymap {
+    keys = {
+        "probability" = :Key {types = #float}
+        "options" = :Key {types = @a/compound, structure = @particle/particle}
+    }
+}
+features inherit temp/Set {
+    $ field = "placed feature"
+    value_types = [#str, #dict, #list]
+    value_structure = @pf/placed_feature_list_or_feature
+}
+spawners inherit temp/SortedKeymap {
+    $ keymap_field = "mob category"
+    keys = {
+        "monster" = :Key {types = #list, structure = @spawners.category}
+        "creature" = :Key {types = #list, structure = @spawners.category}
+        "ambient" = :Key {types = #list, structure = @spawners.category}
+        "water_creature" = :Key {types = #list, structure = @spawners.category}
+        "underground_water_creature" = :Key {types = #list, structure = @spawners.category}
+        "water_ambient" = :Key {types = #list, structure = @spawners.category}
+        "misc" = :Key {types = #list, structure = @spawners.category}
+        "axolotls" = :Key {types = #list, structure = @spawners.category}
+    }
+}
+spawners.category inherit temp/Set {
+    $ field = "mob"
+    value_types = #dict
+    value_structure = @spawners.mob
+}
+spawners.mob inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "weight" = :Key {types = #int}
+        "minCount" = :Key {types = #int}
+        "maxCount" = :Key {types = #int}
+    }
+}
+spawn_costs inherit temp/Dict {
+    $ field = "entity type"
+    value_types = #dict
+    value_structure = @spawn_costs.item
+}
+spawn_costs.item inherit temp/SortedKeymap {
+    keys = {
+        "energy_budget" = :Key {types = #float} // double
+        "charge" = :Key {types = #float} // double
+    }
+}

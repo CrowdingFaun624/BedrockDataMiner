@@ -1,0 +1,28 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "resolution_configs"
+    $ structure = @file
+}
+file inherit temp/Dict {
+    value_types = #dict
+    key_structure = @temp/string
+    value_structure = @resolution
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resolution", "measure_length" = true}
+    }
+}
+resolution inherit temp/SortedKeymap {
+    keys = {
+        "file" = :Key {types = #str}
+        "upscaling_factor" = :Key {types = #float}
+        "x" = :Key {types = #int}
+        "y" = :Key {types = #int}
+    }
+}

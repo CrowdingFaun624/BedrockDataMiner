@@ -1,0 +1,220 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "recipes"
+    $ file_field = "recipe"
+    $ files_min_key_similarity_threshold = 0.5
+    $ pack_type = "behavior pack"
+    $ structure = @recipe
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+item inherit temp/SortedKeymap {
+    keys = {
+        "count" = :Key {types = #int}
+        "data" = :Key {types = #int}
+        "item" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "tag" = :Key {types = #str}
+    }
+}
+item_or_str :Union {
+    substructures = [
+        :Key {types = #dict, structure = @item},
+        :Key {types = #str},
+    ]
+}
+item_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+item_list_or_item :Union {
+    substructures = [
+        :Key {types = #dict, structure = @item},
+        :Key {types = #list, structure = @item_list},
+    ]
+}
+tag_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "tag", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+tag_list_or_tag :Union {
+    substructures = [
+        :Key {types = #list, structure = @tag_list},
+        :Key {types = #str},
+    ]
+}
+recipe :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/recipes_fix_old
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "format_version" = :Key {types = #str}
+            "minecraft:recipe_brewing_container" = :Key {types = #dict, structure = @recipe.brewing_container}
+            "minecraft:recipe_brewing_mix" = :Key {types = #dict, structure = @recipe.brewing_mix}
+            "minecraft:recipe_furnace" = :Key {types = #dict, structure = @recipe.furnace}
+            "minecraft:recipe_material_reduction" = :Key {types = #dict, structure = @recipe.material_reducer}
+            "minecraft:recipe_shaped" = :Key {types = #dict, structure = @recipe.shaped}
+            "minecraft:recipe_shapeless" = :Key {types = #dict, structure = @recipe.shapeless}
+            "minecraft:recipe_smithing_transform" = :Key {types = #dict, structure = @recipe.smithing_transform}
+            "minecraft:recipe_smithing_trim" = :Key {types = #dict, structure = @recipe.smithing_trim}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+recipe.brewing_container inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "input" = :Key {types = #str}
+        "output" = :Key {types = #str}
+        "reagent" = :Key {types = #str}
+        "tags" = :Key {types = #list, structure = @tag_list}
+    }
+}
+recipe.brewing_mix inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "input" = :Key {types = #str}
+        "output" = :Key {types = #str}
+        "reagent" = :Key {types = #str}
+        "tags" = :Key {types = #list, structure = @tag_list}
+    }
+}
+recipe.furnace inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "input" = :Key {types = [#dict, #str], structure = @item_or_str}
+        "output" = :Key {types = #str}
+        "priority" = :Key {types = #int}
+        "tags" = :Key {types = #list, structure = @tag_list}
+        "unlock" = :Key {types = [#dict, #list], structure = @recipe:unlock_group}
+    }
+}
+recipe.material_reducer inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "input" = :Key {types = [#dict, #str], structure = @item_or_str}
+        "output" = :Key {types = #list, structure = @item_list}
+        "tags" = :Key {types = [#list, #str], structure = @tag_list_or_tag}
+    }
+}
+recipe.shaped inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "group" = :Key {types = #str}
+        "key" = :Key {types = #dict, structure = @recipe.shaped:keys}
+        "pattern" = :Key {types = #list, structure = @recipe.shaped:pattern}
+        "priority" = :Key {types = #int}
+        "result" = :Key {types = [#dict, #list], structure = @item_list_or_item}
+        "tags" = :Key {types = [#list, #str], structure = @tag_list_or_tag}
+        "unlock" = :Key {types = [#dict, #list], structure = @recipe:unlock_group}
+    }
+}
+recipe.shaped:keys inherit temp/Dict {
+    value_types = #dict
+    value_structure = @item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "key", "measure_length" = true, "print_all" = true}
+    }
+}
+recipe.shaped:pattern inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "line", "measure_length" = false, "print_all" = true, "print_flat" = false}
+    }
+}
+recipe.shapeless inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "group" = :Key {types = #str}
+        "ingredients" = :Key {types = #list, structure = @recipe.shapeless:ingredients}
+        "priority" = :Key {types = #int}
+        "result" = :Key {types = [#dict, #list], structure = @item_list_or_item}
+        "tags" = :Key {types = [#list, #str], structure = @tag_list_or_tag}
+        "unlock" = :Key {types = [#dict, #list], structure = @recipe:unlock_group}
+    }
+}
+recipe.shapeless:ingredients inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "show_item_key" = false, "print_all" = true, "field" = "ingredient"}
+    }
+}
+recipe.smithing_transform inherit temp/SortedKeymap {
+    keys = {
+        "addition" = :Key {types = #str}
+        "base" = :Key {types = #str}
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "result" = :Key {types = #str}
+        "tags" = :Key {types = [#list, #str], structure = @tag_list_or_tag}
+        "template" = :Key {types = #str}
+    }
+}
+recipe.smithing_trim inherit temp/SortedKeymap {
+    keys = {
+        "addition" = :Key {types = #dict, structure = @item}
+        "base" = :Key {types = #dict, structure = @item}
+        "description" = :Key {types = #dict, structure = @description, similarity_weight = 3, delegate_arguments = {"always_print" = true}}
+        "tags" = :Key {types = [#list, #str], structure = @tag_list_or_tag}
+        "template" = :Key {types = #dict, structure = @item}
+    }
+}
+recipe:unlock_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "context" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+            }
+        }},
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #dict
+            value_structure = @item
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "condition", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+    ]
+}

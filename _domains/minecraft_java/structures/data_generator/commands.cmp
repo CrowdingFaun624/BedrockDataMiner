@@ -1,0 +1,135 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "commands"
+    $ structure = @node
+}
+node :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "argument" = :Key {types = #dict, structure = @node.argument}
+        "literal" = :Key {types = #dict, structure = @node.literal}
+        "root" = :Key {types = #dict, structure = @node.root}
+    }
+}
+node:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "executable" = :Key {types = #bool},
+    "redirect" = :Key {types = #list, structure = @misc/named_list{$name = "node"}}
+}
+children inherit temp/Dict {
+    $ field = "child"
+    value_types = #dict
+    value_structure = @node
+}
+node.argument :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "parser"}
+    }
+    substructures = {
+        "brigadier:bool" = :Key {types = #dict, structure = @node.argument:item}
+        "brigadier:double" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.float}}
+        "brigadier:float" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.float}}
+        "brigadier:integer" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.integer}}
+        "brigadier:string" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.string}}
+        "minecraft:angle" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:block_pos" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:block_predicate" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:block_state" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:color" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:component" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:dialog" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:dimension" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:entity" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.entity}}
+        "minecraft:entity_anchor" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:function" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:game_profile" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:gamemode" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:heightmap" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:hex_color" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:int_range" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:item_predicate" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:item_slot" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:item_slots" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:item_stack" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:loot_modifier" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:loot_predicate" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:loot_table" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:message" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:column_pos" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:nbt_compound_tag" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:nbt_path" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:nbt_tag" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:objective" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:objective_criteria" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:operation" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:resource" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
+        "minecraft:resource_key" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
+        "minecraft:resource_location" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:resource_or_tag" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
+        "minecraft:resource_selector" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
+        "minecraft:rotation" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:score_holder" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:scoreboard_slot" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:style" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:swizzle" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:team" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:template_mirror" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:template_rotation" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:time" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.integer}}
+        "minecraft:vec2" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:vec3" = :Key {types = #dict, structure = @node.argument:item}
+    }
+}
+node.argument:item inherit temp/SortedKeymap {
+    $ (:Structure) properties = @misc/empty_dict
+    keys = @node:all + {
+        "parser" = :Key {types = #str, delegate_arguments = {"always_print" = true}},
+        "properties" = :Key {types = #dict, structure = properties}
+    }
+}
+node.literal inherit temp/SortedKeymap {
+    keys = @node:all + {
+        "required_level" = :Key {types = #int}
+    }
+}
+node.root inherit temp/SortedKeymap {
+    keys = @node:all
+}
+properties.entity inherit temp/SortedKeymap {
+    keys = @node:all + {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "amount" = :Key {types = #str}
+    }
+}
+properties.float inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #float}
+        "min" = :Key {types = #float}
+    }
+}
+properties.integer inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+    }
+}
+properties.resource inherit temp/SortedKeymap {
+    keys = {
+        "registry" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+properties.string inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}

@@ -1,0 +1,32 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files_reversed {
+    $ name = "pieces_lang"
+    $ function = []
+    $ pack_type = "piece"
+    $ file_field = "lang file"
+    $ structure = @lang
+}
+lang inherit temp/Dict {
+    value_types = #dict
+    value_structure = @key
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "sort" = %sort_by_key, "field" = "key"}
+    }
+}
+key inherit temp/SortedKeymap {
+    keys = {
+        "en_US" = :Key {types = #str, structure = @temp/string}
+        "neutral" = :Key {types = #str, structure = @temp/string}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "language"}
+    }
+}

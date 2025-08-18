@@ -1,0 +1,51 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "renderer_deferred_renderer"
+    $ structure = @deferred_renderer
+}
+deferred_renderer inherit temp/SortedKeymap {
+    keys = {
+        "deferred_shading_parameters" = :Key {types = #dict, structure = @deferred_shading_parameters}
+        "light_generation_parameters" = :Key {types = #dict, structure = @light_generation_parameters, tags = [@t/outdated]}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+deferred_shading_parameters inherit temp/SortedKeymap {
+    keys = {
+        "ambient_light_contribution_multiplier" = :Key {types = #float, tags = [@t/outdated]}
+        "block_light_contribution_multiplier" = :Key {types = @temp/decimal, tags = [@t/outdated]}
+        "block_light_indirect_contribution_multiplier" = :Key {types = #float}
+        "emissive_brightness_multiplier" = :Key {types = #int}
+        "emissive_desaturation" = :Key {types = #float}
+        "end_ibl_fade_light_level" = :Key {types = #int}
+        "ibl_indirect_contribution_multiplier" = :Key {types = #float}
+        "end_portal_emissive_multiplier" = :Key {types = #float}
+        "sky_light_contribution_multiplier" = :Key {types = @temp/decimal, tags = [@t/outdated]}
+        "sky_light_indirect_contribution_multiplier" = :Key {types = #float}
+        "start_ibl_fade_light_level" = :Key {types = #int}
+        "volumetric_fog_min_ambient_value" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+light_generation_parameters inherit temp/SortedKeymap {
+    keys = {
+        "emission_to_intensity_factor" = :Key {types = #float}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}

@@ -1,0 +1,155 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+        t = @structure_tags/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "terrain_textures"}
+    }
+}
+collapse_resource_packs abstract :Normalizer {
+    $ (:Structure) structure
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_flat
+    }
+    structure = structure
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/normalizers/terrain_textures_normalize
+            arguments = {"serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @terrain_textures
+        }
+    }
+}
+terrain_textures inherit temp/SortedKeymap {
+    keys = {
+        "num_mip_levels" = :Key {types = #dict, structure = @collapse_resource_packs{$structure=@simple_int_resource_pack_dict}}
+        "padding" = :Key {types = #dict, structure = @collapse_resource_packs{$structure=@simple_int_resource_pack_dict}}
+        "texture_name" = :Key {types = #dict, structure = @collapse_resource_packs{$structure=@simple_str_resource_pack_dict}}
+        "texture_data" = :Key {types = #dict, structure = @texture_data}
+    }
+}
+simple_int_resource_pack_dict inherit temp/Dict {
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+simple_str_resource_pack_dict inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+texture_data inherit temp/Dict {
+    value_types = #dict
+    key_structure = @temp/string
+    min_key_similarity_threshold = 0.5
+    value_structure = @resource_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "terrain", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+resource_packs :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_dict
+    }
+    structure = inherit temp/Dict {
+        key_types = #tuple
+        key_structure = @temp/defined_in
+        value_types = #dict
+        min_value_similarity_threshold = 0.4
+        value_structure = @terrain
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+terrain inherit temp/SortedKeymap {
+    keys = {
+        "blockshape" = :Key {types = #str, tags = [@t/outdated]}
+        "isotropic" = :Key {types = #dict, structure = @isotropic}
+        "mip_fade_amount" = :Key {types = #float, tags = [@t/outdated]}
+        "mip_fade_color" = :Key {types = #list, structure = @color, tags = [@t/outdated]}
+        "quad" = :Key {types = #int}
+        "textures" = :Key {types = [#dict, #list, #str], structure = @textures_group, similarity_weight = 2}
+    }
+}
+isotropic inherit temp/SortedKeymap {
+    keys = {
+        "up" = :Key {types = #bool}
+        "down" = :Key {types = #bool}
+    }
+}
+color inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "channel", "measure_length" = false, "print_all" = true, "print_flat" = true}
+    }
+}
+textures_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @texture_dict},
+        :Key {types = #list, structure = @texture_list},
+        :Key {types = #str, structure = @temp/string},
+    ]
+}
+texture_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    min_value_similarity_threshold = 0.3
+    value_types = [#dict, #str]
+    value_structure = @texture_group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "texture", "show_item_key" = false, "measure_length" = true}
+    }
+}
+texture_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @texture_dict},
+        :Key {types = #str, structure = @temp/string},
+    ]
+}
+texture_dict inherit temp/SortedKeymap {
+    keys = {
+        "mip_fade_amount" = :Key {types = #float, tags = [@t/outdated]}
+        "mip_fade_color" = :Key {types = #list, structure = @color, tags = [@t/outdated]}
+        "overlay_color" = :Key {types = #str}
+        "path" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 3}
+        "tint_color" = :Key {types = #str}
+    }
+}

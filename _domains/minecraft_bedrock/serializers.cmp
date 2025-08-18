@@ -1,0 +1,135 @@
+/* Converted by CmpMigrator 0.1.9 */
+custom_json :Serializer {
+    serializer_class = %CustomJsonSerializer
+}
+language_serializer :Serializer {
+    serializer_class = %LanguageSerializer
+}
+lines_serializer :Serializer {
+    serializer_class = %LinesSerializer
+}
+profanity_filter_serializer :Serializer {
+    serializer_class = %ProfanityFilterSerializer
+}
+models_repairable_json :Serializer {
+    serializer_class = %RepairableJsonSerializer
+    arguments = {"rules" = [
+        {
+            "condition" = {"type" = "always"}
+            "action" = {"type" = "remove_suffix", "content" = "\r\n\r\n}\r\n"}
+        }
+    ]}
+}
+resources_repairable_json :Serializer {
+    serializer_class = %RepairableJsonSerializer
+    arguments = {
+        "rules" = [
+            {
+                "condition" = {
+                    "type" = "suffix"
+                    "content" = "\r\n}\r\n}"
+                }
+                "action" = {
+                    "type" = "sequence"
+                    "actions" = [
+                        {
+                            "type" = "remove_suffix"
+                            "content" = "\r\n}\r\n}"
+                        }
+                        {
+                            "type" = "append"
+                            "content" = "\r\n}"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+loot_tables_repairable_json :Serializer {
+    serializer_class = %RepairableJsonSerializer
+    arguments = {
+        "empty_okay" = true
+        "rules" = [
+            {
+                "condition" = {
+                    "type" = "exception"
+                }
+                "action" = {
+                    "type" = "replace"
+                    "content" = "{}"
+                }
+            }
+        ]
+    }
+}
+texture_backwards_compatibility_mapping_repairable_json :Serializer {
+    serializer_class = %RepairableJsonSerializer
+    arguments = {
+        "rules" = [
+            {
+                "condition" = {
+                    "type" = "always"
+                }
+                "action" = {
+                    "type" = "replace_some"
+                    "old_content" = "}\r\n  \""
+                    "new_content" = "},\r\n  \""
+                    "count" = 1
+                }
+            }
+        ]
+    }
+}
+skin_geometries_repairable_json :Serializer {
+    serializer_class = %RepairableJsonSerializer
+    arguments = {
+        "rules" = [
+            {
+                "condition" = {
+                    "type" = "always"
+                }
+                "action" = {
+                    "type" = "replace_some"
+                    "old_content" = "[0, 95]"
+                    "new_content" = "[0, 95],"
+                    "count" = 1
+                }
+            }
+        ]
+    }
+}
+sound_files_serializer :Serializer {
+    serializer_class = %SoundSerializer
+}
+text_serializer :Serializer {
+    serializer_class = %TextSerializer
+}
+material_bin_serializer_0_9_1 :Serializer {
+    serializer_class = %MaterialBinSerializer
+    arguments = {"version" = "0.9.1"}
+}
+material_bin_serializer_0_9_0 :Serializer {
+    serializer_class = %MaterialBinSerializer
+    arguments = {"version" = "0.9.0"}
+}
+material_bin_serializer_0_8_2 :Serializer {
+    serializer_class = %MaterialBinSerializer
+    arguments = {"version" = "0.8.2"}
+}
+material_bin_serializer_0_6_0 :Serializer {
+    serializer_class = %MaterialBinSerializer
+    arguments = {"version" = "0.6.0"}
+}
+javascript_serializer :Serializer {
+    serializer_class = %JavascriptSerializer
+}
+css_serializer :Serializer {
+    serializer_class = %CssSerializer
+}
+texture_list_serializer :Serializer {
+    serializer_class = %TextureListSerializer
+}
+tiers_bin_serializer :Serializer {
+    serializer_class = %TiersBinSerializer
+}

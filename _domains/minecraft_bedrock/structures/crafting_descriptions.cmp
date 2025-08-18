@@ -1,0 +1,32 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @packs
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "crafting_descriptions"}
+    }
+}
+packs inherit temp/Dict {
+    value_types = #dict
+    value_structure = @keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "pack", "measure_length" = true}
+    }
+}
+keys inherit temp/Dict {
+    min_key_similarity_threshold = 0.0
+    min_value_similarity_threshold = 0.0
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "key", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}

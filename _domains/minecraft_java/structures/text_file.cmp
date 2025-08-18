@@ -1,0 +1,29 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "text_packs"
+    $ serializer = @s/text_serializer
+    $ types = #str
+    $ structure = @lines
+}
+lines :Normalizer {
+    outer_types = #str
+    inner_types = #list
+    functions = :Function {
+        function = %split_lines
+    }
+    structure = :Sequence {
+        max_square_length = 1000000000
+        value_types = #str
+        value_structure = null
+        delegate = :Delegate {
+            delegate_class = %LongStringDelegate
+            arguments = {"measure_length" = true}
+        }
+    }
+}

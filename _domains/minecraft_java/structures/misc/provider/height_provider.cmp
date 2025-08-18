@@ -1,0 +1,73 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+vertical_anchor inherit temp/SortedKeymap {
+    keys = {
+        "absolute" = :Key {types = #int}
+        "above_bottom" = :Key {types = #int}
+        "below_top" = :Key {types = #int}
+    }
+}
+height_provider :Switch {
+    switch_function = :Function {
+        function = %get_get_key
+        arguments = {"key" = "type", "default" = "vertical_anchor"}
+    }
+    substructures = {
+        "vertical_anchor" = :Key {types = #dict, structure = @vertical_anchor}
+        "minecraft:biased_to_bottom" = :Key {types = #dict, structure = @height_provider.biased_to_bottom}
+        "minecraft:constant" = :Key {types = #dict, structure = @height_provider.constant}
+        "minecraft:trapezoid" = :Key {types = #dict, structure = @height_provider.trapezoid}
+        "minecraft:uniform" = :Key {types = #dict, structure = @height_provider.uniform}
+        "minecraft:very_biased_to_bottom" = :Key {types = #dict, structure = @height_provider.biased_to_bottom}
+        "minecraft:weighted_list" = :Key {types = #dict, structure = @height_provider.weighted_list}
+    }
+}
+height_provider:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+height_provider.biased_to_bottom inherit temp/SortedKeymap {
+    keys = @height_provider:all + {
+        "min_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
+        "max_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
+        "inner" = :Key {types = #int}
+    }
+}
+height_provider.constant inherit temp/SortedKeymap {
+    keys = @height_provider:all + {
+        "value" = :Key {types = #dict, structure = @vertical_anchor}
+    }
+}
+height_provider.trapezoid inherit temp/SortedKeymap {
+    keys = @height_provider:all + {
+        "min_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
+        "max_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
+        "plateau" = :Key {types = #int}
+    }
+}
+height_provider.uniform inherit temp/SortedKeymap {
+    keys = @height_provider:all + {
+        "min_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
+        "max_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
+    }
+}
+height_provider.weighted_list inherit temp/SortedKeymap {
+    keys = @height_provider:all + {
+        "distribution" = :Key {types = #list, structure = @height_provider.weighted_list:distribution}
+    }
+}
+height_provider.weighted_list:distribution inherit temp/Set {
+    $ field = "height provider"
+    value_types = #dict
+    value_structure = @height_provider.weighted_list:item
+}
+height_provider.weighted_list:item inherit temp/SortedKeymap {
+    keys = {
+        "data" = :Key {types = #dict, structure = @height_provider}
+        "weight" = :Key {types = #int}
+    }
+}

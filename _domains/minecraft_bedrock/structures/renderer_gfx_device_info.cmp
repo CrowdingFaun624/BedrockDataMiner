@@ -1,0 +1,37 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "renderer_gfx_device_info"
+    $ structure = @cards
+}
+cards inherit temp/Dict {
+    value_types = #dict
+    value_structure = @card
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "card", "measure_length" = true}
+    }
+}
+card inherit temp/SortedKeymap {
+    keys = {
+        "MinSpecDriver" = :Key {types = #str}
+        "VendorID" = :Key {types = #list, structure = @vendor_id}
+    }
+}
+vendor_id inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "print_flat" = true}
+    }
+}

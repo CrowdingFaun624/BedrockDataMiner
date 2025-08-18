@@ -1,0 +1,58 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "skindefs"}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/normalizers/skins_normalize
+            arguments = {"other_keys" = ["geometry"], "serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @skindefs_file
+        }
+    }
+}
+skindefs_file inherit temp/SortedKeymap {
+    keys = {
+        "geometry" = :Key {types = #dict, structure = @structures/skins/names}
+        "skins" = :Key {types = #list, structure = @skins}
+    }
+}
+skins inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @skin
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "skin"}
+    }
+}
+skin inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, similarity_weight = 6}
+        "id" = :Key {types = #str, structure = @temp/string}
+        "geometry" = :Key {types = #str, structure = @temp/string}
+        "texture" = :Key {types = #str, structure = @temp/string}
+        "type" = :Key {types = #str}
+        "defined_in" = :Key {types = #str}
+    }
+}

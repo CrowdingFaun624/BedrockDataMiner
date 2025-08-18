@@ -1,0 +1,49 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+        t = @structure_tags/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "item_models"
+    $ pack_type = "resource pack"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "parent" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "display" = :Key {types = #dict, structure = @structures/assets/block_models/display}
+        "textures" = :Key {types = #dict, structure = @structures/assets/block_models/textures}
+        "gui_light" = :Key {types = #str}
+        "elements" = :Key {types = #list, structure = @structures/assets/block_models/elements}
+        "overrides" = :Key {types = #list, structure = @overrides, tags = [@t/outdated]}
+    }
+}
+overrides inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @override
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "case", "show_item_key" = false, "measure_length" = true}
+    }
+}
+override inherit temp/SortedKeymap {
+    keys = {
+        "predicate" = :Key {types = #dict, structure = @predicate}
+        "model" = :Key {types = #str, structure = @misc/string}
+    }
+}
+predicate inherit temp/Dict {
+    value_types = [#int, #float]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "predicate", "measure_length" = true}
+    }
+}

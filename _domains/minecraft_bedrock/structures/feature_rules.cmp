@@ -1,0 +1,120 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "feature_rules"
+    $ files_key_structure = @temp/string_remove_file_suffix
+    $ file_field = "feature rule"
+    $ structure = @feature_rule
+}
+filter_list_or_filter :Union {
+    substructures = [
+        :Key {types = #list, structure = @filter_list},
+        :Key {types = #dict, structure = @filter},
+    ]
+}
+filter_list inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @filter
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "filter", "measure_length" = true}
+    }
+}
+filter inherit temp/SortedKeymap {
+    keys = {
+        "all_of" = :Key {types = #list, structure = @filter_list}
+        "any_of" = :Key {types = #list, structure = @filter_list}
+        "none_of" = :Key {types = #list, structure = @filter_list}
+        "operator" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "test" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "value" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+fraction_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @fraction},
+        :Key {types = #str},
+        :Key {types = #float},
+    ]
+}
+fraction inherit temp/SortedKeymap {
+    keys = {
+        "denominator" = :Key {types = #int}
+        "numerator" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+range_list_int_molang inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#int, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range item", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+feature_rule inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:feature_rules" = :Key {types = #dict, similarity_weight = 20, structure = inherit temp/SortedKeymap {
+            keys = {
+                "conditions" = :Key {types = #dict, structure = @conditions}
+                "description" = :Key {types = #dict, structure = @description}
+                "distribution" = :Key {types = #dict, structure = @distribution}
+            }
+        }}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "places_feature" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+conditions inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:biome_filter" = :Key {types = [#dict, #list], structure = @filter_list_or_filter}
+        "placement_pass" = :Key {types = #str}
+    }
+}
+distribution inherit temp/SortedKeymap {
+    keys = {
+        "coordinate_eval_order" = :Key {types = #str}
+        "iterations" = :Key {types = [#int, #str]}
+        "scatter_chance" = :Key {types = [#dict, #float, #str], structure = @fraction_group}
+        "x" = :Key {types = [#dict, #int, #str], structure = @distribution:coordinate.group}
+        "y" = :Key {types = [#dict, #int, #str], structure = @distribution:coordinate.group}
+        "z" = :Key {types = [#dict, #int, #str], structure = @distribution:coordinate.group}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "print_all" = true}
+    }
+}
+distribution:coordinate.group :Union {
+    substructures = [
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "distribution" = :Key {types = #str}
+                "extent" = :Key {types = #list, structure = @range_list_int_molang}
+            }
+        }},
+        :Key {types = #int},
+        :Key {types = #str},
+    ]
+}

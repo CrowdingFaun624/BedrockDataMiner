@@ -1,0 +1,83 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "skins"}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Normalizer {
+        outer_types = #dict
+        inner_types = #fake_file
+        functions = :Function {
+            function = %scripts/normalizers/normalizers/skins_normalize
+            arguments = {"other_keys" = ["serialize_name", "localization_name"], "serializer" = @minecraft_common!serializers/json}
+        }
+        structure = :File {
+            serializer = null
+            outer_types = #fake_file
+            inner_types = #dict
+            structure = @skins_file
+        }
+    }
+}
+skins_file inherit temp/SortedKeymap {
+    keys = {
+        "serialize_name" = :Key {types = #dict, structure = @names}
+        "localization_name" = :Key {types = #dict, structure = @names}
+        "skins" = :Key {types = #list, structure = @skins}
+    }
+}
+names inherit temp/Dict {
+    value_types = [#str, #list]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #str},
+            :Key {types = #list, structure = inherit temp/Dict {
+                key_weight = 0
+                key_types = #int
+                this_types = #list
+                value_types = #str
+                value_structure = @temp/string
+                delegate = :Delegate {
+                    delegate_class = %DefaultDelegate
+                    arguments = {"field" = "name", "show_item_key" = false, "measure_length" = true}
+                }
+            }},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "skin pack"}
+    }
+}
+skins inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @skin
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "skin"}
+    }
+}
+skin inherit temp/SortedKeymap {
+    keys = {
+        "cape" = :Key {types = #str, structure = @string}
+        "localization_name" = :Key {types = #str, structure = @string, similarity_weight = 6}
+        "geometry" = :Key {types = #str, structure = @string}
+        "texture" = :Key {types = #str, structure = @string}
+        "type" = :Key {types = #str}
+        "defined_in" = :Key {types = #str}
+    }
+}
+string @temp/string

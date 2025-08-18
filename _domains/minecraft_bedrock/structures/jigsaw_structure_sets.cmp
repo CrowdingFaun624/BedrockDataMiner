@@ -1,0 +1,74 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "jigsaw_structure_sets"
+    $ files_key_structure = @temp/string
+    $ pack_type = "behavior pack"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str, similarity_weight = 0}
+        "minecraft:structure_set" = :Key {types = #dict, structure = @structure_set}
+    }
+}
+structure_set inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "placement" = :Key {types = #dict, structure = @placement}
+        "structures" = :Key {types = #list, structure = @structures}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+structures inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @structure
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "structure", "show_item_key" = false, "measure_length" = true}
+    }
+}
+structure inherit temp/SortedKeymap {
+    keys = {
+        "structure" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "weight" = :Key {types = #int}
+    }
+}
+placement :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_value
+        arguments = {"key" = "type"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "minecraft:random_spread" = :Key {types = #dict, structure = @placement.random_spread}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"passthrough" = true}
+        }
+    }
+}
+placement.random_spread inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+        "salt" = :Key {types = #int}
+        "separation" = :Key {types = #int}
+        "spacing" = :Key {types = #int}
+        "spread_type" = :Key {types = #str}
+    }
+}

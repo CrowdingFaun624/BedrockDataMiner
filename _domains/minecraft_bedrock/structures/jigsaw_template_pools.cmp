@@ -1,0 +1,71 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "jigsaw_template_pools"
+    $ files_key_structure = @temp/string
+    $ pack_type = "behavior pack"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str, similarity_weight = 0}
+        "minecraft:template_pool" = :Key {types = #dict, structure = @template_pool}
+    }
+}
+template_pool inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "elements" = :Key {types = #list, structure = @elements}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+elements inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @elements.item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "element", "show_item_key" = false, "measure_length" = true}
+    }
+}
+elements.item inherit temp/SortedKeymap {
+    keys = {
+        "weight" = :Key {types = #int}
+        "element" = :Key {types = #dict, structure = @element, delegate_arguments = {"always_print" = true}}
+    }
+}
+element :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_value
+        arguments = {"key" = "element_type"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "minecraft:single_pool_element" = :Key {types = #dict, structure = @element.single_pool_element}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"passthrough" = true}
+        }
+    }
+}
+element.single_pool_element inherit temp/SortedKeymap {
+    keys = {
+        "element_type" = :Key {types = #str}
+        "location" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "processors" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}

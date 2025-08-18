@@ -1,0 +1,122 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        bs = @structures/misc/block_state/
+        hp = @structures/misc/provider/height_provider/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+surface_rule_sequence inherit temp/Sequence {
+    $ field = "surface rule"
+    value_types = #dict
+    value_structure = @surface_rule
+}
+surface_rule :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:bandlands" = :Key {types = #dict, structure = @surface_rule.bandlands}
+        "minecraft:block" = :Key {types = #dict, structure = @surface_rule.block}
+        "minecraft:condition" = :Key {types = #dict, structure = @surface_rule.condition}
+        "minecraft:sequence" = :Key {types = #dict, structure = @surface_rule.sequence}
+    }
+}
+surface_rule:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+surface_rule.bandlands inherit temp/SortedKeymap {
+    keys = @surface_rule:all
+}
+surface_rule.block inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "result_state" = :Key {types = @a/compound, structure = @bs/block_state}
+    }
+}
+surface_rule.condition inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "if_true" = :Key {types = #dict, structure = @surface_condition}
+        "then_run" = :Key {types = #dict, structure = @surface_rule}
+    }
+}
+surface_rule.sequence inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "sequence" = :Key {types = #list, structure = @surface_rule_sequence}
+    }
+}
+surface_condition :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:above_preliminary_surface" = :Key {types = #dict, structure = @surface_condition.empty}
+        "minecraft:biome" = :Key {types = #dict, structure = @surface_condition.biome}
+        "minecraft:hole" = :Key {types = #dict, structure = @surface_condition.empty}
+        "minecraft:noise_threshold" = :Key {types = #dict, structure = @surface_condition.noise_threshold}
+        "minecraft:not" = :Key {types = #dict, structure = @surface_condition.not}
+        "minecraft:steep" = :Key {types = #dict, structure = @surface_condition.empty}
+        "minecraft:stone_depth" = :Key {types = #dict, structure = @surface_condition.stone_depth}
+        "minecraft:temperature" = :Key {types = #dict, structure = @surface_condition.empty}
+        "minecraft:vertical_gradient" = :Key {types = #dict, structure = @surface_condition.vertical_gradient}
+        "minecraft:water" = :Key {types = #dict, structure = @surface_condition.water}
+        "minecraft:y_above" = :Key {types = #dict, structure = @surface_condition.y_above}
+    }
+}
+surface_condition:all inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+surface_condition.biome inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "biome_is" = :Key {types = #list, structure = @misc/named_list{$name="biome"}}
+    }
+}
+surface_condition.empty inherit temp/SortedKeymap {
+    keys = @surface_rule:all
+}
+surface_condition.noise_threshold inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "noise" = :Key {types = #str}
+        "min_threshold" = :Key {types = #float} // double
+        "max_threshold" = :Key {types = #float} // double
+    }
+}
+surface_condition.not inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "invert" = :Key {types = #dict, structure = @surface_condition}
+    }
+}
+surface_condition.stone_depth inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "surface_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "offset" = :Key {types = #int}
+        "add_surface_depth" = :Key {types = #bool}
+        "secondary_depth_range" = :Key {types = #int}
+    }
+}
+surface_condition.vertical_gradient inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "random_name" = :Key {types = #str}
+        "true_at_and_below" = :Key {types = #dict, structure = @hp/vertical_anchor}
+        "false_at_and_above" = :Key {types = #dict, structure = @hp/vertical_anchor}
+    }
+}
+surface_condition.water inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "offset" = :Key {types = #int}
+        "surface_depth_multiplier" = :Key {types = #int}
+        "add_stone_depth" = :Key {types = #bool}
+    }
+}
+surface_condition.y_above inherit temp/SortedKeymap {
+    keys = @surface_rule:all + {
+        "anchor" = :Key {types = #dict, structure = @hp/vertical_anchor}
+        "surface_depth_multiplier" = :Key {types = #int}
+        "add_stone_depth" = :Key {types = #bool}
+    }
+}

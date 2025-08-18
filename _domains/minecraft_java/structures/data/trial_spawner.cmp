@@ -1,0 +1,60 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        be = @structures/misc/block_entity/
+        entity = @structures/misc/entity/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "trial_spawner"
+    $ pack_type = "data pack"
+    $ types = @a/compound
+    $ structure = @trial_spawner_configuration
+}
+trial_spawner_or_id :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/compound, structure = @trial_spawner_configuration},
+    ]
+}
+trial_spawner_configuration inherit temp/SortedKeymap.nbt {
+    keys = {
+        "spawn_range" = :Key {types = @a/int}
+        "total_mobs" = :Key {types = @a/float}
+        "simultaneous_mobs" = :Key {types = @a/float}
+        "total_mobs_added_per_player" = :Key {types = @a/float}
+        "simultaneous_mobs_added_per_player" = :Key {types = @a/float}
+        "ticks_between_spawn" = :Key {types = @a/int}
+        "spawn_potentials" = :Key {types = @a/list, structure = @spawn_potentials}
+        "loot_tables_to_eject" = :Key {types = @a/list, structure = @loot_tables}
+        "items_to_drop_when_ominous" = :Key {types = @a/string}
+    }
+}
+loot_tables inherit temp/Set.nbt {
+    $ field = "loot table"
+    value_types = @a/compound
+    value_structure = @loot_tables:item
+}
+loot_tables:item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "weight" = :Key {types = @a/int}
+        "data" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+spawn_potentials inherit temp/Set.nbt {
+    $ field = "spawn potential"
+    value_types = @a/compound
+    value_structure = @spawn_potentials:item
+}
+spawn_potentials:item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "Weight" = :Key {types = @a/int, tags = @t/outdated}
+        "weight" = :Key {types = @a/int}
+        "Entity" = :Key {types = @a/compound, structure = @entity/entity, tags = @t/outdated}
+        "data" = :Key {types = @a/compound, structure = @be/block_entity.mob_spawner:entity}
+    }
+}

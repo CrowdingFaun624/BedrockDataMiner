@@ -1,0 +1,94 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "credits"
+    $ types = #list
+    $ structure = @sections
+}
+sections :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "section"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        key_structure = @temp/string
+        value_structure = @section
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "section", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+section inherit temp/SortedKeymap {
+    keys = {
+        "section" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "disciplines" = :Key {types = #list, structure = @disciplines}
+        "titles" = :Key {types = #list, structure = @titles}
+    }
+}
+disciplines :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "discipline"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        key_structure = @temp/string
+        value_structure = @discipline
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "discipline", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+discipline inherit temp/SortedKeymap {
+    keys = {
+        "discipline" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "titles" = :Key {types = #list, structure = @titles}
+    }
+}
+titles :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "title"}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        key_structure = @temp/string
+        value_structure = @title
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "title", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+title inherit temp/SortedKeymap {
+    keys = {
+        "title" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "names" = :Key {types = #list, structure = @names}
+    }
+}
+names inherit temp/Dict {
+    allow_same_key_optimization = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "name", "show_item_key" = false, "measure_length" = true, "sort" = %sort_by_value}
+    }
+}

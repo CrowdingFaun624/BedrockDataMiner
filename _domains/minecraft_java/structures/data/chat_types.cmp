@@ -1,0 +1,32 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        tc = @structures/misc/text_component/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "chat_types"
+    $ pack_type = "data pack"
+    $ types = #dict
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "chat" = :Key {types = #dict, structure = @chat}
+        "narration" = :Key {types = #dict, structure = @chat}
+    }
+}
+chat inherit temp/SortedKeymap {
+    keys = {
+        "translation_key" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "parameters" = :Key {types = #list, structure = @parameters}
+        "style" = :Key {types = #dict, structure = @tc/text_component:formatting:keymap}
+    }
+}
+parameters inherit temp/List {
+    $ field = "parameter"
+    value_types = #str
+    value_structure = @misc/string
+}

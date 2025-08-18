@@ -1,0 +1,172 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+    }
+}
+base_multiple_files abstract :StructureBase {
+    this_types = #dict
+    $ (type | list) types = #dict
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (:Structure) structure
+    $ (str) name
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = inherit Dict {
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "file", "measure_length" = true}
+        }
+        value_types = #file
+        value_structure = :Cache {
+            this_types = #file
+            structure = :File {
+                outer_types = #file
+                inner_types = types
+                serializer = serializer
+                structure = structure
+            }
+        }
+    }
+}
+base_multiple_pack_files abstract :StructureBase {
+    // has variables "pack_type", "types", "serializer", and "structure"
+    this_types = #dict
+    $ (str) pack_type = "pack"
+    $ (type | list) types = #dict
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (:Structure) structure
+    $ (str) name
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = inherit Dict {
+        $ field = pack_type
+        value_types = #dict
+        value_structure = inherit Dict {
+            $ field = "file"
+            value_types = #file
+            value_structure = :Cache {
+                this_types = #file
+                structure = :File {
+                    outer_types = #file
+                    inner_types = types
+                    serializer = serializer
+                    structure = structure
+                }
+            }
+        }
+    }
+}
+base_pack_files abstract :StructureBase {
+    this_types = #dict
+    $ (str) pack_type = "pack"
+    $ (type | list) types = #dict
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (:Structure) structure
+    $ (str) name
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = inherit Dict {
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = pack_type, "measure_length" = true}
+        }
+        value_types = #file
+        value_structure = :Cache {
+            this_types = #file
+            structure = :File {
+                serializer = serializer
+                outer_types = #file
+                inner_types = types
+                structure = structure
+            }
+        }
+    }
+}
+base_single_file abstract :StructureBase {
+    this_types = #file
+    $ (type | list) types = #dict
+    $ (:Serializer) serializer = @minecraft_common!serializers/json
+    $ (:Structure) structure
+    $ (str) name
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = name}
+    }
+    structure = :Cache {
+        this_types = #file
+        structure = :File {
+            serializer = serializer
+            outer_types = #file
+            inner_types = types
+            structure = structure
+        }
+    }
+}
+Dict abstract :Dict {
+    $ (str) field = "field"
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = field, "measure_length" = true, "show_item_key" = true}
+    }
+}
+Dict.nbt abstract inherit Dict {
+    key_types = @a/string
+    this_types = @a/compound
+}
+List abstract :Dict {
+    $ (str) field = "item"
+    $ (bool) print_all = false
+    $ (bool) print_flat = false
+    this_types = #list
+    key_types = #int
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = field, "measure_length" = true, "show_item_key" = true, "print_all" = print_all, "print_flat" = print_flat}
+    }
+}
+List.nbt abstract inherit List {
+    this_types = @a/list
+}
+Sequence abstract :Sequence {
+    $ (str) field = "item"
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = field, "measure_length" = true, "show_item_key" = true}
+    }
+}
+Sequence.nbt abstract inherit Sequence {
+    this_types = @a/list
+}
+Set abstract :Dict {
+    $ (str) field = "item"
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    $ (bool) show_item_key = false
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = field, "measure_length" = true, "show_item_key" = show_item_key}
+    }
+}
+Set.nbt abstract inherit Set {
+    this_types = @a/list
+}
+SortedKeymap abstract :Keymap {
+    $ (str) keymap_field = "field"
+    $ (bool) measure_length = false
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = keymap_field, "sort" = %sort_by_component_order, "measure_length" = measure_length}
+    }
+}
+SortedKeymap.nbt abstract inherit SortedKeymap {
+    key_types = @a/string
+    this_types = @a/compound
+}

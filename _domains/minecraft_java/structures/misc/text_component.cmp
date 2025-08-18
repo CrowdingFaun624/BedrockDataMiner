@@ -1,0 +1,209 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+root_type [@a/string, @a/compound, @a/list]
+lines inherit temp/List.nbt {
+    $ field = "line"
+    value_types = @root_type
+    value_structure = @root
+}
+raw_json_text :Normalizer {
+    outer_types = @a/string
+    inner_types = @root_type
+    functions = :Function {
+        function = %load_json
+    }
+    structure = @root
+}
+root :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/compound, structure = @text_component},
+        :Key {types = @a/list, structure = @text_components},
+    ]
+}
+text_components inherit temp/List.nbt {
+    $ field = "component"
+    value_types = @root_type
+    value_structure = @root
+}
+text_component :Switch {
+    switch_function = :Function {
+        function = %scripts/normalizers/text_component_choose/
+    }
+    substructures = {
+        "text" = :Key {types = @a/compound, structure = @text_component.text}
+        "translatable" = :Key {types = @a/compound, structure = @text_component.translatable}
+        "score" = :Key {types = @a/compound, structure = @text_component.score}
+        "selector" = :Key {types = @a/compound, structure = @text_component.selector}
+        "keybind" = :Key {types = @a/compound, structure = @text_component.keybind}
+        "nbt" = :Key {types = @a/compound, structure = @text_component.nbt}
+    }
+}
+text_component:all {
+    "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+    "extra" = :Key {types = @a/list, structure = @text_components}
+    "insertion" = :Key {types = @a/string}
+    "click_event" = :Key {types = @a/compound, structure = @click_event}
+    "hoveer_event" = :Key {types = @a/compound, structure = @hover_event}
+}
+text_component:formatting {
+    "color" = :Key {types = @a/string}
+    "font" = :Key {types = @a/string}
+    "bold" = :Key {types = @a/bool}
+    "italic" = :Key {types = @a/bool}
+    "underlined" = :Key {types = @a/bool}
+    "strikethrough" = :Key {types = @a/bool}
+    "obfuscated" = :Key {types = @a/bool}
+    "shadow_color" = :Key {types = [@a/int, @a/list], structure = @misc/color} // silly Mojang using different color formats in the same object
+}
+text_component:formatting:keymap inherit temp/SortedKeymap { // intentionally use non-nbt class because structures/data/chat_types uses this Keymap directly.
+    keys = @text_component:formatting
+}
+text_component.text inherit temp/SortedKeymap.nbt {
+    keys = @text_component:all + @text_component:formatting + {
+        "text" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+text_component.translatable inherit temp/SortedKeymap.nbt {
+    keys = @text_component:all + @text_component:formatting + {
+        "translate" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "fallback" = :Key {types = @a/string}
+        "with" = :Key {types = @a/list, structure = @text_components}
+    }
+}
+text_component.score inherit temp/SortedKeymap.nbt {
+    keys = @text_component:all + @text_component:formatting + {
+        "score" = :Key {types = @a/compound, structure = @text_component.score:score, delegate_arguments = {"always_print" = true}}
+    }
+}
+text_component.score:score inherit temp/SortedKeymap.nbt {
+    keys = {
+        "name" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "objective" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+text_component.selector inherit temp/SortedKeymap.nbt {
+    keys = @text_component:all + @text_component:formatting + {
+        "selector" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "separator" = :Key {types = @root_type, structure = @root}
+    }
+}
+text_component.keybind inherit temp/SortedKeymap.nbt {
+    keys = @text_component:all + @text_component:formatting + {
+        "keybind" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+text_component.nbt inherit temp/SortedKeymap.nbt {
+    keys = @text_component:all + @text_component:formatting + {
+        "source" = :Key {types = @a/string}
+        "nbt" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "interpret" = :Key {types = @a/bool}
+        "separator" = :Key {types = @root_type, structure = @root}
+        "block" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "entity" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "storage" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+click_event :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "action"}
+    }
+    substructures = {
+        "open_url" = :Key {types = @a/compound, structure = @click_event.open_url}
+        "open_file" = :Key {types = @a/compound, structure = @click_event.open_file}
+        "run_command" = :Key {types = @a/compound, structure = @click_event.run_command}
+        "suggest_command" = :Key {types = @a/compound, structure = @click_event.suggest_command}
+        "change_page" = :Key {types = @a/compound, structure = @click_event.change_page}
+        "copy_to_clipboard" = :Key {types = @a/compound, structure = @click_event.copy_to_clipboard}
+        "show_dialog" = :Key {types = @a/compound, structure = @click_event.show_dialog}
+        "custom" = :Key {types = @a/compound, structure = @click_event.custom}
+    }
+}
+event:all {
+    "action" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+}
+click_event.open_url inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "url" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+click_event.open_file inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "path" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+click_event.run_command inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "command" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+click_event.suggest_command inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "command" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+click_event.change_page inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "page" = :Key {types = @a/int}
+    }
+}
+click_event.copy_to_clipboard inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "value" = :Key {types = @a/string, structure = @misc/string.nbt}
+    }
+}
+click_event.show_dialog inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "dialog" = :Key {types = [@a/string, @a/compound], structure = @structures/data/dialog/dialog_or_dialog_id}
+    }
+}
+click_event.custom inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "id" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "payload" = :Key {types = @a/string}
+    }
+}
+hover_event :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "action"}
+    }
+    substructures = {
+        "show_text" = :Key {types = @a/compound, structure = @hover_event.show_text}
+        "show_item" = :Key {types = @a/compound, structure = @hover_event.show_item}
+        "show_entity" = :Key {types = @a/compound, structure = @hover_event.show_entity}
+    }
+}
+hover_event.show_text inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "value" = :Key {types = @root_type, structure = @root}
+    }
+}
+hover_event.show_item inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "id" = :Key {types = @a/string}
+        "count" = :Key {types = @a/int}
+        "components" = :Key {types = @a/compound, structure = @structures/misc/data_components/data_components}
+    }
+}
+hover_event.show_entity inherit temp/SortedKeymap.nbt {
+    keys = @event:all + {
+        "name" = :Key {types = @root_type, structure = @root}
+        "id" = :Key {types = @a/string}
+        "uuid" = :Key {types = [@a/string, @a/list, @a/int_array], structure = @hover_event.show_entity:uuid}
+    }
+}
+hover_event.show_entity:uuid :Union {
+    substructures = [
+        :Key {types = @a/string},
+        :Key {types = @a/int_array, structure = @misc/uuid_list.nbt},
+        :Key {types = #TAG_List, structure = @misc/uuid_tag_list},
+    ]
+}

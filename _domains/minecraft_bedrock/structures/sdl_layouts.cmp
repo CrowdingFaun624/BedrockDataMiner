@@ -1,0 +1,259 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "sdl_layouts"
+    $ structure = @persona_profile
+}
+persona_profile inherit temp/SortedKeymap {
+    keys = {
+        "result" = :Key {types = #dict, structure = @result}
+    }
+}
+result inherit temp/SortedKeymap {
+    keys = {
+        "pageId" = :Key {types = #str}
+        "addToRecentlyViewed" = :Key {types = #bool}
+        "rows" = :Key {types = #list, structure = @rows}
+        "inventoryVersion" = :Key {types = #str}
+        "screenLayout" = :Key {types = #str}
+        "sidebarLayoutType" = :Key {types = #str}
+        "pageRefresh" = :Key {types = #bool}
+    }
+}
+rows inherit temp/Dict {
+    value_types = #dict
+    value_structure = @row
+    this_types = #list
+    key_types = #int
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "row"}
+    }
+}
+row inherit temp/SortedKeymap {
+    keys = {
+        "controlId" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 7}
+        "components" = :Key {types = #list, structure = @components}
+    }
+}
+components inherit temp/Dict {
+    value_types = #dict
+    value_structure = @component
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"show_item_key" = false, "field" = "component"}
+    }
+}
+common.all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "$type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+common.item_list {
+    "items" = :Key {types = #list, structure = @item_list}
+    "totalItems" = :Key {types = #int}
+    "customStoreRowConfiguration" = :Key {types = #dict, structure = @custom_store_row_configuration}
+    "linksTo" = :Key {types = #str}
+    "linksToInfo" = :Key {types = #dict, structure = @page}
+    "offline" = :Key {types = #dict, structure = @offline}
+}
+common.text {
+    "text" = :Key {types = #dict, structure = @text}
+}
+custom_store_row_configuration inherit temp/SortedKeymap {
+    keys = {
+        "seeAllVisible" = :Key {types = #bool}
+        "maxOffers" = :Key {types = #int}
+        "arrowsVisible" = :Key {types = #bool}
+        "visibleOffersPerRow" = :Key {types = #int}
+    }
+}
+item_list inherit temp/Dict {
+    value_types = #str
+    this_types = #list
+    key_types = #int
+    key_weight = 0
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "show_item_key" = false, "measure_length" = true}
+    }
+}
+offline inherit temp/SortedKeymap {
+    keys = {
+        "pieceType" = :Key {types = #str}
+    }
+}
+page inherit temp/SortedKeymap {
+    keys = {
+        "linksTo" = :Key {types = #str}
+        "linkType" = :Key {types = #str}
+        "displayType" = :Key {types = #str}
+        "screenTitle" = :Key {types = #dict, structure = @page.screen_title}
+    }
+}
+page.screen_title inherit temp/SortedKeymap {
+    keys = {
+        "value" = :Key {types = #str}
+        "replacements" = :Key {types = #list, structure = inherit temp/Dict {
+            allow_key_moves = false
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = #null
+            value_structure = null
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "item"}
+            }
+        }}
+    }
+}
+text inherit temp/SortedKeymap {
+    keys = {
+        "value" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 3}
+        "style" = :Key {types = #dict, structure = @style}
+        "replacements" = :Key {types = #list, structure = @text.replacements}
+    }
+}
+text.replacements inherit temp/Dict {
+    value_types = #null
+    this_types = #list
+    key_weight = 0
+    key_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "replacement", "show_item_key" = false, "measure_length" = true}
+    }
+}
+texture_image inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+        "style" = :Key {types = #dict, structure = @style}
+    }
+}
+style inherit temp/SortedKeymap {
+    keys = {
+        "highlightColor" = :Key {types = #list, structure = @color}
+        "alignment" = :Key {types = #str}
+        "textColor" = :Key {types = #list, structure = @color}
+        "font" = :Key {types = #str}
+        "showBackground" = :Key {types = #bool}
+        "showOutline" = :Key {types = #bool}
+        "indent" = :Key {types = @temp/decimal}
+        "buttonWidth" = :Key {types = @temp/decimal}
+        "color" = :Key {types = #list, structure = @color}
+        "offerControlIdType" = :Key {types = #str}
+    }
+}
+color inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @temp/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_flat" = true, "print_all" = true, "field" = "channel"}
+    }
+}
+component :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_value
+        arguments = {"key" = "type"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "appearanceInteractionComp" = :Key {types = #dict, structure = @component.appearance_interaction}
+            "characterSelectComp" = :Key {types = #dict, structure = @component.character_select}
+            "colorPickerComp" = :Key {types = #dict, structure = @component.color_picker}
+            "dispPreviewPieceComp" = :Key {types = #dict, structure = @component.disp_preview_piece}
+            "expandedSkinPackComp" = :Key {types = #dict, structure = @component.expanded_skin_pack}
+            "headerComp" = :Key {types = #dict, structure = @component.header}
+            "itemListComp" = :Key {types = #dict, structure = @component.item_list}
+            "openColorPickerComp" = :Key {types = #dict, structure = @component.open_color_picker}
+            "openExpandedAppearanceViewComp" = :Key {types = #dict, structure = @component.open_expanded_appearance_view}
+            "pagedItemListComp" = :Key {types = #dict, structure = @component.paged_item_list}
+            "personaArmSizeComp" = :Key {types = #dict, structure = @component.persona_arm_size}
+            "personaHeightComp" = :Key {types = #dict, structure = @structure.persona_height}
+            "personaOfferInteractionComp" = :Key {types = #dict, structure = @component.persona_offer_interaction}
+            "skinPackListComp" = :Key {types = #dict, structure = @component.skin_pack_list}
+            "skinPackOfferInteractionComp" = :Key {types = #dict, structure = @component.skin_pack_offer_interaction}
+            "textureComp" = :Key {types = #dict, structure = @component.texture}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order, "passthrough" = true}
+        }
+    }
+}
+component.appearance_interaction inherit temp/SortedKeymap {
+    keys = @common.all
+}
+component.character_select inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "characterPage" = :Key {types = #dict, structure = @page}
+        "skinsPage" = :Key {types = #dict, structure = @page}
+    }
+}
+component.color_picker inherit temp/SortedKeymap {
+    keys = @common.all
+}
+component.disp_preview_piece inherit temp/SortedKeymap {
+    keys = @common.all
+}
+component.expanded_skin_pack inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "isOffline" = :Key {types = #bool}
+    }
+}
+component.header inherit temp/SortedKeymap {
+    keys = @common.all + @common.text
+}
+component.item_list inherit temp/SortedKeymap {
+    keys = @common.all + @common.item_list
+}
+component.open_color_picker inherit temp/SortedKeymap {
+    keys = @common.all + @common.item_list
+}
+component.open_expanded_appearance_view inherit temp/SortedKeymap {
+    keys = @common.all
+}
+component.paged_item_list inherit temp/SortedKeymap {
+    keys = @common.all + @common.item_list
+}
+component.persona_arm_size inherit temp/SortedKeymap {
+    keys = @common.all + @common.item_list
+}
+structure.persona_height inherit temp/SortedKeymap {
+    keys = @common.all + @common.item_list
+}
+component.persona_offer_interaction inherit temp/SortedKeymap {
+    keys = @common.all + @common.item_list
+}
+component.skin_pack_list inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "isOwned" = :Key {types = #bool}
+        "isOffline" = :Key {types = #bool}
+        "linksToInfo" = :Key {types = #dict, structure = @page}
+    }
+}
+component.skin_pack_offer_interaction inherit temp/SortedKeymap {
+    keys = @common.all
+}
+component.texture inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "textureImage" = :Key {types = #dict, structure = @texture_image}
+    }
+}

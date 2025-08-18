@@ -1,0 +1,131 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "attachables"
+    $ file_field = "attachable"
+    $ structure = @attachable
+}
+attachable :Normalizer {
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/attachables_normalize_old
+    }
+    outer_types = #dict
+    inner_types = #dict
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "format_version" = :Key {types = #str}
+            "minecraft:attachable" = :Key {types = #dict, similarity_weight = 42, structure = inherit temp/SortedKeymap {
+                keys = {
+                    "description" = :Key {types = #dict, structure = @description}
+                }
+            }}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "item" = :Key {types = #dict, structure = @items}
+        "animations" = :Key {types = #dict, structure = @animations}
+        "geometry" = :Key {types = #dict, structure = @geometry}
+        "materials" = :Key {types = #dict, structure = @materials}
+        "render_controllers" = :Key {types = #list, structure = @render_controllers}
+        "scripts" = :Key {types = #dict, structure = @scripts}
+        "textures" = :Key {types = #dict, structure = @textures}
+    }
+}
+animations inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "animation", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+geometry inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "geometry", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+items inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "item", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+materials inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "material", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+render_controllers inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "render controller", "show_item_key" = false, "measure_length" = true, "sort" = %sort_by_value}
+    }
+}
+scripts inherit temp/SortedKeymap {
+    keys = {
+        "initialize" = :Key {types = #list, structure = @scripts.list}
+        "parent_setup" = :Key {types = #str}
+        "pre_animation" = :Key {types = #list, structure = @scripts.list}
+        "animate" = :Key {types = #list, structure = @scripts.list}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "situation"}
+    }
+}
+scripts.list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#dict, #str]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #dict, structure = inherit temp/Dict {
+                value_types = #str
+                value_structure = null
+                delegate = :Delegate {
+                    delegate_class = %DefaultDelegate
+                    arguments = {"sort" = %sort_by_key, "measure_length" = true}
+                }
+            }},
+            :Key {types = #str},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "script", "show_item_key" = false, "measure_length" = true}
+    }
+}
+textures inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "texture", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}

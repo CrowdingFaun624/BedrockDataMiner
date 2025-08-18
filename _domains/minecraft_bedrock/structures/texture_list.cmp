@@ -1,0 +1,73 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "texture_list"}
+    }
+}
+cache :Cache {
+    this_types = #dict
+    structure = :Condition {
+        substructures = [
+            :Key {types = #dict, filter = :EqFilter {
+                key = "serializer"
+                value = "lines_serializer"
+            }, structure = @textures{$serializer=@s/lines_serializer}},
+            :Key {types = #dict, filter = :EqFilter {
+                key = "serializer"
+                value = "texture_list_serializer"
+            }, structure = @textures{$serializer = @s/texture_list_serializer}},
+        ]
+    }
+}
+textures abstract :Normalizer {
+    $ (:Serializer) serializer
+    outer_types = #dict
+    inner_types = #fake_file
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/texture_list_normalize
+        arguments = {"serializer" = serializer}
+    }
+    structure = @file
+}
+file :File {
+    serializer = null
+    outer_types = #fake_file
+    inner_types = #dict
+    structure = inherit temp/Dict {
+        value_types = #list
+        key_structure = @temp/string
+        min_key_similarity_threshold = 0.9
+        value_structure = @resource_packs
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "texture", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+resource_packs :Normalizer {
+    outer_types = #list
+    inner_types = #list
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_pack_names
+    }
+    structure = inherit temp/Dict {
+        key_weight = 0
+        key_types = #int
+        this_types = #list
+        value_types = #tuple
+        value_structure = @temp/defined_in
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "resource pack", "show_item_key" = false, "measure_length" = true, "print_flat" = true, "sort" = %sort_by_value, "print_all" = true}
+        }
+    }
+}

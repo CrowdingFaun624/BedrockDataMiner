@@ -1,0 +1,76 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        item_old = @structures/misc/item_old/
+        s = @minecraft_common!serializers/
+        temp = @structures/misc/template/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        tc = @structures/misc/text_component/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "advancements"
+    $ pack_type = "data pack"
+    $ serializer = @s/json
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "parent" = :Key {types = #str}
+        "display" = :Key {types = #dict, structure = @display}
+        "criteria" = :Key {types = #dict, structure = @criteria}
+        "requirements" = :Key {types = #list, structure = @requirements}
+        "rewards" = :Key {types = #dict, structure = @rewards}
+        "sends_telemetry_event" = :Key {types = #bool}
+    }
+}
+display inherit temp/SortedKeymap {
+    keys = {
+        "icon" = :Key {types = [@a/compound, #str], structure = @display:icon}
+        "title" = :Key {types = @tc/root_type, structure = @tc/root}
+        "description" = :Key {types = @tc/root_type, structure = @tc/root}
+        "frame" = :Key {types = #str}
+        "background" = :Key {types = #str}
+        "show_toast" = :Key {types = #bool}
+        "announce_to_chat" = :Key {types = #bool}
+        "hidden" = :Key {types = #bool}
+        "rewards" = :Key {types = #dict, structure = @rewards, tags = @t/outdated}
+    }
+}
+display:icon :Switch {
+    switch_function = :Function {
+        function = %scripts/normalizers/normalizers/advancements_display_icon_switch
+    }
+    substructures = {
+        "older" = :Key {types = #str, tags = @t/outdated}
+        "old" = :Key {types = #dict, structure = @display:icon.old, tags = @t/outdated}
+        "new" = :Key {types = @a/compound, structure = @misc/item_data_slotless}
+    }
+}
+display:icon.old inherit temp/SortedKeymap {
+    keys = {
+        "item" = :Key {types = #str}
+        "data" = :Key {types = #int, tags = @t/outdated}
+        "nbt" = :Key {types = #str} // TODO: process SNBT
+    }
+}
+requirements inherit temp/Set {
+    $ field = "requirement"
+    value_types = #list
+    value_structure = @misc/named_list{$name="criterion"}
+}
+rewards inherit temp/SortedKeymap {
+    keys = {
+        "experience" = :Key {types = #int}
+        "recipes" = :Key {types = #list, structure = @misc/named_list{$name="recipe"}}
+        "loot" = :Key {types = #list, structure = @misc/named_list{$name="loot table"}}
+        "function" = :Key {types = #str}
+    }
+}
+criteria inherit temp/Dict {
+    $ field = "criterion"
+    value_types = #dict
+    value_structure = @structures/data/advancements/triggers/criterion
+}

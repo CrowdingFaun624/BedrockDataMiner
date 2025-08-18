@@ -1,0 +1,46 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        int_provider = @structures/misc/provider/int_provider/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ pack_type = "data pack"
+    $ name = "enchantment_providers"
+    $ structure = @root
+}
+root :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:single" = :Key {types = #dict, structure = @provider.single}
+        "minecraft:enchantments_by_cost" = :Key {types = #dict, structure = @provider.enchantments_by_cost}
+        "minecraft:by_cost_with_difficulty" = :Key {types = #dict, structure = @provider.by_cost_with_difficulty}
+    }
+}
+provider:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+provider.single inherit temp/SortedKeymap {
+    keys = @provider:all + {
+        "enchantment" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "level" = :Key {types = [#int, #dict], structure = @int_provider/int_provider}
+    }
+}
+provider.enchantments_by_cost inherit temp/SortedKeymap {
+    keys = @provider:all + {
+        "enchantments" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="enchantment"}}
+        "cost" = :Key {types = [#int, #dict], structure = @int_provider/int_provider}
+    }
+}
+provider.by_cost_with_difficulty inherit temp/SortedKeymap {
+    keys = @provider:all + {
+        "enchantments" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="enchantment"}}
+        "min_cost" = :Key {types = #int}
+        "max_cost_span" = :Key {types = #int}
+    }
+}

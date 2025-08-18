@@ -1,0 +1,82 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "lighting"
+    $ file_field = "lighting file"
+    $ pack_type = "resource pack"
+    $ structure = @lighting_file
+}
+lighting_file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:lighting_settings" = :Key {types = #dict, structure = @lighting_settings, similarity_weight = 15}
+    }
+}
+lighting_settings inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "directional_lights" = :Key {types = #dict, structure = @directional_lights}
+        "emissive" = :Key {types = #dict, structure = @emissive}
+        "ambient" = :Key {types = #dict, structure = @ambient}
+        "sky" = :Key {types = #dict, structure = @sky}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+directional_lights inherit temp/SortedKeymap {
+    keys = {
+        "chaotic" = :Key {types = #dict, structure = @directional_light}
+        "flash" = :Key {types = #dict, structure = @directional_light}
+        "sun" = :Key {types = #dict, structure = @directional_light}
+        "moon" = :Key {types = #dict, structure = @directional_light}
+        "orbital_offset_degrees" = :Key {types = #float}
+        "orbital" = :Key {types = #dict, structure = @directional_lights}
+    }
+}
+directional_light inherit temp/SortedKeymap {
+    keys = {
+        "illuminance" = :Key {types = [#dict, #float], structure = @keyframe_dict_or_float}
+        "color" = :Key {types = [#dict, #list], structure = @keyframe_vector_dict_or_vector}
+    }
+}
+emissive inherit temp/SortedKeymap {
+    keys = {
+        "desaturation" = :Key {types = #float}
+    }
+}
+ambient inherit temp/SortedKeymap {
+    keys = {
+        "color" = :Key {types = [#str, #list], structure = :Union {
+            substructures = [
+                :Key {types = #str},
+                :Key {types = #list, structure = @structures/atmospheric_weather/color},
+            ]
+        }}
+        "illuminance" = :Key {types = #float}
+    }
+}
+sky inherit temp/SortedKeymap {
+    keys = {
+        "intensity" = :Key {types = #float}
+    }
+}
+keyframe_dict_or_float :Union {
+    substructures = [
+        :Key {types = #float},
+        :Key {types = #dict, structure = @structures/atmospherics/keyframe_dict},
+    ]
+}
+keyframe_vector_dict_or_vector :Union {
+    substructures = [
+        :Key {types = #list, structure = @structures/atmospherics/vector_int},
+        :Key {types = #dict, structure = @structures/atmospherics/keyframe_vector_dict},
+    ]
+}

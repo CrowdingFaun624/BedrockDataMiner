@@ -1,0 +1,199 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "render_controllers"
+    $ pack_type = "resource pack"
+    $ structure = @render_controllers_file
+}
+render_controllers_file :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/render_controllers_fix_old
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "format_version" = :Key {types = #str}
+            "render_controllers" = :Key {types = #dict, structure = @render_controllers}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+render_controllers inherit temp/Dict {
+    value_types = #dict
+    value_structure = @render_controller
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "render controller", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+color inherit temp/SortedKeymap {
+    keys = {
+        "a" = :Key {types = [#float, #str]}
+        "r" = :Key {types = [#float, #str]}
+        "g" = :Key {types = [#float, #str]}
+        "b" = :Key {types = [#float, #str]}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "channel"}
+    }
+}
+render_controller :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %delete_key
+        arguments = {"key" = "texures"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "arrays" = :Key {types = #dict, structure = @arrays}
+            "color" = :Key {types = #dict, structure = @color}
+            "filter_lighting" = :Key {types = #bool}
+            "geometry" = :Key {types = #str}
+            "ignore_lighting" = :Key {types = #bool}
+            "is_hurt_color" = :Key {types = #dict, structure = @color}
+            "light_color_multiplier" = :Key {types = #float}
+            "materials" = :Key {types = #list, structure = @materials}
+            "on_fire_color" = :Key {types = #dict, structure = @color}
+            "overlay_color" = :Key {types = #dict, structure = @color}
+            "part_visibility" = :Key {types = [#dict, #list], structure = @part_visibility.group}
+            "rebuild_animation_matrices" = :Key {types = #bool}
+            "textures" = :Key {types = #list, structure = @textures}
+            "uv_anim" = :Key {types = #dict, structure = @uv_anim}
+        }
+    }
+}
+arrays inherit temp/SortedKeymap {
+    keys = {
+        "geometries" = :Key {types = #dict, structure = @array}
+        "materials" = :Key {types = #dict, structure = @array}
+        "textures" = :Key {types = #dict, structure = @array}
+    }
+}
+array inherit temp/Dict {
+    value_types = #list
+    value_structure = @array_list
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "array", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+array_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "array item", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+materials inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @material_dict
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "material dict", "show_item_key" = false, "measure_length" = true}
+    }
+}
+material_dict inherit temp/Dict {
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "material", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+part_visibility.group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @part_visibility_dict},
+        :Key {types = #list, structure = @part_visibility},
+    ]
+}
+part_visibility inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    min_value_similarity_threshold = 0.3
+    value_structure = @part_visibility_dict
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "part visibility dict", "show_item_key" = false, "measure_length" = true}
+    }
+}
+part_visibility_dict inherit temp/Dict {
+    value_types = [#bool, #int, #str]
+    min_key_similarity_threshold = 0.5
+    min_value_similarity_threshold = 0.1
+    key_weight = 9
+    value_weight = 1
+    key_structure = @temp/string
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #bool},
+            :Key {types = #int},
+            :Key {types = #str, structure = @temp/string{
+                max_square_length = 1000000
+            }},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "part visibility", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+textures inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "texture", "show_item_key" = false, "sort" = %sort_by_value, "measure_length" = true}
+    }
+}
+uv_anim inherit temp/SortedKeymap {
+    keys = {
+        "offset" = :Key {types = #list, structure = @uv_anim.offsets}
+        "scale" = :Key {types = #list, structure = @uv_anim.scale}
+    }
+}
+uv_anim.offsets inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#float, #str]
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "expression", "show_item_key" = false, "measure_length" = true}
+    }
+}
+uv_anim.scale inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "range item", "measure_length" = false, "print_flat" = true, "print_all" = true}
+    }
+}

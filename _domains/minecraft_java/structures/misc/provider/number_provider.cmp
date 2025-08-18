@@ -1,0 +1,99 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+number_provider abstract :Union {
+    $ (type | list) types
+    substructures = [
+        :Key {types = types},
+        :Key {types = #dict, structure = @number_provider_types{$types=types}},
+    ]
+}
+number_provider_types abstract :Switch {
+    $ (type | list) types
+    switch_function = :Function {
+        function = %get_get_key
+        arguments = {"key" = "type", "default" = "minecraft:uniform"}
+    }
+    substructures = {
+        "minecraft:constant" = :Key {types = #dict, structure = @number_provider.constant{$types=types}}
+        "minecraft:uniform" = :Key {types = #dict, structure = @number_provider.uniform{$types=types}}
+        "minecraft:binomial" = :Key {types = #dict, structure = @number_provider.binomial}
+        "minecraft:linear" = :Key {types = #dict, structure = @number_provider.linear}
+        "minecraft:score" = :Key {types = #dict, structure = @number_provider.score}
+        "minecraft:storage" = :Key {types = #dict, structure = @number_provider.storage}
+        "minecraft:enchantment_level" = :Key {types = #dict, structure = @number_provider.enchantment_level}
+    }
+}
+number_provider:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+number_provider.constant abstract inherit temp/SortedKeymap {
+    $ (type | list) types
+    keys = @number_provider:all + {
+        "value" = :Key {types = types}
+    }
+}
+number_provider.uniform abstract inherit temp/SortedKeymap {
+    $ (type | list) types
+    keys = @number_provider:all + {
+        "min" = :Key {types = [types, #dict], structure = @number_provider{$types=types}}
+        "max" = :Key {types = [types, #dict], structure = @number_provider{$types=types}}
+    }
+}
+number_provider.binomial abstract inherit temp/SortedKeymap {
+    keys = @number_provider:all + {
+        "n" = :Key {types = [@misc/decimal, #dict], structure = @number_provider{$types=@misc/decimal}}
+        "p" = :Key {types = [@misc/decimal, #dict], structure = @number_provider{$types=@misc/decimal}}
+    }
+}
+number_provider.linear abstract inherit temp/SortedKeymap {
+    keys = @number_provider:all + {
+        "base" = :Key {types = #float}
+        "per_level_above_first" = :Key {types = #float}
+    }
+}
+number_provider.score abstract inherit temp/SortedKeymap {
+    keys = @number_provider:all + {
+        "target" = :Key {types = #dict, structure = @target}
+        "score" = :Key {types = #str}
+        "scale" = :Key {types = @misc/decimal}
+    }
+}
+number_provider.storage abstract inherit temp/SortedKeymap {
+    keys = @number_provider:all + {
+        "storage" = :Key {types = #str}
+        "path" = :Key {types = #str}
+    }
+}
+number_provider.enchantment_level abstract inherit temp/SortedKeymap {
+    keys = @number_provider:all + {
+        "amount" = :Key {types = [#float, #dict], structure = @structures/data/enchantments/effect_components/level_based_value}
+    }
+}
+target :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "fixed" = :Key {types = #dict, structure = @target.fixed}
+        "context" = :Key {types = #dict, structure = @target.context}
+    }
+}
+target:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+target.fixed inherit temp/SortedKeymap {
+    keys = @target:all + {
+        "name" = :Key {types = #str}
+    }
+}
+target.context inherit temp/SortedKeymap {
+    keys = @target:all + {
+        "target" = :Key {types = #str}
+    }
+}

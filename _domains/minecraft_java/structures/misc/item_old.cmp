@@ -1,0 +1,154 @@
+/* Converted by CmpMigrator 0.1.9 */
+// the old "tag" format in items
+settings {
+    aliases {
+        a = @structures/misc/types/
+        be = @structures/misc/block_entity/
+        bs = @structures/misc/block_state/
+        entity = @structures/misc/entity/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+tag inherit temp/SortedKeymap.nbt {
+    keys = {
+        "AttributeModifiers" = :Key {types = @a/list, structure = @tag.attribute_modifiers}
+        "author" = :Key {types = @a/string}
+        "BlockEntityTag" = :Key {types = @a/compound, structure = @be/block_entity}
+        "BlockStateTag" = :Key {types = @a/compound, structure = @bs/properties}
+        "BucketVariantTag" = :Key {types = @a/int}
+        "CanDestroy" = :Key {types = @a/list, structure = @misc/named_list.nbt{$name="block"}}
+        "CanPlaceOn" = :Key {types = @a/list, structure = @misc/named_list.nbt{$name="block"}}
+        "Charged" = :Key {types = @a/bool}
+        "ChargedProjectiles" = :Key {types = @a/list, structure = @misc/item_data_slotless_list}
+        "CustomPotionEffects" = :Key {types = @a/list, structure = @misc/effect_data_list, tags = @t/outdated}
+        "custom_potion_effects" = :Key {types = @a/list, structure = @misc/effect_data_list}
+        "CustomModelData" = :Key {types = @a/int}
+        "CustomPotionColor" = :Key {types = @a/int}
+        "Damage" = :Key {types = @a/int}
+        "DebugProperty" = :Key {types = @a/compound, structure = @tag.debug_property}
+        "Decorations" = :Key {types = @a/list, structure = @tag.decorations}
+        "display" = :Key {types = @a/compound, structure = @tag.display}
+        "Effects" = :Key {types = @a/list, structure = @tag.effects, tags = @t/outdated}
+        "effects" = :Key {types = @a/list, structure = @tag.effects}
+        "ench" = :Key {types = @a/list, structure = @tag.enchantments, tags = @t/outdated}
+        "Enchantments" = :Key {types = @a/list, structure = @tag.enchantments}
+        "EntityTag" = :Key {types = @a/compound, structure = @entity/entity}
+        "Explosion" = :Key {types = @a/compound, structure = @misc/firework_explosion}
+        "filtered_pages" = :Key {types = @a/compound, structure = @tag.filtered_pages}
+        "filtered_title" = :Key {types = @a/string}
+        "Fireworks" = :Key {types = @a/compound, structure = @tag.fireworks}
+        "generation" = :Key {types = @a/int}
+        "HideFlags" = :Key {types = @a/int}
+        "instrument" = :Key {types = @a/string}
+        "Items" = :Key {types = @a/list, structure = @misc/item_data_slotless_list}
+        "LocName" = :Key {types = @a/string, tags = @t/outdated}
+        "LodestoneDimension" = :Key {types = @a/string}
+        "LodestonePos" = :Key {types = @a/compound, structure = @tag.lodestone_pos}
+        "LodestoneTracked" = :Key {types = @a/bool}
+        "map" = :Key {types = @a/int}
+        "map_scale_direction" = :Key {types = @a/int}
+        "map_to_lock" = :Key {types = @a/bool}
+        "pages" = :Key {types = @a/list, structure = @misc/named_list.nbt{$name="page"}}
+        "Potion" = :Key {types = @a/string}
+        "Recipes" = :Key {types = @a/list, structure = @misc/named_list.nbt{$name="recipe"}}
+        "RepairCost" = :Key {types = @a/int}
+        "resolved" = :Key {types = @a/bool}
+        "SkullOwner" = :Key {types = [@a/string, @a/compound], structure = @misc/profile}
+        "StoredEnchantments" = :Key {types = @a/list, structure = @tag.enchantments}
+        "title" = :Key {types = @a/string}
+        "Trim" = :Key {types = @a/compound, structure = @tag.trim}
+        "Unbreakable" = :Key {types = @a/bool}
+    }
+}
+tag.trim inherit temp/SortedKeymap.nbt {
+    keys = {
+        "material" = :Key {types = @a/string}
+        "pattern" = :Key {types = @a/string}
+    }
+}
+tag.attribute_modifiers inherit temp/Set.nbt {
+    $ field = "attribute modifier"
+    value_types = @a/compound
+    value_structure = @tag.attribute_modifiers:item
+}
+tag.attribute_modifiers:item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "AttributeName" = :Key {types = @a/string}
+        "Name" = :Key {types = @a/string}
+        "Slot" = :Key {types = @a/string}
+        "Operation" = :Key {types = @a/int}
+        "Amount" = :Key {types = @a/double}
+        "UUID" = :Key {types = @a/int_array, structure = @misc/uuid_list.nbt}
+    }
+}
+tag.debug_property inherit temp/Dict.nbt {
+    $ field = "block"
+    value_types = @a/string
+    value_structure = null
+}
+tag.decorations inherit temp/Set.nbt {
+    $ field = "decoration"
+    value_types = @a/compound
+    value_structure = @tag.decorations:item
+}
+tag.decorations:item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "id" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "type" = :Key {types = @a/byte}
+        "x" = :Key {types = @a/double}
+        "z" = :Key {types = @a/double}
+        "rot" = :Key {types = @a/double}
+    }
+}
+tag.display inherit temp/SortedKeymap.nbt {
+    keys = {
+        "Name" = :Key {types = @a/string}
+        "Lore" = :Key {types = @a/list, structure = @misc/named_list.nbt{$name="line"}}
+        "color" = :Key {types = @a/int} // armor only
+        "MapColor" = :Key {types = @a/int} // maps only
+    }
+}
+tag.effects inherit temp/Set.nbt { // suspicious stew
+    $ field = "effect"
+    value_types = @a/compound
+    value_structure = @tag.effects:item
+}
+tag.effects:item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "EffectId" = :Key {types = @a/int, delegate_arguments = {"always_print" = true}}
+        "id" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+        "EffectDuration" = :Key {types = @a/int}
+        "duration" = :Key {types = @a/int}
+    }
+}
+tag.enchantments inherit temp/Set.nbt {
+    $ field = "enchantment"
+    value_types = @a/compound
+    value_structure = @tag.enchantments:item
+}
+tag.enchantments:item inherit temp/SortedKeymap.nbt {
+    keys = {
+        "id" = :Key {types = [@a/string, @a/short], delegate_arguments = {"always_print" = true}}
+        "lvl" = :Key {types = @a/short}
+    }
+}
+tag.filtered_pages inherit temp/Dict.nbt {
+    $ field = "page"
+    value_types = @a/string
+    value_structure = null
+}
+tag.fireworks inherit temp/SortedKeymap.nbt {
+    keys = {
+        "Explosions" = :Key {types = @a/list, structure = @misc/firework_explosion_list}
+        "Flight" = :Key {types = @a/byte}
+    }
+}
+tag.lodestone_pos inherit temp/SortedKeymap.nbt {
+    keys = {
+        "X" = :Key {types = @a/int}
+        "Y" = :Key {types = @a/int}
+        "Z" = :Key {types = @a/int}
+    }
+}

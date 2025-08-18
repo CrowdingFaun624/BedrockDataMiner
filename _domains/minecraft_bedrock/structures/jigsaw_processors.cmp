@@ -1,0 +1,160 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "jigsaw_processors"
+    $ files_key_structure = @temp/string
+    $ file_field = "processor"
+    $ pack_type = "behavior pack"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str, similarity_weight = 0}
+        "minecraft:processor_list" = :Key {types = #dict, structure = @processor_list}
+    }
+}
+processor_list inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "processors" = :Key {types = #list, structure = @processors}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+processors inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @processor
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "processor", "show_item_key" = false, "measure_length" = true}
+    }
+}
+processor :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_value
+        arguments = {"key" = "processor_type"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "minecraft:capped" = :Key {types = #dict, structure = @processor.capped}
+            "minecraft:rule" = :Key {types = #dict, structure = @processor.rule}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"passthrough" = true}
+        }
+    }
+}
+processor.capped inherit temp/SortedKeymap {
+    keys = {
+        "processor_type" = :Key {types = #str}
+        "limit" = :Key {types = #int}
+        "delegate" = :Key {types = #dict, structure = @processor}
+    }
+}
+processor.rule inherit temp/SortedKeymap {
+    keys = {
+        "processor_type" = :Key {types = #str}
+        "rules" = :Key {types = #list, structure = @rules}
+    }
+}
+rules inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @rule
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "rule", "show_item_key" = false, "measure_length" = true}
+    }
+}
+rule inherit temp/SortedKeymap {
+    keys = {
+        "block_entity_modifier" = :Key {types = #dict, structure = @block_entity_modifier}
+        "input_predicate" = :Key {types = #dict, structure = @predicate}
+        "output_state" = :Key {types = #dict, structure = @output_state}
+    }
+}
+output_state inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "states" = :Key {types = #dict, structure = @block_states}
+    }
+}
+block_states inherit temp/SortedKeymap {
+    keys = {
+        "dirt_type" = :Key {types = #str}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "state", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+predicate :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_value
+        arguments = {"key" = "predicate_type"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "minecraft:block_match" = :Key {types = #dict, structure = @predicate.block_match}
+            "minecraft:random_block_match" = :Key {types = #dict, structure = @predicate.random_block_match}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"passthrough" = true}
+        }
+    }
+}
+predicate.block_match inherit temp/SortedKeymap {
+    keys = {
+        "predicate_type" = :Key {types = #str}
+        "block" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+predicate.random_block_match inherit temp/SortedKeymap {
+    keys = {
+        "predicate_type" = :Key {types = #str}
+        "block" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "probability" = :Key {types = #float}
+    }
+}
+block_entity_modifier :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_value
+        arguments = {"key" = "type"}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "minecraft:append_loot" = :Key {types = #dict, structure = @block_entity_modifier.append_loot}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"passthrough" = true}
+        }
+    }
+}
+block_entity_modifier.append_loot inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str}
+        "loot_table" = :Key {types = #str, delegate_arguments = {"always_print" = true}, structure = @temp/string}
+    }
+}

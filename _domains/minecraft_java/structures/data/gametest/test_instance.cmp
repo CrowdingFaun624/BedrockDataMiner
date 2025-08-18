@@ -1,0 +1,46 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @structure_tags/
+        te = @structures/data/gametest/test_environment/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "test_instance"
+    $ pack_type = "data pack"
+    $ structure = @test_instance
+}
+test_instance :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:block_based" = :Key {types = #dict, structure = @test_instance.block_based}
+        "minecraft:function" = :Key {types = #dict, structure = @test_instance.function}
+    }
+}
+test_instance:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "environment" = :Key {types = [#str, #dict], structure = @te/test_environment_or_id}
+    "structure" = :Key {types = #str}
+    "max_ticks" = :Key {types = #int}
+    "setup_ticks" = :Key {types = #int}
+    "required" = :Key {types = #bool}
+    "rotation" = :Key {types = #str}
+    "manual_only" = :Key {types = #bool}
+    "sky_access" = :Key {types = #bool}
+    "sky_accesss" = :Key {types = #bool, tags = @t/outdated}
+    "max_attempts" = :Key {types = #int}
+    "required_successes" = :Key {types = #int}
+}
+test_instance.block_based inherit temp/SortedKeymap {
+    keys = @test_instance:all
+}
+test_instance.function inherit temp/SortedKeymap {
+    keys = @test_instance:all + {
+        "batch" = :Key {types = #str, tags = @t/outdated}
+        "function" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}

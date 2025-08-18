@@ -1,0 +1,61 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        l = @version_tag/latest_slots/
+        v = @versions/
+    }
+}
+alpha :VersionTag {}
+beta :VersionTag {
+    is_order_tag = true
+    is_development_tag = true
+    development_name = "beta"
+    latest_slot = @l/development
+}
+double_assets :VersionTag {
+    auto_assign = [
+        :RangeVersionTagAutoAssigner {
+            newest = null
+            oldest = @v/'1.20.50.21'
+        },
+    ]
+}
+ipa :VersionTag {}
+major :VersionTag {
+    is_order_tag = true
+    is_major_tag = true
+    latest_slot = @l/release
+}
+minor :VersionTag {
+    is_order_tag = true
+    is_major_tag = true
+    latest_slot = @l/release
+}
+patch :VersionTag {
+    is_order_tag = true
+    is_major_tag = true
+    latest_slot = @l/release
+}
+pocket_edition :VersionTag {
+    auto_assign = [
+        :RangeVersionTagAutoAssigner {
+            newest = @v/'1.1.7'
+            oldest = null
+        },
+    ]
+}
+pocket_edition_alpha_before :VersionTag {
+    auto_assign = [
+        :RangeVersionTagAutoAssigner {
+            newest = @v/'1.1.7'
+            oldest = @v/a0.17.0.1
+        },
+    ]
+}
+reupload :VersionTag {
+    is_order_tag = true
+    latest_slot = @l/release
+}
+unreleased :VersionTag {
+    is_unreleased_tag = true
+}

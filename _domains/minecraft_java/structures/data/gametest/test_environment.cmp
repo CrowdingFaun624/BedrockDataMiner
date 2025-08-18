@@ -1,0 +1,81 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "test_environment"
+    $ pack_type = "data pack"
+    $ structure = @test_environment
+}
+test_environment_list inherit temp/Set {
+    $ field = "test_environment"
+    value_types = [#str, #dict]
+    value_structure = @test_environment_or_id
+}
+test_environment_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @test_environment},
+    ]
+}
+test_environment :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:all_of" = :Key {types = #dict, structure = @test_environment.all_of}
+        "minecraft:function" = :Key {types = #dict, structure = @test_environment.function}
+        "minecraft:game_rules" = :Key {types = #dict, structure = @test_environment.game_rules}
+        "minecraft:weather" = :Key {types = #dict, structure = @test_environment.weather}
+        "minecraft:raining" = :Key {types = #dict, structure = @test_environment.weather, tags = @t/outdated}
+        "minecraft:time_of_day" = :Key {types = #dict, structure = @test_environment.time_of_day}
+    }
+}
+test_environment:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+test_environment.all_of inherit temp/SortedKeymap {
+    keys = @test_environment:all + {
+        "definitions" = :Key {types = #list, structure = @test_environment_list}
+    }
+}
+test_environment.function inherit temp/SortedKeymap {
+    keys = @test_environment:all + {
+        "setup" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "teardown" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+test_environment.game_rules inherit temp/SortedKeymap {
+    keys = @test_environment:all + {
+        "bool_rules" = :Key {types = #list, structure = @test_environment.game_rules:rules{$value_types=#bool}}
+        "int_rules" = :Key {types = #list, structure = @test_environment.game_rules:rules{$value_types=#int}}
+    }
+}
+test_environment.game_rules:rules abstract inherit temp/Set {
+    $ field = "game rule"
+    $ (type) value_types
+    value_types = #dict
+    value_structure = @test_environment.game_rules:rule{$value_types=value_types}
+}
+test_environment.game_rules:rule abstract inherit temp/SortedKeymap {
+    $ (type) value_types
+    keys = {
+        "rule" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "value" = :Key {types = value_types}
+    }
+}
+test_environment.weather inherit temp/SortedKeymap {
+    keys = @test_environment:all + {
+        "weather" = :Key {types = #str}
+    }
+}
+test_environment.time_of_day inherit temp/SortedKeymap {
+    keys = @test_environment:all + {
+        "time" = :Key {types = #int}
+    }
+}

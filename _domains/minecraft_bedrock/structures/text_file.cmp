@@ -1,0 +1,56 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+    }
+}
+base :StructureBase {
+    this_types = #file
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "text_file"}
+    }
+}
+cache :Cache {
+    this_types = #file
+    structure = :Condition {
+        substructures = [
+            :Key {types = #file, filter = :EqFilter {
+                key = "serializer"
+                value = "text_serializer"
+            }, structure = @file{$serializer=@s/text_serializer}},
+            :Key {types = #file, filter = :EqFilter {
+                key = "serializer"
+                value = "javascript_serializer"
+            }, structure = @file{$serializer=@s/javascript_serializer}},
+            :Key {types = #file, filter = :EqFilter {
+                key = "serializer"
+                value = "css_serializer"
+            }, structure = @file{$serializer = @s/css_serializer}},
+        ]
+    }
+}
+file :File {
+    $ (:Serializer) serializer = @s/text_serializer
+    serializer = serializer
+    outer_types = #file
+    inner_types = #str
+    structure = @lines
+}
+lines :Normalizer {
+    outer_types = #str
+    inner_types = #list
+    functions = :Function {
+        function = %split_lines
+    }
+    structure = :Sequence {
+        max_square_length = 1000000000000
+        value_types = #str
+        value_structure = null
+        delegate = :Delegate {
+            delegate_class = %LongStringDelegate
+            arguments = {"measure_length" = true}
+        }
+    }
+}

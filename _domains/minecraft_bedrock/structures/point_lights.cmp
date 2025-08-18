@@ -1,0 +1,31 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "point_lights"
+    $ file_field = "point lights file"
+    $ pack_type = "resource pack"
+    $ structure = @point_lights_file
+}
+point_lights_file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:point_light_settings" = :Key {types = #dict, structure = @point_light_settings, similarity_weight = 15}
+    }
+}
+point_light_settings inherit temp/SortedKeymap {
+    keys = {
+        "colors" = :Key {types = #dict, structure = @colors}
+    }
+}
+colors inherit temp/Dict {
+    key_structure = @temp/string_remove_minecraft_prefix
+    key_weight = 4
+    value_weight = 1
+    value_types = #str
+    value_structure = null
+}

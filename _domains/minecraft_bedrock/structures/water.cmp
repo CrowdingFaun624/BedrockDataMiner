@@ -1,0 +1,66 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "water"
+    $ file_field = "water file"
+    $ pack_type = "resource pack"
+    $ structure = @water_file
+}
+water_file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:water_settings" = :Key {types = #dict, structure = @water_settings, similarity_weight = 15}
+    }
+}
+water_settings inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+        "particle_concentrations" = :Key {types = #dict, structure = @particle_concentrations}
+        "caustics" = :Key {types = #dict, structure = @caustics}
+        "waves" = :Key {types = #dict, structure = @waves}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+particle_concentrations inherit temp/SortedKeymap {
+    keys = {
+        "chlorophyll" = :Key {types = #float}
+        "suspended_sediment" = :Key {types = @temp/decimal}
+        "cdom" = :Key {types = @temp/decimal}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "particle"}
+    }
+}
+caustics inherit temp/SortedKeymap {
+    keys = {
+        "enabled" = :Key {types = #bool}
+        "frame_length" = :Key {types = #float}
+        "scale" = :Key {types = #float}
+        "power" = :Key {types = #int}
+    }
+}
+waves inherit temp/SortedKeymap {
+    keys = {
+        "enabled" = :Key {types = #bool}
+        "frequency" = :Key {types = #int}
+        "octaves" = :Key {types = #int}
+        "depth" = :Key {types = #int}
+        "sampleWidth" = :Key {types = #float}
+        "speed" = :Key {types = #int}
+        "shape" = :Key {types = #float}
+        "pull" = :Key {types = #float}
+        "mix" = :Key {types = #float}
+        "frequency_scaling" = :Key {types = #float}
+        "speed_scaling" = :Key {types = #float}
+    }
+}

@@ -1,0 +1,198 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        block_models = @structures/assets/block_models/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+        vector = @structures/misc/vector/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @resource_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "blockstates"}
+    }
+}
+resource_packs inherit temp/Dict {
+    value_types = #dict
+    value_structure = @files
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "measure_length" = true}
+    }
+}
+files inherit temp/Dict {
+    value_types = #file
+    value_structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "file", "measure_length" = true}
+    }
+}
+cache :Cache {
+    this_types = #file
+    structure = :Condition {
+        substructures = [
+            :Key {types = #file, filter = :EqFilter {
+                key = "fix_json"
+                value = false
+                default = true
+            }, structure = @file{$serializer = @minecraft_common!serializers/json}}
+            :Key {types = #file, filter = :EqFilter {
+                key = "fix_json"
+                value = true
+            }, structure = @file{$serializer = @serializers/blockstates_fixer}},
+        ]
+    }
+}
+file abstract :File {
+    $ (:Serializer) serializer
+    serializer = serializer
+    outer_types = #file
+    inner_types = #dict
+    structure = @root
+}
+blockstate_condition inherit temp/Dict {
+    value_types = [#str, #list, #bool]
+    key_structure = @misc/string
+    value_structure = :Union {
+        substructures = [
+            :Key {types = #bool}, // outdated
+            :Key {types = #str, structure = @misc/string},
+            :Key {types = #list, structure = @blockstate_conditions},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "state", "measure_length" = true}
+    }
+}
+blockstate_conditions inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @blockstate_condition
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "condition", "show_item_key" = false, "measure_length" = true}
+    }
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "__comment" = :Key {types = #str, tags = @t/outdated}
+        ",facing=_comment" = :Key {types = #str, tags = @t/outdated}
+        "multipart" = :Key {types = #list, structure = @multipart}
+        "variants" = :Key {types = #dict, structure = @variants}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}, tags = @t/outdated}
+        "inheritFrom" = :Key {types = #str, tags = @t/outdated}
+        "inventoryRender3D" = :Key {types = #bool, tags = @t/outdated}
+        "randomOffsetX" = :Key {types = #bool, tags = @t/outdated}
+        "randomOffsetY" = :Key {types = #bool, tags = @t/outdated}
+        "randomOffsetZ" = :Key {types = #bool, tags = @t/outdated}
+        "rotation" = :Key {types = #list, structure = @vector/vector.decimal, tags = @t/outdated}
+        "rotationOrigin" = :Key {types = #list, structure = @vector/vector.decimal, tags = @t/outdated}
+        "translation" = :Key {types = #list, structure = @vector/vector.decimal, tags = @t/outdated}
+        "useAmbientOcclusion" = :Key {types = #bool, tags = @t/outdated}
+        "elements" = :Key {types = #list, structure = @block_models/elements, tags = @t/outdated}
+        "faces" = :Key {types = #list, structure = @faces, tags = @t/outdated}
+    }
+}
+multipart inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @rule
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "rule", "show_item_key" = false, "measure_length" = true}
+    }
+}
+rule inherit temp/SortedKeymap {
+    keys = {
+        "apply" = :Key {types = [#dict, #list], structure = :Union {
+            substructures = [
+                :Key {types = #dict, structure = @variant},
+                :Key {types = #list, structure = @variants_list},
+            ]
+        }}
+        "when" = :Key {types = #dict, structure = @blockstate_condition}
+    }
+}
+variants inherit temp/Dict {
+    value_types = [#dict, #list]
+    key_structure = @misc/string
+    value_structure = @variants_group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "variant", "measure_length" = true}
+    }
+}
+variants_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#dict, #list]
+    value_structure = @variants_group
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "variant", "show_item_key" = false, "measure_length" = true}
+    }
+}
+variants_group :Union {
+    substructures = [
+        :Key {types = #dict, structure = @variant},
+        :Key {types = #list, structure = @subvariants},
+    ]
+}
+subvariants inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @variant
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "subvariant", "show_item_key" = false, "measure_length" = true}
+    }
+}
+variant inherit temp/SortedKeymap {
+    keys = {
+        "model" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "x" = :Key {types = #int}
+        "y" = :Key {types = #int}
+        "uvlock" = :Key {types = #bool}
+        "weight" = :Key {types = #int}
+    }
+}
+faces inherit temp/Set {
+    $ field = "face"
+    value_types = #dict
+    value_structure = @face
+}
+face inherit temp/SortedKeymap {
+    keys = {
+        "overlay" = :Key {types = #bool, tags = @t/outdated}
+        "shade" = :Key {types = #float, tags = @t/outdated}
+        "tint" = :Key {types = #bool, tags = @t/outdated}
+        "textureFacing" = :Key {types = #str, tags = @t/outdated}
+        "cullFacing" = :Key {types = #str}
+        "vertices" = :Key {types = #list, structure = @vertices}
+    }
+}
+vertices inherit temp/Sequence {
+    $ field = "vertex"
+    value_types = #dict
+    value_structure = @vertex
+}
+vertex inherit temp/SortedKeymap {
+    keys = {
+        "position" = :Key {types = #list, structure = @vector/vector.float}
+        "color" = :Key {types = #list, structure = @vector/vector.float}
+        "texcoord" = :Key {types = #list, structure = @vector/vector.decimal}
+    }
+}

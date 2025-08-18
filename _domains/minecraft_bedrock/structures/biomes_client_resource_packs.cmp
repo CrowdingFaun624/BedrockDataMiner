@@ -1,0 +1,167 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @minecraft_common!serializers/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @biomes
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "biomes_client_resource_packs"}
+    }
+}
+biomes inherit temp/Dict {
+    value_types = #dict
+    value_structure = @resource_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "biome", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+resource_packs :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_flat
+    }
+    structure = inherit temp/Dict {
+        value_types = #file
+        value_structure = @cache
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+cache :Cache {
+    this_types = #file
+    structure = :File {
+        serializer = @s/json
+        outer_types = #file
+        inner_types = #dict
+        structure = @biome
+    }
+}
+biome inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:client_biome" = :Key {types = #dict, similarity_weight = 16, structure = inherit temp/SortedKeymap {
+            keys = {
+                "description" = :Key {types = #dict, structure = @description, delegate_arguments = {"always_print" = true}}
+                "components" = :Key {types = #dict, structure = @components}
+            }
+        }}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+components inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:ambient_sounds" = :Key {types = #dict, structure = @component.ambient_sounds}
+        "minecraft:atmosphere_identifier" = :Key {types = #dict, structure = @component.atmosphere_identifier}
+        "minecraft:biome_music" = :Key {types = #dict, structure = @component.biome_music}
+        "minecraft:color_grading_identifier" = :Key {types = #dict, structure = @component.color_grading_identifier}
+        "minecraft:dry_foliage_color" = :Key {types = #dict, structure = @component.dry_foliage_color}
+        "minecraft:fog_appearance" = :Key {types = #dict, structure = @component.fog_appearance}
+        "minecraft:foliage_appearance" = :Key {types = #dict, structure = @component.foliage_appearance}
+        "minecraft:grass_appearance" = :Key {types = #dict, structure = @component.grass_appearance}
+        "minecraft:lighting_identifier" = :Key {types = #dict, structure = @component.lighting_identifier}
+        "minecraft:precipitation" = :Key {types = #dict, structure = @component.precipitation}
+        "minecraft:sky_color" = :Key {types = #dict, structure = @component.sky_color}
+        "minecraft:water_appearance" = :Key {types = #dict, structure = @component.water_appearance}
+        "minecraft:water_identifier" = :Key {types = #dict, structure = @component.water_identifier}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "field" = "component"}
+    }
+}
+component.ambient_sounds inherit temp/SortedKeymap {
+    keys = {
+        "addition" = :Key {types = #str}
+        "loop" = :Key {types = #str}
+        "mood" = :Key {types = #str}
+    }
+}
+component.atmosphere_identifier inherit temp/SortedKeymap {
+    keys = {
+        "atmosphere_identifier" = :Key {types = #str}
+    }
+}
+component.biome_music inherit temp/SortedKeymap {
+    keys = {
+        "music_definition" = :Key {types = #str}
+        "volume_multiplier" = :Key {types = #int}
+    }
+}
+component.color_grading_identifier inherit temp/SortedKeymap {
+    keys = {
+        "color_grading_identifier" = :Key {types = #str}
+    }
+}
+component.dry_foliage_color inherit temp/SortedKeymap {
+    keys = {
+        "color" = :Key {types = #str}
+    }
+}
+component.fog_appearance inherit temp/SortedKeymap {
+    keys = {
+        "fog_identifier" = :Key {types = #str}
+    }
+}
+component.foliage_appearance inherit temp/SortedKeymap {
+    keys = {
+        "color" = :Key {types = [#str, #dict], structure = @component.foliage_appearance:color}
+    }
+}
+component.foliage_appearance:color :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "color_map" = :Key {types = #str}
+            }
+        }},
+    ]
+}
+component.grass_appearance inherit temp/SortedKeymap {
+    keys = {
+        "grass_is_shaded" = :Key {types = #bool}
+        "color" = :Key {types = [#str, #dict], structure = @component.foliage_appearance:color}
+    }
+}
+component.lighting_identifier inherit temp/SortedKeymap {
+    keys = {
+        "lighting_identifier" = :Key {types = #str}
+    }
+}
+component.precipitation inherit temp/SortedKeymap {
+    keys = {
+        "white_ash" = :Key {types = #float}
+        "red_spores" = :Key {types = #float}
+        "ash" = :Key {types = #float}
+        "blue_spores" = :Key {types = #float}
+    }
+}
+component.sky_color inherit temp/SortedKeymap {
+    keys = {
+        "sky_color" = :Key {types = #str}
+    }
+}
+component.water_appearance inherit temp/SortedKeymap {
+    keys = {
+        "surface_color" = :Key {types = #str}
+        "surface_opacity" = :Key {types = #float}
+    }
+}
+component.water_identifier inherit temp/SortedKeymap {
+    keys = {
+        "water_identifier" = :Key {types = #str}
+    }
+}

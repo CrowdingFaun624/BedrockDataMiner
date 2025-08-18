@@ -1,0 +1,31 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @files
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "all_files"}
+    }
+}
+files :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/all_files_normalize
+    }
+    structure = inherit temp/Dict {
+        value_types = #str
+        tags = @t/file_hash_tag
+        value_structure = null
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "file", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}

@@ -1,0 +1,41 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "renderer_tone_mapping"
+    $ structure = @tone_mapping
+}
+tone_mapping inherit temp/SortedKeymap {
+    keys = {
+        "brightness" = :Key {types = #int}
+        "contrast" = :Key {types = #int}
+        "custom_exposure_compensation" = :Key {types = #dict, structure = @custom_exposure_compensation}
+        "exposure_compensation" = :Key {types = #float}
+        "exposure_compensation_type" = :Key {types = #str}
+        "f_stop" = :Key {types = #float}
+        "is_auto_exposure_compensation" = :Key {types = #bool, tags = [@t/outdated]}
+        "max_luminance" = :Key {types = #float}
+        "min_luminance" = :Key {types = #float}
+        "min_white_point" = :Key {types = #float}
+        "saturation" = :Key {types = #int}
+        "technique" = :Key {types = #str}
+        "whitepoint" = :Key {types = #int, tags = [@t/outdated]}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+custom_exposure_compensation inherit temp/Dict {
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "value", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}

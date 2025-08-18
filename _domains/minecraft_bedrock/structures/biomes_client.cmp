@@ -1,0 +1,64 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @minecraft_common!serializers/
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @resource_packs
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "biomes_client"}
+    }
+}
+resource_packs :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_flat
+    }
+    structure = inherit temp/Dict {
+        value_types = #file
+        value_structure = @cache
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+        }
+    }
+}
+cache :Cache {
+    this_types = #file
+    structure = :File {
+        serializer = @s/json
+        outer_types = #file
+        inner_types = #dict
+        structure = @biomes_client_file
+    }
+}
+biomes_client_file inherit temp/SortedKeymap {
+    keys = {
+        "biomes" = :Key {types = #dict, structure = @biomes}
+    }
+}
+biomes inherit temp/Dict {
+    value_types = #dict
+    value_structure = @biome
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "biome", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+biome inherit temp/SortedKeymap {
+    keys = {
+        "fog_color" = :Key {types = #str}
+        "fog_identifier" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "inherit_from_prior_fog" = :Key {types = #bool}
+        "remove_all_prior_fog" = :Key {types = #bool}
+        "water_fog_color" = :Key {types = #str}
+        "water_fog_distance" = :Key {types = #int}
+        "water_surface_color" = :Key {types = #str}
+        "water_surface_transparency" = :Key {types = #float}
+    }
+}

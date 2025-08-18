@@ -1,0 +1,34 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @subdirs
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "subdirs"}
+    }
+}
+subdirs :Normalizer {
+    outer_types = #dict
+    inner_types = #list
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/subdirs_normalize
+        arguments = {"serializer" = @minecraft_common!serializers/json}
+    }
+    structure = inherit temp/Dict {
+        this_types = #list
+        allow_key_moves = true
+        key_weight = 0
+        key_types = #int
+        value_types = #str
+        value_structure = @temp/string
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "subdir", "measure_length" = true, "sort" = %sort_by_value, "show_item_key" = false}
+        }
+    }
+}

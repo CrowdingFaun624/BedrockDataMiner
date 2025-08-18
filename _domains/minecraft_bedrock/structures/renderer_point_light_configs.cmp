@@ -1,0 +1,54 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_point_light_configs"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "low" = :Key {types = #dict, structure = @point_light_configuration}
+        "medium" = :Key {types = #dict, structure = @point_light_configuration}
+        "high" = :Key {types = #dict, structure = @point_light_configuration}
+        "ultra" = :Key {types = #dict, structure = @point_light_configuration}
+    } + @point_light_configuration:keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "setting"}
+    }
+}
+point_light_configuration:keys {
+    "file" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    "grid_hierarchy_radii" = :Key {types = #list, structure = @grid_hierarchy_radii}
+    "before_diffuse_fade_out" = :Key {types = #float}
+    "after_diffuse_fade_out" = :Key {types = #float}
+    "start_diffuse_fade_out" = :Key {types = #float}
+    "end_diffuse_fade_out" = :Key {types = #float}
+    "start_specular_fade_out" = :Key {types = #float}
+    "end_specular_fade_out" = :Key {types = #float}
+    "enable_fade_out_diffuse" = :Key {types = #bool}
+    "enable_fade_out_specular" = :Key {types = #bool}
+}
+point_light_configuration inherit temp/SortedKeymap {
+    keys = @point_light_configuration:keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+grid_hierarchy_radii inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "radius", "measure_length" = true}
+    }
+}

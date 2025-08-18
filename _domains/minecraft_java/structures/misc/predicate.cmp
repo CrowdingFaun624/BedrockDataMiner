@@ -1,0 +1,174 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        conditions = @structures/data/advancements/conditions/
+        misc = @structures/misc/misc/
+        np = @structures/misc/provider/number_provider/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+predicate :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "condition"}
+    }
+    substructures = {
+        "minecraft:all_of" = :Key {types = #dict, structure = @predicate.metapredicate}
+        "minecraft:alternative" = :Key {types = #dict, structure = @predicate.metapredicate}
+        "minecraft:any_of" = :Key {types = #dict, structure = @predicate.metapredicate}
+        "minecraft:block_state_property" = :Key {types = #dict, structure = @predicate.block_state_property}
+        "minecraft:damage_source_properties" = :Key {types = #dict, structure = @predicate.damage_source_properties}
+        "minecraft:enchantment_active_check" = :Key {types = #dict, structure = @predicate.enchantment_active_check}
+        "minecraft:entity_present" = :Key {types = #dict, structure = @predicate.entity_present, tags = @t/outdated}
+        "entity_properties" = :Key {types = #dict, structure = @predicate.entity_properties, tags = @t/outdated}
+        "minecraft:entity_properties" = :Key {types = #dict, structure = @predicate.entity_properties}
+        "minecraft:entity_scores" = :Key {types = #dict, structure = @predicate.entity_scores}
+        "minecraft:inverted" = :Key {types = #dict, structure = @predicate.inverted}
+        "killed_by_player" = :Key {types = #dict, structure = @predicate.killed_by_player, tags = @t/outdated}
+        "minecraft:killed_by_player" = :Key {types = #dict, structure = @predicate.killed_by_player}
+        "minecraft:location_check" = :Key {types = #dict, structure = @predicate.location_check}
+        "minecraft:match_tool" = :Key {types = #dict, structure = @predicate.match_tool}
+        "random_chance" = :Key {types = #dict, structure = @predicate.random_chance, tags = @t/outdated}
+        "minecraft:random_chance" = :Key {types = #dict, structure = @predicate.random_chance}
+        "minecraft:random_chance_with_enchanted_bonus" = :Key {types = #dict, structure = @predicate.random_chance_with_enchanted_bonus}
+        "random_chance_with_looting" = :Key {types = #dict, structure = @predicate.random_chance_with_looting, tags = @t/outdated}
+        "minecraft:random_chance_with_looting" = :Key {types = #dict, structure = @predicate.random_chance_with_looting, tags = @t/outdated}
+        "minecraft:reference" = :Key {types = #dict, structure = @predicate.reference}
+        "minecraft:survives_explosion" = :Key {types = #dict, structure = @predicate.survives_explosion}
+        "minecraft:table_bonus" = :Key {types = #dict, structure = @predicate.table_bonus}
+        "minecraft:time_check" = :Key {types = #dict, structure = @predicate.time_check}
+        "minecraft:value_check" = :Key {types = #dict, structure = @predicate.value_check}
+        "minecraft:weather_check" = :Key {types = #dict, structure = @predicate.weather_check}
+    }
+}
+predicate_list inherit temp/Sequence {
+    $ field = "predicate"
+    value_types = #dict
+    value_structure = @predicate
+}
+common.all  {
+    "condition" = :Key {types = #str}
+}
+predicate.metapredicate inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "terms" = :Key {types = #list, structure = @predicate_list}
+    }
+}
+predicate.block_state_property inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "block" = :Key {types = #str, structure = @misc/string}
+        "properties" = :Key {types = #dict, structure = @conditions/condition.block_state}
+    }
+}
+predicate.damage_source_properties inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "predicate" = :Key {types = #dict, structure = @conditions/condition.damage_type}
+    }
+}
+predicate.enchantment_active_check inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "active" = :Key {types = #bool}
+    }
+}
+predicate.entity_present inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "entity" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+predicate.entity_properties inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "properties" = :Key {types = #dict, structure = @predicate.entity_properties:properties, tags = @t/outdated}
+        "entity" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "predicate" = :Key {types = #dict, structure = @conditions/condition.entity}
+    }
+}
+predicate.entity_properties:properties inherit temp/SortedKeymap {
+    keys = {
+        "on_fire" = :Key {types = #bool}
+    }
+}
+predicate.entity_scores inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "entity" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "scores" = :Key {types = #dict, structure = @conditions/condition.scores}
+    }
+}
+predicate.inverted inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "term" = :Key {types = #dict, structure = @predicate}
+    }
+}
+predicate.killed_by_player inherit temp/SortedKeymap {
+    keys = @common.all
+}
+predicate.location_check inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "offsetX" = :Key {types = #int}
+        "offsetY" = :Key {types = #int}
+        "offsetZ" = :Key {types = #int}
+        "predicate" = :Key {types = #dict, structure = @conditions/condition.location}
+    }
+}
+predicate.match_tool inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "predicate" = :Key {types = @a/compound, structure = @conditions/condition.item}
+    }
+}
+predicate.random_chance inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "chance" = :Key {types = [#float, #dict], structure = @np/number_provider{$types=#float}}
+    }
+}
+predicate.random_chance_with_enchanted_bonus inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "unenchanted_chance" = :Key {types = #float}
+        "chance" = :Key {types = [#float, #dict], structure = @np/number_provider{$types=#float}, tags = @t/outdated}
+        "enchanted_chance" = :Key {types = [#float, #dict], structure = @np/number_provider{$types=#float}}
+        "enchantment" = :Key {types = #str}
+    }
+}
+predicate.random_chance_with_looting inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "chance" = :Key {types = #float}
+        "looting_multiplier" = :Key {types = #float}
+    }
+}
+predicate.reference inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "name" = :Key {types = #str}
+    }
+}
+predicate.survives_explosion inherit temp/SortedKeymap {
+    keys = @common.all
+}
+predicate.table_bonus inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "enchantment" = :Key {types = #str}
+        "chances" = :Key {types = #list, structure = @predicate.table_bonus:chances}
+    }
+}
+predicate.table_bonus:chances inherit temp/List {
+    $ field = "chance"
+    value_types = #float
+    value_structure = null
+}
+predicate.time_check inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "value" = :Key {types = [#int, #dict], structure = @np/number_provider{$types=#int}}
+        "period" = :Key {types = #int}
+    }
+}
+predicate.value_check inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "value" = :Key {types = [#int, #dict], structure = @np/number_provider{$types=#int}}
+        "range" = :Key {types = [#int, #dict], structure = @np/number_provider{$types=#int}}
+    }
+}
+predicate.weather_check inherit temp/SortedKeymap {
+    keys = @common.all + {
+        "raining" = :Key {types = #bool}
+        "thundering" = :Key {types = #bool}
+    }
+}

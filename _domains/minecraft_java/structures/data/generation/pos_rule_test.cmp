@@ -1,0 +1,40 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/misc/template/
+    }
+}
+pos_rule_test :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "predicate_type"}
+    }
+    substructures = {
+        "minecraft:always_true" = :Key {types = #dict, structure = @pos_rule_test.always_true}
+        "minecraft:linear_pos" = :Key {types = #dict, structure = @pos_rule_test.linear_pos}
+        "minecraft:axis_aligned_linear_pos" = :Key {types = #dict, structure = @pos_rule_test.axis_aligned_linear_pos}
+    }
+}
+pos_rule_test:all {
+    "predicate_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+pos_rule_test.always_true inherit temp/SortedKeymap {
+    keys = @pos_rule_test:all
+}
+pos_rule_test.linear_pos inherit temp/SortedKeymap {
+    keys = @pos_rule_test:all + {
+        "min_chance" = :Key {types = #float}
+        "max_chance" = :Key {types = #float}
+        "min_dist" = :Key {types = #int}
+        "max_dist" = :Key {types = #int}
+    }
+}
+pos_rule_test.axis_aligned_linear_pos inherit temp/SortedKeymap {
+    keys = @pos_rule_test:all + {
+        "axis" = :Key {types = #str}
+        "min_chance" = :Key {types = #float}
+        "max_chance" = :Key {types = #float}
+        "min_dist" = :Key {types = #int}
+        "max_dist" = :Key {types = #int}
+    }
+}

@@ -1,0 +1,69 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "resources"
+    $ pack_type = "resource pack"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "pack_id" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "name" = :Key {types = #str}
+        "description" = :Key {types = #str}
+        "key_art_path" = :Key {types = #str}
+        "screenshots" = :Key {types = #list, structure = @screenshots}
+        "resources" = :Key {types = #dict, structure = @categories}
+        "skins" = :Key {types = #dict, structure = @skins}
+    } + @categories:keys
+}
+screenshots inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @screenshot
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "screenshot", "show_item_key" = false, "measure_length" = true}
+    }
+}
+screenshot inherit temp/SortedKeymap {
+    keys = {
+        "path" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+categories:keys {
+    "models" = :Key {types = #dict, structure = @resources}
+    "textures" = :Key {types = #dict, structure = @resources}
+    "metas" = :Key {types = #dict, structure = @resources}
+}
+categories inherit temp/SortedKeymap {
+    keys = @categories:keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "category", "measure_length" = true}
+    }
+}
+resources inherit temp/Dict {
+    value_types = #str
+    value_structure = @temp/string
+    key_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource", "measure_length" = true}
+    }
+}
+skins inherit temp/Dict {
+    value_types = #str
+    value_structure = @temp/string
+    key_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "skin", "measure_length" = true}
+    }
+}

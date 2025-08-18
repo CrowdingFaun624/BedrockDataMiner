@@ -1,0 +1,84 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "atlases"
+    $ pack_type = "resource pack"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "sources" = :Key {types = #list, structure = @sources}
+    }
+}
+sources inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @source_switch
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "source", "show_item_key" = false, "measure_length" = true}
+    }
+}
+source_switch :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "directory" = :Key {types = #dict, structure = @source.directory}
+        "minecraft:directory" = :Key {types = #dict, structure = @source.directory}
+        "paletted_permutations" = :Key {types = #dict, structure = @source.paletted_permutations}
+        "minecraft:paletted_permutations" = :Key {types = #dict, structure = @source.paletted_permutations}
+        "single" = :Key {types = #dict, structure = @source.single}
+        "minecraft:single" = :Key {types = #dict, structure = @source.single}
+    }
+}
+texture_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @misc/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "texture", "show_item_key" = false, "measure_length" = true}
+    }
+}
+source.directory inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "source" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "prefix" = :Key {types = #str, structure = @misc/string}
+    }
+}
+source.paletted_permutations inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "textures" = :Key {types = #list, structure = @texture_list}
+        "palette_key" = :Key {types = #str, structure = @misc/string}
+        "permutations" = :Key {types = #dict, structure = @source.paletted_permutations:permutations}
+    }
+}
+source.paletted_permutations:permutations inherit temp/Dict {
+    value_types = #str
+    key_structure = @misc/string
+    value_structure = @misc/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "permutation", "measure_length" = true}
+    }
+}
+source.single inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "resource" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+    }
+}

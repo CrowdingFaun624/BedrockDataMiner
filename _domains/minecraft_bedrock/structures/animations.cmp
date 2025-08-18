@@ -1,0 +1,178 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "animations"
+    $ pack_type = "resource pack"
+    $ key_weight = 5
+    $ value_weight = 8
+    $ min_value_similarity_threshold = 0.3
+    $ structure = @animations_file
+}
+animations_file :Normalizer {
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/animations_fix_old
+    }
+    outer_types = #dict
+    inner_types = #dict
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "format_version" = :Key {types = #str}
+            "animations" = :Key {types = #dict, structure = @animations, similarity_weight = 20}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+animations inherit temp/Dict {
+    value_types = #dict
+    min_key_similarity_threshold = 0.9
+    min_value_similarity_threshold = 0.75
+    key_structure = @temp/string
+    value_structure = @animation
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "animation", "measure_length" = true, "sort" = %sort_by_key}
+    }
+}
+timestamps_and_vectors_or_vector_or_lerp :Union {
+    substructures = [
+        :Key {types = #dict, structure = @timestamps_and_vectors_or_lerp},
+        :Key {types = #list, structure = @vector_special},
+    ]
+}
+timestamps_and_vectors_or_lerp inherit temp/Dict {
+    value_types = [#dict, #list]
+    allow_key_moves = false
+    value_structure = @vector_or_lerp
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "timestamp", "measure_length" = true}
+    }
+}
+vector_or_lerp :Union {
+    substructures = [
+        :Key {types = #dict, structure = @lerp},
+        :Key {types = #list, structure = @vector_special},
+    ]
+}
+lerp inherit temp/SortedKeymap {
+    keys = {
+        "lerp_mode" = :Key {types = #str}
+        "pre" = :Key {types = #list, structure = @vector_special}
+        "post" = :Key {types = #list, structure = @vector_special}
+    }
+}
+vector_special inherit temp/Dict {
+    allow_key_moves = false
+    allow_same_key_optimization = true
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [@temp/decimal, #dict, #str]
+    value_structure = :Union {
+        substructures = [
+            :Key {types = @temp/decimal},
+            :Key {types = #dict, structure = inherit temp/SortedKeymap {
+                keys = {
+                    "x" = :Key {types = #str}
+                    "y" = :Key {types = #str}
+                }
+                delegate = :Delegate {
+                    delegate_class = %DefaultDelegate
+                    arguments = {"sort" = %sort_by_component_order, "print_all" = true}
+                }
+            }},
+            :Key {types = #str, structure = @temp/string{
+                max_square_length = 1000000
+            }},
+        ]
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "vector item", "print_all" = true, "print_flat" = true, "measure_length" = false}
+    }
+}
+animation inherit temp/SortedKeymap {
+    keys = {
+        "anim_time_update" = :Key {types = #str}
+        "animation_length" = :Key {types = @temp/decimal}
+        "loop" = :Key {types = [#bool, #str]}
+        "override_previous_animation" = :Key {types = #bool}
+        "start_delay" = :Key {types = #str}
+        "bones" = :Key {types = #dict, structure = @bones}
+        "particle_effects" = :Key {types = #dict, structure = @particle_effects}
+        "sound_effects" = :Key {types = #dict, structure = @sound_effects}
+    }
+}
+bones inherit temp/Dict {
+    value_types = #dict
+    min_value_similarity_threshold = 0.3
+    min_key_similarity_threshold = 0.3
+    key_weight = 3
+    value_weight = 5
+    key_structure = @temp/string
+    value_structure = @bone
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "bone", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+bone inherit temp/SortedKeymap {
+    keys = {
+        "relative_to" = :Key {types = #dict, structure = @bone.relative_to}
+        "rotation" = :Key {types = [#list, #dict], structure = @timestamps_and_vectors_or_vector_or_lerp}
+        "position" = :Key {types = [#list, #dict], structure = @timestamps_and_vectors_or_vector_or_lerp}
+        "scale" = :Key {types = [@temp/decimal, #dict, #list, #str], structure = @bone.scale}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+bone.relative_to inherit temp/SortedKeymap {
+    keys = {
+        "rotation" = :Key {types = #str}
+    }
+}
+bone.scale :Union {
+    substructures = [
+        :Key {types = @temp/decimal},
+        :Key {types = #dict, structure = @timestamps_and_vectors_or_lerp},
+        :Key {types = #list, structure = @vector_special},
+        :Key {types = #str},
+    ]
+}
+particle_effects inherit temp/Dict {
+    value_types = #dict
+    allow_key_moves = false
+    value_structure = inherit temp/SortedKeymap {
+        keys = {
+            "effect" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+            "pre_effect_script" = :Key {types = #str}
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "timestamp", "measure_length" = true, "sort" = %sort_by_key}
+    }
+}
+sound_effects inherit temp/Dict {
+    value_types = #dict
+    allow_key_moves = false
+    value_structure = inherit temp/SortedKeymap {
+        keys = {
+            "effect" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "timestamp", "measure_length" = true, "sort" = %sort_by_key}
+    }
+}

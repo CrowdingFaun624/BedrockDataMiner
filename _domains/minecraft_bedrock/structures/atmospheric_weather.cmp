@@ -1,0 +1,50 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "atmospheric_weather"
+    $ structure = @atmospheric_weather
+}
+atmospheric_weather inherit temp/SortedKeymap {
+    key_structure = @temp/string
+    allow_key_moves = true
+    keys = {
+        "base_rain_cloud_color" = :Key {types = #list, structure = @color}
+        "base_thunder_sky_color" = :Key {types = #list, structure = @color}
+        "base_thunder_cloud_color" = :Key {types = #list, structure = @color}
+        "cloud_render_distance_scale" = :Key {types = #float}
+        "directional_light_strength" = :Key {types = #float}
+        "lightning_flash_color" = :Key {types = #list, structure = @color}
+        "lightning_flash_contribution" = :Key {types = #float}
+        "lightning_flash_color_contribution" = :Key {types = #float}
+        "sky_transition_speed" = :Key {types = #float}
+        "rain_sky_color" = :Key {types = #list, structure = @color}
+        "rainy_sky_color" = :Key {types = #list, structure = @color}
+        "rainy_cloud_color" = :Key {types = #list, structure = @color}
+        "rainy_cloud_contribution" = :Key {types = #float}
+        "rainy_cloud_color_contribution" = :Key {types = #float}
+        "rain_cloud_color_contribution" = :Key {types = #float}
+        "thunder_sky_color" = :Key {types = #list, structure = @color}
+        "thunder_sky_contribution" = :Key {types = #float}
+        "thunder_sky_color_contribution" = :Key {types = #float}
+        "thunder_cloud_color" = :Key {types = #list, structure = @color}
+        "thunder_cloud_contribution" = :Key {types = #float}
+        "thunder_cloud_color_contribution" = :Key {types = #float}
+    }
+}
+color inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "channel", "print_all" = true, "print_flat" = true}
+    }
+}

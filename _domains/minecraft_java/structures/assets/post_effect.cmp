@@ -1,0 +1,145 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        s = @serializers/
+        t = @structure_tags/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "post_effect"
+    $ pack_type = "resource pack"
+    $ structure = @root
+}
+vector_decimal inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = @misc/decimal
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true, "print_flat" = true, "field" = "component"}
+    }
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "targets" = :Key {types = #dict, structure = @targets}
+        "passes" = :Key {types = #list, structure = @passes}
+    }
+}
+targets inherit temp/Dict {
+    value_types = #dict
+    key_structure = @misc/string
+    value_structure = @target
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "target", "measure_length" = true}
+    }
+}
+target inherit temp/SortedKeymap {
+    keys = {
+        "width" = :Key {types = #int}
+        "height" = :Key {types = #int}
+    }
+}
+passes inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @pass
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "pass", "show_item_key" = false, "measure_length" = true}
+    }
+}
+pass inherit temp/SortedKeymap {
+    keys = {
+        "program" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "fragment_shader" = :Key {types = #str, structure = @misc/string}
+        "inputs" = :Key {types = #list, structure = @inputs}
+        "output" = :Key {types = #str, structure = @misc/string}
+        "uniforms" = :Key {types = [#list, #dict], structure = @uniforms_union}
+        "vertex_shader" = :Key {types = #str, structure = @misc/string}
+    }
+}
+inputs inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @input
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "input", "show_item_key" = false, "measure_length" = true}
+    }
+}
+input inherit temp/SortedKeymap {
+    keys = {
+        "sampler_name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "bilinear" = :Key {types = #bool}
+        "target" = :Key {types = #str}
+        "use_depth_buffer" = :Key {types = #bool}
+        "location" = :Key {types = #str, structure = @misc/string}
+        "width" = :Key {types = #int}
+        "height" = :Key {types = #int}
+    }
+}
+uniforms_union :Union {
+    substructures = [
+        :Key {types = #list, structure = @uniforms},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "BitsConfig" = :Key {types = #list, structure = @uniforms}
+                "BlitConfig" = :Key {types = #list, structure = @uniforms}
+                "BlurConfig" = :Key {types = #list, structure = @uniforms}
+                "ColorConfig" = :Key {types = #list, structure = @uniforms}
+                "InvertConfig" = :Key {types = #list, structure = @uniforms}
+                "RotScaleConfig" = :Key {types = #list, structure = @uniforms}
+                "SpiderConfig" = :Key {types = #list, structure = @uniforms}
+            }
+        }},
+    ]
+}
+uniforms inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @uniform
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "uniform", "show_item_key" = false, "measure_length" = true}
+    }
+}
+uniform :Switch {
+    switch_function = :Function {
+        function = %scripts/normalizers/normalizers/post_effect_choose_uniform
+    }
+    substructures = {
+        "float" = :Key {types = #dict, structure = @uniform.float}
+        "vec2" = :Key {types = #dict, structure = @uniform.matrix}
+        "vec3" = :Key {types = #dict, structure = @uniform.matrix}
+        "vec4" = :Key {types = #dict, structure = @uniform.matrix}
+    }
+}
+uniform.float inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "value" = :Key {types = @misc/decimal}
+        "values" = :Key {types = #list, structure = @vector_decimal, tags = @t/outdated}
+    }
+}
+uniform.matrix inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "name" = :Key {types = #str, structure = @misc/string, delegate_arguments = {"always_print" = true}}
+        "value" = :Key {types = #list, structure = @vector_decimal}
+        "values" = :Key {types = #list, structure = @vector_decimal, tags = @t/outdated}
+        "RadiusMultiplier" = :Key {types = #float, tags = @t/outdated}
+    }
+}

@@ -1,0 +1,159 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        bpred = @structures/misc/block_predicate/
+        cf = @structures/data/generation/configured_feature/
+        hp = @structures/misc/provider/height_provider/
+        ip = @structures/misc/provider/int_provider/
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+        vector = @structures/misc/vector/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "placed_feature"
+    $ pack_type = "data pack"
+    $ structure = @placed_feature
+}
+placed_feature_list_or_feature :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @placed_feature},
+        :Key {types = #list, structure = @placed_feature_or_id_list},
+    ]
+}
+placed_feature_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @placed_feature},
+    ]
+}
+placed_feature_or_id_list inherit temp/Set {
+    $ field = "placed feature"
+    value_types = [#str, #dict]
+    value_structure = @placed_feature_or_id
+}
+placed_feature inherit temp/SortedKeymap {
+    keys = {
+        "feature" = :Key {types = [#str, #dict], structure = @cf/feature_or_id}
+        "placement" = :Key {types = #list, structure = @placement_modifier_list}
+    }
+}
+placement_modifier_list inherit temp/Set {
+    $ field = "placement modifier"
+    value_types = #dict
+    value_structure = @placement_modifier
+}
+placement_modifier :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:biome" = :Key {types = #dict, structure = @placement_modifier.biome}
+        "minecraft:block_predicate_filter" = :Key {types = #dict, structure = @placement_modifier.block_predicate_filter}
+        "minecraft:carving_mask" = :Key {types = #dict, structure = @placement_modifier.carving_mask}
+        "minecraft:count" = :Key {types = #dict, structure = @placement_modifier.count}
+        "minecraft:count_on_every_layer" = :Key {types = #dict, structure = @placement_modifier.count}
+        "minecraft:environment_scan" = :Key {types = #dict, structure = @placement_modifier.environment_scan}
+        "minecraft:fixed_placement" = :Key {types = #dict, structure = @placement_modifier.fixed_placement}
+        "minecraft:height_range" = :Key {types = #dict, structure = @placement_modifier.height_range}
+        "minecraft:heightmap" = :Key {types = #dict, structure = @placement_modifier.heightmap}
+        "minecraft:in_square" = :Key {types = #dict, structure = @placement_modifier.in_square}
+        "minecraft:noise_based_count" = :Key {types = #dict, structure = @placement_modifier.noise_based_count}
+        "minecraft:noise_threshold_count" = :Key {types = #dict, structure = @placement_modifier.noise_threshold_count}
+        "minecraft:random_offset" = :Key {types = #dict, structure = @placement_modifier.random_offset}
+        "minecraft:rarity_filter" = :Key {types = #dict, structure = @placement_modifier.rarity_filter}
+        "minecraft:surface_relative_threshold_filter" = :Key {types = #dict, structure = @placement_modifier.surface_relative_threshold_filter}
+        "minecraft:surface_water_depth_filter" = :Key {types = #dict, structure = @placement_modifier.surface_water_depth_filter}
+    }
+}
+placement_modifier:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+placement_modifier.biome inherit temp/SortedKeymap {
+    keys = @placement_modifier:all
+}
+placement_modifier.block_predicate_filter inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "predicate" = :Key {types = #dict, structure = @bpred/block_predicate}
+    }
+}
+placement_modifier.carving_mask inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "step" = :Key {types = #str}
+    }
+}
+placement_modifier.count inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "count" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}
+placement_modifier.environment_scan inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "direction_of_search" = :Key {types = #str}
+        "max_steps" = :Key {types = #int}
+        "target_condition" = :Key {types = #dict, structure = @bpred/block_predicate}
+        "allowed_search_condition" = :Key {types = #dict, structure = @bpred/block_predicate}
+    }
+}
+placement_modifier.fixed_placement inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "positions" = :Key {types = #list, structure = @placement_modifier.fixed_placement:positions}
+    }
+}
+placement_modifier.fixed_placement:positions inherit temp/Set {
+    $ field = "position"
+    value_types = #list
+    value_structure = @vector/vector.int
+}
+placement_modifier.height_range inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "height" = :Key {types = #dict, structure = @hp/height_provider}
+    }
+}
+placement_modifier.heightmap inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "heightmap" = :Key {types = #str}
+    }
+}
+placement_modifier.in_square inherit temp/SortedKeymap {
+    keys = @placement_modifier:all
+}
+placement_modifier.noise_based_count inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "noise_factor" = :Key {types = #float} // double
+        "noise_offset" = :Key {types = #float} // double
+        "noise_to_count_ratio" = :Key {types = #int}
+    }
+}
+placement_modifier.noise_threshold_count inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "noise_level" = :Key {types = #float} // double
+        "below_noise" = :Key {types = #int}
+        "above_noise" = :Key {types = #int}
+    }
+}
+placement_modifier.random_offset inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "xz_spread" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "y_spread" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}
+placement_modifier.rarity_filter inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "chance" = :Key {types = #int}
+    }
+}
+placement_modifier.surface_relative_threshold_filter inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "heightmap" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "min_inclusive" = :Key {types = #int}
+        "max_inclusive" = :Key {types = #int}
+    }
+}
+placement_modifier.surface_water_depth_filter inherit temp/SortedKeymap {
+    keys = @placement_modifier:all + {
+        "max_water_depth" = :Key {types = #int}
+    }
+}

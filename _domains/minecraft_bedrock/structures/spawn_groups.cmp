@@ -1,0 +1,106 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "spawn_groups"
+    $ file_field = "spawn group"
+    $ structure = @spawn_group
+}
+spawn_group inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:spawn_groups" = :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "description" = :Key {types = #dict, structure = @description}
+                "conditions" = :Key {types = #list, structure = @conditions}
+            }
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"sort" = %sort_by_component_order}
+            }
+        }}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+    }
+}
+conditions inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @condition
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "condition", "show_item_key" = false, "measure_length" = true}
+    }
+}
+condition inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:difficulty_filter" = :Key {types = #dict, structure = @component.difficulty_filter}
+        "minecraft:distance_filter" = :Key {types = #dict, structure = @component.distance_filter}
+        "minecraft:herd" = :Key {types = #dict, structure = @component.herd}
+        "minecraft:mob_event_filter" = :Key {types = #dict, structure = @component.mob_event_filter}
+        "minecraft:permute_type" = :Key {types = #list, structure = @component.permute_type}
+        "minecraft:spawns_on_surface" = :Key {types = #dict, structure = @temp/empty}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+component.difficulty_filter inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #str}
+        "min" = :Key {types = #str}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+component.distance_filter inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"print_all" = true}
+    }
+}
+component.herd inherit temp/SortedKeymap {
+    keys = {
+        "event" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "max_size" = :Key {types = #int}
+        "min_size" = :Key {types = #int}
+    }
+}
+component.mob_event_filter inherit temp/SortedKeymap {
+    keys = {
+        "event" = :Key {types = #str}
+    }
+}
+component.permute_type inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @component.permute_type:item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "permute type", "show_item_key" = false, "measure_length" = true}
+    }
+}
+component.permute_type:item inherit temp/SortedKeymap {
+    keys = {
+        "entity_type" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "weight" = :Key {types = #int}
+    }
+}

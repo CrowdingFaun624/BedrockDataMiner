@@ -1,0 +1,60 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_pack_files {
+    $ name = "aim_assist_categories"
+    $ pack_type = "behavior_pack"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str, similarity_weight = 0}
+        "minecraft:aim_assist_categories" = :Key {types = #dict, structure = @aim_assist_categories}
+    }
+}
+aim_assist_categories inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string_remove_minecraft_prefix, delegate_arguments = {"always_print" = true}}
+        "categories" = :Key {types = #list, structure = @categories, similarity_weight = 3}
+    }
+}
+categories inherit temp/Dict {
+    key_types = #int
+    key_weight = 0
+    this_types = #list
+    value_types = #dict
+    value_structure = @category
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "category", "show_item_key" = false, "measure_length" = true}
+    }
+}
+category inherit temp/SortedKeymap {
+    min_value_similarity_threshold = 0.4
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string_remove_minecraft_prefix, similarity_weight = 10, delegate_arguments = {"always_print" = true}}
+        "entity_default" = :Key {types = #int}
+        "block_default" = :Key {types = #int}
+        "priorities" = :Key {types = #dict, structure = @priorities}
+    }
+}
+priorities inherit temp/SortedKeymap {
+    keys = {
+        "blocks" = :Key {types = #dict, structure = @priorities.blocks}
+        "block_default" = :Key {types = #int}
+        "entity_default" = :Key {types = #int}
+    }
+}
+priorities.blocks inherit temp/Dict {
+    key_structure = @temp/string_remove_minecraft_prefix
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "measure_length" = true, "sort" = %sort_by_key}
+    }
+}

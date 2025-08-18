@@ -1,0 +1,259 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        t = @structure_tags/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "spawn_rules"
+    $ file_field = "spawn rules"
+    $ pack_type = "behavior pack"
+    $ structure = @spawn_rules_item
+}
+block :Union {
+    substructures = [
+        :Key {types = #dict, structure = @block_dict},
+        :Key {types = #str},
+    ]
+}
+block_dict inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "states" = :Key {types = #dict, structure = @block.states}
+    }
+}
+block.states inherit temp/SortedKeymap {
+    keys = {
+        "dirt_type" = :Key {types = #str}
+        "sand_type" = :Key {types = #str}
+    }
+}
+block_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#dict, #str]
+    value_structure = @block
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "block", "show_item_key" = false, "measure_length" = true}
+    }
+}
+block_list_or_block :Union {
+    substructures = [
+        :Key {types = #dict, structure = @block_dict},
+        :Key {types = #list, structure = @block_list},
+        :Key {types = #str},
+    ]
+}
+filter inherit temp/SortedKeymap {
+    keys = {
+        "all_of" = :Key {types = [#dict, #list], structure = @filter_or_filter_list}
+        "any_of" = :Key {types = [#dict, #list], structure = @filter_or_filter_list}
+        "none_of" = :Key {types = [#dict, #list], structure = @filter_or_filter_list}
+        "operator" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "subject" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "test" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "value" = :Key {types = [#bool, #float, #int, #str], delegate_arguments = {"always_print" = true}}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "filter property"}
+    }
+}
+filter_list inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @filter
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "filter", "show_item_key" = false, "measure_length" = true}
+    }
+}
+filter_or_filter_list :Union {
+    substructures = [
+        :Key {types = #dict, structure = @filter},
+        :Key {types = #list, structure = @filter_list},
+    ]
+}
+spawn_rules_item inherit temp/SortedKeymap {
+    keys = {
+        "format_version" = :Key {types = #str}
+        "minecraft:spawn_rules" = :Key {types = #dict, structure = @minecraft:spawn_rules}
+    }
+}
+minecraft:spawn_rules inherit temp/SortedKeymap {
+    keys = {
+        "description" = :Key {types = #dict, structure = @description}
+        "conditions" = :Key {types = #list, structure = @condition_sets}
+    }
+}
+description inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "population_control" = :Key {types = #str}
+    }
+}
+condition_sets inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @condition_set
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "condition set", "show_item_key" = false, "measure_length" = true}
+    }
+}
+condition_set inherit temp/SortedKeymap {
+    keys = {
+        "minecraft:biome_filter" = :Key {types = [#dict, #list], structure = @filter_or_filter_list}
+        "minecraft:brightness_filter" = :Key {types = #dict, structure = @condition.brightness_filter}
+        "minecraft:delay_filter" = :Key {types = #dict, structure = @condition.delay_filter}
+        "minecraft:density_limit" = :Key {types = #dict, structure = @condition.density_limit}
+        "minecraft:difficulty_filter" = :Key {types = #dict, structure = @condition.difficulty_filter}
+        "minecraft:disallow_spawns_in_bubble" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:distance_filter" = :Key {types = #dict, structure = @condition.distance_filter}
+        "minecraft:height_filter" = :Key {types = #dict, structure = @condition.height_filter}
+        "minecraft:herd" = :Key {types = [#list, #dict], structure = @condition.herd}
+        "minecraft:is_persistent" = :Key {types = #dict, structure = @temp/empty, tags = [@t/outdated]}
+        "minecraft:mob_event_filter" = :Key {types = #dict, structure = @condition.mob_event_filter}
+        "minecraft:permute_type" = :Key {types = #list, structure = @condition.permute_type}
+        "minecraft:player_in_village_filter" = :Key {types = #dict, structure = @condition.player_in_village_filter}
+        "minecraft:spawn_event" = :Key {types = #dict, structure = @condition.spawn_event}
+        "minecraft:spawns_lava" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:spawns_above_block_filter" = :Key {types = #dict, structure = @condition.spawns_above_block_filter, tags = [@t/outdated]}
+        "minecraft:spawns_on_block_filter" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "minecraft:spawns_on_block_prevented_filter" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "minecraft:spawns_on_surface" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:spawns_underground" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:spawns_underwater" = :Key {types = #dict, structure = @temp/empty}
+        "minecraft:weight" = :Key {types = #dict, structure = @condition.weight}
+        "minecraft:world_age_filter" = :Key {types = #dict, structure = @condition.world_age_filter}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+condition.brightness_filter inherit temp/SortedKeymap {
+    keys = {
+        "adjust_for_weather" = :Key {types = #bool}
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+    }
+}
+condition.delay_filter inherit temp/SortedKeymap {
+    keys = {
+        "identifier" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+        "spawn_chance" = :Key {types = #int}
+    }
+}
+condition.density_limit inherit temp/SortedKeymap {
+    keys = {
+        "surface" = :Key {types = #int}
+        "underground" = :Key {types = #int}
+    }
+}
+condition.difficulty_filter inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #str}
+        "min" = :Key {types = #str}
+    }
+}
+condition.distance_filter inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+    }
+}
+condition.height_filter inherit temp/SortedKeymap {
+    keys = {
+        "max" = :Key {types = #int}
+        "min" = :Key {types = #int}
+    }
+}
+condition.herd :Normalizer {
+    outer_types = [#list, #dict]
+    inner_types = #list
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/spawn_rules_normalize_herd
+    }
+    structure = inherit temp/Dict {
+        key_weight = 0
+        key_types = #int
+        this_types = #list
+        value_types = #dict
+        value_structure = @condition.herd:item
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "event", "show_item_key" = false, "measure_length" = true}
+        }
+    }
+}
+condition.herd:item inherit temp/SortedKeymap {
+    keys = {
+        "event" = :Key {types = #str, similarity_weight = 20, delegate_arguments = {"always_print" = true}}
+        "event_skip_count" = :Key {types = #int}
+        "initial_event" = :Key {types = #str}
+        "initial_event_count" = :Key {types = #int}
+        "max_size" = :Key {types = #int}
+        "min_size" = :Key {types = #int}
+    }
+}
+condition.mob_event_filter inherit temp/SortedKeymap {
+    keys = {
+        "event" = :Key {types = #str}
+    }
+}
+condition.permute_type inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @condition.permute_type:item
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "permute type", "show_item_key" = false, "measure_length" = true}
+    }
+}
+condition.permute_type:item inherit temp/SortedKeymap {
+    keys = {
+        "entity_type" = :Key {types = #str}
+        "weight" = :Key {types = #int}
+    }
+}
+condition.player_in_village_filter inherit temp/SortedKeymap {
+    keys = {
+        "distance" = :Key {types = #int}
+        "village_border_tolerance" = :Key {types = #int}
+    }
+}
+condition.spawn_event inherit temp/SortedKeymap {
+    keys = {
+        "event" = :Key {types = #str}
+    }
+}
+condition.spawns_above_block_filter inherit temp/SortedKeymap {
+    keys = {
+        "blocks" = :Key {types = [#dict, #list, #str], structure = @block_list_or_block}
+        "distance" = :Key {types = #int}
+    }
+}
+condition.weight inherit temp/SortedKeymap {
+    keys = {
+        "default" = :Key {types = #int}
+        "rarity" = :Key {types = #int}
+    }
+}
+condition.world_age_filter inherit temp/SortedKeymap {
+    keys = {
+        "min" = :Key {types = #int}
+    }
+}

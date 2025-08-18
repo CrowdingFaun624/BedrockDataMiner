@@ -1,0 +1,60 @@
+/* Converted by CmpMigrator 0.1.9 */
+// name "list modifier" is my invention.
+settings {
+    aliases {
+        temp = @structures/misc/template/
+    }
+}
+list_modifier abstract :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "mode"}
+    }
+    $ (str) values_key = "values"
+    $ (type | list) value_types = #list
+    $ (:Structure) values
+    substructures = {
+        "append" = :Key {types = #dict, structure = @list_modifier.append{$values=values, $values_key=values_key, $value_types=value_types}}
+        "insert" = :Key {types = #dict, structure = @list_modifier.insert{$values=values, $values_key=values_key, $value_types=value_types}}
+        "replace_all" = :Key {types = #dict, structure = @list_modifier.replace_all{$values=values, $values_key=values_key, $value_types=value_types}}
+        "replace_selection" = :Key {types = #dict, structure = @list_modifier.replace_selection{$values=values, $values_key=values_key, $value_types=value_types}}
+    }
+}
+list_modifier:all abstract {
+    $ (str) values_key = "values"
+    $ (type | list) value_types = #list
+    $ (:Structure) values
+    "function" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    values_key = :Key {types = value_types, structure = values}
+    "mode" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "entity" = :Key {types = #str} // only in some places does this key exist
+}
+list_modifier.append abstract inherit temp/SortedKeymap {
+    $ (str) values_key = "values"
+    $ (type | list) value_types = #list
+    $ (:Structure) values
+    keys = @list_modifier:all{$values = values, $values_key=values_key, $value_types=value_types}
+}
+list_modifier.insert abstract inherit temp/SortedKeymap {
+    $ (str) values_key = "values"
+    $ (type | list) value_types = #list
+    $ (:Structure) values
+    keys = @list_modifier:all{$values = values, $values_key=values_key, $value_types=value_types} + {
+        "offset" = :Key {types = #int}
+    }
+}
+list_modifier.replace_all abstract inherit temp/SortedKeymap {
+    $ (str) values_key = "values"
+    $ (type | list) value_types = #list
+    $ (:Structure) values
+    keys = @list_modifier:all{$values = values, $values_key=values_key, $value_types=value_types}
+}
+list_modifier.replace_selection abstract inherit temp/SortedKeymap {
+    $ (str) values_key = "values"
+    $ (type | list) value_types = #list
+    $ (:Structure) values
+    keys = @list_modifier:all{$values = values, $values_key=values_key, $value_types=value_types} + {
+        "offset" = :Key {types = #int}
+        "size" = :Key {types = #int}
+    }
+}

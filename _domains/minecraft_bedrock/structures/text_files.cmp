@@ -1,0 +1,23 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @files
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "text_files"}
+    }
+}
+files inherit temp/Dict {
+    value_types = #file
+    key_structure = @temp/string
+    value_structure = @structures/text_file/cache
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "file", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}

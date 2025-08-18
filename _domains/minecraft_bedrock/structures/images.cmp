@@ -1,0 +1,53 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "images"
+    $ structure = @images
+}
+images inherit temp/SortedKeymap {
+    keys = {
+        "bilinear" = :Key {types = #bool}
+        "textures" = :Key {types = [#list, #dict], structure = @textures}
+    }
+}
+textures :Union {
+    substructures = [
+        :Key {types = #list, structure = inherit temp/Dict {
+            key_weight = 0
+            key_types = #int
+            this_types = #list
+            value_types = [#str, #dict]
+            value_structure = @texture
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"field" = "texture", "show_item_key" = false, "measure_length" = true}
+            }
+        }},
+        :Key {types = #dict, structure = inherit temp/Dict {
+            value_types = [#str, #dict]
+            value_structure = @texture
+            key_structure = @temp/string
+            delegate = :Delegate {
+                delegate_class = %DefaultDelegate
+                arguments = {"sort" = %sort_by_key, "field" = "texture", "measure_length" = true}
+            }
+        }},
+    ]
+}
+texture :Union {
+    substructures = [
+        :Key {types = #str, structure = @temp/string},
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "texture" = :Key {types = #str, structure = @temp/string, similarity_weight = 8, delegate_arguments = {"always_print" = true}}
+                "bilinear" = :Key {types = #bool}
+                "wrap" = :Key {types = #bool}
+            }
+        }},
+    ]
+}

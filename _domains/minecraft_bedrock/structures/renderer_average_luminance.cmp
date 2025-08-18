@@ -1,0 +1,36 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "renderer_average_luminance"
+    $ structure = @average_luminance
+}
+average_luminance inherit temp/SortedKeymap {
+    keys = {
+        "low_percent" = :Key {types = #float}
+        "high_percent" = :Key {types = #float}
+        "min_log_luminance" = :Key {types = #float}
+        "log_luminance_range" = :Key {types = [#float, #int]}
+        "adaptive_time_coefficient" = :Key {types = #float}
+        "light_adaptation" = :Key {types = #float}
+        "dark_adaptation" = :Key {types = #float}
+        "enable_custom_weight" = :Key {types = #bool}
+        "weight_curve_key_values" = :Key {types = #dict, structure = @weight_curve_key_values}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+weight_curve_key_values inherit temp/Dict {
+    value_types = #float
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "value", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}

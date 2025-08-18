@@ -1,0 +1,30 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @langauges
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "emotes_texts"}
+    }
+}
+langauges inherit temp/Dict {
+    value_types = #dict
+    value_structure = @emotes
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "language", "measure_length" = true}
+    }
+}
+emotes inherit temp/Dict {
+    value_types = #file
+    value_structure = @structures/languages_contents/cache_keys
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key, "field" = "emote", "measure_length" = true}
+    }
+}

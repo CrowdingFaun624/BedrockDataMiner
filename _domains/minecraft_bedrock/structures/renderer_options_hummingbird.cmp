@@ -1,0 +1,100 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "renderer_options_hummingbird"
+    $ types = [#dict, #list]
+    $ structure = @file
+}
+file :Normalizer {
+    outer_types = [#dict, #list]
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/renderer_options_normalize_mappings
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "global_settings" = :Key {types = #dict, structure = @global_settings}
+            "shaders" = :Key {types = #list, structure = @shaders}
+            "mappings" = :Key {types = #list, structure = @mappings}
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"sort" = %sort_by_component_order}
+        }
+    }
+}
+global_settings inherit temp/SortedKeymap {
+    keys = {
+        "hb_gfx_supports_msaa_textures" = :Key {types = #bool}
+        "hb_gfx_requires_msaa_resolve" = :Key {types = #bool}
+        "hb_gfx_supports_a8_render_target" = :Key {types = #bool}
+        "hb_gfx_requires_rb_swap_for_images" = :Key {types = #bool}
+        "hb_gfx_requires_draw_fences" = :Key {types = #bool}
+        "hb_gfx_requires_shader_type_in_shader" = :Key {types = #bool}
+        "hb_gfx_supports_npot_texture_ops" = :Key {types = #bool}
+        "hb_gfx_shader_change_requires_resources_rebind" = :Key {types = #bool}
+        "hb_gfx_supports_only_16_bit_indices" = :Key {types = #bool}
+        "hb_gfx_constant_buffer_block_alignment" = :Key {types = #int}
+        "hb_gfx_requires_y_flip_for_layers" = :Key {types = #bool}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "setting", "measure_length" = true}
+    }
+}
+shaders inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @shader
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "shader", "show_item_key" = false, "measure_length" = true}
+    }
+}
+shader inherit temp/SortedKeymap {
+    keys = {
+        "name" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}, similarity_weight = 4}
+        "vertexShader" = :Key {types = #str}
+        "fragmentShader" = :Key {types = #str}
+        "defines" = :Key {types = #list, structure = @defines}
+    }
+}
+defines inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_value, "show_item_key" = false, "field" = "definition", "measure_length" = true}
+    }
+}
+mappings :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %scripts/normalizers/normalizers/renderer_options_dragon_normalize
+    }
+    structure = inherit temp/Dict {
+        value_types = [#str, #null]
+        key_structure = @temp/string
+        value_structure = :Union {
+            substructures = [
+                :Key {types = #str, structure = @temp/string},
+                :Key {types = #null},
+            ]
+        }
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "mapping", "measure_length" = true}
+        }
+    }
+}

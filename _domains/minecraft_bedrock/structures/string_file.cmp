@@ -1,0 +1,34 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+    }
+}
+base :StructureBase {
+    this_types = #file
+    structure = @cache
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "string_file"}
+    }
+}
+cache :Cache {
+    this_types = #file
+    structure = :Condition {
+        substructures = [
+            :Key {types = #file, filter = :EqFilter {
+                key = "serializer"
+                value = "text_serializer"
+            }, structure = :File {
+                serializer = @s/text_serializer
+                outer_types = #file
+                inner_types = #str
+                structure = @file
+            }},
+        ]
+    }
+}
+file :Primitive { // structure cannot be none; StringStructure makes no difference
+    this_types = #str
+    delegate = :Delegate {delegate_class=%@PrimitiveDelegate}
+}

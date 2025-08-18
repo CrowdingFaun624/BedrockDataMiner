@@ -1,0 +1,61 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+float_provider :Switch {
+    switch_function = :Function {
+        function = %scripts/normalizers/normalizers/provider_switch
+        arguments = {"key" = "type", "default" = "minecraft:constant_float"}
+    }
+    substructures = {
+        "minecraft:constant_float" = :Key {types = #float} // not a real type
+        "minecraft:constant" = :Key {types = #dict, structure = @float_provider.constant}
+        "minecraft:uniform" = :Key {types = #dict, structure = @float_provider.uniform}
+        "minecraft:clamped_normal" = :Key {types = #dict, structure = @float_provider.clamped_normal}
+        "minecraft:trapezoid" = :Key {types = #dict, structure = @float_provider.trapezoid}
+    }
+}
+float_provider:all  {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+float_provider:value abstract {
+    $ (dict) imports
+    "value" = :Key {types = #dict, structure = @value{$imports=imports}}
+}
+value abstract inherit temp/SortedKeymap {
+    $ (dict) imports
+    keys = imports
+}
+float_provider:clamped  {
+    "min" = :Key {types = #float}
+    "max" = :Key {types = #float}
+}
+float_provider:clamped_range {
+    "min_inclusive" = :Key {types = #float}
+    "max_exclusive" = :Key {types = #float}
+}
+float_provider:normal {
+    "mean" = :Key {types = @misc/decimal}
+    "deviation" = :Key {types = @misc/decimal}
+}
+float_provider:plateau {
+    "plateau" = :Key {types = #float}
+}
+float_provider.constant inherit temp/SortedKeymap {
+    keys = @float_provider:all + {
+        "value" = :Key {types = #float}
+    }
+}
+float_provider.uniform inherit temp/SortedKeymap {
+    keys = @float_provider:all + @float_provider:clamped_range + @float_provider:value{$imports=@float_provider:clamped_range}
+}
+float_provider.clamped_normal inherit temp/SortedKeymap {
+    keys = @float_provider:all + @float_provider:clamped + @float_provider:normal + @float_provider:value{$imports=@float_provider:clamped + @float_provider:normal}
+}
+float_provider.trapezoid inherit temp/SortedKeymap {
+    keys = @float_provider:all + @float_provider:clamped + @float_provider:plateau + @float_provider:value{$imports=@float_provider:clamped + @float_provider:plateau}
+}

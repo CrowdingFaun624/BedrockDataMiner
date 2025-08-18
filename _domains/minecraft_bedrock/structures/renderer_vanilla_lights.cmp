@@ -1,0 +1,25 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "renderer_vanilla_lights"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "colors" = :Key {types = #dict, structure = @colors}
+    }
+}
+colors inherit temp/Dict {
+    value_types = #str
+    value_structure = @temp/string
+    key_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "light source"}
+    }
+}

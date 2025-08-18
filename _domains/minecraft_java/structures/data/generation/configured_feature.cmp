@@ -1,0 +1,537 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        a = @structures/misc/types/
+        bs = @structures/misc/block_state/
+        bpred = @structures/misc/block_predicate/
+        bsp = @structures/misc/provider/block_state_provider/
+        foliage_placer = @structures/data/generation/tree/foliage_placer/
+        fp = @structures/misc/provider/float_provider/
+        hp = @structures/misc/provider/height_provider/
+        ip = @structures/misc/provider/int_provider/
+        minimum_size = @structures/data/generation/tree/minimum_size/
+        misc = @structures/misc/misc/
+        pf = @structures/data/generation/placed_feature/
+        pl = @structures/data/generation/processor_list/
+        root_placer = @structures/data/generation/tree/root_placer/
+        rt = @structures/data/generation/rule_test/
+        temp = @structures/misc/template/
+        tree_decorator = @structures/data/generation/tree/decorator/
+        trunk_placer = @structures/data/generation/tree/trunk_placer/
+        vector = @structures/misc/vector/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "feature"
+    $ pack_type = "data pack"
+    $ structure = @feature
+}
+feature_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @feature},
+    ]
+}
+feature :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:bamboo" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.bamboo}}
+        "minecraft:basalt_columns" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.basalt_columns}}
+        "minecraft:basalt_pillar" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:block_column" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.block_column}}
+        "minecraft:block_pile" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.block_pile}}
+        "minecraft:blue_ice" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:bonus_chest" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:chorus_plant" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:coral_claw" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:coral_mushroom" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:coral_tree" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:delta_feature" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.delta_feature}}
+        "minecraft:desert_well" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:disk" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.disk}}
+        "minecraft:dripstone_cluster" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.dripstone_cluster}}
+        "minecraft:end_gateway" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.end_gateway}}
+        "minecraft:end_island" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:end_platform" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:end_spike" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.end_spike}}
+        "minecraft:fallen_tree" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.fallen_tree}}
+        "minecraft:fill_layer" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.fill_layer}}
+        "minecraft:flower" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.random_patch}}
+        "minecraft:forest_rock" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.forest_rock}}
+        "minecraft:fossil" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.fossil}}
+        "minecraft:freeze_top_layer" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:geode" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.geode}}
+        "minecraft:glowstone_blob" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:huge_brown_mushroom" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.huge_mushroom}}
+        "minecraft:huge_fungus" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.huge_fungus}}
+        "minecraft:huge_red_mushroom" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.huge_mushroom}}
+        "minecraft:ice_spike" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:iceberg" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.iceberg}}
+        "minecraft:kelp" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:lake" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.lake}}
+        "minecraft:large_dripstone" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.large_dripstone}}
+        "minecraft:monster_room" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:multiface_growth" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.multiface_growth}}
+        "minecraft:nether_forest_vegetation" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.nether_forest_vegetation}}
+        "minecraft:netherrack_replace_blobs" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.netherrack_replace_blobs}}
+        "minecraft:no_bonemeal_flower" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.random_patch}}
+        "minecraft:no_op" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:ore" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.ore}}
+        "minecraft:pointed_dripstone" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.pointed_dripstone}}
+        "minecraft:random_boolean_selector" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.random_boolean_selector}}
+        "minecraft:random_selector" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.random_selector}}
+        "minecraft:random_patch" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.random_patch}}
+        "minecraft:replace_single_block" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.replace_single_block}}
+        "minecraft:root_system" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.root_system}}
+        "minecraft:scattered_ore" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.ore}}
+        "minecraft:sculk_patch" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.sculk_patch}}
+        "minecraft:seagrass" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.seagrass}}
+        "minecraft:sea_pickle" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.sea_pickle}}
+        "minecraft:simple_block" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.simple_block}}
+        "minecraft:simple_random_selector" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.simple_random_selector}}
+        "minecraft:spring_feature" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.spring_feature}}
+        "minecraft:tree" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.tree}}
+        "minecraft:twisting_vines" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.twisting_vines}}
+        "minecraft:underwater_magma" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.underwater_magma}}
+        "minecraft:vegetation_patch" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.vegetation_patch}}
+        "minecraft:vines" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:void_start_platform" = :Key {types = #dict, structure = @feature:abstract}
+        "minecraft:waterlogged_vegetation_patch" = :Key {types = #dict, structure = @feature:abstract{$imports=@config.vegetation_patch}}
+        "minecraft:weeping_vines" = :Key {types = #dict, structure = @feature:abstract}
+    }
+}
+feature:abstract inherit temp/SortedKeymap {
+    $ (dict) imports = {}
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "config" = :Key {types = #dict, structure = @config:abstract{$imports=imports}}
+    }
+}
+config:abstract abstract inherit temp/SortedKeymap {
+    $ (dict) imports
+    keys = imports
+}
+config.bamboo inherit temp/SortedKeymap {
+    keys = {
+        "probability" = :Key {types = #float}
+    }
+}
+config.basalt_columns inherit temp/SortedKeymap {
+    keys = {
+        "reach" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "height" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}
+config.block_column inherit temp/SortedKeymap {
+    keys = {
+        "direction" = :Key {types = #str}
+        "allowed_placement" = :Key {types = #dict, structure = @bpred/block_predicate}
+        "prioritize_tip" = :Key {types = #bool}
+        "layers" = :Key {types = #list, structure = @config.block_columns:layers}
+    }
+}
+config.block_columns:layers inherit temp/Set {
+    $ field = "layer"
+    value_types = #dict
+    value_structure = @config.block_columns:layer
+}
+config.block_columns:layer inherit temp/SortedKeymap {
+    keys = {
+        "height" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    }
+}
+config.block_pile inherit temp/SortedKeymap {
+    keys = {
+        "state_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    }
+}
+config.delta_feature inherit temp/SortedKeymap {
+    keys = {
+        "contents" = :Key {types = @a/compound, structure = @bs/block_state}
+        "rim" = :Key {types = @a/compound, structure = @bs/block_state}
+        "size" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "rim_size" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}
+config.disk inherit temp/SortedKeymap {
+    keys = {
+        "state_provider" = :Key {types = #dict, structure = @config.disk:state_provider}
+        "radius" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "half_height" = :Key {types = #int}
+        "target" = :Key {types = #dict, structure = @bpred/block_predicate}
+    }
+}
+config.disk:state_provider inherit temp/SortedKeymap {
+    keys = {
+        "fallback" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "rules" = :Key {types = #list, structure = @config.disk:rules}
+    }
+}
+config.disk:rules inherit temp/Set {
+    $ field = "rule"
+    value_types = #dict
+    value_structure = @config.disk:rule
+}
+config.disk:rule inherit temp/SortedKeymap {
+    keys = {
+        "if_true" = :Key {types = #dict, structure = @bpred/block_predicate}
+        "then" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    }
+}
+config.dripstone_cluster inherit temp/SortedKeymap {
+    keys = {
+        "floor_to_ceiling_search_range" = :Key {types = #int}
+        "height" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "radius" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "max_stalagmite_stalactite_height_diff" = :Key {types = #int}
+        "height_deviation" = :Key {types = #int}
+        "dripstone_block_layer_thickness" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "density" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "wetness" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "chance_of_dripstone_column_at_max_distance_from_center" = :Key {types = #float}
+        "max_distance_from_edge_affecting_chance_of_dripstone_column" = :Key {types = #int}
+        "max_distance_from_center_affecting_height_bias" = :Key {types = #int}
+    }
+}
+config.end_gateway inherit temp/SortedKeymap {
+    keys = {
+        "exact" = :Key {types = #bool}
+        "exit" = :Key {types = #list, structure = @vector/vector.int}
+    }
+}
+config.end_spike inherit temp/SortedKeymap {
+    keys = {
+        "crystal_invulnerable" = :Key {types = #bool}
+        "crystal_beam_target" = :Key {types = #list, structure = @vector/vector.int}
+        "spikes" = :Key {types = #list, structure = @config.end_spike:spikes}
+    }
+}
+config.end_spike:spikes inherit temp/Set {
+    $ field = "spike"
+    value_types = #dict
+    value_structure = @config.end_spike:spike
+}
+config.end_spike:spike inherit temp/SortedKeymap {
+    keys = {
+        "centerX" = :Key {types = #int}
+        "centerZ" = :Key {types = #int}
+        "radius" = :Key {types = #int}
+        "height" = :Key {types = #int}
+        "guarded" = :Key {types = #bool}
+    }
+}
+config.fill_layer inherit temp/SortedKeymap {
+    keys = {
+        "state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "height" = :Key {types = #int}
+    }
+}
+config.fallen_tree inherit temp/SortedKeymap {
+    keys = {
+        "trunk_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "log_length" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "log_decorators" = :Key {types = #list, structure = @tree_decorator/decorator_list}
+        "stump_decorators" = :Key {types = #list, structure = @tree_decorator/decorator_list}
+    }
+}
+config.forest_rock inherit temp/SortedKeymap {
+    keys = {
+        "state" = :Key {types = @a/compound, structure = @bs/block_state}
+    }
+}
+config.fossil inherit temp/SortedKeymap {
+    keys = {
+        "fossil_structures" = :Key {types = #list, structure = @misc/named_list{$name="structure"}}
+        "overlay_structures" = :Key {types = #list, structure = @misc/named_list{$name="structure"}}
+        "fossil_processors" = :Key {types = [#str, #list, #dict], structure = @pl/processor_list_or_id}
+        "overlay_processors" = :Key {types = [#str, #list, #dict], structure = @pl/processor_list_or_id}
+        "max_empty_corners_allowed" = :Key {types = #int}
+    }
+}
+config.geode inherit temp/SortedKeymap {
+    keys = {
+        "blocks" = :Key {types = #dict, structure = @config.geode:blocks}
+        "layers" = :Key {types = #dict, structure = @config.geode:layers}
+        "crack" = :Key {types = #dict, structure = @config.geode:crack}
+        "noise_multiplier" = :Key {types = #float} // double
+        "use_potential_placements_chance" = :Key {types = #float} // double
+        "use_alternate_layer0_chance" = :Key {types = #float} // double
+        "placements_require_layer0_alternate" = :Key {types = #bool}
+        "outer_wall_distance" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "distribution_points" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "invalid_blocks_threshold" = :Key {types = #int}
+        "point_offset" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "min_gen_offset" = :Key {types = #int}
+        "max_gen_offset" = :Key {types = #int}
+    }
+}
+config.geode:blocks inherit temp/SortedKeymap {
+    keys = {
+        "filling_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "inner_layer_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "alternate_inner_layer_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "middle_layer_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "outer_layer_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "inner_placements" = :Key {types = @a/list, structure = @bs/block_state_list}
+        "cannot_replace" = :Key {types = #str}
+        "invalid_blocks" = :Key {types = #str}
+    }
+}
+config.geode:layers inherit temp/SortedKeymap {
+    keys = { // all doubles
+        "filling" = :Key {types = #float}
+        "inner_layer" = :Key {types = #float}
+        "middle_layer" = :Key {types = #float}
+        "outer_layer" = :Key {types = #float}
+    }
+}
+config.geode:crack inherit temp/SortedKeymap {
+    keys = {
+        "generate_crack_chance" = :Key {types = #float} // double
+        "base_crack_size" = :Key {types = #float} // double
+        "crack_point_offset" = :Key {types = #int}
+    }
+}
+config.huge_fungus inherit temp/SortedKeymap {
+    keys = {
+        "hat_state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "decor_state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "stem_state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "valid_base_block" = :Key {types = @a/compound, structure = @bs/block_state}
+        "planted" = :Key {types = #bool}
+        "replaceable_blocks" = :Key {types = #dict, structure = @bpred/block_predicate}
+    }
+}
+config.huge_mushroom inherit temp/SortedKeymap {
+    keys = {
+        "cap_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "stem_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "foliage_radius" = :Key {types = #int}
+    }
+}
+config.iceberg inherit temp/SortedKeymap {
+    keys = {
+        "state" = :Key {types = @a/compound, structure = @bs/block_state}
+    }
+}
+config.lake inherit temp/SortedKeymap {
+    keys = {
+        "fluid" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "barrier" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    }
+}
+config.large_dripstone inherit temp/SortedKeymap {
+    keys = {
+        "floor_to_ceiling_search_range" = :Key {types = #int}
+        "column_radius" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "height_scale" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "max_column_radius_to_cave_height_ratio" = :Key {types = #float}
+        "stalactite_bluntness" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "stalagmite_bluntness" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "wind_speed" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+        "min_radius_for_wind" = :Key {types = #int}
+        "min_bluntness_for_wind" = :Key {types = #float}
+    }
+}
+config.multiface_growth inherit temp/SortedKeymap {
+    keys = {
+        "block" = :Key {types = #str}
+        "search_range" = :Key {types = #int}
+        "chance_of_spreading" = :Key {types = #float}
+        "can_place_on_floor" = :Key {types = #bool}
+        "can_place_on_ceiling" = :Key {types = #bool}
+        "can_place_on_wall" = :Key {types = #bool}
+        "can_be_placed_on" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+    }
+}
+config.nether_forest_vegetation inherit temp/SortedKeymap {
+    keys = {
+        "state_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "spread_width" = :Key {types = #int}
+        "spread_height" = :Key {types = #int}
+    }
+}
+config.netherrack_replace_blobs inherit temp/SortedKeymap {
+    keys = {
+        "state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "target" = :Key {types = @a/compound, structure = @bs/block_state}
+        "radius" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}
+config.ore inherit temp/SortedKeymap {
+    keys = {
+        "size" = :Key {types = #int}
+        "discard_chance_on_air_exposure" = :Key {types = #float}
+        "targets" = :Key {types = #list, structure = @config.ore:targets}
+    }
+}
+config.ore:targets inherit temp/Set {
+    $ field = "target"
+    value_types = #dict
+    value_structure = @config.ore:target
+}
+config.ore:target inherit temp/SortedKeymap {
+    keys = {
+        "target" = :Key {types = #dict, structure = @rt/rule_test}
+        "state" = :Key {types = @a/compound, structure = @bs/block_state}
+    }
+}
+config.pointed_dripstone inherit temp/SortedKeymap {
+    keys = {
+        "chance_of_taller_dripstone" = :Key {types = #float}
+        "chance_of_directional_spread" = :Key {types = #float}
+        "chance_of_spread_radius2" = :Key {types = #float}
+        "chance_of_spread_radius3" = :Key {types = #float}
+    }
+}
+config.random_boolean_selector inherit temp/SortedKeymap {
+    keys = {
+        "feature_false" = :Key {types = [#str, #dict], structure = @pf/placed_feature_or_id}
+        "feature_true" = :Key {types = [#str, #dict], structure = @pf/placed_feature_or_id}
+    }
+}
+config.random_selector inherit temp/SortedKeymap {
+    keys = {
+        "default" = :Key {types = [#str, #dict], structure = @pf/placed_feature_or_id}
+        "features" = :Key {types = #list, structure = @config.random_selector:features}
+    }
+}
+config.random_selector:features inherit temp/Set {
+    $ field = "feature"
+    value_types = #dict
+    value_structure = @config.random_selector:feature
+}
+config.random_selector:feature inherit temp/SortedKeymap {
+    keys = {
+        "feature" = :Key {types = [#str, #dict], structure = @pf/placed_feature_or_id}
+        "chance" = :Key {types = #float}
+    }
+}
+config.random_patch inherit temp/SortedKeymap {
+    keys = {
+        "tries" = :Key {types = #int}
+        "xz_spread" = :Key {types = #int}
+        "y_spread" = :Key {types = #int}
+        "feature" = :Key {types = [#str, #dict], structure = @pf/placed_feature_or_id}
+    }
+}
+config.replace_single_block inherit temp/SortedKeymap {
+    keys = {
+        "targets" = :Key {types = #list, structure = @config.replace_single_block:targets}
+    }
+}
+config.replace_single_block:targets inherit temp/Set {
+    $ field = "target"
+    value_types = #dict
+    value_structure = @config.replace_single_block:target
+}
+config.replace_single_block:target inherit temp/SortedKeymap {
+    keys = {
+        "target" = :Key {types = #dict, structure = @rt/rule_test}
+        "state" = :Key {types = @a/compound, structure = @bs/block_state}
+    }
+}
+config.root_system inherit temp/SortedKeymap {
+    keys = {
+        "required_vertical_space_for_tree" = :Key {types = #int}
+        "root_radius" = :Key {types = #int}
+        "root_placement_attempts" = :Key {types = #int}
+        "root_column_max_height" = :Key {types = #int}
+        "hanging_root_radius" = :Key {types = #int}
+        "hanging_roots_vertical_span" = :Key {types = #int}
+        "hanging_root_placement_attempts" = :Key {types = #int}
+        "allowed_vertical_water_for_tree" = :Key {types = #int}
+        "root_replaceable" = :Key {types = #str}
+        "root_state_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "hanging_root_state_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "allowed_tree_position" = :Key {types = #dict, structure = @bpred/block_predicate}
+        "feature" = :Key {types = [#str, #dict], structure = @pf/placed_feature_or_id}
+    }
+}
+config.sculk_patch inherit temp/SortedKeymap {
+    keys = {
+        "charge_count" = :Key {types = #int}
+        "amount_per_charge" = :Key {types = #int}
+        "spread_attempts" = :Key {types = #int}
+        "growth_rounds" = :Key {types = #int}
+        "spread_rounds" = :Key {types = #int}
+        "extra_rare_growths" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "catalyst_chance" = :Key {types = #float}
+    }
+}
+config.seagrass inherit temp/SortedKeymap {
+    keys = {
+        "probability" = :Key {types = #float}
+    }
+}
+config.sea_pickle inherit temp/SortedKeymap {
+    keys = {
+        "count" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    }
+}
+config.simple_block inherit temp/SortedKeymap {
+    keys = {
+        "schedule_tick" = :Key {types = #int}
+        "to_place" = :Key {types = #dict, structure = @bsp/block_state_provider}
+    }
+}
+config.simple_random_selector inherit temp/SortedKeymap {
+    keys = {
+        "features" = :Key {types = [#str, #dict, #list], structure = @pf/placed_feature_list_or_feature}
+    }
+}
+config.spring_feature inherit temp/SortedKeymap {
+    keys = {
+        "state" = :Key {types = @a/compound, structure = @bs/block_state}
+        "rock_count" = :Key {types = #int}
+        "hole_count" = :Key {types = #int}
+        "requires_block_below" = :Key {types = #bool}
+        "valid_blocks" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
+    }
+}
+config.tree inherit temp/SortedKeymap {
+    keys = {
+        "ignore_vines" = :Key {types = #bool}
+        "force_dirt" = :Key {types = #bool}
+        "dirt_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "trunk_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "foliage_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "minimum_size" = :Key {types = #dict, structure = @minimum_size/minimum_size}
+        "trunk_placer" = :Key {types = #dict, structure = @trunk_placer/trunk_placer}
+        "foliage_placer" = :Key {types = #dict, structure = @foliage_placer/foliage_placer}
+        "root_placer" = :Key {types = #dict, structure = @root_placer/root_placer}
+        "decorators" = :Key {types = #list, structure = @tree_decorator/decorator_list}
+    }
+}
+config.twisting_vines inherit temp/SortedKeymap {
+    keys = {
+        "spread_width" = :Key {types = #int}
+        "spread_height" = :Key {types = #int}
+        "max_height" = :Key {types = #int}
+    }
+}
+config.underwater_magma inherit temp/SortedKeymap {
+    keys = {
+        "floor_search_range" = :Key {types = #int}
+        "placement_radius_around_floor" = :Key {types = #int}
+        "placement_probability_per_valid_position" = :Key {types = #float}
+    }
+}
+config.vegetation_patch inherit temp/SortedKeymap {
+    keys = {
+        "surface" = :Key {types = #str}
+        "depth" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "vertical_range" = :Key {types = #int}
+        "extra_bottom_block_chance" = :Key {types = #float}
+        "extra_edge_column_chance" = :Key {types = #float}
+        "vegetation_chance" = :Key {types = #float}
+        "xz_radius" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "replaceable" = :Key {types = #str}
+        "ground_state" = :Key {types = #dict, structure = @bsp/block_state_provider}
+        "vegetation_feature" = :Key {types = [#str, #dict], structure = @pf/placed_feature_or_id}
+    }
+}

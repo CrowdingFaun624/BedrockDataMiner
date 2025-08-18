@@ -1,0 +1,173 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = @resource_packs
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/BaseDelegate/
+        arguments = {}
+    }
+}
+resource_packs :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = [
+        :Function {
+            function = %scripts/tablifiers/sound_definitions/normalize/
+            arguments = {"serializer" = @minecraft_common!serializers/json}
+        },
+        :Function {
+            function = %scripts/tablifiers/sound_definitions/remove_format_version/
+        },
+        :Function {
+            function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_dict_old
+        },
+        :Function {
+            function = %scripts/tablifiers/sound_definitions/make_all_tags/
+        },
+    ]
+    structure = inherit temp/Dict {
+        allow_key_moves = false
+        value_types = #dict
+        value_structure = @sound_events
+        delegate = :Delegate {
+            delegate_class = %scripts/tablifiers/sound_definitions/ResourcePackDelegate/
+            arguments = {}
+        }
+    }
+}
+sound_events inherit temp/Dict {
+    value_types = #dict
+    key_structure = @string
+    value_structure = @sound_event
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/SoundEventsDelegate/
+        arguments = {}
+    }
+}
+sound_event :Normalizer {
+    outer_types = #dict
+    inner_types = #dict
+    functions = :Function {
+        // https://bugs.mojang.com/browse/MCPE-153558
+        // https://bugs.mojang.com/browse/MCPE-178265
+        function = %delete_keys
+        arguments = {"keys" = ["subtitle", "volume", "pitch"]}
+    }
+    structure = inherit temp/SortedKeymap {
+        keys = {
+            "name" = :Key {types = #str, similarity_weight = 0, structure = @string}
+            "category" = :Key {types = #str, structure = @category}
+            "max_distance" = :Key {types = [#int, #float], structure = @make_float}
+            "min_distance" = :Key {types = [#int, #float], structure = @make_float}
+            "sounds" = :Key {types = #list, structure = @sounds}
+        }
+        delegate = :Delegate {
+            delegate_class = %scripts/tablifiers/sound_definitions/SoundEventDelegate/
+            arguments = {}
+        }
+    }
+}
+sounds inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = [#dict, #str]
+    min_value_similarity_threshold = 0.3
+    value_structure = @sound_properties
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/SoundsDelegate/
+        arguments = {}
+    }
+}
+sound_properties :Normalizer {
+    outer_types = [#str, #dict]
+    inner_types = #dict
+    functions = [
+        :Function {
+            function = %scripts/normalizers/normalizers/sound_definitions_make_strings_to_dict
+        },
+        :Function {
+            // https://bugs.mojang.com/browse/MCPE-153561
+            function = %delete_key
+            arguments = {"key" = "pitch:"}
+        },
+    ]
+    structure = inherit temp/SortedKeymap {
+        key_structure = @not_code_string
+        keys = {
+            "name" = :Key {types = #str, structure = @string, similarity_weight = 10, required = true}
+            "type" = :Key {types = #str, structure = @primitive_string, delegate_arguments = {"always_print" = true}}
+            "weight" = :Key {types = #int, structure = @int}
+            "volume" = :Key {types = [#int, #float], structure = @make_float}
+            "pitch" = :Key {types = [#int, #float], structure = @make_float}
+            "stream" = :Key {types = #bool, structure = @bool}
+            "load_on_low_memory" = :Key {types = #bool, structure = @bool}
+            "is3D" = :Key {types = #bool, structure = @bool}
+            "exclude_from_pocket_platforms" = :Key {types = #bool, structure = @bool}
+        }
+        delegate = :Delegate {
+            delegate_class = %scripts/tablifiers/sound_definitions/SoundPropertiesDelegate/
+            arguments = {}
+        }
+    }
+}
+category :Primitive {
+    this_types = #str
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/CategoryDelegate/
+        arguments = {"code" = false}
+    }
+}
+string :String {
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/PrimitiveDelegate/
+        arguments = {"code" = false}
+    }
+}
+not_code_string :Primitive {
+    this_types = #str
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/PrimitiveDelegate/
+        arguments = {"code" = false}
+    }
+}
+primitive_string :Primitive {
+    this_types = #str
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/PrimitiveDelegate/
+        arguments = {"code" = false}
+    }
+}
+make_float :Normalizer {
+    outer_types = [#float, #int]
+    inner_types = #float
+    functions = :Function {
+        function = %parse_float
+    }
+    structure = :Primitive {
+        this_types = #float
+        delegate = :Delegate {
+            delegate_class = %scripts/tablifiers/sound_definitions/PrimitiveDelegate/
+            arguments = {"code" = false}
+        }
+    }
+}
+int :Primitive {
+    this_types = #int
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/PrimitiveDelegate/
+        arguments = {"code" = false}
+    }
+}
+bool :Primitive {
+    this_types = #bool
+    delegate = :Delegate {
+        delegate_class = %scripts/tablifiers/sound_definitions/PrimitiveDelegate/
+        arguments = {"code" = false}
+    }
+}

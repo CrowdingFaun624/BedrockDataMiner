@@ -1,0 +1,58 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        entry = @structures/data/loot_tables/entry/
+        item_modifier = @structures/data/loot_tables/item_modifier/
+        temp = @structures/misc/template/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        np = @structures/misc/provider/number_provider/
+        pred = @structures/misc/predicate/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ pack_type = "data pack"
+    $ name = "loot_tables"
+    $ structure = @root
+}
+loot_table_or_id :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @root},
+    ]
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "functions" = :Key {types = #list, structure = @item_modifier/item_modifier_list}
+        "pools" = :Key {types = #list, structure = @pools}
+        "random_sequence" = :Key {types = #str}
+    }
+}
+pools inherit temp/Sequence {
+    $ field = "pool"
+    value_types = #dict
+    value_structure = @pool
+}
+pool inherit temp/SortedKeymap {
+    keys = {
+        "conditions" = :Key {types = #list, structure = @pred/predicate_list}
+        "functions" = :Key {types = #list, structure = @item_modifier/item_modifier_list}
+        "rolls" = :Key {types = [@misc/decimal, #dict], structure = @np/number_provider{$types=@misc/decimal}}
+        "bonus_rolls" = :Key {types = [#float, #dict], structure = @np/number_provider{$types=#float}}
+        "items" = :Key {types = #list, structure = @items, tags = @t/outdated}
+        "entries" = :Key {types = #list, structure = @entry/entry_list}
+    }
+}
+items inherit temp/Set {
+    $ field = "item"
+    value_types = #dict
+    value_structure = @item
+}
+item inherit temp/SortedKeymap {
+    keys = {
+        "item" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "functions" = :Key {types = #list, structure = @item_modifier/item_modifier_list}
+        "weight" = :Key {types = #int}
+    }
+}

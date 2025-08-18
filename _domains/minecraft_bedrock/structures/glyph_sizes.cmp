@@ -1,0 +1,32 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @minecraft_common!serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "glyph_sizes"
+    $ serializer = @s/glyph_sizes_serializer
+    $ structure = @file
+}
+file inherit temp/Dict {
+    value_types = #dict
+    allow_key_moves = false
+    value_structure = @range
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"measure_length" = true, "sort" = %sort_by_key, "field" = "codepoint"}
+    }
+}
+range inherit temp/SortedKeymap {
+    keys = {
+        "character" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "left" = :Key {types = #int}
+        "right" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_component_order, "field" = "end"}
+    }
+}

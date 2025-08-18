@@ -1,0 +1,79 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        temp = @structures/template/
+    }
+}
+base :StructureBase {
+    this_types = #dict
+    structure = :Cache {
+        this_types = #dict
+        structure = :Normalizer {
+            outer_types = #dict
+            inner_types = #fake_file
+            functions = :Function {
+                function = %scripts/normalizers/collapse_resource_packs/collapse_resource_packs_list_file
+                arguments = {"serializer" = @minecraft_common!serializers/json}
+            }
+            structure = :File {
+                serializer = null
+                outer_types = #fake_file
+                inner_types = #dict
+                structure = @resource_packs
+            }
+        }
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultBaseDelegate
+        arguments = {"name" = "flipbook_textures"}
+    }
+}
+resource_packs inherit temp/Dict {
+    key_types = #tuple
+    key_structure = @temp/defined_in
+    value_types = #list
+    value_structure = @flipbook_textures
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "resource pack", "sort" = %sort_by_key, "measure_length" = true}
+    }
+}
+flipbook_textures inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @flipbook_texture
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "flipbook texture", "show_item_key" = false, "measure_length" = true}
+    }
+}
+flipbook_texture inherit temp/SortedKeymap {
+    keys = {
+        "atlas_index" = :Key {types = #int, delegate_arguments = {"always_print" = true}}
+        "atlas_tile" = :Key {types = #str, similarity_weight = 8, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "atlas_tile_variant" = :Key {types = #int}
+        "blend_frames" = :Key {types = #bool}
+        "flipbook_texture" = :Key {types = #str, structure = @temp/string}
+        "frames" = :Key {types = #list, structure = @frames}
+        "replicate" = :Key {types = #int}
+        "ticks_per_frame" = :Key {types = #int}
+    }
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"sort" = %sort_by_key}
+    }
+}
+frames inherit temp/Dict {
+    allow_key_moves = false
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #int
+    value_structure = null
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "frame", "measure_length" = true, "print_flat" = true}
+    }
+}

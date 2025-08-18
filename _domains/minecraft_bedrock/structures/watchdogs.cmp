@@ -1,0 +1,63 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "watchdogs"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "timers" = :Key {types = #list, structure = @timers}
+    }
+}
+timers inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @timer
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "timer", "show_item_key" = false, "measure_length" = true}
+    }
+}
+timer inherit temp/SortedKeymap {
+    keys = {
+        "timer_label" = :Key {types = #str, structure = @temp/string, similarity_weight = 4, delegate_arguments = {"always_print" = true}}
+        "timer_name" = :Key {types = #str, structure = @temp/string, similarity_weight = 4, delegate_arguments = {"always_print" = true}}
+        "timer_group" = :Key {types = #str}
+        "watchdogs" = :Key {types = #list, structure = @watchdogs}
+    }
+}
+watchdogs inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @watchdog
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "watchdog", "show_item_key" = false, "measure_length" = true}
+    }
+}
+watchdog inherit temp/SortedKeymap {
+    keys = {
+        "execution_budget" = :Key {types = #str, structure = @temp/string}
+        "overage_actions" = :Key {types = #list, structure = @actions}
+    }
+}
+actions inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #str
+    value_structure = @temp/string
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "action", "show_item_key" = false, "measure_length" = true}
+    }
+}

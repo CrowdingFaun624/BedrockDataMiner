@@ -1,0 +1,33 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "camera_blends"
+    $ types = #list
+    $ structure = @blends
+}
+blends inherit temp/Dict {
+    key_weight = 0
+    key_types = #int
+    this_types = #list
+    value_types = #dict
+    value_structure = @blend
+    delegate = :Delegate {
+        delegate_class = %DefaultDelegate
+        arguments = {"field" = "blend", "show_item_key" = false, "measure_length" = true}
+    }
+}
+blend inherit temp/SortedKeymap {
+    keys = {
+        "camera_from" = :Key {types = #str, structure = @temp/string, similarity_weight = 2, delegate_arguments = {"always_print" = true}}
+        "camera_to" = :Key {types = #str, structure = @temp/string, similarity_weight = 2, delegate_arguments = {"always_print" = true}}
+        "ease" = :Key {types = #str}
+        "blend_time" = :Key {types = #float}
+        "camera_from_accepts_input" = :Key {types = #bool}
+        "camera_to_accepts_input" = :Key {types = #bool}
+    }
+}

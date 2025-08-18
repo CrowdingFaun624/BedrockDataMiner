@@ -1,0 +1,63 @@
+/* Converted by CmpMigrator 0.1.9 */
+settings {
+    aliases {
+        s = @serializers/
+        temp = @structures/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "disconnection_error_messaging"
+    $ structure = @file
+}
+file inherit temp/SortedKeymap {
+    keys = {
+        "FallbackStrings" = :Key {types = #dict, structure = @error}
+        "Themes" = :Key {types = #list, structure = @themes}
+    }
+}
+themes :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %wrap_in_dict
+        arguments = {"key" = "ThemeName", "delete" = true}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @theme
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "theme", "measure_length" = true}
+        }
+    }
+}
+theme inherit temp/SortedKeymap {
+    keys = {
+        "DefaultStrings" = :Key {types = #dict, structure = @error}
+        "Errors" = :Key {types = #list, structure = @errors}
+    }
+}
+errors :Normalizer {
+    outer_types = #list
+    inner_types = #dict
+    functions = :Function {
+        function = %turn_to_dict
+        arguments = {"key_key" = "FailReason", "value_key" = "OverrideStrings", "default" = {}}
+    }
+    structure = inherit temp/Dict {
+        value_types = #dict
+        value_structure = @error
+        delegate = :Delegate {
+            delegate_class = %DefaultDelegate
+            arguments = {"field" = "error"}
+        }
+    }
+}
+error inherit temp/SortedKeymap {
+    keys = {
+        "Codeword" = :Key {types = #str, structure = @temp/string, delegate_arguments = {"always_print" = true}}
+        "Title" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "Body" = :Key {types = #str}
+        "WebUrl" = :Key {types = #str}
+    }
+}
