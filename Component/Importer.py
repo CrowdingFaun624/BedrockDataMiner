@@ -168,7 +168,7 @@ def import_all(primary_domain:"Domain.Domain") -> bool:
             )
             memory_usage.add_domain(domain)
 
-        finalize_all(all_groups)
+        error = error.narrow(finalize_all(all_groups, trace))
 
     if trace.has_exceptions or any(group.reader.has_exceptions for groups in all_groups.values() for group in groups):
         exception_count:int = 0

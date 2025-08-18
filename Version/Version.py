@@ -15,7 +15,8 @@ class Version(ComponentObject):
     __slots__ = (
         "_incomplete_tags",
         "_tags",
-        "children",
+        "_children",
+        "children_sorted",
         "data_directory",
         "index",
         "latest",
@@ -42,7 +43,7 @@ class Version(ComponentObject):
 
         self.version_directory = self.domain.versions_directory.joinpath(self.name)
         self.data_directory = self.version_directory.joinpath("data")
-        self.children:list[Version] = []
+        self._children:list[Version] = []
 
         self.index = index
         self.parent = parent
@@ -50,10 +51,11 @@ class Version(ComponentObject):
         self._tags:Sequence[VersionTag]|None = None
         self.time = time
         self.version_file_creators = version_files
+        self.children_sorted:bool = False
 
     def finalize_version(self, trace:Trace) -> None:
         if self.parent is not None:
-            self.parent.children.append(self)
+            self.parent._children.append(self)
 
         order_tag:VersionTag|None = None
         for tag in self._incomplete_tags:
@@ -92,8 +94,17 @@ class Version(ComponentObject):
                 else:
                     accessor.constrained_memory = False
 
-    def get_children_recursive(self) -> list["Version"]:
-        children = self.children[:]
+    @property
+    def children(self) -> Sequence["Version"]:
+        if not self.children_sorted:
+            self._children.sort(key=lambda version: version.index)
+            self.children_sorted = True
+            # children may not be sorted initially, since Versions are not finalized in order.
+        return self._children
+
+    def get_children_recursive(self) -> Sequence["Version"]:
+        children:list["Version"] = []
+        children.extend(self.children)
         for child in self.children:
             children.extend(child.children)
         return children
