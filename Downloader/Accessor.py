@@ -40,28 +40,30 @@ class Accessor():
         return f"<{self.__class__.__name__} {self.full_name}>"
 
     def prepare_for_install(self, instance_arguments:Mapping[Any,Any], class_arguments:Mapping[Any,Any], linked_accessors:dict[str,"Accessor"]) -> None:
-        '''Any actions that can take place before grabbing files can happen.'''
+        """
+        Any actions that can take place before grabbing files can happen.
+        """
         ...
 
     def close(self) -> None:
-        '''
+        """
         Always called by the system before deleting this Accessor.
-        '''
+        """
         for linked_accessor in self.linked_accessors.values():
             linked_accessor.close()
 
     def all_done(self) -> None:
-        '''
+        """
         Removes all files that were created as part of the installation of this version.
         Should only be called on the parent Accessor.
-        '''
+        """
         for linked_accessor in self.linked_accessors.values():
             linked_accessor.all_done()
 
     def constrain_memory(self) -> None:
-        '''
+        """
         Called when memory is too high.
-        '''
+        """
         self.constrained_memory = True
         for linked_accessor in self.linked_accessors.values():
             linked_accessor.constrain_memory()

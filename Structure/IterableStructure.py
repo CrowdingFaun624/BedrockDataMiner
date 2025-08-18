@@ -34,9 +34,9 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
     IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]],
     BO, CO,
 ]):
-    '''
+    """
     This type of Structure can act when the Domain's typestuff knows both how to iterate and how to set items of the data.
-    '''
+    """
 
     __slots__ = (
         "delegate",
@@ -81,28 +81,28 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         return False if self.delegate is None else self.delegate.finalize(self.domain, trace)
 
     def get_key_structure(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None:
-        '''
+        """
         Returns a Structure that can act on the key of the Iterable of this Structure or None.
-        '''
+        """
         ...
 
     def get_value_structure(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None:
-        '''
+        """
         Returns a Structure that can act on the value of the Iterable of this Structure or None.
-        '''
+        """
         ...
 
     def get_value_types(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> tuple[type,...]:
-        '''
+        """
         Returns the types that this specific value can be.
-        '''
+        """
         ...
 
     def get_value_tags(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> AbstractSet[StructureTag]|None:
-        '''
+        """
         Returns the StructureTags associated with the given value.
         Return an empty set or None if there are no associated StructureTags.
-        '''
+        """
         return None
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> ICon[Con[K], Con[V], D]|EllipsisType:

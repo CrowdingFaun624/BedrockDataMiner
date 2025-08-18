@@ -36,20 +36,20 @@ class Serializer[a]():
     )
 
     type_verifier:ClassVar[TypedDictTypeVerifier] = TypedDictTypeVerifier()
-    '''
+    """
     TypeVerifier for verifying the arguments of this Serializer
-    '''
+    """
 
     empty_okay:bool = False
-    '''
+    """
     If False, an EmptyFileError will be raised if attempting to create a File
     object with this Serializer with an empty bytes object.
-    '''
+    """
 
     can_contain_subfiles:bool = False
-    '''
+    """
     If True, will call get_referenced_files during garbage collection.
-    '''
+    """
 
     def __init__(self, name:str, full_name:str, domain:"Domain.Domain", kwargs:Mapping[str,Any]) -> None:
         self.name = name
@@ -68,14 +68,14 @@ class Serializer[a]():
         return f"<{self.__class__.__name__} {self.name}>"
 
     def memory_constrain(self) -> None:
-        '''
+        """
         Called when memory is too high.
-        '''
+        """
         self.memory_constrained = True
 
     def deserialize(self, data:bytes) -> a:
-        '''
+        """
         Converts a file into an object. Will be called when retrieving the file
         from file storage.
-        '''
+        """
         raise SerializerMethodNonexistentError(self, self.deserialize)

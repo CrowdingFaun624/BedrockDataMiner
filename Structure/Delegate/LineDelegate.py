@@ -46,10 +46,11 @@ class LineDelegate[DC:Con, DD:Don|Diff, S:Structure|None](Delegate[DC, DD, S, li
             return output
 
     def stringify(self, data:Any) -> str:
-        '''
+        """
         Returns the string of data containing no Diffs.
-        :data: The data to stringify.
-        '''
+
+        :param data: The data to stringify.
+        """
         if hasattr(data, "__stringify__"):
             return data.__stringify__() # type: ignore
         match data:
@@ -68,9 +69,9 @@ class LineDelegate[DC:Con, DD:Don|Diff, S:Structure|None](Delegate[DC, DD, S, li
                 return str(data)
 
     def print_single(self, key_output:list[LineType]|None, value_output:list[LineType], output:list[LineType], *, message:str="", post_message:str="", allow_single_line:bool=True, add_punctuation:bool=True) -> None:
-        '''
+        """
         Adds text from a single-type Diff (i.e. an addition or removal).
-        '''
+        """
         if self.passthrough:
             # ignore key_output
             output.extend(value_output)
@@ -119,17 +120,18 @@ class LineDelegate[DC:Con, DD:Don|Diff, S:Structure|None](Delegate[DC, DD, S, li
         *,
         post_message:str=""
     ) -> None:
-        '''
+        """
         Adds text from a double-type Diff (i.e. a change). Returns a list of ErrorTraces.
-        :key_str: The key to describe the data with. If None, it will not be present.
-        :data1: The data from the oldest Version to print (containing no Diffs).
-        :data2: The data from the newest Version to print (containing no Diffs).
-        :message: The capitalized string describing what happened to the data (i.e. "Added" or "Removed").
-        :output: The list of Lines to output to.
-        :printer: The StructureSet to print the data with.
-        :environment: The ComparisonEnvironment to use.
-        :post_message: A string to put after the field.
-        '''
+
+        :param key_str: The key to describe the data with. If None, it will not be present.
+        :param data1: The data from the oldest Version to print (containing no Diffs).
+        :param data2: The data from the newest Version to print (containing no Diffs).
+        :param message: The capitalized string describing what happened to the data (i.e. "Added" or "Removed").
+        :param output: The list of Lines to output to.
+        :param printer: The StructureSet to print the data with.
+        :param environment: The ComparisonEnvironment to use.
+        :param post_message: A string to put after the field.
+        """
         if self.passthrough:
             output.extend(value_output1)
             output.extend(value_output2)

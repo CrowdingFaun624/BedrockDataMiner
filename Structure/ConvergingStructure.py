@@ -30,9 +30,9 @@ from Utilities.Trace import Trace
 
 
 class ConvergingStructure[A, B, BO, CO](Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], BO, CO]):
-    '''
+    """
     Contains a Structure that may branch out and converge again at a single Structure.
-    '''
+    """
 
     __slots__ = (
         "end_structure",
@@ -82,9 +82,9 @@ class ConvergingStructure[A, B, BO, CO](Structure[A, Con[A], Don[A], Don[A]|Diff
             return reduce(lambda start, insides_func: insides_func(start), [insides_function] * self.within_structure_depth, data) # type: ignore
 
     def insides_detailed(self, data:Con[A]) -> Sequence[Con[B]]:
-        '''
+        """
         Returns a sequence of unique Containers. The next one is immediately contained by the previous. Includes the argument.
-        '''
+        """
         output:list[Con[B]] = []
         subdata:WCon = data # type: ignore # if it isn't a WCon, then within_structure_depth must be 0.
         for _ in range(self.within_structure_depth):

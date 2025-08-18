@@ -293,17 +293,17 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         suffix_len:int,
         path:"numpy.ndarray[tuple[int, int], numpy.dtype[numpy.int8]]",
     ) -> bool:
-        '''
+        """
         Returns if all items in the path are DIAGONAL_NO_CHANGE.
-        '''
+        """
         initial_x = data1_length - prefix_len - suffix_len
         initial_y = data2_length - prefix_len - suffix_len
         return data1_length == data2_length and all(path[initial_y - pos, initial_x - pos] == DIAGONAL_NO_CHANGE or pos == data1_length - prefix_len - suffix_len for pos in range(path.shape[0]))
 
     def render_full_path(self, path:"numpy.ndarray[tuple[int, int], numpy.dtype[numpy.int8]]") -> None:
-        '''
+        """
         Prints a representation of `path` for debugging purposes.
-        '''
+        """
         CHARACTERS = ".-|*&^\\"
         lines:list[str] = []
         y_size, x_size = path.shape

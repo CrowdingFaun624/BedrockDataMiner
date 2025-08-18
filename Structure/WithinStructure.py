@@ -23,9 +23,9 @@ from Utilities.Trace import Trace
 
 
 class WithinStructure[A, B, BO, CO](Structure[A, WCon[A, Con[B]], WDon[A, Don[B], Con[B]], WDon[A, Don[B], Con[B]]|Diff[WDon[A, Don[B], Con[B]]], BO, CO]):
-    '''
+    """
     Calls a non-modifying function on data and passes that to its singular sub-Structure.
-    '''
+    """
 
     __slots__ = (
         "inner_type_list",
@@ -67,11 +67,11 @@ class WithinStructure[A, B, BO, CO](Structure[A, WCon[A, Con[B]], WDon[A, Don[B]
         return data.insides, self.structure
 
     def get_insides(self, data:A, trace:Trace, environment:PrinterEnvironment) -> B|EllipsisType:
-        '''
+        """
         Function called once on the data during containerization.
 
         Should **NOT** modify its input
-        '''
+        """
         ...
 
     def containerize(self, data: A, trace: Trace, environment: PrinterEnvironment) -> WCon[A, Con[B]] | EllipsisType:

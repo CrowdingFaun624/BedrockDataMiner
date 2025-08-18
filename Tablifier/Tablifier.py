@@ -292,9 +292,9 @@ class Tablifier(ComponentObject):
         return output
 
     def print_exception_list(self, trace:Trace, versions:Sequence["Version"], domain:"Domain.Domain") -> bool:
-        '''
+        """
         Prints all exceptions and traces in list and raises an exception at the end if the list has any items.
-        '''
+        """
         texts:list[str] = list(trace.stringify())
         if trace.has_exceptions:
             if (log := domain.logs.get("structure_log")) is not None and log.supports_type(log, str):

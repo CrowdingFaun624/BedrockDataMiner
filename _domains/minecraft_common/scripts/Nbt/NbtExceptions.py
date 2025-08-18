@@ -6,19 +6,24 @@ if TYPE_CHECKING:
     from _domains.minecraft_common.scripts.Nbt.SnbtParser import Reader
 
 class NbtException(Exception):
-    "Abstract Exception class for errors relating to NBT."
+    """
+    Abstract Exception class for errors relating to NBT.
+    """
 
 class NbtParseException(NbtException):
-    "Abstract Exception class for errors relating to the parsing of NBT from bytes."
+    """
+    Abstract Exception class for errors relating to the parsing of NBT from bytes.
+    """
 
 class CompoundDuplicateKeyError(NbtParseException):
-    "A TAG_Compound has a duplicate key."
+    """
+    A TAG_Compound has a duplicate key.
+
+    :param key: The key that was duplicated.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key:str, message:Optional[str]=None) -> None:
-        '''
-        :key: The key that was duplicated.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key, message)
         self.key = key
         self.message = message
@@ -27,13 +32,14 @@ class CompoundDuplicateKeyError(NbtParseException):
         return f"A TAG_Compound has a duplicate key \"{self.key}\"{message(self.message)}"
 
 class InvalidNbtContentType(NbtParseException):
-    "An NBT tag has an invalid content type."
+    """
+    An NBT tag has an invalid content type.
+
+    :param content_type: The content type ID.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, content_type:int, message:Optional[str]=None) -> None:
-        '''
-        :content_type: The content type ID.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(content_type, message)
         self.content_type = content_type
         self.message = message

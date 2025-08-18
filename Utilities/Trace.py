@@ -77,30 +77,33 @@ class Trace():
         return [item[1]() for item in self.trace]
 
     def enter(self, object:object, position_name:str, position_data:Any|EllipsisType) -> Self:
-        '''
+        """
         This method must be used at a `with` statement.
-        :object: The current Structure or StructureBase.
-        :position_name: The name of the current Structure or StructureBase.
-        :position_data: The value that the context is now looking at.
-        '''
+
+        :param object: The current Structure or StructureBase.
+        :param position_name: The name of the current Structure or StructureBase.
+        :param position_data: The value that the context is now looking at.
+        """
         self.trace.append((object, lambda: position_name, position_data, TraceType.object))
         return self
 
     def enter_key(self, key:object, position_data:Any|EllipsisType) -> Self:
-        '''
+        """
         This method must be used at a `with` statement.
-        :key: The current key of the context.
-        :position_data: The value that the context is now looking at.
-        '''
+
+        :param key: The current key of the context.
+        :param position_data: The value that the context is now looking at.
+        """
         self.trace.append((key, lambda: str(key), position_data, TraceType.key))
         return self
 
     def enter_keys(self, keys:tuple[object,...], position_data:Any|EllipsisType) -> Self:
-        '''
+        """
         This method must be used at a `with` statement.
-        :keys: The current key group of the context.
-        :position_data: The value that the context is now looking at.
-        '''
+
+        :param keys: The current key group of the context.
+        :param position_data: The value that the context is now looking at.
+        """
         # trace[1] is empty string because it isn't used.
         self.trace.append((keys, lambda: "", position_data, TraceType.key_group))
         return self
@@ -116,16 +119,16 @@ class Trace():
         return self
 
     def include(self, trace:"Trace") -> None:
-        '''
+        """
         Combines this Trace with another Trace.
-        '''
+        """
         self._exceptions.extend(ErrorTrace(self.trace + exception.trace, exception.exception) for exception in trace._exceptions)
 
     @property
     def objects(self) -> Iterable[tuple[object, Callable[[],str], Any, TraceType]]:
-        '''
+        """
         Generator of all objects that created an Exception.
-        '''
+        """
         yield from (trace_item for error_trace in self._exceptions for trace_item in error_trace.trace)
 
     def __enter__(self) -> Self:
@@ -141,9 +144,9 @@ class Trace():
         return output
 
     def exception(self, exception:Exception) -> None:
-        '''
-        :exception: The Exception to store in this Trace.
-        '''
+        """
+        :param exception: The Exception to store in this Trace.
+        """
         self._exceptions.append(ErrorTrace(self.trace.copy(), exception))
 
     def exceptions(self, exceptions:Iterable[Exception]) -> None:
@@ -171,9 +174,9 @@ class Trace():
         return output
 
     def stringify(self) -> Iterator[str]:
-        '''
+        """
         Turns each stored Exception into a fancy, formatted string.
-        '''
+        """
         for error_trace in self._exceptions:
             exception = error_trace.exception
             match exception:
@@ -186,6 +189,12 @@ class Trace():
             yield f"{error_trace.exception.__class__.__name__} at {stringify_trace(error_trace.trace)}{f" from data {self.show_data(error_trace)}" if len(error_trace.trace) > 0 and error_trace.trace[-1][2] is not ... else ""}:{"\n" if exception_string.count("\n") > 0 else " "}{exception_string}"
 
 class ErrorTrace():
+    """
+    This object should not be created manually; instead, use `Trace.exception`.
+
+    :param trace: A copy of the Trace object's `trace` list attribute.
+    :param exception: The Exception that occurred.
+    """
 
     __slots__ = (
         "exception",
@@ -193,11 +202,6 @@ class ErrorTrace():
     )
 
     def __init__(self, trace:list[tuple[object, Callable[[],str], Any, TraceType]], exception:Exception) -> None:
-        '''
-        An ErrorTrace should not be created by this method; instead, use `Trace.exception`.
-        :trace: A copy of the Trace object's `trace` list attribute.
-        :exception: The Exception that occurred.
-        '''
         self.trace = trace
         self.exception = exception
 

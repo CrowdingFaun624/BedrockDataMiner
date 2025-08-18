@@ -67,7 +67,7 @@ class Variable[R](Field[R]):
         Modifies this Variable to have a new value. Don't screw up the
         scopiness! Will freak out if it already has a value.
 
-        :new_value: The value to write to this Variable.
+        :param new_value: The value to write to this Variable.
         """
         if self.types is None: raise RuntimeError("Hey you're only supposed to give new values to declared Variables")
         if new_value is self:

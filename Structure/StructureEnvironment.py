@@ -63,7 +63,9 @@ class PrinterEnvironment():
         self.branch = branch
 
     def get_version(self) -> "Version":
-        '''Returns this PrinterEnvironment's Version. Raises an error if it is None.'''
+        """
+        Returns this PrinterEnvironment's Version. Raises an error if it is None.
+        """
         if self.version is None:
             raise AttributeNoneError("version", self)
         return self.version

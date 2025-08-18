@@ -58,9 +58,9 @@ class GrabPackFileDataminer(FileDataminer):
         return environment.dependency_data.get(self.pack_type, self)
 
     def get_files(self, packs:list[PacksDataminer.PackTypedDict], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment) -> dict[tuple[str,str],bytes]:
-        '''
+        """
         Returns a dictionary of the pack the the files are in and the file's name to the file's contents.
-        '''
+        """
         files:dict[tuple[str,str], bytes] = {}
         for pack, location in product(packs, self.location):
             if pack["name"] in self.ignore_packs:

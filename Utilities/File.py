@@ -32,7 +32,9 @@ def new_file(data:bytes, file_name:str, domain:"Domain.Domain") -> "File":
     return File(file_name, integer_hash)
 
 def hash_int_to_str(hash_int:int) -> str:
-    '''Assumes hash length of 40'''
+    """
+    Assumes hash length of 40.
+    """
     return hex(hash_int)[2:].zfill(40)
 
 def hash_str_to_int(hash_str:str) -> int:
@@ -117,7 +119,9 @@ class File[a](AbstractFile[a]):
 
 @register_decorator("fake_file", None)
 class FakeFile[a](AbstractFile[a]):
-    '''Similar to a File, but it can be created anywhere and using any hash/data.'''
+    """
+    Similar to a File, but it can be created anywhere and using any hash/data.
+    """
 
     __slots__ = (
         "_data"

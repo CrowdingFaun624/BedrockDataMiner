@@ -12,7 +12,9 @@ if TYPE_CHECKING:
     )
 
 class Filter(ComponentObject):
-    '''Object for changing flow based on StructureInfo content.'''
+    """
+    Object for changing flow based on StructureInfo content.
+    """
 
     __slots__ = ()
 

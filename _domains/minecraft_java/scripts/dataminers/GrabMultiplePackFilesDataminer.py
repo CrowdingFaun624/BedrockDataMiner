@@ -97,9 +97,9 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
         return output
 
     def get_files(self, packs:dict[str,PackTypedDict], accessor:DirectoryAccessor, environment:DataminerEnvironment) -> dict[tuple[str,str,str],bytes]:
-        '''
+        """
         Returns a dict with of pack name, path relative to base, file name to the file's contents.
-        '''
+        """
         pack_path_name = [(pack_path, pack["name"]) for pack_path, pack in packs.items()]
         files:dict[tuple[str,str,str],bytes] = {}
         for (pack_path, pack_name), location in product(pack_path_name, self.location):

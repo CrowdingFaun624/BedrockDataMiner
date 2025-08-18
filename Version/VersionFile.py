@@ -77,10 +77,11 @@ class VersionFile():
     @overload
     def get_accessor[a: Accessor](self, required_type:type[a]) -> a: ...
     def get_accessor[a: Accessor](self, required_type:type[a]=Accessor, none_okay:bool=False) -> a|None:
-        '''
+        """
         Returns the first Accessor of this VersionFile that meets the requirements.
-        :required_type: Type of the Accessor.
-        '''
+
+        :param required_type: Type of the Accessor.
+        """
         for accessor in self.accessors:
             if not isinstance(accessor, required_type):
                 continue

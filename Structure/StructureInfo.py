@@ -8,9 +8,9 @@ if TYPE_CHECKING:
 
 
 class StructureInfo():
-    '''
+    """
     Class defined in each DataminerSettings that is passed to determine behavior.
-    '''
+    """
 
     __slots__ = (
         "data",

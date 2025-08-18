@@ -16,17 +16,18 @@ from Utilities.TypeVerifier import (
 
 
 class UnrecognizedPackError(StructureException):
-    "The behavior pack/resource pack is not recognized."
+    """
+    The behavior pack/resource pack is not recognized.
+
+    :param pack: The name(s) of the behavior pack/resource pack(s).
+    :param pack_type: The type of pack ("behavior", "resource", "skin", "emote", "piece", or "pack").
+    :param source: The object that found the behavior pack/resource pack.
+    :param message: Additional text to place after the main message.
+    """
 
     PACK_TYPES:dict[str,str] = {"behavior": "Behavior pack", "resource": "Resource pack", "skin": "Skin pack", "emote": "Emote directory", "piece": "Piece directory"}
 
     def __init__(self, pack:str|list[str], pack_type:Literal["behavior", "resource", "skin", "emote", "piece", "pack"], source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :pack: The name(s) of the behavior pack/resource pack(s).
-        :pack_type: The type of pack ("behavior", "resource", "skin", "emote", "piece", or "pack").
-        :source: The object that found the behavior pack/resource pack.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(pack, pack_type, source, message)
         self.pack = pack
         self.pack_type = pack_type
@@ -58,9 +59,9 @@ def get_resource_pack_order() -> list[ResourcePackTypedDict]:
     return data
 
 def get_resource_pack_tag_strings() -> dict[str, str]:
-    '''
+    """
     Makes sure that identical strings have the same identity.
-    '''
+    """
     output:dict[str,str] = {}
     already_tags:dict[str,str] = {} # mapping from string to the same string.
     for resource_pack_name, resource_pack in resource_pack_dict.items():
@@ -97,7 +98,9 @@ def get_resource_packs_by_tag(data:Iterable[str]) -> Iterable[tuple[str,list[str
 
 @component_function(no_arguments=True)
 def collapse_resource_packs_dict_old[a](data:Mapping[str,Mapping[str,a]]) -> dict[str,dict[str,a]]:
-    '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.'''
+    """
+    Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
+    """
     output:defaultdict[str,dict[str,a]] = defaultdict(lambda: {})
     for tag_string, resource_pack_list in get_resource_packs_by_tag(data):
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
@@ -107,7 +110,9 @@ def collapse_resource_packs_dict_old[a](data:Mapping[str,Mapping[str,a]]) -> dic
 
 @component_function(no_arguments=True)
 def collapse_resource_packs_dict[a](data:Mapping[str,Mapping[str,a]]) -> dict[tuple[str,...],dict[str,a]]:
-    '''Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.'''
+    """
+    Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.
+    """
     output:dict[tuple[str,...],dict[str,a]] = {}
     for resource_pack_list in get_grouped_resource_packs(data):
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
@@ -121,7 +126,9 @@ def collapse_resource_packs_dict[a](data:Mapping[str,Mapping[str,a]]) -> dict[tu
     TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
 ))
 def collapse_resource_packs_dict_file[a](data:Mapping[str,AbstractFile[Mapping[str,a]]], serializer:SerializerCreator) -> FakeFile[dict[tuple[str,...],dict[str,a]]]:
-    '''Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.'''
+    """
+    Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.
+    """
     output:dict[tuple[str,...],dict[str,a]] = {}
     file_hashes:list[int] = []
     for resource_pack_list in get_grouped_resource_packs(data):
@@ -136,7 +143,9 @@ def collapse_resource_packs_dict_file[a](data:Mapping[str,AbstractFile[Mapping[s
 
 @component_function(no_arguments=True)
 def collapse_resource_packs_flat[a](data:Mapping[str,a]) -> dict[str,a]:
-    '''Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.'''
+    """
+    Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.
+    """
     output:dict[str,a] = {}
     for resource_pack_list in get_grouped_resource_packs(data):
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
@@ -148,7 +157,9 @@ def collapse_resource_packs_flat[a](data:Mapping[str,a]) -> dict[str,a]:
     TypedDictKeyTypeVerifier("serializer", True, SerializerCreator),
 ))
 def collapse_resource_packs_list_file[a](data:Mapping[str,AbstractFile[Sequence[a]]], serializer:SerializerCreator) -> FakeFile[dict[tuple[str,...],list[a]]]:
-    '''Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.'''
+    """
+    Turns keys like {"vanilla", "vanilla_1.20", "cartoon"} into combined, such as {("vanilla", "vanilla_1.20"), ("cartoon",)}.
+    """
     output:dict[tuple[str,...],list[a]] = {}
     file_hashes:list[int] = []
     for resource_pack_list in get_grouped_resource_packs(data):

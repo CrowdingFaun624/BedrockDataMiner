@@ -10,7 +10,7 @@ from Utilities.TypeVerifier import TypedDictTypeVerifier
 
 HEADER = "<!--This page was automatically generated. If you need to update it, consider notifying the author of the generator, CrowdingFaun624, instead of manually changing it.-->\n\n"
 
-FOOTER = '''
+FOOTER = """
 <noinclude>
 [[ja:Sounds.json/Bedrock Editionの値]]
 [[pt:Sounds.json/Valores da Edição Bedrock]]
@@ -19,7 +19,7 @@ FOOTER = '''
 [[zh:Sounds.json/基岩版数据值]]
 [[Category:Data pages]]
 </noinclude>
-'''
+"""
 
 @component_function()
 class BaseDelegate(Delegate[Any, Any, StructureBase[dict[str,dict[Any,Any]], Any, str], Any, Any, str, Any]):

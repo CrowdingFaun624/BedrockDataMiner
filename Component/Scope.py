@@ -63,9 +63,9 @@ class Scope():
         return f"<{self.__class__.__name__} {len(self.variable_declarations)}, {len(self.variable_definitions)}, {len(self.override_variables)}, {len(self.override_fields)}>"
 
     def assert_no_overriding(self, trace:Trace) -> None:
-        '''
+        """
         Creates an Exception using `trace.exception` if `override_variables` or `override_fields` exist and are not empty.
-        '''
+        """
         if self.override_fields is not None and len(self.override_fields) > 0:
             trace.exception(RuntimeError("Overriding Fields are not allowed in this context"))
         if self.override_variables is not None and len(self.override_variables) > 0:
@@ -73,10 +73,10 @@ class Scope():
 
     @property
     def local_variables(self) -> Mapping[str,"Variable"]:
-        '''
+        """
         Combines Variables and stuff.
         Only Variables which were declared at or above this Field are available.
-        '''
+        """
         if len(self.override_variables) > 0:
             raise RuntimeError("Hey you're supposed to call `sub` on a Scope before `local_variables`.")
         output:dict[str,"Variable"] = {}
@@ -92,9 +92,9 @@ class Scope():
 
     @property
     def local_fields(self) -> Mapping[str,"Field"]:
-        '''
+        """
         The overriding Fields, if they exist.
-        '''
+        """
         return self.override_fields
 
     def sub(self) -> "Scope":
@@ -129,14 +129,14 @@ class Scope():
         *,
         forget_above_variables:bool=False,
     ) -> "Scope":
-        '''
+        """
         Overrides sub-Fields to use different Variables and Fields.
 
         :param override_variables: Variables to place on top of Variables of the sub-Field.
         :param override_fields: Fields to place on top of the Fields of the sub-Field.
         :param forget_above_variables: If True, Variables from above are forgotten.
         :returns: A new VariableEnvironment with the propeties described.
-        '''
+        """
         new_variables:dict[str,"Variable"] = {}
         new_variables.update(override_variables)
         # doing self.override_variables second to prioritize the old ones more.

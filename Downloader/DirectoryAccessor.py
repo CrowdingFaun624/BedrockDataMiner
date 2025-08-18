@@ -18,7 +18,9 @@ class DirectoryAccessor(Accessor):
     def open(self, file_name:str) -> BinaryIO: ...
 
     def get_files_in(self, parent:str) -> Sequence[str]:
-        '''Returns a list of all files that are within the given directory.'''
+        """
+        Returns a list of all files that are within the given directory.
+        """
         directory_length = len(parent)
         file_list = self.file_list
         left = bisect.bisect_left(file_list, parent)

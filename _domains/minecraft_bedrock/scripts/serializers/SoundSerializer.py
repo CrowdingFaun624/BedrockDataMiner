@@ -12,11 +12,13 @@ from Utilities.FileManager import get_hash_hexdigest
 
 
 class SoundFilesMetadataError(DataminerException):
-    "audio_metadata failed to extract the sound file."
+    """
+    `audio_metadata` failed to extract the sound file.
+
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, message:Optional[str]=None) -> None:
-        '''
-        :message: Additional text to place after the main message.'''
         super().__init__(message)
         self.message = message
 

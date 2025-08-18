@@ -9,9 +9,9 @@ from Utilities.TypeUtilities import TypeDict, TypeSet
 
 
 class NoCoder():
-    '''
+    """
     Used to annotate that a type specifically has no JSON Coder.
-    '''
+    """
 
     __slots__ = ()
 
@@ -21,10 +21,10 @@ class NoCoder():
 no_coder = NoCoder()
 
 class TypeStuff():
-    '''
+    """
     Class that keeps track of typing. There is one primary one for all Domains
     and an additional one for each domain.
-    '''
+    """
 
     __slots__ = (
         "iterate_table",
@@ -114,9 +114,9 @@ class TypeStuff():
         self.json_decoders.update(other.json_decoders)
 
     def link(self, other:"TypeStuff") -> None:
-        '''
+        """
         When adding to self, also add to `other`.
-        '''
+        """
         other.linked_type_stuffs.append(self)
 
     def get_cascading_dependencies(self, memo:set["TypeStuff"]) -> Iterable["TypeStuff"]:
@@ -131,19 +131,20 @@ class TypeStuff():
             return ()
 
     def hash_data(self, data:Any) -> int:
-        '''
+        """
         Tries its best to hash anything, including mutable objects.
-        :data: The data to hash
-        '''
+
+        :param data: The data to hash
+        """
         return self.hash_type_table[type(data)](data, self)
 
     def iterate_data(self, data:Any) -> Iterable[tuple[Any, Any]]:
         return self.iterate_table[type(data)](data)
 
 primary_type_stuff = TypeStuff(None)
-'''
+"""
 TypeStuff for non-Script types.
-'''
+"""
 
 def register_decorator[T](
     name:str|None,
@@ -157,23 +158,23 @@ def register_decorator[T](
     can_contain:set[type]|None=None,
     json_coder:type[Coder]|NoCoder|None=None,
 ) -> Callable[[type[T]],type[T]]:
-    '''
+    """
     Makes a type referrable to via Components. If a type subclasses a type
     already added using this method (including default types), it does not need
     to specify everything again; these properties are inherited.
 
-    :name: The string Components should use to refer to this type. If None, cannot be referred to by Components.
-    :hashing_method: The method Structures use to hash the data (even if it is not a primitive).\
+    :param name: The string Components should use to refer to this type. If None, cannot be referred to by Components.
+    :param hashing_method: The method Structures use to hash the data (even if it is not a primitive).\
         Use None to inherit from a subclass's hash method and ... to use the `hash` function.
-    :iterate_method: The method Structures use to iterate the data.\
+    :param iterate_method: The method Structures use to iterate the data.\
         Use None to inherit from a subclass's iterate method and ... to wrap it in a SimpleContainer.
-    :requires_subcomponent: If True, Components that use this type must have a subcomponent.
-    :sortable: The category/ies of types this type is sortable with.
-    :is_file: If this type is File-like.
-    :is_string: If this type acts like a str.
-    :can_contain: If present, Components will only let this type contain these types.
-    :json_coder: Coder used to convert the type to JSON and vice versa.
-    '''
+    :param requires_subcomponent: If True, Components that use this type must have a subcomponent.
+    :param sortable: The category/ies of types this type is sortable with.
+    :param is_file: If this type is File-like.
+    :param is_string: If this type acts like a str.
+    :param can_contain: If present, Components will only let this type contain these types.
+    :param json_coder: Coder used to convert the type to JSON and vice versa.
+    """
     def decorator(_type:type[T]) -> type[T]:
         register_type(
             _type,
@@ -203,24 +204,24 @@ def register_type[T](
     can_contain:set[type]|None=None,
     json_coder:type[Coder]|NoCoder|None=None,
 ) -> None:
-    '''
+    """
     Makes a type referrable to via Components. If a type subclasses a type
     already added using this method (including default types), it does not need
     to specify everything again; these properties are inherited.
 
-    :_type: The class to be added.
-    :name: The string Components should use to refer to this type. If None, cannot be referred to by Components.
-    :hashing_method: The method Structures use to hash the data (even if it is not a primitive).\
+    :param _type: The class to be added.
+    :param name: The string Components should use to refer to this type. If None, cannot be referred to by Components.
+    :param hashing_method: The method Structures use to hash the data (even if it is not a primitive).\
         Use None to inherit from a subclass's hash method and ... to use the `hash` function.
-    :iterate_method: The method Structures use to iterate over the data.\
+    :param iterate_method: The method Structures use to iterate over the data.\
         Use None to inherit from a subclass's iterate method.
-    :requires_subcomponent: If True, Components that use this type must have a subcomponent.
-    :sortable: The category/ies of types this type is sortable with.
-    :is_file: If this type is File-like.
-    :is_string: If this type acts like a str.
-    :can_contain: If present, Components will only let this type contain these types.
-    :json_coder: Coder used to convert the type to JSON and vice versa.
-    '''
+    :param requires_subcomponent: If True, Components that use this type must have a subcomponent.
+    :param sortable: The category/ies of types this type is sortable with.
+    :param is_file: If this type is File-like.
+    :param is_string: If this type acts like a str.
+    :param can_contain: If present, Components will only let this type contain these types.
+    :param json_coder: Coder used to convert the type to JSON and vice versa.
+    """
     domain_name = get_domain_name_from_module(_type.__module__)
     type_stuff = primary_type_stuff if domain_name is None else domains[domain_name].type_stuff
     type_stuffs = type_stuff.get_cascading_dependencies(set())

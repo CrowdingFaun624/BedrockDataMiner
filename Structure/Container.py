@@ -2,10 +2,10 @@ from typing import Iterable, Mapping, cast
 
 
 class ACon[A]():
-    '''
+    """
     AbstractContainer, parent of both Con (Container) and Don (DiffContainer).
     For situations where only Containers can be present, use Con.
-    '''
+    """
 
     __slots__ = ()
     hash:int
@@ -19,10 +19,10 @@ class ACon[A]():
         ...
 
     def get_con(self, branch:int) -> "Con[A]":
-        '''
+        """
         If self is a Con, returns itself. If self is a Don, returns the Container at `branch`.
         Must not contain Dons or Diffs.
-        '''
+        """
         ...
 
     def __eq__(self, value: object) -> bool:
@@ -52,16 +52,16 @@ class Con[A](ACon[A]):
         return self.hash == value.hash if isinstance(value, Con) else False
 
     def as_don(self, bundle:tuple[int,...]) -> "Don[A]":
-        '''
+        """
         Shallowly transforms self into a Don.
-        '''
+        """
         ...
 
 class Don[A](ACon[A]):
-    '''
+    """
     Short for "DiffContainer". Same as a Con but instead of a `data` attribute,
     index this Don using a branch.
-    '''
+    """
 
     _containers: Mapping[int,Con[A]]
 

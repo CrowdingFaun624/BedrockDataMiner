@@ -14,7 +14,6 @@ from typing import (
 
 if TYPE_CHECKING:
     from Component.Component import Component
-    from Component.Field.Field import Field
     from Component.Group import Group
     from Component.Scripts import Script
     from Component.Version.VersionComponent import VersionComponent
@@ -138,7 +137,9 @@ def format_list[A](_list:Sequence[A], string_function:Callable[[A],str]=str, *, 
 # one-off exceptions related to the domain don't need a custom error type
 
 class AttributeNoneError(Exception):
-    "The attribute is None when, at the time of calling, it should not be None."
+    """
+    The attribute is None when, at the time of calling, it should not be None.
+    """
 
     def __init__(self, name:str, source:object, message:Optional[str]=None) -> None:
         super().__init__(name, source, message)
@@ -150,12 +151,13 @@ class AttributeNoneError(Exception):
         return f"Attribute \"{self.name}\" of {self.source} is None and should not be{message(self.message)}"
 
 class EmptyFileError(Exception):
-    "The file IO has no bytes."
+    """
+    The file IO has no bytes.
+
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, message:Optional[str]=None) -> None:
-        '''
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(message)
         self.message = message
 
@@ -163,13 +165,14 @@ class EmptyFileError(Exception):
         return f"A file has no bytes{message(self.message)}"
 
 class ImportOrderError(Exception):
-    "A module has been imported at the wrong time."
+    """
+    A module has been imported at the wrong time.
+
+    :param module_name: The name of the Module that was imported too early.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, module_name:str, message:Optional[str]=None) -> None:
-        '''
-        :module_name: The name of the Module that was imported too early.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(module_name, message)
         self.module_name = module_name
         self.message = message
@@ -178,22 +181,27 @@ class ImportOrderError(Exception):
         return f"Module {self.module_name} was imported too early{message(self.message)}"
 
 class InvalidStateError(Exception):
-    "The program has reached an assumedly unreachable part of the code."
+    """
+    The program has reached an assumedly unreachable part of the code.
+    """
 
     def __str__(self) -> str:
         return f"Invalid state{message(self.args, yes_message=": %s!")}"
 
 class CacheException(Exception):
-    "Abstract Exception class for errors relating to Caches."
+    """
+    Abstract Exception class for errors relating to Caches.
+    """
 
 class CacheCannotWriteError(CacheException):
-    "Attempted to write to a Cache that cannot be written to."
+    """
+    Attempted to write to a Cache that cannot be written to.
+
+    :param cache: The Cache that cannot be written to.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, cache:"Cache", message:Optional[str]=None) -> None:
-        '''
-        :cache: The Cache that cannot be written to.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(cache, message)
         self.cache = cache
         self.message = message
@@ -202,13 +210,14 @@ class CacheCannotWriteError(CacheException):
         return f"{self.cache} cannot be written to{message(self.message)}"
 
 class CacheDeserializeError(CacheException):
-    "Attempted to write a Cache that has no `deserialize` method defined."
+    """
+    Attempted to write a Cache that has no `deserialize` method defined.
+
+    :param cache: The Cache with no `deserialize` method.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, cache:"Cache", message:Optional[str]=None) -> None:
-        '''
-        :cache: The Cache with no `deserialize` method.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(cache, message)
         self.cache = cache
         self.message = message
@@ -217,13 +226,14 @@ class CacheDeserializeError(CacheException):
         return f"{self.cache} has no deserialize method; cannot write{message(self.message)}"
 
 class CacheFileNotFoundError(CacheException):
-    "Attempted to open a Cache that has no `get_default_content` method and no existing file."
+    """
+    Attempted to open a Cache that has no `get_default_content` method and no existing file.
+
+    :param cache: The Cache with no `get_default_content` method.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, cache:"Cache", message:Optional[str]=None) -> None:
-        '''
-        :cache: The Cache with no `get_default_content` method.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(cache, message)
         self.cache = cache
         self.message = message
@@ -232,17 +242,20 @@ class CacheFileNotFoundError(CacheException):
         return f"{self.cache} has no get_default_content method and its file does not exist{message(self.message)}"
 
 class ComponentException(Exception):
-    "Abstract Exception class for errors relating to Components."
+    """
+    Abstract Exception class for errors relating to Components.
+    """
 
 class AbstractComponentError(ComponentException):
-    "A Component referred to an abstract Component without defining all of its Variables."
+    """
+    A Component referred to an abstract Component without defining all of its Variables.
+
+    :param referenced_component: The still-abstract Component.
+    :param remaining_variables: All undefined Variables of `referenced_component` that were not defined.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, referenced_component:"Component", remaining_variables:Iterable[str], message:Optional[str]=None) -> None:
-        '''
-        :referenced_component: The still-abstract Component.
-        :remaining_variables: All undefined Variables of `referenced_component` that were not defined.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(referenced_component, remaining_variables, message)
         self.referenced_component = referenced_component
         self.remaining_variables = remaining_variables
@@ -252,14 +265,15 @@ class AbstractComponentError(ComponentException):
         return f"{self.referenced_component} was referred to without defining all of its Variables ({", ".join(sorted(self.remaining_variables))}){message(self.message)}"
 
 class ComponentCountError(ComponentException):
-    "There is an invalid number of BaseComponents."
+    """
+    There is an invalid number of BaseComponents.
+
+    :param components: The list of Components of duplicate type.
+    :param object_type: The type of final in `components`.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, components:Sequence[Any], object_type:type, message:Optional[str]=None) -> None:
-        '''
-        :components: The list of Components of duplicate type.
-        :object_type: The type of final in `components`.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(components, object_type, message)
         self.components = components
         self.object_type = object_type
@@ -269,13 +283,14 @@ class ComponentCountError(ComponentException):
         return f"There is not exactly one Components of type {self.object_type.__name__}{": " if len(self.components) > 0 else ""}{", ".join(component.name for component in self.components)}{message(self.message)}"
 
 class ComponentDuplicateTypeError(ComponentException):
-    "A Component has a duplicate type."
+    """
+    A Component has a duplicate type.
+
+    :param type_str: The name of the type that is duplicated.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, type_str:str, message:Optional[str]=None) -> None:
-        '''
-        :type_str: The name of the type that is duplicated.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(type_str, message)
         self.type_str = type_str
         self.message = message
@@ -284,14 +299,15 @@ class ComponentDuplicateTypeError(ComponentException):
         return f"Type \"{self.type_str}\" is duplicate{message(self.message)}"
 
 class ComponentFileError(ComponentException):
-    "Failed to read a Component file."
+    """
+    Failed to read a Component file.
+
+    :param file: The name of the invalid file.
+    :param contents: The byte contents of the invalid file.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, file:Path, contents:bytes, message:Optional[str]=None) -> None:
-        '''
-        :file: The name of the invalid file.
-        :contents: The byte contents of the invalid file.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(file, contents, message)
         self.file = file
         self.contents = contents
@@ -301,14 +317,15 @@ class ComponentFileError(ComponentException):
         return f"Cannot read file{self.file}{message(self.message, no_message=": ", yes_message=" %s: ")}{self.contents}"
 
 class ComponentInvalidNameCharacterError(ComponentException):
-    "A Component has a name with an illegal character."
+    """
+    A Component has a name with an illegal character.
+
+    :param component: The Component with an invalid character.
+    :param invalid_characters: A list of characters this Component cannot have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component:"Component", invalid_characters:list[str], message:Optional[str]=None) -> None:
-        '''
-        :component: The Component with an invalid character.
-        :invalid_characters: A list of characters this Component cannot have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component, invalid_characters, message)
         self.component = component
         self.invalid_characters = invalid_characters
@@ -318,14 +335,15 @@ class ComponentInvalidNameCharacterError(ComponentException):
         return f"The name of {self.component} cannot have any characters within {"".join(self.invalid_characters)}{message(self.message)}"
 
 class ComponentInvalidNameError(ComponentException):
-    "A Component has an illegal name."
+    """
+    A Component has an illegal name.
+
+    :param component: The Component with an invalid name.
+    :param invalid_names: A list of names that this Component cannot have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component:"Component", invalid_names:list[str], message:Optional[str]=None) -> None:
-        '''
-        :component: The Component with an invalid name.
-        :invalid_names: A list of names that this Component cannot have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component, invalid_names, message)
         self.component = component
         self.invalid_names = invalid_names
@@ -335,17 +353,20 @@ class ComponentInvalidNameError(ComponentException):
         return f"The name of {self.component} cannot be one of {self.invalid_names}{message(self.message)}"
 
 class ComponentInvalidVersionRangeException(ComponentException):
-    "Abstract exception class for errors relating to invalid VersionRanges."
+    """
+    Abstract exception class for errors relating to invalid VersionRanges.
+    """
 
 class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
-    "The new/old Version of the first/last sub-Component is not None."
+    """
+    The new/old Version of the first/last sub-Component is not None.
+
+    :param actual_value: The value that is present in the new Version instead of None.
+    :param is_first: Whether this DataminerSettings is the newest one or not.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, actual_value:"Version", is_first:bool, message:Optional[str]=None) -> None:
-        '''
-        :actual_value: The value that is present in the new Version instead of None.
-        :is_first: Whether this DataminerSettings is the newest one or not.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(actual_value, is_first, message)
         self.actual_value = actual_value
         self.is_first = is_first
@@ -355,14 +376,15 @@ class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
         return f"The {"new" if self.is_first else "old"} Version of the {"first" if self.is_first else "last"} DataminerSettings is not None, but instead {self.actual_value}{message(self.message)}"
 
 class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
-    "There is a gap in a Components's sub-Components' Versions."
+    """
+    There is a gap in a Components's sub-Components' Versions.
+
+    :param new_version: The Version or the Version's name on the newer side of the gap.
+    :param old_version: The Version or the Version's name on the older side of the gap.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, new_version:"Version", old_version:"Version", message:Optional[str]=None) -> None:
-        '''
-        :new_version: The Version or the Version's name on the newer side of the gap.
-        :old_version: The Version or the Version's name on the older side of the gap.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(new_version, old_version, message)
         self.new_version = new_version
         self.old_version = old_version
@@ -372,14 +394,15 @@ class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
         return f"There is a gap between Versions {self.new_version} and {self.old_version}{message(self.message)}"
 
 class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
-    "The new or old Version of a non-first DataminerSettings is None."
+    """
+    The new or old Version of a non-first DataminerSettings is None.
+
+    :param index: The index of the DataminerSettings
+    :param slot: The key ("old" or "new") of the sub-Component.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, slot:Literal["old", "new"], message:Optional[str]=None) -> None:
-        '''
-        :index: The index of the DataminerSettings
-        :slot: The key ("old" or "new") of the sub-Component.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(slot, message)
         self.slot = slot
         self.message = message
@@ -388,16 +411,17 @@ class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
         return f"The {self.slot} Version is None{message(self.message)}"
 
 class ComponentMismatchedTypesError(ComponentException):
-    "The types of one Component and the types of another do not match."
+    """
+    The types of one Component and the types of another do not match.
+
+    :param component1: The name of the first Component or a string representing it.
+    :param component1_types: The types allowed by the first Component.
+    :param component2: The name of the second Component or a string representing it.
+    :param component2_types: The types allowed by the second Component.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component1:str, component1_types:list[type], component2:str, component2_types:list[type], message:Optional[str]=None) -> None:
-        '''
-        :component1: The name of the first Component or a string representing it.
-        :component1_types: The types allowed by the first Component.
-        :component2: The name of the second Component or a string representing it.
-        :component2_types: The types allowed by the second Component.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component1, component1_types, component2, component2_types, message)
         self.component1 = component1
         self.component1_types = component1_types
@@ -409,13 +433,14 @@ class ComponentMismatchedTypesError(ComponentException):
         return f"{self.component1} accepts types [{", ".join(f"\"{type.__name__}\"" for type in self.component1_types)}], but its subcomponent, {self.component2}, accepts types [{", ".join(f"\"{type.__name__}\"" for type in self.component2_types)}]{message(self.message)}"
 
 class ComponentNameNumberError(ComponentException):
-    "A Component's name begins with a number"
+    """
+    A Component's name begins with a number.
+
+    :param component: The Component with an invalid name.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component:"Component", message:Optional[str]=None) -> None:
-        '''
-        :component: The Component with an invalid name.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component, message)
         self.component = component
         self.message = message
@@ -424,14 +449,15 @@ class ComponentNameNumberError(ComponentException):
         return f"The name of {self.component} cannot start with a digit{message(self.message)}"
 
 class ComponentParseError(ComponentException):
-    "Multiple Components failed to parse."
+    """
+    Multiple Components failed to parse.
+
+    :param failed_groups: The Groups that failed to parse.
+    :param exception_count: The number of total Exceptions.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, failed_groups:list[str], exception_count:int, message:Optional[str]=None) -> None:
-        '''
-        :failed_groups: The Groups that failed to parse.
-        :exception_count: The number of total Exceptions.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(failed_groups, exception_count, message)
         self.failed_groups = failed_groups
         self.exception_count = exception_count
@@ -441,14 +467,15 @@ class ComponentParseError(ComponentException):
         return f"{self.exception_count} exceptions in {len(self.failed_groups)} Groups: [{", ".join(self.failed_groups)}]{message(self.message)}"
 
 class ComponentScriptUnreferenceableError(ComponentException):
-    "The Component corresponding to the object accessed by a ScriptReferenceable does not allow script referencing of its final."
+    """
+    The Component corresponding to the object accessed by a ScriptReferenceable does not allow script referencing of its final.
+
+    :param path: The path used to access the Component's final.
+    :param options: All paths that can be used to access valid script-referenceable objects.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, path:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :path: The path used to access the Component's final.
-        :options: All paths that can be used to access valid script-referenceable objects.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(path, options, message)
         self.path = path
         self.options = options
@@ -458,14 +485,15 @@ class ComponentScriptUnreferenceableError(ComponentException):
         return f"Component at \"{self.path}\" does not allow for its final to be referenced by Scripts{message(self.message)}{nearest_message(self.path, self.options)}"
 
 class ComponentTypeContainmentError(ComponentException):
-    "A Component has a type that cannot be contained by its current container type."
+    """
+    A Component has a type that cannot be contained by its current container type.
+
+    :param container_type: The type of the container.
+    :param containee_type: The type contained by the container type.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, container_type:type, containee_type:type, message:Optional[str]=None) -> None:
-        '''
-        :container_type: The type of the container.
-        :containee_type: The type contained by the container type.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(container_type, containee_type, message)
         self.container_type = container_type
         self.containee_type = containee_type
@@ -474,30 +502,16 @@ class ComponentTypeContainmentError(ComponentException):
     def __str__(self) -> str:
         return f"Type \"{self.containee_type}\" cannot be contained by type \"{self.container_type}\"{message(self.message)}"
 
-class ComponentTypeInheritError(ComponentException):
-    "A Component has both the \"type\" and \"inherit\" keys!"
-
-    def __init__(self, component:"Component", message:Optional[str]=None) -> None:
-        '''
-        :component: The Component with both the "type" and "inherit" keys.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(component, message)
-        self.component = component
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.component} cannot have both the type and inherit keys!"
-
 class ComponentTypeInvalidTypeError(ComponentException):
-    "A Component has a value in a TypeField that is not allowed."
+    """
+    A Component has a value in a TypeField that is not allowed.
+
+    :param observed_type: The type that is not allowed.
+    :param allowed_types: The set of types that this TypeField must be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, observed_type:type, allowed_types:"TypeSet", message:Optional[str]=None) -> None:
-        '''
-        :observed_type: The type that is not allowed.
-        :allowed_types: The set of types that this TypeField must be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(observed_type, allowed_types, message)
         self.observed_type = observed_type
         self.allowed_types = allowed_types
@@ -507,14 +521,15 @@ class ComponentTypeInvalidTypeError(ComponentException):
         return f"{self.observed_type} is not one of [{", ".join(type.__name__ for type in sorted(self.allowed_types, key=lambda value: value.__name__))}]{message(self.message)}"
 
 class ComponentTypeMissingError(ComponentException):
-    "A Component is missing the type key and there is no type assumption."
+    """
+    A Component is missing the type key and there is no type assumption.
+
+    :param component_name: The name of the Component with the missing type key.
+    :param group: The Group the Component is found in.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component_name:str, group:"Group", message:Optional[str]=None) -> None:
-        '''
-        :component_name: The name of the Component with the missing type key.
-        :group: The Group the Component is found in.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component_name, group, message)
         self.component_name = component_name
         self.group = group
@@ -524,14 +539,15 @@ class ComponentTypeMissingError(ComponentException):
         return f"Component \"{self.component_name}\" in {self.group} is missing its type key{message(self.message)}"
 
 class ComponentTypeRequiresComponentError(ComponentException):
-    "A Component has a type that requires a Component but has no Component."
+    """
+    A Component has a type that requires a Component but has no Component.
+
+    :param component: The Component referencing the type or a string representing it.
+    :param accepted_type: The type requiring a Component.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component:"Component|str", accepted_type:type, message:Optional[str]=None) -> None:
-        '''
-        :component: The Component referencing the type or a string representing it.
-        :accepted_type: The type requiring a Component.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component, accepted_type, message)
         self.component = component
         self.accepted_type = accepted_type
@@ -541,13 +557,14 @@ class ComponentTypeRequiresComponentError(ComponentException):
         return f"{self.component} accepts type \"{self.accepted_type.__name__}\", which requires a Component, but has no sub-Component{message(self.message)}"
 
 class ComponentUnrecognizedTypeError(ComponentException):
-    "This Component references an unrecognized default type."
+    """
+    This Component references an unrecognized default type.
+
+    :param type_str: The name of the unrecognized type.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, type_str:str, message:Optional[str]=None) -> None:
-        '''
-        :type_str: The name of the unrecognized type.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(type_str, message)
         self.type_str = type_str
         self.message = message
@@ -556,13 +573,14 @@ class ComponentUnrecognizedTypeError(ComponentException):
         return f"Type \"{self.type_str}\" is unrecognized{message(self.message)}"
 
 class InheritanceLoopError(ComponentException):
-    "Component inheritance points in a loop!"
+    """
+    Component inheritance points in a loop!
+
+    :param involved_components: The set of Components involved in the inheritance loop.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, involved_components:set["Component"], message:Optional[str]=None) -> None:
-        '''
-        :involved_components: The set of Components involved in the inheritance loop.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(involved_components, message)
         self.involved_components = involved_components
         self.message = message
@@ -571,18 +589,19 @@ class InheritanceLoopError(ComponentException):
         return f"There is a Component inheritance loop involving {{{", ".join(component.full_name for component in self.involved_components)}}}{message(self.message)}"
 
 class InvalidComponentFinalTypeError(ComponentException):
-    "The referenced Component's final is the wrong type."
+    """
+    The referenced Component's final is the wrong type.
+
+    :param path: The key used to reference the Component.
+    :param object: The Component's final.
+    :param required_type: The type that the Component's final should be.
+    :param actual_type: The type that the Component's final is.
+    :param options: Values the path could be.
+    :param message: Additional text to place after the main message.
+    """
     # used exclusively by ScriptReferenceable
 
     def __init__(self, path:str, object:Any, required_type:type, actual_type:type, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :path: The key used to reference the Component.
-        :object: The Component's final.
-        :required_type: The type that the Component's final should be.
-        :actual_type: The type that the Component's final is.
-        :options: Values the path could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(path, object, required_type, actual_type, options, message)
         self.path = path
         self.object = object
@@ -595,15 +614,16 @@ class InvalidComponentFinalTypeError(ComponentException):
         return f"{self.object:r} at \"{self.path}\" should be type {self.required_type.__name__}, but is actually {self.actual_type.__name__}{message(self.message)}{nearest_message(self.path, self.options)}"
 
 class LinkedComponentExtraError(ComponentException):
-    "An extra linked Component is present."
+    """
+    An extra linked Component is present.
+
+    :param key: The key of the extra linked Component.
+    :param linked_object: The object of the linked Component.
+    :param options: Values that `key` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key:str, linked_object:Any, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :key: The key of the extra linked Component.
-        :linked_object: The object of the linked Component.
-        :options: Values that `key` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key, linked_object, options, message)
         self.key = key
         self.linked_object = linked_object
@@ -614,14 +634,15 @@ class LinkedComponentExtraError(ComponentException):
         return f"There is an extra linked Component \"{self.key}\": {self.linked_object}{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class LinkedComponentMissingError(ComponentException):
-    "A linked Component is missing."
+    """
+    A linked Component is missing.
+
+    :param key: The key of the missing Component.
+    :param linked_type: The type of the linked object.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key:str, linked_type:type, message:Optional[str]=None) -> None:
-        '''
-        :key: The key of the missing Component.
-        :linked_type: The type of the linked object.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key, linked_type, message)
         self.key = key
         self.linked_type = linked_type
@@ -631,15 +652,16 @@ class LinkedComponentMissingError(ComponentException):
         return f"Missing linked Component \"{self.key}\" of type \"{self.linked_type.__name__}\"{message(self.message)}"
 
 class LinkedComponentTypeError(ComponentException):
-    "A linked Component's object is the wrong type."
+    """
+    A linked Component's object is the wrong type.
+
+    :param key: The key of the linked Component.
+    :param required_type: The type the linked object should have.
+    :param observed_object: The linked object.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key:str, required_type:type, observed_object:Any, message:Optional[str]=None) -> None:
-        '''
-        :key: The key of the linked Component.
-        :required_type: The type the linked object should have.
-        :observed_object: The linked object.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key, required_type, observed_object, message)
         self.key = key
         self.required_type = required_type
@@ -650,14 +672,15 @@ class LinkedComponentTypeError(ComponentException):
         return f"Linked object \"{self.key}\": {self.observed_object} should be type \"{self.required_type.__name__}\"{message(self.message)}"
 
 class MalformedComponentReferenceError(ComponentException):
-    "A reference Component is invalid."
+    """
+    A reference Component is invalid.
+
+    :param key: The key used to reference the Component
+    :param options: Values that `key` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :key: The key used to reference the Component
-        :options: Values that `key` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key, options, message)
         self.key = key
         self.options = options
@@ -667,14 +690,15 @@ class MalformedComponentReferenceError(ComponentException):
         return f"Component reference \"{self.key}\" is malformed{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class ReferenceInheritanceDataError(ComponentException):
-    "Attempted to write new data onto a Component using reference inheritance."
+    """
+    Attempted to write new data onto a Component using reference inheritance.
+
+    :param source: The InheritedComponent whose data exists.
+    :param destination: The Component whose copy is being written to.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, source:"Component", destination:"Component", message:Optional[str]=None) -> None:
-        '''
-        :source: The InheritedComponent whose data exists.
-        :destination: The Component whose copy is being written to.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(source, destination, message)
         self.source = source
         self.destination = destination
@@ -684,13 +708,14 @@ class ReferenceInheritanceDataError(ComponentException):
         return f"Cannot write data from {self.source} onto {self.destination} in reference inheritance{message(self.message)}"
 
 class UnrecognizedCapabilityError(ComponentException):
-    "A capability is unrecognized."
+    """
+    A capability is unrecognized.
+
+    :param property: The name of the unrecognized capability property.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, property:str, message:Optional[str]=None) -> None:
-        '''
-        :property: The name of the unrecognized capability property.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(property, message)
         self.property = property
         self.message = message
@@ -699,16 +724,17 @@ class UnrecognizedCapabilityError(ComponentException):
         return f"Key \"{self.property}\" is not a recognized property{message(self.message)}"
 
 class UnrecognizedComponentError(ComponentException):
-    "A Component is unrecognized."
+    """
+    A Component is unrecognized.
+
+    :param component_str: The name of the unrecognized Component.
+    :param key: The key used to reference the Component.
+    :param source: The object that refers to this Component.
+    :param options: Values the Component key could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component_str:str, key:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :component_str: The name of the unrecognized Component.
-        :key: The key used to reference the Component.
-        :source: The object that refers to this Component.
-        :options: Values the Component key could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component_str, key, options, message)
         self.component_str = component_str
         self.key = key
@@ -719,15 +745,16 @@ class UnrecognizedComponentError(ComponentException):
         return f"Component \"{self.component_str}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options, show_original=True)}"
 
 class UnrecognizedComponentDomainError(ComponentException):
-    "A Domain referenced by a Component is unrecognized."
+    """
+    A Domain referenced by a Component is unrecognized.
+
+    :param domain: The name of the unrecognized Domain.
+    :param key: The key used to reference the Component.
+    :param options: Values that `key` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, domain:str, key:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :domain: The name of the unrecognized Domain.
-        :key: The key used to reference the Component.
-        :options: Values that `key` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(domain, key, options, message)
         self.domain = domain
         self.key = key
@@ -738,15 +765,16 @@ class UnrecognizedComponentDomainError(ComponentException):
         return f"Domain \"{self.domain}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options, show_original=True)}"
 
 class UnrecognizedGroupAliasError(ComponentException):
-    "A Group referenced from a Group alias is unrecognized."
+    """
+    A Group referenced from a Group alias is unrecognized.
+
+    :param group_name: The name of the unrecognized Group.
+    :param alias: The alias given to the Group.
+    :param options: Values that `key` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, group_name:str, alias:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :group_name: The name of the unrecognized Group.
-        :alias: The alias given to the Group.
-        :options: Values that `key` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(group_name, alias, options, message)
         self.group_name = group_name
         self.alias = alias
@@ -757,15 +785,16 @@ class UnrecognizedGroupAliasError(ComponentException):
         return f"Group \"{self.alias}\": \"{self.group_name}\" is unrecognized{message(self.message)}{nearest_message(self.group_name, self.options)}"
 
 class UnrecognizedGroupError(ComponentException):
-    "A Group is unrecognized"
+    """
+    A Group is unrecognized.
+
+    :param group_name: The name of the unrecognized Group.
+    :param key: The key used to reference the Component.
+    :param options: Values that `key` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, group_name:str, key:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :group_name: The name of the unrecognized Group.
-        :key: The key used to reference the Component.
-        :options: Values that `key` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(group_name, key, options, message)
         self.group_name = group_name
         self.key = key
@@ -776,15 +805,16 @@ class UnrecognizedGroupError(ComponentException):
         return f"Group \"{self.group_name}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options, show_original=True)}"
 
 class UnrecognizedComponentTypeError(ComponentException):
-    "A Component type is unrecognized."
+    """
+    A Component type is unrecognized.
+
+    :param component_type: The name of the unrecognized Component type.
+    :param source: The object that refers to this Component type.
+    :param options: Values that the Component type could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component_type:str, source:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :component_type: The name of the unrecognized Component type.
-        :source: The object that refers to this Component type.
-        :options: Values that the Component type could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component_type, source, options, message)
         self.component_type = component_type
         self.source = source
@@ -795,13 +825,14 @@ class UnrecognizedComponentTypeError(ComponentException):
         return f"Component type \"{self.component_type}\", as referenced by {self.source}, is unrecognized{message(self.message)}{nearest_message(self.component_type, self.options)}"
 
 class VariableNameError(ComponentException):
-    "A Variable has an invalid name."
+    """
+    A Variable has an invalid name.
+
+    :param variable_name: The invalid name.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, variable_name:str, message:Optional[str]=None) -> None:
-        '''
-        :variable_name: The invalid name.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(variable_name, message)
         self.variable_name = variable_name
         self.message = message
@@ -810,16 +841,17 @@ class VariableNameError(ComponentException):
         return f"Variable name {self.variable_name!r} is invalid{message(self.message)}"
 
 class VariableUnusedError(ComponentException):
-    "A declared Variable has no usages in Expresions."
+    """
+    A declared Variable has no usages in Expresions.
+
+    :param component: The Component that the Variable is not used in.
+    :param variable_name: The name of the unused Variable declaration.
+    :param value: The value of the Variable declaration.
+    :param options: Possible correct Variable names.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, component:"Component", variable_name:str, value:Any, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :component: The Component that the Variable is not used in.
-        :variable_name: The name of the unused Variable declaration.
-        :value: The value of the Variable declaration.
-        :options: Possible correct Variable names.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(component, variable_name, value, options, message)
         self.component = component
         self.variable_name = variable_name
@@ -831,16 +863,19 @@ class VariableUnusedError(ComponentException):
         return f"Variable {self.variable_name}: {repr(self.value)} has no uses in Expressions in {self.component}{message(self.message)}{nearest_message(self.variable_name, self.options)}"
 
 class CustomJsonException(Exception):
-    "Abstract Exception class for errors relating to custom JSON encoders and decoders."
+    """
+    Abstract Exception class for errors relating to custom JSON encoders and decoders.
+    """
 
 class CannotEncodeToJsonError(CustomJsonException):
-    "The object cannot be encoded to JSON."
+    """
+    The object cannot be encoded to JSON.
+
+    :param source: The object that cannot be encoded to JSON.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, source:object, message:Optional[str]=None) -> None:
-        '''
-        :source: The object that cannot be encoded to JSON.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(source, message)
         self.source = source
         self.message = message
@@ -849,13 +884,14 @@ class CannotEncodeToJsonError(CustomJsonException):
         return f"Object {self.source} of type {self.source.__class__.__name__} cannot be encoded to JSON{message(self.message)}"
 
 class InvalidSpecialTypeError(CustomJsonException):
-    "The $special_type key has a value that is not recognized."
+    """
+    The $special_type key has a value that is not recognized.
+
+    :param special_type: The value of $special_type.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, special_type:str, message:Optional[str]=None) -> None:
-        '''
-        :special_type: The value of $special_type.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(special_type, message)
         self.special_type = special_type
         self.message = message
@@ -864,16 +900,19 @@ class InvalidSpecialTypeError(CustomJsonException):
         return f"Invalid $special_type of \"{self.special_type}\" received{message(self.message)}"
 
 class DataFileException(Exception):
-    "Exception relating to DataFiles"
+    """
+    Exception relating to DataFiles
+    """
 
 class DataFileNothingToWriteError(DataFileException):
-    "Called `write` on a DataFile without any content."
+    """
+    Called `write` on a DataFile without any content.
+
+    :param source: The DataFile that has nothing to write.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, source:"DataFile", message:Optional[str]=None) -> None:
-        '''
-        :source: The DataFile that has nothing to write.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(source, message)
         self.source = source
         self.message = message
@@ -882,19 +921,22 @@ class DataFileNothingToWriteError(DataFileException):
         return f"{self.source} cannot be written if not yet read{message(self.message)}"
 
 class DataminerException(Exception):
-    "Abstract Exception class for errors relating to Dataminers."
+    """
+    Abstract Exception class for errors relating to Dataminers.
+    """
 
 class DataminerAccessorWrongTypeError(DataminerException):
-    "The assumed type of an Accessor is not its actual type."
+    """
+    The assumed type of an Accessor is not its actual type.
+
+    :param dataminer: The Dataminer that attempted to access its Accessor.
+    :param file_type: The name of the VersionFile that has the wrong Accessor type.
+    :param accessor_type: The type that the Accessor should be.
+    :param options: Values that `file_type` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", file_type:str, accessor_type:type["Accessor"], options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer that attempted to access its Accessor.
-        :file_type: The name of the VersionFile that has the wrong Accessor type.
-        :accessor_type: The type that the Accessor should be.
-        :options: Values that `file_type` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, file_type, accessor_type, options, message)
         self.dataminer = dataminer
         self.file_type = file_type
@@ -906,14 +948,15 @@ class DataminerAccessorWrongTypeError(DataminerException):
         return f"VersionFile \"{self.file_type}\" from {self.dataminer} should have Accessor with type \"{self.accessor_type.__name__}\"{message(self.message)}"
 
 class DataminerCannotKnowFileTypeError(DataminerException):
-    "Attempted to access a Dataminer's VersionFileTypes with no key, but there are too many VersionFileTypes."
+    """
+    Attempted to access a Dataminer's VersionFileTypes with no key, but there are too many VersionFileTypes.
+
+    :param dataminer: The Dataminer with too many VersionFileTypes.
+    :param count: The number of VersionFileTypes.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", count:int, message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer with too many VersionFileTypes.
-        :count: The number of VersionFileTypes.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, count, message)
         self.dataminer = dataminer
         self.count = count
@@ -923,13 +966,14 @@ class DataminerCannotKnowFileTypeError(DataminerException):
         return f"Cannot know which VersionFileType {self.dataminer}.get_accessor is referring to, since there are more than 1 ({self.count}) VersionFileTypes{message(self.message)}"
 
 class DataminerCollectionFileError(DataminerException):
-    "The \"files\" key in a DataminerCollection is improperly specified."
+    """
+    The \"files\" key in a DataminerCollection is improperly specified.
+
+    :param exists: Whether or not the "files" key actually exists.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, exists:bool, message:Optional[str]=None) -> None:
-        '''
-        :exists: Whether or not the "files" key actually exists.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(exists, message)
         self.exists = exists
         self.message = message
@@ -938,14 +982,15 @@ class DataminerCollectionFileError(DataminerException):
         return f"Key \"files\" {"cannot" if self.exists else "must"} exist{message(self.message)}"
 
 class DataminerDependencyOverwriteError(DataminerException):
-    "Attempted to set an item of a DataminerDependencies object that already exists."
+    """
+    Attempted to set an item of a DataminerDependencies object that already exists.
+
+    :param dataminer_dependencies: The DataminerDependencies that had an item overwritten.
+    :param dependency_name: The dependency that was overwritten.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer_dependencies:"DataminerDependencies", dependency_name:str, message:Optional[str]=None) -> None:
-        '''
-        :dataminer_dependencies: The DataminerDependencies that had an item overwritten.
-        :dependency_name: The dependency that was overwritten.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer_dependencies, dependency_name, message)
         self.dataminer_dependencies = dataminer_dependencies
         self.dependency_name = dependency_name
@@ -955,14 +1000,15 @@ class DataminerDependencyOverwriteError(DataminerException):
         return f"Attempted to overwrite dependency \"{self.dependency_name}\" of {self.dataminer_dependencies}{message(self.message)}"
 
 class DataminerDuplicateFileNameError(DataminerException):
-    "Two DataminerCollections have the same file name."
+    """
+    Two DataminerCollections have the same file name.
+
+    :param file_name: The file name shared by all of the DataminerCollections.
+    :param dataminers: The DataminerCollections that share the same file name.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, file_name:str, dataminers:list["AbstractDataminerCollection"], message:Optional[str]=None) -> None:
-        '''
-        :file_name: The file name shared by all of the DataminerCollections.
-        :dataminers: The DataminerCollections that share the same file name.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(file_name, dataminers, message)
         self.file_name = file_name
         self.dataminers = dataminers
@@ -972,15 +1018,16 @@ class DataminerDuplicateFileNameError(DataminerException):
         return f"DataminerCollection [{", ".join(dataminer.name for dataminer in self.dataminers)}] all have the same file name \"{self.file_name}\"{message(self.message)}"
 
 class DataminerFileTypePermissionError(DataminerException):
-    "A Dataminer attempted to access a VersionFileType it has no permissions to use."
+    """
+    A Dataminer attempted to access a VersionFileType it has no permissions to use.
+
+    :param dataminer: The Dataminer that attempted to access a VersionFileType without permission.
+    :param file_type_name: The name of the VersionFileType it attempted to access.
+    :param options: Values that `file_type_name` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", file_type_name:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer that attempted to access a VersionFileType without permission.
-        :file_type_name: The name of the VersionFileType it attempted to access.
-        :options: Values that `file_type_name` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, file_type_name, options, message)
         self.dataminer = dataminer
         self.file_type_name = file_type_name
@@ -991,13 +1038,14 @@ class DataminerFileTypePermissionError(DataminerException):
         return f"{self.dataminer} attempted to access VersionFileType {self.file_type_name}; permissions are lacking or it does not exist{message(self.message, "", " %s")}{nearest_message(self.file_type_name, self.options)}"
 
 class DataminerLacksActivateError(DataminerException):
-    "A Dataminer did not override the activate function."
+    """
+    A Dataminer did not override the activate function.
+
+    :param dataminer: The Dataminer that is missing the activate function.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer that is missing the activate function.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, message)
         self.dataminer = dataminer
         self.message = message
@@ -1006,13 +1054,14 @@ class DataminerLacksActivateError(DataminerException):
         return f"{self.dataminer} is missing its activate function{message(self.message)}"
 
 class DataminerNoFileTypeError(DataminerException):
-    "A Dataminer has no linked VersionFileTypes and should."
+    """
+    A Dataminer has no linked VersionFileTypes and should.
+
+    :param dataminer: The Dataminer with no VersionFileTypes specified.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer with no VersionFileTypes specified.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, message)
         self.dataminer = dataminer
         self.message = message
@@ -1021,13 +1070,14 @@ class DataminerNoFileTypeError(DataminerException):
         return f"{self.dataminer} has no VersionFileTypes; cannot access one{message(self.message)}"
 
 class DataminerNothingFoundError(DataminerException):
-    "This Dataminer found nothing."
+    """
+    This Dataminer found nothing.
+
+    :param dataminer: The Dataminer that failed to find anything.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer that failed to find anything.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, message)
         self.dataminer = dataminer
         self.message = message
@@ -1036,13 +1086,14 @@ class DataminerNothingFoundError(DataminerException):
         return f"{self.dataminer} failed to find anything{message(self.message)}"
 
 class DataminerNullReturnError(DataminerException):
-    "The Dataminer's activate method has returned None."
+    """
+    The Dataminer's activate method has returned None.
+
+    :param dataminer: The Dataminer whose activate method returned None.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"AbstractDataminerCollection", message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer whose activate method returned None.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, message)
         self.dataminer = dataminer
         self.message = message
@@ -1051,14 +1102,15 @@ class DataminerNullReturnError(DataminerException):
         return f"{self.dataminer} returned None upon being activated{message(self.message)}"
 
 class DataminerSettingsImporterLoopError(DataminerException):
-    "A DataminerSettings has an import loop."
+    """
+    A DataminerSettings has an import loop.
+
+    :param dataminer_settings: The initial DataminerSettings containing the loop.
+    :param loop_items: A list of DataminerCollection names contained in the loop.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer_settings:"DataminerSettings", loop_items:Sequence[str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer_settings: The initial DataminerSettings containing the loop.
-        :loop_items: A list of DataminerCollection names contained in the loop.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer_settings, loop_items, message)
         self.dataminer_settings = dataminer_settings
         self.loop_items = loop_items
@@ -1068,14 +1120,15 @@ class DataminerSettingsImporterLoopError(DataminerException):
         return f"{self.dataminer_settings} has an import loop involving {self.loop_items}{message(self.message)}"
 
 class DataminersFailureError(DataminerException):
-    "Multiple Dataminers failed to activate."
+    """
+    Multiple Dataminers failed to activate.
+
+    :param version: The Version for which datamining failed.
+    :param dataminer_collections: The DataminerCollections that failed to activate on this Version.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", dataminer_collections:list["AbstractDataminerCollection"], message:Optional[str]=None) -> None:
-        '''
-        :version: The Version for which datamining failed.
-        :dataminer_collections: The DataminerCollections that failed to activate on this Version.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, dataminer_collections, message)
         self.version = version
         self.dataminer_collections = dataminer_collections
@@ -1085,15 +1138,16 @@ class DataminersFailureError(DataminerException):
         return f"Failed to datamine {self.version} on {len(self.dataminer_collections)} Dataminers: [{", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections)}]{message(self.message)}"
 
 class DataminerUnrecognizedDependencyError(DataminerException):
-    "A dependency does not exist."
+    """
+    A dependency does not exist.
+
+    :param dataminer: The Dataminer attempting to access the dependency.
+    :param dependency_name: The name of the DataminerCollection that does not exist.
+    :param options: Values that `dependency_name` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", dependency_name:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer attempting to access the dependency.
-        :dependency_name: The name of the DataminerCollection that does not exist.
-        :options: Values that `dependency_name` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, dependency_name, options, message)
         self.dataminer = dataminer
         self.dependency_name = dependency_name
@@ -1104,15 +1158,16 @@ class DataminerUnrecognizedDependencyError(DataminerException):
         return f"{self.dataminer} references dependency \"{self.dependency_name}\" that is non-existent for this Version{message(self.message)}{nearest_message(self.dependency_name, self.options)}"
 
 class DataminerUnrecognizedSuffixError(DataminerException):
-    "A file suffix is unrecognized."
+    """
+    A file suffix is unrecognized.
+
+    :param dataminer: The Dataminer that found the unrecognized suffix.
+    :param path: The path containing the unrecognized suffix.
+    :param recognized_suffixes: A list of suffixes that are recognized.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", path:str, recognized_suffixes:list[str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer that found the unrecognized suffix.
-        :path: The path containing the unrecognized suffix.
-        :recognized_suffixes: A list of suffixes that are recognized.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, path, recognized_suffixes, message)
         self.dataminer = dataminer
         self.path = path
@@ -1123,15 +1178,16 @@ class DataminerUnrecognizedSuffixError(DataminerException):
         return f"{self.dataminer} found unrecognized suffix on path \"{self.path}\"; it is not in {self.recognized_suffixes}{message(self.message, yes_message="; %s!")}"
 
 class DataminerUnregisteredDependencyError(DataminerException):
-    "The dependency exists, but is not listed as a dependency by this Dataminer."
+    """
+    The dependency exists, but is not listed as a dependency by this Dataminer.
+
+    :param dataminer: The Dataminer attempting to access the dependency.
+    :param dependency_name: The name of the DataminerCollection that is unregistered.
+    :param options: Values that `dependency_name` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", dependency_name:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer attempting to access the dependency.
-        :dependency_name: The name of the DataminerCollection that is unregistered.
-        :options: Values that `dependency_name` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, dependency_name, options, message)
         self.dataminer = dataminer
         self.dependency_name = dependency_name
@@ -1142,15 +1198,16 @@ class DataminerUnregisteredDependencyError(DataminerException):
         return f"{self.dataminer} references unlisted dependency \"{self.dependency_name}\"{message(self.message)}{nearest_message(self.dependency_name, self.options)}"
 
 class MissingDataFileError(DataminerException):
-    "The data file for this DataminerCollection is missing."
+    """
+    The data file for this DataminerCollection is missing.
+
+    :param dataminer_collection: The Dataminer, DataminerSettings, or DataminerCollection that is missing its file.
+    :param file_name: The name of the file that's missing.
+    :param version: The Version for which this Dataminer is missing its file.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer|DataminerSettings|AbstractDataminerCollection", file_name:str, version:Optional["Version"], message:Optional[str]=None) -> None:
-        '''
-        :dataminer_collection: The Dataminer, DataminerSettings, or DataminerCollection that is missing its file.
-        :file_name: The name of the file that's missing.
-        :version: The Version for which this Dataminer is missing its file.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, version, file_name, message)
         self.dataminer = dataminer
         self.version = version
@@ -1161,15 +1218,16 @@ class MissingDataFileError(DataminerException):
         return f"File {self.file_name} of {self.dataminer}{message(self.version, "", " of Version \"%s\"", lambda version: version.name)} is missing{message(self.message)}"
 
 class TagSearcherDependencyError(DataminerException):
-    "A tag exists in a Dataminer that is not a dependency of this one."
+    """
+    A tag exists in a Dataminer that is not a dependency of this one.
+
+    :param dataminer: The Dataminer that attempted to access the tag.
+    :param tag: The tag that was found in an inaccessible DataminerCollection.
+    :param dataminer_collection: The DataminerCollection the tag was found in.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, dataminer:"Dataminer", tag:"StructureTag", dataminer_collection:"AbstractDataminerCollection", message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer that attempted to access the tag.
-        :tag: The tag that was found in an inaccessible DataminerCollection.
-        :dataminer_collection: The DataminerCollection the tag was found in.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(dataminer, tag, dataminer_collection, message)
         self.dataminer = dataminer
         self.tag = tag
@@ -1180,14 +1238,15 @@ class TagSearcherDependencyError(DataminerException):
         return f"{self.dataminer} could find {self.tag} in {self.dataminer_collection}, but it is not a dependency{message(self.message)}"
 
 class TagSearcherParseError(DataminerException):
-    "Failed to parse a TagSearcher expression."
+    """
+    Failed to parse a TagSearcher expression.
+
+    :param data_reader: The DataReader object used to read the expression.
+    :param reason: The reason for the error.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, data_reader:"DataReader", reason:str, message:Optional[str]=None) -> None:
-        '''
-        :data_reader: The DataReader object used to read the expression.
-        :reason: The reason for the error.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(data_reader, reason, message)
         self.data_reader = data_reader
         self.reason = reason
@@ -1197,10 +1256,19 @@ class TagSearcherParseError(DataminerException):
         return f"{self.reason} at position {self.data_reader.position} of expression \"{self.data_reader.data}\"{message(self.message)}"
 
 class DelegateException(Exception):
-    "Abstract Exception class for errors relating to Delegates."
+    """
+    Abstract Exception class for errors relating to Delegates.
+    """
 
 class InapplicableDelegateError(DelegateException):
-    "The Structure or StructureBase a Delegate is applied to does not suit the Delegate."
+    """
+    The Structure or StructureBase a Delegate is applied to does not suit the Delegate.
+
+    :param delegate_type: The type of Delegate that is applied to the wrong type of Structure or StructureBase.
+    :param structure_type: The Structure or StructureBase that has the inapplicable Delegate applied to it.
+    :param allowed_types: The types of Structure or StructureBase that the Delegate is allowed to be applied to.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(
         self,
@@ -1209,12 +1277,6 @@ class InapplicableDelegateError(DelegateException):
         allowed_types:tuple[type["Structure|None"], ...],
         message:Optional[str]=None,
     ) -> None:
-        '''
-        :delegate_type: The type of Delegate that is applied to the wrong type of Structure or StructureBase.
-        :structure_type: The Structure or StructureBase that has the inapplicable Delegate applied to it.
-        :allowed_types: The types of Structure or StructureBase that the Delegate is allowed to be applied to.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(delegate_type, structure, allowed_types, message)
         self.delegate_type = delegate_type
         self.structure = structure
@@ -1225,17 +1287,20 @@ class InapplicableDelegateError(DelegateException):
         return f"Delegate type \"{self.delegate_type.__name__}\" can only be applied to types [{", ".join(f"\"{allowed_type.__name__}\"" for allowed_type in self.allowed_types)}], not {self.structure}{message(self.message)}"
 
 class LogException(Exception):
-    "Abstract Exception class for errors relating to Logs."
+    """
+    Abstract Exception class for errors relating to Logs.
+    """
 
 class LogInvalidFileError(LogException):
-    "Attempted to create a Log with an invalid file path."
+    """
+    Attempted to create a Log with an invalid file path.
+
+    :param log: The Log with the invalid file path.
+    :param path: The invalid path.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, log:"Log", path:Path, message:Optional[str]=None) -> None:
-        '''
-        :log: The Log with the invalid file path.
-        :path: The invalid path.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(log, path, message)
         self.log = log
         self.path = path
@@ -1245,15 +1310,16 @@ class LogInvalidFileError(LogException):
         return f"The path of {self.log}, \"{self.path.as_posix()}\", is invalid{message(self.message)}"
 
 class LogWriteTypeError(LogException):
-    "Attempted to write to a Log with an invalid type for the Log's LogType."
+    """
+    Attempted to write to a Log with an invalid type for the Log's LogType.
+
+    :param log: The Log that attempted to write to.
+    :param write_type: The type that was given to `Log.write`.
+    :param allowed_types: The types that can be given to `Log.write`.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, log:"Log", write_type:type, allowed_types:tuple[type,...], message:Optional[str]=None) -> None:
-        '''
-        :log: The Log that attempted to write to.
-        :write_type: The type that was given to `Log.write`.
-        :allowed_types: The types that can be given to `Log.write`.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(log, write_type, allowed_types, message)
         self.log = log
         self.write_type = write_type
@@ -1264,18 +1330,21 @@ class LogWriteTypeError(LogException):
         return f"Attempted to write to {self.log} using type \"{self.write_type.__name__}\" instead of types [{", ".join(f"\"{allowed_type.__name__}\"" for allowed_type in self.allowed_types)}]{message(self.message)}"
 
 class DomainException(Exception):
-    "Abstract Exception class for errors relating to Domains."
+    """
+    Abstract Exception class for errors relating to Domains.
+    """
 
 class LibFileNotFoundError(DomainException):
-    "A lib file does not exist."
+    """
+    A lib file does not exist.
+
+    :param name: The file name used to access the LibFiles.
+    :param path: The Path that was found using `name`.
+    :param options: Options that `name` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, name:str, path:Path, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :name: The file name used to access the LibFiles.
-        :path: The Path that was found using `name`.
-        :options: Options that `name` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(name, path, options, message)
         self.name = name
         self.path = path
@@ -1286,16 +1355,17 @@ class LibFileNotFoundError(DomainException):
         return f"Path \"{self.path.as_posix()}\", derived from \"{self.name}\", does not exist{message(self.message)}{nearest_message(self.name, self.options)}"
 
 class LibFileWrongDirectoryError(DomainException):
-    "Attempted to access a lib file that is not in the correct directory."
+    """
+    Attempted to access a lib file that is not in the correct directory.
+
+    :param name: The file name used to access the LibFiles.
+    :param path: The Path that was found using `name`.
+    :param correct_directory: The Path that `path` should be a descendent of.
+    :param options: Options that `name` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, name:str, path:Path, correct_directory:Path, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :name: The file name used to access the LibFiles.
-        :path: The Path that was found using `name`.
-        :correct_directory: The Path that `path` should be a descendent of.
-        :options: Options that `name` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(name, path, correct_directory, options, message)
         self.name = name
         self.path = path
@@ -1307,17 +1377,20 @@ class LibFileWrongDirectoryError(DomainException):
         return f"Path derived from {self.name} should be a descendent of {self.correct_directory.as_posix()}, not {self.path.as_posix()}{message(self.message)}{nearest_message(self.name, self.options)}"
 
 class ScriptException(Exception):
-    "Abstract Exception class for errors relating to Scripts."
+    """
+    Abstract Exception class for errors relating to Scripts.
+    """
 
 class ScriptNameCollideError(ScriptException):
-    "A Script has the same stem as another Script in the same folder."
+    """
+    A Script has the same stem as another Script in the same folder.
+
+    :param script_path1: The Path of the first Script.
+    :param script_path2: The Path of the second Script.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, script_path1:Path, script_path2:Path, message:Optional[str]=None) -> None:
-        '''
-        :script_path1: The Path of the first Script.
-        :script_path2: The Path of the second Script.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(script_path1, script_path2, message)
         self.script_path1 = script_path1
         self.script_path2 = script_path2
@@ -1327,15 +1400,16 @@ class ScriptNameCollideError(ScriptException):
         return f"Scripts on paths \"{self.script_path1}\" and \"{self.script_path2}\" have the same stem{message(self.message)}"
 
 class ScriptGeneralityError(ScriptException):
-    "Cannot use a Script key because it could refer to multiple objects"
+    """
+    Cannot use a Script key because it could refer to multiple objects
+
+    :param script_name: The key used to access the ScriptSet.
+    :param potential_meanings: The Scripts that `script_name` could refer to.
+    :param options: Values this Script could have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, script_name:str, potential_meanings:list["Script"], options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :script_name: The key used to access the ScriptSet.
-        :potential_meanings: The Scripts that `script_name` could refer to.
-        :options: Values this Script could have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(script_name, potential_meanings, options, message)
         self.script_name = script_name
         self.potential_meanings = potential_meanings
@@ -1346,15 +1420,16 @@ class ScriptGeneralityError(ScriptException):
         return f"Script name \"{self.script_name}\" could be referring to {self.potential_meanings}{message(self.message)}{nearest_message(self.script_name, self.options)}"
 
 class UnrecognizedScriptDomainError(ScriptException):
-    "An unrecognized Domain is referenced by a Script."
+    """
+    An unrecognized Domain is referenced by a Script.
+
+    :param domain_name: The name of the unrecognized Domain.
+    :param key: The key used to access the Script.
+    :param options: Values this Script could have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, domain_name:str, key:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :domain_name: The name of the unrecognized Domain.
-        :key: The key used to access the Script.
-        :options: Values this Script could have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(domain_name, key, options, message)
         self.domain_name = domain_name
         self.key = key
@@ -1365,14 +1440,15 @@ class UnrecognizedScriptDomainError(ScriptException):
         return f"Domain \"{self.domain_name}\" in key \"{self.key}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedScriptError(ScriptException):
-    "An unrecognized Script was referenced."
+    """
+    An unrecognized Script was referenced.
+
+    :param script_name: The name of the unrecognized script.
+    :param options: Values this Script could have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, script_name:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :script_name: The name of the unrecognized script.
-        :options: Values this Script could have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(script_name, options, message)
         self.script_name = script_name
         self.options = options
@@ -1382,15 +1458,16 @@ class UnrecognizedScriptError(ScriptException):
         return f"Unrecognized Script \"{self.script_name}\"{message(self.message)}{nearest_message(self.script_name, self.options)}"
 
 class UnrecognizedScriptFileNameError(ScriptException):
-    "A Script references a file that does not exist."
+    """
+    A Script references a file that does not exist.
+
+    :param key: The key used to access the Script.
+    :param file_name: The unrecognized file name.
+    :param options: Values this Script could have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key:str, file_name:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :key: The key used to access the Script.
-        :file_name: The unrecognized file name.
-        :options: Values this Script could have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key, file_name, options, message)
         self.key = key
         self.file_name = file_name
@@ -1401,16 +1478,17 @@ class UnrecognizedScriptFileNameError(ScriptException):
         return f"Script file name \"{self.file_name}\"{f" from key \"{self.key}\"" if self.key != self.file_name else ""} is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedScriptObjectNameError(ScriptException):
-    "A Script references an object that does not exist in a file that does exist."
+    """
+    A Script references an object that does not exist in a file that does exist.
+
+    :param key: The key used to access the Script.
+    :param file_name: The recognized file name.
+    :param object_name: The unrecognized object name.
+    :param options: Values this Script could have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key:str, file_name:str, object_name:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :key: The key used to access the Script.
-        :file_name: The recognized file name.
-        :object_name: The unrecognized object name.
-        :options: Values this Script could have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key, file_name, object_name, options, message)
         self.key = key
         self.file_name = file_name
@@ -1422,16 +1500,17 @@ class UnrecognizedScriptObjectNameError(ScriptException):
         return f"Scripted object \"{self.object_name}\" is unrecognized in recognized file \"{self.file_name}\"{message(self.message)}{nearest_message(self.key, self.options, show_original=True)}"
 
 class WrongScriptError(ScriptException):
-    "Attempted to import a Script that exists, but cannot be used in this situation."
+    """
+    Attempted to import a Script that exists, but cannot be used in this situation.
+
+    :param key: The key used to access the Script.
+    :param script: The Script that cannot be used in this situation.
+    :param type_name: A string representing the type the ScriptSet should be referencing.
+    :param options: Values this Script could have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key:str, script:"Script", type_name:Optional[str], options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :key: The key used to access the Script.
-        :script: The Script that cannot be used in this situation.
-        :type_name: A string representing the type the ScriptSet should be referencing.
-        :options: Values this Script could have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key, script, options, message)
         self.key = key
         self.script = script
@@ -1443,18 +1522,21 @@ class WrongScriptError(ScriptException):
         return f"Cannot load {self.script} from \"{self.key}\" in this situation{f"; should be {self.type_name}" if self.type_name is not None else ""}{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class SerializerException(Exception):
-    "Abstract Exception class for errors relating to Serializers"
+    """
+    Abstract Exception class for errors relating to Serializers
+    """
 
 class FileWrongSerializerError(SerializerException):
-    "A File cannot be read with the given Serializer."
+    """
+    A File cannot be read with the given Serializer.
+
+    :param file: The File without the correct Serializer.
+    :param serializers: The Serializers that the File does have.
+    :param serializer: The Serializer used to access the File.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, file:"AbstractFile", serializers:list["Serializer|None"], serializer:"Serializer|None", message:Optional[str]=None) -> None:
-        '''
-        :file: The File without the correct Serializer.
-        :serializers: The Serializers that the File does have.
-        :serializer: The Serializer used to access the File.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(file, serializers, serializer, message)
         self.file = file
         self.serializers = serializers
@@ -1465,14 +1547,15 @@ class FileWrongSerializerError(SerializerException):
         return f"{self.file} cannot be read with {self.serializer} because {"it has not been read yet" if len(self.serializers) == 0 else f"it can only be read by [{", ".join(repr(serializer) for serializer in self.serializers)}]"}{message(self.message)}"
 
 class SerializerEllipsisError(SerializerException):
-    "A Serializer returned an Ellipsis object."
+    """
+    A Serializer returned an Ellipsis object.
+
+    :param file: The File that was read using the Serializer.
+    :param serializer: The Serializer that returned an Ellipsis object.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, file:"AbstractFile", serializer:"Serializer|None", message:Optional[str]=None) -> None:
-        '''
-        :file: The File that was read using the Serializer.
-        :serializer: The Serializer that returned an Ellipsis object.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(file, serializer, message)
         self.file = file
         self.serializer = serializer
@@ -1485,14 +1568,15 @@ class SerializerEllipsisError(SerializerException):
             return f"{self.serializer} returned an Ellipsis while deserializing {self.file}{message(self.message)}"
 
 class SerializationFailureError(SerializerException):
-    "A Serializer failed to serialize."
+    """
+    A Serializer failed to serialize.
+
+    :param serializer: The Serializer that failed to serialize.
+    :param file_name: The name of the File that failed to be serialized.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, serializer:"Serializer", file_name:str, message:Optional[str]=None) -> None:
-        '''
-        :serializer: The Serializer that failed to serialize.
-        :file_name: The name of the File that failed to be serialized.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(serializer, file_name, message)
         self.serializer = serializer
         self.file_name = file_name
@@ -1502,14 +1586,15 @@ class SerializationFailureError(SerializerException):
         return f"{self.serializer} failed to serialize file \"{self.file_name}\"{message(self.message)}"
 
 class SerializerMethodNonexistentError(SerializerException):
-    "A Serializer's method does not exist and was called."
+    """
+    A Serializer's method does not exist and was called.
+
+    :param serializer: The Serializer missing a method.
+    :param method: The method that was called and is missing.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, serializer:"Serializer", method:Callable, message:Optional[str]=None) -> None:
-        '''
-        :serializer: The Serializer missing a method.
-        :method: The method that was called and is missing.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(serializer, method, message)
         self.serializer = serializer
         self.method = method
@@ -1519,13 +1604,14 @@ class SerializerMethodNonexistentError(SerializerException):
         return f"{self.serializer} is missing method {self.method.__name__}{message(self.message)}"
 
 class SerializerNoneError(SerializerException):
-    "Attempted to read a File without using a Serializer."
+    """
+    Attempted to read a File without using a Serializer.
+
+    :param file: The File that was read without a Serializer.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, file:"File", message:Optional[str]=None) -> None:
-        '''
-        :file: The File that was read without a Serializer.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(file, message)
         self.file = file
         self.message = message
@@ -1534,17 +1620,20 @@ class SerializerNoneError(SerializerException):
         return f"Attempted to read non-fake File {self.file} without a Serializer{message(self.message)}"
 
 class StructureException(Exception):
-    "Abstract Exception class for errors relating to Structures"
+    """
+    Abstract Exception class for errors relating to Structures
+    """
 
 class ConditionStructureFilterError(StructureException):
-    "A ConditionStructure encountered StructureInfo that fits none of its filters."
+    """
+    A ConditionStructure encountered StructureInfo that fits none of its filters.
+
+    :param structure: The Structure that encountered StructureInfo that fits none of its filters.
+    :param structure_info: The StructureInfo that fits no filter.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, structure:"Structure", structure_info:"StructureInfo", message:Optional[str]=None) -> None:
-        '''
-        :structure: The Structure that encountered StructureInfo that fits none of its filters.
-        :structure_info: The StructureInfo that fits no filter.
-        :message: Additional text to place after the main message.
-        '''
         self.structure = structure
         self.structure_info = structure_info
         self.message = message
@@ -1553,14 +1642,15 @@ class ConditionStructureFilterError(StructureException):
         return f"{self.structure} encountered {self.structure_info}, which passes no filter{message(self.message)}"
 
 class ConvergingStructureDepthError(StructureException):
-    "A ConvergingStructure's depth is not the actual depth encountered."
+    """
+    A ConvergingStructure's depth is not the actual depth encountered.
+
+    :param expected: The depth the ConvergingStructure expects.
+    :param encountered: The depth the ConvergingStructure found for a given data.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, expected:int, encountered:int, message:Optional[str]=None) -> None:
-        '''
-        :expected: The depth the ConvergingStructure expects.
-        :encountered: The depth the ConvergingStructure found for a given data.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(expected, encountered, message)
         self.expected = expected
         self.encountered = encountered
@@ -1570,14 +1660,15 @@ class ConvergingStructureDepthError(StructureException):
         return f"Expected to find {self.expected} WithinStructures in the chain, but found {self.encountered} WithinStructures{message(self.message)}"
 
 class ConvergingStructureEndError(StructureException):
-    "A ConvergingStructure's end Structure is not the actual end Structure encountered."
+    """
+    A ConvergingStructure's end Structure is not the actual end Structure encountered.
+
+    :param expected: The end Structure that the ConvergingStructure expects.
+    :param encountered: The end Structure that the ConvergingStructure found for a given data.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, expected:"Structure|None", encountered:"Structure|None", message:Optional[str]=None) -> None:
-        '''
-        :expected: The end Structure that the ConvergingStructure expects.
-        :encountered: The end Structure that the ConvergingStructure found for a given data.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(expected, encountered, message)
         self.expected = expected
         self.encountered = encountered
@@ -1587,13 +1678,14 @@ class ConvergingStructureEndError(StructureException):
         return f"Expected to find end Structure {self.expected}, but found {self.encountered}{message(self.message)}"
 
 class DataPathEmbeddedDataError(StructureException):
-    "A DataPath has no embedded data but should."
+    """
+    A DataPath has no embedded data but should.
+
+    :param data_path: The DataPath without embedded data.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, data_path:"DataPath", message:Optional[str]=None) -> None:
-        '''
-        :data_path: The DataPath without embedded data.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(data_path, message)
         self.data_path = data_path
         self.message = message
@@ -1602,15 +1694,16 @@ class DataPathEmbeddedDataError(StructureException):
         return f"{self.data_path} has no embedded data{message(self.message)}"
 
 class SwitchStructureError(StructureException):
-    "A SwitchStructure's switch function returned a value that is not in its switches."
+    """
+    A SwitchStructure's switch function returned a value that is not in its switches.
+
+    :param return_value: The value that the SwitchStructure's switch function returned.
+    :param options: The values that the SwitchStructure expects the return value to be.
+    :param switch_structure: The SwitchStructure.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, return_value:str, options:list[str], switch_structure:"Structure", message:Optional[str]=None) -> None:
-        '''
-        :return_value: The value that the SwitchStructure's switch function returned.
-        :options: The values that the SwitchStructure expects the return value to be.
-        :switch_structure: The SwitchStructure.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(return_value, options, switch_structure, message)
         self.return_value = return_value
         self.options = options
@@ -1621,14 +1714,15 @@ class SwitchStructureError(StructureException):
         return f"{self.switch_structure.full_name}'s switch function returned \"{self.return_value}\", which is not a valid key{message(self.message)}{nearest_message(self.return_value, self.options)}"
 
 class InvalidFileHashType(StructureException):
-    "An is_file StructureTag references data that cannot be interpreted as a file hash."
+    """
+    An is_file StructureTag references data that cannot be interpreted as a file hash.
+
+    :param version: The Version that has the invalid file hash.
+    :param structure_tag: The StructureTag that has the invalid file hash.
+    :param data_path: The DataPath whose embedded data is an invalid file hash.
+    """
 
     def __init__(self, version:"Version", structure_tag:"StructureTag", data_path:"DataPath", message:Optional[str]=None) -> None:
-        '''
-        :version: The Version that has the invalid file hash.
-        :structure_tag: The StructureTag that has the invalid file hash.
-        :data_path: The DataPath whose embedded data is an invalid file hash.
-        '''
         super().__init__(version, structure_tag, data_path, message)
         self.version = version
         self.structure_tag = structure_tag
@@ -1639,13 +1733,14 @@ class InvalidFileHashType(StructureException):
         return f"Data {self.data_path.embedded_data} at path {self.data_path} of {self.structure_tag} of {self.version} is not a valid file hash{message(self.message)}"
 
 class NormalizerEllipsisError(StructureException):
-    "The last Function in a NormalizerStructure returned an Ellipsis."
+    """
+    The last Function in a NormalizerStructure returned an Ellipsis.
+
+    :param structure: The NormalizerStructure whose last Function returned an Ellipsis.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, structure:"Structure", message:Optional[str]=None) -> None:
-        '''
-        :structure: The NormalizerStructure whose last Function returned an Ellipsis.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(structure, message)
         self.structure = structure
         self.message = message
@@ -1654,15 +1749,16 @@ class NormalizerEllipsisError(StructureException):
         return f"The last Function of {self.structure} returned Ellipsis{message(self.message)}"
 
 class SequenceTooLongError(StructureException):
-    "A StringStructure or SequenceStructure cannot compare or get similarity of data because it is too long."
+    """
+    A StringStructure or SequenceStructure cannot compare or get similarity of data because it is too long.
+
+    :param structure: The StringStructure or SequenceStructure with the too-long data.
+    :param len1: The length of the first data.
+    :param len2: The length of the second data.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, structure:"Structure", len1:int, len2:int, message:Optional[str]=None) -> None:
-        '''
-        :structure: The StringStructure or SequenceStructure with the too-long data.
-        :len1: The length of the first data.
-        :len2: The length of the second data.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(structure, len1, len2, message)
         self.structure = structure
         self.len1 = len1
@@ -1673,13 +1769,14 @@ class SequenceTooLongError(StructureException):
         return f"{self.structure} attempted to compare/get similarity of data too long: first is {self.len1} long; second is {self.len2} long{message(self.message)}"
 
 class StructuresCompareFailureError(StructureException):
-    "Multiple Structures failed to compare."
+    """
+    Multiple Structures failed to compare.
+
+    :param structure_names: The names of the Structures that failed to compare.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, structure_names:list[str], message:Optional[str]=None) -> None:
-        '''
-        :structure_names: The names of the Structures that failed to compare.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(structure_names, message)
         self.structure_names = structure_names
         self.message = message
@@ -1688,12 +1785,13 @@ class StructuresCompareFailureError(StructureException):
         return f"Failed to compare on DataminerCollections [{", ".join(self.structure_names)}] (len {len(self.structure_names)}){message(self.message)}"
 
 class StructureCannotPrintFlatError(StructureException):
-    "Some data cannot be printed on a single line."
+    """
+    Some data cannot be printed on a single line.
+
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, message:Optional[str]=None) -> None:
-        '''
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(message)
         self.message = message
 
@@ -1701,13 +1799,14 @@ class StructureCannotPrintFlatError(StructureException):
         return f"Data cannot be printed flat{message(self.message)}"
 
 class StructureError(StructureException):
-    "A StructureBase has failed."
+    """
+    A StructureBase has failed.
+
+    :param structure_base: The StructureBase that failed.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, structure_base:"Structure", message:Optional[str]=None) -> None:
-        '''
-        :structure_base: The StructureBase that failed.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(structure_base, message)
         self.structure_base = structure_base
         self.message = message
@@ -1716,14 +1815,15 @@ class StructureError(StructureException):
         return f"{self.structure_base} has failed{message(self.message)}"
 
 class StructureRequiredKeyMissingError(StructureException):
-    "A required key is missing."
+    """
+    A required key is missing.
+
+    :param structure: The Structure that should have the key.
+    :param key: The required key that is missing from the data.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, structure:"Structure", key:Any, message:Optional[str]=None) -> None:
-        '''
-        :structure: The Structure that should have the key.
-        :key: The required key that is missing from the data.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(structure, key, message)
         self.structure = structure
         self.key = key
@@ -1733,15 +1833,16 @@ class StructureRequiredKeyMissingError(StructureException):
         return f"Required key \"{self.key}\" from {self.structure} is missing{message(self.message)}"
 
 class StructureTypeError(StructureException):
-    "Data given to a Structure has the wrong type."
+    """
+    Data given to a Structure has the wrong type.
+
+    :param required_types: The types that the value should be.
+    :param actual_type: The actual type of the data tested.
+    :param label: The uppercase text to label the value with.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, required_types:tuple[type,...], actual_type:type, label:str, message:Optional[str]=None) -> None:
-        '''
-        :required_types: The types that the value should be.
-        :actual_type: The actual type of the data tested.
-        :label: The uppercase text to label the value with.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(required_types, actual_type, label, message)
         self.required_types = required_types
         self.actual_type = actual_type
@@ -1752,14 +1853,15 @@ class StructureTypeError(StructureException):
         return f"{self.label} must have a type of one of [{", ".join(f"\"{required_type.__name__}\"" for required_type in self.required_types)}], not \"{self.actual_type.__name__}\"{message(self.message)}"
 
 class StructureUnrecognizedKeyError(StructureException):
-    "A key in some data is not a recognized key."
+    """
+    A key in some data is not a recognized key.
+
+    :param unrecognized_key: The key that is unrecognized.
+    :param label: The uppercase text to label the key with.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, unrecognized_key:Any, label:str="Key", message:Optional[str]=None) -> None:
-        '''
-        :unrecognized_key: The key that is unrecognized.
-        :label: The uppercase text to label the key with.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(unrecognized_key, label, message)
         self.unrecognized_key = unrecognized_key
         self.label = label
@@ -1769,15 +1871,16 @@ class StructureUnrecognizedKeyError(StructureException):
         return f"{self.label} \"{self.unrecognized_key}\" is not recognized{message(self.message)}"
 
 class UnrecognizedStructureTagError(StructureException):
-    "A StructureTag referenced in a tag expression does not exist."
+    """
+    A StructureTag referenced in a tag expression does not exist.
+
+    :param expression: The tag expression containing the unrecognized StructureTag.
+    :param tag_name: The name of the unrecognized StructureTag.
+    :param options: Values that `tag_name` could be.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, expression:str, tag_name:str, options:list[str], message:Optional[str]=None) -> None:
-        '''
-        :expression: The tag expression containing the unrecognized StructureTag.
-        :tag_name: The name of the unrecognized StructureTag.
-        :options: Values that `tag_name` could be.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(expression, tag_name, options, message)
         self.expression = expression
         self.tag_name = tag_name
@@ -1788,14 +1891,15 @@ class UnrecognizedStructureTagError(StructureException):
         return f"Unrecognized tag \"{self.tag_name}\" referenced in expression \"{self.expression}{message(self.message)}{nearest_message(self.tag_name, self.options)}"
 
 class ZeroWeightError(StructureException):
-    "The sum of the key weight and value weight for a Structure may be 0!"
+    """
+    The sum of the key weight and value weight for a Structure may be 0!
+
+    :param key_weight_path: A string representing the key path from the Structure to the key weight.
+    :param value_weight_path: A string representing the key path from the Structure to the value weight.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key_weight_path:str, value_weight_path:str, message:Optional[str]=None) -> None:
-        '''
-        :key_weight_path: A string representing the key path from the Structure to the key weight.
-        :value_weight_path: A string representing the key path from the Structure to the value weight.
-        :message: Additional text to place after the main message
-        '''
         self.key_weight_path = key_weight_path
         self.value_weight_path = value_weight_path
         self.message = message
@@ -1805,16 +1909,19 @@ class ZeroWeightError(StructureException):
         return f"The sum of {self.key_weight_path} and {self.value_weight_path} is 0{message(self.message)}"
 
 class TablifierException(Exception):
-    "Abstract Exception class for errors relating to Tablifiers."
+    """
+    Abstract Exception class for errors relating to Tablifiers.
+    """
 
 class TablifierError(StructureException):
-    "A Tablifier has failed."
+    """
+    A Tablifier has failed.
+
+    :param tablifier: The Tablifier that failed.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, tablifier:"Tablifier", message:Optional[str]=None) -> None:
-        '''
-        :tablifier: The Tablifier that failed.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(tablifier, message)
         self.tablifier = tablifier
         self.message = message
@@ -1823,10 +1930,14 @@ class TablifierError(StructureException):
         return f"{self.tablifier} has failed{message(self.message)}"
 
 class TypeVerifierException(Exception):
-    "Abstract Exception class for errors relating to TypeVerifiers."
+    """
+    Abstract Exception class for errors relating to TypeVerifiers.
+    """
 
 class TypedDictTypeVerifierKeysOverlapError(TypeVerifierException):
-    "Attempted to extend a TypedDictTypeVerifier with another TypedDictTypeVerifier that shares its same keys!"
+    """
+    Attempted to extend a TypedDictTypeVerifier with another TypedDictTypeVerifier that shares its same keys!
+    """
 
     def __init__(self, type_verifier:"TypedDictTypeVerifier", other:"TypedDictTypeVerifier", keys_overlap:list[str]) -> None:
         super().__init__(type_verifier, other, keys_overlap)
@@ -1838,13 +1949,14 @@ class TypedDictTypeVerifierKeysOverlapError(TypeVerifierException):
         return f"Cannot combine {self.other} into {self.type_verifier} because they share these keys: {self.keys_overlap}!"
 
 class TypeVerificationFailedError(TypeVerifierException):
-    "Type verification failed."
+    """
+    Type verification failed.
+
+    :param type_verifier: The base TypeVerifier on which base_verify was called.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, type_verifier:"TypeVerifier", message:Optional[str]=None) -> None:
-        '''
-        :type_verifier: The base TypeVerifier on which base_verify was called.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(type_verifier, message)
         self.type_verifier = type_verifier
         self.message = message
@@ -1853,7 +1965,9 @@ class TypeVerificationFailedError(TypeVerifierException):
         return f"{self.type_verifier} failed verification{message(self.message)}"
 
 class TypeVerificationTypeException(TypeVerifierException):
-    "Abstract Exception class for errors that are passed around by TypeVerifiers."
+    """
+    Abstract Exception class for errors that are passed around by TypeVerifiers.
+    """
     ...
 
 class TypeVerificationEnumError(TypeVerificationTypeException):
@@ -1926,17 +2040,20 @@ class TypeVerificationUnrecognizedKeyError(TypeVerificationTypeException):
         return f"\"{self.key}\" is an unrecognized key!{nearest_message(self.key, self.options)}"
 
 class VersionException(Exception):
-    "Abstract Exception class for errors relating to Versions."
+    """
+    Abstract Exception class for errors relating to Versions.
+    """
 
 class DuplicateVersionTagOrderError(VersionException):
-    "There are two VersionTags with the same name in VersionTagOrder"
+    """
+    There are two VersionTags with the same name in VersionTagOrder
+
+    :param tag: The VersionTag that is dulicated.
+    :param key: The key(s) that has the duplicate VersionTag.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, tag:"VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
-        '''
-        :tag: The VersionTag that is dulicated.
-        :key: The key(s) that has the duplicate VersionTag.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(tag, key, message)
         self.tag = tag
         self.key = key
@@ -1946,14 +2063,15 @@ class DuplicateVersionTagOrderError(VersionException):
         return f"{self.tag} is duplicated in {f"keys [{", ".join(f"\"{key}\"" for key in self.key)}]" if isinstance(self.key, tuple) else f"key \"{self.key}\""} of VersionTagOrder{message(self.message)}"
 
 class InvalidParentVersionError(VersionException):
-    "A Version has an invalid parent Version."
+    """
+    A Version has an invalid parent Version.
+
+    :param version: The Version with an invalid parent Version.
+    :param parent: The parent of this Version.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", parent:"Version", message:Optional[str]=None) -> None:
-        '''
-        :version: The Version with an invalid parent Version.
-        :parent: The parent of this Version.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, parent, message)
         self.version = version
         self.parent = parent
@@ -1963,15 +2081,16 @@ class InvalidParentVersionError(VersionException):
         return f"{self.version} has an invalid parent {self.parent}{message(self.message)}"
 
 class InvalidVersionTimeError(VersionException):
-    "A Version has an invalid time."
+    """
+    A Version has an invalid time.
+
+    :param version: The Version with an invalid time.
+    :param time: The time that is invalid.
+    :param reason: Why the time is invalid.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", time:date|datetime, reason:str, message:Optional[str]=None) -> None:
-        '''
-        :version: The Version with an invalid time.
-        :time: The time that is invalid.
-        :reason: Why the time is invalid.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, time, reason, message)
         self.version = version
         self.time = time
@@ -1982,14 +2101,15 @@ class InvalidVersionTimeError(VersionException):
         return f"{self.version} has an invalid time {self.time} because {self.reason}{message(self.message)}"
 
 class NoOrderVersionTagsFoundError(VersionException):
-    "No ordering VersionTags were found."
+    """
+    No ordering VersionTags were found.
+
+    :param version: The Version with no ordering tags.
+    :param version_tags: The list of VersionTags containing no ordering tags.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", version_tags:Sequence["VersionTag"], message:Optional[str]=None) -> None:
-        '''
-        :version: The Version with no ordering tags.
-        :version_tags: The list of VersionTags containing no ordering tags.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, version_tags, message)
         self.version = version
         self.version_tags = version_tags
@@ -1999,14 +2119,15 @@ class NoOrderVersionTagsFoundError(VersionException):
         return f"No ordering tags found with {self.version}'s tags: {self.version_tags}{message(self.message)}"
 
 class NotAllOrderTagsUsedError(VersionException):
-    "Not all ordering VersionTags were used."
+    """
+    Not all ordering VersionTags were used.
+
+    :param tag: The VersionTag that is missing.
+    :param key: Which key(s) has a missing VersionTag.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, tag:"VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
-        '''
-        :tag: The VersionTag that is missing.
-        :key: Which key(s) has a missing VersionTag.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(tag, key, message)
         self.tag = tag
         self.key = key
@@ -2016,13 +2137,14 @@ class NotAllOrderTagsUsedError(VersionException):
         return f"{self.tag} was not used in {f"keys [{", ".join(f"\"key\"" for key in self.key)}]" if isinstance(self.key, tuple) else f"key \"{self.key}\""} of VersionTagOrder{message(self.message)}"
 
 class NotAnOrderTagError(VersionException):
-    "The VersionTag is not an ordering tag."
+    """
+    The VersionTag is not an ordering tag.
+
+    :param tag: The VersionTag that is not an ordering tag.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, tag:"VersionTag", message:Optional[str]=None) -> None:
-        '''
-        :tag: The VersionTag that is not an ordering tag.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(tag, message)
         self.tag = tag
         self.message = message
@@ -2031,14 +2153,15 @@ class NotAnOrderTagError(VersionException):
         return f"{self.tag} is not an ordering tag{message(self.message)}"
 
 class UnreleasedDownloadableVersionError(VersionException):
-    "A Version has the unreleased tag and has a method for downloading."
+    """
+    A Version has the unreleased tag and has a method for downloading.
+
+    :param version: The Version with an unreleased tag and a method for downloading.
+    :param version_file: The VersionFile that cannot exist when the Version is unreleased.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", version_file:"VersionFile", message:Optional[str]=None) -> None:
-        '''
-        :version: The Version with an unreleased tag and a method for downloading.
-        :version_file: The VersionFile that cannot exist when the Version is unreleased.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, message)
         self.version = version
         self.version_file = version_file
@@ -2048,16 +2171,17 @@ class UnreleasedDownloadableVersionError(VersionException):
         return f"{self.version_file} cannot exist when {self.version} is unreleased{message(self.message)}"
 
 class VersionChildError(VersionException):
-    "The parent Version's ordering tag and child Version's ordering tag cannot go together."
+    """
+    The parent Version's ordering tag and child Version's ordering tag cannot go together.
+
+    :param parent_version: The parent Version.
+    :param parent_tag: The ordering VersionTag of the parent Version.
+    :param child_version: The child Version.
+    :param child_tag: The ordering VersionTag of the child Version.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, parent_version:"Version", parent_tag:"VersionTag", child_version:"Version", child_tag:"VersionTag", message:Optional[str]=None) -> None:
-        '''
-        :parent_version: The parent Version.
-        :parent_tag: The ordering VersionTag of the parent Version.
-        :child_version: The child Version.
-        :child_tag: The ordering VersionTag of the child Version.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(parent_version, parent_tag, child_version, child_tag, message)
         self.parent_version = parent_version
         self.parent_tag = parent_tag
@@ -2069,13 +2193,14 @@ class VersionChildError(VersionException):
         return f"{self.child_version} (tag {self.child_tag}), child of {self.parent_version} (tag {self.parent_tag}) is not a valid child type of a {self.parent_tag}{message(self.message)}"
 
 class VersionChildOfMultipleTopLevelVersionsError(VersionException):
-    "The Version is a child of multiple top-level Versions."
+    """
+    The Version is a child of multiple top-level Versions.
+
+    :param version: The Version that is a child of multiple top-level Versions.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", message:Optional[str]=None) -> None:
-        '''
-        :version: The Version that is a child of multiple top-level Versions.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, message)
         self.version = version
         self.message = message
@@ -2084,15 +2209,16 @@ class VersionChildOfMultipleTopLevelVersionsError(VersionException):
         return f"{self.version} is a child of multiple top-level Versions{message(self.message)}"
 
 class VersionChildOrderError(VersionException):
-    "The Version's children are in an invalid order."
+    """
+    The Version's children are in an invalid order.
+
+    :param version: The Version with children in an invalid order.
+    :param child_tags: The ordering VersionTags of each of the Version's children.
+    :param error_child: The Version child at which the order is invalid.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", child_tags:list["VersionTag"], error_child:"Version", message:Optional[str]=None) -> None:
-        '''
-        :version: The Version with children in an invalid order.
-        :child_tags: The ordering VersionTags of each of the Version's children.
-        :error_child: The Version child at which the order is invalid.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, child_tags, error_child, message)
         self.version = version
         self.child_tags = child_tags
@@ -2103,15 +2229,16 @@ class VersionChildOrderError(VersionException):
         return f"The children of {self.version}, [{", ".join(child_tag.name for child_tag in self.child_tags)}], are in an invalid order at child {self.error_child}{message(self.message)}"
 
 class VersionOrderingTagsError(VersionException):
-    "The Version has none or too many ordering VersionTags."
+    """
+    The Version has none or too many ordering VersionTags.
+
+    :param version: The Version that has an invalid number of ordering VersionTags.
+    :param count: The number of ordering VersionTags this Version has.
+    :param tags: The list of VersionTags that this Version does have.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", count:int, tags:Sequence["VersionTag"], message:Optional[str]=None) -> None:
-        '''
-        :version: The Version that has an invalid number of ordering VersionTags.
-        :count: The number of ordering VersionTags this Version has.
-        :tags: The list of VersionTags that this Version does have.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, count, tags, message)
         self.version = version
         self.count = count
@@ -2122,17 +2249,18 @@ class VersionOrderingTagsError(VersionException):
         return f"{self.version} {"lacks" if self.count == 0 else "has too many"} ordering VersionTags; has [{", ".join(tag.name for tag in self.tags)}]{message(self.message)}"
 
 class VersionOrderSequenceError(VersionException):
-    "A Version is before or after a tag that it shouldn't be."
+    """
+    A Version is before or after a tag that it shouldn't be.
+
+    :param parent_version: The parent Version.
+    :param parent_tag: The ordering VersionTag of the parent Version.
+    :param child_version: The child Version.
+    :param child_tag: The ordering VersionTag of the child Version.
+    :param time_text: The actual relationship the child has to its parent.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, parent_version:"Version", parent_tag:"VersionTag", child_version:"Version", child_tag:"VersionTag", time_text:Literal["before", "after"], message:Optional[str]=None) -> None:
-        '''
-        :parent_version: The parent Version.
-        :parent_tag: The ordering VersionTag of the parent Version.
-        :child_version: The child Version.
-        :child_tag: The ordering VersionTag of the child Version.
-        :time_text: The actual relationship the child has to its parent.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(parent_version, parent_tag, child_version, child_tag, time_text, message)
         self.parent_version = parent_version
         self.parent_tag = parent_tag
@@ -2145,14 +2273,15 @@ class VersionOrderSequenceError(VersionException):
         return f"Child {self.child_version} (tag {self.child_tag}) of {self.parent_version} (tag {self.parent_tag}) comes {self.time_text} the latter{message(self.message)}"
 
 class VersionOutOfRangeError(VersionException):
-    "The Version is not in a VersionRange."
+    """
+    The Version is not in a VersionRange.
+
+    :param version: The Version that is not within the VersionRange.
+    :param version_range: The VersionRange that the Version does not fall within.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", version_range:Optional["VersionRange"]=None, message:Optional[str]=None) -> None:
-        '''
-        :version: The Version that is not within the VersionRange.
-        :version_range: The VersionRange that the Version does not fall within.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, version_range, message)
         self.version = version
         self.version_range = version_range
@@ -2162,7 +2291,14 @@ class VersionOutOfRangeError(VersionException):
         return f"Version {self.version} is not within the VersionRange{message(self.version_range, "", "%r")}{message(self.message)}"
 
 class VersionRangeOrderError(VersionException):
-    "The old and new Versions of a VersionRange are switched."
+    """
+    The old and new Versions of a VersionRange are switched.
+
+    :param version_range: The VersionRange with switched Versions.
+    :param start_version: The start Version that is newer than the stop Version.
+    :param stop_version: The stop Version that is older than the start Version.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(
         self,
@@ -2171,12 +2307,6 @@ class VersionRangeOrderError(VersionException):
         stop_version:"Version|VersionComponent",
         message:Optional[str]=None
     ) -> None:
-        '''
-        :version_range: The VersionRange with switched Versions.
-        :start_version: The start Version that is newer than the stop Version.
-        :stop_version: The stop Version that is older than the start Version.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version_range, start_version, stop_version, message)
         self.version_range = version_range
         self.start_version = start_version
@@ -2187,14 +2317,15 @@ class VersionRangeOrderError(VersionException):
         return f"The Versions of {self.version_range}, {self.start_version} (start) and {self.stop_version} (stop), are switched{message(self.message)}"
 
 class VersionTagExclusivePropertyError(VersionException):
-    "A VersionTag has properties that are mutually exclusive."
+    """
+    A VersionTag has properties that are mutually exclusive.
+
+    :param property1: The name of the first mutually exclusive property.
+    :param property2: The name of the second mutually exclusive property.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, property1:str, property2:str, message:Optional[str]=None) -> None:
-        '''
-        :property1: The name of the first mutually exclusive property.
-        :property2: The name of the second mutually exclusive property.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(property1, property2, message)
         self.property1 = property1
         self.property2 = property2
@@ -2204,17 +2335,18 @@ class VersionTagExclusivePropertyError(VersionException):
         return f"Cannot have both {self.property1} and {self.property2}{message(self.message)}"
 
 class VersionTimeTravelError(VersionException):
-    "A Version's children are not in order chronologically."
+    """
+    A Version's children are not in order chronologically.
+
+    :param previous_child: The child earlier in the children but chronologically after the current child.
+    :param previous_time: The time of the previous child.
+    :param current_child: The child after in the children but chronologically before the previous child.
+    :param current_time: The time of the current child.
+    :param parent: The parent Version of the previous and current children.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, previous_child:"Version", previous_time:datetime, current_child:"Version", current_time:datetime, parent:"Version", message:Optional[str]=None) -> None:
-        '''
-        :previous_child: The child earlier in the children but chronologically after the current child.
-        :previous_time: The time of the previous child.
-        :current_child: The child after in the children but chronologically before the previous child.
-        :current_time: The time of the current child.
-        :parent: The parent Version of the previous and current children.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(previous_child, previous_time, current_child, current_time, parent, message)
         self.previous_child = previous_child
         self.previous_time = previous_time
@@ -2227,16 +2359,17 @@ class VersionTimeTravelError(VersionException):
         return f"Date of child {self.previous_child} ({self.previous_time}) comes after date of child {self.current_child} ({self.current_time}) despite being before it in the children of {self.parent}{message(self.message)}"
 
 class VersionTimezoneError(VersionException):
-    "A Version has no timezone in its time but should."
+    """
+    A Version has no timezone in its time but should.
+
+    :param version: The Version without timezone info.
+    :param time: The time of the Version.
+    :param version_with_timezone: The Version with a timezone
+    :param timezone_time: The time with a timezone.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", time:datetime, version_with_timezone:"Version", timezone_time:datetime, message:Optional[str]=None) -> None:
-        '''
-        :version: The Version without timezone info.
-        :time: The time of the Version.
-        :version_with_timezone: The Version with a timezone
-        :timezone_time: The time with a timezone.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, time, version_with_timezone, timezone_time, message)
         self.version = version
         self.time = time
@@ -2248,14 +2381,15 @@ class VersionTimezoneError(VersionException):
         return f"{self.version}'s time, {self.time.isoformat()} does not have a timezone but should because {self.version_with_timezone}'s time, {self.timezone_time.isoformat()}, does have a timezone{message(self.message)}"
 
 class VersionTopLevelError(VersionException):
-    "A Version is a top-level Version but has no top-level VersionTag."
+    """
+    A Version is a top-level Version but has no top-level VersionTag.
+
+    :param version: The top-level Version missing the top-level VersionTag.
+    :param top_level_tag: The top-level VersionTag.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version:"Version", top_level_tag:"VersionTag", message:Optional[str]=None) -> None:
-        '''
-        :version: The top-level Version missing the top-level VersionTag.
-        :top_level_tag: The top-level VersionTag.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version, top_level_tag, message)
         self.version = version
         self.top_level_tag = top_level_tag
@@ -2265,17 +2399,20 @@ class VersionTopLevelError(VersionException):
         return f"{self.version} is a top-level Version, but does not have the top-level {self.top_level_tag}{message(self.message)}"
 
 class VersionFileException(Exception):
-    "Abstract Exception class for errors relating to VersionFiles or VersionFileTypes."
+    """
+    Abstract Exception class for errors relating to VersionFiles or VersionFileTypes.
+    """
 
 class RequiredVersionFileTypeMissingError(VersionFileException):
-    "A requied VersionFileType is not present."
+    """
+    A requied VersionFileType is not present.
+
+    :param file_type: The VersionFileType that is required but missing.
+    :param version: The Version that is missing the VersionFileType.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, file_type:"VersionFileType", version:"Version", message:Optional[str]=None) -> None:
-        '''
-        :file_type: The VersionFileType that is required but missing.
-        :version: The Version that is missing the VersionFileType.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(file_type, version, message)
         self.file_type = file_type
         self.version = version
@@ -2285,14 +2422,15 @@ class RequiredVersionFileTypeMissingError(VersionFileException):
         return f"Required {self.file_type} is missing in {self.version}{message(self.message)}"
 
 class VersionFileDependencyError(VersionFileException):
-    "A VersionFile depends on another VersionFile that does not exist for this Version."
+    """
+    A VersionFile depends on another VersionFile that does not exist for this Version.
+
+    :param version_file: The VersionFile missing its dependency.
+    :param dependency: The missing VersionFileType.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version_file:"VersionFile", dependency:"VersionFileType", message:Optional[str]=None) -> None:
-        '''
-        :version_file: The VersionFile missing its dependency.
-        :dependency: The missing VersionFileType.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version_file, dependency, message)
         self.version_file = version_file
         self.dependency = dependency
@@ -2302,14 +2440,15 @@ class VersionFileDependencyError(VersionFileException):
         return f"{self.version_file} depends on {self.dependency}, but it is not present{message(self.message)}"
 
 class VersionFileInvalidAccessorError(VersionFileException):
-    "The VersionFile has an invalid Accessor."
+    """
+    The VersionFile has an invalid Accessor.
+
+    :param version_file: The VersionFile with an invalid Accessor.
+    :param accessor_str: The name of the Accessor.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version_file:"VersionFileCreator", accessor_str:str, message:Optional[str]=None) -> None:
-        '''
-        :version_file: The VersionFile with an invalid Accessor.
-        :accessor_str: The name of the Accessor.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version_file, accessor_str, message)
         self.version_file = version_file
         self.accessor_str = accessor_str
@@ -2319,13 +2458,14 @@ class VersionFileInvalidAccessorError(VersionFileException):
         return f"{self.version_file} does not recognize Accessor \"{self.accessor_str}\"{message(self.message)}"
 
 class VersionFileNoAccessorsError(VersionFileException):
-    "The VersionFile has no Accessors."
+    """
+    The VersionFile has no Accessors.
+
+    :param version_file: The VersionFile with no available Accessors.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, version_file:"VersionFile", message:Optional[str]=None) -> None:
-        '''
-        :version_file: The VersionFile with no available Accessors.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(version_file, message)
         self.version_file = version_file
         self.message = message

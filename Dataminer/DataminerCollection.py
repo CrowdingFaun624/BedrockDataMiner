@@ -31,14 +31,18 @@ class DataminerCollection(AbstractDataminerCollection):
         return self.get_dataminer(version).activate(environment)
 
     def get_dataminer_settings(self, version:Version) -> "DataminerSettings":
-        '''Returns a DataminerSettings such that `version` is in the dataminer's VersionRange'''
+        """
+        Returns a DataminerSettings such that `version` is in the dataminer's VersionRange
+        """
         for dataminer_setting in self.dataminer_settings:
             if version in dataminer_setting.version_range:
                 return dataminer_setting
         else: raise InvalidStateError("Version matches no DataminerSettings!")
 
     def get_dataminer_class(self, version:Version) -> type[Dataminer]:
-        '''Returns a type of Dataminer such that `version` is in the dataminer's VersionRange.'''
+        """
+        Returns a type of Dataminer such that `version` is in the dataminer's VersionRange.
+        """
         dataminer_settings = self.get_dataminer_settings(version)
         dataminer_class = dataminer_settings.get_dataminer_class()
         if dataminer_class is None:
@@ -46,7 +50,9 @@ class DataminerCollection(AbstractDataminerCollection):
         return dataminer_class
 
     def get_dataminer(self, version:Version) -> Dataminer:
-        '''Returns a Dataminer such that `version` is in the dataminer's VersionRange.'''
+        """
+        Returns a Dataminer such that `version` is in the dataminer's VersionRange.
+        """
         dataminer_settings = self.get_dataminer_settings(version)
         dataminer_class = dataminer_settings.get_dataminer_class()
         if dataminer_class is None:

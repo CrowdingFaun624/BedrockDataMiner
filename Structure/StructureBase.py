@@ -65,9 +65,9 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         return any(self.has_tag(tag) for tag in tags)
 
     def print_exception_list(self, trace:Trace, versions:Sequence["Version"], raise_exception:bool=False) -> bool:
-        '''
+        """
         Prints all exceptions and traces in list and raises an exception at the end if the list has any items.
-        '''
+        """
         texts:list[str] = list(trace.stringify())
         if trace.has_exceptions:
             if (log := self.domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
@@ -86,11 +86,12 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
             return data
 
     def store(self, report:str, name:str) -> None:
-        '''
+        """
         Stores a comparison report.
-        :report: The comparison report string.
-        :name: The name of the folder to store the report in.
-        '''
+
+        :param report: The comparison report string.
+        :param name: The name of the folder to store the report in.
+        """
         file_counts = self.domain.comparison_file_counts
         if name in file_counts:
             store_number = file_counts[name] + 1
@@ -102,10 +103,11 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
             f.write(report)
 
     def initial_report(self, data:D, version:Version, structure_info:StructureInfo, environment:StructureEnvironment) -> str:
-        '''
+        """
         Returns a final string of the initial report at the first Version that supports this StructureBase.
-        :data: The data from `version`.
-        '''
+
+        :param data: The data from `version`.
+        """
         printer_environment = PrinterEnvironment(environment, structure_info, version, 0)
         trace = Trace()
         containerized_data = self.ensure_not_ellipsis(self.containerize(data, trace, printer_environment), trace, (version,))

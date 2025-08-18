@@ -11,11 +11,12 @@ from Utilities.Trace import Trace
 
 
 def special_enumerate[A](iterable:Sequence[A], start_index:int) -> Iterable[tuple[int,A]]:
-    '''
+    """
     Returns results similar to enumerate, except that it grows both left and right from `start_index`.
-    :iterable: The values to yield.
-    :start_index: The index to start from.
-    '''
+
+    :param iterable: The values to yield.
+    :param start_index: The index to start from.
+    """
     length = len(iterable)
     if length == 0:
         return
@@ -60,9 +61,9 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
     ) -> None:
         self.allow_same_key_optimization = True
         self.key_moves_ever_allowed = True
-        '''
+        """
         Can only be False if `allow_key_move` returns False no matter its inputs.
-        '''
+        """
         self.min_key_similarity_threshold = min_key_similarity_threshold
         self.min_value_similarity_threshold = min_value_similarity_threshold
 
@@ -75,9 +76,9 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         return True
 
     def get_similarity_weight(self, key:Con[K], value:Con[V], trace:Trace, environment:ComparisonEnvironment) -> int:
-        '''
+        """
         Returns the weight of the key-value pair in similarity calculations.
-        '''
+        """
         return 1
 
     def get_key_weight(self, key:Con[K], value:Con[V], trace:Trace, environment:ComparisonEnvironment) -> int:
@@ -229,17 +230,17 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         trace:Trace,
         environment:ComparisonEnvironment,
     ) -> Generator[None, None, int|None]:
-        '''
-        :key2: The newest key.
-        :value2: The newest value.
-        :index: Index of the key-value pair `(key2, value2)` in its source.
-        :branch2: Branch that `key2` and `value2` come from.
-        :key_value_pairs: List of things that can get the branches, keys, and values of the older data.
-        :key_value_map: Mapping of keys to its index in `key_value_pairs` from older data and the branch in the older data it appears in.
-        :key_function: Function called on the first item of each item of `key_value_pairs`, returning its branch and key.
-        :value_function: Function called on the second item of each item of `key_value_pairs`, returning its branch and value.
-        :return: A list of similarity, index1, index2, key similarity, value similarity, key2, and value2.
-        '''
+        """
+        :param key2: The newest key.
+        :param value2: The newest value.
+        :param index: Index of the key-value pair `(key2, value2)` in its source.
+        :param branch2: Branch that `key2` and `value2` come from.
+        :param key_value_pairs: List of things that can get the branches, keys, and values of the older data.
+        :param key_value_map: Mapping of keys to its index in `key_value_pairs` from older data and the branch in the older data it appears in.
+        :param key_function: Function called on the first item of each item of `key_value_pairs`, returning its branch and key.
+        :param value_function: Function called on the second item of each item of `key_value_pairs`, returning its branch and value.
+        :param return: A list of similarity, index1, index2, key similarity, value similarity, key2, and value2.
+        """
         # return value is an integer iff there is a perfect enough match.
         index_branch = key_value_map.get(key2)
         if (skip_same_key := index_branch is not None):

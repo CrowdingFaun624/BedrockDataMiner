@@ -49,9 +49,9 @@ class GroupSettings():
                 field.set_field(group, field_name, f"{domain.name}!{group.name}<settings><aliases>{field_name}", index, trace, is_inline=False)
 
 class GroupObject():
-    '''
+    """
     Object representing a directory or file.
-    '''
+    """
 
     __slots__ = (
         "parent",
@@ -108,7 +108,7 @@ class GroupDirectory(GroupObject):
 class GroupFile(GroupObject):
 
     __slots__ = (
-        "domain"
+        "domain",
     )
 
     def __init__(self, path: Path, path_name:str, parent: GroupObject | None, domain:"Domain.Domain") -> None:
@@ -149,9 +149,9 @@ class ScriptFile(GroupFile):
         self.module_name = module_name
 
 class Group():
-    '''
+    """
     Basically a file of Fields.
-    '''
+    """
 
     __slots__ = (
         "domain",

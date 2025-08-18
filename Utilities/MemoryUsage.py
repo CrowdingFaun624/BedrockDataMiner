@@ -54,9 +54,9 @@ class MemoryUsage():
         self.similarity_caches.extend(chain.from_iterable(structure.get_similarity_caches() for structure in all_structures))
 
     def get_memory_usage_proportion(self) -> float:
-        '''
+        """
         Returns a float between 0 and 1.
-        '''
+        """
         return psutil.virtual_memory().percent / 100
 
     def set_cache_setting(self, new_cache_setting:float, force:bool=False) -> None:

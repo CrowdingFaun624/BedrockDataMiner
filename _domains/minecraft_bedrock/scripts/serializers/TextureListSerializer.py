@@ -6,10 +6,10 @@ from Serializer.Serializer import Serializer
 
 @component_function()
 class TextureListSerializer(Serializer):
-    '''
+    """
     I have made a situation in which two different formats must
     be squeezed into the same Serializer. oops.
-    '''
+    """
 
     __slots__ = ()
 

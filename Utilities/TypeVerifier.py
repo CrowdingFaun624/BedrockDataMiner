@@ -13,7 +13,9 @@ class TraceItemType(enum.Enum):
     OTHER = 3
 
 class TypeVerifier[A]():
-    '''Use `base_verify` to check the types of data.'''
+    """
+    Use `verify` to check the types of data.
+    """
 
     __slots__ = ()
 
@@ -39,9 +41,9 @@ class TypeVerifier[A]():
     def verify(self, data:A, trace:Trace) -> bool: ... # returns True if there are new exceptions.
 
     def verify_throw(self, data:A, trace_items:tuple[Any,...]|None=None) -> None:
-        '''
+        """
         Verifies data and immediately raises any exceptions.
-        '''
+        """
         trace = Trace()
         if trace_items is None:
             trace_items = ("data",)
@@ -236,9 +238,9 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
         return False
 
     def extend(self, other:"TypedDictTypeVerifier") -> "TypedDictTypeVerifier":
-        '''
+        """
         Modifies other by combining itself with `self`.
-        '''
+        """
         if other.function is None and self.function is None:
             function = None
         elif other.function is None and self.function is not None:

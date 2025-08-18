@@ -1,4 +1,4 @@
-from typing import Any, NoReturn
+from typing import Any
 
 import Utilities.Exceptions as Exceptions
 from Dataminer.DataminerEnvironment import DataminerEnvironment
@@ -23,7 +23,9 @@ class Dataminer():
     )
 
     parameters:TypedDictTypeVerifier|None = TypedDictTypeVerifier()
-    '''TypeVerifier for verifying the json arguments of this Dataminer'''
+    """
+    TypeVerifier for verifying the json arguments of this Dataminer
+    """
 
     def __init__(self, version:Version, settings:DataminerSettings) -> None:
         self.version = version
@@ -44,15 +46,21 @@ class Dataminer():
 
     @classmethod
     def manipulate_arguments(cls, arguments:dict[str,Any]) -> None:
-        '''Manipulates the arguments of this Dataminer before they are passed into `initialize`.'''
+        """
+        Manipulates the arguments of this Dataminer before they are passed into `initialize`.
+        """
         return None
 
     def initialize(self, **kwargs) -> None:
-        '''`DataminerSettings.__init__(**kwargs)` -> `Dataminer.initialize(**kwargs)`.'''
+        """
+        `DataminerSettings.__init__(**kwargs)` -> `Dataminer.initialize(**kwargs)`.
+        """
         pass
 
     def activate(self, environment:DataminerEnvironment) -> Any:
-        '''Makes the dataminer get the file. Returns the output.'''
+        """
+        Makes the dataminer get the file. Returns the output.
+        """
         raise Exceptions.DataminerLacksActivateError(self)
 
     def get_accessor[a: Accessor](self, accessor_type:type[a]=Accessor, file_type:str|None=None) -> a:

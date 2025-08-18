@@ -8,9 +8,9 @@ from Serializer.Serializer import Serializer
 
 @register_builtin()
 class JsonSerializer(Serializer[Any]):
-    '''
+    """
     Serializer for JSON files.
-    '''
+    """
 
     __slots__ = ()
 

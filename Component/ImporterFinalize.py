@@ -210,7 +210,9 @@ def get_dependencies(dataminer_settings:DataminerSettings, dataminer_settings_di
     return duplicated_dataminer_settings
 
 def check_for_loops(used_versions:set[Version], dataminer_collections:Sequence[AbstractDataminerCollection], trace:Trace) -> None:
-    '''Raises an error if a loop exists in any part.'''
+    """
+    Raises an error if a loop exists in any part.
+    """
     versions = sorted(used_versions)
     for version in versions:
         all_dataminer_settings = {dataminer_collection: dataminer_collection.get_dataminer_settings(version) for dataminer_collection in dataminer_collections if isinstance(dataminer_collection, DataminerCollection)}

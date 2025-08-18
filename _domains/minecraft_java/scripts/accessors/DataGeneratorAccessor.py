@@ -28,9 +28,9 @@ class ClassArguments(TypedDict):
 
 @component_function()
 class DataGeneratorAccessor(FileAccessor):
-    '''
+    """
     Downloads files from the internet and runs them. What could go wrong?????
-    '''
+    """
 
     __slots__ = (
         "installed",

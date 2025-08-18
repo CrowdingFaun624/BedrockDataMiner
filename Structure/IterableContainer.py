@@ -4,9 +4,9 @@ from Structure.Container import Con, Don
 
 
 def icon_from_list[K, V, D](items:Iterable[tuple[K, V]], data:D) -> "ICon[K, V, D]":
-    '''
+    """
     Creates a new IterableContainer from a list of tuples of Containers.
-    '''
+    """
     items_dict:dict[K, V] = {}
     hashable_stuff:list[Hashable] = []
     for key, value in items:
@@ -17,9 +17,9 @@ def icon_from_list[K, V, D](items:Iterable[tuple[K, V]], data:D) -> "ICon[K, V, 
     return ICon(data, items_dict, items_hash)
 
 def idon_from_list[K, V, D, KC, VC](items:Iterable[tuple[K, V]], containers:Mapping[int,"ICon[KC, VC, D]"]) -> "IDon[K, V, D, KC, VC]":
-    '''
+    """
     Creates a new IterableDiffContainer from a list of tuples of Containers.
-    '''
+    """
     items_dict:dict[K, V] = {}
     hashable_stuff:list[Hashable] = []
     for key, value in items:

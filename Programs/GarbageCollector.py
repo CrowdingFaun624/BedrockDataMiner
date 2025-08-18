@@ -11,9 +11,9 @@ from Utilities.UserInput import input_single
 
 
 def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
-    '''
+    """
     Collects every file referenced by anything, returns a list of unused hashes.
-    '''
+    """
     referenced_files:set[int] = set()
     for domain in domains:
         domain.import_components()

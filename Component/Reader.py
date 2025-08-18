@@ -45,18 +45,18 @@ class Reader():
         return output
 
     def next_is(self, text:str, /, reverse_if_false:bool, reverse_if_true:bool) -> bool:
-        '''
+        """
         Returns True if the next `len(text)` characters are `text`.
-        '''
+        """
         output = self.read(len(text), len(text)) == text
         if not (reverse_if_false and not output or reverse_if_true and output):
             self.move(len(text))
         return output
 
     def next_in(self, texts:Sequence[str], /, reverse_if_false:bool, reverse_if_true:bool) -> bool:
-        '''
+        """
         Returns True if the next characters are in texts. `texts` must have strings of equal length.
-        '''
+        """
         if len(texts) == 0: return False
         length = len(texts[0])
         output = self.read(length, length) in texts
@@ -71,18 +71,20 @@ class Reader():
         self.index = min(self.index + amount, len(self.source))
 
     def at_last(self, amount:int=1, /) -> bool:
-        '''
+        """
         Returns if the Reader is unable to read due to being at the end of its source.
-        :amount: The number of characters the Reader may be able to read.
-        '''
+
+        :param amount: The number of characters the Reader may be able to read.
+        """
         return self.index + amount > len(self.source)
 
     def read_while(self, while_function:Callable[[str],bool]) -> str:
-        '''
+        """
         Returns all characters from the current position while `while_function` returns True
         or the end of the source is reached.
-        :while_function: A function that takes a single character.
-        '''
+
+        :param while_function: A function that takes a single character.
+        """
         start = self.index
         for index in range(start, len(self.source)):
             if not while_function(self.source[index]):
@@ -92,11 +94,12 @@ class Reader():
         return self.source[start:]
 
     def move_while(self, while_function:Callable[[str],bool]) -> int:
-        '''
+        """
         Moves forward while `while_function` returns True or the end of the source is reached.
         Returns the amount moved.
-        :while_function: A function that takes a single character.
-        '''
+
+        :param while_function: A function that takes a single character.
+        """
         start = self.index
         for index in range(start, len(self.source)):
             if not while_function(self.source[index]):
@@ -106,10 +109,10 @@ class Reader():
         return self.index - start
 
     def current_scope(self) -> "TraceObject":
-        '''
+        """
         Returns the TraceObject of the current scope.
         Contains information on the stop and start of this object.
-        '''
+        """
         return self.trace[-1]
 
     def __repr__(self) -> str:
@@ -119,16 +122,16 @@ class Reader():
         return self
 
     def focus(self) -> Self:
-        '''
+        """
         If an exception occurs in this `with` block, highlight the contents read during it with "~". Low-priority.
-        '''
+        """
         self.trace.append(HighlightObject(self.index, FocusType.focus))
         return self
 
     def highlight(self) -> Self:
-        '''
+        """
         If an exception occurs in this `with` block, highlight the contents read during it with "^". High-priority.
-        '''
+        """
         self.trace.append(HighlightObject(self.index, FocusType.highlight))
         return self
 

@@ -20,10 +20,10 @@ def get_levenshtein_distance(data1:str, data2:str) -> int:
     return distance
 
 def guess_intent(user_input:str, items:list[str], threshold:int) -> str|None:
-    '''
+    """
     Returns what the user probably wants based on their input, or returns None
     if it cannot be guessed.
-    '''
+    """
     if len(user_input) < 2: return None
     similarities:dict[str,int] = {option: get_levenshtein_distance(user_input, option) for option in items}
     min_option, min_distance, second_min_distance = None, None, None
@@ -73,22 +73,22 @@ def input_single[a](
     aliases:Mapping[str,Iterable[str]]|None=None,
     enter_can_pick_only:bool=False
 ) -> a:
-    '''
+    """
     Returns one item from `items`.
 
     By default, uses the prompt "Choose a &lt;label&gt;: "
 
-    :items: The items the user can choose from.
-    :label: The simple label to be given to the prompt function.
-    :show_options: If True, prints out all options by giving the options to the prompt function.
-    :show_options_first_time: If True, prints out all options if this is the user's first try.
-    :close_enough: If True, will attempt to guess the user's intent.
-    :close_enough_threshold: The maximum distance the guesses can have.
-    :prompt_function: Can be overridden to create a custom prompt.
-    :behavior_on_eof: Function that is called when input() raises an EOFError.
-    :aliases: Hidden shortcuts to another action.
-    :enter_can_pick_only: If True, entering no input will pick the only option if there is only one option.
-    '''
+    :param items: The items the user can choose from.
+    :param label: The simple label to be given to the prompt function.
+    :param show_options: If True, prints out all options by giving the options to the prompt function.
+    :param show_options_first_time: If True, prints out all options if this is the user's first try.
+    :param close_enough: If True, will attempt to guess the user's intent.
+    :param close_enough_threshold: The maximum distance the guesses can have.
+    :param prompt_function: Can be overridden to create a custom prompt.
+    :param behavior_on_eof: Function that is called when input() raises an EOFError.
+    :param aliases: Hidden shortcuts to another action.
+    :param enter_can_pick_only: If True, entering no input will pick the only option if there is only one option.
+    """
     user_input:str|EllipsisType = ...
     options:list[str] = list(items.keys())
     items = deduplicate_aliases({} if aliases is None else aliases, items)
@@ -128,23 +128,23 @@ def input_multi[a](
     alternative_selectors:Mapping[str,Callable[[],list[str]]]|None=None,
     behavior_on_eof:Callable[[],NoReturn]|None=None,
 ) -> list[a]:
-    '''
+    """
     Returns one or multiple items from `items`.
 
     By default, uses the prompt "Choose a/some &lt;label&gt; (space-delimited): "
 
-    :items: The items the user can choose from.
-    :label: The simple label to be given to the prompt function.
-    :allow_select_all: If True, the user can type an asterisk and get all items.
-    :show_options: If True, prints out all options by giving the options to the prompt function.
-    :show_options_first_time: If True, prints out all options if this is the user's first try.
-    :close_enough: If True, will attempt to guess the user's intent.
-    :close_enough_threshold: The maximum distance the guesses can have.
-    :prompt_function: Can be overridden to create a custom prompt.
-    :aliases: Hidden shortcuts to another action.
-    :alternative_selectors: A dictionary of single-character strings that maps to a function that returns options.
-    :behavior_on_eof: Function that is called when input() raises an EOFError.
-    '''
+    :param items: The items the user can choose from.
+    :param label: The simple label to be given to the prompt function.
+    :param allow_select_all: If True, the user can type an asterisk and get all items.
+    :param show_options: If True, prints out all options by giving the options to the prompt function.
+    :param show_options_first_time: If True, prints out all options if this is the user's first try.
+    :param close_enough: If True, will attempt to guess the user's intent.
+    :param close_enough_threshold: The maximum distance the guesses can have.
+    :param prompt_function: Can be overridden to create a custom prompt.
+    :param aliases: Hidden shortcuts to another action.
+    :param alternative_selectors: A dictionary of single-character strings that maps to a function that returns options.
+    :param behavior_on_eof: Function that is called when input() raises an EOFError.
+    """
     user_inputs:list[str] = []
     options:list[str] = list(items.keys())
     items = deduplicate_aliases({} if aliases is None else aliases, items)
@@ -209,17 +209,17 @@ def input_integer(
     prompt_function:Callable[[str, list[str]|None],str]=default_prompt_single,
     behavior_on_eof:Callable[[],NoReturn]|None=None,
 ) -> int:
-    '''
+    """
     Returns an integer.
 
     By default, uses the prompt "Choose a &lt;label&gt;: "
 
-    :label: The simple label to be given to the prompt function.
-    :may_be_negative: If True, negative inputs are allowed.
-    :may_be_zero: If True, an input of 0 is allowed.
-    :prompt_function: Can be overridden to create a custom prompt.
-    :behavior_on_eof: Function that is called when input() raises an EOFError.
-    '''
+    :param label: The simple label to be given to the prompt function.
+    :param may_be_negative: If True, negative inputs are allowed.
+    :param may_be_zero: If True, an input of 0 is allowed.
+    :param prompt_function: Can be overridden to create a custom prompt.
+    :param behavior_on_eof: Function that is called when input() raises an EOFError.
+    """
     while True:
         try:
             user_input:str = input(prompt_function(label, None))

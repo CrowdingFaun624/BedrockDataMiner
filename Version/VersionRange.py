@@ -6,9 +6,11 @@ if TYPE_CHECKING:
     from Version.Version import Version
 
 class VersionRange():
-    '''Used for detecting if a Version is within a range of versions.
+    """
+    Used for detecting if a Version is within a range of versions.
     Use None to represent not stopping, or continuing on to the end of the list.
-    Checks if the version is in [start, stop).'''
+    Checks if the version is in [start, stop).
+    """
 
     __slots__ = (
         "start",

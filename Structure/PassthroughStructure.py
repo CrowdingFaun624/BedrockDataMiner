@@ -18,9 +18,9 @@ from Utilities.Trace import Trace
 
 
 class PassthroughStructure[D, BO, CO](Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]):
-    '''
+    """
     Passes data through by choosing a particular Structure.
-    '''
+    """
 
     __slots__ = (
         "similarity_cache",
@@ -44,9 +44,9 @@ class PassthroughStructure[D, BO, CO](Structure[D, Con[D], Don[D], Don[D]|Diff[D
         return (self.similarity_cache,)
 
     def get_structure(self, data:D, trace:Trace, environment:PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
-        '''
+        """
         Returns a Structure that can act on the same data as this Structure or None.
-        '''
+        """
         ...
 
     def get_substructure(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> tuple[Con[D], Structure[Any, Con[D], Any, Any, Any, Any] | None]:

@@ -23,9 +23,9 @@ from Utilities.UserInput import input_single
 COMPRESSIBLE_FILES = {"json", "fsb", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"}
 
 class FileStorageIndex(LinesCache[dict[str,bool], tuple[str,bool]]):
-    '''
+    """
     Cache of a dictionary of hex strings to zippability.
-    '''
+    """
 
     __slots__ = ()
 
@@ -51,7 +51,9 @@ class FileStorageIndex(LinesCache[dict[str,bool], tuple[str,bool]]):
 index = FileStorageIndex()
 
 def should_zip_file(file_path:str) -> bool:
-    '''Returns if the file is efficiently zippable.'''
+    """
+    Returns if the file is efficiently zippable.
+    """
     file_name = file_path.split("/")[-1].split("\\")[-1]
     file_end = file_name.split(".")[-1].lower() if "." in file_name else ""
     return file_end in COMPRESSIBLE_FILES
@@ -72,9 +74,11 @@ def is_archived(*, data:bytes|None=None, file_hash:str|None=None) -> bool:
     return get_file_path(file_hash).exists()
 
 def archive_data(data:bytes, file_name:str) -> str:
-    '''Takes in bytes, and stores a file in the `./_assets/file_storage/objects` directory, and adds its data to the `./_assets/file_storage/index.txt` file.
+    """
+    Takes in bytes, and stores a file in the `./_assets/file_storage/objects` directory, and adds its data to the `./_assets/file_storage/index.txt` file.
     Returns the sha1 hash in a hexadecimal string format that the file is stored at.
-    If the file already exists in the archive, do nothing.'''
+    If the file already exists in the archive, do nothing.
+    """
     file_hash = get_hash_hexdigest(data)
     archived_directory = FILE_STORAGE_OBJECTS_DIRECTORY.joinpath(file_hash[:2])
     archived_path = get_file_path(file_hash)
@@ -141,10 +145,10 @@ def recycle_items_main(domain:"Domain.Domain") -> None:
     recycle_items(files)
 
 def remove_index_values_without_associated_file() -> None:
-    '''
+    """
     Removes all index entries such that there is no file
     stored at that hash. Saves automatically.
-    '''
+    """
     loaded_index = index.get()
     items_to_delete:list[str] = []
     for key in loaded_index.keys():

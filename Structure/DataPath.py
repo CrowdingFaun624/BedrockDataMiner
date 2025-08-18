@@ -23,6 +23,11 @@ class DataPathCoder(Coder[DataPathJsonTypedDict, "DataPath"]):
 
 @register_decorator(None, ..., json_coder=DataPathCoder)
 class DataPath[K:Hashable, V]():
+    """
+    :param path_items: Items in the DataPath. Cannot contain None.
+    :param root: The dataminer/structure in which this DataPath originates.
+    :param embedded_data: Data given to this DataPath when it reaches the correct tag.
+    """
 
     __slots__ = (
         "embedded_data",
@@ -32,49 +37,52 @@ class DataPath[K:Hashable, V]():
     )
 
     def __init__(self, path_items:list[K], root:str, embedded_data:Any|EllipsisType=...) -> None:
-        '''
-        :path_items: Items in the DataPath. Cannot contain None.
-        :root: The dataminer/structure in which this DataPath originates.
-        :embedded_data: Data given to this DataPath when it reaches the correct tag.'''
         self.path_items = path_items
         self.root = root
         self.embedded_data:V|EllipsisType = embedded_data
         self.hash = None
 
     def last_key(self) -> K:
-        '''Returns the key of the most recently appended item.'''
+        """
+        Returns the key of the most recently appended item.
+        """
         return self[-1]
 
     def remove_embedded_data(self) -> Self:
-        '''Removes the embedded data from this DataPath. Returns itself.'''
+        """
+        Removes the embedded data from this DataPath. Returns itself.
+        """
         self.embedded_data = ...
         return self
 
     def copy(self, new_item:K|EllipsisType=...) -> "DataPath":
-        '''
+        """
         Returns a new DataPath with a copied `path_items` attribute.
-        :new_item: An optional item to append to the copied DataPath.
-        '''
+
+        :param new_item: An optional item to append to the copied DataPath.
+        """
         output = DataPath(self.path_items.copy(), self.root, self.embedded_data)
         if new_item is not ...:
             output.append(new_item)
         return output
 
     def append(self, new_item:K) -> Self:
-        '''
+        """
         Adds a new item to this DataPath. Returns itself.
-        :new_item: The item to add to the end of the DataPath.
-        '''
+
+        :param new_item: The item to add to the end of the DataPath.
+        """
         self.path_items.append(new_item)
         self.hash = None
         return self
 
     def embed(self, item:V) -> Self:
-        '''
+        """
         Embeds data into this DataPath. Returns itself.
         Used to carry data from deep inside Structures out.
-        :item: The data to embed.
-        '''
+
+        :param item: The data to embed.
+        """
         self.embedded_data = item
         return self
 

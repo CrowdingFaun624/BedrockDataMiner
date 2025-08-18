@@ -7,10 +7,10 @@ from Utilities.FileManager import PARENT_DIRECTORY
 
 
 class Cache[T]():
-    '''
+    """
     Class that stores data from a file. Does not read the file until it is
     first accessed. Must be overridden.
-    '''
+    """
 
     can_be_written:bool = True
 
@@ -26,43 +26,43 @@ class Cache[T]():
         self.data:T|EllipsisType = ...
 
     def get_default_content(self) -> T|None:
-        '''
+        """
         If the file does not exist, this method is called.
         If it returns None, then an exception is raised.
-        '''
+        """
         ...
 
     def read(self) -> bytes:
-        '''
+        """
         Reads the file into bytes. Should not be overridden.
-        '''
+        """
         with open(self.path, "rb") as f:
             return f.read()
 
     def deserialize(self, data:bytes) -> T:
-        '''
+        """
         Deserializes the bytes of the file into the data format.
-        '''
+        """
         ...
 
     def serialize(self, data:T) -> bytes:
-        '''
-        Sserializes the data format into bytes of the file.
-        '''
+        """
+        Serializes the data format into bytes of the file.
+        """
         ...
 
     def forget(self) -> None:
-        '''
+        """
         Sets this Cache back to its unopened state, so that its contents can be
         removed from memory.
-        '''
+        """
         self.has_opened = False
         self.data = ...
 
     def get(self) -> T:
-        '''
+        """
         Opens the Cache. Should not be overridden.
-        '''
+        """
         if not self.has_opened:
             self.has_opened = True
             if self.path.exists():
@@ -76,11 +76,11 @@ class Cache[T]():
         return self.data
 
     def write(self, value:T|None=None) -> None:
-        '''
+        """
         Overwrites the Cache's file. Can only be called if `deserialize`
         is overridden. Should not be overridden. If `value` is None, only
         write to the file without changing the data.
-        '''
+        """
         if not self.can_be_written:
             raise Exceptions.CacheCannotWriteError(self)
         if self.data is ...:
@@ -116,23 +116,23 @@ class LinesCache[T, W](Cache[T]):
     __slots__ = ()
 
     def serialize_line(self, data:W) -> str:
-        '''
+        """
         Serializes the data format into a string that can be appended to the
         file.
-        '''
+        """
         ...
 
     def append_new_line(self, data:W) -> None:
-        '''
+        """
         Changes the `data` attribute of this Cache (what is returned by the
         `get` method) to include the `data` parameter of this method.
-        '''
+        """
         ...
 
     def write_new_line(self, data:W) -> None:
-        '''
+        """
         Adds a new line of data to this Cache. Should not be overridden.
-        '''
+        """
         self.append_new_line(data)
         deserialized_data = self.serialize_line(data)
         if deserialized_data is None:

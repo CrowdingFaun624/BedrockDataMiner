@@ -33,8 +33,8 @@ class VersionProvider():
         return f"<{self.__class__.__name__} {self.full_name}>"
 
     def get_versions(self, versions:list[Version], *, supports_dataminer_collection:AbstractDataminerCollection|None=None) -> list[Version]:
-        '''
-        :versions: List of all versions from oldest to newest.
-        :return: Subset of versions that this VersionProvider is searching for, sorted oldest to newest.
-        '''
+        """
+        :param versions: List of all versions from oldest to newest.
+        :returns: Subset of versions that this VersionProvider is searching for, sorted oldest to newest.
+        """
         ...

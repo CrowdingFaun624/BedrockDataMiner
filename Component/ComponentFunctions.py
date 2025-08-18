@@ -7,12 +7,12 @@ from Utilities.TypeVerifier import TypedDictTypeVerifier
 EMPTY_TYPE_VERIFIER = TypedDictTypeVerifier()
 
 def component_function[T:Callable](*, type_verifier:TypedDictTypeVerifier|None=None, no_arguments:bool=False) -> Callable[[T], T]:
-    '''
+    """
     Use as a decorator on an object that should be made available to Components.
 
-    :type_verifier: The keyword arguments on a function.
-    :no_arguments: If True, sets `type_verifier` to an empty TypedDictTypeVerifier.
-    '''
+    :param type_verifier: The keyword arguments on a function.
+    :param no_arguments: If True, sets `type_verifier` to an empty TypedDictTypeVerifier.
+    """
     if no_arguments:
         type_verifier = EMPTY_TYPE_VERIFIER
     def comp_func(func:T) -> T:

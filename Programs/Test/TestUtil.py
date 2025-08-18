@@ -12,11 +12,12 @@ def count_bits(number:int) -> int:
     return bin(number).count("1")
 
 def get_overlapping_bits(all_bits:list[int], length:int) -> list[int]:
-    '''
+    """
     Returns a subset of `bits` such that the bitwise-or-sum of the result has all bits activated.
-    :bits: The list of bits.
-    :length: The number of bits that must be activated.
-    '''
+
+    :param bits: The list of bits.
+    :param length: The number of bits that must be activated.
+    """
     max_index:int|None = None
     max_count = 0
     for index, bits in enumerate(all_bits):
@@ -42,11 +43,16 @@ def get_overlapping_bits(all_bits:list[int], length:int) -> list[int]:
     return [all_bits[index] for index in sorted(indexes_used)]
 
 class Plan[a: Hashable]():
+    """
+    :param versions: The Versions which support all of the same objects.
+    :param all_dataminer_collections: A list of every DataminerCollection.
+    :param version_objects: Dictionary mapping Versions to a set of this Plan's objects supported by that Version.
+    """
 
     label:str = "objects"
-    '''
+    """
     Plural string labeling this Plan's object.
-    '''
+    """
 
     __slots__ = (
         "domain",
@@ -55,59 +61,56 @@ class Plan[a: Hashable]():
     )
 
     def __init__(self, versions:list[Version], all_dataminer_collections:list[AbstractDataminerCollection], version_objects:dict[Version,set[a]], domain:"Domain.Domain") -> None:
-        '''
-        :versions: The Versions which support all of the same objects.
-        :all_dataminer_collections: A list of every DataminerCollection.
-        :version_objects: Dictionary mapping Versions to a set of this Plan's objects supported by that Version.
-        '''
         self.versions = versions
         self.items_to_test:list[a] = []
         self.domain = domain
 
     def add_item(self, item:a) -> None:
-        '''
+        """
         Adds an item that should be tested when `test` is called.
         Only some items need to be tested; this function determines which.
         Other items can be tested by different Plans.
-        :item: The item to add.
-        '''
+
+        :param item: The item to add.
+        """
         self.items_to_test.append(item)
 
     def test(self) -> list[a]:
-        '''
+        """
         Tests all items in the `items_to_test` list.
-        '''
+        """
         ...
 
     @classmethod
     def supports_dataminer_collection(cls, dataminer_collection:AbstractDataminerCollection) -> bool:
-        '''
+        """
         Returns False if this AbstractDataminerCollection should be skipped.
         AbstractDataminerCollections that do not support a particular Version are already skipped.
-        '''
+        """
         return True
 
     @classmethod
     def get_obj(cls, dataminer_collection:AbstractDataminerCollection, version:Version) -> a:
-        '''
+        """
         Gets this Plan's object from a DataminerCollection and Version.
-        :dataminer_collection: The DataminerCollection associated with the object.
-        :version: The Version associated with the object.
-        '''
+
+        :param dataminer_collection: The DataminerCollection associated with the object.
+        :param version: The Version associated with the object.
+        """
         ...
 
     @classmethod
     def sort(cls, item:a) -> "SupportsRichComparison":
-        '''
+        """
         Returns an object that supports rich comparison from the item.
-        '''
+        """
         ...
 
     @classmethod
     def get_name(cls, item:a) -> str:
-        '''
+        """
         Returns a string representing the object. By default, uses `repr`.
-        '''
+        """
         return repr(item)
 
     def __repr__(self) -> str:

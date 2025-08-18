@@ -11,15 +11,16 @@ LAYER_CHARACTERS_DEFAULT_MAX = len(LAYER_CHARACTERS_DEFAULT)
 
 
 class VolumeStructureMissingKeyError(StructureException):
-    "The VolumeStructure is missing its position or state key."
+    """
+    The VolumeStructure is missing its position or state key.
+
+    :param key_type: If the key is a position key or a state key.
+    :param key: The key that is missing.
+    :param block: The index of the block with the missing key.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key_type:Literal["Position", "State"], key:str, block:int, message:Optional[str]=None) -> None:
-        '''
-        :key_type: If the key is a position key or a state key.
-        :key: The key that is missing.
-        :block: The index of the block with the missing key.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key_type, key, block, message)
         self.key_type = key_type
         self.key = key
@@ -30,15 +31,16 @@ class VolumeStructureMissingKeyError(StructureException):
         return f"{self.key_type} key \"{self.key}\" is missing in block {self.block}{message(self.message)}"
 
 class VolumeStructureInvalidKeyError(StructureException):
-    "The position or state of a VolumeStructure is invalid."
+    """
+    The position or state of a VolumeStructure is invalid.
+
+    :param key_type: If the key is a position key or a state key.
+    :param value: The value of the key for this block.
+    :param block: The index of the block.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, key_type:Literal["Position", "State"], value:Any, block:int, message:str="is invalid") -> None:
-        '''
-        :key_type: If the key is a position key or a state key.
-        :value: The value of the key for this block.
-        :block: The index of the block.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(key_type, value, block, message)
         self.key_type = key_type
         self.value = value

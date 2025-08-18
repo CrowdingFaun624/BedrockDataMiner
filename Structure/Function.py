@@ -4,7 +4,9 @@ from Component.ComponentObject import ComponentObject
 
 
 class Function(ComponentObject):
-    '''Changes data before a Structure looks at it.'''
+    """
+    Changes data before a Structure looks at it.
+    """
 
     __slots__ = (
         "arguments",
@@ -22,8 +24,9 @@ class Function(ComponentObject):
         self.trace_name = self.name
 
     def __call__(self, data:Any) -> Any:
-        '''
+        """
         Calls the Function's function.
-        :data: The argument of the Function's function.
-        '''
+
+        :param data: The argument of the Function's function.
+        """
         return self.function(data, **self.arguments)

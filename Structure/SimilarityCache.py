@@ -49,10 +49,11 @@ class SimilarityCache[A: Con]():
         return similarity_tuple
 
     def clear(self, keep:Container[tuple[Version, StructureInfo]]) -> None:
-        '''
+        """
         Clears all environment caches that do not have both environments in `keep`.
-        :keep: A Container of PrinterEnvironments to keep in the cache.
-        '''
+
+        :param keep: A Container of PrinterEnvironments to keep in the cache.
+        """
         removals:list[tuple[Version, Version, StructureInfo, StructureInfo]] = []
         cache = self.cache
         index = self.index

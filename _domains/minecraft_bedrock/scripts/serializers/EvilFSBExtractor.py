@@ -10,13 +10,14 @@ from Utilities.FileStorage import archive_data, read_archived
 
 
 class SoundFilesExtractionError(DataminerException):
-    "Failure to extract from an FSB file."
+    """
+    Failure to extract from an FSB file.
+
+    :param exit_code: The exit code that the extraction executable returned.
+    :param message: Additional text to place after the main message.
+    """
 
     def __init__(self, exit_code:int, message:Optional[str]=None) -> None:
-        '''
-        :exit_code: The exit code that the extraction executable returned.
-        :message: Additional text to place after the main message.
-        '''
         super().__init__(exit_code, message)
         self.exit_code = exit_code
         self.message = message

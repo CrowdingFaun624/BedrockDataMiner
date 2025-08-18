@@ -9,11 +9,11 @@ from Utilities.Trace import Trace
 
 
 class ContainerField[R](Field[R]):
-    '''
+    """
     Field that contains other Fields.
 
     :param subfields: Fields and Variables which this Field contains. Also has a string based on its key to append to the sub-Field's name.
-    '''
+    """
 
     __slots__ = (
         "subfield_factories",

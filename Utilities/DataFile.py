@@ -23,9 +23,9 @@ class DataFile():
 
     @property
     def contents(self) -> Any:
-        '''
+        """
         The contents of the DataFile. Waits until first access to read.
-        '''
+        """
         if not self.has_read_contents:
             with open(self.file_path, "rt") as f:
                 self._contents = pyjson5.load(f)
@@ -33,10 +33,11 @@ class DataFile():
         return self._contents
 
     def write(self, obj:object=...) -> None:
-        '''
+        """
         Re-writes the content to the file.
-        :obj: The object to replace the content with (optional).
-        '''
+
+        :param obj: The object to replace the content with (optional).
+        """
         if obj is not ...:
             self._contents = obj
         elif not self.has_read_contents:

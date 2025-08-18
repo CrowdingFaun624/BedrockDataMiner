@@ -30,10 +30,10 @@ class NbtSerializer(Serializer[TAG]):
     )
 
     def initialize(self, endianness:Literal["big", "little"], gzipped:bool) -> None:
-        '''
-        :endianness: If the content of the nbt file is big-endian or little-endian.
-        :gzipped: If True, decompresses the file using gzip.
-        '''
+        """
+        :param endianness: If the content of the nbt file is big-endian or little-endian.
+        :param gzipped: If True, decompresses the file using gzip.
+        """
         self.endianness = End[endianness.upper()]
         self.gzipped = gzipped
 

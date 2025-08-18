@@ -6,10 +6,14 @@ from Utilities.File import FakeFile, File
 from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 CONTROLS_KEYS = ("controls", "+controls")
-'''Keys of items that contain nested elements.'''
+"""
+Keys of items that contain nested elements.
+"""
 
 def parse_element_name(raw_element_name:str, namespace:str) -> tuple[str,str|None,str|None]:
-    '''Returns the element's name, its superclass's namespace, and the superclass's name.'''
+    """
+    Returns the element's name, its superclass's namespace, and the superclass's name.
+    """
     if "@" in raw_element_name:
         element_name, superclass = raw_element_name.split("@", 1)
         if "." in superclass:

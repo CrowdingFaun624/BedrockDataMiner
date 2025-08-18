@@ -107,14 +107,14 @@ def merge_collections(pack_name:str, destination:dict[str,MyCollectionTypedDict]
         merge_collection(pack_name, destination[collection_name], source_collection_data)
 
 def trace_exists(object:Mapping[str,Any], trace:tuple[str,...]) -> bool:
-    '''
+    """
     Returns True if the path given by `trace` exists in `object`.
     For example:\n
     .. code-block:: python
         return trace_exists(foo, ["bar", "baz"])
         # will return the same thing as
         return "bar" in foo and "baz" in foo["bar"]
-    '''
+    """
     for trace_item in trace:
         if trace_item in object:
             object = object[trace_item]

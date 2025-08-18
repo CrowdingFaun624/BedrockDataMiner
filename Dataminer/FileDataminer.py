@@ -23,7 +23,9 @@ class FileSet():
         yield from self.files
 
     def get_files_in(self, directory:str) -> list[str]:
-        '''Returns all file names that start with the directory string.'''
+        """
+        Returns all file names that start with the directory string.
+        """
         directory_length = len(directory)
         left = bisect.bisect_left(self.files, directory)
         right = bisect.bisect_right(self.files, directory, lo=left, key=lambda item: item[:directory_length])
@@ -37,12 +39,12 @@ class FileDataminer(Dataminer):
     __slots__ = ()
 
     def get_coverage(self, file_set:FileSet, environment:DataminerEnvironment) -> set[str]:
-        '''
+        """
         Must be overridden by subclasses of FileDataminer.
         Returns the set of file paths this Dataminer would return if it were
         activated.
 
-        :file_set: The set of all file paths.
-        :environment: The DataminerEnvironment to use (for dependencies).
-        '''
+        :param file_set: The set of all file paths.
+        :param environment: The DataminerEnvironment to use (for dependencies).
+        """
         ...

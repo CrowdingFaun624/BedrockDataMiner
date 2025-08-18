@@ -82,9 +82,9 @@ def parse_multiline_comment(reader:Reader, /) -> Errors:
     return error
 
 def parse_whitespace(reader:Reader, /, at_least:int=0, chars:Container[str]=whitespace, allow_comments:bool=True) -> Errors:
-    '''
+    """
     Consumes all characters in `string.whitespace`.
-    '''
+    """
     error = Errors.fine
     total_whitespace:int = 0
     while True:
@@ -103,10 +103,10 @@ def parse_whitespace(reader:Reader, /, at_least:int=0, chars:Container[str]=whit
     return error
 
 def parse_separator(reader:Reader, /, allow_comments:bool=True) -> Errors:
-    '''
+    """
     Consumes all whitespace before and after the separator.
     The separator may be a newline or a comma.
-    '''
+    """
     error = Errors.fine
     between_chars:list[str] = []
     with reader.highlight():
@@ -172,9 +172,9 @@ def parse_string(reader:Reader, /, quote_style:str) -> tuple[str, Errors]:
     return "".join(string), error
 
 def parse_identifier(reader:Reader, /) -> tuple[str, Errors]:
-    '''
+    """
     Parses an identifier, making sure it is valid.
-    '''
+    """
     with reader.highlight():
         error = Errors.fine
         if reader.next_in(("\"", "'"), True, True): # double quote isn't allowed, but doing it for error messages
@@ -232,9 +232,9 @@ def parse_variable_assignment(reader:Reader, /) -> tuple[str,FieldFactory[Variab
     return key, FieldFactory(reader, False, error, variable_fields, Variable, lambda factory, scope: Variable(factory, scope, error, variable_types, value)), error
 
 def parse_aliases(reader:Reader, /) -> Aliases:
-    '''
+    """
     Parses the aliases of settings, including the keyword "aliases".
-    '''
+    """
     with reader.focus():
         error = Errors.fine
         domain_aliases:dict[str,FieldFactory[DomainField]] = {}
@@ -270,9 +270,9 @@ def parse_aliases(reader:Reader, /) -> Aliases:
         return Aliases(domain_aliases, group_aliases, error)
 
 def parse_settings(reader:Reader, /) -> GroupSettings:
-    '''
+    """
     Parses the Group settings, including the keyword "settings".
-    '''
+    """
     with reader.focus():
         error = Errors.fine
         if not reader.next_is("settings", True, False):
@@ -625,9 +625,9 @@ def parse_component_fields(reader:Reader, /) -> tuple[Sequence[tuple[str,FieldFa
     return output, error
 
 def parse_component_assignment(reader:Reader, /) -> tuple[str,FieldFactory]:
-    '''
+    """
     Parses top-level Component assignments.
-    '''
+    """
     name, error = parse_identifier(reader)
     error = error.narrow(parse_whitespace(reader, 1))
     component_field = parse_field(reader, False)

@@ -84,9 +84,9 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
         material_bin_cache.forget()
 
     def run_material_bin_tool(self, data:bytes) -> Path:
-        '''
+        """
         Returns temporary directory.
-        '''
+        """
         temporary_directory = get_temp_file_path()
         temporary_directory.mkdir()
         input_file = temporary_directory.joinpath("data.material.bin")
@@ -113,9 +113,9 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
         return temporary_directory
 
     def get_main_data_file(self, output_directory:Path, data_hash:str) -> tuple[File[Any], list[str]]:
-        '''
+        """
         Returns the main data file and the pass names contained within.
-        '''
+        """
         file_name = f"main_material_bin_of_{data_hash}.json"
         main_data_path = output_directory.joinpath("data.json")
         with open(main_data_path, "rb") as f:

@@ -51,15 +51,15 @@ class Use(): # pronounced like the noun use, YOOS
         return f"<{self.__class__.__name__} id {id(self)}>"
 
     def message(self) -> str:
-        '''
+        """
         The message given if this Use is unused.
-        '''
+        """
         ...
 
     def name(self) -> str:
-        '''
+        """
         A short string of this Use. Used in TypeUse only.
-        '''
+        """
         ...
 
     def should_display(self, unused:Container["Use"]) -> bool:
@@ -321,9 +321,9 @@ class UsageTracker(): # used for optimization without complicated parameters to 
         self.domain = domain
 
     def report_use(self, use:Use) -> None:
-        '''
+        """
         Called by a Use when created.
-        '''
+        """
         self.structure_current_uses[use.origin].add(use)
         self.still_used(use.origin) # There is the potential that `still_used` won't be called again, so this must be called to make sure everything ends up used if it should be.
 

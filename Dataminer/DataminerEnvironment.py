@@ -9,38 +9,41 @@ if TYPE_CHECKING:
     from Version.Version import Version
 
 class DataminerDependencies():
-    "Controls the dependencies of Dataminers."
+    """
+    Controls the dependencies of Dataminers.
+
+    :param data: A dictionary with keys of DataminerCollection names and values of the data they collected for this Version.
+    """
 
     __slots__ = (
         "data",
     )
 
     def __init__(self, data:dict[str,Any]) -> None:
-        '''
-        :data: A dictionary with keys of DataminerCollection names and values of the data they collected for this Version.
-        '''
         self.data = data
 
     def get(self, dataminer_name:str, dataminer:"Dataminer") -> Any:
-        '''
+        """
         Returns the data associated with the given DataminerCollection name for this Version.
         Raises a DataminerUnregisteredDependencyError if the DataminerCollection is not listed as a dependency for this Dataminer.
-        :dataminer_name: The name of the DataminerCollection to access.
-        :dataminer: The Dataminer attempting to access the dependency.
-        '''
+
+        :param dataminer_name: The name of the DataminerCollection to access.
+        :param dataminer: The Dataminer attempting to access the dependency.
+        """
         output = self.get_default(dataminer_name, dataminer, ...)
         if output is ...:
             raise Exceptions.DataminerUnrecognizedDependencyError(dataminer, dataminer_name, list(self.data.keys()))
         return cast(Any, output)
 
     def get_default[a](self, dataminer_name:str, dataminer:"Dataminer", default:a) -> Any|a:
-        '''
+        """
         Returns the data associated with the given DataminerCollection name for this Version, or `default` if the DataminerCollection exists but has no data for this Version.
         Raises a DataminerUnregisteredDependencyError if the DataminerCollection is not listed as a dependency for this Dataminer.
-        :dataminer_name: The name of the DataminerCollection to access.
-        :dataminer: The Dataminer attempting to access the dependency.
-        :default: The default value to return if the data does not exist for this Version.
-        '''
+
+        :param dataminer_name: The name of the DataminerCollection to access.
+        :param dataminer: The Dataminer attempting to access the dependency.
+        :param default: The default value to return if the data does not exist for this Version.
+        """
         if not any(dataminer_name == dependency.name for dependency in dataminer.dependencies):
             raise Exceptions.DataminerUnregisteredDependencyError(dataminer, dataminer_name, [dependency.name for dependency in dataminer.dependencies])
         output = self.data.get(dataminer_name, default) # Dataminers cannot output None

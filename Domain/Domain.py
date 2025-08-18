@@ -202,9 +202,9 @@ class Domain():
 
     def import_data_files(self) -> None:
         self.data_files:Mapping[str,DataFile]
-        '''
+        """
         dictionary of files in the `./_assets/data` directory without the final suffix.
-        '''
+        """
         if not self.data_directory.exists():
             self.data_files = {}
             return
