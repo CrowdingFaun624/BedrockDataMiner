@@ -22,6 +22,7 @@ class Scope():
     __slots__ = (
         "_sub",
         "_without_variables",
+        "destroyed",
         "hash",
         "name",
         "override_fields",
@@ -38,6 +39,7 @@ class Scope():
         override_variables:Mapping[str,"Variable"]={},
         override_fields:Mapping[str,"Field"]={}
     ) -> None:
+        self.destroyed = False
         self.name:Final = name
         self.variable_declarations:Final = variable_declarations
         self.variable_definitions:Final = variable_definitions
@@ -169,5 +171,21 @@ class Scope():
             override_fields=new_fields,
         )
         return output
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        self.destroyed = True
+        for variable in self.variable_declarations.values():
+            variable.destroy()
+        for variable in self.variable_definitions.values():
+            variable.destroy()
+        for variable in self.override_variables.values():
+            variable.destroy()
+        for field in self.override_fields.values():
+            field.destroy()
+        del self.variable_declarations # type: ignore DESTROY
+        del self.variable_definitions # type: ignore DESTROY
+        del self.override_variables # type: ignore DESTROY
+        del self.override_fields # type: ignore DESTROY
 
 EMPTY_SCOPE = Scope(None, {}, {})

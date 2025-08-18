@@ -77,6 +77,8 @@ class DictField[K:Hashable, V](ContainerField[Mapping[K, V]]):
             super().create_final(trace)
             if self.error <= Errors.create_final:
                 return self.error
+            del self.field_slots
+            del self.variable_slots
             self.result = {}
             self.propagating_variables = PropagatingVariables.new_empty(suggestible=True)
             return self.error
@@ -125,3 +127,16 @@ class DictField[K:Hashable, V](ContainerField[Mapping[K, V]]):
                 self.narrow(value_field.finalize(trace))
             return self.error
         return self.narrow(Errors.finalize)
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        del self.mapping # type: ignore
+        for _, key, value in self.fields:
+            key.destroy()
+            value.destroy()
+        del self.fields
+        if self.created_final:
+            del self.result
+            self.propagating_variables.destroy()
+            del self.propagating_variables

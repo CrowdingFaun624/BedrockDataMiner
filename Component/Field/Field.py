@@ -29,18 +29,15 @@ class Field[R]():
 
     __slots__ = (
         "created_final",
-        "end_column",
+        "destroyed",
         "end_index",
-        "end_line",
         "error",
         "factory",
         "finalized",
         "linked_final",
         "name",
         "scope",
-        "start_column",
         "start_index",
-        "start_line",
     )
 
     def __init__(self, factory:"FieldFactory", scope:Scope, error:Errors) -> None:
@@ -50,16 +47,11 @@ class Field[R]():
         """
         self.factory: Final = factory
         self.start_index: Final = factory.reader_scope.start_index
-        self.start_line: Final
-        self.start_column: Final
-        self.start_line, self.start_column = factory.group.reader.newlines[self.start_index]
         self.end_index: Final = factory.reader_scope.end_index
-        self.end_line: Final
-        self.end_column: Final
-        self.end_line, self.end_column = factory.group.reader.newlines[self.end_index]
-        self.created_final = False # used to not repeat the calculations of create_final
-        self.linked_final = False # used to not repeat the calculations of link_final. Reassigned to True by each implementation of the method.
-        self.finalized = False # used to not repeat the calculations of finalize
+        self.created_final:bool = False # used to not repeat the calculations of create_final
+        self.linked_final:bool = False # used to not repeat the calculations of link_final. Reassigned to True by each implementation of the method.
+        self.finalized:bool = False # used to not repeat the calculations of finalize
+        self.destroyed:bool = False
         self.scope: Final = scope
         self.name = self.factory.group.full_name + self.factory.name # get full name
 
@@ -121,6 +113,15 @@ class Field[R]():
         """
         self.finalized = True
         return self.error
+
+    def destroy(self) -> None:
+        """
+        The sixth and final step (after finalize). Removes all potentially problematic attributes of this Field.
+        """
+        if self.destroyed: return
+        self.destroyed = True
+        del self.factory # type: ignore DESTROY
+        del self.scope # type: ignore DESTROY
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.name}>"

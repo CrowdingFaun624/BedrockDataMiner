@@ -23,7 +23,6 @@ from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Serializer.Serializer import SerializerCreator
 from Structure.StructureTag import StructureTag
 from Tablifier.Tablifier import Tablifier
-from Utilities.Log import Log
 from Utilities.MemoryUsage import memory_usage
 from Utilities.Trace import Trace
 from Version.Version import Version
@@ -188,6 +187,13 @@ def import_all(primary_domain:"Domain.Domain") -> bool:
                 f.write(exception + "\n\n")
             exception_count += 1
         print(f"{exception_count} total exceptions")
+
+    if error == Errors.fine: # not designed for missing attributes due to errors.
+        for domain, groups in all_groups.items():
+            for group in groups:
+                if DEBUG:
+                    print("destroy", group)
+                group.destroy()
 
     if error < Errors.fine:
         print(f"Failed to import ({error.name})")

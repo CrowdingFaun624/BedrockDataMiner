@@ -121,3 +121,20 @@ class ConcatenationField[R](Field[R]):
             self.field2.finalize(trace)
             return self.error
         return self.narrow(Errors.finalize)
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        self.field_factory1.destroy()
+        del self.field_factory1
+        self.field_factory2.destroy()
+        del self.field_factory2
+        self.field1.destroy()
+        del self.field1
+        self.field2.destroy()
+        del self.field2
+        if self.created_final:
+            self.propagating_variables.destroy()
+            del self.propagating_variables
+        if self.linked_final:
+            del self.result

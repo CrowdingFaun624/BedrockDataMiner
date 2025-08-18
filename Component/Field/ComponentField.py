@@ -48,6 +48,7 @@ class ComponentField[R: ComponentObject](ContainerField[R]):
         with trace.enter_field(self, ...):
             if super().create_final(trace) <= Errors.create_final:
                 return self.error
+            del self.field_slots
             component_type = cast("type[Component[R]]|None", component_types_dict.get(self.component_type_name))
             if component_type is None:
                 trace.exception(RuntimeError(f"Unrecognized Component type {self.component_type_name}"))
@@ -116,3 +117,12 @@ class ComponentField[R: ComponentObject](ContainerField[R]):
                 return self.error
             return self.error
         return self.narrow(Errors.finalize)
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        if self.created_final:
+            self.component.destroy()
+            del self.component
+            self.propagating_variables.destroy()
+            del self.propagating_variables

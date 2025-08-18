@@ -14,6 +14,7 @@ class PropagatingVariables():
     __slots__ = (
         "booleans",
         "cached_output",
+        "destroyed",
         "sets",
         "subs",
         "suggestible",
@@ -25,6 +26,7 @@ class PropagatingVariables():
         self.subs = subs
         self.suggestible = suggestible
         self.cached_output:tuple[Mapping[str,bool], Mapping[str,AbstractSet[object]]]|None = None
+        self.destroyed:bool = False
 
     @classmethod
     def new_empty(cls, suggestible:bool) -> "PropagatingVariables":
@@ -71,3 +73,16 @@ class PropagatingVariables():
             if child is not None:
                 self.cached_output = None # adding a child invalidates the cache.
                 self.subs.append(child)
+
+    def destroy(self) -> None:
+        """
+        Removes attributes of this PropagatingVariables.
+        """
+        if self.destroyed: return
+        self.destroyed = True
+        del self.booleans
+        del self.sets
+        for sub in self.subs:
+            sub.destroy()
+        del self.subs
+        del self.cached_output

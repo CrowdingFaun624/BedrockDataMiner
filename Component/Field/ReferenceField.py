@@ -124,6 +124,8 @@ class ReferenceField[R](ContainerField[R]):
             super().create_final(trace)
             if self.error <= Errors.create_final:
                 return self.error
+            del self.field_slots
+            del self.variable_slots
             self.narrow(self.referenced_field.create_final(trace))
             return self.error
         return self.narrow(Errors.create_final)
@@ -174,3 +176,14 @@ class ReferenceField[R](ContainerField[R]):
             self.narrow(self.referenced_field.finalize(trace))
             return self.error
         return self.narrow(Errors.finalize)
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        self.referenced_field.destroy()
+        del self.referenced_field
+        if self.linked_final:
+            del self.result
+            if self.propagating_variables is not None:
+                self.propagating_variables.destroy()
+            del self.propagating_variables

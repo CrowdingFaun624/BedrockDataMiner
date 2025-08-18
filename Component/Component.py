@@ -39,6 +39,7 @@ class Component[R: ComponentObject, P:Mapping[Any, Any] = Mapping[Any, Any]]():
     type_verifier:TypedDictTypeVerifier = TypedDictTypeVerifier()
 
     __slots__ = (
+        "destroyed",
         "fields",
         "final",
         "full_name",
@@ -74,6 +75,7 @@ class Component[R: ComponentObject, P:Mapping[Any, Any] = Mapping[Any, Any]]():
         Propagating sets are sent upwards through Fields and Field references.
         The contents may be updated during `link_final`.
         """
+        self.destroyed:bool = False
 
     def __repr__(self) -> str:
         return f"<{self.type_name} {self.full_name}>"
@@ -135,3 +137,18 @@ class Component[R: ComponentObject, P:Mapping[Any, Any] = Mapping[Any, Any]]():
         :returns: If there are any exceptions.
         """
         return False
+
+    def destroy(self) -> None:
+        """
+        Removes potentially problematic attributes of this Component.
+        Does not need to be subclassed.
+        """
+        if self.destroyed: return
+        self.destroyed = True
+        del self.group
+        if hasattr(self, "propagating_booleans"):
+            del self.propagating_booleans
+            del self.propagating_sets
+            del self.final
+        if hasattr(self, "fields"):
+            del self.fields

@@ -24,7 +24,7 @@ import Domain.Domains as Domains
 #     Domains.domains["minecraft_bedrock"].import_components()
 # profile.dump_stats("./time_report.txt")
 
-PROGRAM_NAMES = ("AllVersions", "Cleaner", "CompareAll", "CompareSome", "Dataminers", "FileStorage", "GarbageCollector", "StructureUsage", "Tablifiers", "Tests")
+PROGRAM_NAMES = ("AllVersions", "Cleaner", "CompareAll", "CompareSome", "Dataminers", "FileStorage", "GarbageCollector", "Noop", "StructureUsage", "Tablifiers", "Tests")
 
 lock1 = threading.Lock() # domain input
 lock2 = threading.Lock() # program input
@@ -64,6 +64,7 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[Domain.Domain],None]] = {
     "Dataminers": Dataminers.user_interface,
     "FileStorage": FileStorage.main,
     "GarbageCollector": GarbageCollector.main,
+    "Noop": lambda domain: None,
     "StructureUsage": StructureUsage.main,
     "Tablifiers": Tablifiers.main,
     "Tests": Tests.main,

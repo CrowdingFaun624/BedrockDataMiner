@@ -69,3 +69,14 @@ class VariableReferenceField[R](Field[R]):
             self.propagating_variables = propagating_variables
             return result, propagating_variables, self.error
         return ..., None, self.narrow(Errors.link_final)
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        self.variable.destroy()
+        del self.variable
+        if self.linked_final:
+            del self.result
+            if self.propagating_variables is not None:
+                self.propagating_variables.destroy()
+            del self.propagating_variables

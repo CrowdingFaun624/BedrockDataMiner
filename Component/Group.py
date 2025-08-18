@@ -29,6 +29,14 @@ class Aliases():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {len(self.domain_aliases)} {len(self.group_aliases)}>"
 
+    def destroy(self) -> None:
+        for field in self.domain_aliases.values():
+            field.destroy()
+        for field in self.group_aliases.values():
+            field.destroy()
+        del self.domain_aliases
+        del self.group_aliases
+
 class GroupSettings():
 
     __slots__ = (
@@ -48,12 +56,17 @@ class GroupSettings():
             if not field.abstract:
                 field.set_field(group, field_name, f"{domain.name}!{group.name}<settings><aliases>{field_name}", index, trace, is_inline=False)
 
+    def destroy(self) -> None:
+        self.aliases.destroy()
+        del self.aliases
+
 class GroupObject():
     """
     Object representing a directory or file.
     """
 
     __slots__ = (
+        "destroyed",
         "parent",
         "path",
         "path_name",
@@ -68,6 +81,7 @@ class GroupObject():
         self.path = path
         self.path_name = path_name
         self.parent = parent
+        self.destroyed:bool = False
 
     def get_parent(self, trace:Trace) -> tuple["GroupObject|EllipsisType", Errors]:
         if self.parent is None:
@@ -80,6 +94,13 @@ class GroupObject():
         Recursively gets all subfiles from itself.
         """
         ...
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        self.destroyed = True
+        if self.parent is not None:
+            self.parent.destroy()
+        del self.parent
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.path_name}>"
@@ -104,6 +125,13 @@ class GroupDirectory(GroupObject):
 
     def get_all_children(self) -> Iterable["GroupFile"]:
         yield from chain.from_iterable(child.get_all_children() for child in self.children.values())
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        for child in self.children.values():
+            child.destroy()
+        del self.children
 
 class GroupFile(GroupObject):
 
@@ -132,6 +160,11 @@ class ComponentFile(GroupFile):
     def __init__(self, path:Path, path_name:str, parent: GroupObject|None, domain:"Domain.Domain") -> None:
         super().__init__(path, path_name, parent, domain)
         self.group:Group # set by Importer
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        del self.group
 
 class ScriptFile(GroupFile):
     """
@@ -175,6 +208,19 @@ class Group():
         self.error = error
         self.group_file:GroupObject
         self.finals:Mapping[str,object]
+
+    def destroy(self) -> None:
+        """
+        Removes potentially problematic attributes.
+        """
+        del self.path
+        self.settings.destroy()
+        for field in self.fields.values():
+            field.destroy()
+        del self.fields
+        self.group_file.destroy()
+        del self.group_file
+        del self.finals
 
     @property
     def full_name(self) -> str:

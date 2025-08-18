@@ -53,6 +53,7 @@ class ListField[V](ContainerField[Sequence[V]]):
         with trace.enter_field(self, ...):
             if super().create_final(trace) <= Errors.create_final:
                 return self.error
+            del self.field_slots
             self.result = []
             self.propagating_variables = PropagatingVariables.new_empty(suggestible=True)
             return self.error
@@ -103,3 +104,15 @@ class ListField[V](ContainerField[Sequence[V]]):
                 self.narrow(subfield.finalize(trace))
             return self.error
         return self.narrow(Errors.finalize)
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        del self.sequence # type: ignore
+        for field in self.fields:
+            field.destroy()
+        del self.fields
+        if self.created_final:
+            del self.result
+            self.propagating_variables.destroy()
+            del self.propagating_variables

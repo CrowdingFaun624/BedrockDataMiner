@@ -56,3 +56,8 @@ class GroupField(Field[Group]):
             self.linked_final = True
             return self.group, None, self.error
         return ..., None, self.narrow(Errors.link_final)
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        del self.group

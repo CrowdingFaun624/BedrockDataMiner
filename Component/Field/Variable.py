@@ -132,3 +132,20 @@ class Variable[R](Field[R]):
             self.linked_final = True
             return result, propagating_variables, self.error
         return ..., None, self.narrow(Errors.link_final)
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        if self.types is not None:
+            self.types.destroy()
+        del self.types # type: ignore
+        if self.variable_value is not None:
+            self.variable_value.destroy()
+        del self.variable_value # type: ignore
+        self.referenced_field.destroy()
+        del self.referenced_field
+        if self.linked_final:
+            del self.result
+            if self.propagating_variables is not None:
+                self.propagating_variables.destroy()
+            del self.propagating_variables

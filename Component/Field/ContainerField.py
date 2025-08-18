@@ -54,6 +54,7 @@ class ContainerField[R](Field[R]):
                 else:
                     override_fields[field_name] = subfield
                 scope = self.scope.override(..., override_variables, override_fields)
+            del self.subfield_factories
             self.subfields = subfields
             self.subscope = scope
 
@@ -76,3 +77,12 @@ class ContainerField[R](Field[R]):
     # finalize is also the responsibility of subclasses because sometimes a
     # Field overwrites another and the overwritten Field will never have
     # link_final called on it, so finalize cannot be called on it either.
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        super().destroy()
+        for subfield in self.subfields:
+            subfield.destroy()
+        self.subscope.destroy()
+        del self.subfields
+        del self.subscope

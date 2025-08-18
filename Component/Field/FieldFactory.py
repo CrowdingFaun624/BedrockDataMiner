@@ -134,6 +134,14 @@ class FieldFactory[F: "Field"]():
         """
         return self.fields[scope].finalize(trace)
 
+    def destroy(self) -> None:
+        """
+        Removes all potentially problematic attributes of this FieldFactory.
+        """
+        for scope, field in self.fields.items():
+            scope.destroy()
+            field.destroy()
+
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.field_type.__name__} {self.full_name}>"
 
@@ -144,6 +152,7 @@ class FieldSlot[F:"Field"="Field"]():
     """
 
     __slots__ = (
+        "destroyed",
         "error",
         "field",
         "field_factory",
@@ -153,6 +162,7 @@ class FieldSlot[F:"Field"="Field"]():
         self.error = Errors.fine
         self.field_factory:Final[FieldFactory[F]] = field_factory
         self.field:F
+        self.destroyed:bool = False
 
     def create_field(self, scope:Scope, trace:Trace) -> tuple["F|EllipsisType", Errors]:
         """
@@ -166,6 +176,15 @@ class FieldSlot[F:"Field"="Field"]():
         if output is not ...:
             self.field = output
         return output, self.error
+
+    def destroy(self) -> None:
+        if self.destroyed: return
+        self.destroyed = True
+        self.field_factory.destroy()
+        del self.field_factory # type: ignore DESTROY
+        if hasattr(self, "field"):
+            self.field.destroy()
+            del self.field
 
     def __repr__(self) -> str:
         if hasattr(self, "field"): # this allows for __repr__ to always function correctly.
