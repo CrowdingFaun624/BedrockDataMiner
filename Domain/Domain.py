@@ -83,7 +83,6 @@ class Domain():
         "lib_directory",
         "lib_files",
         "log_directory",
-        "logs",
         "name",
         "scripts",
         "scripts_directory",
@@ -183,7 +182,6 @@ class Domain():
     def set_values(
         self,
         dataminer_collections:Mapping[str,"AbstractDataminerCollection"],
-        logs:Mapping[str,"Log"],
         serializers:Mapping[str,"Serializer"],
         structure_tags:Mapping[str,"StructureTag"],
         tablifiers:Mapping[str,"Tablifier"],
@@ -193,7 +191,6 @@ class Domain():
         if self.is_imported:
             return # may be triggered by a Domain using this one as a library being imported
         self.dataminer_collections = dataminer_collections
-        self.logs = logs
         self.serializers = serializers
         self.structure_tags = structure_tags
         self.tablifiers = tablifiers

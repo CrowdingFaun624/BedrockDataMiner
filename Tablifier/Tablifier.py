@@ -17,6 +17,7 @@ from Structure.StructureEnvironment import (
 )
 from Utilities.Exceptions import TablifierError
 from Utilities.FileManager import OUTPUT_DIRECTORY
+from Utilities.Log import Log
 from Utilities.Trace import Trace
 from Version.Version import Version
 from Version.VersionProvider.VersionProvider import VersionProviderCreator
@@ -258,6 +259,7 @@ class Tablifier(ComponentObject):
     __slots__ = (
         "dataminer_collection",
         "file_name",
+        "log",
         "path",
         "structure",
         "version_provider",
@@ -267,11 +269,13 @@ class Tablifier(ComponentObject):
         self,
         dataminer_collection:AbstractDataminerCollection,
         file_name:str,
+        log: Log | None,
         structure:StructureBase,
         version_provider:VersionProviderCreator,
     ) -> None:
         self.dataminer_collection = dataminer_collection
         self.file_name = file_name
+        self.log = log
         self.path = OUTPUT_DIRECTORY.joinpath(self.file_name)
         self.structure = structure
         self.version_provider = version_provider
@@ -297,9 +301,9 @@ class Tablifier(ComponentObject):
         """
         texts:list[str] = list(trace.stringify())
         if trace.has_exceptions:
-            if (log := domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
-                log.write(f"-------- {trace.exception_count} EXCEPTIONS IN {self.name} ON {", ".join(version.name for version in versions)} --------\n\n")
-                log.write("\n".join(texts))
+            if self.log is not None and self.log.supports_type(self.log, str):
+                self.log.write(f"-------- {trace.exception_count} EXCEPTIONS IN {self.name} ON {", ".join(version.name for version in versions)} --------\n\n")
+                self.log.write("\n".join(texts))
             for text in texts:
                 print(text)
         return len(trace._exceptions) > 0

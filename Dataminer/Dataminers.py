@@ -11,8 +11,6 @@ from Version.Version import Version
 
 def print_error(message:str, domain:"Domain.Domain") -> None:
     print(message)
-    if (log := domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
-        log.write(message)
 
 def get_dataminable_dataminers(version:Version, domain:Domain.Domain) -> Iterable[AbstractDataminerCollection]:
     """

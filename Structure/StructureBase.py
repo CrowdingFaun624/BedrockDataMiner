@@ -15,6 +15,7 @@ from Structure.StructureInfo import StructureInfo
 from Structure.StructureTag import StructureTag
 from Structure.StructureTypes.CacheStructure import CacheStructure
 from Utilities.Exceptions import StructureError
+from Utilities.Log import Log
 from Utilities.Trace import Trace
 from Version.Version import Version
 
@@ -25,14 +26,17 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         "_cache_substructures",
         "delegate",
         "delegate_creator",
+        "log",
     )
 
     def link_structure_base(
         self,
         delegate:DelegateCreator[Delegate[Con[D], Don[D]|Diff[Don[D]], Self, str, Any, str, Any]]|None,
+        log:Log|None
     ) -> None:
         self.trace_name = self.full_name
         self.delegate_creator = delegate
+        self.log = log
         self._cache_substructures:Sequence[CacheStructure]|None = None
 
     def finalize_structure_base(self, trace:Trace) -> bool:
@@ -70,9 +74,9 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         """
         texts:list[str] = list(trace.stringify())
         if trace.has_exceptions:
-            if (log := self.domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
-                log.write(f"-------- {trace.exception_count} EXCEPTIONS IN {self.full_name} ON {", ".join(version.name for version in versions)} --------\n\n")
-                log.write("\n".join(texts))
+            if self.log is not None and self.log.supports_type(self.log, str):
+                self.log.write(f"-------- {trace.exception_count} EXCEPTIONS IN {self.full_name} ON {", ".join(version.name for version in versions)} --------\n\n")
+                self.log.write("\n".join(texts))
             for text in texts:
                 print(text)
             if raise_exception:
