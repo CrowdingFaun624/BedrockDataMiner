@@ -1,0 +1,81 @@
+settings {
+    aliases {
+        bp = @structures/data_generator/biome_parameters/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "dimension"
+    $ pack_type = "data pack"
+    $ structure = @dimension
+}
+dimension :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:overworld" = :Key {types = #dict, structure = @dimension.overworld}
+        "minecraft:the_end" = :Key {types = #dict, structure = @dimension.overworld}
+        "minecraft:the_nether" = :Key {types = #dict, structure = @dimension.overworld}
+    }
+}
+dimension.overworld inherit temp/SortedKeymap {
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "generator" = :Key {types = #dict, structure = @generator}
+    }
+}
+generator :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:noise" = :Key {types = #dict, structure = @generator.noise}
+    }
+}
+generator:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "seed" = :Key {types = #int}
+}
+generator.noise inherit temp/SortedKeymap {
+    keys = @generator:all + {
+        "settings" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "biome_source" = :Key {types = #dict, structure = @biome_source}
+    }
+}
+biome_source :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:multi_noise" = :Key {types = #dict, structure = @biome_source.multi_noise}
+        "minecraft:the_end" = :Key {types = #dict, structure = @biome_source.the_end}
+    }
+}
+biome_source:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+biome_source.multi_noise inherit temp/SortedKeymap {
+    keys = @biome_source:all + {
+        "biomes" = :Key {types = #list, structure = @bp/biomes}
+    }
+}
+biome_source.the_end inherit temp/SortedKeymap {
+    keys = @biome_source:all + {
+        "seed" = :Key {types = #int}
+    }
+}
+parameters inherit temp/SortedKeymap {
+    keys = {
+        "erosion" = :Key {types = #float}
+        "depth" = :Key {types = #float}
+        "weirdness" = :Key {types = #float}
+        "offset" = :Key {types = #float}
+        "temperature" = :Key {types = #float}
+        "humidity" = :Key {types = #float}
+        "continentalness" = :Key {types = #float}
+    }
+}

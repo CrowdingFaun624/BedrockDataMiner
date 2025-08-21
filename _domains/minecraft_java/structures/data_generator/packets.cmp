@@ -1,0 +1,35 @@
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "biome_parameters"
+    $ structure = @states
+}
+states inherit temp/SortedKeymap {
+    keys = {
+        "handshake" = :Key {types = #dict, structure = @state}
+        "status" = :Key {types = #dict, structure = @state}
+        "login" = :Key {types = #dict, structure = @state}
+        "configuration" = :Key {types = #dict, structure = @state}
+        "play" = :Key {types = #dict, structure = @state}
+    }
+}
+state inherit temp/SortedKeymap {
+    keys = {
+        "clientbound" = :Key {types = #dict, structure = @packets}
+        "serverbound" = :Key {types = #dict, structure = @packets}
+    }
+}
+packets inherit temp/Dict {
+    $field = "packet"
+    value_types = #dict
+    value_structure = @packet
+}
+packet inherit temp/SortedKeymap {
+    keys = {
+        "protocol_id" = :Key {types = #int}
+    }
+}

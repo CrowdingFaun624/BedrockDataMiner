@@ -11,6 +11,18 @@ block_state_list inherit temp/Set.nbt {
     value_types = @a/compound
     value_structure = @block_state
 }
+block_state_or_id_list inherit temp/Set.nbt {
+    $ field = "block state"
+    value_types = [@a/compound, @a/string]
+    value_structure = @block_state_or_id
+}
+block_state_list_or_id :Union {
+    substructures = [
+        :Key {types = @a/string}
+        :Key {types = @a/compound, structure = @block_state}
+        :Key {types = @a/list, structure = @block_state_or_id_list}
+    ]
+}
 block_state_or_id :Union {
     substructures = [
         :Key {types = @a/string},

@@ -1,0 +1,52 @@
+settings {
+    aliases {
+        bs = @structures/misc/block_state/
+        temp = @structures/misc/template/
+    }
+}
+surface_builder :Switch {
+    switch_function = :Function {
+        function = %old_type_choose
+    }
+    $ (:Key) default_key = :Key {types = #dict, structure = @surface_builder:abstract{$imports=@config.default}}
+    substructures = {
+        "minecraft:badlands" = default_key
+        "minecraft:basalt_deltas" = default_key
+        "minecraft:default" = default_key
+        "minecraft:eroded_badlands" = default_key
+        "minecraft:frozen_ocean" = default_key
+        "minecraft:giant_tree_taiga" = default_key
+        "minecraft:gravelly_mountain" = default_key
+        "minecraft:grove" = default_key
+        "minecraft:lofty_peaks" = default_key
+        "minecraft:mountain" = default_key
+        "minecraft:nether" = default_key
+        "minecraft:nether_forest" = default_key
+        "minecraft:nope" = default_key // very humor
+        "minecraft:shattered_savanna" = default_key
+        "minecraft:snowcapped_peaks" = default_key
+        "minecraft:snowy_slopes" = default_key
+        "minecraft:soul_sand_valley" = default_key
+        "minecraft:stone_shore" = default_key
+        "minecraft:stony_peaks" = default_key
+        "minecraft:swamp" = default_key
+        "minecraft:wooded_badlands" = default_key
+    }
+}
+surface_builder:abstract inherit temp/SortedKeymap {
+    $ (dict) imports = {}
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "config" = :Key {types = #dict, structure = @config:abstract{$imports=imports}}
+    }
+}
+config:abstract abstract inherit temp/SortedKeymap {
+    $ (dict) imports
+    keys = imports
+}
+config.default {
+    "top_material" = :Key {types = #dict, structure = @bs/block_state}
+    "under_material" = :Key {types = #dict, structure = @bs/block_state}
+    "underwater_material" = :Key {types = #dict, structure = @bs/block_state}
+}

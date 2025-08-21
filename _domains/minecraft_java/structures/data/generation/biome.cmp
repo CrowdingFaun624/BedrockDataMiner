@@ -3,10 +3,13 @@ settings {
     aliases {
         a = @structures/misc/types/
         carver = @structures/data/generation/carver/
+        cf = @structures/data/generation/configured_feature/
         pf = @structures/data/generation/placed_feature/
         misc = @structures/misc/misc/
         t = @structure_tags/
         particle = @structures/data/particles/particles/
+        sb = @structures/data/generation/surface_builder/
+        sf = @structures/data/generation/structure_feature/
         temp = @structures/misc/template/
     }
 }
@@ -17,6 +20,10 @@ base inherit temp/base_multiple_pack_files {
 }
 biome inherit temp/SortedKeymap {
     keys = {
+        "parent" = :Key {types = #str, tags = @t/outdated, delegate_arguments = {"always_print" = true}}
+        "category" = :Key {types = #str, tags = @t/outdated}
+        "scale" = :Key {types = #float, tags = @t/outdated}
+        "depth" = :Key {types = #float, tags = @t/outdated}
         "has_precipitation" = :Key {types = #bool}
         "precipitation" = :Key {types = #str, tags = @t/outdated}
         "temperature" = :Key {types = #float}
@@ -24,29 +31,34 @@ biome inherit temp/SortedKeymap {
         "downfall" = :Key {types = #float}
         "effects" = :Key {types = #dict, structure = @effects}
         "carvers" = :Key {types = [#str, #dict, #list], structure = @carver/carver_list_or_carver}
+        "surface_builder" = :Key {types = #dict, structure = @sb/surface_builder, tags = @t/outdated}
         "features" = :Key {types = #list, structure = @features}
+        "starts" = :Key {types = #list, structure = @sf/structure_feature_list, tags = @t/outdated}
         "creature_spawn_probability" = :Key {types = #float}
         "spawners" = :Key {types = #dict, structure = @spawners}
         "spawn_costs" = :Key {types = #dict, structure = @spawn_costs}
-    }
+        "player_spawn_friendly" = :Key {types = #bool, tags = @t/outdated}
+    } + @effects:keys{tags = [@t/outdated]}
+}
+effects:keys {
+    $ (list) tags = []
+    "fog_color" = :Key {types = #int, tags = tags}
+    "sky_color" = :Key {types = #int, tags = tags}
+    "water_color" = :Key {types = #int, tags = tags}
+    "water_fog_color" = :Key {types = #int, tags = tags}
+    "foliage_color" = :Key {types = #int, tags = tags}
+    "dry_foliage_color" = :Key {types = #int, tags = tags}
+    "grass_color" = :Key {types = #int, tags = tags}
+    "grass_color_modifier" = :Key {types = #str, tags = tags}
+    "particle" = :Key {types = #dict, structure = @effects.particle, tags = tags}
+    "ambient_sound" = :Key {types = [@a/string, @a/compound], structure = @misc/sound_event, tags = tags}
+    "mood_sound" = :Key {types = #dict, structure = @effects.mood_sound, tags = tags}
+    "additions_sound" = :Key {types = #dict, structure = @effects.additions_sound, tags = tags}
+    "music" = :Key {types = [#list, #dict], structure = @effects.musics, tags = tags}
+    "music_volume" = :Key {types = #float, tags = tags}
 }
 effects inherit temp/SortedKeymap {
-    keys = {
-        "fog_color" = :Key {types = #int}
-        "sky_color" = :Key {types = #int}
-        "water_color" = :Key {types = #int}
-        "water_fog_color" = :Key {types = #int}
-        "foliage_color" = :Key {types = #int}
-        "dry_foliage_color" = :Key {types = #int}
-        "grass_color" = :Key {types = #int}
-        "grass_color_modifier" = :Key {types = #str}
-        "particle" = :Key {types = #dict, structure = @effects.particle}
-        "ambient_sound" = :Key {types = [@a/string, @a/compound], structure = @misc/sound_event}
-        "mood_sound" = :Key {types = #dict, structure = @effects.mood_sound}
-        "additions_sound" = :Key {types = #dict, structure = @effects.additions_sound}
-        "music" = :Key {types = [#list, #dict], structure = @effects.musics}
-        "music_volume" = :Key {types = #float}
-    }
+    keys = @effects:keys
 }
 effects.additions_sound inherit temp/SortedKeymap {
     keys = {
@@ -95,7 +107,7 @@ effects.particle inherit temp/SortedKeymap {
 features inherit temp/Set {
     $ field = "placed feature"
     value_types = [#str, #dict, #list]
-    value_structure = @pf/placed_feature_list_or_feature
+    value_structure = @pf/placed_feature_list_or_feature_or_old
 }
 spawners inherit temp/SortedKeymap {
     $ keymap_field = "mob category"

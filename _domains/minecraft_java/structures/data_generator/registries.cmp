@@ -1,0 +1,40 @@
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "registries"
+    $ structure = @registries
+}
+items_base inherit temp/base_single_file {
+    $ name = "items_registry"
+    $ structure = @entries
+}
+registries inherit temp/Dict {
+    $field = "registry"
+    key_structure = null
+    allow_key_moves = false
+    value_types = #dict
+    value_structure = @registry
+}
+registry inherit temp/SortedKeymap {
+    keys = {
+        "protocol_id" = :Key {types = #int, delegate_arguments = {"always_print" = true}, similarity_weight = 0}
+        "default" = :Key {types = #str}
+        "entries" = :Key {types = #dict, structure = @entries}
+    }
+}
+entries :Normalizer {
+    outer_types = #dict
+    inner_types = #list
+    functions = :Function {
+        function = %registries_simplify
+    },
+    structure = inherit temp/Set {
+        $field = "entry"
+        value_types = #str
+        value_structure = null
+    }
+}

@@ -1,0 +1,98 @@
+settings {
+    aliases {
+        hp = @structures/misc/provider/height_provider/
+        temp = @structures/misc/template/
+        tp = @structures/data/generation/template_pool/
+    }
+}
+structure_feature_list inherit temp/Set {
+    $field = "structure feature"
+    value_types = #dict
+    value_structure = @structure_feature
+}
+structure_feature :Switch {
+    switch_function = :Function {
+        function = %old_type_choose
+    }
+    substructures = {
+        "minecraft:bastion_remnant" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.pooled}}
+        "minecraft:buried_treasure" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.buried_treasure}}
+        "minecraft:desert_pyramid" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:endcity" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:fortress" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:igloo" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:jungle_pyramid" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:mansion" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:mineshaft" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.mineshaft}}
+        "minecraft:monument" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:nether_fossil" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.nether_fossil}}
+        "minecraft:ocean_ruin" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.ocean_ruin}}
+        "minecraft:pillager_outpost" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.pooled}}
+        "minecraft:ruined_portal" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.ruined_portal}}
+        "minecraft:shipwreck" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.shipwreck}}
+        "minecraft:stronghold" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:swamp_hut" = :Key {types = #dict, structure = @structure_feature:abstract}
+        "minecraft:village" = :Key {types = #dict, structure = @structure_feature:abstract{$config=@config.pooled}}
+    }
+}
+structure_feature:abstract inherit temp/SortedKeymap {
+    $ (:Structure) config = inherit temp/SortedKeymap {keys = {}}
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "config" = :Key {types = #dict, structure = config}
+    }
+}
+config.buried_treasure inherit temp/SortedKeymap {
+    keys = {
+        "probability" = :Key {types = #float}
+    }
+}
+config.mineshaft :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "mesa" = :Key {types = #dict, structure = @config.mineshaft.mesa}
+        "normal" = :Key {types = #dict, structure = @config.mineshaft.normal}
+    }
+}
+config.mineshaft:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "probability" = :Key {types = #float}
+}
+config.mineshaft.mesa inherit temp/SortedKeymap {
+    keys = @config.mineshaft:all
+}
+config.mineshaft.normal inherit temp/SortedKeymap {
+    keys = @config.mineshaft:all
+}
+config.nether_fossil inherit temp/SortedKeymap {
+    keys = {
+        "height" = :Key {types = #dict, structure = @hp/height_provider}
+    }
+}
+config.ocean_ruin inherit temp/SortedKeymap {
+    keys = {
+        "biome_temp" = :Key {types = #str}
+        "large_probability" = :Key {types = #float}
+        "cluster_probability" = :Key {types = #float}
+    }
+}
+config.pooled inherit temp/SortedKeymap {
+    keys = {
+        "start_pool" = :Key {types = [#str, #dict], structure = @tp/template_pool_or_id}
+        "size" = :Key {types = #int}
+    }
+}
+config.ruined_portal inherit temp/SortedKeymap {
+    keys = {
+        "portal_type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    }
+}
+config.shipwreck inherit temp/SortedKeymap {
+    keys = {
+        "is_beached" = :Key {types = #bool}
+    }
+}

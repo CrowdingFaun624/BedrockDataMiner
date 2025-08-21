@@ -24,47 +24,52 @@ int_provider :Switch {
 int_provider:all  {
     "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
 }
-int_provider:value abstract {
-    $ (dict) imports
-    "value" = :Key {types = #dict, structure = @value{$imports=imports}, tags = @t/outdated}
+int_provider:abstract abstract inherit temp/SortedKeymap {
+    $ (:Structure) keys
+    keys = @int_provider:all + keys + {
+        "value" = :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = keys
+        }}
+    }
 }
-value abstract inherit temp/SortedKeymap {
-    $ (dict) imports
-    keys = imports
-}
-int_provider:clamped {
-    "min_inclusive" = :Key {types = #int}
-    "max_inclusive" = :Key {types = #int}
-}
-int_provider:clamped_source {
-    "source" = :Key {types = [#int, #dict], structure = @int_provider}
-}
-int_provider:distribution {
-    "distribution" = :Key {types = #list, structure = @int_provider.weighted_list:distribution}
-}
-int_provider:normal {
-    "mean" = :Key {types = @misc/decimal}
-    "deviation" = :Key {types = @misc/decimal}
-}
-int_provider.constant inherit temp/SortedKeymap {
+int_provider.constant inherit temp/SortedKeymap { // does not inherit from int_provider:abstract
     keys = @int_provider:all + {
         "value" = :Key {types = #int}
     }
 }
-int_provider.uniform inherit temp/SortedKeymap {
-    keys = @int_provider:all + @int_provider:clamped + @int_provider:value{$imports=@int_provider:clamped}
+int_provider.uniform inherit int_provider:abstract {
+    $ keys = {
+        "min_inclusive" = :Key {types = #int}
+        "max_inclusive" = :Key {types = #int}
+        "base" = :Key {types = #int}
+        "spread" = :Key {types = #int}
+    }
 }
-int_provider.biased_to_bottom inherit temp/SortedKeymap {
-    keys = @int_provider:all + @int_provider:clamped + @int_provider:value{$imports=@int_provider:clamped}
+int_provider.biased_to_bottom inherit int_provider:abstract {
+    $ keys = {
+        "min_inclusive" = :Key {types = #int}
+        "max_inclusive" = :Key {types = #int}
+    }
 }
-int_provider.clamped inherit temp/SortedKeymap {
-    keys = @int_provider:all + @int_provider:clamped + @int_provider:clamped_source + @int_provider:value{$imports=@int_provider:clamped + @int_provider:clamped_source}
+int_provider.clamped inherit int_provider:abstract {
+    $ keys = {
+        "min_inclusive" = :Key {types = #int}
+        "max_inclusive" = :Key {types = #int}
+        "source" = :Key {types = [#int, #dict], structure = @int_provider}
+    }
 }
-int_provider.clamped_normal inherit temp/SortedKeymap {
-    keys = @int_provider:all + @int_provider:clamped + @int_provider:normal + @int_provider:value{$imports=@int_provider:clamped + @int_provider:normal}
+int_provider.clamped_normal inherit int_provider:abstract {
+    $ keys = {
+        "min_inclusive" = :Key {types = #int}
+        "max_inclusive" = :Key {types = #int}
+        "mean" = :Key {types = @misc/decimal}
+        "deviation" = :Key {types = @misc/decimal}
+    }
 }
-int_provider.weighted_list inherit temp/SortedKeymap {
-    keys = @int_provider:all + @int_provider:distribution + @int_provider:value{$imports=@int_provider:distribution}
+int_provider.weighted_list inherit int_provider:abstract {
+    $ keys = {
+        "distribution" = :Key {types = #list, structure = @int_provider.weighted_list:distribution}
+    }
 }
 int_provider.weighted_list:distribution inherit temp/Set {
     $ field = "entry"

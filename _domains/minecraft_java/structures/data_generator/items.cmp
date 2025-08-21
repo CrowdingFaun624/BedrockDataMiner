@@ -1,0 +1,30 @@
+settings {
+    aliases {
+        a = @structures/misc/types/
+        dc = @structures/misc/data_components/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "items"
+    $ structure = @items
+}
+items inherit temp/Dict {
+    $field = "item"
+    allow_key_moves = true
+    value_types = #dict
+    value_structure = @item
+}
+item inherit temp/SortedKeymap {
+    keys = {
+        "components" = :Key {types = [#list, #dict], structure = @data_components}
+    }
+}
+data_components :Normalizer {
+    outer_types = [#list, #dict]
+    inner_types = @a/compound
+    functions = :Function {
+        function = %item_components_normalize
+    },
+    structure = @dc/data_components
+}

@@ -4,6 +4,7 @@ settings {
         hp = @structures/misc/provider/height_provider/
         misc = @structures/misc/misc/
         pa = @structures/data/generation/pool_alias/
+        t = @structure_tags/
         temp = @structures/misc/template/
         tp = @structures/data/generation/template_pool/
     }
@@ -49,6 +50,7 @@ structure:all {
     "step" = :Key {types = #str}
     "terrain_adaptation" = :Key {types = #str}
     "spawn_overrides" = :Key {types = #dict, structure = @spawn_overrides}
+    "adapt_noise" = :Key {types = #bool, tags = @t/outdated}
 }
 spawn_overrides inherit temp/SortedKeymap {
     $ keymap_field = "mob category"
@@ -72,7 +74,21 @@ spawn_overrides.category inherit temp/SortedKeymap {
 structure.empty inherit temp/SortedKeymap {
     keys = @structure:all
 }
-structure.jigsaw inherit temp/SortedKeymap {
+structure.jigsaw :Switch {
+    switch_function = :Function {
+        function = %structure_jigsaw_switch
+    }
+    substructures = {
+        "old" = :Key {types = #dict, structure = @structure.jigsaw:old, tags = @t/outdated}
+        "new" = :Key {types = #dict, structure = @structure.jigsaw:new}
+    }
+}
+structure.jigsaw:old inherit temp/SortedKeymap {
+    keys = @structure:all + {
+        "value" = :Key {types = #dict, structure = @structure.jigsaw:new}
+    }
+}
+structure.jigsaw:new inherit temp/SortedKeymap {
     keys = @structure:all + {
         "start_pool" = :Key {types = [#str, #dict], structure = @tp/template_pool_or_id}
         "size" = :Key {types = #int}

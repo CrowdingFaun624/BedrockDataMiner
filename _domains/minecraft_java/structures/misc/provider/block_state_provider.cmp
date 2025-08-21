@@ -7,6 +7,7 @@ settings {
         bs = @structures/misc/block_state/
         int_provider = @structures/misc/provider/int_provider/
         noise = @structures/data/generation/noise/
+        t = @structure_tags/
         vector = @structures/misc/vector/
     }
 }
@@ -28,13 +29,19 @@ block_state_provider :Switch {
         arguments = {"key" = "type"}
     }
     substructures = {
-        "minecraft:simple_state_provider" = :Key {types = #dict, structure = @block_state_provider.simple_state_provider}
-        "minecraft:rotated_block_provider" = :Key {types = #dict, structure = @block_state_provider.rotated_block_provider}
-        "minecraft:weighted_state_provider" = :Key {types = #dict, structure = @block_state_provider.weighted_state_provider}
-        "minecraft:randomized_int_state_provider" = :Key {types = #dict, structure = @block_state_provider.randomized_int_state_provider}
-        "minecraft:noise_provider" = :Key {types = #dict, structure = @block_state_provider.noise_provider}
+        "minecraft:dual_noise_2d_provider" = :Key {types = #dict, structure = @block_state_provider.dual_noise_provider, tags = @t/outdated}
         "minecraft:dual_noise_provider" = :Key {types = #dict, structure = @block_state_provider.dual_noise_provider}
+        "minecraft:forest_flower_provider" = :Key {types = #dict, structure = @block_state_provider.flower_provider, tags = @t/outdated}
+        "minecraft:meadow_flower_provider" = :Key {types = #dict, structure = @block_state_provider.flower_provider, tags = @t/outdated}
+        "minecraft:noise_2d_cutoff_provider" = :Key {types = #dict, structure = @block_state_provider.noise_threshold_provider, tags = @t/outdated}
+        "minecraft:noise_2d_provider" = :Key {types = #dict, structure = @block_state_provider.noise_provider, tags = @t/outdated}
+        "minecraft:noise_provider" = :Key {types = #dict, structure = @block_state_provider.noise_provider}
         "minecraft:noise_threshold_provider" = :Key {types = #dict, structure = @block_state_provider.noise_threshold_provider}
+        "minecraft:plain_flower_provider" = :Key {types = #dict, structure = @block_state_provider.flower_provider, tags = @t/outdated}
+        "minecraft:randomized_int_state_provider" = :Key {types = #dict, structure = @block_state_provider.randomized_int_state_provider}
+        "minecraft:rotated_block_provider" = :Key {types = #dict, structure = @block_state_provider.rotated_block_provider}
+        "minecraft:simple_state_provider" = :Key {types = #dict, structure = @block_state_provider.simple_state_provider}
+        "minecraft:weighted_state_provider" = :Key {types = #dict, structure = @block_state_provider.weighted_state_provider}
     }
 }
 block_state_provider:all {
@@ -103,4 +110,7 @@ block_state_provider.noise_threshold_provider inherit temp/SortedKeymap {
         "low_states" = :Key {types = @a/list, structure = @bs/block_state_list}
         "high_states" = :Key {types = @a/list, structure = @bs/block_state_list}
     }
+}
+block_state_provider.flower_provider inherit temp/SortedKeymap {
+    keys = @block_state_provider:all
 }

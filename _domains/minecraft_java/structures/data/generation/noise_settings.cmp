@@ -6,7 +6,9 @@ settings {
         df = @structures/data/generation/density_function/
         misc = @structures/misc/misc/
         sr = @structures/data/generation/surface_rule/
+        t = @structure_tags/
         temp = @structures/misc/template/
+        vector = @structures/misc/vector/
     }
 }
 base inherit temp/base_multiple_pack_files {
@@ -24,8 +26,10 @@ noise_settings inherit temp/SortedKeymap {
     keys = {
         "sea_level" = :Key {types = #int}
         "disable_mob_generation" = :Key {types = #bool}
-        "ore_veins_enabled" = :Key {types = #bool}
         "aquifers_enabled" = :Key {types = #bool}
+        "noise_caves_enabled" = :Key {types = #bool, tags = @t/outdated}
+        "noodle_caves_enabled" = :Key {types = #bool, tags = @t/outdated}
+        "ore_veins_enabled" = :Key {types = #bool}
         "legacy_random_source" = :Key {types = #bool}
         "default_block" = :Key {types = @a/compound, structure = @bs/block_state}
         "default_fluid" = :Key {types = @a/compound, structure = @bs/block_state}
@@ -33,6 +37,7 @@ noise_settings inherit temp/SortedKeymap {
         "noise" = :Key {types = #dict, structure = @noise}
         "noise_router" = :Key {types = #dict, structure = @noise_router}
         "surface_rule" = :Key {types = #dict, structure = @sr/surface_rule}
+        "structures" = :Key {types = #dict, structure = @structures, tags = @t/outdated}
     }
 }
 spawn_target inherit temp/Set {
@@ -75,6 +80,13 @@ noise inherit temp/SortedKeymap {
         "height" = :Key {types = #int}
         "size_horizontal" = :Key {types = #int}
         "size_vertical" = :Key {types = #int}
+        "amplified" = :Key {types = #bool, tags = @t/outdated}
+        "large_biomes" = :Key {types = #bool, tags = @t/outdated}
+        "island_noise_override" = :Key {types = #bool, tags = @t/outdated}
+        "top_slide" = :Key {types = #dict, structure = @slide, tags = @t/outdated}
+        "bottom_slide" = :Key {types = #dict, structure = @slide, tags = @t/outdated}
+        "sampling" = :Key {types = #dict, structure = @sampling, tags = @t/outdated}
+        "terrain_shaper" = :Key {types = #dict, structure = @terrain_shaper, tags = @t/outdated}
     }
 }
 noise_router inherit temp/SortedKeymap {
@@ -96,4 +108,90 @@ noise_router inherit temp/SortedKeymap {
         "ridges" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
         "preliminary_surface_level" = :Key {types = [#str, @df/density_function_type], structure = @df/density_function_or_id}
     }
+}
+sampling inherit temp/SortedKeymap {
+    keys = @df/density_function.old_blended_noise:keys
+}
+slide inherit temp/SortedKeymap {
+    keys = {
+        "target" = :Key {types = #float}
+        "size" = :Key {types = #int}
+        "offset" = :Key {types = #int}
+    }
+}
+structures :Switch {
+    switch_function = :Function {
+        function = %noise_settings_structure_switch
+    }
+    substructures = {
+        "old" = :Key {types = #dict, structure = @structures:structures, tags = @t/outdated}
+        "new" = :Key {types = #dict, structure = @structures:new}
+    }
+}
+structures:new inherit temp/SortedKeymap {
+    keys = {
+        "structures" = :Key {types = #dict, structure = @structures:structures}
+        "stronghold" = :Key {types = #dict, structure = @structures:stronghold}
+    }
+}
+structures:stronghold inherit temp/SortedKeymap {
+    keys = {
+        "distance" = :Key {types = #int}
+        "spread" = :Key {types = #int}
+        "count" = :Key {types = #int}
+    }
+}
+structures:structures inherit temp/Dict {
+    $ field = "structure"
+    value_types = #dict
+    value_structure = @placement
+}
+placement :Switch {
+    switch_function = :Function {
+        function = %noise_settings_placement_switch
+    }
+    substructures = {
+        "new" = :Key {types = #dict, structure = @placement:new}
+        "minecraft:random_spread" = :Key {types = #dict, structure = @placement.random_spread, tags = @t/outdated}
+        "minecraft:concentric_rings" = :Key {types = #dict, structure = @placement.concentric_rings, tags = @t/outdated}
+    }
+}
+placement:new inherit temp/SortedKeymap {
+    keys = {
+        "spacing" = :Key {types = #int}
+        "separation" = :Key {types = #int}
+        "salt" = :Key {types = #int}
+    }
+}
+placement:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+placement.concentric_rings inherit temp/SortedKeymap {
+    keys = @placement:all + {
+        "distance" = :Key {types = #int}
+        "spread" = :Key {types = #int}
+        "count" = :Key {types = #int}
+    }
+}
+placement.random_spread inherit temp/SortedKeymap {
+    keys = @placement:all + {
+        "spread_type" = :Key {types = #str}
+        "salt" = :Key {types = #int}
+        "spacing" = :Key {types = #int}
+        "separation" = :Key {types = #int}
+        "locate_offset" = :Key {types = #list, structure = @vector/vector.int}
+    }
+}
+terrain_shaper inherit temp/SortedKeymap {
+    keys = {
+        "offset" = :Key {types = [#dict, #float], structure = @terrain_shaper:offset}
+        "factor" = :Key {types = [#dict, #float], structure = @terrain_shaper:offset}
+        "jaggedness" = :Key {types = [#dict, #float], structure = @terrain_shaper:offset}
+    }
+}
+terrain_shaper:offset :Union {
+    substructures = [
+        :Key {types = #float}
+        :Key {types = #dict, structure = @df/density_function.spline:spline.keymap}
+    ]
 }

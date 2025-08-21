@@ -182,23 +182,23 @@ condition.light inherit temp/SortedKeymap {
         "light" = :Key {types = [#int, #dict], structure = @misc/range_int_or_int}
     }
 }
+condition.location:keys {
+    $ (list) tags = []
+    "biome" = :Key {types = #str, tags = [@t/outdated] + tags}
+    "biomes" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="biome"}, tags = tags}
+    "block" = :Key {types = #dict, structure = @condition.block, tags = tags}
+    "dimension" = :Key {types = #str, tags = tags}
+    "feature" = :Key {types = #str, tags = [@t/outdated] + tags}
+    "fluid" = :Key {types = #dict, structure = @condition.fluid, tags = tags}
+    "light" = :Key {types = #dict, structure = @condition.light, tags = tags}
+    "position" = :Key {types = #dict, structure = @condition.position, tags = tags}
+    "smokey" = :Key {types = #bool, tags = tags}
+    "can_see_sky" = :Key {types = #bool, tags = tags}
+    "structure" = :Key {types = #str, tags = [@t/outdated] + tags}
+    "structures" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="structure"}, tags = tags}
+}
 condition.location inherit temp/SortedKeymap {
-    $ (:StructureTag | list) tags = []
-    tags = tags
-    keys = {
-        "biome" = :Key {types = #str, tags = @t/outdated}
-        "biomes" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="biome"}}
-        "block" = :Key {types = #dict, structure = @condition.block}
-        "dimension" = :Key {types = #str}
-        "feature" = :Key {types = #str, tags = @t/outdated}
-        "fluid" = :Key {types = #dict, structure = @condition.fluid}
-        "light" = :Key {types = #dict, structure = @condition.light}
-        "position" = :Key {types = #dict, structure = @condition.position}
-        "smokey" = :Key {types = #bool}
-        "can_see_sky" = :Key {types = #bool}
-        "structure" = :Key {types = #str, tags = @t/outdated}
-        "structures" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="structure"}}
-    }
+    keys = @condition.location:keys
 }
 condition.movement inherit temp/SortedKeymap {
     keys = {

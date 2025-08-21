@@ -2,6 +2,7 @@
 settings {
     aliases {
         misc = @structures/misc/misc/
+        t = @structure_tags/
         temp = @structures/misc/template/
         tc = @structures/misc/text_component/
     }
@@ -16,9 +17,25 @@ root inherit temp/SortedKeymap {
     keys = {
         "chat" = :Key {types = #dict, structure = @chat}
         "narration" = :Key {types = #dict, structure = @chat}
+        "overlay" = :Key {types = #dict, structure = @misc/empty_dict, tags = @t/outdated}
     }
 }
-chat inherit temp/SortedKeymap {
+chat :Switch {
+    switch_function = :Function {
+        function = %chat_types_switch
+    },
+    substructures = {
+        "old" = :Key {types = #dict, structure = @chat.old, tags = @t/outdated}
+        "new" = :Key {types = #dict, structure = @chat.new}
+    }
+}
+chat.old inherit temp/SortedKeymap {
+    keys = {
+        "priority" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "decoration" = :Key {types = #dict, structure = @chat.new}
+    }
+}
+chat.new inherit temp/SortedKeymap {
     keys = {
         "translation_key" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
         "parameters" = :Key {types = #list, structure = @parameters}

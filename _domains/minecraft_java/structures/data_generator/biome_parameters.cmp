@@ -1,0 +1,53 @@
+settings {
+    aliases {
+        misc = @structures/misc/misc/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_files {
+    $ name = "biome_parameters"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "biomes" = :Key {types = #list, structure = @biomes}
+    }
+}
+biomes inherit temp/Set {
+    $ field = "biome"
+    value_types = #dict
+    value_structure = @biome
+}
+biome inherit temp/SortedKeymap {
+    keys = {
+        "biome" = :Key {types = #str, structure = @id_string, similarity_weight = 4}
+        "parameters" = :Key {types = #dict, structure = @parameters}
+    }
+}
+parameters inherit temp/SortedKeymap {
+    keys = {
+        "continentalness" = :Key {types = [#float, #list], structure = @range}
+        "depth" = :Key {types = [#float, #list], structure = @range}
+        "erosion" = :Key {types = [#float, #list], structure = @range}
+        "humidity" = :Key {types = [#float, #list], structure = @range}
+        "offset" = :Key {types = [#float, #list], structure = @range}
+        "temperature" = :Key {types = [#float, #list], structure = @range}
+        "weirdness" = :Key {types = [#float, #list], structure = @range}
+    }
+}
+range :Union {
+    substructures = [
+        :Key {types = #float}
+        :Key {types = #list, structure = inherit temp/List {
+            $print_all = true
+            $print_flat = true
+            value_types = #float
+            value_structure = null
+        }}
+    ]
+}
+id_string inherit misc/string {
+    similarity_function = :Function {
+        function = %remove_minecraft_prefix
+    }
+}

@@ -1,0 +1,139 @@
+settings {
+    aliases {
+        bp = @structures/misc/block_predicate/
+        bs = @structures/misc/block_state/
+        hp = @structures/misc/provider/height_provider/
+        ip = @structures/misc/provider/int_provider/
+        misc = @structures/misc/misc/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+        vector = @structures/misc/vector/
+    }
+}
+decorator :Switch {
+    switch_function = :Function {
+        function = %old_type_choose
+    }
+    substructures = {
+        "minecraft:block_filter" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.block_filter}}
+        "minecraft:block_survives_filter" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.block_survives_filter}}
+        "minecraft:carving_mask" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.carving_mask}}
+        "minecraft:cave_surface" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.cave_surface}}
+        "minecraft:chance" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.chance}}
+        "minecraft:count" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.count}}
+        "minecraft:count_extra" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.count_extra}}
+        "minecraft:count_multilayer" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.count}}
+        "minecraft:count_noise" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.count_noise}}
+        "minecraft:count_noise_biased" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.count_noise_biased}}
+        "minecraft:dark_oak_tree" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:decorated" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.decorated}}
+        "minecraft:depth_average" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.depth_average}, tags = @t/outdated}
+        "minecraft:emerald_ore" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:end_gateway" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:end_island" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:fire" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.count}}
+        "minecraft:glowstone" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.count}, tags = @t/outdated}
+        "minecraft:heightmap" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.heightmap}}
+        "minecraft:heightmap_spread_double" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.heightmap}}
+        "minecraft:heightmap_with_water_threshold" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.water_depth_threshold}, tags = @t/outdated}
+        "minecraft:heightmap_world_surface" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:iceberg" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:lava_lake" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.chance}}
+        "minecraft:magma" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:range" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.range}}
+        "minecraft:range_biased" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.range_biased_to_bottom}, tags = @t/outdated}
+        "minecraft:range_biased_to_bottom" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.range_biased_to_bottom}, tags = @t/outdated}
+        "minecraft:range_very_biased" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.range_biased_to_bottom}, tags = @t/outdated}
+        "minecraft:range_very_biased_to_bottom" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.range_biased_to_bottom}, tags = @t/outdated}
+        "minecraft:spread_32_above" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:square" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:surface_relative_threshold" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.surface_relative_threshold}}
+        "minecraft:top_solid_heightmap" = :Key {types = #dict, structure = @decorator:abstract}
+        "minecraft:water_depth_threshold" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.water_depth_threshold}}
+        "minecraft:water_lake" = :Key {types = #dict, structure = @decorator:abstract{$imports=@decorator.chance}}
+    }
+}
+decorator:abstract inherit temp/SortedKeymap {
+    $ (dict) imports = {}
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "config" = :Key {types = #dict, structure = @config:abstract{$imports=imports}}
+    }
+}
+config:abstract abstract inherit temp/SortedKeymap {
+    $ (dict) imports
+    keys = imports
+}
+decorator.block_filter {
+    "allowed" = :Key {types = #list, structure = @misc/named_list{$name = "block"}}
+    "offset" = :Key {types = #list, structure = @vector/vector.int}
+    "predicate" = :Key {types = #dict, structure = @bp/block_predicate}
+}
+decorator.block_survives_filter {
+    "state" = :Key {types = #dict, structure = @bs/block_state}
+}
+decorator.carving_mask {
+    "step" = :Key {types = #str}
+    "probability" = :Key {types = #float, tags = @t/outdated}
+}
+decorator.cave_surface {
+    "surface" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "floor_to_ceiling_search_range" = :Key {types = #int}
+}
+decorator.chance {
+    "chance" = :Key {types = #int}
+}
+decorator.count {
+    "count" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+}
+decorator.count_extra @decorator.count + {
+    "extra_chance" = :Key {types = #float}
+    "extra_count" = :Key {types = #int}
+}
+decorator.count_noise {
+    "noise_level" = :Key {types = #float}
+    "below_noise" = :Key {types = #int}
+    "above_noise" = :Key {types = #int}
+}
+decorator.count_noise_biased {
+    "noise_to_count_ratio" = :Key {types = #int}
+    "noise_factor" = :Key {types = #float}
+    "noise_offset" = :Key {types = #float}
+}
+decorator.decorated {
+    "outer" = :Key {types = #dict, structure = @decorator}
+    "inner" = :Key {types = #dict, structure = @decorator}
+}
+decorator.depth_average {
+    "baseline" = :Key {types = [#int, #dict], structure = @decorator.depth_average:baseline}
+    "spread" = :Key {types = #int}
+}
+decorator.depth_average:baseline :Union {
+    substructures = [
+        :Key {types = #dict, structure = @hp/vertical_anchor}
+        :Key {types = #int}
+    ]
+}
+decorator.heightmap {
+    "heightmap" = :Key {types = #str}
+}
+decorator.range {
+    "height" = :Key {types = #dict, structure = @hp/height_provider}
+    "bottom_inclusive" = :Key {types = #dict, structure = @hp/vertical_anchor, tags = @t/outdated}
+    "bottom_offset" = :Key {types = #int, tags = @t/outdated}
+    "top_inclusive" = :Key {types = #dict, structure = @hp/vertical_anchor, tags = @t/outdated}
+    "top_offset" = :Key {types = #int, tags = @t/outdated}
+    "maximum" = :Key {types = #int, tags = @t/outdated}
+}
+decorator.range_biased_to_bottom @decorator.range + {
+    "cutoff" = :Key {types = #int, tags = @t/outdated}
+}
+decorator.surface_relative_threshold {
+    "heightmap" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    "min_inclusive" = :Key {types = #int}
+    "max_inclusive" = :Key {types = #int}
+}
+decorator.water_depth_threshold {
+    "max_water_depth" = :Key {types = #int}
+}

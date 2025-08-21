@@ -1,0 +1,42 @@
+settings {
+    aliases {
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_single_file {
+    $ name = "datapacks"
+    $ structure = @root
+}
+root inherit temp/SortedKeymap {
+    keys = {
+        "others" = :Key {types = #dict, structure = @others}
+        "registries" = :Key {types = #dict, structure = @registries}
+    }
+}
+others inherit temp/SortedKeymap {
+    keys = {
+        "function" = :Key {types = #dict, structure = @other}
+        "structure" = :Key {types = #dict, structure = @other}
+    }
+}
+other inherit temp/SortedKeymap {
+    keys = {
+        "elements" = :Key {types = #bool}
+        "format" = :Key {types = #str}
+        "stable" = :Key {types = #bool}
+        "tags" = :Key {types = #bool}
+    }
+}
+registries inherit temp/Dict {
+    $field = "registry"
+    allow_key_moves = false
+    value_types = #dict
+    value_structure = @registry
+}
+registry inherit temp/SortedKeymap {
+    keys = {
+        "elements" = :Key {types = #bool}
+        "stable" = :Key {types = #bool}
+        "tags" = :Key {types = #bool}
+    }
+}

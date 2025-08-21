@@ -27,36 +27,43 @@ height_provider :Switch {
         "minecraft:weighted_list" = :Key {types = #dict, structure = @height_provider.weighted_list}
     }
 }
-height_provider:all {
-    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+height_provider:abstract inherit temp/SortedKeymap {
+    $ (dict) keys = {}
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+    } + keys + {
+        "value" = :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = keys
+        }}
+    }
 }
-height_provider.biased_to_bottom inherit temp/SortedKeymap {
-    keys = @height_provider:all + {
+height_provider.biased_to_bottom inherit height_provider:abstract {
+    $ keys = {
         "min_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
         "max_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
         "inner" = :Key {types = #int}
     }
 }
-height_provider.constant inherit temp/SortedKeymap {
-    keys = @height_provider:all + {
+height_provider.constant inherit height_provider:abstract {
+    $ keys = {
         "value" = :Key {types = #dict, structure = @vertical_anchor}
     }
 }
-height_provider.trapezoid inherit temp/SortedKeymap {
-    keys = @height_provider:all + {
+height_provider.trapezoid inherit height_provider:abstract {
+    $ keys = {
         "min_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
         "max_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
         "plateau" = :Key {types = #int}
     }
 }
-height_provider.uniform inherit temp/SortedKeymap {
-    keys = @height_provider:all + {
+height_provider.uniform inherit height_provider:abstract {
+    $ keys = {
         "min_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
         "max_inclusive" = :Key {types = #dict, structure = @vertical_anchor}
     }
 }
-height_provider.weighted_list inherit temp/SortedKeymap {
-    keys = @height_provider:all + {
+height_provider.weighted_list inherit height_provider:abstract {
+    $ keys = {
         "distribution" = :Key {types = #list, structure = @height_provider.weighted_list:distribution}
     }
 }

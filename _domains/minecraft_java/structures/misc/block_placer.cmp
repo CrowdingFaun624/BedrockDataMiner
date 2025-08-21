@@ -1,0 +1,31 @@
+settings {
+    aliases {
+        ip = @structures/misc/provider/int_provider/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+block_placer :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:column_placer" = :Key {types = #dict, structure = @block_placer.column_placer}
+        "minecraft:double_plant_placer" = :Key {types = #dict, structure = @block_placer.simple_block_placer}
+        "minecraft:simple_block_placer" = :Key {types = #dict, structure = @block_placer.simple_block_placer}
+    }
+}
+block_placer:all {
+    "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+}
+block_placer.column_placer inherit temp/SortedKeymap {
+    keys = @block_placer:all + {
+        "size" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+        "min_size" = :Key {types = #int, tags = @t/outdated}
+        "extra_size" = :Key {types = #int, tags = @t/outdated}
+    }
+}
+block_placer.simple_block_placer inherit temp/SortedKeymap {
+    keys = @block_placer:all
+}

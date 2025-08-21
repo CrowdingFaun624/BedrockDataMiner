@@ -2,6 +2,7 @@
 // MCW says every float in this file is a double, except for some in density_function.spline
 settings {
     aliases {
+        t = @structure_tags/
         temp = @structures/misc/template/
     }
 }
@@ -53,9 +54,11 @@ density_function :Switch {
         "minecraft:shift_a" = :Key {types = #dict, structure = @density_function.shift}
         "minecraft:shift_b" = :Key {types = #dict, structure = @density_function.shift}
         "minecraft:shifted_noise" = :Key {types = #dict, structure = @density_function.shifted_noise}
+        "minecraft:slide" = :Key {types = #dict, structure = @density_function.single_argument, tags = @t/outdated}
         "minecraft:spline" = :Key {types = #dict, structure = @density_function.spline}
         "minecraft:square" = :Key {types = #dict, structure = @density_function.single_argument}
         "minecraft:squeeze" = :Key {types = #dict, structure = @density_function.single_argument}
+        "minecraft:terrain_shaper_spline" = :Key {types = #dict, structure = @density_function.terrain_shaper_spline, tags = @t/outdated}
         "minecraft:weird_scaled_sampler" = :Key {types = #dict, structure = @density_function.weird_scaled_sampler}
         "minecraft:y_clamped_gradient" = :Key {types = #dict, structure = @density_function.y_clamped_gradient}
     }
@@ -99,14 +102,15 @@ density_function.noise inherit temp/SortedKeymap {
         "y_scale" = :Key {types = #float}
     }
 }
+density_function.old_blended_noise:keys {
+    "xz_scale" = :Key {types = #float}
+    "y_scale" = :Key {types = #float}
+    "xz_factor" = :Key {types = #float}
+    "y_factor" = :Key {types = #float}
+    "smear_scale_multiplier" = :Key {types = #float}
+}
 density_function.old_blended_noise inherit temp/SortedKeymap {
-    keys = @density_function:all + {
-        "xz_scale" = :Key {types = #float}
-        "y_scale" = :Key {types = #float}
-        "xz_factor" = :Key {types = #float}
-        "y_factor" = :Key {types = #float}
-        "smear_scale_multiplier" = :Key {types = #float}
-    }
+    keys = @density_function:all + @density_function.old_blended_noise:keys
 }
 density_function.range_choice inherit temp/SortedKeymap {
     keys = @density_function:all + {
@@ -164,6 +168,16 @@ density_function.spline:point inherit temp/SortedKeymap {
         "location" = :Key {types = #float}
         "value" = :Key {types = [#float, #dict], structure = @density_function.spline:spline}
         "derivative" = :Key {types = #float}
+    }
+}
+density_function.terrain_shaper_spline inherit temp/SortedKeymap {
+    keys = @density_function:all + {
+        "spline" = :Key {types = #str, delegate_arguments = {"always_print" = true}},
+        "min_value" = :Key {types = #float}
+        "max_value" = :Key {types = #float}
+        "continentalness" = :Key {types = #str}
+        "erosion" = :Key {types = #str}
+        "weirdness" = :Key {types = #str}
     }
 }
 density_function.weird_scaled_sampler inherit temp/SortedKeymap {

@@ -1,0 +1,50 @@
+settings {
+    aliases {
+        sf = @structures/data/generation/structure_feature/
+        structure = @structures/data/generation/structure/
+        t = @structure_tags/
+        temp = @structures/misc/template/
+    }
+}
+base inherit temp/base_multiple_pack_files {
+    $ name = "configured_structure_feature"
+    $ pack_type = "data pack"
+    $ structure = @configured_structure_feature
+}
+configured_structure_feature :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "minecraft:ancient_city" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.pooled}}
+        "minecraft:bastion_remnant" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.pooled}}
+        "minecraft:buried_treasure" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.buried_treasure}}
+        "minecraft:desert_pyramid" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:endcity" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:fortress" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:igloo" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:jungle_pyramid" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:mansion" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:mineshaft" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.mineshaft}}
+        "minecraft:monument" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:nether_fossil" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.nether_fossil}}
+        "minecraft:ocean_ruin" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.ocean_ruin}}
+        "minecraft:pillager_outpost" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.pooled}}
+        "minecraft:ruined_portal" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.ruined_portal}}
+        "minecraft:shipwreck" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.shipwreck}}
+        "minecraft:stronghold" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:swamp_hut" = :Key {types = #dict, structure = @configured_structure_feature:abstract}
+        "minecraft:village" = :Key {types = #dict, structure = @configured_structure_feature:abstract{$config=@sf/config.pooled}}
+    }
+}
+configured_structure_feature:abstract inherit temp/SortedKeymap {
+    $ (:Structure) config = inherit temp/SortedKeymap {keys = {}}
+    keys = {
+        "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "adapt_noise" = :Key {types = #bool, tags = @t/outdated}
+        "biomes" = :Key {types = #str}
+        "spawn_overrides" = :Key {types = #dict, structure = @structure/spawn_overrides}
+        "config" = :Key {types = #dict, structure = config}
+    }
+}

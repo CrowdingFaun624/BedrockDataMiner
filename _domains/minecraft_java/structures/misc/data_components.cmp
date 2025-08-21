@@ -37,7 +37,7 @@ data_components:keys {
     "minecraft:creative_slot_lock" = :Key {types = @a/compound, structure = @misc/empty_compound} // internal
     "minecraft:custom_data" = :Key {types = [@a/compound, @a/string], structure = @component.custom_data}
     "minecraft:custom_model_data" = :Key {types = @a/compound, structure = @component.custom_model_data}
-    "minecraft:custom_name" = :Key {types = [@a/string, @a/list, @a/compound], structure = @structures/misc/text_component/root}
+    "minecraft:custom_name" = :Key {types = [@a/string, @a/list, @a/compound], structure = @tc/root}
     "minecraft:damage" = :Key {types = @a/int}
     "minecraft:damage_resistant" = :Key {types = @a/compound, structure = @component.damage_resistant}
     "minecraft:debug_stick_state" = :Key {types = @a/compound, structure = @component.debug_stick_state}
@@ -49,6 +49,7 @@ data_components:keys {
     "minecraft:entity_data" = :Key {types = @a/compound, structure = @structures/misc/entity/entity}
     "minecraft:equippable" = :Key {types = @a/compound, structure = @component.equippable}
     "minecraft:explicit_foil" = :Key {types = @a/bool, tags = [@t/april_fools]}
+    "minecraft:fire_resistant" = :Key {types = @a/compound, structure = @structures/misc/misc/empty_compound, tags = @t/outdated}
     "minecraft:firework_explosion" = :Key {types = @a/compound, structure = @misc/firework_explosion}
     "minecraft:fireworks" = :Key {types = @a/compound, structure = @component.fireworks}
     "minecraft:fletching" = :Key {types = @a/compound, structure = @component.fletching, tags = [@t/april_fools]}
@@ -63,13 +64,13 @@ data_components:keys {
     "minecraft:hovered" = :Key {types = @a/bool, tags = [@t/april_fools]}
     "minecraft:instrument" = :Key {types = [@a/string, @a/compound], structure = @component.instrument:union}
     "minecraft:intangible_projectile" = :Key {types = @a/compound, structure = @misc/empty_compound}
-    "minecraft:item_mode" = :Key {types = @a/string}
-    "minecraft:item_name" = :Key {types = [@a/string, @a/compound, @a/list], structure = @structures/misc/text_component/root}
-    "minecraft:jukebox_playable" = :Key {types = @a/string}
+    "minecraft:item_model" = :Key {types = @a/string}
+    "minecraft:item_name" = :Key {types = [@a/string, @a/compound, @a/list], structure = @tc/root}
+    "minecraft:jukebox_playable" = :Key {types = [@a/compound, @a/string], structure = @component.jukebox_playable}
     "minecraft:llama/variant" = :Key {types = @a/string}
     "minecraft:lock" = :Key {types = @a/compound, structure = @conditions/condition.item}
     "minecraft:lodestone_tracker" = :Key {types = @a/compound, structure = @component.lodestone_tracker}
-    "minecraft:lore" = :Key {types = @a/list, structure = @structures/misc/text_component/lines}
+    "minecraft:lore" = :Key {types = @a/list, structure = @tc/lines}
     "minecraft:lubrication" = :Key {types = @a/compound, structure = @component.lubrication, tags = [@t/april_fools]}
     "minecraft:map_color" = :Key {types = @a/int}
     "minecraft:map_decorations" = :Key {types = @a/compound, structure = @component.map_decorations}
@@ -93,7 +94,7 @@ data_components:keys {
     "minecraft:rabbit/variant" = :Key {types = @a/string}
     "minecraft:rarity" = :Key {types = @a/string}
     "minecraft:recipes" = :Key {types = @a/list, structure = @misc/named_list.nbt{$name="recipe"}}
-    "minecraft:repairable" = :Key {types = [@a/string, @a/list], structure = @misc/named_list_or_item.nbt{$name = "item"}}
+    "minecraft:repairable" = :Key {types = @a/compound, structure = @component.repairable}
     "minecraft:repair_cost" = :Key {types = @a/int}
     "minecraft:resin" = :Key {types = @a/compound, structure = @component.resin, tags = [@t/april_fools]}
     "minecraft:salmon/size" = :Key {types = @a/string}
@@ -183,7 +184,7 @@ data_component_modification inherit temp/SortedKeymap.nbt {
         "!minecraft:hovered" = :Key {types = @a/compound, structure = @misc/empty_compound}
         "!minecraft:instrument" = :Key {types = @a/compound, structure = @misc/empty_compound}
         "!minecraft:intangible_projectile" = :Key {types = @a/compound, structure = @misc/empty_compound}
-        "!minecraft:item_mode" = :Key {types = @a/compound, structure = @misc/empty_compound}
+        "!minecraft:item_model" = :Key {types = @a/compound, structure = @misc/empty_compound}
         "!minecraft:item_name" = :Key {types = @a/compound, structure = @misc/empty_compound}
         "!minecraft:jukebox_playable" = :Key {types = @a/compound, structure = @misc/empty_compound}
         "!minecraft:llama/variant" = :Key {types = @a/compound, structure = @misc/empty_compound}
@@ -264,9 +265,34 @@ component.attribute_modifiers:item inherit temp/SortedKeymap.nbt {
     keys = {
         "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
         "slot" = :Key {types = @a/string}
+        "name" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
         "id" = :Key {types = @a/string, structure = @misc/string.nbt, delegate_arguments = {"always_print" = true}}
         "amount" = :Key {types = @a/double}
         "operation" = :Key {types = @a/string}
+        "display" = :Key {types = @a/compound, structure = @component.attribute_modifiers:display}
+        "uuid" = :Key {types = @a/int_array, structure = @misc/uuid_list.nbt}
+    }
+}
+component.attribute_modifiers:display :Switch {
+    switch_function = :Function {
+        function = %get_key
+        arguments = {"key" = "type"}
+    }
+    substructures = {
+        "default" = :Key {types = @a/compound, structure = @component.attribute_modifiers:display.default}
+        "hidden" = :Key {types = @a/compound, structure = @component.attribute_modifiers:display.default}
+        "override" = :Key {types = @a/compound, structure = @component.attribute_modifiers:display.override}
+    }
+}
+component.attribute_modifiers:display:all {
+    "type" = :Key {types = @a/string, delegate_arguments = {"always_print" = true}}
+}
+component.attribute_modifiers:display.default inherit temp/SortedKeymap.nbt {
+    keys = @component.attribute_modifiers:display:all
+}
+component.attribute_modifiers:display.override inherit temp/SortedKeymap.nbt {
+    keys = @component.attribute_modifiers:display:all + {
+        "value" = :Key {types = @tc/root_type, structure = @tc/root}
     }
 }
 component.banner_patterns inherit temp/Sequence.nbt {
@@ -456,6 +482,9 @@ component.equippable inherit temp/SortedKeymap.nbt {
         "damage_on_hurt" = :Key {types = @a/bool}
         "equip_on_interact" = :Key {types = @a/bool}
         "camera_overlay" = :Key {types = @a/string}
+        "can_be_sheared" = :Key {types = @a/bool}
+        "shearing_sound" = :Key {types = @a/string}
+        "model" = :Key {types = @a/string, tags = @t/outdated}
     }
 }
 component.fireworks inherit temp/SortedKeymap.nbt {
@@ -478,6 +507,21 @@ component.food inherit temp/SortedKeymap.nbt {
         "nutrition" = :Key {types = @a/int}
         "saturation" = :Key {types = @a/float}
         "can_always_eat" = :Key {types = @a/bool}
+        "using_converts_to" = :Key {types = @a/compound, structure = @misc/item_data_slotless, tags = @t/outdated}
+        "effects" = :Key {types = @a/list, structure = @component.food:effects, tags = @t/outdated}
+        "eat_seconds" = :Key {types = @a/float, tags = @t/outdated}
+        "saturation_modifier" = :Key {types = @a/float, tags = @t/outdated}
+    }
+}
+component.food:effects inherit temp/Set.nbt {
+    $field = "effect"
+    value_types = @a/compound
+    value_structure = @component.food:effect
+}
+component.food:effect inherit temp/SortedKeymap.nbt {
+    keys = {
+        "effect" = :Key {types = @a/compound, structure = @misc/effect_data}
+        "probability" = :Key {types = @a/float}
     }
 }
 component.heat inherit temp/SortedKeymap.nbt {
@@ -495,11 +539,21 @@ component.instrument:union :Union {
 }
 component.instrument inherit temp/SortedKeymap.nbt {
     keys = {
-        "description" = :Key {types = @structures/misc/text_component/root_type, structure = @structures/misc/text_component/root}
+        "description" = :Key {types = @tc/root_type, structure = @tc/root}
         "sound_event" = :Key {types = [@a/string, @a/compound], structure = @misc/sound_event}
         "use_duration" = :Key {types = @a/float}
         "range" = :Key {types = @a/float}
     }
+}
+component.jukebox_playable :Union {
+    substructures = [
+        :Key {types = @a/string}
+        :Key {types = @a/compound, structure = inherit temp/SortedKeymap.nbt {
+            keys = {
+                "song" = :Key {types = @a/string}
+            }
+        }}
+    ]
 }
 component.lodestone_tracker inherit temp/SortedKeymap.nbt {
     keys = {
@@ -542,6 +596,11 @@ component.potion_contents inherit temp/SortedKeymap.nbt {
         "custom_color" = :Key {types = @a/int}
         "custom_name" = :Key {types = @a/string}
         "custom_effects" = :Key {types = @a/list, structure = @misc/effect_data_list}
+    }
+}
+component.repairable inherit temp/SortedKeymap.nbt {
+    keys = {
+        "items" = :Key {types = [@a/string, @a/list], structure = @misc/named_list_or_item.nbt{$name = "item"}}
     }
 }
 component.resin inherit temp/SortedKeymap.nbt {
@@ -607,6 +666,7 @@ component.use_cooldown inherit temp/SortedKeymap.nbt {
 component.weapon inherit temp/SortedKeymap.nbt {
     keys = {
         "item_damage_per_attack" = :Key {types = @a/int}
+        "damage_per_attack" = :Key {types = @a/int, tags = @t/outdated}
         "can_disable_blocking" = :Key {types = @a/bool, tags = @t/outdated}
         "disable_blocking_for_seconds" = :Key {types = @a/float}
     }

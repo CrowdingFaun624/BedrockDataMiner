@@ -1,11 +1,15 @@
-from typing import Iterable, TypedDict
+from typing import Iterable, Sequence, TypedDict
 
 from Component.ComponentFunctions import component_function
 from Dataminer.Dataminer import Dataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
 from Dataminer.FileDataminer import location_value_function
 from Utilities.Exceptions import DataminerNothingFoundError
-from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
 
 class PackTypedDict(TypedDict):
@@ -19,20 +23,24 @@ class OutputTypedDict(TypedDict):
 class PacksDataminer(Dataminer):
 
     __slots__ = (
+        "ignore_packs",
         "namespace_location",
         "subpack_location",
     )
 
     parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("ignore_packs", False, ListTypeVerifier(str, list)),
         TypedDictKeyTypeVerifier("namespace_location", True, str, location_value_function),
         TypedDictKeyTypeVerifier("subpack_location", False, str, location_value_function),
     )
 
     def initialize(
         self,
+        ignore_packs:Sequence[str],
         namespace_location:str,
         subpack_location:str|None=None
     ) -> None:
+        self.ignore_packs = ignore_packs
         self.namespace_location = namespace_location
         self.subpack_location:str|None = subpack_location
 

@@ -8,6 +8,7 @@ settings {
         misc = @structures/misc/misc/
         prt = @structures/data/generation/pos_rule_test/
         rt = @structures/data/generation/rule_test/
+        t = @structure_tags/
         temp = @structures/misc/template/
     }
 }
@@ -46,17 +47,18 @@ processor :Switch {
         arguments = {"key" = "processor_type"}
     }
     substructures = {
-        "minecraft:rule" = :Key {types = #dict, structure = @processor.rule}
-        "minecraft:block_rot" = :Key {types = #dict, structure = @processor.block_rot}
+        "minecraft:blackstone_replace" = :Key {types = #dict, structure = @processor.empty}
         "minecraft:block_age" = :Key {types = #dict, structure = @processor.block_age}
         "minecraft:block_ignore" = :Key {types = #dict, structure = @processor.block_ignore}
+        "minecraft:block_rot" = :Key {types = #dict, structure = @processor.block_rot}
+        "minecraft:capped" = :Key {types = #dict, structure = @processor.capped}
         "minecraft:gravity" = :Key {types = #dict, structure = @processor.gravity}
-        "minecraft:protected_blocks" = :Key {types = #dict, structure = @processor.protected_blocks}
-        "minecraft:blackstone_replace" = :Key {types = #dict, structure = @processor.empty}
         "minecraft:jigsaw_replacement" = :Key {types = #dict, structure = @processor.empty}
         "minecraft:lava_submerged_block" = :Key {types = #dict, structure = @processor.empty}
-        "minecraft:capped" = :Key {types = #dict, structure = @processor.capped}
         "minecraft:nop" = :Key {types = #dict, structure = @processor.empty}
+        "minecraft:protected_blocks" = :Key {types = #dict, structure = @processor.protected_blocks}
+        "minecraft:replace_in_tag" = :Key {types = #dict, structure = @processor.replace_in_tag, tags = @t/outdated}
+        "minecraft:rule" = :Key {types = #dict, structure = @processor.rule}
     }
 }
 processor:all {
@@ -144,5 +146,11 @@ processor.capped inherit temp/SortedKeymap {
         "value" = :Key {types = [#int, #dict], structure = @ip/int_provider}
         "limit" = :Key {types = #int} // not documented on wiki
         "delegate" = :Key {types = #dict, structure = @processor}
+    }
+}
+processor.replace_in_tag inherit temp/SortedKeymap {
+    keys = @processor:all + {
+        "rottable_blocks" = :Key {types = #str}
+        "integrity" = :Key {types = #float}
     }
 }

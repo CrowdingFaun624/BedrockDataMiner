@@ -4,6 +4,7 @@ settings {
         bsp = @structures/misc/provider/block_state_provider/
         ip = @structures/misc/provider/int_provider/
         misc = @structures/misc/misc/
+        t = @structure_tags/
         temp = @structures/misc/template/
     }
 }
@@ -20,6 +21,7 @@ root_placer:all {
     "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
     "root_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
     "trunk_offset_y" = :Key {types = [#int, #dict], structure = @ip/int_provider}
+    "y_offset" = :Key {types = [#int, #dict], structure = @ip/int_provider, tags = [@t/outdated]}
     "above_root_placement" = :Key {types = #dict, structure = @above_root_placement}
 }
 above_root_placement inherit temp/SortedKeymap {
@@ -31,15 +33,17 @@ above_root_placement inherit temp/SortedKeymap {
 root_placer.mangrove_root_placer inherit temp/SortedKeymap {
     keys = @root_placer:all + {
         "mangrove_root_placement" = :Key {types = #dict, structure = @root_placer.mangrove_root_placer:mangrove_root_placement}
-    }
+    } + @root_placer.mangrove_root_placer:mangrove_root_placement:keys{tags = [@t/outdated]}
+}
+root_placer.mangrove_root_placer:mangrove_root_placement:keys {
+    $ (list) tags = []
+    "max_root_width" = :Key {types = #int, tags = tags}
+    "max_root_length" = :Key {types = #int, tags = tags}
+    "random_skew_chance" = :Key {types = #float, tags = tags}
+    "can_grow_through" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}, tags = tags}
+    "muddy_roots_in" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}, tags = tags}
+    "muddy_roots_provider" = :Key {types = #dict, structure = @bsp/block_state_provider, tags = tags}
 }
 root_placer.mangrove_root_placer:mangrove_root_placement inherit temp/SortedKeymap {
-    keys = {
-        "max_root_width" = :Key {types = #int}
-        "max_root_length" = :Key {types = #int}
-        "random_skew_chance" = :Key {types = #float}
-        "can_grow_through" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
-        "muddy_roots_in" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
-        "muddy_roots_provider" = :Key {types = #dict, structure = @bsp/block_state_provider}
-    }
+    keys = @root_placer.mangrove_root_placer:mangrove_root_placement:keys
 }

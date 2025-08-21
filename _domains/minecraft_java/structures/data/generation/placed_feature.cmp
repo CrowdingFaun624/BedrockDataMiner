@@ -22,10 +22,23 @@ placed_feature_list_or_feature :Union {
         :Key {types = #list, structure = @placed_feature_or_id_list},
     ]
 }
+placed_feature_list_or_feature_or_old :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @placed_feature_or_old},
+        :Key {types = #list, structure = @placed_feature_or_id_list_or_old},
+    ]
+}
 placed_feature_or_id :Union {
     substructures = [
         :Key {types = #str},
         :Key {types = #dict, structure = @placed_feature},
+    ]
+}
+placed_feature_or_id_or_old :Union {
+    substructures = [
+        :Key {types = #str},
+        :Key {types = #dict, structure = @placed_feature_or_old},
     ]
 }
 placed_feature_or_id_list inherit temp/Set {
@@ -33,11 +46,22 @@ placed_feature_or_id_list inherit temp/Set {
     value_types = [#str, #dict]
     value_structure = @placed_feature_or_id
 }
+placed_feature_or_id_list_or_old inherit temp/Set {
+    $ field = "placed feature"
+    value_types = [#str, #dict]
+    value_structure = @placed_feature_or_id_or_old
+}
 placed_feature inherit temp/SortedKeymap {
     keys = {
         "feature" = :Key {types = [#str, #dict], structure = @cf/feature_or_id}
         "placement" = :Key {types = #list, structure = @placement_modifier_list}
     }
+}
+placed_feature_or_old :Condition {
+    substructures = [
+        :Key {types = [#str, #dict, #list], filter = :EqFilter {key = "old_features", value = true, default = false}, structure = @cf/feature}
+        :Key {types = [#str, #dict, #list], filter = :EqFilter {key = "old_features", value = false, default = true}, structure = @placed_feature}
+    ]
 }
 placement_modifier_list inherit temp/Set {
     $ field = "placement modifier"

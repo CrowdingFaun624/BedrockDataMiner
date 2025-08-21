@@ -63,8 +63,24 @@ element.empty inherit temp/SortedKeymap {
 }
 element.feature inherit temp/SortedKeymap {
     keys = @element:all + {
-        "feature" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "feature" = :Key {types = [#str, #dict], structure = @element.feature:feature}
     }
+}
+element.feature:feature :Union {
+    substructures = [
+        :Key {types = #str}
+        :Key {types = #dict, structure = inherit temp/SortedKeymap {
+            keys = {
+                "feature" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+                "placement" = :Key {types = #list, structure = @element.feature:placement}
+            }
+        }, tags = @t/outdated}
+    ]
+}
+element.feature:placement inherit temp/Set {
+    $field = "placement"
+    value_types = #null
+    value_structure = null
 }
 element.legacy_single inherit temp/SortedKeymap {
     keys = @element:all + {

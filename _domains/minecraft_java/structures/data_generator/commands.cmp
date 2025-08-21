@@ -3,6 +3,7 @@ settings {
     aliases {
         misc = @structures/misc/misc/
         temp = @structures/misc/template/
+        t = @structure_tags/
     }
 }
 base inherit temp/base_single_file {
@@ -18,12 +19,17 @@ node :Switch {
         "argument" = :Key {types = #dict, structure = @node.argument}
         "literal" = :Key {types = #dict, structure = @node.literal}
         "root" = :Key {types = #dict, structure = @node.root}
+        "unknown" = :Key {types = #dict, structure = @node.unknown, tags = @t/outdated}
     }
 }
 node:all {
     "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
     "executable" = :Key {types = #bool},
     "redirect" = :Key {types = #list, structure = @misc/named_list{$name = "node"}}
+    "required_level" = :Key {types = #int}
+}
+node:children {
+    "children" = :Key {types = #dict, structure = @children}
 }
 children inherit temp/Dict {
     $ field = "child"
@@ -46,17 +52,20 @@ node.argument :Switch {
         "minecraft:block_predicate" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:block_state" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:color" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:column_pos" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:component" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:dialog" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:dimension" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:entity" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.entity}}
         "minecraft:entity_anchor" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:entity_summon" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:function" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:game_profile" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:gamemode" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:heightmap" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:hex_color" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:int_range" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:item_enchantment" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:item_predicate" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:item_slot" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:item_slots" = :Key {types = #dict, structure = @node.argument:item}
@@ -65,20 +74,24 @@ node.argument :Switch {
         "minecraft:loot_predicate" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:loot_table" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:message" = :Key {types = #dict, structure = @node.argument:item}
-        "minecraft:column_pos" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:mob_effect" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:nbt" = :Key {types = #dict, structure = @node.argument:item, tags = @t/outdated}
         "minecraft:nbt_compound_tag" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:nbt_path" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:nbt_tag" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:objective" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:objective_criteria" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:operation" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:particle" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:range" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.range}}
         "minecraft:resource" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
         "minecraft:resource_key" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
         "minecraft:resource_location" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:resource_or_tag" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
+        "minecraft:resource_or_tag_key" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
         "minecraft:resource_selector" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.resource}}
         "minecraft:rotation" = :Key {types = #dict, structure = @node.argument:item}
-        "minecraft:score_holder" = :Key {types = #dict, structure = @node.argument:item}
+        "minecraft:score_holder" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.entity}}
         "minecraft:scoreboard_slot" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:style" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:swizzle" = :Key {types = #dict, structure = @node.argument:item}
@@ -86,6 +99,7 @@ node.argument :Switch {
         "minecraft:template_mirror" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:template_rotation" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:time" = :Key {types = #dict, structure = @node.argument:item{$properties=@properties.integer}}
+        "minecraft:uuid" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:vec2" = :Key {types = #dict, structure = @node.argument:item}
         "minecraft:vec3" = :Key {types = #dict, structure = @node.argument:item}
     }
@@ -95,15 +109,16 @@ node.argument:item inherit temp/SortedKeymap {
     keys = @node:all + {
         "parser" = :Key {types = #str, delegate_arguments = {"always_print" = true}},
         "properties" = :Key {types = #dict, structure = properties}
-    }
+    } + @node:children
 }
 node.literal inherit temp/SortedKeymap {
-    keys = @node:all + {
-        "required_level" = :Key {types = #int}
-    }
+    keys = @node:all + @node:children
 }
 node.root inherit temp/SortedKeymap {
-    keys = @node:all
+    keys = @node:all + @node:children
+}
+node.unknown inherit temp/SortedKeymap {
+    keys = @node:all + @node:children
 }
 properties.entity inherit temp/SortedKeymap {
     keys = @node:all + {
@@ -121,6 +136,11 @@ properties.integer inherit temp/SortedKeymap {
     keys = {
         "max" = :Key {types = #int}
         "min" = :Key {types = #int}
+    }
+}
+properties.range inherit temp/SortedKeymap {
+    keys = {
+        "decimals" = :Key {types = #bool, delegate_arguments = {"always_print" = true}}
     }
 }
 properties.resource inherit temp/SortedKeymap {

@@ -5,6 +5,7 @@ settings {
         bs = @structures/misc/block_state/
         fp = @structures/misc/provider/float_provider/
         hp = @structures/misc/provider/height_provider/
+        ip = @structures/misc/provider/int_provider/
         misc = @structures/misc/misc/
         t = @structure_tags/
         temp = @structures/misc/template/
@@ -35,20 +36,22 @@ carver_or_id_list inherit temp/Set {
 }
 carver :Switch {
     switch_function = :Function {
-        function = %get_get_key
-        arguments = {"key" = "type", "default" = "old"}
+        function = %carvers_choose
     }
     substructures = {
         "old" = :Key {types = #dict, structure = @old_carver, tags = @t/outdated}
+        "minecraft:canyon" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.canyon}}
         "minecraft:cave" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.cave}}
         "minecraft:nether_cave" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.cave}}
-        "minecraft:canyon" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.canyon}}
+        "minecraft:underwater_canyon" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.canyon}}
+        "minecraft:underwater_cave" = :Key {types = #dict, structure = @carver:abstract{$imports=@config.cave}, tags = @t/outdated}
     }
 }
 carver:abstract abstract inherit temp/SortedKeymap {
     $ (dict) imports
     keys = {
         "type" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
+        "name" = :Key {types = #str, delegate_arguments = {"always_print" = true}}
         "config" = :Key {types = #dict, structure = @config{$imports=imports}}
     }
 }
@@ -60,6 +63,7 @@ config abstract inherit temp/SortedKeymap {
         "lava_level" = :Key {types = #dict, structure = @hp/vertical_anchor}
         "replaceable" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="block"}}
         "debug_settings" = :Key {types = #dict, structure = @debug_settings}
+        "aquifers_enabled" = :Key {types = #bool, tags = @t/outdated}
     } + imports
 }
 debug_settings inherit temp/SortedKeymap {
@@ -77,23 +81,31 @@ config.cave {
     "vertical_radius_multiplier" = :Key {types = [#float, #dict], structure = @fp/float_provider}
     "floor_level" = :Key {types = [#float, #dict], structure = @fp/float_provider}
 }
-config.canyon  {
+config.canyon {
     "yScale" = :Key {types = [#float, #dict], structure = @fp/float_provider}
+    "y_scale" = :Key {types = [#int, #dict], structure = @ip/int_provider, tags = @t/outdated}
     "vertical_rotation" = :Key {types = [#float, #dict], structure = @fp/float_provider}
     "shape" = :Key {types = #dict, structure = @config.canyon:shape}
+    "vertical_radius_default_factor" = :Key {types = #dict, structure = @fp/float_provider}
+    "bottom_inclusive" = :Key {types = #dict, structure = @hp/vertical_anchor, tags = @t/outdated}
+    "top_inclusive" = :Key {types = #dict, structure = @hp/vertical_anchor, tags = @t/outdated}
+} + @config.canyon:shape:keys{tags = [@t/outdated]}
+config.canyon:shape:keys {
+    $ (list) tags = []
+    "distance_factor" = :Key {types = [#float, #dict], structure = @fp/float_provider, tags = tags}
+    "distanceFactor" = :Key {types = [#float, #dict], structure = @fp/float_provider, tags = [@t/outdated] + tags}
+    "thickness" = :Key {types = [#float, #dict], structure = @fp/float_provider, tags = tags}
+    "horizontal_radius_factor" = :Key {types = [#float, #dict], structure = @fp/float_provider, tags = tags}
+    "vertical_radius_default_factor" = :Key {types = #float, tags = tags}
+    "vertical_radius_center_factor" = :Key {types = #float, tags = tags}
+    "width_smoothness" = :Key {types = #int, tags = tags}
 }
 config.canyon:shape inherit temp/SortedKeymap {
-    keys = {
-        "distance_factor" = :Key {types = [#float, #dict], structure = @fp/float_provider}
-        "thickness" = :Key {types = [#float, #dict], structure = @fp/float_provider}
-        "horizontal_radius_factor" = :Key {types = [#float, #dict], structure = @fp/float_provider}
-        "vertical_radius_default_factor" = :Key {types = #float}
-        "vertical_radius_center_factor" = :Key {types = #float}
-        "width_smoothness" = :Key {types = #int}
-    }
+    keys = @config.canyon:shape:keys
 }
 old_carver inherit temp/SortedKeymap {
     keys = {
-        "air" = :Key {types = [#str, #list], structure = @misc/named_list_or_item{$name="carver"}}
+        "air" = :Key {types = [#str, #list, #dict], structure = @carver_list_or_carver}
+        "liquid" = :Key {types = [#str, #list, #dict], structure = @carver_list_or_carver, tags = @t/outdated}
     }
 }
