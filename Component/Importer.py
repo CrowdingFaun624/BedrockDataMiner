@@ -16,8 +16,8 @@ from Component.Group import (
     ScriptFile,
 )
 from Component.ImporterFinalize import finalize_all
-from Component.Parser import parse_file
-from Component.Reader import Reader
+from Component.Parser.Parser import parse_file
+from Component.Parser.Reader import Reader
 from Component.Scope import EMPTY_SCOPE
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Serializer.Serializer import SerializerCreator

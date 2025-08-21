@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from Component.Field.DomainField import DomainField
     from Component.Field.FieldFactory import FieldFactory
     from Component.Field.GroupField import GroupField
-    from Component.Reader import Reader
+    from Component.Parser.Reader import Reader
 
 class Aliases():
 

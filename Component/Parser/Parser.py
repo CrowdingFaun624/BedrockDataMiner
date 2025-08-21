@@ -22,7 +22,7 @@ from Component.Field.TypeField import TypeField
 from Component.Field.Variable import Variable
 from Component.Field.VariableReferenceField import VariableReferenceField
 from Component.Group import Aliases, Group, GroupSettings
-from Component.Reader import Reader
+from Component.Parser.Reader import Reader
 from Component.Scope import Scope
 
 # wow look at that it's descriptive instead of prescriptive

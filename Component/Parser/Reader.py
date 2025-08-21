@@ -33,15 +33,10 @@ class Reader():
         self.exceptions:list[ReaderTrace] = []
 
     def read(self, amount:int, back:int=0, /) -> str:
-        if self.index >= len(self.source):
-            self.index = len(self.source)
-            return ""
-        elif self.index + amount > len(self.source):
-            output = self.source[self.index:]
-            self.index = min(len(self.source), self.index + amount - back)
-        else:
-            output = self.source[self.index:self.index+amount]
-            self.index += amount - back
+        if self.index >= len(self.source): output = ""
+        elif self.index + amount > len(self.source): output = self.source[self.index:]
+        else: output = self.source[self.index:self.index+amount]
+        self.index += amount - back
         return output
 
     def next_is(self, text:str, /, reverse_if_false:bool, reverse_if_true:bool) -> bool:
@@ -68,7 +63,7 @@ class Reader():
         self.index = index
 
     def move(self, amount:int, /) -> None:
-        self.index = min(self.index + amount, len(self.source))
+        self.index = self.index + amount
 
     def at_last(self, amount:int=1, /) -> bool:
         """

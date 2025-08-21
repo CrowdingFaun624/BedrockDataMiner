@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, Callable, Final, Self, Sequence
 
 from Component.Field.Errors import Errors
 from Component.Field.Variable import Variable
-from Component.Reader import Reader
+from Component.Parser.Reader import Reader
 from Component.Scope import Scope
 from Utilities.Trace import Trace
 
