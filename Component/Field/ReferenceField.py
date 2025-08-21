@@ -95,7 +95,7 @@ class ReferenceField[R](ContainerField[R]):
             )
         else:
             return self.scope.override(
-                self.factory.name if self.scope.name is None else self.scope.name,
+                (self.factory.full_name, self.factory.name) if self.scope.name is None else self.scope.name,
                 {key: variable.field for key, variable in self.variable_slots},
                 {key: field.field for key, field in self.field_slots},
                 forget_above_variables=True,

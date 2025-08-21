@@ -51,7 +51,7 @@ class Component[R: ComponentObject, P:Mapping[Any, Any] = Mapping[Any, Any]]():
         "propagating_sets",
     )
 
-    def __init__(self, name:str, field:Field, group:Group, index:int, is_inline:bool) -> None:
+    def __init__(self, full_name:str, name:str, group:Group, index:int, is_inline:bool) -> None:
         self.name = name
         self.group = group
         self.index = index
@@ -59,7 +59,7 @@ class Component[R: ComponentObject, P:Mapping[Any, Any] = Mapping[Any, Any]]():
         """
         The index of this Component's Field within its original Group.
         """
-        self.full_name = self.group.full_name + self.name
+        self.full_name = full_name
 
         self.final:R
         """

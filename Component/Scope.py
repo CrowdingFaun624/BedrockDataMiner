@@ -12,7 +12,7 @@ class Scope():
     """
     Immutable object that handles the passing and overlaying of Variables and Fields.
 
-    :param name: The name Components created by this Scope will have.
+    :param name: The full name and name Components created by this Scope will have.
     :param variable_declarations: Variables declarations from above Fields.
     :param variable_definitions: Variable definitions from above Fields.
     :param override_variables: Variables to place on top of `variables` and the Variables of the next Field.
@@ -33,7 +33,7 @@ class Scope():
 
     def __init__(
         self,
-        name:str|None,
+        name:tuple[str,str]|None,
         variable_declarations:Mapping[str,"Variable"],
         variable_definitions:Mapping[str,"Variable"],
         override_variables:Mapping[str,"Variable"]={},
@@ -115,7 +115,7 @@ class Scope():
             if self.name is None and len(self.override_variables) == 0 and len(self.override_fields) == 0:
                 self._sub = self
             elif len(self.override_variables) == 0:
-                self._sub = Scope(None if self.name is None else f"{self.name}({field_name})", self.variable_declarations, self.variable_definitions)
+                self._sub = Scope(None if self.name is None else (f"{self.name[0]}({field_name})", f"{self.name[1]}({field_name})"), self.variable_declarations, self.variable_definitions)
             else:
                 # Why this works: Only setting the value from above will be able to
                 # work, since any defined Variable resets the stored declared Variable.
@@ -131,12 +131,12 @@ class Scope():
                         new_variable_definitions[variable_name] = variable
                     if variable.is_declaration: # must go after variable.is_defined block
                         new_variable_declarations[variable_name] = variable
-                self._sub = Scope(None if self.name is None else f"{self.name}({field_name})", new_variable_declarations, new_variable_definitions)
+                self._sub = Scope(None if self.name is None else (f"{self.name[0]}({field_name})", f"{self.name[1]}({field_name})"), new_variable_declarations, new_variable_definitions)
         return self._sub
 
     def override(
         self,
-        name:str|None|EllipsisType,
+        name:tuple[str,str]|None|EllipsisType,
         override_variables:Mapping[str,"Variable"],
         override_fields:Mapping[str,"Field"],
         *,

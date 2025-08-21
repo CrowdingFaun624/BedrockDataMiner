@@ -2,7 +2,6 @@ from types import EllipsisType
 from typing import TYPE_CHECKING, Any, Callable, Final, Self, Sequence
 
 from Component.Field.Errors import Errors
-from Component.Field.Variable import Variable
 from Component.Parser.Reader import Reader
 from Component.Scope import Scope
 from Utilities.Trace import Trace
@@ -86,7 +85,7 @@ class FieldFactory[F: "Field"]():
             trace.exception(RuntimeError(f"{self.field_type.__name__} cannot be abstract"))
             self.narrow(Errors.create_field)
         for key, subfield in self.subfields:
-            self.narrow(subfield.set_field(group, name + (f"(${key})" if issubclass(subfield.field_type, Variable) else f"({key})"), key, index, trace))
+            self.narrow(subfield.set_field(group, name + f"({key})", key, index, trace))
         return self.error
 
     def create_field_shallow(self, scope:Scope, trace:Trace) -> F|EllipsisType:
