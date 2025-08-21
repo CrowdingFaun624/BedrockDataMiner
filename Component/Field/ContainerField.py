@@ -46,7 +46,12 @@ class ContainerField[R](Field[R]):
                 if new_error <= Errors.create_field:
                     # if sub-Field is a Variable and it failed, then any Fields
                     # after it could fail, too.
-                    break
+                    if issubclass(subfield_factory.field_factory.field_type, Variable):
+                        # Variables break things a lot more, since sub-Fields could depend on one
+                        # of these Variables.
+                        break
+                    else:
+                        continue
                 assert subfield is not ...
                 subfields.append(subfield)
                 if isinstance(subfield, Variable):
@@ -61,22 +66,12 @@ class ContainerField[R](Field[R]):
             return self.error
         return self.narrow(Errors.create_field)
 
-    def create_final(self, trace: Trace) -> Errors:
-        if self.created_final: return self.error
-        with trace.enter_field(self, ...):
-            super().create_final(trace)
-            if self.error <= Errors.create_final:
-                return self.error
-            for subfield in self.subfields:
-                self.narrow(subfield.create_final(trace))
-            return self.error
-        return self.narrow(Errors.create_final)
-
     # link_final is the responsibility of subclasses
 
-    # finalize is also the responsibility of subclasses because sometimes a
-    # Field overwrites another and the overwritten Field will never have
-    # link_final called on it, so finalize cannot be called on it either.
+    # create_final and finalize are also the responsibility of subclasses
+    # because sometimes a Field overwrites another and the overwritten Field
+    # will never have link_final called on it, so finalize cannot be called on
+    # it either.
 
     def destroy(self) -> None:
         if self.destroyed: return

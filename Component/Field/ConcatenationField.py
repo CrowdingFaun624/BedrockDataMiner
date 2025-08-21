@@ -107,7 +107,7 @@ class ConcatenationField[R](Field[R]):
                 else:
                     result = self.result = final1 + final2 # type: ignore we'll deal with that when we add type safety
             except TypeError as e:
-                e.add_note(f"{final1} and {final2}")
+                e.add_note(f"{final1} and {final2} at {self}")
                 raise
             return result, self.propagating_variables, self.error
         return ..., None, self.narrow(Errors.link_final)

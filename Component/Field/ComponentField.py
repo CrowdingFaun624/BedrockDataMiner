@@ -38,10 +38,10 @@ class ComponentField[R: ComponentObject](ContainerField[R]):
     def __eq__(self, value: object) -> bool:
         # using optional_scope here works because the only place where __eq__ or __hash__ can be called
         # is during Scope-y stuff. In that case, all Fields compared will have the same Scope anyways.
-        return isinstance(value, type(self)) and self.optional_scope == value.optional_scope and self.field_slots == value.field_slots
+        return isinstance(value, type(self)) and self.scope == value.scope and self.field_slots == value.field_slots
 
     def __hash__(self) -> int:
-        return hash((type(self), self.optional_scope, tuple(self.field_slots)))
+        return hash((type(self), self.scope, tuple(self.field_slots)))
 
     def create_final(self, trace: Trace) -> Errors:
         if self.created_final: return self.error
@@ -54,6 +54,11 @@ class ComponentField[R: ComponentObject](ContainerField[R]):
                 trace.exception(RuntimeError(f"Unrecognized Component type {self.component_type_name}"))
                 self.narrow(Errors.create_final)
                 return self.error
+            for field in self.subscope.local_fields.values():
+                self.narrow(field.create_final(trace))
+                # We do not break or return if the Errors can be narrowed.
+                # The creation of sub-Fields do not affect the creation of the
+                # Component.
             self.component_type = component_type
             # using self.index here does not uphold scopiness correctly.
             # significant index will be removed soon.

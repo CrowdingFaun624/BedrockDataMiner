@@ -114,8 +114,8 @@ class Scope():
         if self._sub is None:
             if self.name is None and len(self.override_variables) == 0 and len(self.override_fields) == 0:
                 self._sub = self
-            elif self.name is not None and len(self.override_variables) == 0 and len(self.override_fields) == 0:
-                self._sub = Scope(f"{self.name}({field_name})", self.variable_declarations, self.variable_definitions)
+            elif len(self.override_variables) == 0:
+                self._sub = Scope(None if self.name is None else f"{self.name}({field_name})", self.variable_declarations, self.variable_definitions)
             else:
                 # Why this works: Only setting the value from above will be able to
                 # work, since any defined Variable resets the stored declared Variable.
@@ -126,8 +126,8 @@ class Scope():
                 new_variable_definitions:dict[str,"Variable"] = {}
                 new_variable_definitions.update(self.variable_definitions)
                 for variable_name, variable in self.override_variables.items():
-                    if variable.is_defined:
-                        new_variable_definitions.pop(variable_name, None) # defining a Variable beneath its declaration creates a separate Variable.
+                    if variable.value_exists:
+                        new_variable_declarations.pop(variable_name, None) # defining a Variable beneath its declaration creates a separate Variable.
                         new_variable_definitions[variable_name] = variable
                     if variable.is_declaration: # must go after variable.is_defined block
                         new_variable_declarations[variable_name] = variable

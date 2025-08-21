@@ -37,16 +37,10 @@ class Variable[R](Field[R]):
         self.propagating_variables: PropagatingVariables|None
 
     def __eq__(self, value: object) -> bool:
-        if self.variable_value is None:
-            # if the Variable has no value, it is a declaration Variable.
-            # these Variables never use their own Scope.
-            return isinstance(value, type(self)) and self.variable_value == value.variable_value # still compare just in case the other's isn't None.
-        return isinstance(value, type(self)) and self.optional_scope == value.optional_scope and self.variable_value == value.variable_value
+        return isinstance(value, type(self)) and self.referenced_field == value.referenced_field
 
     def __hash__(self) -> int:
-        if self.variable_value is None:
-            return hash((type(self), self.variable_value)) # hash a tuple of different length so that it won't be confused with an unequal Variable with no Scope
-        return hash((type(self), self.optional_scope, self.variable_value))
+        return hash((type(self), self.referenced_field))
 
     @property
     def is_declaration(self) -> bool:
@@ -132,6 +126,15 @@ class Variable[R](Field[R]):
             self.linked_final = True
             return result, propagating_variables, self.error
         return ..., None, self.narrow(Errors.link_final)
+
+    def finalize(self, trace: Trace) -> Errors:
+        if self.finalized: return self.error
+        with trace.enter_field(self, ...):
+            if super().finalize(trace) <= Errors.finalize:
+                return self.error
+            self.narrow(self.referenced_field.finalize(trace))
+            return self.error
+        return self.narrow(Errors.finalize)
 
     def destroy(self) -> None:
         if self.destroyed: return

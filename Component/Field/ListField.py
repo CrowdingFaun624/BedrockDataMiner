@@ -34,10 +34,10 @@ class ListField[V](ContainerField[Sequence[V]]):
 
     def __eq__(self, value: object) -> bool:
         return isinstance(value, type(self)) and ( len(self.field_slots) == 0 and len(value.field_slots) == 0 or\
-            self.optional_scope == value.optional_scope) and self.field_slots == value.field_slots
+            self.scope == value.scope) and self.field_slots == value.field_slots
 
     def __hash__(self) -> int:
-        return hash((type(self), (self.optional_scope if len(self.field_slots) > 0 else None), tuple(self.field_slots)))
+        return hash((type(self), (self.scope if len(self.field_slots) > 0 else None), tuple(self.field_slots)))
 
     def create_field(self, memo: set[FieldFactory], trace: Trace) -> Errors:
         with trace.enter_field(self, ...):
@@ -54,6 +54,9 @@ class ListField[V](ContainerField[Sequence[V]]):
             if super().create_final(trace) <= Errors.create_final:
                 return self.error
             del self.field_slots
+            for field in self.subscope.local_fields.values():
+                self.narrow(field.create_final(trace))
+                # don't return early if error occurs
             self.result = []
             self.propagating_variables = PropagatingVariables.new_empty(suggestible=True)
             return self.error

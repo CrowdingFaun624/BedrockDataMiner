@@ -75,11 +75,11 @@ class ReferenceField[R](ContainerField[R]):
     def __eq__(self, value: object) -> bool:
         # When there are no Field slots or Variable slots, the Scope does not matter
         return isinstance(value, type(self)) and (self.is_forgetful and len(self.variable_slots) == 0 and len(value.variable_slots) == 0 and len(self.field_slots) == 0 and len(value.field_slots) == 0 \
-        or self.optional_scope == value.optional_scope) and self.domain == value.domain and self.group_path == value.group_path and self.component_name == value.component_name \
+        or self.scope == value.scope) and self.domain == value.domain and self.group_path == value.group_path and self.component_name == value.component_name \
         and self.is_forgetful is value.is_forgetful and self.field_slots == value.field_slots and self.variable_slots == value.variable_slots
 
     def __hash__(self) -> int:
-        return hash((type(self), self.optional_scope if not self.is_forgetful or len(self.field_slots) > 0 or len(self.variable_slots) > 0 else None, self.domain, tuple(self.group_path),
+        return hash((type(self), self.scope if not self.is_forgetful or len(self.field_slots) > 0 or len(self.variable_slots) > 0 else None, self.domain, tuple(self.group_path),
                      self.component_name, self.is_forgetful, tuple(self.field_slots), tuple(self.variable_slots)))
 
     def get_subscope(self) -> Scope:
@@ -121,9 +121,9 @@ class ReferenceField[R](ContainerField[R]):
     def create_final(self, trace: Trace) -> Errors:
         if self.created_final: return self.error
         with trace.enter_field(self, ...):
-            super().create_final(trace)
-            if self.error <= Errors.create_final:
+            if super().create_final(trace) <= Errors.create_final:
                 return self.error
+            # do not create_final on local Fields; that is the responsibility of the referenced Field
             del self.field_slots
             del self.variable_slots
             self.narrow(self.referenced_field.create_final(trace))
@@ -169,10 +169,7 @@ class ReferenceField[R](ContainerField[R]):
         with trace.enter_field(self, ...):
             if super().finalize(trace) <= Errors.finalize:
                 return self.error
-            for subfield in self.subfields:
-                self.narrow(subfield.finalize(trace))
-            if self.error <= Errors.finalize:
-                return self.error
+            # ReferenceField does not finalize its own Fields; that is the responsibility of the referenced Field.
             self.narrow(self.referenced_field.finalize(trace))
             return self.error
         return self.narrow(Errors.finalize)

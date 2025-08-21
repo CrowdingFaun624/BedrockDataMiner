@@ -126,13 +126,6 @@ class Field[R]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.name}>"
 
-    @property
-    def optional_scope(self) -> Scope|None:
-        """
-        Returns the `scope` attribute if it exists, otherwise None.
-        """
-        return self.scope if hasattr(self, "scope") else None
-
     # __eq__ and __hash__ should be implemented assuming `create_field` has not been called.
 
     def __eq__(self, value: object) -> bool:

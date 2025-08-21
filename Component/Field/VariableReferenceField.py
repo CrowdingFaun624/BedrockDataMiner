@@ -28,10 +28,10 @@ class VariableReferenceField[R](Field[R]):
         self.propagating_variables: PropagatingVariables|None
 
     def __eq__(self, value: object) -> bool:
-        return isinstance(value, type(self)) and self.optional_scope == value.optional_scope and self.variable_name == value.variable_name
+        return isinstance(value, type(self)) and self.scope == value.scope and self.variable_name == value.variable_name
 
     def __hash__(self) -> int:
-        return hash((type(self), self.optional_scope, self.variable_name))
+        return hash((type(self), self.scope, self.variable_name))
 
     def create_field(self, memo: set["FieldFactory"], trace: Trace) -> Errors:
         with trace.enter_field(self, ...):
@@ -48,6 +48,15 @@ class VariableReferenceField[R](Field[R]):
                 self.variable = variable
             return self.error
         return self.narrow(Errors.create_field)
+
+    def create_final(self, trace: Trace) -> Errors:
+        if self.created_final: return self.error
+        with trace.enter_field(self, ...):
+            if super().create_final(trace) <= Errors.create_final:
+                return self.error
+            self.narrow(self.variable.create_final(trace))
+            return self.error
+        return self.narrow(Errors.create_final)
 
     def get_final_type(self, trace: Trace) -> tuple[tuple[type, ...], Errors]:
         with trace.enter_field(self, ...):
@@ -69,6 +78,14 @@ class VariableReferenceField[R](Field[R]):
             self.propagating_variables = propagating_variables
             return result, propagating_variables, self.error
         return ..., None, self.narrow(Errors.link_final)
+
+    def finalize(self, trace: Trace) -> Errors:
+        if self.finalized: return self.error
+        with trace.enter_field(self, ...):
+            if super().finalize(trace) <= Errors.finalize:
+                return self.error
+            return self.narrow(self.variable.finalize(trace))
+        return self.narrow(Errors.finalize)
 
     def destroy(self) -> None:
         if self.destroyed: return

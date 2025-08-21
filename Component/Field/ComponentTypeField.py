@@ -33,7 +33,8 @@ class ComponentTypeField(Field[type[ComponentObject]]):
     def create_final(self, trace: Trace) -> Errors:
         if self.created_final: return self.error
         with trace.enter_field(self, ...):
-            super().create_final(trace)
+            if super().create_final(trace) <= Errors.create_final:
+                return self.error
             component_type = component_types_dict.get(self.type_name, ...)
             if component_type is ...:
                 trace.exception(RuntimeError(f"Unrecognized Component type {self.type_name}"))
