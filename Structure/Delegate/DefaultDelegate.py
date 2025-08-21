@@ -138,9 +138,12 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
                     # key_structure cannot be None because if it were None, `key_diff.contains_diff` must be False.
                     if key_structure is None:
                         continue
-                    key_output = key_structure.print_comparison(key_diff[1], bundle, trace, environment)
-                    if key_output is ...:
-                        continue
+                    if key_structure.has_comparison_printer(key_diff[1], trace, environment):
+                        key_output = key_structure.print_comparison(key_diff[1], bundle, trace, environment)
+                        if key_output is ...:
+                            continue
+                    else:
+                        key_output = [(0, self.stringify(key_diff[1]))]
                     self.print_single(None, key_output, output, message="Moved ")
                     key_representation = key_diff[1].get_con(1)
                     if key_representation is ...:
@@ -175,9 +178,12 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
                     # value_structure cannot be None because if it were None, `value_diff.contains_diff` must be False.
                     if value_structure is None:
                         continue
-                    value_output = value_structure.print_comparison(value_diff[1], bundle, trace, environment)
-                    if value_output is ...:
-                        continue
+                    if value_structure.has_comparison_printer(value_diff[1], trace, environment):
+                        value_output = value_structure.print_comparison(value_diff[1], bundle, trace, environment)
+                        if value_output is ...:
+                            continue
+                    else:
+                        value_output = [(0, self.stringify(value_diff[1]))]
                     self.print_single(key_output_representation(), value_output, output, message="Changed ", allow_single_line=False)
 
                 elif value_diff.length > 1: # if there is a shallow change and both branches 0 and 1 exist.

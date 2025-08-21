@@ -129,11 +129,23 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO](ComponentObject):
         """
         ...
 
+    def has_branch_printer(self, data:B, trace:Trace, environment:PrinterEnvironment) -> bool:
+        """
+        Returns if there is a printer for a single branch of data.
+        """
+        return False
+
     def print_branch(self, data:B, trace:Trace, environment:PrinterEnvironment) -> BO|EllipsisType:
         """
         Prints one branch of data. Returns an Ellipsis if there was an error.
         """
         return ...
+
+    def has_comparison_printer(self, data:D, trace:Trace, environment:ComparisonEnvironment) -> bool:
+        """
+        Returns if there is a printer for multiple branches of data.
+        """
+        return False
 
     def print_comparison(self, data:D, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CO|EllipsisType:
         """

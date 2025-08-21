@@ -36,7 +36,7 @@ class LineDelegate[DC:Con, DD:Don|Diff, S:Structure|None](Delegate[DC, DD, S, li
     ) -> list[LineType]:
         if item is ...:
             return []
-        elif structure is None:
+        elif structure is None or not structure.has_branch_printer(item, trace, environment):
             return [(0, self.stringify(item.data))]
         elif (output := structure.print_branch(item, trace, environment)) is ...:
             return []

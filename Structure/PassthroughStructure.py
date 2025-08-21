@@ -242,6 +242,19 @@ class PassthroughStructure[D, BO, CO, K](Structure[D, Con[D], Don[D], Don[D]|Dif
                 return self.similarity_cache.set(structure1.get_similarity(data1, data2, branch1, branch2, trace, environment), data1, data2, environment1, environment2)
         return 0.0, False
 
+    def has_branch_printer(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> bool:
+        structure, _ = self.get_structure(data.data, trace, environment)
+        return structure is not None and structure.has_branch_printer(data, trace, environment)
+
+    def has_comparison_printer(self, data: Don[D] | Diff[Don[D]], trace: Trace, environment: ComparisonEnvironment) -> bool:
+        if isinstance(data, Don):
+            structures = [self.get_structure(data.get_con(branch).data, trace, environment[branch])[0] for branch in data.iter_branches()]
+            return len(structures) > 0 and structures[0] is not None and all(structure is structures[0] for structure in structures) and structures[0].has_comparison_printer(data, trace, environment)
+        else: # isinstance(data, Diff)
+            if data.length != 1: return False
+            structures = [self.get_structure(data[branch].get_con(branch).data, trace, environment[branch])[0] for branch in range(data.branch_count)]
+            return structures[0] is not None and all(structure is structures[0] for structure in structures) and structures[0].has_comparison_printer(data, trace, environment)
+
     def print_branch(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.trace_name, data):
             structure, key = self.get_structure(data.data, trace, environment)

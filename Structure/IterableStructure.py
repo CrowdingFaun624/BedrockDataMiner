@@ -327,6 +327,12 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
         memo.add(self)
         return output
 
+    def has_branch_printer(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> bool:
+        return self.delegate is not None
+
+    def has_comparison_printer(self, data: IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], trace: Trace, environment: ComparisonEnvironment) -> bool:
+        return self.delegate is not None
+
     def print_branch(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.trace_name, data):
             if self.delegate is None:

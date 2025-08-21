@@ -120,6 +120,12 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
             return float(is_similar := (data1 == data2)), is_similar
         return 0.0, False
 
+    def has_branch_printer(self, data: SCon[D], trace: Trace, environment: PrinterEnvironment) -> bool:
+        return self.delegate is not None
+
+    def has_comparison_printer(self, data: Diff[SDon[D]], trace: Trace, environment: ComparisonEnvironment) -> bool:
+        return self.delegate is not None
+
     def print_branch(self, data: SCon[D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.trace_name, data):
             printer:Callable[[SCon[D], Trace, PrinterEnvironment], Any]

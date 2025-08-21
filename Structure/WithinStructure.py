@@ -177,6 +177,12 @@ class WithinStructure[A, B, BO, CO](Structure[A, WCon[A, Con[B]], WDon[A, Don[B]
             return self.structure.get_similarity(data1.insides, data2.insides, branch1, branch2, trace, environment)
         return 0.0, False
 
+    def has_branch_printer(self, data: WCon[A, Con[B]], trace: Trace, environment: PrinterEnvironment) -> bool:
+        return self.structure is not None and self.structure.has_branch_printer(data.insides, trace, environment)
+
+    def has_comparison_printer(self, data: WDon[A, Don[B], Con[B]] | Diff[WDon[A, Don[B], Con[B]]], trace: Trace, environment: ComparisonEnvironment) -> bool:
+        return self.structure is not None and self.structure.has_comparison_printer(self.get_comparison_insides(data), trace, environment)
+
     def print_branch(self, data: WCon[A, Con[B]], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.trace_name, data):
             printer:Callable[[Con[B], Trace, PrinterEnvironment]]

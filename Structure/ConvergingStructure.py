@@ -211,6 +211,12 @@ class ConvergingStructure[A, B, BO, CO](Structure[A, Con[A], Don[A], Don[A]|Diff
             return self.end_structure.get_similarity(inside_data1, inside_data2, branch1, branch2, trace, environment)
         return 0.0, False
 
+    def has_branch_printer(self, data: Con[A], trace: Trace, environment: PrinterEnvironment) -> bool:
+        return True
+
+    def has_comparison_printer(self, data: Don[A] | Diff[Don[A]], trace: Trace, environment: ComparisonEnvironment) -> bool:
+        return self.end_structure is not None
+
     def print_branch(self, data: Con[A], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.trace_name, data):
             return self.structure.print_branch(data, trace, environment)
