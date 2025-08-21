@@ -14,7 +14,7 @@ from Utilities.Trace import Trace
 
 foo = False
 
-class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
+class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO, None]):
 
     __slots__ = (
         "structure",
@@ -44,8 +44,8 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
         if not isinstance(data.data, self.this_types):
             trace.exception(StructureTypeError(self.this_types, type(data.data), "Data"))
 
-    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
-        return self.structure
+    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> tuple[Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None, EllipsisType]:
+        return self.structure, ...
 
     def diffize(self, data: Con[D], bundle: tuple[int, ...], trace: Trace, environment: ComparisonEnvironment) -> Mapping[tuple[int,...],Don[D]]|EllipsisType:
         with trace.enter(self, self.trace_name, data):

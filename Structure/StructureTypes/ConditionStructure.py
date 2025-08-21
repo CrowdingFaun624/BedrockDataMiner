@@ -1,3 +1,4 @@
+from types import EllipsisType
 from typing import AbstractSet, Sequence
 
 from ordered_set import OrderedSet
@@ -23,7 +24,7 @@ from Utilities.Exceptions import ConditionStructureFilterError, StructureTypeErr
 from Utilities.Trace import Trace
 
 
-class ConditionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
+class ConditionStructure[D, BO, CO](PassthroughStructure[D, BO, CO, int]):
 
     __slots__ = (
         "branch_tags",
@@ -64,12 +65,12 @@ class ConditionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
             return (data_path.copy(...).embed(data.data),)
         return ()
 
-    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D] | Diff[Don[D]], BO, CO] | None:
+    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> tuple[Structure[D, Con[D], Don[D], Don[D] | Diff[Don[D]], BO, CO] | None, int|EllipsisType]:
         branch = environment.structure_info.evaluate(self, self.filters)
         if branch is None:
             trace.exception(ConditionStructureFilterError(self, environment.structure_info))
-            return None
-        return self.structures[branch]
+            return None, ...
+        return self.structures[branch], branch
 
     def iter_structures(self) -> Sequence[Structure]:
         return [structure for structure in self.structures if structure is not None]

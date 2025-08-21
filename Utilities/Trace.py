@@ -13,6 +13,8 @@ class TraceType(enum.Enum):
     key = 1
     key_group = 2
     field = 3
+    key2 = 4
+    noop = 5
 
 def simplify_trace(trace:list[tuple[object, Callable[[],str], Any|EllipsisType, TraceType]]) -> list[tuple[object, Callable[[],str], Any, TraceType]]:
     last_id:int|None = None
@@ -57,6 +59,10 @@ def stringify_trace(trace:list[tuple[object, Callable[[],str], Any|EllipsisType,
                     else:
                         trace_string.append(f"{"" if index == 0 else " → "}{thing.factory.key}")
                     previous_field = thing
+                case TraceType.key2:
+                    trace_string.append(f"<{position_name_function()}>")
+                case TraceType.noop:
+                    pass # do literally nothing
         return "".join(trace_string)
 
 class Trace():
@@ -95,6 +101,23 @@ class Trace():
         :param position_data: The value that the context is now looking at.
         """
         self.trace.append((key, lambda: str(key), position_data, TraceType.key))
+        return self
+
+    def enter_key2(self, key:object, position_data:Any|EllipsisType) -> Self:
+        """
+        This method must be used at a `with` statement.
+
+        :param key: The current key of the context.
+        :param position_data: The value that the context is now looking at.
+        """
+        self.trace.append((key, lambda: str(key), position_data, TraceType.key2))
+        return self
+
+    def enter_noop(self) -> Self:
+        """
+        This method must be used at a `with` statement.
+        """
+        self.trace.append((..., lambda: "", ..., TraceType.noop))
         return self
 
     def enter_keys(self, keys:tuple[object,...], position_data:Any|EllipsisType) -> Self:

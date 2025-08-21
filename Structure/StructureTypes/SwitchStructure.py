@@ -1,3 +1,4 @@
+from types import EllipsisType
 from typing import AbstractSet, Mapping, Sequence
 
 from ordered_set import OrderedSet
@@ -23,7 +24,7 @@ from Utilities.Exceptions import StructureTypeError, SwitchStructureError
 from Utilities.Trace import Trace
 
 
-class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
+class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO, str]):
 
     __slots__ = (
         "keys",
@@ -49,13 +50,13 @@ class SwitchStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
         self.types:Mapping[str,tuple[type,...]] = {key: value.types for key, value in self.keys.items()}
         del self.keys
 
-    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
+    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> tuple[Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None, str|EllipsisType]:
         switch_key:str = self.switch_function(data)
         structure = self.switches.get(switch_key, ...)
         if structure is ...:
             trace.exception(SwitchStructureError(switch_key, list(self.switches.keys()), self))
-            return None
-        return structure
+            return None, switch_key
+        return structure, switch_key
 
     def iter_structures(self) -> Sequence[Structure]:
         return [structure for structure in self.switches.values() if structure is not None]

@@ -1,3 +1,4 @@
+from types import EllipsisType
 from typing import AbstractSet, Mapping, Sequence
 
 from ordered_set import OrderedSet
@@ -15,7 +16,7 @@ from Utilities.Exceptions import StructureTypeError
 from Utilities.Trace import Trace
 
 
-class UnionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
+class UnionStructure[D, BO, CO](PassthroughStructure[D, BO, CO, str]):
 
     __slots__ = (
         "keys",
@@ -33,11 +34,11 @@ class UnionStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
         self.union_tags:Mapping[type[D], AbstractSet[StructureTag]] = {type: key.tags for key in self.keys for type in key.types if len(key.tags) > 0}
         del self.keys
 
-    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
+    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> tuple[Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None, str|EllipsisType]:
         if (output := self.substructures.get(type(data), ...)) is ...:
             trace.exception(StructureTypeError(tuple(self.substructures.keys()), type(data), "Data"))
-            return None
-        return output
+            return None, type(data).__name__
+        return output, type(data).__name__
 
     def iter_structures(self) -> Sequence[Structure]:
         return [structure for structure in self.substructures.values() if structure is not None]
